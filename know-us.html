@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Know us — knowhere</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  .kw-us *{margin:0;padding:0;box-sizing:border-box}
+  .kw-us{--bg:#070708;--ink:#EDECE8;--dim:#8C8B87;--dimmer:#6B6A66;--line:rgba(255,255,255,0.08);--brat:#7BEA5A;background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:clip}
+  .kw-us::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:999;opacity:.5;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E")}
+  html{scroll-snap-type:y proximity}
+  .kw-us a{text-decoration:none}
+  .kw-us .hero{min-height:calc(100vh - 60px);display:flex;flex-direction:column;justify-content:center;scroll-snap-align:start}
+  .kw-us .eyebrow-sm{font-size:11px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--brat);margin-bottom:14px}
+  .kw-us canvas.flow{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:1}
+  .kw-us main{position:relative;z-index:2}
+  .kw-us [data-reveal]{opacity:0;transform:translateY(26px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
+  .kw-us [data-reveal].in{opacity:1;transform:none}
+  @keyframes kwBreathe{0%,100%{transform:scale(1);opacity:.5}50%{transform:scale(1.35);opacity:.15}}
+  @keyframes kwMarkPulse{0%,100%{color:#EDECE8}50%{color:#7BEA5A}}
+  @keyframes kwDrift{0%{background-position:0% 50%}100%{background-position:200% 50%}}
+  .kw-us .irid{background-image:linear-gradient(100deg,#F15524,#FCB815,#7BEA5A,#23A4DD,#854896,#EC1559,#F15524);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:kwDrift 9s linear infinite}
+
+  .kw-us nav{position:sticky;top:0;z-index:200;display:flex;align-items:center;gap:16px;padding:14px 34px;backdrop-filter:blur(20px) saturate(150%);-webkit-backdrop-filter:blur(20px) saturate(150%);background:rgba(7,7,8,0.62);border-bottom:1px solid var(--line)}
+  .kw-us .mark-wrap{position:relative;width:30px;height:30px;display:grid;place-items:center;flex-shrink:0}
+  .kw-us .mark-glow{position:absolute;inset:-8px;border-radius:50%;background:radial-gradient(circle,rgba(123,234,90,.55),transparent 70%);animation:kwBreathe 3s ease-in-out infinite;pointer-events:none}
+  .kw-us .navmark{position:relative;z-index:1;display:flex;color:#EDECE8;animation:kwMarkPulse 4.2s ease-in-out infinite;font-size:20px}
+  .kw-us .brand{display:flex;align-items:center;gap:10px}
+  .kw-us .brand:hover .navmark{animation-duration:1.6s}
+  .kw-us .wordmark{font-size:16.5px;font-weight:700;letter-spacing:-0.04em;color:var(--ink)}
+  .kw-us nav .links{flex:1;display:flex;gap:22px;justify-content:flex-end;align-items:center;flex-wrap:wrap}
+  .kw-us nav .links a{font-size:13px;font-weight:500;color:var(--dim);transition:color .16s}
+  .kw-us nav .links a:hover{color:var(--ink)}
+  @media (max-width:820px){.kw-us nav .links a:not(.cta){display:none}}
+  .kw-us .cta{position:relative;overflow:hidden;font-family:inherit;font-weight:700;color:#070708;background:var(--brat);border:none;border-radius:12px;cursor:pointer;letter-spacing:-0.01em;transition:transform .18s;display:inline-block}
+  .kw-us .cta.small{padding:10px 18px;font-size:13px;box-shadow:0 6px 22px rgba(123,234,90,.25)}
+  .kw-us .cta:hover{transform:translateY(-1px)}
+  .kw-us .cta,.kw-us .cta:hover{color:#070708}
+
+  .kw-us .page-banner{position:relative;height:clamp(150px,22vh,240px);width:100%;max-width:1080px;margin:0 auto 6px;padding:0 34px}
+  .kw-us .pb-host{position:absolute;inset:0 34px}
+  @media (max-width:700px){.kw-us .page-banner{height:clamp(110px,17vh,170px)}}
+
+  .kw-us .lede-block{padding:56px 34px 8px;text-align:center;max-width:1080px;margin:0 auto}
+  .kw-us h1{font-size:clamp(34px,4.8vw,56px);line-height:1.04;letter-spacing:-0.045em;font-weight:700;margin:0 auto;max-width:22ch;text-wrap:balance}
+  .kw-us h1 .hi{color:var(--brat)}
+  .kw-us .kicker{font-size:clamp(30px,4.2vw,48px);font-weight:800;letter-spacing:.03em;text-transform:uppercase;color:var(--brat);line-height:1.04}
+
+  .kw-us .prose{max-width:720px;margin:0 auto;padding:0 34px}
+  .kw-us .block{padding:44px 0 8px}
+  .kw-us .block p{font-size:16.5px;line-height:1.72;color:#9b9a96;margin-bottom:16px}
+  .kw-us .block p strong{color:var(--ink);font-weight:600}
+  .kw-us .block p em{font-style:italic;color:var(--ink)}
+
+  .kw-us .stack{position:relative}
+  .kw-us .stack-viewport{position:sticky;top:0;height:100vh;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0;max-width:1180px;margin:0 auto;padding:0 34px;align-items:center}
+  .kw-us .stack-cards{position:relative;height:440px}
+  .kw-us .scard{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:44px 48px;border-radius:26px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 30px 80px rgba(0,0,0,0.5);opacity:0;transform:translateY(70px);transition:transform .7s cubic-bezier(.2,.7,.2,1),opacity .7s cubic-bezier(.2,.7,.2,1),filter .7s}
+  .kw-us .scard .marker{font-size:clamp(22px,2.6vw,30px);font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--brat);margin-bottom:10px;line-height:1.04}
+  .kw-us .scard h3{font-size:clamp(22px,2.6vw,30px);font-weight:700;letter-spacing:-0.04em;line-height:1.12;margin-bottom:16px;text-wrap:balance}
+  .kw-us .scard p{font-size:15.5px;line-height:1.68;color:#9b9a96}
+  .kw-us .scard p+p{margin-top:12px}
+  .kw-us .scard p strong{color:var(--ink);font-weight:600}
+  .kw-us .scard p em{font-style:italic;color:var(--ink)}
+  .kw-us .scard.on{opacity:1;transform:translateY(0)}
+  .kw-us .scard.under{opacity:.32;transform:translateY(-16px) scale(.955);filter:blur(1px)}
+  .kw-us .scard.under2{opacity:.14;transform:translateY(-30px) scale(.915);filter:blur(2px)}
+  .kw-us .scard.under3{opacity:.06;transform:translateY(-42px) scale(.88);filter:blur(3px)}
+  .kw-us .stack-cv{position:relative;height:100vh}
+  .kw-us .stack-dots{position:absolute;left:50%;bottom:40px;transform:translateX(-50%);display:flex;gap:8px}
+  .kw-us .stack-dots span{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.18);transition:all .3s}
+  .kw-us .stack-dots span.on{background:var(--brat);box-shadow:0 0 8px var(--brat)}
+  @media (max-width:860px){
+    .kw-us .stack-viewport{grid-template-columns:1fr}
+    .kw-us .stack-cv{position:absolute;inset:0;height:auto}
+    .kw-us .stack-cards{z-index:2}
+    .kw-us .scard{padding:34px 30px}
+  }
+
+  .kw-us .fs{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;scroll-snap-align:center}
+  .kw-us .fs-inner{position:relative;max-width:760px;padding:0 34px;text-align:center}
+  .kw-us .fs-inner::before{content:'';position:absolute;inset:-90px -140px;background:radial-gradient(closest-side,rgba(7,7,8,0.86),rgba(7,7,8,0.45) 60%,transparent);z-index:-1;border-radius:50%}
+  .kw-us .fs .marker{font-size:clamp(26px,3.6vw,40px);font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--brat);margin-bottom:10px;line-height:1.04}
+  .kw-us .fs h2{font-size:clamp(26px,3.6vw,40px);font-weight:700;letter-spacing:-0.04em;line-height:1.1;margin-bottom:20px;text-wrap:balance}
+  .kw-us .fs p{font-size:16.5px;line-height:1.72;color:#9b9a96;margin-bottom:14px}
+  .kw-us .fs p strong{color:var(--ink);font-weight:600}
+  .kw-us .fs p em{font-style:italic;color:var(--ink)}
+  .kw-us .fs .curve-labels{display:flex;justify-content:space-between;font-size:10.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--dimmer);position:absolute;left:34px;right:34px;bottom:44px}
+  .kw-us .fs .curve-labels .flat{color:var(--brat)}
+
+  .kw-us .micdrop{text-align:center;padding:90px 34px 10px;max-width:980px;margin:0 auto}
+  .kw-us .micdrop .line1{font-size:clamp(30px,4.6vw,56px);font-weight:800;letter-spacing:-0.045em;line-height:1.06}
+  .kw-us .micdrop .line2{font-size:clamp(16px,2vw,21px);font-weight:500;color:#9b9a96;margin-top:18px;letter-spacing:-0.01em}
+  .kw-us .closing{text-align:center;padding:60px 34px 14px;font-size:15px;font-weight:600;letter-spacing:.01em;color:var(--dim)}
+  .kw-us .closing span{color:var(--ink)}
+  .kw-us .closing.big{font-size:clamp(20px,2.6vw,30px);font-weight:800;letter-spacing:-0.03em;color:var(--ink)}
+  .kw-us .closing.big .g{color:var(--brat)}
+
+  /* founder letter */
+  .kw-us .letter{position:relative;border-radius:26px;background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.08);padding:52px 56px;box-shadow:0 30px 80px rgba(0,0,0,0.45);backdrop-filter:blur(10px) saturate(130%);-webkit-backdrop-filter:blur(10px) saturate(130%);text-align:left;max-width:760px;margin:0 auto}
+  .kw-us .letter::before{content:'';position:absolute;left:0;top:26px;bottom:26px;width:2px;border-radius:2px;background:var(--brat);box-shadow:0 0 14px rgba(123,234,90,.5)}
+  .kw-us .letter p{font-size:17px;font-weight:300;line-height:1.8;color:#b7b6b1;margin-bottom:18px}
+  .kw-us .letter p strong{color:var(--ink);font-weight:600}
+  .kw-us .letter p em{font-style:italic;color:var(--ink)}
+  .kw-us .letter .sig{font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--brat);margin-top:26px}
+  @media (max-width:700px){.kw-us .letter{padding:38px 30px}}
+
+  /* contact */
+  .kw-us .bigmail{display:inline-block;font-size:clamp(30px,5vw,58px);font-weight:800;letter-spacing:-0.045em;color:var(--ink);border-bottom:3px solid rgba(123,234,90,0.35);padding-bottom:6px;transition:color .2s,border-color .2s}
+  .kw-us .bigmail:hover{color:var(--brat);border-color:var(--brat)}
+  .kw-us .fineprint{font-size:13px;color:var(--dimmer);margin-top:34px;line-height:1.8}
+  .kw-us .fineprint .goat{color:var(--dim)}
+
+  @media (prefers-reduced-motion: reduce){
+    .kw-us .mark-glow,.kw-us .navmark,.kw-us .irid{animation:none}
+    .kw-us [data-reveal]{opacity:1;transform:none;transition:none}
+    .kw-us .stack{height:auto!important}
+    .kw-us .stack-viewport{position:static;height:auto;padding-top:40px;padding-bottom:40px}
+    .kw-us .stack-cards{height:auto;display:flex;flex-direction:column;gap:22px}
+    .kw-us .scard{position:static;opacity:1;transform:none;filter:none}
+    .kw-us .stack-dots{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="kw-us">
+
+  <nav>
+    <a class="brand" href="index.html" style="display:flex;align-items:center;gap:9px">
+      <span class="mark-wrap"><span class="mark-glow"></span><span class="navmark" data-kw-logo="24"></span></span>
+      <span class="wordmark">know<b>here</b></span>
+    </a>
+    <div class="links">
+      <a href="how-it-works.html">How it works</a>
+      <a href="experience-it.html">Experience it</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="for-parents.html">For parents</a>
+      <a href="https://app.knowhere.me/login" style="display:inline-block;padding:10px 18px;font-size:13px;font-weight:700;letter-spacing:-0.01em;color:#070708;background:#EDECE8;border-radius:12px;text-decoration:none;box-shadow:0 6px 22px rgba(237,236,232,.18);transition:transform .18s,background .18s,box-shadow .18s" onmouseover="this.style.transform='translateY(-1px)';this.style.background='#FFFFFF';this.style.boxShadow='0 10px 32px rgba(237,236,232,.34)'" onmouseout="this.style.transform='';this.style.background='#EDECE8';this.style.boxShadow='0 6px 22px rgba(237,236,232,.18)'">Log in</a>
+      <a class="cta small" href="pricing.html">Start your free trial</a>
+    </div>
+  </nav>
+
+  <div class="page-banner" aria-hidden="true"><div class="pb-host" id="pbHost"></div></div>
+  <main>
+    <div class="lede-block" data-reveal>
+      <h1>we're not an edtech company.<br>we're a <span class="irid">human intelligence</span> company.</h1>
+    </div>
+
+    <div class="prose">
+      <section class="block" data-reveal>
+        <p>Knowhere is built by Gigantor Studios — founded on one conviction: <strong>technology should make humans smarter, not lazier.</strong> Every tool we build starts with the same question: does this augment your intelligence, or quietly replace it?</p>
+        <p>If it replaces it, we bin it.</p>
+      </section>
+    </div>
+
+    <!-- WHAT WE BELIEVE — the deck -->
+    <div class="stack" id="stack" style="height:440vh">
+      <div class="stack-viewport">
+        <div class="stack-cards">
+          <div class="scard"><div class="eyebrow-sm">we know</div>
+            <h3>Brains are <span class="irid">not interchangeable</span>.</h3>
+            <p>Nine learner types, different neurologies, different processing styles. One-size-fits-all fits no one.</p></div>
+          <div class="scard"><div class="eyebrow-sm">we know</div>
+            <h3><span class="irid">Understanding</span> beats memorising.</h3>
+            <p>Every time. In every subject. Forever.</p></div>
+          <div class="scard"><div class="eyebrow-sm">we know</div>
+            <h3>Technology is a <span class="irid">lever</span>, not a crutch.</h3>
+            <p>We build tools that make you more capable when you put them down.</p></div>
+          <div class="scard"><div class="eyebrow-sm">we know</div>
+            <h3><span class="irid">Humans</span> first.</h3>
+            <p>Not engagement metrics. Not screen time. You.</p></div>
+        </div>
+        <div class="stack-cv"></div>
+        <div class="stack-dots" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+      </div>
+    </div>
+
+    <section class="fs" data-kind="pulse">
+      <div class="fs-inner" data-reveal>
+        <div class="marker">how we work</div>
+        <h2>Small, opinionated, allergic to "good enough."</h2>
+        <p>Every screen, every explanation, every animation in Knowhere exists because it does a job for your brain — nothing is decoration. We ship fast, we test on real humans, and when something doesn't land, we fix it before lunch.</p>
+        <p>We're also <strong>neurodivergent-founded.</strong> Personalisation isn't a feature we bolted on for the marketing page — it's the reason the company exists. We know firsthand what it's like to sit in a classroom where the information was never shaped for your brain. So we built the thing we needed.</p>
+      </div>
+    </section>
+
+    <section class="fs" data-kind="print">
+      <div class="fs-inner" data-reveal style="max-width:860px">
+        <div class="marker" style="margin-bottom:22px">a note from the founder</div>
+        <div class="letter">
+          <p>School and I did not get along.</p>
+          <p>Not because I was causing trouble — I wasn't. I just wasn't built for the format. My brain moved fast and sideways: I'd get a topic in minutes and then sit through an hour of a teacher reading a textbook at me about something I already understood. I took notes in pictures because that's how my brain files things. For all of this, I was treated as the problem.</p>
+          <p>I spent most of Year 12 in the school library, because removing me from class was easier for everyone than teaching a brain like mine. I passed the time photocopying my face for a self-portrait nobody had asked for. Then I sat the exams and finished with <strong>the top score in my school and the top percentile in the state</strong> — mostly without attending class.</p>
+          <p>I'm not telling you that to brag. I'm telling you because it's evidence. <strong>The gap was never ability. It was format.</strong> The system decided what a "good student" looked like, and if your brain worked differently, you were graded on the difference instead of the intelligence.</p>
+          <p>That was twenty years ago. It hasn't improved. The kid drawing pictures in the margins is still being told to stop.</p>
+          <p>So I stopped waiting for the system to fix itself. <em>I built the thing I needed.</em></p>
+          <div class="sig">— Cat, founder</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="closing big" data-reveal>Gigantic intent. <span class="g">Zero gatekeeping.</span> That's the studio.</div>
+  </main>
+
+  <knowhere-footer></knowhere-footer>
+</div>
+<script src="./knowhere-marks.js"></script>
+<script src="./knowhere-footer.js"></script>
+<script>
+
+(function(){
+  var root=document.querySelector('.kw-us');
+
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var WARM=[237,236,230],BRAT=[123,234,90],PURP=[155,90,234],BLUE=[35,164,221];
+  var T9=['#23A4DD','#EC1559','#FCB815','#9B5AEA','#EDECE8','#38B6A8','#FF8A2A','#F15524','#7BEA5A'].map(function(h){return [parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];});
+  function hash(x){var v=Math.sin(x*78.233)*43758.5453;v=v%1;return v<0?v+1:v;}
+  function smooth(x){x=Math.max(0,Math.min(1,x));return x*x*(3-2*x);}
+
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:0.12});
+  root.querySelectorAll('[data-reveal]').forEach(function(el){io.observe(el);});
+  (function inj(){if(window.KnowhereMarks){root.querySelectorAll('[data-kw-logo]').forEach(function(el){el.innerHTML=window.KnowhereMarks.logoSvg(parseInt(el.getAttribute('data-kw-logo')||'24',10),el.getAttribute('data-kw-logo-color')||'#EDECE8');});}else{setTimeout(inj,60);}})();
+
+  /* sheerer glass title: heavier blur, barely-there tint — the flow reads through the glyphs */
+  function glassTitle(host,title){
+    var glass=document.createElement('div');glass.setAttribute('aria-hidden','true');
+    glass.style.cssText='position:absolute;inset:0;pointer-events:none;z-index:3;backdrop-filter:blur(11px) saturate(150%) brightness(1.55);-webkit-backdrop-filter:blur(11px) saturate(150%) brightness(1.55);background:linear-gradient(175deg,rgba(237,236,232,0.05),rgba(237,236,232,0.015) 55%,rgba(123,234,90,0.02));';
+    host.appendChild(glass);
+    function mask(){
+      var r=host.getBoundingClientRect();if(!r.width)return;
+      var d2=Math.min(window.devicePixelRatio||1,2),mc=document.createElement('canvas');
+      mc.width=Math.round(r.width*d2);mc.height=Math.round(r.height*d2);
+      var m=mc.getContext('2d');m.setTransform(d2,0,0,d2,0,0);
+      var f=Math.min(r.width*0.14,r.height*0.92);
+      m.font='900 '+f+'px Geist, system-ui, sans-serif';
+      var tw=m.measureText(title).width,mx=r.width*0.92;
+      if(tw>mx)f*=mx/tw;
+      m.font='900 '+f+'px Geist, system-ui, sans-serif';
+      m.textAlign='center';m.textBaseline='middle';m.fillStyle='#fff';
+      m.fillText(title,r.width/2,r.height/2+f*0.04);
+      var u=mc.toDataURL('image/png');
+      glass.style.webkitMaskImage='url('+u+')';glass.style.maskImage='url('+u+')';
+      glass.style.webkitMaskSize='100% 100%';glass.style.maskSize='100% 100%';
+      glass.style.webkitMaskRepeat='no-repeat';glass.style.maskRepeat='no-repeat';
+    }
+    window.addEventListener('resize',mask);
+    if(document.fonts&&document.fonts.load){document.fonts.load('900 100px Geist').then(function(){return document.fonts.ready;}).then(mask).catch(mask);}else{mask();}
+  }
+
+  /* ══ Flow field: one pool, one fixed canvas; particles chase whichever scene owns the viewport ══ */
+  function FlowField(scenes,N){
+    var cv=document.createElement('canvas');cv.className='flow';cv.setAttribute('aria-hidden','true');
+    root.insertBefore(cv,root.firstChild);
+    var ctx=cv.getContext('2d'),dpr=Math.min(window.devicePixelRatio||1,1.5);
+    var W=0,H=0,px=new Float32Array(N),py=new Float32Array(N),seed=new Float32Array(N),seed2=new Float32Array(N);
+    for(var i=0;i<N;i++){seed[i]=Math.random();seed2[i]=hash(i+11);}
+    function size(){
+      W=window.innerWidth;H=window.innerHeight;
+      cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);
+      for(var i=0;i<N;i++){px[i]=W*0.5+(Math.random()-0.5)*W*1.2;py[i]=H*0.5+(Math.random()-0.5)*H*1.6;}
+    }
+    size();window.addEventListener('resize',size);
+    var t0=performance.now(),last=0,cur=-1;
+    function frame(now){
+      requestAnimationFrame(frame);
+      if(now-last<33)return;last=now;
+      var t=(now-t0)/1000;
+      /* pick the scene whose anchor sits closest to the viewport's heart */
+      var best=-1,bd=1e9,rects=[];
+      for(var s=0;s<scenes.length;s++){
+        var r=scenes[s].el.getBoundingClientRect();rects.push(r);
+        var cy=r.top+r.height/2,d=Math.abs(cy-H*0.5);
+        if(r.bottom>-H&&r.top<H*2&&d<bd){bd=d;best=s;}
+      }
+      ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);
+      if(best<0)return;
+      cur=best;
+      var sc=scenes[best],R=rects[best];
+      if(R.bottom<-H*0.4||R.top>H*1.6)return; /* deep in the footer's territory — stand down */
+      if(sc.lines)sc.lines(ctx,R,t);
+      ctx.globalCompositeOperation='lighter';
+      for(var i2=0;i2<N;i2++){
+        var o=sc.f(i2,t,R,seed[i2],seed2[i2]);
+        if(!reduce){px[i2]+=(o[0]-px[i2])*(o[5]||0.07);py[i2]+=(o[1]-py[i2])*(o[5]||0.07);}
+        else{px[i2]=o[0];py[i2]=o[1];}
+        var al=o[3];if(al<=0.004)continue;
+        var c=o[2],g=o[4]||0,cr=c[0],cg=c[1],cb=c[2];
+        if(g>0.03){cr+=(255-cr)*g*0.5|0;cg+=(255-cg)*g*0.5|0;cb+=(255-cb)*g*0.5|0;}
+        var tw=0.55+0.45*Math.sin(t*1.4+seed[i2]*6.283);
+        al=al*(0.6+0.4*tw)*(1+0.9*g);if(al>0.95)al=0.95;
+        ctx.fillStyle='rgba('+(cr|0)+','+(cg|0)+','+(cb|0)+','+al.toFixed(3)+')';
+        var sz=(o[3]>0.5?2.3:1.7)*(1+0.8*g);
+        ctx.fillRect(px[i2]-sz/2,py[i2]-sz/2,sz,sz);
+      }
+      ctx.globalCompositeOperation='source-over';
+      if(sc.over)sc.over(ctx,R,t);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  glassTitle(root.querySelector('#pbHost'),'Know us');
+
+  var stack=root.querySelector('#stack');
+  var cards=[].slice.call(root.querySelectorAll('.scard'));
+  var dots=[].slice.call(root.querySelectorAll('.stack-dots span'));
+  function seg(){
+    if(reduce)return cards.length-1;
+    var r=stack.getBoundingClientRect(),vh=window.innerHeight;
+    var p=Math.max(0,Math.min(1,(-r.top)/(r.height-vh)));
+    return Math.min(cards.length-0.001,p*cards.length);
+  }
+  var curK=-1;
+  function setCards(){
+    var k=Math.floor(seg());
+    if(k===curK)return;curK=k;
+    cards.forEach(function(c,i){c.classList.remove('on','under','under2','under3');
+      if(i===k)c.classList.add('on');else if(i===k-1)c.classList.add('under');else if(i===k-2)c.classList.add('under2');else if(i===k-3)c.classList.add('under3');});
+    dots.forEach(function(d,i){d.classList.toggle('on',i===k);});
+  }
+  window.addEventListener('scroll',setCards,{passive:true});setCards();
+
+  function printPos(i,t,R,scale,rot){
+    var rings=8,ring=i%rings,cx=R.left+R.width*0.5,cy=R.top+R.height*0.52;
+    var u=(Math.floor(i/rings)%90)/90;
+    var baseR=(R.height*0.14+ring*R.height*0.085)*scale;
+    var th=u*6.283+ring*0.5+Math.sin(u*11+ring*2.3)*0.08+t*rot*(ring%2?1:-1);
+    var gap=Math.sin(u*29+ring*4.1)>-0.72;
+    return [cx+Math.cos(th)*baseR*1.55,cy+Math.sin(th)*baseR*0.78,gap,ring];
+  }
+  function ecgY(u,cy,h){
+    var y=cy;
+    if(u>0.28&&u<0.33)y=cy+Math.sin((u-0.28)/0.05*3.14)*h*0.06;
+    else if(u>=0.33&&u<0.40)y=cy-Math.sin((u-0.33)/0.07*3.14)*h*0.26;
+    else if(u>=0.40&&u<0.45)y=cy+Math.sin((u-0.40)/0.05*3.14)*h*0.09;
+    else if(u>0.66&&u<0.74)y=cy-Math.sin((u-0.66)/0.08*3.14)*h*0.12;
+    return y;
+  }
+
+  var N=720;
+  FlowField([
+    {el:root.querySelector('#pbHost'),f:function(i,t,R,s1,s2){
+      var P=printPos(i,t,R,1,0.04);
+      if(!P[2])return [P[0],P[1],WARM,0,0,0.06];
+      var acc=(i%9===0),hue=(P[3]*36+t*8)%360;
+      /* hue accents handled as rgb approximation: rotate through T9 by ring */
+      var c=acc?T9[P[3]%9]:WARM;
+      return [P[0],P[1],c,acc?0.55:0.30,0,0.06];
+    }},
+    {el:root.querySelector('.stack-cv'),f:function(i,t,R,s1,s2){
+      var k=Math.floor(seg()),cx=R.left+R.width*0.5,cy=R.top+R.height*0.5;
+      var S=Math.min(R.width,R.height);
+      if(k===0){ /* nine distinct mini-brains — not interchangeable */
+        var b=i%9,gx=b%3,gy=Math.floor(b/3);
+        var bx=cx+(gx-1)*S*0.26,by=cy+(gy-1)*S*0.26;
+        var ang=s1*6.283+t*0.2*(b%2?1:-1),rad=Math.sqrt(s2)*S*0.085;
+        return [bx+Math.cos(ang)*rad,by+Math.sin(ang)*rad*0.9,T9[b],0.5,0,0.08];
+      }
+      if(k===1){ /* the aha burst — understanding radiates */
+        var core=(s2<0.3);
+        if(core){var a2=s1*6.283,r2=Math.sqrt(s2/0.3)*S*0.07;
+          return [cx+Math.cos(a2)*r2,cy+Math.sin(a2)*r2,BRAT,0.6,0.3+0.3*Math.sin(t*2),0.08];}
+        var ray=Math.floor(s1*16)/16*6.283+0.1*Math.sin(t*0.4);
+        var ph=((s2-0.3)/0.7+t*0.22)%1;
+        var dist=S*0.09+ph*S*0.34;
+        var g=Math.exp(-Math.pow((ph-0.5)/0.3,2))*0.5;
+        return [cx+Math.cos(ray)*dist,cy+Math.sin(ray)*dist*0.9,WARM,0.34*(1-ph*0.6),g,0.10];
+      }
+      if(k===2){ /* the lever — small force, big lift */
+        var rock=Math.sin(t*0.9)*0.30;
+        if(s2<0.14){ /* fulcrum triangle */
+          var v=s2/0.14,side=Math.floor(s1*3),e1=[[0,-1],[-1,1],[1,1]][side],e2=[[0,-1],[-1,1],[1,1]][(side+1)%3];
+          var fx=cx+((e1[0]+(e2[0]-e1[0])*v))*S*0.07,fy=cy+S*0.16+((e1[1]+(e2[1]-e1[1])*v))*S*0.07;
+          return [fx,fy,WARM,0.4,0,0.08];
+        }
+        if(s2<0.8){ /* the beam */
+          var u=(s2-0.14)/0.66-0.5;
+          var bx2=cx+Math.cos(rock)*u*S*0.72,by2=cy+S*0.09+Math.sin(rock)*u*S*0.72;
+          return [bx2,by2,(i%6===0)?BRAT:WARM,(i%6===0)?0.6:0.4,0,0.08];
+        }
+        /* the load being lifted at the far end */
+        var ex=cx+Math.cos(rock)*0.5*S*0.72,ey=cy+S*0.09+Math.sin(rock)*0.5*S*0.72;
+        var a3=s1*6.283,r3=Math.sqrt((s2-0.8)/0.2)*S*0.06;
+        return [ex+Math.cos(a3)*r3,ey-S*0.06+Math.sin(a3)*r3,BRAT,0.5,Math.max(0,-Math.sin(rock))*0.4,0.08];
+      }
+      /* humans first — a figure of light */
+      if(s2<0.4){ /* head */
+        var a4=s1*6.283,r4=S*0.085*(0.7+0.3*Math.sqrt(s2/0.4));
+        return [cx+Math.cos(a4)*r4,cy-S*0.17+Math.sin(a4)*r4,(i%7===0)?BRAT:WARM,(i%7===0)?0.6:0.4,0,0.08];
+      }
+      /* shoulders arc */
+      var u4=(s2-0.4)/0.6,th4=Math.PI*(1.15-u4*1.3);
+      var sx=cx+Math.cos(th4)*S*0.22,sy=cy+S*0.10-Math.sin(th4)*S*0.20;
+      return [sx,sy+Math.sin(t*1.1+u4*4)*2,(i%7===0)?BRAT:WARM,(i%7===0)?0.55:0.38,0,0.08];
+    }},
+    {el:root.querySelector('[data-kind="pulse"]'),f:function(i,t,R,s1,s2){
+      /* the shipping heartbeat: an ECG that beats when the pulse passes */
+      var u=i/N,cy=R.top+R.height*0.5,ph=(t*0.24)%1.3;
+      var x=R.left+R.width*(0.03+u*0.94);
+      var d=u-ph,g=Math.exp(-d*d/0.0022);
+      var y=ecgY(u,cy,R.height)+Math.sin(t*0.6+i*1.3)*2-g*R.height*0.05;
+      var acc=(i%5===0);
+      return [x,y,acc?BRAT:WARM,(acc?0.62:0.36)*0.62,g,0.08];
+    }},
+    {el:root.querySelector('[data-kind="print"]'),f:function(i,t,R,s1,s2){
+      /* her print, writ large behind the letter */
+      var P=printPos(i,t,R,1.35,0.03);
+      if(!P[2])return [P[0],P[1],WARM,0,0,0.06];
+      var acc=(i%9===0);
+      return [P[0],P[1],acc?BRAT:WARM,(acc?0.5:0.24)*0.6,0,0.06];
+    }}
+  ],N);
+})();
+
+</script>
+</body>
+</html>
