@@ -368,18 +368,18 @@ class Component extends DCLogic {
 }
 </script>
 
-<!-- kw-mobile-menu v4 (shows ≤820px only) -->
+<!-- kw-mobile-menu (added; shows ≤820px only) -->
 <style>
   .kwm-btn{display:none;margin-left:6px;width:40px;height:40px;border-radius:11px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:#EDECE8;font-size:17px;line-height:1;cursor:pointer;align-items:center;justify-content:center;flex-shrink:0}
   .kwm-panel{display:none;position:fixed;top:64px;left:12px;right:12px;z-index:999;background:rgba(12,13,12,.97);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:8px;box-shadow:0 24px 60px rgba(0,0,0,.6);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
-  .kwm-panel a{display:block;padding:13px 16px;border-radius:11px;font-size:15px;font-weight:600;letter-spacing:-.01em;color:#EDECE8;text-decoration:none;font-family:'Geist',system-ui,-apple-system,Arial,sans-serif;text-align:right}
+  .kwm-panel.open{display:block}
+  .kwm-panel a{display:block;padding:13px 16px;border-radius:11px;font-size:15px;font-weight:600;letter-spacing:-.01em;color:#EDECE8;text-decoration:none}
   .kwm-panel a:active,.kwm-panel a:hover{background:rgba(123,234,90,.1);color:#7BEA5A}
-  .kwm-panel a.here{background:rgba(123,234,90,.12);color:#7BEA5A}
   .kwm-panel a.kwm-login{border-top:1px solid rgba(255,255,255,.08);border-radius:0 0 11px 11px;margin-top:4px;color:#8C8B87}
-  @media (max-width:820px){.kwm-btn{display:flex}nav a[href*="app.knowhere.me"]{display:none !important}}
+  @media (max-width:820px){.kwm-btn{display:flex}}
 </style>
 <script>
-/* kwm v4 */
+/* kwm v2 — capture-phase delegation, style-based toggle */
 (function(){
   function build(){
     if(document.querySelector('.kwm-btn'))return;
@@ -387,8 +387,6 @@ class Component extends DCLogic {
     var btn=document.createElement('button');btn.className='kwm-btn';btn.type='button';btn.setAttribute('aria-label','Menu');btn.innerHTML='☰';
     var panel=document.createElement('div');panel.className='kwm-panel';
     panel.innerHTML='<a href="index.html">Home</a><a href="how-it-works.html">How it works</a><a href="experience-it.html">Experience it</a><a href="pricing.html">Pricing</a><a href="for-parents.html">For parents</a><a class="kwm-login" href="https://app.knowhere.me/login">Log in</a>';
-    var here=(location.pathname.split('/').pop()||'index.html');
-    panel.querySelectorAll('a').forEach(function(a){if(a.getAttribute('href')===here)a.classList.add('here');});
     nav.appendChild(btn);document.body.appendChild(panel);
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',build);else build();
