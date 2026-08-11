@@ -1,0 +1,645 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #5AADD4;
+  --ag: rgba(90,173,212,.7);
+  --ag1: rgba(90,173,212,.12);
+  --ag2: rgba(90,173,212,.45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 72px;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(30px, 8vw, 52px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  margin-bottom: 18px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 16px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-wrapper {
+  margin-bottom: 12px;
+}
+
+.temp-slider {
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 50%), #23291f var(--fill, 50%));
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.temp-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.temp-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.temp-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.temp-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+  margin-top: 14px;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.toggle-section {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(90,173,212,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(90,173,212,.18);
+}
+
+.knowdrop {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 34px;
+}
+
+.know-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 10px;
+}
+
+.know-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.footer {
+  margin-top: 34px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 10px var(--acc);
+  animation: thermoPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes thermoPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(0.6);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse-dot {
+    animation: none;
+  }
+  .temp-slider::-webkit-slider-thumb,
+  .temp-slider::-moz-range-thumb,
+  .toggle-btn {
+    transition: none;
+  }
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Interactive demonstration of thermoregulation feedback mechanisms in endotherms</h2>
+
+  <h1>Your body fights harder to cool down than <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">warm up</span></h1>
+  
+  <p class="intro">In mammals, heat gain triggers immediate responses through both nervous and endocrine pathways, while heat loss relies primarily on slower metabolic adjustments via thyroid hormones. Drag the slider to simulate different environmental temperatures and watch how your hypothalamus coordinates multiple physiological responses.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-label">Thermoregulation Response</div>
+      <div class="live-tag" id="statusTag">Normal Range</div>
+    </div>
+    <div class="card-hint">Body responds to maintain 37°C core temperature</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="thermoCanvas"></canvas>
+      <div class="canvas-overlay" id="canvasTag">Hypothalamus set point: 37°C</div>
+    </div>
+
+    <div class="slider-wrapper">
+      <input type="range" min="30" max="42" value="37" step="0.5" class="temp-slider" id="tempSlider">
+    </div>
+    <div class="tick-labels">
+      <span>30°C</span>
+      <span>37°C</span>
+      <span>42°C</span>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Blood Flow</div>
+        <div class="stat-value" style="color:var(--acc)" id="bloodFlow">Normal</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Heat Generation</div>
+        <div class="stat-value" style="color:var(--amb)" id="heatGen">Baseline</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-section">
+      <button class="toggle-btn active" id="btn1">Vasodilation</button>
+      <button class="toggle-btn" id="btn2">Vasoconstriction</button>
+    </div>
+    <div class="knowdrop" id="knowdropText">
+      When body temperature rises above the hypothalamic set point, thermoreceptors trigger autonomic nervous responses that cause arteriole smooth muscle to relax. This vasodilation dramatically increases blood flow to superficial capillaries in the skin, allowing greater heat dissipation through radiation to the environment. Simultaneously, sweat glands receive sympathetic stimulation to secrete hypotonic fluid onto the skin surface. As this sweat evaporates, it absorbs latent heat of vaporisation directly from the skin, providing immediate and powerful cooling. These rapid responses operate within seconds to minutes, making heat loss highly efficient in endotherms.
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-tag">Know This</div>
+    <div class="know-body">The <span style="color:var(--acc)">hypothalamus</span> acts as the body's thermostat, comparing thermoreceptor input against a <span style="color:var(--acc)">37°C set point</span> and coordinating <span style="color:var(--acc)">vasomotor</span>, <span style="color:var(--acc)">sudomotor</span>, and <span style="color:var(--acc)">metabolic</span> responses through both nervous and endocrine pathways.</div>
+  </div>
+
+  <div class="footer">
+    <div class="pulse-dot"></div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('thermoCanvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const slider = document.getElementById('tempSlider');
+const statusTag = document.getElementById('statusTag');
+const canvasTag = document.getElementById('canvasTag');
+const bloodFlow = document.getElementById('bloodFlow');
+const heatGen = document.getElementById('heatGen');
+const btn1 = document.getElementById('btn1');
+const btn2 = document.getElementById('btn2');
+const knowdropText = document.getElementById('knowdropText');
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d');
+
+let currentTemp = 37;
+let targetTemp = 37;
+let time = 0;
+let particles = [];
+let sweatDrops = [];
+
+const knowdrops = {
+  vasodilation: "When body temperature rises above the hypothalamic set point, thermoreceptors trigger autonomic nervous responses that cause arteriole smooth muscle to relax. This vasodilation dramatically increases blood flow to superficial capillaries in the skin, allowing greater heat dissipation through radiation to the environment. Simultaneously, sweat glands receive sympathetic stimulation to secrete hypotonic fluid onto the skin surface. As this sweat evaporates, it absorbs latent heat of vaporisation directly from the skin, providing immediate and powerful cooling. These rapid responses operate within seconds to minutes, making heat loss highly efficient in endotherms.",
+  vasoconstriction: "When body temperature falls below the set point, the hypothalamus initiates vasoconstriction through sympathetic nervous stimulation of arteriole smooth muscle. This reduces blood flow to superficial capillaries, minimising heat loss to the environment. Skeletal muscles receive signals triggering involuntary shivering contractions that generate heat through increased ATP hydrolysis and cellular respiration. While erector pili muscles also contract causing piloerection, this response is ineffective in humans who lack sufficient body hair for insulation. For sustained cold exposure, the hypothalamus releases thyrotropin-releasing hormone, ultimately increasing thyroid hormone production which elevates basal metabolic rate and heat generation across all cells."
+};
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+resize();
+window.addEventListener('resize', resize);
+
+class BloodParticle {
+  constructor(w, h) {
+    this.reset(w, h);
+  }
+  reset(w, h) {
+    this.x = Math.random() * w;
+    this.y = -10;
+    this.vy = 0.5 + Math.random() * 1.5;
+    this.size = 1.2 + Math.random() * 2;
+    this.opacity = 0.3 + Math.random() * 0.4;
+  }
+  update(h, flow) {
+    this.vy = (0.5 + Math.random() * 1.5) * flow;
+    this.y += this.vy;
+    return this.y < h + 20;
+  }
+}
+
+class SweatDrop {
+  constructor(w, h) {
+    this.x = Math.random() * w;
+    this.y = h * 0.2 + Math.random() * h * 0.3;
+    this.vy = 2 + Math.random() * 2;
+    this.life = 1;
+  }
+  update(dt) {
+    this.y += this.vy;
+    this.life -= dt * 0.8;
+    return this.life > 0;
+  }
+}
+
+slider.addEventListener('input', (e) => {
+  targetTemp = parseFloat(e.target.value);
+  const fill = ((targetTemp - 30) / 12) * 100;
+  slider.style.setProperty('--fill', fill + '%');
+  
+  if (targetTemp >= 39) {
+    statusTag.textContent = 'Hyperthermia';
+  } else if (targetTemp >= 37.5) {
+    statusTag.textContent = 'Heat Stress';
+  } else if (targetTemp > 36.5) {
+    statusTag.textContent = 'Normal Range';
+  } else if (targetTemp >= 35) {
+    statusTag.textContent = 'Cold Stress';
+  } else {
+    statusTag.textContent = 'Hypothermia';
+  }
+});
+
+slider.dispatchEvent(new Event('input'));
+
+btn1.addEventListener('click', () => {
+  btn1.classList.add('active');
+  btn2.classList.remove('active');
+  knowdropText.textContent = knowdrops.vasodilation;
+});
+
+btn2.addEventListener('click', () => {
+  btn2.classList.add('active');
+  btn1.classList.remove('active');
+  knowdropText.textContent = knowdrops.vasoconstriction;
+});
+
+function draw() {
+  time += 0.016;
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  
+  currentTemp += (targetTemp - currentTemp) * 0.08;
+  
+  const deviation = currentTemp - 37;
+  const bloodFlowRate = deviation > 0 ? 1 + deviation * 0.4 : Math.max(0.3, 1 + deviation * 0.15);
+  const heatRate = deviation < 0 ? Math.abs(deviation) * 0.5 : 0;
+  const sweating = Math.max(0, deviation - 0.5);
+  
+  canvasTag.textContent = `Current: ${currentTemp.toFixed(1)}°C | Deviation: ${deviation > 0 ? '+' : ''}${deviation.toFixed(1)}°C`;
+  
+  if (deviation >= 2) {
+    bloodFlow.textContent = 'High';
+  } else if (deviation >= 0.5) {
+    bloodFlow.textContent = 'Elevated';
+  } else if (deviation > -0.5) {
+    bloodFlow.textContent = 'Normal';
+  } else if (deviation > -2) {
+    bloodFlow.textContent = 'Reduced';
+  } else {
+    bloodFlow.textContent = 'Low';
+  }
+  
+  if (heatRate > 1.5) {
+    heatGen.textContent = 'High';
+  } else if (heatRate > 0.5) {
+    heatGen.textContent = 'Active';
+  } else {
+    heatGen.textContent = 'Baseline';
+  }
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  // Hypothalamus core
+  const cx = w * 0.5;
+  const cy = h * 0.5;
+  const coreR = 28;
+  
+  const coreGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreR);
+  coreGrad.addColorStop(0, '#1a1f1a');
+  coreGrad.addColorStop(1, '#0d100b');
+  ctx.fillStyle = coreGrad;
+  ctx.beginPath();
+  ctx.arc(cx, cy, coreR, 0, Math.PI * 2);
+  ctx.fill();
+  
+  ctx.strokeStyle = 'rgba(90,173,212,0.4)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.arc(cx, cy, coreR, 0, Math.PI * 2);
+  ctx.stroke();
+  
+  // Set point ring
+  ctx.strokeStyle = 'rgba(90,173,212,0.22)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([3, 3]);
+  ctx.beginPath();
+  ctx.arc(cx, cy, coreR + 12, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  
+  // Blood flow particles
+  if (particles.length < bloodFlowRate * 80) {
+    particles.push(new BloodParticle(w, h));
+  }
+  
+  particles = particles.filter(p => p.update(h, bloodFlowRate));
+  
+  particles.forEach(p => {
+    const dist = Math.hypot(p.x - cx, p.y - cy);
+    const influence = Math.max(0, 1 - dist / (w * 0.6));
+    const glow = influence * 0.4;
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.fillStyle = `rgba(250, 199, 117, ${p.opacity * (0.6 + glow)})`;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  });
+  
+  // Sweat drops
+  if (sweating > 0 && Math.random() < sweating * 0.1) {
+    sweatDrops.push(new SweatDrop(w, h));
+  }
+  
+  sweatDrops = sweatDrops.filter(d => d.update(0.016));
+  
+  sweatDrops.forEach(d => {
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.fillStyle = `rgba(90,173,212, ${d.life * 0.5})`;
+    ctx.beginPath();
+    ctx.arc(d.x, d.y, 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  });
+  
+  // Shivering effect
+  if (heatRate > 0) {
+    const shakeAmt = heatRate * 3;
+    for (let i = 0; i < 8; i++) {
+      const angle = (i / 8) * Math.PI * 2 + time * 3;
+      const r = coreR + 18 + Math.sin(time * 8 + i) * shakeAmt;
+      const x = cx + Math.cos(angle) * r;
+      const y = cy + Math.sin(angle) * r;
+      
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.fillStyle = `rgba(250, 199, 117, ${0.15 + Math.sin(time * 6 + i) * 0.1})`;
+      ctx.beginPath();
+      ctx.arc(x, y, 3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+  
+  // Core glow based on activity
+  const glowIntensity = Math.abs(deviation) * 0.15;
+  const corona = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreR * 3);
+  if (deviation > 0) {
+    corona.addColorStop(0, `rgba(90,173,212, ${0.35 + glowIntensity})`);
+    corona.addColorStop(0.5, `rgba(90,173,212, ${0.12 + glowIntensity * 0.5})`);
+  } else {
+    corona.addColorStop(0, `rgba(250, 199, 117, ${0.35 + glowIntensity})`);
+    corona.addColorStop(0.5, `rgba(250, 199, 117, ${0.12 + glowIntensity * 0.5})`);
+  }
+  corona.addColorStop(1, 'rgba(0, 0, 0, 0)');
+  
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.fillStyle = corona;
+  ctx.beginPath();
+  ctx.arc(cx, cy, coreR * 3, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+  
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+  
+  requestAnimationFrame(draw);
+}
+
+draw();
+</script>

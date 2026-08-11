@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy — knowhere</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
+<script src="./knowhere-marks.js"></script>
+<script src="./knowhere-page.js"></script>
+<style>
+  .kw-priv *{margin:0;padding:0;box-sizing:border-box}
+  .kw-priv{--bg:#070708;--ink:#EDECE8;--dim:#8C8B87;--dimmer:#6B6A66;--line:rgba(255,255,255,0.08);--brat:#7BEA5A;--neuro:#9B5AEA;--modeblue:#23A4DD;background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  .kw-priv::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:999;opacity:.5;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E")}
+  .kw-priv a{text-decoration:none}
+  .kw-priv [data-reveal]{opacity:0;transform:translateY(26px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
+  .kw-priv [data-reveal].in{opacity:1;transform:none}
+  @keyframes kwBreathe{0%,100%{transform:scale(1);opacity:.5}50%{transform:scale(1.35);opacity:.15}}
+  @keyframes kwMarkPulse{0%,100%{color:#EDECE8}50%{color:#7BEA5A}}
+  @keyframes kwCtaGlow{0%,100%{box-shadow:0 4px 18px rgba(123,234,90,.2)}50%{box-shadow:0 12px 44px rgba(123,234,90,.4)}}
+  @keyframes kwSheen{0%,60%{transform:translateX(-130%) skewX(-16deg)}80%,100%{transform:translateX(320%) skewX(-16deg)}}
+  .kw-priv nav{position:sticky;top:0;z-index:200;display:flex;align-items:center;gap:16px;padding:14px 34px;backdrop-filter:blur(20px) saturate(150%);-webkit-backdrop-filter:blur(20px) saturate(150%);background:rgba(7,7,8,0.62);border-bottom:1px solid var(--line)}
+  .kw-priv .mark-wrap{position:relative;width:30px;height:30px;display:grid;place-items:center;flex-shrink:0}
+  .kw-priv .mark-glow{position:absolute;inset:-8px;border-radius:50%;background:radial-gradient(circle,rgba(123,234,90,.55),transparent 70%);animation:kwBreathe 3s ease-in-out infinite;pointer-events:none}
+  .kw-priv .navmark{position:relative;z-index:1;display:flex;color:#EDECE8;animation:kwMarkPulse 4.2s ease-in-out infinite}
+  .kw-priv .brand:hover .navmark{animation-duration:1.6s}
+  .kw-priv .wordmark{font-size:16.5px;font-weight:700;letter-spacing:-0.04em;color:var(--ink)}
+  .kw-priv nav .links{flex:1;display:flex;gap:22px;justify-content:flex-end;align-items:center;flex-wrap:wrap}
+  .kw-priv nav .links a{font-size:13px;font-weight:500;color:var(--dim);transition:color .16s}
+  .kw-priv nav .links a:hover{color:var(--ink)}
+  @media (max-width:820px){.kw-priv nav .links a:not(.cta){display:none}}
+  .kw-priv .cta{position:relative;overflow:hidden;font-family:inherit;font-size:15px;font-weight:700;color:#070708;background:var(--brat);border:none;border-radius:12px;padding:15px 28px;cursor:pointer;letter-spacing:-0.01em;animation:kwCtaGlow 3.2s ease-in-out infinite;transition:transform .18s;display:inline-block}
+  .kw-priv .cta.small{padding:10px 18px;font-size:13px;animation:none;box-shadow:0 6px 22px rgba(123,234,90,.25)}
+  .kw-priv .cta,.kw-priv .cta:link,.kw-priv .cta:visited,.kw-priv .cta:hover,.kw-priv .cta:focus,.kw-priv .cta:active{color:#070708}
+  .kw-priv .cta::after{content:'';position:absolute;top:0;bottom:0;left:0;width:45%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);transform:translateX(-130%) skewX(-16deg);animation:kwSheen 6s ease-in-out infinite}
+  .kw-priv .cta:hover{transform:translateY(-1px)}
+
+  .kw-priv .page-banner{position:relative;height:clamp(150px,22vh,240px);width:100%;max-width:1080px;margin:14px auto 0;padding:0 34px}
+  .kw-priv .pb-host{position:absolute;inset:0 34px}
+  .kw-priv .pb-host canvas{position:absolute;inset:0;width:100%;height:100%}
+  @media (max-width:700px){.kw-priv .page-banner{height:clamp(110px,17vh,170px)}}
+
+  .kw-priv .sub-title{text-align:center;font-size:clamp(28px,4.6vw,44px);font-weight:600;font-style:italic;letter-spacing:-0.03em;line-height:1.1;color:var(--dim);margin:16px auto 0;padding:0 34px;text-wrap:balance}
+  .kw-priv .sub-title b{color:var(--brat);font-weight:700;font-style:normal}
+  .kw-priv .meta-row{display:flex;align-items:baseline;justify-content:center;gap:14px;flex-wrap:wrap;margin:18px 0 26px}
+  .kw-priv .kicker b{color:var(--ink);font-weight:700}
+  .kw-priv .prose{max-width:740px;margin:0 auto;padding:10px 34px 90px}
+  .kw-priv .kicker{font-size:10.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--dimmer)}
+
+  .kw-priv .tldr{position:relative;border:1px dashed rgba(123,234,90,.45);background:rgba(123,234,90,.05);border-radius:18px;padding:26px 28px;margin:0 0 14px}
+  .kw-priv .tldr .chip{font-size:9px;letter-spacing:.12em;text-transform:uppercase;border:1px solid var(--brat);color:var(--brat);border-radius:5px;padding:2px 7px}
+  .kw-priv .tldr p{font-size:15px;line-height:1.66;color:#b9b8b4;margin-top:12px}
+  .kw-priv .tldr p strong{color:var(--ink);font-weight:600}
+  .kw-priv .readable{font-size:13.5px;line-height:1.6;color:var(--dimmer);font-style:italic;margin:0 0 8px;padding:0 4px}
+
+  .kw-priv section{padding-top:40px}
+  .kw-priv h2{font-size:clamp(20px,2.6vw,26px);font-weight:700;letter-spacing:-0.03em;line-height:1.15;display:flex;align-items:baseline;gap:12px}
+  .kw-priv h2 .num{font-family:ui-monospace,monospace;font-size:12px;font-weight:600;letter-spacing:.14em;color:var(--brat);flex-shrink:0}
+  .kw-priv section p{font-size:15.5px;line-height:1.72;color:#9b9a96;margin-top:14px}
+  .kw-priv section p strong{color:var(--ink);font-weight:600}
+  .kw-priv section p em{font-style:italic;color:var(--ink)}
+  .kw-priv section ul{margin-top:12px;padding-left:20px}
+  .kw-priv section li{font-size:15.5px;line-height:1.7;color:#9b9a96;margin-top:8px}
+  .kw-priv section li strong{color:var(--ink);font-weight:600}
+  .kw-priv section a{color:var(--brat);border-bottom:1px solid rgba(123,234,90,.35);transition:border-color .16s}
+  .kw-priv section a:hover{border-color:var(--brat)}
+
+  .kw-priv .callout{border:1px dashed rgba(155,90,234,.45);background:rgba(155,90,234,.05);border-radius:14px;padding:18px 20px;margin-top:16px}
+  .kw-priv .callout p{font-size:14px;line-height:1.66;color:#b9b8b4;margin-top:0}
+  .kw-priv .callout .chip{font-size:9px;letter-spacing:.12em;text-transform:uppercase;border:1px solid var(--neuro);color:var(--neuro);border-radius:5px;padding:2px 7px;display:inline-block;margin-bottom:10px}
+
+  .kw-priv .rule-line{margin-top:16px;border-left:3px solid var(--brat);padding:4px 0 4px 18px}
+  .kw-priv .rule-line p{margin-top:0;font-size:15.5px;color:#b9b8b4}
+  .kw-priv .rule-line p strong{color:var(--ink)}
+
+  .kw-priv .tbl-wrap{margin-top:18px;overflow-x:auto;border:1px solid var(--line);border-radius:14px}
+  .kw-priv table{width:100%;border-collapse:collapse;min-width:520px}
+  .kw-priv th{font-family:ui-monospace,monospace;font-size:10.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dimmer);text-align:left;padding:12px 16px;border-bottom:1px solid var(--line);background:rgba(255,255,255,0.018)}
+  .kw-priv td{font-size:13.5px;line-height:1.55;color:#9b9a96;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.05);vertical-align:top}
+  .kw-priv tr:last-child td{border-bottom:none}
+  .kw-priv td:first-child{color:var(--ink);font-weight:600;white-space:nowrap}
+
+  .kw-priv .contact-card{margin-top:16px;border:1px solid rgba(123,234,90,.25);background:rgba(123,234,90,.04);border-radius:14px;padding:18px 20px}
+  .kw-priv .contact-card p{margin-top:0;font-size:14.5px}
+
+  @media (prefers-reduced-motion:reduce){.kw-priv *{animation:none !important}.kw-priv [data-reveal]{opacity:1;transform:none;transition:none}}
+</style>
+</helmet>
+<div class="kw-priv">
+
+  <nav>
+    <a class="brand" href="index.html" style="display:flex;align-items:center;gap:9px">
+      <span class="mark-wrap"><span class="mark-glow"></span><span class="navmark" data-kw-logo="24"></span></span>
+      <span class="wordmark">know<b>here</b></span>
+    </a>
+    <div class="links">
+      <a href="how-it-works.html">How it works</a>
+      <a href="experience-it.html">Experience it</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="for-parents.html">For parents</a>
+      <a href="https://app.knowhere.me/login" style="display:inline-block;padding:10px 18px;font-size:13px;font-weight:700;letter-spacing:-0.01em;color:#070708;background:#EDECE8;border-radius:12px;text-decoration:none;box-shadow:0 6px 22px rgba(237,236,232,.18);transition:transform .18s,background .18s,box-shadow .18s" onmouseover="this.style.transform='translateY(-1px)';this.style.background='#FFFFFF';this.style.boxShadow='0 10px 32px rgba(237,236,232,.34)'" onmouseout="this.style.transform='';this.style.background='#EDECE8';this.style.boxShadow='0 6px 22px rgba(237,236,232,.18)'">Log in</a>
+      <a class="cta small" href="pricing.html">Start your free trial</a>
+    </div>
+  </nav>
+
+  <div class="page-banner" aria-hidden="true">
+    <div class="pb-host" id="pbHost"><canvas id="pbCv"></canvas></div>
+  </div>
+  <h1 style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Privacy Policy</h1>
+  <p class="sub-title" data-reveal>The Goat <b>never</b> tells.</p>
+
+  <main class="prose">
+    <div class="meta-row">
+      <span class="kicker"><b>Knowhere privacy policy</b></span>
+      <span class="kicker">Last updated · July 2026</span>
+    </div>
+
+    <div class="tldr" data-reveal>
+      <span class="chip">The short version</span>
+      <p>We collect what we need to personalise your study experience — your name, email, subjects, learning profile, and study activity. <strong>We never sell your data.</strong> Your mistakes stay private from your parents (they see effort and progress, not answers). AI helps generate your study content, which means some of your inputs are processed by our AI provider. You can ask us to delete everything, any time.</p>
+    </div>
+    <p class="readable">This policy is written to be actually readable, because privacy policies you can't understand aren't really consent.</p>
+
+    <section id="who-we-are" data-reveal>
+      <h2><span class="num">01</span>Who we are</h2>
+      <p>Knowhere is an Australian study platform for Year 12 students, operated by Gigantor Studios Pty Ltd (ABN 86 161 340 790), trading as <strong>knowhere labs</strong> ("we", "us"). This policy explains what personal information we collect, why, and what your rights are. It applies to our app, website, and emails.</p>
+      <p>Questions or requests: <a href="mailto:hello@knowhere.me">hello@knowhere.me</a></p>
+    </section>
+
+    <section id="what-we-collect" data-reveal>
+      <h2><span class="num">02</span>What we collect</h2>
+      <p><strong>Account information</strong> — your name, email address, and password (stored securely as a cryptographic hash — we can't see it).</p>
+      <p><strong>Learning profile</strong> — your selected subjects, your Enneagram-style learning type from our onboarding quiz, your representation-style preference, and (if you choose to share it) information about how your brain works, such as ADHD, ASD, or dyslexia profiles.</p>
+      <div class="callout">
+        <span class="chip">Sensitive information</span>
+        <p>Neurodivergence information may be <strong>sensitive information</strong> under the Privacy Act 1988 (Cth). We only collect it with your consent, only use it to personalise how content is presented to you, and you can remove it at any time in Learning Preferences.</p>
+      </div>
+      <p><strong>Study activity</strong> — topics you open, concepts you mark as understood, flashcard ratings, quiz answers, "get unstuck" requests, streaks, and time-of-use patterns. We use this to power features like your dashboard and the Gap Map.</p>
+      <p><strong>Parent accounts</strong> — a parent's name and email, and the link between a parent account and their student's account.</p>
+      <p><strong>Waitlist</strong> — if Knowhere isn't live in your state yet, we collect your email address and state so we can let you know when it is. That's all it's used for.</p>
+      <p><strong>Payments</strong> — handled by Stripe. We never see or store your card number. Stripe's privacy policy applies to payment data.</p>
+      <p><strong>Technical data</strong> — standard logs (IP address, browser type) for security and debugging.</p>
+    </section>
+
+    <section id="what-we-dont-collect" data-reveal>
+      <h2><span class="num">03</span>What we do NOT collect</h2>
+      <ul>
+        <li>We don't track your location.</li>
+        <li>We don't use your data for targeted advertising, and we don't show third-party ads.</li>
+        <li>We don't sell personal information to anyone. <strong>Ever.</strong></li>
+      </ul>
+    </section>
+
+    <section id="how-we-use" data-reveal>
+      <h2><span class="num">04</span>How we use your information</h2>
+      <ul>
+        <li>To provide and personalise the service (that's the whole point of Knowhere)</li>
+        <li>To generate AI study content tailored to your profile</li>
+        <li>To show parents a limited progress summary (see section 6)</li>
+        <li>To process subscriptions and send service emails (receipts, invites, important notices)</li>
+        <li>To send optional study reminders and updates — only with consent, and every email has an unsubscribe link (Spam Act 2003 compliant)</li>
+        <li>To improve the product using aggregated, de-identified usage patterns</li>
+      </ul>
+    </section>
+
+    <section id="ai-processing" data-reveal>
+      <h2><span class="num">05</span>AI processing</h2>
+      <p>Knowhere uses AI (currently Anthropic's Claude models) to generate study content, explanations, and custom concepts. When you use these features, relevant inputs (e.g. the topic, your learning profile type, your question) are sent to our AI provider to generate a response. We don't send your name or email with these requests. AI providers we use do not train their models on this data under our API terms.</p>
+      <p><strong>Automated personalisation:</strong> features like the Gap Map use your study activity to automatically estimate which topics need attention. These estimates only affect what we suggest you study — they are never shared as grades, never shown to parents in detail, and never used to make decisions with legal or similarly significant effects.</p>
+    </section>
+
+    <section id="parents-and-students" data-reveal>
+      <h2><span class="num">06</span>Parents and students — who sees what</h2>
+      <div class="rule-line"><p>Knowhere is built on a simple rule: <strong>parents see effort, not errors.</strong></p></div>
+      <p><strong>Shared with a linked parent:</strong> progress and coverage per subject, current topic names, streaks, days active, card review counts, and credit balances.</p>
+      <p><strong>Never shared with a parent:</strong> your flashcard answers, quiz mistakes, "get unstuck" requests, chat content, or Daily Distractor activity.</p>
+      <p>If your parent created your account, they consented to data collection on your behalf when they set up the invite. We show you what's collected and shared during onboarding, and this policy is always available in the app.</p>
+    </section>
+
+    <section id="children" data-reveal>
+      <h2><span class="num">07</span>Children and young people</h2>
+      <p>Most of our users are 16–18. We design for this:</p>
+      <ul>
+        <li>Plain-language privacy information (this document)</li>
+        <li>No targeted advertising to anyone, especially not minors</li>
+        <li>Data minimisation — we collect only what the features need</li>
+        <li>We are following the development of the OAIC's Children's Online Privacy Code and intend to comply with it when it commences.</li>
+      </ul>
+      <p>Users under 15 require a parent or guardian to create their account.</p>
+    </section>
+
+    <section id="processors" data-reveal>
+      <h2><span class="num">08</span>Who we share data with (processors)</h2>
+      <p>We share limited data with service providers who help us run Knowhere:</p>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Provider</th><th>Purpose</th><th>What they process</th></tr></thead>
+          <tbody>
+            <tr><td>Anthropic</td><td>AI content generation</td><td>study queries + learning profile type (no name/email)</td></tr>
+            <tr><td>Stripe</td><td>Payments</td><td>payment and billing details</td></tr>
+            <tr><td>Railway</td><td>Hosting our servers</td><td>all service data (stored in the United States)</td></tr>
+            <tr><td>Resend</td><td>Sending our emails</td><td>your name, email address, and email content</td></tr>
+            <tr><td>Cloudflare</td><td>DNS and inbound email routing</td><td>emails you send to us</td></tr>
+            <tr><td>Klipy</td><td>GIFs in the app</td><td>GIF search requests, routed through our server (no personal data)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>We require processors to protect your data. We do not share data with anyone else except where required by law.</p>
+    </section>
+
+    <section id="storage-security" data-reveal>
+      <h2><span class="num">09</span>Storage, security and overseas disclosure</h2>
+      <p>Your data is hosted with Railway and may be stored in the United States. Where personal information is handled overseas, we take reasonable steps to ensure it's protected consistently with the Australian Privacy Principles (APP 8).</p>
+      <p>Passwords are hashed with bcrypt. Access is limited and authenticated. Some preferences and study state are also stored locally on your own device (browser localStorage) and never leave it unless synced.</p>
+      <p>No system is perfectly secure. If a data breach is likely to result in serious harm, we will notify affected users and the OAIC as required by the Notifiable Data Breaches scheme.</p>
+    </section>
+
+    <section id="retention" data-reveal>
+      <h2><span class="num">10</span>Retention and deletion</h2>
+      <p>We keep your data while your account is active. You can:</p>
+      <ul>
+        <li><strong>Delete your account</strong> — we delete your personal information within 30 days, except records we must keep by law (e.g. payment records, kept 7 years for tax purposes).</li>
+        <li><strong>Export your data</strong> — email us and we'll send you what we hold.</li>
+      </ul>
+      <p>Deleting a student account also removes the data visible to any linked parent.</p>
+    </section>
+
+    <section id="your-rights" data-reveal>
+      <h2><span class="num">11</span>Your rights</h2>
+      <p>Under the Privacy Act, you can ask us to access, correct, or delete your personal information: <a href="mailto:hello@knowhere.me">hello@knowhere.me</a>. We'll respond within 30 days.</p>
+      <div class="contact-card">
+        <p>If you're not happy with how we handle it, you can complain to the Office of the Australian Information Commissioner (OAIC): <a href="https://www.oaic.gov.au" target="_blank" rel="noopener">oaic.gov.au</a> · 1300 363 992</p>
+      </div>
+    </section>
+
+    <section id="cookies" data-reveal>
+      <h2><span class="num">12</span>Cookies and local storage</h2>
+      <p>We use essential browser storage (localStorage) to keep you logged in and to run app features. We don't use advertising or cross-site tracking cookies.</p>
+    </section>
+
+    <section id="changes" data-reveal>
+      <h2><span class="num">13</span>Changes</h2>
+      <p>If we make material changes to this policy, we'll notify you by email or in the app before they take effect. Continued use after that means you accept the updated policy.</p>
+      <p style="margin-top:26px">Also see our <a href="terms.html">Terms of Use</a>.</p>
+    </section>
+  </main>
+
+  <x-import component-from-global-scope="knowhere-footer" from="./knowhere-footer.js" hint-size="100%,100vh"></x-import>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1080,&quot;height&quot;:820}}">
+class Component extends DCLogic {
+  componentDidMount(){
+    const root=document.querySelector('.kw-priv'); if(!root) return;
+    const boot=()=>{
+      if(!window.KnowherePage){ return setTimeout(boot,50); }
+      window.KnowherePage.injectLogo(root);
+      this._io=window.KnowherePage.reveal(root);
+      this._stopBanner=window.KnowherePage.banner(root,'Privacy',[[123,234,90],[35,164,221],[155,90,234]]);
+    };
+    boot();
+  }
+  componentWillUnmount(){ if(this._stopBanner) this._stopBanner(); if(this._io) this._io.disconnect(); }
+}
+</script>
+
+<!-- kw-mobile-menu v4 (shows ≤820px only) -->
+<style>
+  .kwm-btn{display:none;margin-left:6px;width:40px;height:40px;border-radius:11px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:#EDECE8;font-size:17px;line-height:1;cursor:pointer;align-items:center;justify-content:center;flex-shrink:0}
+  .kwm-panel{display:none;position:fixed;top:64px;left:12px;right:12px;z-index:999;background:rgba(12,13,12,.97);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:8px;box-shadow:0 24px 60px rgba(0,0,0,.6);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+  .kwm-panel a{display:block;padding:13px 16px;border-radius:11px;font-size:15px;font-weight:600;letter-spacing:-.01em;color:#EDECE8;text-decoration:none;font-family:'Geist',system-ui,-apple-system,Arial,sans-serif;text-align:right}
+  .kwm-panel a:active,.kwm-panel a:hover{background:rgba(123,234,90,.1);color:#7BEA5A}
+  .kwm-panel a.here{background:rgba(123,234,90,.12);color:#7BEA5A}
+  .kwm-panel a.kwm-login{border-top:1px solid rgba(255,255,255,.08);border-radius:0 0 11px 11px;margin-top:4px;color:#8C8B87}
+  @media (max-width:820px){.kwm-btn{display:flex}nav a[href*="app.knowhere.me"]{display:none !important}}
+</style>
+<script>
+/* kwm v4 */
+(function(){
+  function build(){
+    if(document.querySelector('.kwm-btn'))return;
+    var nav=document.querySelector('nav');if(!nav)return;
+    var btn=document.createElement('button');btn.className='kwm-btn';btn.type='button';btn.setAttribute('aria-label','Menu');btn.innerHTML='☰';
+    var panel=document.createElement('div');panel.className='kwm-panel';
+    panel.innerHTML='<a href="index.html">Home</a><a href="how-it-works.html">How it works</a><a href="experience-it.html">Experience it</a><a href="pricing.html">Pricing</a><a href="for-parents.html">For parents</a><a class="kwm-login" href="https://app.knowhere.me/login">Log in</a>';
+    var here=(location.pathname.split('/').pop()||'index.html');
+    panel.querySelectorAll('a').forEach(function(a){if(a.getAttribute('href')===here)a.classList.add('here');});
+    nav.appendChild(btn);document.body.appendChild(panel);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',build);else build();
+  document.addEventListener('click',function(ev){
+    var panel=document.querySelector('.kwm-panel');if(!panel)return;
+    var onBtn=ev.target.closest&&ev.target.closest('.kwm-btn');
+    var inPanel=ev.target.closest&&ev.target.closest('.kwm-panel');
+    if(onBtn){ev.preventDefault();ev.stopPropagation();panel.style.display=(panel.style.display==='block')?'none':'block';return;}
+    if(!inPanel)panel.style.display='none';
+  },true);
+})();
+</script>
+</body>
+</html>

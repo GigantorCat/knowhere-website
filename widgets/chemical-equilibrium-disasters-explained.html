@@ -1,0 +1,645 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #3AADA0;
+  --ag: rgba(58,173,160,.7);
+  --ag1: rgba(58,173,160,.12);
+  --ag2: rgba(58,173,160,.45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 72px;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(30px, 8vw, 52px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  margin-bottom: 16px;
+}
+
+.intro {
+  font-size: 15.5px;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 28px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: white;
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 12px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 14px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-wrapper {
+  margin-bottom: 8px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 10px;
+}
+
+.eq-slider {
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+  margin-bottom: 6px;
+}
+
+.eq-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.eq-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.eq-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.eq-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  padding: 0 2px;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+  margin-top: 14px;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.stat-value.acc { color: var(--acc); }
+.stat-value.amb { color: var(--amb); }
+
+.toggle-section {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(58,173,160,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(58,173,160,.18);
+}
+
+.knowdrop {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 22px;
+}
+
+.know-this-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 10px;
+}
+
+.know-this-body {
+  font-size: 17.4px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.footer {
+  margin-top: 34px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 10px var(--acc);
+  animation: eqPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes eqPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .35; transform: scale(.6); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Chemical Equilibrium Disasters Interactive Widget</h2>
+  
+  <h1>Industrial equilibrium isn't static—it's a <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">time bomb</span></h1>
+  
+  <p class="intro">Chemical equilibrium means forward and reverse reactions occur at equal rates, not that reactions have stopped. In industrial settings, this delicate balance is actively maintained against enormous forces. When disturbed, the system's attempt to restore equilibrium can release catastrophic energy. Drag the slider to heat an exothermic equilibrium and watch the feedback loop spiral.</p>
+  
+  <div class="card">
+    <div class="card-header">
+      <div class="card-label">Exothermic Equilibrium System</div>
+      <div class="live-tag" id="live-tag">Stable • 25°C</div>
+    </div>
+    <div class="card-hint">Temperature stress on N₂ + 3H₂ ⇌ 2NH₃ (ΔH = −92 kJ/mol)</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="equilibrium-canvas"></canvas>
+      <div class="canvas-overlay" id="overlay-tag">System at equilibrium</div>
+    </div>
+    
+    <div class="slider-wrapper">
+      <div class="slider-label">External Temperature (°C)</div>
+      <input type="range" class="eq-slider" id="temp-slider" min="25" max="600" value="25" step="5">
+      <div class="tick-labels">
+        <span>25°C</span>
+        <span>200°C</span>
+        <span>400°C</span>
+        <span>600°C</span>
+      </div>
+    </div>
+    
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Heat Released</div>
+        <div class="stat-value acc" id="heat-stat">0 kJ</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Pressure Buildup</div>
+        <div class="stat-value amb" id="pressure-stat">1.0 atm</div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="card">
+    <div class="toggle-section">
+      <button class="toggle-btn active" id="btn-haber">Haber Process</button>
+      <button class="toggle-btn" id="btn-bhopal">Bhopal 1984</button>
+    </div>
+    <div class="knowdrop" id="knowdrop-text">
+      The Haber process synthesizes ammonia at 450°C and 200 atmospheres, walking a tightrope between yield and safety. The reaction N₂ + 3H₂ ⇌ 2NH₃ is exothermic, releasing 92 kJ per mole of nitrogen consumed. If containment fails, pressure drops suddenly—Le Chatelier's Principle predicts the equilibrium shifts backward, absorbing heat and generating enormous volumes of gas. Simultaneously, if cooling systems fail, temperature soars, shifting the equilibrium further backward and releasing stored reactants. Within seconds, the combined pressure and temperature surge can rupture vessels. Modern plants use triple-redundant cooling and pressure relief systems because a single failure point creates a cascading equilibrium disaster. The industrial miracle of cheap fertilizer exists only because engineers constantly battle against thermodynamic chaos.
+    </div>
+  </div>
+  
+  <div class="know-this">
+    <div class="know-this-tag">Know This</div>
+    <div class="know-this-body"><span style="color:var(--acc)">Le Chatelier's Principle</span> predicts how equilibrium shifts respond to stress—industrially, uncontrolled shifts release devastating energy as systems spiral toward new equilibrium states exponentially faster than safety systems can respond.</div>
+  </div>
+  
+  <div class="footer">
+    <div class="pulse-dot"></div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('equilibrium-canvas');
+const ctx = canvas.getContext('2d');
+const slider = document.getElementById('temp-slider');
+const liveTag = document.getElementById('live-tag');
+const overlayTag = document.getElementById('overlay-tag');
+const heatStat = document.getElementById('heat-stat');
+const pressureStat = document.getElementById('pressure-stat');
+const btnHaber = document.getElementById('btn-haber');
+const btnBhopal = document.getElementById('btn-bhopal');
+const knowdropText = document.getElementById('knowdrop-text');
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d');
+
+let temp = 25;
+let time = 0;
+let particles = [];
+let explosionParticles = [];
+
+const haberText = "The Haber process synthesizes ammonia at 450°C and 200 atmospheres, walking a tightrope between yield and safety. The reaction N₂ + 3H₂ ⇌ 2NH₃ is exothermic, releasing 92 kJ per mole of nitrogen consumed. If containment fails, pressure drops suddenly—Le Chatelier's Principle predicts the equilibrium shifts backward, absorbing heat and generating enormous volumes of gas. Simultaneously, if cooling systems fail, temperature soars, shifting the equilibrium further backward and releasing stored reactants. Within seconds, the combined pressure and temperature surge can rupture vessels. Modern plants use triple-redundant cooling and pressure relief systems because a single failure point creates a cascading equilibrium disaster. The industrial miracle of cheap fertilizer exists only because engineers constantly battle against thermodynamic chaos.";
+
+const bhopalText = "The Bhopal disaster killed over 3,800 people when water contaminated a methyl isocyanate storage tank, triggering an uncontrolled exothermic reaction. MIC normally exists in equilibrium with trace decomposition products, but water shifted multiple equilibria simultaneously—hydrolysis generated heat, raising temperature by 200°C within minutes. Higher temperature shifted decomposition equilibria forward, releasing more heat in a self-accelerating cycle. The reaction quotient Q exceeded the equilibrium constant K by orders of magnitude, driving the system violently toward a new equilibrium state. Pressure exceeded design limits (2 bar became 55 bar), safety valves failed, and 40 tonnes of toxic gas vented into sleeping neighborhoods. The disaster exemplifies how contamination stress creates feedback loops that spiral beyond all engineering safeguards. Equilibrium doesn't care about human timescales—it will restore balance through whatever pathway physics allows.";
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  initParticles();
+}
+
+function initParticles() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  particles = [];
+  
+  // Forward reaction particles (N2 + H2 -> NH3)
+  for (let i = 0; i < 30; i++) {
+    particles.push({
+      x: Math.random() * w * 0.4 + w * 0.05,
+      y: Math.random() * h,
+      vx: 0.3 + Math.random() * 0.4,
+      vy: (Math.random() - 0.5) * 0.2,
+      type: 'reactant',
+      r: 3 + Math.random() * 2
+    });
+  }
+  
+  // Reverse reaction particles (NH3 -> N2 + H2)
+  for (let i = 0; i < 30; i++) {
+    particles.push({
+      x: Math.random() * w * 0.4 + w * 0.55,
+      y: Math.random() * h,
+      vx: -0.3 - Math.random() * 0.4,
+      vy: (Math.random() - 0.5) * 0.2,
+      type: 'product',
+      r: 4 + Math.random() * 2
+    });
+  }
+}
+
+function updateParticles() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  
+  // Calculate equilibrium shift based on temperature
+  // Higher temp shifts exothermic equilibrium backward (more reactants)
+  const shiftFactor = (temp - 25) / 575; // 0 to 1
+  const forwardSpeed = 1 - shiftFactor * 0.7;
+  const reverseSpeed = 1 + shiftFactor * 1.5;
+  
+  particles.forEach(p => {
+    if (p.type === 'reactant') {
+      p.x += p.vx * forwardSpeed;
+      p.y += p.vy;
+      if (p.x > w * 0.5) p.x = w * 0.05 + Math.random() * w * 0.1;
+    } else {
+      p.x += p.vx * reverseSpeed;
+      p.y += p.vy;
+      if (p.x < w * 0.5) p.x = w * 0.85 + Math.random() * w * 0.1;
+    }
+    
+    if (p.y < 0 || p.y > h) p.vy *= -1;
+  });
+  
+  // Add explosion particles when critical
+  if (temp > 450 && Math.random() < 0.15) {
+    const cx = w * 0.5;
+    const cy = h * 0.5;
+    for (let i = 0; i < 3; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 2 + Math.random() * 4;
+      explosionParticles.push({
+        x: cx,
+        y: cy,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        life: 1,
+        r: 3 + Math.random() * 4
+      });
+    }
+  }
+  
+  explosionParticles = explosionParticles.filter(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.life -= 0.015;
+    return p.life > 0;
+  });
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  const cx = w * 0.5;
+  const cy = h * 0.5;
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  // Background glow based on temperature
+  const intensity = Math.min((temp - 25) / 575, 1);
+  if (intensity > 0) {
+    const bgGlow = ctx.createRadialGradient(cx, cy, 0, cx, cy, w * 0.6);
+    bgGlow.addColorStop(0, `rgba(58,173,160,${intensity * 0.15})`);
+    bgGlow.addColorStop(0.5, `rgba(58,173,160,${intensity * 0.08})`);
+    bgGlow.addColorStop(1, 'rgba(58,173,160,0)');
+    ctx.fillStyle = bgGlow;
+    ctx.fillRect(0, 0, w, h);
+  }
+  
+  // Draw equilibrium barrier
+  ctx.save();
+  ctx.strokeStyle = temp > 400 ? `rgba(250,199,117,${0.3 + intensity * 0.4})` : 'rgba(58,173,160,0.25)';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([6, 4]);
+  ctx.beginPath();
+  ctx.moveTo(cx, h * 0.15);
+  ctx.lineTo(cx, h * 0.85);
+  ctx.stroke();
+  ctx.restore();
+  
+  // Draw particles
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  
+  particles.forEach(p => {
+    const color = p.type === 'reactant' ? '58,173,160' : '250,199,117';
+    const glow = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 3);
+    glow.addColorStop(0, `rgba(${color},0.8)`);
+    glow.addColorStop(0.5, `rgba(${color},0.3)`);
+    glow.addColorStop(1, `rgba(${color},0)`);
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r * 3, 0, Math.PI * 2);
+    ctx.fill();
+    
+    ctx.fillStyle = `rgba(${color},1)`;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  
+  explosionParticles.forEach(p => {
+    const glow = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 4);
+    glow.addColorStop(0, `rgba(250,199,117,${p.life * 0.9})`);
+    glow.addColorStop(0.5, `rgba(250,199,117,${p.life * 0.4})`);
+    glow.addColorStop(1, 'rgba(250,199,117,0)');
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r * 4, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  
+  ctx.restore();
+  
+  // Warning pulses at critical temperature
+  if (temp > 500) {
+    const pulse = 0.3 + 0.7 * Math.abs(Math.sin(time * 0.08));
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.strokeStyle = `rgba(250,199,117,${pulse * 0.6})`;
+    ctx.lineWidth = 3;
+    ctx.setLineDash([]);
+    ctx.strokeRect(w * 0.05, h * 0.05, w * 0.9, h * 0.9);
+    ctx.restore();
+  }
+  
+  // Apply bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+}
+
+function animate() {
+  time++;
+  updateParticles();
+  draw();
+  requestAnimationFrame(animate);
+}
+
+function updateUI() {
+  const fill = ((temp - 25) / 575) * 100;
+  slider.style.setProperty('--fill', fill + '%');
+  
+  // Calculate stats
+  const heatReleased = Math.round((600 - temp) * 0.16);
+  const pressure = (1 + ((temp - 25) / 575) * 54).toFixed(1);
+  
+  heatStat.textContent = heatReleased + ' kJ';
+  pressureStat.textContent = pressure + ' atm';
+  
+  // Update tags
+  if (temp < 100) {
+    liveTag.textContent = `Stable • ${temp}°C`;
+    overlayTag.textContent = 'System at equilibrium';
+  } else if (temp < 300) {
+    liveTag.textContent = `Shifting • ${temp}°C`;
+    overlayTag.textContent = 'Equilibrium disturbed—shifting backward';
+  } else if (temp < 450) {
+    liveTag.textContent = `Warning • ${temp}°C`;
+    overlayTag.textContent = 'Rapid reverse reaction—heat accumulating';
+  } else if (temp < 550) {
+    liveTag.textContent = `Critical • ${temp}°C`;
+    overlayTag.textContent = 'Feedback loop engaged—pressure rising';
+  } else {
+    liveTag.textContent = `Catastrophic • ${temp}°C`;
+    overlayTag.textContent = 'Runaway reaction—containment failure imminent';
+  }
+}
+
+slider.addEventListener('input', (e) => {
+  temp = parseInt(e.target.value);
+  updateUI();
+});
+
+btnHaber.addEventListener('click', () => {
+  btnHaber.classList.add('active');
+  btnBhopal.classList.remove('active');
+  knowdropText.textContent = haberText;
+});
+
+btnBhopal.addEventListener('click', () => {
+  btnBhopal.classList.add('active');
+  btnHaber.classList.remove('active');
+  knowdropText.textContent = bhopalText;
+});
+
+window.addEventListener('resize', resize);
+resize();
+updateUI();
+animate();
+</script>

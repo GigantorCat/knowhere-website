@@ -1,0 +1,754 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #2FA94E;
+  --ag: rgba(47,169,78,.7);
+  --ag1: rgba(47,169,78,.12);
+  --ag2: rgba(47,169,78,.45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  min-height: 100vh;
+  padding: 40px 16px 72px;
+  color: var(--ink);
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(30px, 8vw, 52px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  margin-bottom: 16px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 16px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-container {
+  margin-bottom: 12px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+}
+
+.dr-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  outline: none;
+  cursor: pointer;
+}
+
+.dr-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.dr-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.dr-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.dr-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  padding: 0 4px;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.toggle-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(47,169,78,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(47,169,78,.18);
+}
+
+.knowdrop-section {
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.knowdrop-body {
+  font-family: 'Geist', sans-serif;
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-top: 16px;
+}
+
+.know-this-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 8px;
+}
+
+.know-this-body {
+  font-family: 'Geist', sans-serif;
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.footer {
+  margin-top: 34px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 10px var(--acc);
+  animation: drPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes drPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(0.6);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse-dot {
+    animation: none;
+  }
+}
+</style>
+
+<h2 class="sr-only">Differentiation Rules Interactive Widget</h2>
+
+<div class="container">
+  <h1>Every complex derivative is just <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">multiplication</span></h1>
+  
+  <p class="intro">The chain rule, product rule, and quotient rule all reduce differentiation to multiplication—they just tell you which pieces to multiply and in what order. Drag the slider to see each rule build its derivative step by step.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-label">Rule Visualisation</div>
+      <div class="live-tag" id="liveTag">Chain Rule</div>
+    </div>
+    <div class="card-hint">Watch each rule construct its derivative</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="canvas"></canvas>
+      <div class="canvas-overlay" id="overlayTag">f'(g(x)) × g'(x)</div>
+    </div>
+
+    <div class="slider-container">
+      <div class="slider-label">Differentiation Rule</div>
+      <input type="range" class="dr-slider" id="ruleSlider" min="0" max="2" value="0" step="1">
+    </div>
+    <div class="tick-labels">
+      <span>Chain</span>
+      <span>Product</span>
+      <span>Quotient</span>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Rule Type</div>
+        <div class="stat-value" id="ruleType" style="color:var(--acc);font-size:18px;">Composite</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Operations</div>
+        <div class="stat-value" id="opCount" style="color:var(--amb);">2</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card toggle-card">
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" id="btn1">Chain Rule</button>
+      <button class="toggle-btn" id="btn2">Product Rule</button>
+      <button class="toggle-btn" id="btn3">Quotient Rule</button>
+    </div>
+    <div class="knowdrop-section">
+      <p class="knowdrop-body" id="knowdropText">The chain rule differentiates composite functions where one function is nested inside another. For y = f(g(x)), the derivative dy/dx = f'(g(x)) × g'(x) multiplies the outer function's derivative (evaluated at the inner function) by the inner function's derivative. This appears in functions like (3x² + 1)⁵, where the outer function is ( )⁵ and the inner is 3x² + 1. The chain rule tells us to take 5(3x² + 1)⁴ and multiply by 6x, giving 30x(3x² + 1)⁴. Without the chain rule, differentiating nested exponentials, trigonometric compositions, and logarithms would be impossible. Every time you see a function inside another function, the chain rule is the only tool that works.</p>
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-this-tag">Know This</div>
+    <div class="know-this-body">The <span style="color:var(--acc)">chain rule</span> handles composites (f'(g(x)) × g'(x)), the <span style="color:var(--acc)">product rule</span> handles products (u'v + uv'), and the <span style="color:var(--acc)">quotient rule</span> handles quotients ((u'v − uv')/v²)—each reduces differentiation to multiplication of known derivatives.</div>
+  </div>
+
+  <div class="footer">
+    <div class="pulse-dot"></div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const slider = document.getElementById('ruleSlider');
+const liveTag = document.getElementById('liveTag');
+const overlayTag = document.getElementById('overlayTag');
+const ruleType = document.getElementById('ruleType');
+const opCount = document.getElementById('opCount');
+const btn1 = document.getElementById('btn1');
+const btn2 = document.getElementById('btn2');
+const btn3 = document.getElementById('btn3');
+const knowdropText = document.getElementById('knowdropText');
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d');
+
+const ruleNames = ['Chain Rule', 'Product Rule', 'Quotient Rule'];
+const overlayLabels = ["f'(g(x)) × g'(x)", "u'v + uv'", "(u'v − uv')/v²"];
+const typeLabels = ['Composite', 'Product', 'Quotient'];
+const opLabels = ['2', '4', '5'];
+
+const knowdropTexts = [
+  "The chain rule differentiates composite functions where one function is nested inside another. For y = f(g(x)), the derivative dy/dx = f'(g(x)) × g'(x) multiplies the outer function's derivative (evaluated at the inner function) by the inner function's derivative. This appears in functions like (3x² + 1)⁵, where the outer function is ( )⁵ and the inner is 3x² + 1. The chain rule tells us to take 5(3x² + 1)⁴ and multiply by 6x, giving 30x(3x² + 1)⁴. Without the chain rule, differentiating nested exponentials, trigonometric compositions, and logarithms would be impossible. Every time you see a function inside another function, the chain rule is the only tool that works.",
+  "The product rule differentiates functions that are multiplied together. For y = u(x)v(x), the derivative is dy/dx = u'v + uv', which means we differentiate the first function and multiply by the second (keeping it unchanged), then add the first function (unchanged) multiplied by the derivative of the second. For x²sin(x), we get 2x·sin(x) + x²·cos(x). The product rule is essential because the derivative of a product is not the product of the derivatives—that common mistake would give 2x·cos(x), which is completely wrong. The product rule ensures both functions contribute their rate of change to the overall derivative. This rule appears everywhere in physics and economics where quantities multiply together.",
+  "The quotient rule differentiates fractions where both numerator and denominator are functions. For y = u(x)/v(x), the derivative is dy/dx = (u'v − uv')/v², often remembered as 'low d-high minus high d-low over low squared'. For (2x + 1)/(x² − 3), we compute (2·(x² − 3) − (2x + 1)·2x)/(x² − 3)², which simplifies to (−2x² − 2x − 6)/(x² − 3)². The quotient rule is necessary because the derivative of a quotient is not the quotient of derivatives. The denominator squared in the final answer reflects how changes in the bottom of a fraction have amplified effects. Rational functions dominate calculus applications, making this rule indispensable for rates of change in physics, chemistry, and engineering."
+];
+
+let currentRule = 0;
+let particles = [];
+let time = 0;
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function updateSlider() {
+  const val = slider.value;
+  const percent = (val / 2) * 100;
+  slider.style.setProperty('--fill', percent + '%');
+}
+
+function updateUI() {
+  currentRule = parseInt(slider.value);
+  liveTag.textContent = ruleNames[currentRule];
+  overlayTag.textContent = overlayLabels[currentRule];
+  ruleType.textContent = typeLabels[currentRule];
+  opCount.textContent = opLabels[currentRule];
+  
+  // Update toggle buttons
+  [btn1, btn2, btn3].forEach((btn, i) => {
+    if (i === currentRule) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+  
+  knowdropText.textContent = knowdropTexts[currentRule];
+}
+
+slider.addEventListener('input', () => {
+  updateSlider();
+  updateUI();
+  particles = [];
+});
+
+btn1.addEventListener('click', () => {
+  slider.value = 0;
+  updateSlider();
+  updateUI();
+  particles = [];
+});
+
+btn2.addEventListener('click', () => {
+  slider.value = 1;
+  updateSlider();
+  updateUI();
+  particles = [];
+});
+
+btn3.addEventListener('click', () => {
+  slider.value = 2;
+  updateSlider();
+  updateUI();
+  particles = [];
+});
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  const cx = w / 2;
+  const cy = h / 2;
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  // Coordinate grid
+  ctx.save();
+  ctx.strokeStyle = 'rgba(47,169,78,0.08)';
+  ctx.lineWidth = 0.8;
+  const gridSpacing = 30;
+  for (let x = 0; x < w; x += gridSpacing) {
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, h);
+    ctx.stroke();
+  }
+  for (let y = 0; y < h; y += gridSpacing) {
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(w, y);
+    ctx.stroke();
+  }
+  ctx.restore();
+  
+  time += 0.016;
+  
+  if (currentRule === 0) {
+    // Chain rule: nested circles with flowing particles
+    const outerR = Math.min(w, h) * 0.28;
+    const innerR = outerR * 0.55;
+    
+    // Outer function circle
+    ctx.save();
+    ctx.strokeStyle = 'rgba(47,169,78,0.5)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, outerR, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+    
+    // Inner function circle
+    ctx.save();
+    ctx.strokeStyle = 'rgba(250,199,117,0.5)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, innerR, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+    
+    // Spawn particles from inner to outer
+    if (Math.random() < 0.15) {
+      const angle = Math.random() * Math.PI * 2;
+      particles.push({
+        x: cx + Math.cos(angle) * innerR,
+        y: cy + Math.sin(angle) * innerR,
+        vx: Math.cos(angle) * 1.2,
+        vy: Math.sin(angle) * 1.2,
+        life: 1,
+        type: 'chain'
+      });
+    }
+    
+    // Labels
+    ctx.save();
+    ctx.font = '13px "JetBrains Mono"';
+    ctx.fillStyle = 'rgba(250,199,117,0.9)';
+    ctx.textAlign = 'center';
+    ctx.fillText('g(x)', cx, cy - innerR - 12);
+    ctx.fillStyle = 'rgba(47,169,78,0.9)';
+    ctx.fillText('f( )', cx, cy - outerR - 12);
+    ctx.restore();
+    
+  } else if (currentRule === 1) {
+    // Product rule: two curves multiplying
+    const amp1 = h * 0.15;
+    const amp2 = h * 0.12;
+    const freq1 = 0.015;
+    const freq2 = 0.022;
+    
+    // First function u(x)
+    ctx.save();
+    ctx.strokeStyle = 'rgba(47,169,78,0.6)';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    for (let x = 0; x <= w; x += 2) {
+      const y = cy - amp1 * Math.sin((x + time * 30) * freq1);
+      if (x === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.restore();
+    
+    // Second function v(x)
+    ctx.save();
+    ctx.strokeStyle = 'rgba(250,199,117,0.6)';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    for (let x = 0; x <= w; x += 2) {
+      const y = cy + amp2 * Math.cos((x - time * 25) * freq2);
+      if (x === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.restore();
+    
+    // Spawn particles along both curves
+    if (Math.random() < 0.12) {
+      const x = Math.random() * w;
+      const y1 = cy - amp1 * Math.sin((x + time * 30) * freq1);
+      particles.push({
+        x: x,
+        y: y1,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: 1.5,
+        life: 1,
+        type: 'product',
+        color: 'rgba(47,169,78,'
+      });
+    }
+    if (Math.random() < 0.12) {
+      const x = Math.random() * w;
+      const y2 = cy + amp2 * Math.cos((x - time * 25) * freq2);
+      particles.push({
+        x: x,
+        y: y2,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: -1.5,
+        life: 1,
+        type: 'product',
+        color: 'rgba(250,199,117,'
+      });
+    }
+    
+    // Labels
+    ctx.save();
+    ctx.font = '12px "JetBrains Mono"';
+    ctx.fillStyle = 'rgba(47,169,78,0.9)';
+    ctx.fillText('u(x)', 16, cy - amp1 - 10);
+    ctx.fillStyle = 'rgba(250,199,117,0.9)';
+    ctx.fillText('v(x)', 16, cy + amp2 + 20);
+    ctx.restore();
+    
+  } else {
+    // Quotient rule: division visualization
+    const numY = cy - h * 0.18;
+    const denY = cy + h * 0.18;
+    
+    // Numerator bar
+    ctx.save();
+    ctx.strokeStyle = 'rgba(47,169,78,0.6)';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(w * 0.15, numY);
+    ctx.lineTo(w * 0.85, numY);
+    ctx.stroke();
+    ctx.restore();
+    
+    // Denominator bar
+    ctx.save();
+    ctx.strokeStyle = 'rgba(250,199,117,0.6)';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(w * 0.15, denY);
+    ctx.lineTo(w * 0.85, denY);
+    ctx.stroke();
+    ctx.restore();
+    
+    // Division line
+    ctx.save();
+    ctx.strokeStyle = 'rgba(237,237,232,0.3)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(w * 0.12, cy);
+    ctx.lineTo(w * 0.88, cy);
+    ctx.stroke();
+    ctx.restore();
+    
+    // Spawn particles from numerator
+    if (Math.random() < 0.1) {
+      particles.push({
+        x: w * (0.15 + Math.random() * 0.7),
+        y: numY,
+        vx: (Math.random() - 0.5) * 2,
+        vy: 2,
+        life: 1,
+        type: 'quotient',
+        color: 'rgba(47,169,78,'
+      });
+    }
+    
+    // Spawn particles from denominator
+    if (Math.random() < 0.1) {
+      particles.push({
+        x: w * (0.15 + Math.random() * 0.7),
+        y: denY,
+        vx: (Math.random() - 0.5) * 2,
+        vy: -2,
+        life: 1,
+        type: 'quotient',
+        color: 'rgba(250,199,117,'
+      });
+    }
+    
+    // Labels
+    ctx.save();
+    ctx.font = '13px "JetBrains Mono"';
+    ctx.fillStyle = 'rgba(47,169,78,0.9)';
+    ctx.textAlign = 'right';
+    ctx.fillText('u(x)', w * 0.12, numY + 5);
+    ctx.fillStyle = 'rgba(250,199,117,0.9)';
+    ctx.fillText('v(x)', w * 0.12, denY + 5);
+    ctx.restore();
+  }
+  
+  // Update and draw particles
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  particles = particles.filter(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.life -= 0.012;
+    
+    if (p.life <= 0) return false;
+    
+    const size = p.life * 3 + 1;
+    if (p.type === 'chain') {
+      ctx.fillStyle = 'rgba(47,169,78,' + p.life * 0.7 + ')';
+    } else {
+      ctx.fillStyle = p.color + p.life * 0.6 + ')';
+    }
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
+    ctx.fill();
+    
+    return true;
+  });
+  ctx.restore();
+  
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+  
+  requestAnimationFrame(draw);
+}
+
+window.addEventListener('resize', resize);
+resize();
+updateSlider();
+updateUI();
+draw();
+</script>

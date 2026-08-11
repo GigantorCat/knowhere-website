@@ -1,0 +1,674 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #EC1559;
+  --ag: rgba(236,21,89,.7);
+  --ag1: rgba(236,21,89,.12);
+  --ag2: rgba(236,21,89,.45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 72px;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(30px, 8vw, 52px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 28px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 16px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: white;
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 18px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-control {
+  margin-bottom: 8px;
+}
+
+.gpe-slider {
+  width: 100%;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+}
+
+.gpe-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.gpe-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.gpe-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.gpe-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  margin-top: 6px;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 4px;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.toggle-section {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(236,21,89,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(236,21,89,.18);
+}
+
+.knowdrop {
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.knowdrop p {
+  font-family: 'Geist', sans-serif;
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 34px;
+}
+
+.know-this-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 10px;
+}
+
+.know-this-body {
+  font-family: 'Geist', sans-serif;
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.know-this-body .acc {
+  color: var(--acc);
+}
+
+.footer {
+  margin-top: 34px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 10px var(--acc);
+  animation: gpePulse 2.4s ease-in-out infinite;
+}
+
+@keyframes gpePulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .35; transform: scale(.6); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Gravitational Potential Energy: Interactive visualisation of how energy becomes less negative as distance increases</h2>
+  
+  <h1>Gravitational potential energy is <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">negative</span></h1>
+  
+  <p class="intro">At Earth's surface, you're already trapped in a deep energy well — every kilogram of your mass holds about –63 MJ of gravitational potential energy. To escape to infinity where GPE equals zero, you must add energy to climb out of the negative. Drag the slider to lift a 1 kg mass away from Earth and watch how GPE increases toward zero.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-label">Energy Well Visualisation</div>
+      <div class="live-tag" id="liveTag">r = 1.0 R⊕</div>
+    </div>
+    <div class="card-hint">Drag slider to change orbital radius</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="gpeCanvas"></canvas>
+      <div class="canvas-overlay" id="canvasOverlay">GPE = –63.0 MJ/kg</div>
+    </div>
+
+    <div class="slider-control">
+      <input type="range" class="gpe-slider" id="radiusSlider" min="1" max="10" step="0.1" value="1">
+      <div class="tick-labels">
+        <span>Surface</span>
+        <span>5 R⊕</span>
+        <span>10 R⊕</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Distance</div>
+        <div class="stat-value" style="color:var(--acc)" id="distStat">6,371 km</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Escape Δ</div>
+        <div class="stat-value" style="color:var(--amb)" id="escapeStat">63.0 MJ/kg</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-section">
+      <button class="toggle-btn active" id="btn1">Universal Formula</button>
+      <button class="toggle-btn" id="btn2">Near Surface</button>
+    </div>
+    
+    <div class="knowdrop">
+      <p id="kdText">The universal formula E = –GMm/r works everywhere in a gravitational field, not just near Earth's surface. The negative sign is crucial: it means you're in an energy deficit relative to infinity. At infinity, r approaches ∞ and E approaches zero — that's the reference point. Closer to the mass, r is smaller, so E becomes more negative. To escape completely requires adding exactly |E| joules of energy to climb from your current negative value up to zero. This is why orbital mechanics uses negative energies: bound orbits have E < 0, and only objects with E ≥ 0 can escape.</p>
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-this-tag">Know This</div>
+    <div class="know-this-body">
+      <span class="acc">GPE increases</span> as you move away from a mass, becoming <span class="acc">less negative</span> and approaching <span class="acc">zero at infinity</span> — the familiar mgh formula is just the surface approximation where Δr ≪ R⊕.
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="pulse-dot"></div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('gpeCanvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const slider = document.getElementById('radiusSlider');
+const liveTag = document.getElementById('liveTag');
+const canvasOverlay = document.getElementById('canvasOverlay');
+const distStat = document.getElementById('distStat');
+const escapeStat = document.getElementById('escapeStat');
+const btn1 = document.getElementById('btn1');
+const btn2 = document.getElementById('btn2');
+const kdText = document.getElementById('kdText');
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d', { alpha: false });
+
+const G = 6.674e-11;
+const M = 5.972e24; // Earth mass kg
+const R = 6.371e6; // Earth radius m
+const GM = G * M;
+
+let currentRadius = 1;
+let time = 0;
+let lastRipple = 0;
+let ripples = [];
+
+const stars = Array.from({ length: 150 }, () => ({
+  x: Math.random(),
+  y: Math.random(),
+  r: Math.random() * 1.4 + 0.3,
+  tw: Math.random() * Math.PI * 2,
+  sp: 0.6 + Math.random() * 1.8,
+  h: Math.random() < 0.22
+}));
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function project(dx, dy, cx, cy, D, core, pinchAmt, tilt) {
+  const r = Math.hypot(dx, dy);
+  const depth = D / (1 + (r / core) * (r / core));
+  const t = depth / D;
+  const pinch = t * pinchAmt;
+  return { sx: cx + dx * (1 - pinch), sy: cy + dy * (1 - pinch) * tilt + depth, t };
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  const cx = w / 2;
+  const cy = h / 2;
+
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+
+  // Starfield
+  stars.forEach(st => {
+    const alpha = (0.5 + 0.5 * Math.sin(time * st.sp + st.tw)) * 0.7;
+    if (st.h) {
+      ctx.fillStyle = `rgba(236,21,89,${alpha})`;
+    } else {
+      ctx.fillStyle = `rgba(237,237,232,${alpha * 0.4})`;
+    }
+    ctx.beginPath();
+    ctx.arc(st.x * w, st.y * h, st.r, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  // Grid parameters
+  const D = h * 0.55;
+  const core = w * 0.18;
+  const basePinch = 0.42;
+  const massInfluence = 1 / currentRadius;
+  const pinchAmt = basePinch * massInfluence;
+  const tilt = 0.6;
+  const xR = w * 0.52;
+  const yR = h * 0.52;
+  const spacing = 32;
+  const fine = 3;
+
+  // Horizontal lines
+  for (let gy = -yR; gy <= yR; gy += spacing) {
+    const pts = [];
+    for (let gx = -xR; gx <= xR; gx += fine) {
+      pts.push(project(gx, gy, cx, cy, D, core, pinchAmt, tilt));
+    }
+    for (let i = 0; i < pts.length - 1; i++) {
+      const grad = ctx.createLinearGradient(pts[i].sx, pts[i].sy, pts[i + 1].sx, pts[i + 1].sy);
+      const avgT = (pts[i].t + pts[i + 1].t) / 2;
+      const brightness = avgT * 0.35 + 0.08;
+      grad.addColorStop(0, `rgba(236,21,89,${pts[i].t * brightness})`);
+      grad.addColorStop(1, `rgba(236,21,89,${pts[i + 1].t * brightness})`);
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 0.8;
+      ctx.beginPath();
+      ctx.moveTo(pts[i].sx, pts[i].sy);
+      ctx.lineTo(pts[i + 1].sx, pts[i + 1].sy);
+      ctx.stroke();
+    }
+  }
+
+  // Vertical lines
+  for (let gx = -xR; gx <= xR; gx += spacing) {
+    const pts = [];
+    for (let gy = -yR; gy <= yR; gy += fine) {
+      pts.push(project(gx, gy, cx, cy, D, core, pinchAmt, tilt));
+    }
+    for (let i = 0; i < pts.length - 1; i++) {
+      const grad = ctx.createLinearGradient(pts[i].sx, pts[i].sy, pts[i + 1].sx, pts[i + 1].sy);
+      const avgT = (pts[i].t + pts[i + 1].t) / 2;
+      const brightness = avgT * 0.35 + 0.08;
+      grad.addColorStop(0, `rgba(236,21,89,${pts[i].t * brightness})`);
+      grad.addColorStop(1, `rgba(236,21,89,${pts[i + 1].t * brightness})`);
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 0.8;
+      ctx.beginPath();
+      ctx.moveTo(pts[i].sx, pts[i].sy);
+      ctx.lineTo(pts[i + 1].sx, pts[i + 1].sy);
+      ctx.stroke();
+    }
+  }
+
+  // Central mass (Earth)
+  const massR = 16 / currentRadius + 8;
+  
+  // Corona glow
+  const corona = ctx.createRadialGradient(cx, cy, 0, cx, cy, massR * 5.5);
+  corona.addColorStop(0, 'rgba(236,21,89,0.55)');
+  corona.addColorStop(0.4, 'rgba(236,21,89,0.18)');
+  corona.addColorStop(1, 'rgba(236,21,89,0)');
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.fillStyle = corona;
+  ctx.beginPath();
+  ctx.arc(cx, cy, massR * 5.5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+  // Earth sphere
+  const earthGrad = ctx.createRadialGradient(cx - massR * 0.3, cy - massR * 0.3, 0, cx, cy, massR);
+  earthGrad.addColorStop(0, '#4A7C8C');
+  earthGrad.addColorStop(1, '#1A3C4C');
+  ctx.fillStyle = earthGrad;
+  ctx.beginPath();
+  ctx.arc(cx, cy, massR, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.strokeStyle = 'rgba(236,21,89,0.3)';
+  ctx.lineWidth = 1.2;
+  ctx.stroke();
+
+  // Test mass orbit
+  const orbitR = massR + 32 * currentRadius;
+  const angle = time * 0.4;
+  const mx = cx + Math.cos(angle) * orbitR;
+  const my = cy + Math.sin(angle) * orbitR * tilt;
+
+  // Orbit path
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.strokeStyle = 'rgba(236,21,89,0.2)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, orbitR, orbitR * tilt, 0, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.restore();
+
+  // Test mass trail
+  for (let i = 22; i >= 1; i--) {
+    const ta = angle - i * 0.05;
+    const trailR = orbitR;
+    const tx = cx + Math.cos(ta) * trailR;
+    const ty = cy + Math.sin(ta) * trailR * tilt;
+    ctx.fillStyle = `rgba(236,21,89,${(1 - i / 22) * 0.5})`;
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.beginPath();
+    ctx.arc(tx, ty, 5 * (1 - i / 22) + 1, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // Test mass
+  const massGrad = ctx.createRadialGradient(mx - 3, my - 3, 0, mx, my, 7);
+  massGrad.addColorStop(0, '#FAC775');
+  massGrad.addColorStop(1, '#E89E3A');
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.fillStyle = massGrad;
+  ctx.beginPath();
+  ctx.arc(mx, my, 7, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.strokeStyle = 'rgba(250,199,117,0.6)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  ctx.restore();
+
+  // Gravitational ripples
+  if (time - lastRipple > 1.8) {
+    ripples.push({ r: 0, born: time });
+    lastRipple = time;
+  }
+
+  ripples = ripples.filter(rp => {
+    const age = time - rp.born;
+    rp.r = age * 80;
+    const life = 1 - age / 4;
+    if (life <= 0) return false;
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.beginPath();
+    ctx.strokeStyle = `rgba(236,21,89,${life * 0.16})`;
+    ctx.lineWidth = 1.2;
+    ctx.ellipse(cx, cy, rp.r, rp.r * tilt, 0, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+    return true;
+  });
+
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+
+  time += 0.016;
+  requestAnimationFrame(draw);
+}
+
+function updateStats() {
+  const r = currentRadius;
+  const distKm = (r * R / 1000).toFixed(0);
+  
+  // GPE per kg: E = -GM/r
+  const gpe = -GM / (r * R);
+  const gpeMJ = (gpe / 1e6).toFixed(1);
+  
+  // Energy needed to escape (absolute value)
+  const escMJ = (-gpe / 1e6).toFixed(1);
+  
+  liveTag.textContent = `r = ${r.toFixed(1)} R⊕`;
+  canvasOverlay.textContent = `GPE = ${gpeMJ} MJ/kg`;
+  distStat.textContent = `${parseInt(distKm).toLocaleString()} km`;
+  escapeStat.textContent = `${escMJ} MJ/kg`;
+  
+  const fillPercent = ((r - 1) / 9) * 100;
+  slider.style.setProperty('--fill', fillPercent + '%');
+}
+
+slider.addEventListener('input', (e) => {
+  currentRadius = parseFloat(e.target.value);
+  updateStats();
+});
+
+const knowdrops = {
+  btn1: "The universal formula E = –GMm/r works everywhere in a gravitational field, not just near Earth's surface. The negative sign is crucial: it means you're in an energy deficit relative to infinity. At infinity, r approaches ∞ and E approaches zero — that's the reference point. Closer to the mass, r is smaller, so E becomes more negative. To escape completely requires adding exactly |E| joules of energy to climb from your current negative value up to zero. This is why orbital mechanics uses negative energies: bound orbits have E < 0, and only objects with E ≥ 0 can escape.",
+  btn2: "Near Earth's surface where Δr ≪ R⊕, we can approximate the change in GPE with the familiar ΔE = mgΔh formula. This works because over small height changes, g is roughly constant at 9.8 m/s². But this is just a linear approximation of the true 1/r relationship. If you lift a 1 kg mass from sea level to 100 km altitude using mgh, you get 980 kJ. The exact formula –GM/r gives 984 kJ — only 0.4% different. But try using mgh to calculate the energy to reach geostationary orbit (36,000 km up) and you'll be off by 40%. The universal formula is always correct; mgh is a convenient surface shortcut."
+};
+
+btn1.addEventListener('click', () => {
+  btn1.classList.add('active');
+  btn2.classList.remove('active');
+  kdText.textContent = knowdrops.btn1;
+});
+
+btn2.addEventListener('click', () => {
+  btn2.classList.add('active');
+  btn1.classList.remove('active');
+  kdText.textContent = knowdrops.btn2;
+});
+
+window.addEventListener('resize', resize);
+resize();
+updateStats();
+draw();
+</script>

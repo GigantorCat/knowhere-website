@@ -1,0 +1,399 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+@keyframes flPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.6)}}
+*{margin:0;padding:0;box-sizing:border-box}
+.fl-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;outline:none;cursor:pointer;
+  background:linear-gradient(90deg,#7BEA5A var(--fill,20%),#23291f var(--fill,20%));}
+.fl-slider::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:#0B0D0C;
+  border:2px solid #7BEA5A;cursor:pointer;box-shadow:0 0 16px rgba(123,234,90,.85),0 0 4px rgba(123,234,90,.6);transition:box-shadow .15s;}
+.fl-slider::-webkit-slider-thumb:hover{box-shadow:0 0 24px rgba(123,234,90,1),0 0 8px rgba(123,234,90,.9);}
+.fl-slider::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:#0B0D0C;border:2px solid #7BEA5A;cursor:pointer;box-shadow:0 0 16px rgba(123,234,90,.85);}
+.toggle-btn{font-family:'JetBrains Mono',monospace;font-size:14.5px;letter-spacing:0.04em;padding:12px;border-radius:11px;cursor:pointer;transition:all .18s ease;flex:1;border:none;}
+.toggle-btn.off{background:#141815;border:1px solid #262B26;color:#8C9389;}
+.toggle-btn.on{background:rgba(123,234,90,.12);border:1px solid #7BEA5A;color:#7BEA5A;box-shadow:0 0 20px rgba(123,234,90,.16);}
+</style>
+
+<div style="background:radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);color:#EDEDE8;font-family:'Geist',sans-serif;min-height:100vh;padding:32px 16px 64px;box-sizing:border-box">
+  <div style="max-width:720px;margin:0 auto">
+
+    <h1 style="font-size:clamp(30px,8vw,52px);font-weight:700;line-height:1.02;letter-spacing:-0.03em;margin:0 0 14px">Rivers don't erode randomly.<br>They spiral in <span style="color:#7BEA5A;text-shadow:0 0 26px rgba(123,234,90,.5)">helixes.</span></h1>
+    <p style="color:#8C9389;font-size:15.5px;line-height:1.55;margin:0 0 30px;max-width:58ch">Meandering channels aren't carved because water is "lazy" — they're sculpted by a corkscrew current spinning inside the river itself. Drag the slider and watch maximum velocity swing onto the outer bank, eroding the cut bank while sediment quietly builds the point bar opposite.</p>
+
+    <div style="background:linear-gradient(180deg,#141815,#0d100b);border:1px solid #262B26;border-radius:18px;padding:16px;margin-bottom:18px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 rgba(123,234,90,.05)">
+      <div style="margin-bottom:14px">
+        <div id="cardLabel" style="font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:0.12em;text-transform:uppercase;color:#FFFFFF">Helicoidal Flow Pattern</div>
+        <div id="hintText" style="font-family:'JetBrains Mono',monospace;color:#BBBBBB;letter-spacing:0.04em;font-size:11px;line-height:1.4;margin-top:6px">Maximum velocity (the bright core) swings onto the outer bank — eroding the cut bank while the corkscrew drops sediment to build the point bar opposite.</div>
+      </div>
+      <div style="position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px rgba(123,234,90,.1)">
+        <canvas id="flCanvas" style="position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none"></canvas>
+        <div id="liveTag" style="position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:14px;letter-spacing:0.06em;text-transform:uppercase;color:#7BEA5A;text-align:center">MODERATE DISCHARGE</div>
+      </div>
+      <div style="margin:18px 0 6px">
+        <input type="range" class="fl-slider" id="flSlider" min="0" max="100" value="20" style="--fill:20%">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;margin-top:16px;border-top:1px solid #262B26">
+        <div style="text-align:center;padding:14px 12px 2px;border-right:1px solid #262B26">
+          <div id="statLabel1" style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:0.06em;text-transform:uppercase;color:#8C9389;margin-bottom:7px">Cut Bank Erosion</div>
+          <div id="statValue1" style="font-family:'JetBrains Mono',monospace;font-size:25px;color:#7BEA5A">0.3 m/yr</div>
+        </div>
+        <div style="text-align:center;padding:14px 12px 2px">
+          <div id="statLabel2" style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:0.06em;text-transform:uppercase;color:#8C9389;margin-bottom:7px">Point Bar Growth</div>
+          <div id="statValue2" style="font-family:'JetBrains Mono',monospace;font-size:25px;color:#FAC775">0.2 m/yr</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:linear-gradient(180deg,#141815,#0d100b);border:1px solid #262B26;border-radius:14px;margin-bottom:16px;padding:14px">
+      <div style="display:flex;gap:10px;margin-bottom:14px">
+        <button class="toggle-btn on" id="btnHelix" type="button">Helicoidal Flow</button>
+        <button class="toggle-btn off" id="btnOxbow" type="button">Oxbow Formation</button>
+      </div>
+      <div style="border-top:1px solid #262B26;padding-top:16px">
+        <p id="explainerText" style="font-size:14.5px;line-height:1.65;color:#EDEDE8;margin:0">Helicoidal flow is a corkscrew current where water doesn't just travel downstream — it spirals across the channel. Maximum velocity sits near the surface on the outside of a bend, slamming the cut bank with enough energy to erode it through hydraulic action and abrasion. Slower water near the bed spirals back toward the inside, dropping its sediment load to build the point bar. That asymmetry is why meanders migrate sideways over time, and why meander wavelength scales so predictably with channel width.</p>
+      </div>
+    </div>
+
+    <div style="border-left:3px solid #7BEA5A;padding:16px 18px;margin-bottom:22px;background:linear-gradient(90deg,rgba(123,234,90,.09),rgba(123,234,90,.02));border-radius:0 12px 12px 0">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:0.15em;text-transform:uppercase;color:#7BEA5A;margin-bottom:7px">Know This</div>
+      <p style="font-size:17.4px;line-height:1.55;color:#EDEDE8;margin:0">Helicoidal flow spirals water toward the outer bank, concentrating erosion there while sediment settles on the inner bank — which is why meander wavelength stays reliably 10–14× the channel width.</p>
+    </div>
+
+    <div style="margin-top:30px;padding-top:16px;border-top:1px solid #262B26;display:flex;justify-content:center">
+      <span style="width:7px;height:7px;border-radius:50%;background:#7BEA5A;box-shadow:0 0 10px #7BEA5A;animation:flPulse 2.4s ease-in-out infinite"></span>
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function(){
+  const canvas = document.getElementById('flCanvas');
+  const ctx = canvas.getContext('2d');
+  const slider = document.getElementById('flSlider');
+  const liveTag = document.getElementById('liveTag');
+  const cardLabel = document.getElementById('cardLabel');
+  const hintText = document.getElementById('hintText');
+  const statLabel1 = document.getElementById('statLabel1');
+  const statValue1 = document.getElementById('statValue1');
+  const statLabel2 = document.getElementById('statLabel2');
+  const statValue2 = document.getElementById('statValue2');
+  const explainerText = document.getElementById('explainerText');
+  const btnHelix = document.getElementById('btnHelix');
+  const btnOxbow = document.getElementById('btnOxbow');
+
+  const ACC = [123,234,90];
+  const AMB = [250,199,117];
+  const dpr = Math.min(window.devicePixelRatio||1,2);
+  let W=0, H=0, t0=performance.now();
+  let mode='helix', value=20;
+
+  const texts = {
+    helix: "Helicoidal flow is a corkscrew current where water doesn\u2019t just travel downstream \u2014 it spirals across the channel. Maximum velocity sits near the surface on the outside of a bend, slamming the cut bank with enough energy to erode it through hydraulic action and abrasion. Slower water near the bed spirals back toward the inside, dropping its sediment load to build the point bar. That asymmetry is why meanders migrate sideways over time, and why meander wavelength scales so predictably with channel width.",
+    oxbow: "When a meander grows so exaggerated that the neck between its limbs narrows past the channel width, a flood takes the shortcut \u2014 cutting straight across the neck because it\u2019s the path of least resistance. The abandoned loop is sealed off into a crescent-shaped oxbow lake. Over decades it slowly infills with fine sediment from overbank floods, vegetation colonises the margins, and the lake fades into a wetland and finally a dry meander scar etched into the floodplain."
+  };
+
+  // OKLCH secondary colour
+  function lin(c){c/=255;return c<=0.04045?c/12.92:Math.pow((c+0.055)/1.055,2.4);}
+  function slin(c){const v=c<=0.0031308?12.92*c:1.055*Math.pow(c,1/2.4)-0.055;return Math.max(0,Math.min(1,v));}
+  function oklab(r,g,b){r=lin(r);g=lin(g);b=lin(b);const l=0.4122214708*r+0.5363325363*g+0.0514459929*b,m=0.2119034982*r+0.6806995451*g+0.1073969566*b,s=0.0883024619*r+0.2817188376*g+0.6299787005*b;const L=Math.cbrt(l),M=Math.cbrt(m),S=Math.cbrt(s);return{a:1.9779984951*L-2.428592205*M+0.4505937099*S,b:0.0259040371*L+0.7827717662*M-0.808675766*S};}
+  function torgb(L,a,b){const l_=L+0.3963377774*a+0.2158037573*b,m_=L-0.1055613458*a-0.0638541728*b,s_=L-0.0894841775*a-1.291485548*b;const l=l_**3,m=m_**3,s=s_**3;return[4.0767416621*l-3.3077115913*m+0.2309699292*s,-1.2684380046*l+2.6097574011*m-0.3413193965*s,-0.0041960863*l-0.7034186147*m+1.707614701*s];}
+  let _sec=null;
+  function secRGB(){if(_sec)return _sec;const o=oklab(ACC[0],ACC[1],ACC[2]);const H=Math.atan2(o.b,o.a)+Math.PI;let c=0.135,rgb;for(let i=0;i<24;i++){rgb=torgb(0.80,c*Math.cos(H),c*Math.sin(H));if(rgb.every(v=>v>=-0.001&&v<=1.001))break;c-=0.006;}return _sec=rgb.map(v=>Math.round(slin(v)*255));}
+  function hex(c){return '#'+c.map(v=>v.toString(16).padStart(2,'0')).join('');}
+  function rgba(c,a){return 'rgba('+c[0]+','+c[1]+','+c[2]+','+a+')';}
+
+  // particles
+  const parts = Array.from({length:90},()=>({
+    s:Math.random(), phase:Math.random()*Math.PI*2,
+    turn:2.2+Math.random()*1.6, sz:0.6+Math.random()*0.9
+  }));
+
+  function resize(){
+    const rect=canvas.getBoundingClientRect();
+    if(!rect.width)return;
+    W=rect.width;H=rect.height;
+    canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+
+  function buildPath(pts){
+    const cum=[0];let len=0;
+    for(let i=1;i<pts.length;i++){len+=Math.hypot(pts[i].x-pts[i-1].x,pts[i].y-pts[i-1].y);cum.push(len);}
+    return{pts,cum,len};
+  }
+  function posAt(path,s){
+    s=Math.max(0,Math.min(1,s));
+    const target=s*path.len,cum=path.cum,pts=path.pts;
+    let i=1;while(i<cum.length&&cum[i]<target)i++;
+    if(i>=pts.length)i=pts.length-1;
+    const a=pts[i-1],b=pts[i];
+    const seg=(cum[i]-cum[i-1])||1;
+    const f=(target-cum[i-1])/seg;
+    const x=a.x+(b.x-a.x)*f,y=a.y+(b.y-a.y)*f;
+    let tx=b.x-a.x,ty=b.y-a.y;const m=Math.hypot(tx,ty)||1;tx/=m;ty/=m;
+    return{x,y,tx,ty,nx:-ty,ny:tx,curv:(a.curv!=null?a.curv:0),out:(a.out!=null?a.out:0)};
+  }
+
+  function drawFlow(path,opts){
+    const time=opts.time,flow=opts.flow,width=opts.width,bias=opts.bias||0;
+    const AMBc=secRGB();
+    ctx.save();ctx.globalCompositeOperation='lighter';
+    for(const p of parts){
+      p.s+=(0.00055+0.0026*flow)*(0.7+p.sz*0.5);
+      if(p.s>1)p.s-=1;
+      const pos=posAt(path,p.s);
+      const u=Math.sin(p.phase+p.s*p.turn*Math.PI*2+time*(1+flow));
+      const depth=(u+1)/2;
+      const lateral=(u*0.30+bias*pos.out*0.10)*width;
+      const x=pos.x+pos.nx*lateral,y=pos.y+pos.ny*lateral;
+      const bright=(0.18+depth*0.7)*(0.4+flow*0.8);
+      const r=(0.8+depth*1.7+flow*1.2)*p.sz;
+      const col=depth>0.55?ACC:[90,150,180];
+      const g=ctx.createRadialGradient(x,y,0,x,y,r*4);
+      g.addColorStop(0,rgba(col,bright));g.addColorStop(1,rgba(col,0));
+      ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r*4,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle=rgba(col,Math.min(1,bright+0.25));ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  function arrow(x1,y1,x2,y2){
+    ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+    const a=Math.atan2(y2-y1,x2-x1),s=4;
+    ctx.beginPath();ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-Math.cos(a-0.5)*s,y2-Math.sin(a-0.5)*s);
+    ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-Math.cos(a+0.5)*s,y2-Math.sin(a+0.5)*s);ctx.stroke();
+  }
+  function roundRect(x,y,w,h,r){
+    ctx.beginPath();ctx.moveTo(x+r,y);
+    ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();
+  }
+
+  function drawCrossSection(time,flow){
+    const w=W,h=H;
+    const pw=Math.min(w*0.34,180)*1.2,ph=pw*0.74,px=w-pw-14,py=h-ph-44;
+    ctx.save();
+    ctx.fillStyle='rgba(4,7,4,0.72)';ctx.strokeStyle='rgba(123,234,90,0.22)';ctx.lineWidth=1;
+    roundRect(px,py,pw,ph,10);ctx.fill();ctx.stroke();
+    ctx.fillStyle='rgba(140,147,137,0.9)';ctx.font="500 8px 'JetBrains Mono',monospace";
+    ctx.fillText('CROSS-SECTION \u00B7 SECONDARY FLOW',px+9,py+14);
+    const bx=px+12,bw=pw-24,by=py+24,bh=ph-40;
+    const innerY=by+bh*0.42,outerY=by+bh;
+    const AMBc=secRGB();
+    ctx.beginPath();
+    ctx.moveTo(bx,innerY);
+    ctx.bezierCurveTo(bx+bw*0.3,by+bh*0.55,bx+bw*0.55,outerY,bx+bw,outerY-bh*0.06);
+    ctx.lineTo(bx+bw,by);ctx.lineTo(bx,by);ctx.closePath();
+    const wg=ctx.createLinearGradient(0,by,0,by+bh);
+    wg.addColorStop(0,'rgba(28,70,80,0.9)');wg.addColorStop(1,'rgba(12,36,44,0.95)');
+    ctx.fillStyle=wg;ctx.fill();
+    ctx.beginPath();ctx.moveTo(bx,innerY);ctx.lineTo(bx,by+bh);ctx.lineTo(bx+bw*0.34,by+bh);
+    ctx.bezierCurveTo(bx+bw*0.2,by+bh*0.7,bx+bw*0.1,by+bh*0.55,bx,innerY);ctx.closePath();
+    ctx.fillStyle=rgba(AMBc,0.34);ctx.fill();
+    const cellX=bx+bw*0.54,cellY=by+bh*0.5,rx=bw*0.3,ry=bh*0.3;
+    ctx.globalCompositeOperation='lighter';
+    for(let i=0;i<10;i++){
+      const a=(time*(0.6+flow*1.8))+(i/10)*Math.PI*2;
+      const x=cellX+Math.cos(a)*rx,y=cellY+Math.sin(a)*ry;
+      const al=(0.2+0.5*((Math.sin(a)+1)/2))*(0.5+flow);
+      ctx.fillStyle=rgba(ACC,al);
+      ctx.beginPath();ctx.arc(x,y,1.6,0,Math.PI*2);ctx.fill();
+    }
+    ctx.strokeStyle=rgba(ACC,0.5+flow*0.4);ctx.lineWidth=1.3;ctx.globalCompositeOperation='source-over';
+    arrow(cellX-rx*0.2,cellY-ry,cellX+rx*0.7,cellY-ry*0.8);
+    arrow(cellX+rx*0.2,cellY+ry,cellX-rx*0.7,cellY+ry*0.8);
+    ctx.globalCompositeOperation='lighter';
+    const vmx=cellX+rx*0.9,vmy=cellY-ry*0.9,vr=4+flow*7;
+    const vg=ctx.createRadialGradient(vmx,vmy,0,vmx,vmy,vr);
+    vg.addColorStop(0,'rgba(214,255,196,0.95)');vg.addColorStop(1,rgba(ACC,0));
+    ctx.fillStyle=vg;ctx.beginPath();ctx.arc(vmx,vmy,vr,0,Math.PI*2);ctx.fill();
+    ctx.globalCompositeOperation='source-over';
+    ctx.fillStyle=rgba(AMBc,0.85);ctx.font="500 7px 'JetBrains Mono',monospace";ctx.textAlign='left';
+    ctx.fillText('POINT BAR',bx,py+ph-6);
+    ctx.fillStyle='rgba(123,234,90,0.9)';ctx.textAlign='right';
+    ctx.fillText('CUT BANK',bx+bw,py+ph-6);
+    ctx.textAlign='left';
+    ctx.restore();
+  }
+
+  function drawHelix(time){
+    const w=W,h=H,flow=value/100;
+    const amp=h*0.205,k=2*Math.PI/(w*0.62),phase=-Math.PI/2;
+    const cy=h*0.46,chW=h*0.215;
+    const N=140,pts=[];
+    for(let i=0;i<=N;i++){
+      const x=(i/N)*w;
+      const y=cy+amp*Math.sin(k*x+phase);
+      const ypp=-Math.sin(k*x+phase);
+      pts.push({x,y,curv:Math.abs(ypp),out:(ypp>0?1:-1)});
+    }
+    const path=buildPath(pts);
+    const AMBc=secRGB();
+    ctx.save();ctx.lineJoin='round';ctx.lineCap='round';
+    const grad=ctx.createLinearGradient(0,0,w,0);
+    grad.addColorStop(0,'rgba(20,52,60,0.85)');grad.addColorStop(1,'rgba(16,42,50,0.85)');
+    ctx.strokeStyle=grad;ctx.lineWidth=chW;
+    ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.stroke();
+    ctx.strokeStyle='rgba(60,120,130,0.18)';ctx.lineWidth=chW*0.62;
+    ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.stroke();
+    ctx.restore();
+    ctx.save();ctx.globalCompositeOperation='lighter';
+    for(let i=0;i<=N;i+=2){
+      const p=pts[i];if(p.curv<0.25)continue;
+      let tx,ty;
+      if(i<N){tx=pts[i+1].x-p.x;ty=pts[i+1].y-p.y;}else{tx=p.x-pts[i-1].x;ty=p.y-pts[i-1].y;}
+      const m=Math.hypot(tx,ty)||1;const nx=-ty/m,ny=tx/m;
+      const oc=p.out;
+      const ex=p.x+nx*oc*chW*0.5,ey=p.y+ny*oc*chW*0.5;
+      const er=(3+flow*9)*p.curv;
+      const eg=ctx.createRadialGradient(ex,ey,0,ex,ey,er*3);
+      eg.addColorStop(0,rgba(ACC,(0.10+flow*0.5)*p.curv));eg.addColorStop(1,rgba(ACC,0));
+      ctx.fillStyle=eg;ctx.beginPath();ctx.arc(ex,ey,er*3,0,Math.PI*2);ctx.fill();
+      const bx=p.x-nx*oc*chW*0.42,by=p.y-ny*oc*chW*0.42;
+      const br=(2+flow*7)*p.curv;
+      const bgd=ctx.createRadialGradient(bx,by,0,bx,by,br*3);
+      bgd.addColorStop(0,rgba(AMBc,(0.08+flow*0.32)*p.curv));bgd.addColorStop(1,rgba(AMBc,0));
+      ctx.fillStyle=bgd;ctx.beginPath();ctx.arc(bx,by,br*3,0,Math.PI*2);ctx.fill();
+    }
+    ctx.restore();
+    drawFlow(path,{time,flow,width:chW,bias:1});
+    const sCore=(time*(0.05+flow*0.12))%1;
+    const pc=posAt(path,sCore);
+    const cx=pc.x+pc.nx*pc.out*chW*0.4,ccy=pc.y+pc.ny*pc.out*chW*0.4;
+    ctx.save();ctx.globalCompositeOperation='lighter';
+    const cr=7+flow*14;
+    const cg=ctx.createRadialGradient(cx,ccy,0,cx,ccy,cr);
+    cg.addColorStop(0,'rgba(214,255,196,0.95)');cg.addColorStop(0.5,rgba(ACC,0.6));cg.addColorStop(1,rgba(ACC,0));
+    ctx.fillStyle=cg;ctx.beginPath();ctx.arc(cx,ccy,cr,0,Math.PI*2);ctx.fill();
+    ctx.restore();
+    drawCrossSection(time,flow);
+  }
+
+  function buildLoop(R,cyLoop,delta,cx,valleyY,legBottomY){
+    const left=cx-R*Math.sin(delta),right=cx+R*Math.sin(delta);
+    const gapY=cyLoop+R*Math.cos(delta);
+    const pts=[{x:left,y:legBottomY},{x:left,y:gapY}];
+    const start=Math.PI/2+delta,end=Math.PI*2.5-delta,STEPS=72;
+    for(let i=0;i<=STEPS;i++){const th=start+(end-start)*(i/STEPS);pts.push({x:cx+R*Math.cos(th),y:cyLoop+R*Math.sin(th)});}
+    pts.push({x:right,y:gapY},{x:right,y:legBottomY});
+    return{pts,left,right};
+  }
+
+  function drawOxbow(time){
+    const w=W,h=H,stage=value/100;
+    const valleyY=h*0.62,cx=w*0.5,chW=h*0.082;
+    const cutoff=stage>=0.6;
+    const prog=Math.min(stage,0.6)/0.6;
+    const R=h*0.10+prog*h*0.17;
+    const delta=0.6-prog*0.5;
+    const cyLoop=valleyY-R*1.02;
+    const AMBc=secRGB();
+    if(!cutoff){
+      const loop=buildLoop(R,cyLoop,delta,cx,valleyY,valleyY);
+      const neckW=loop.right-loop.left;
+      const chan=[{x:0,y:valleyY},...loop.pts,{x:w,y:valleyY}];
+      ctx.save();ctx.lineJoin='round';ctx.lineCap='round';
+      ctx.strokeStyle='rgba(18,46,54,0.92)';ctx.lineWidth=chW;
+      ctx.beginPath();chan.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.stroke();
+      ctx.strokeStyle='rgba(60,120,130,0.16)';ctx.lineWidth=chW*0.6;
+      ctx.beginPath();chan.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.stroke();
+      ctx.restore();
+      if(neckW<chW*2.6){
+        ctx.save();ctx.globalCompositeOperation='lighter';
+        const inten=1-(neckW/(chW*2.6));
+        const ng=ctx.createRadialGradient(cx,valleyY,0,cx,valleyY,chW*2);
+        ng.addColorStop(0,rgba(ACC,0.3*inten*(0.6+0.4*Math.sin(time*6))));ng.addColorStop(1,rgba(ACC,0));
+        ctx.fillStyle=ng;ctx.beginPath();ctx.arc(cx,valleyY,chW*2,0,Math.PI*2);ctx.fill();
+        ctx.restore();
+      }
+      drawFlow(buildPath(chan),{time,flow:0.5+prog*0.4,width:chW,bias:0});
+    } else {
+      const infill=Math.min(1,(stage-0.6)/0.4);
+      ctx.save();ctx.lineCap='round';
+      ctx.strokeStyle='rgba(18,46,54,0.92)';ctx.lineWidth=chW;
+      ctx.beginPath();ctx.moveTo(0,valleyY);ctx.lineTo(w,valleyY);ctx.stroke();
+      ctx.restore();
+      drawFlow(buildPath([{x:0,y:valleyY},{x:w,y:valleyY}]),{time,flow:0.85,width:chW,bias:0});
+      const Rl=h*0.185,dl=0.30,cyl=h*0.30;
+      const legTop=valleyY-chW*1.2;
+      const loop=buildLoop(Rl,cyl,dl,cx,valleyY,legTop);
+      const lake=[...loop.pts,{x:loop.pts[0].x,y:loop.pts[0].y}];
+      ctx.save();ctx.lineJoin='round';ctx.lineCap='round';
+      ctx.strokeStyle=rgba(AMBc,0.3+infill*0.35);ctx.lineWidth=chW*(0.5+infill*0.8);
+      ctx.beginPath();lake.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.stroke();
+      const wr=Math.round(18+infill*16),wgc=Math.round(52+infill*72),wb=Math.round(60-infill*28);
+      ctx.strokeStyle=`rgba(${wr},${wgc},${wb},${0.95-infill*0.35})`;
+      ctx.lineWidth=chW*(0.78-infill*0.45);
+      ctx.beginPath();lake.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.stroke();
+      ctx.restore();
+      ctx.save();
+      ctx.fillStyle='rgba(184,192,182,0.95)';ctx.font="500 9px 'JetBrains Mono',monospace";
+      ctx.textAlign='center';ctx.textBaseline='middle';
+      const loopLabel=infill>0.6?['MEANDER SCAR','\u00B7 WETLAND']:['OXBOW LAKE'];
+      const lh=13,y0=cyl-(loopLabel.length-1)*lh/2;
+      loopLabel.forEach((ln,i)=>ctx.fillText(ln,cx,y0+i*lh));
+      ctx.restore();ctx.textAlign='left';ctx.textBaseline='alphabetic';
+      if(stage<0.72){
+        ctx.save();ctx.globalCompositeOperation='lighter';
+        const fl=(0.72-stage)/0.12;
+        ctx.fillStyle=`rgba(255,255,255,${fl*(0.55+0.45*Math.sin(time*10))})`;
+        ctx.font="700 14px 'JetBrains Mono',monospace";ctx.textAlign='center';
+        ctx.fillText('\u26A1 NECK CUTOFF',cx,valleyY-6);
+        ctx.restore();ctx.textAlign='left';
+      }
+    }
+  }
+
+  function draw(now){
+    if(!W){resize();return;}
+    const time=(now-t0)/1000;
+    ctx.clearRect(0,0,W,H);
+    const bg=ctx.createRadialGradient(W/2,H*0.5,0,W/2,H*0.5,W*0.75);
+    bg.addColorStop(0,'#0c130a');bg.addColorStop(1,'#000');
+    ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+    if(mode==='helix')drawHelix(time);
+    else drawOxbow(time);
+    const vig=ctx.createRadialGradient(W/2,H/2,H*0.25,W/2,H/2,W*0.72);
+    vig.addColorStop(0,'rgba(0,0,0,0)');vig.addColorStop(1,'rgba(0,0,0,0.5)');
+    ctx.fillStyle=vig;ctx.fillRect(0,0,W,H);
+    requestAnimationFrame(draw);
+  }
+
+  function updateUI(){
+    const v=value,f=v/100;
+    const AMBc=secRGB();
+    slider.value=v;
+    slider.style.setProperty('--fill',v+'%');
+    statValue2.style.color=hex(AMBc);
+    if(mode==='helix'){
+      cardLabel.textContent='Helicoidal Flow Pattern';
+      liveTag.textContent=v<35?'LOW DISCHARGE':v<70?'MODERATE DISCHARGE':'HIGH DISCHARGE';
+      statLabel1.textContent='Cut Bank Erosion';statValue1.textContent=(0.2+f*0.6).toFixed(1)+' m/yr';
+      statLabel2.textContent='Point Bar Growth';statValue2.textContent=(0.1+f*0.5).toFixed(1)+' m/yr';
+      hintText.textContent='Maximum velocity (the bright core) swings onto the outer bank \u2014 eroding the cut bank while the corkscrew drops sediment to build the point bar opposite.';
+      explainerText.textContent=texts.helix;
+      btnHelix.className='toggle-btn on';btnOxbow.className='toggle-btn off';
+    } else {
+      cardLabel.textContent='Meander Migration \u2192 Oxbow';
+      liveTag.textContent=v<45?'YOUNG MEANDER':v<60?'NECK PINCHING':v<72?'CUTOFF!':'OXBOW LAKE';
+      const sinuosity=(1.2+Math.min(f,0.6)*2.1).toFixed(2);
+      const neckW=v<60?Math.max(2,(60-v)*1.6).toFixed(0)+' m':'\u2014 cut \u2014';
+      statLabel1.textContent='Sinuosity';statValue1.textContent=sinuosity+'\u00D7';
+      statLabel2.textContent=v<60?'Neck Width':'Lake Infill';
+      statValue2.textContent=v<60?neckW:Math.round(Math.min(100,(v-60)/0.4))+'%';
+      hintText.textContent='Scrub the meander through time: the loop amplifies, the neck pinches, a flood cuts straight across \u2014 and the abandoned loop is sealed off as an oxbow lake that slowly infills.';
+      explainerText.textContent=texts.oxbow;
+      btnOxbow.className='toggle-btn on';btnHelix.className='toggle-btn off';
+    }
+  }
+
+  slider.addEventListener('input',e=>{value=parseInt(e.target.value);updateUI();});
+  btnHelix.addEventListener('click',()=>{mode='helix';value=20;updateUI();});
+  btnOxbow.addEventListener('click',()=>{mode='oxbow';value=15;updateUI();});
+  window.addEventListener('resize',()=>{W=0;H=0;});
+
+  resize();updateUI();
+  requestAnimationFrame(draw);
+})();
+</script>

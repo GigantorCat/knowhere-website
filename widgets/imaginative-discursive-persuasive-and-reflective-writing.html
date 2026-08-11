@@ -1,0 +1,587 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #BB6FE2;
+  --acc-rgb: 187, 111, 226;
+  --ag: rgba(var(--acc-rgb), .7);
+  --ag1: rgba(var(--acc-rgb), .12);
+  --ag2: rgba(var(--acc-rgb), .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  min-height: 100vh;
+  padding: 40px 16px 0;
+  color: var(--ink);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--ink);
+  font-weight: 400;
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+  font-weight: 400;
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.mode-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+@media (min-width: 480px) {
+  .mode-buttons {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.mode-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  padding: 12px 8px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: #12160F;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.mode-btn.active {
+  background: rgba(var(--acc-rgb), .1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(var(--acc-rgb), .18);
+}
+
+.mode-btn:hover:not(.active) {
+  background: #15190f;
+  border-color: var(--ag1);
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+  margin-top: 16px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.stat:first-child .stat-value {
+  color: var(--acc);
+}
+
+.stat:last-child .stat-value {
+  color: var(--amb);
+}
+
+.toggle-card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: #12160F;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toggle-btn.active {
+  background: rgba(var(--acc-rgb), .1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(var(--acc-rgb), .18);
+}
+
+.toggle-btn:hover:not(.active) {
+  background: #15190f;
+  border-color: var(--ag1);
+}
+
+.knowdrop-divider {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.knowdrop {
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-this-tag {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 12px;
+}
+
+.know-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 8px var(--acc);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+.know-tag-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+}
+
+.know-this-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.know-this-body span {
+  color: var(--acc);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+
+<h2 class="sr-only">Interactive widget exploring the four writing modes and their distinct reader contracts</h2>
+
+<div class="container">
+  <h1>The form you choose is a <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">contract</span></h1>
+  
+  <p class="intro">Every mode makes a silent promise to your reader. Imaginative writing builds worlds, discursive writing thinks aloud, persuasive writing stakes a position, reflective writing examines process. Switch modes mid-essay and you break the contract. Select a mode below to see what each form promises.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-label">Mode Contract Visualiser</div>
+      <div class="live-tag" id="currentMode">Imaginative</div>
+    </div>
+    <div class="card-hint">Select any mode to see its distinct reader promise</div>
+    
+    <div class="mode-buttons">
+      <button class="mode-btn active" data-mode="imaginative">Imag.</button>
+      <button class="mode-btn" data-mode="discursive">Disc.</button>
+      <button class="mode-btn" data-mode="persuasive">Pers.</button>
+      <button class="mode-btn" data-mode="reflective">Refl.</button>
+    </div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="canvas"></canvas>
+      <div class="canvas-overlay" id="promise">Promise: Build a world</div>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-label">Primary Signal</div>
+        <div class="stat-value" id="signal">Voice</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Reader Stance</div>
+        <div class="stat-value" id="stance">Immersed</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toggle-card">
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" id="craftBtn">Craft</button>
+      <button class="toggle-btn" id="processBtn">Process</button>
+    </div>
+    
+    <div class="knowdrop-divider">
+      <p class="knowdrop" id="knowdropText">Voice, image, and structure are the three pillars of imaginative craft. Voice establishes the narrator's distance and reliability. Image builds sensory texture—not decoration, but the concrete detail that makes abstraction feel real. Structure determines when information arrives: chronology, fragmentation, layering. All three work together to hold your reader inside the world you're building, maintaining the illusion that this is happening now, to someone real.</p>
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-this-tag">
+      <div class="know-dot"></div>
+      <div class="know-tag-text">Know This</div>
+    </div>
+    <p class="know-this-body">Strong writers recognise that switching <span>writing modes</span> mid-piece breaks the <span>reader contract</span>—choose your mode at the start and sustain its <span>core promise</span> all the way through.</p>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d');
+
+const CSS = getComputedStyle(document.documentElement);
+const ACC = CSS.getPropertyValue('--acc').trim();
+const RGB = CSS.getPropertyValue('--acc-rgb').trim();
+
+let currentMode = 'imaginative';
+let particles = [];
+let time = 0;
+
+const modes = {
+  imaginative: {
+    promise: 'Promise: Build a world',
+    signal: 'Voice',
+    stance: 'Immersed',
+    particleCount: 80,
+    flowType: 'radial',
+    color: RGB
+  },
+  discursive: {
+    promise: 'Promise: Think aloud',
+    signal: 'Inquiry',
+    stance: 'Curious',
+    particleCount: 60,
+    flowType: 'wave',
+    color: RGB
+  },
+  persuasive: {
+    promise: 'Promise: Stake position',
+    signal: 'Argument',
+    stance: 'Evaluating',
+    particleCount: 50,
+    flowType: 'convergent',
+    color: RGB
+  },
+  reflective: {
+    promise: 'Promise: Examine process',
+    signal: 'Insight',
+    stance: 'Reflective',
+    particleCount: 70,
+    flowType: 'spiral',
+    color: RGB
+  }
+};
+
+function initParticles() {
+  particles = [];
+  const count = modes[currentMode].particleCount;
+  for (let i = 0; i < count; i++) {
+    particles.push({
+      x: Math.random(),
+      y: Math.random(),
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3,
+      phase: Math.random() * Math.PI * 2,
+      speed: 0.3 + Math.random() * 0.4,
+      size: 1.2 + Math.random() * 2.2
+    });
+  }
+}
+
+function resize() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function draw() {
+  const w = canvas.width / Math.min(window.devicePixelRatio || 1, 2);
+  const h = canvas.height / Math.min(window.devicePixelRatio || 1, 2);
+  const cx = w / 2;
+  const cy = h / 2;
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  time += 0.016;
+  
+  const flowType = modes[currentMode].flowType;
+  
+  particles.forEach(p => {
+    if (flowType === 'radial') {
+      const dx = p.x - 0.5;
+      const dy = p.y - 0.5;
+      const angle = Math.atan2(dy, dx);
+      p.x += Math.cos(angle) * 0.002 * p.speed;
+      p.y += Math.sin(angle) * 0.002 * p.speed;
+    } else if (flowType === 'wave') {
+      p.x += 0.003 * p.speed;
+      p.y += Math.sin(time * p.speed + p.phase) * 0.001;
+    } else if (flowType === 'convergent') {
+      const dx = 0.5 - p.x;
+      const dy = 0.5 - p.y;
+      p.x += dx * 0.004 * p.speed;
+      p.y += dy * 0.004 * p.speed;
+    } else if (flowType === 'spiral') {
+      const dx = p.x - 0.5;
+      const dy = p.y - 0.5;
+      const r = Math.hypot(dx, dy);
+      const angle = Math.atan2(dy, dx) + 0.02 * p.speed;
+      const nr = r + 0.001 * p.speed;
+      p.x = 0.5 + Math.cos(angle) * nr;
+      p.y = 0.5 + Math.sin(angle) * nr;
+    }
+    
+    if (p.x < 0) p.x = 1;
+    if (p.x > 1) p.x = 0;
+    if (p.y < 0) p.y = 1;
+    if (p.y > 1) p.y = 0;
+    
+    const px = p.x * w;
+    const py = p.y * h;
+    
+    const glow = ctx.createRadialGradient(px, py, 0, px, py, p.size * 8);
+    glow.addColorStop(0, 'rgba(' + RGB + ',0.7)');
+    glow.addColorStop(0.5, 'rgba(' + RGB + ',0.25)');
+    glow.addColorStop(1, 'rgba(' + RGB + ',0)');
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(px, py, p.size * 8, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+    
+    ctx.fillStyle = 'rgba(' + RGB + ',0.9)';
+    ctx.beginPath();
+    ctx.arc(px, py, p.size, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+  
+  requestAnimationFrame(draw);
+}
+
+function switchMode(mode) {
+  currentMode = mode;
+  const modeData = modes[mode];
+  
+  document.getElementById('currentMode').textContent = mode.charAt(0).toUpperCase() + mode.slice(1);
+  document.getElementById('promise').textContent = modeData.promise;
+  document.getElementById('signal').textContent = modeData.signal;
+  document.getElementById('stance').textContent = modeData.stance;
+  
+  initParticles();
+}
+
+document.querySelectorAll('.mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    switchMode(btn.dataset.mode);
+  });
+});
+
+const craftBtn = document.getElementById('craftBtn');
+const processBtn = document.getElementById('processBtn');
+const knowdropText = document.getElementById('knowdropText');
+
+const knowdrops = {
+  craft: "Voice, image, and structure are the three pillars of imaginative craft. Voice establishes the narrator's distance and reliability. Image builds sensory texture—not decoration, but the concrete detail that makes abstraction feel real. Structure determines when information arrives: chronology, fragmentation, layering. All three work together to hold your reader inside the world you're building, maintaining the illusion that this is happening now, to someone real.",
+  process: "Drafting, editing, and refining are not three stages—they're three lenses you apply recursively across all four modes. First draft establishes the mode contract and core promise. Editing tests whether every sentence honours that promise. Refining tightens voice, sharpens image, strengthens structure. The process is identical whether you're building a world, thinking aloud, staking a position, or examining your own insight. Mode determines the promise; process determines whether you keep it."
+};
+
+craftBtn.addEventListener('click', () => {
+  craftBtn.classList.add('active');
+  processBtn.classList.remove('active');
+  knowdropText.textContent = knowdrops.craft;
+});
+
+processBtn.addEventListener('click', () => {
+  processBtn.classList.add('active');
+  craftBtn.classList.remove('active');
+  knowdropText.textContent = knowdrops.process;
+});
+
+initParticles();
+resize();
+window.addEventListener('resize', resize);
+draw();
+</script>
