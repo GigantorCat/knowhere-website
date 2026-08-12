@@ -144,25 +144,15 @@
   <section class="section" id="exp-content">
     <div class="eyebrow"><span class="live-dot"></span> human intelligence // live demo</div>
     <h2><span class="num">01</span><br>One concept.<br><span class="accent">Every way to grasp it.</span></h2>
-    <p class="sub">These are real widgets from the app — not mockups, not renders. Pick your subject, then drag it, watch it, or hit listen. Interactive, visual and audio in one artefact.</p>
-
-    <div class="pill-row" role="tablist" aria-label="Subject">
-      <span class="row-label">your subject</span>
-      <button class="pill subj-pill active" data-widget="physics">Physics</button>
-      <button class="pill subj-pill" data-widget="english">English</button>
-      <button class="pill subj-pill" data-widget="maths">Maths</button>
-      <button class="pill subj-pill" data-widget="chemistry">Chemistry</button>
-      <button class="pill subj-pill" data-widget="biology">Biology</button>
-      <span class="more">13 subjects in the app</span>
-    </div>
+    <p class="sub">This is a real widget from the app — not a mockup, not a render. Drag it, watch it, or hit listen. Interactive, visual and audio in one artefact.</p>
 
     <div class="widget-panel">
       <div class="widget-chrome three-zone">
-        <span id="widgetChromeLabel">physics · unit 3 · gravity &amp; fields</span>
+        <span>physics · unit 3 · gravity &amp; fields</span>
         <span class="real" style="text-align:center">● live — actual product</span>
         <span style="text-align:right"><button class="mode-chip" id="listenBtn" aria-label="Play audio description">🔊 listen</button></span>
       </div>
-      <iframe id="widgetFrame" src="widgets/gravitational-potential-energy-and-potential.html" title="Interactive gravitational potential energy widget" loading="lazy" scrolling="no"></iframe>
+      <iframe src="demo-widget-gravity.html" title="Interactive spacetime curvature widget" loading="lazy" scrolling="no"></iframe>
     </div>
   </section>
 
@@ -346,40 +336,7 @@ class Component extends DCLogic {
       speechSynthesis.speak(new SpeechSynthesisUtterance(text));
     });
 
-    const KW_WIDGETS={
-      physics:{ label:"physics · unit 3 · gravity & fields",
-        src:"widgets/gravitational-potential-energy-and-potential.html",
-        title:"Interactive gravitational potential energy widget",
-        desc:"This widget shows a one kilogram mass being lifted away from Earth. Drag the slider to change its distance and watch gravitational potential energy climb toward zero — because GPE is negative everywhere, and only reaches zero infinitely far away. The takeaway: the familiar m g h formula is just the surface approximation of a much deeper curve." },
-      english:{ label:"english · creating & transforming texts",
-        src:"widgets/imaginative-discursive-persuasive-and-reflective-writing.html",
-        title:"Interactive writing forms widget",
-        desc:"This widget shows the four Year 12 writing forms — imaginative, discursive, persuasive and reflective. Tap a form to see its contract with the reader: what it promises, how it moves, and the craft that sustains it. The takeaway: the form you choose is a contract. Pick your mode at the start and keep its promise all the way through." },
-      maths:{ label:"maths methods · differentiation & applications",
-        src:"widgets/differentiation-rules-and-techniques.html",
-        title:"Interactive differentiation rules widget",
-        desc:"This widget builds derivatives step by step. Choose the chain, product or quotient rule, then drag the slider to watch each rule assemble the derivative one move at a time. The takeaway: every complex derivative is just multiplication — each rule tells you exactly what to multiply." },
-      chemistry:{ label:"chemistry · rate & equilibrium",
-        src:"widgets/chemical-equilibrium-disasters-explained.html",
-        title:"Interactive chemical equilibrium widget",
-        desc:"This widget shows an exothermic equilibrium under stress. Drag the slider to heat the system and watch Le Chatelier's principle fight back — and what happens industrially when the feedback loop wins. The takeaway: equilibrium is not static. Stress it carelessly and it spirals." },
-      biology:{ label:"biology · homeostasis",
-        src:"widgets/thermoregulation-in-endotherms.html",
-        title:"Interactive thermoregulation widget",
-        desc:"This widget simulates your body's thermostat. Drag the slider to change the environmental temperature and watch the hypothalamus coordinate vasodilation, sweating and shivering to defend a thirty-seven degree set point. The takeaway: your body fights harder to cool down than to warm up." }
-    };
-    let DESC=KW_WIDGETS.physics.desc;
-    root.querySelectorAll('[data-widget]').forEach(btn=>{
-      btn.addEventListener('click',()=>{
-        const w=KW_WIDGETS[btn.dataset.widget]; if(!w) return;
-        root.querySelectorAll('[data-widget]').forEach(b=>b.classList.toggle('active',b===btn));
-        if('speechSynthesis' in window){ speechSynthesis.cancel(); const lb=root.querySelector('#listenBtn'); if(lb) lb.classList.remove('speaking'); }
-        DESC=w.desc;
-        const cl=root.querySelector('#widgetChromeLabel'); if(cl) cl.textContent=w.label;
-        const f=root.querySelector('#widgetFrame');
-        if(f){ f.title=w.title; f.style.minHeight=''; f.style.height=''; f.src=w.src; }
-      });
-    });
+    const DESC="This widget shows a two dimensional grid representing spacetime. A large mass sits in the centre, warping the grid downward like a weight on a stretched sheet. A smaller object moves in a straight line — but because the grid itself is curved, its path bends into an orbit. Drag the mass to change its size, and watch how the curvature, and the orbit, respond. The takeaway: gravity is not a pulling force. It is the shape of space itself.";
     const listenBtn=$('listenBtn');
     listenBtn.addEventListener('click',function(){
       if(!('speechSynthesis' in window)) return;

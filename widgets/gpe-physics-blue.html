@@ -4,10 +4,10 @@
 :root {
   --bg: #0B0D0C;
   --bg2: #12160F;
-  --acc: #EC1559;
-  --ag: rgba(236,21,89,.7);
-  --ag1: rgba(236,21,89,.12);
-  --ag2: rgba(236,21,89,.45);
+  --acc: #3A6FC8;
+  --ag: rgba(58,111,200,.7);
+  --ag1: rgba(58,111,200,.12);
+  --ag2: rgba(58,111,200,.45);
   --amb: #FAC775;
   --ink: #EDEDE8;
   --ink-dim: #8C9389;
@@ -235,10 +235,10 @@ canvas {
 }
 
 .toggle-btn.active {
-  background: rgba(236,21,89,.1);
+  background: rgba(58,111,200,.1);
   border: 1px solid var(--acc);
   color: var(--acc);
-  box-shadow: 0 0 22px rgba(236,21,89,.18);
+  box-shadow: 0 0 22px rgba(58,111,200,.18);
 }
 
 .knowdrop {
@@ -436,14 +436,17 @@ function draw() {
   const cx = w / 2;
   const cy = h / 2;
 
-  ctx.fillStyle = '#000';
+  const bgGrad = ctx.createLinearGradient(0, 0, 0, h);
+  bgGrad.addColorStop(0, '#16294E');
+  bgGrad.addColorStop(1, '#0A1424');
+  ctx.fillStyle = bgGrad;
   ctx.fillRect(0, 0, w, h);
 
   // Starfield
   stars.forEach(st => {
     const alpha = (0.5 + 0.5 * Math.sin(time * st.sp + st.tw)) * 0.7;
     if (st.h) {
-      ctx.fillStyle = `rgba(236,21,89,${alpha})`;
+      ctx.fillStyle = `rgba(58,111,200,${alpha})`;
     } else {
       ctx.fillStyle = `rgba(237,237,232,${alpha * 0.4})`;
     }
@@ -473,11 +476,11 @@ function draw() {
     for (let i = 0; i < pts.length - 1; i++) {
       const grad = ctx.createLinearGradient(pts[i].sx, pts[i].sy, pts[i + 1].sx, pts[i + 1].sy);
       const avgT = (pts[i].t + pts[i + 1].t) / 2;
-      const brightness = avgT * 0.35 + 0.08;
-      grad.addColorStop(0, `rgba(236,21,89,${pts[i].t * brightness})`);
-      grad.addColorStop(1, `rgba(236,21,89,${pts[i + 1].t * brightness})`);
+      const brightness = avgT * 0.6 + 0.16;
+      grad.addColorStop(0, `rgba(128,178,246,${pts[i].t * brightness})`);
+      grad.addColorStop(1, `rgba(128,178,246,${pts[i + 1].t * brightness})`);
       ctx.strokeStyle = grad;
-      ctx.lineWidth = 0.8;
+      ctx.lineWidth = 1.05;
       ctx.beginPath();
       ctx.moveTo(pts[i].sx, pts[i].sy);
       ctx.lineTo(pts[i + 1].sx, pts[i + 1].sy);
@@ -494,11 +497,11 @@ function draw() {
     for (let i = 0; i < pts.length - 1; i++) {
       const grad = ctx.createLinearGradient(pts[i].sx, pts[i].sy, pts[i + 1].sx, pts[i + 1].sy);
       const avgT = (pts[i].t + pts[i + 1].t) / 2;
-      const brightness = avgT * 0.35 + 0.08;
-      grad.addColorStop(0, `rgba(236,21,89,${pts[i].t * brightness})`);
-      grad.addColorStop(1, `rgba(236,21,89,${pts[i + 1].t * brightness})`);
+      const brightness = avgT * 0.6 + 0.16;
+      grad.addColorStop(0, `rgba(128,178,246,${pts[i].t * brightness})`);
+      grad.addColorStop(1, `rgba(128,178,246,${pts[i + 1].t * brightness})`);
       ctx.strokeStyle = grad;
-      ctx.lineWidth = 0.8;
+      ctx.lineWidth = 1.05;
       ctx.beginPath();
       ctx.moveTo(pts[i].sx, pts[i].sy);
       ctx.lineTo(pts[i + 1].sx, pts[i + 1].sy);
@@ -511,9 +514,9 @@ function draw() {
   
   // Corona glow
   const corona = ctx.createRadialGradient(cx, cy, 0, cx, cy, massR * 5.5);
-  corona.addColorStop(0, 'rgba(236,21,89,0.55)');
-  corona.addColorStop(0.4, 'rgba(236,21,89,0.18)');
-  corona.addColorStop(1, 'rgba(236,21,89,0)');
+  corona.addColorStop(0, 'rgba(58,111,200,0.55)');
+  corona.addColorStop(0.4, 'rgba(58,111,200,0.18)');
+  corona.addColorStop(1, 'rgba(58,111,200,0)');
   ctx.save();
   ctx.globalCompositeOperation = 'lighter';
   ctx.fillStyle = corona;
@@ -531,7 +534,7 @@ function draw() {
   ctx.arc(cx, cy, massR, 0, Math.PI * 2);
   ctx.fill();
 
-  ctx.strokeStyle = 'rgba(236,21,89,0.3)';
+  ctx.strokeStyle = 'rgba(128,178,246,0.5)';
   ctx.lineWidth = 1.2;
   ctx.stroke();
 
@@ -544,7 +547,7 @@ function draw() {
   // Orbit path
   ctx.save();
   ctx.globalCompositeOperation = 'lighter';
-  ctx.strokeStyle = 'rgba(236,21,89,0.2)';
+  ctx.strokeStyle = 'rgba(128,178,246,0.35)';
   ctx.lineWidth = 1;
   ctx.beginPath();
   ctx.ellipse(cx, cy, orbitR, orbitR * tilt, 0, 0, Math.PI * 2);
@@ -557,7 +560,7 @@ function draw() {
     const trailR = orbitR;
     const tx = cx + Math.cos(ta) * trailR;
     const ty = cy + Math.sin(ta) * trailR * tilt;
-    ctx.fillStyle = `rgba(236,21,89,${(1 - i / 22) * 0.5})`;
+    ctx.fillStyle = `rgba(58,111,200,${(1 - i / 22) * 0.5})`;
     ctx.globalCompositeOperation = 'lighter';
     ctx.beginPath();
     ctx.arc(tx, ty, 5 * (1 - i / 22) + 1, 0, Math.PI * 2);
@@ -595,7 +598,7 @@ function draw() {
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
     ctx.beginPath();
-    ctx.strokeStyle = `rgba(236,21,89,${life * 0.16})`;
+    ctx.strokeStyle = `rgba(128,178,246,${life * 0.32})`;
     ctx.lineWidth = 1.2;
     ctx.ellipse(cx, cy, rp.r, rp.r * tilt, 0, 0, Math.PI * 2);
     ctx.stroke();
