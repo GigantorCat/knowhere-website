@@ -6,8 +6,8 @@
     if (!window.KnowhereMarks) { return setTimeout(function () { injectLogo(root); }, 60); }
     root.querySelectorAll('[data-kw-logo]').forEach(function (el) {
       var s = parseInt(el.getAttribute('data-kw-logo') || '24', 10);
-      var col = el.getAttribute('data-kw-logo-color') || '#EDECE8';
-      el.innerHTML = window.KnowhereMarks.logoSvg(s, col);
+      var col = el.getAttribute('data-kw-logo-color');
+      el.innerHTML = col ? window.KnowhereMarks.logoSvg(s, col) : window.KnowhereMarks.logoSvg(s);
     });
   }
 

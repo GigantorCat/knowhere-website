@@ -1,0 +1,6 @@
+/* Vendored runtime for support.js — no unpkg dependency. Loaded BEFORE support.js. */
+window.__resources = {
+  "https://unpkg.com/react@18.3.1/umd/react.production.min.js": "./vendor/react.production.min.js",
+  "https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js": "./vendor/react-dom.production.min.js",
+  "https://unpkg.com/@babel/standalone@7.29.0/babel.min.js": "./vendor/babel.min.js"
+};

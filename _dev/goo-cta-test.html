@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>goo cta — test rig</title>
+<style>
+/* ============================================================
+   KNOWHERE GOO CTA — test rig
+   Lift-out for production = everything between the LIFT markers
+   + the inline <svg> filter def + the JS block at the bottom.
+   Brat locked. No hue cycling. Purple stays in the neuro layer.
+   ============================================================ */
+
+:root {
+  --kw-ink: #070708;
+  --kw-brat: #7BEA5A;
+  --kw-brat-hot: hsl(106 90% 82%);   /* hotspot highlight — lighter brat, same hue */
+  --kw-label-ink: #0a1f06;           /* text on brat */
+  --spring: linear(
+    0, 0.002, 0.01 0.9%, 0.038 1.8%, 0.156, 0.312 5.8%, 0.789 11.1%, 1.015 14.2%,
+    1.096, 1.157, 1.199, 1.224 20.3%, 1.231, 1.231, 1.226, 1.214 24.6%,
+    1.176 26.9%, 1.057 32.6%, 1.007 35.5%, 0.984, 0.968, 0.956, 0.949 42%,
+    0.946 44.1%, 0.95 46.5%, 0.998 57.2%, 1.007, 1.011 63.3%, 1.012 68.3%,
+    0.998 84%, 1
+  );
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+
+body {
+  background: var(--kw-ink);
+  color: #e8e8e6;
+  font-family: system-ui, -apple-system, sans-serif; /* production: inherit site display face */
+  display: grid;
+  place-items: center;
+}
+
+main {
+  display: grid;
+  gap: 4.5rem;
+  justify-items: center;
+  text-align: center;
+  padding: 3rem 1.5rem;
+}
+
+.mono {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;   /* mono labels stay uppercase — doctrine */
+  color: #5a5a58;
+}
+
+.note { max-width: 34rem; font-size: 0.85rem; line-height: 1.6; color: #8a8a86; }
+.note strong { color: #c9c9c5; font-weight: 600; }
+
+/* ================= LIFT START ================= */
+
+@property --a { syntax: "<percentage>"; initial-value: 0%; inherits: true; }
+@property --x { syntax: "<number>"; initial-value: 50; inherits: true; }
+@property --y { syntax: "<number>"; initial-value: 50; inherits: true; }
+
+.kw-goo {
+  --a: 100%;         /* full power always — the goo filter thresholds hard,
+                        partial alpha = flickery ripples. movement, not fade. */
+  --x: 50;
+  --y: 32;
+
+  appearance: none;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+  isolation: isolate;
+
+  font-family: inherit;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  color: var(--kw-label-ink);      /* crisp — the goo wobbles, the words don't */
+  padding: 1.25em 2.4em;
+
+  scale: 0.94;
+  transition: --a 0.5s ease-in-out, scale 1.66s var(--spring);
+}
+
+/* the goo lives entirely on the pseudo, behind the crisp label */
+.kw-goo::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  padding: 24px;                 /* radial layer overreach = where the goo forms */
+  border-radius: 20px;
+  filter: blur(12px) url(#kw-goo-filter)
+          drop-shadow(0 0.25em 0.6em rgba(0, 0, 0, 0.55));
+  background-image:
+    linear-gradient(0deg, var(--kw-brat), var(--kw-brat)),
+    radial-gradient(
+      40% 70% at calc(var(--x) * 1%) calc(var(--y) * 1%),
+      hsl(106 90% 82% / var(--a)) 0%,
+      transparent 90%
+    );
+  background-clip: content-box, border-box;
+}
+
+.kw-goo:hover,
+.kw-goo.is-pressed {
+  --a: 100%;
+  scale: 1;
+  transition-duration: 0.5s, 1s;
+}
+
+.kw-goo:active { scale: 0.97; transition: scale 0.15s ease-out; }
+
+.kw-goo:focus-visible {
+  outline: 2px solid var(--kw-brat);
+  outline-offset: 10px;
+  border-radius: 20px;
+}
+
+/* --- flat fallback: solid brat pill, zero filters ---
+   apply .kw-goo--flat if Safari renders wet cardboard   */
+.kw-goo--flat::before {
+  filter: none;
+  padding: 0;
+  border-radius: 999px;
+  background-image: linear-gradient(0deg, var(--kw-brat), var(--kw-brat));
+  background-clip: border-box;
+}
+
+/* --- reduced motion: static, dignified, still brat --- */
+@media (prefers-reduced-motion: reduce) {
+  .kw-goo { scale: 1; transition: none; --a: 0%; }  /* clean static rect */
+}
+
+/* ================= LIFT END ================= */
+
+/* test-rig chrome only */
+.toggle {
+  appearance: none;
+  border: 1px solid #2a2a28;
+  background: transparent;
+  color: #8a8a86;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.6em 1.2em;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+.toggle:hover { color: #e8e8e6; border-color: #4a4a48; }
+</style>
+<style>html,body{margin:0;padding:0;background:#070708}</style>
+</head>
+<body>
+
+<main>
+  <div>
+    <p class="mono">primary cta — goo treatment</p>
+  </div>
+
+  <button type="button" class="kw-goo" id="cta">start knowing&nbsp;&nbsp;&rarr;</button>
+
+  <div style="display:grid; gap:1.25rem; justify-items:center;">
+    <button type="button" class="toggle" id="flatToggle">preview flat fallback</button>
+    <p class="note">
+      <strong>desktop:</strong> hover — goo follows the pointer.
+      <strong>touch:</strong> the blob breathes on its own; press and the goo surges to your thumb.
+      <strong>safari check:</strong> if the edges look like a smudge instead of goo,
+      the SVG filter is being ignored — that's what the flat fallback is for.
+      reduced-motion users get a calm static button automatically.
+    </p>
+  </div>
+</main>
+
+<!-- goo filter def — required, ships with the component -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="kw-goo-filter" x="-50%" y="-50%" width="200%" height="200%">
+    <feComponentTransfer><feFuncA type="discrete" tableValues="0 1"/></feComponentTransfer>
+    <feGaussianBlur stdDeviation="5"/>
+    <feComponentTransfer><feFuncA type="table" tableValues="-5 11"/></feComponentTransfer>
+  </filter>
+</svg>
+
+<script>
+/* ================= LIFT START (js) =================
+   Idle breathing + pointer follow + touch surge.
+   ~30 lines, no deps, one rAF loop max.            */
+(() => {
+  const b = document.getElementById('cta');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce) return; // static hotspot from CSS defaults — done
+
+  let t = Math.random() * 10;
+  let raf = null;
+
+  // lissajous drift — the blob breathes when nobody's touching it
+  function idle() {
+    t += 0.006;
+    b.style.setProperty('--x', ((Math.cos(t) + 1) / 2) * 64 + 18);
+    b.style.setProperty('--y', ((Math.sin(t * 1.7) + 1) / 2) * 64 + 18);
+    raf = requestAnimationFrame(idle);
+  }
+  function stopIdle() { if (raf) { cancelAnimationFrame(raf); raf = null; } }
+
+  function follow(e) {
+    const r = b.getBoundingClientRect();
+    b.style.setProperty('--x', ((e.clientX - r.x) / r.width) * 100);
+    b.style.setProperty('--y', ((e.clientY - r.y) / r.height) * 100);
+  }
+
+  // fine pointers: goo chases the cursor
+  b.addEventListener('pointerenter', e => {
+    if (e.pointerType === 'mouse') { stopIdle(); follow(e); }
+  });
+  b.addEventListener('pointermove', e => {
+    if (e.pointerType === 'mouse') follow(e);
+  });
+  b.addEventListener('pointerleave', () => { if (!raf) idle(); });
+
+  // touch: surge to the thumb on press, resume breathing after
+  b.addEventListener('pointerdown', e => {
+    stopIdle(); follow(e); b.classList.add('is-pressed');
+  });
+  ['pointerup', 'pointercancel'].forEach(ev =>
+    b.addEventListener(ev, () => {
+      b.classList.remove('is-pressed');
+      if (!raf) idle();
+    })
+  );
+
+  idle();
+})();
+/* ================= LIFT END (js) ================= */
+
+/* test-rig only: fallback preview toggle */
+document.getElementById('flatToggle').addEventListener('click', function () {
+  const cta = document.getElementById('cta');
+  cta.classList.toggle('kw-goo--flat');
+  this.textContent = cta.classList.contains('kw-goo--flat')
+    ? 'back to goo' : 'preview flat fallback';
+});
+</script>
+<script src="./knowhere-mobile-menu.js?v=6" defer></script>
+</body>
+</html>
