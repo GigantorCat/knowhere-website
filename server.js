@@ -130,6 +130,58 @@ app.get('/api/waitlist/preview', (req, res) => {
   res.set('Content-Type', 'text/html; charset=utf-8').send(m.html);
 });
 
+// ---------- launch console (ADMIN_KEY): counts + one-click T-7 / T-3 / T-0 sends, per cohort ----------
+const sent = {}; // stage -> { at, count } (in-memory guard against double-sends within a process lifetime)
+async function sendStage(stage, launchDateStr, appUrl, testTo, testAs) {
+  const emailsMod = emails;
+  if (testTo) { const m = emailsMod.countdown(stage, { email: testTo, firstName: 'Cat', type: testAs || 'student', teacherSeat: testAs === 'teacher' ? 7 : 0, launchDateStr, appUrl }); const r = await resend('POST', '/emails', m); return { ok: r.ok, sent: r.ok ? 1 : 0, failed: r.ok ? 0 : 1, detail: r.json }; }
+  const list = contacts.filter(c => !c.unsubscribed);
+  let ok = 0, failed = 0;
+  for (let i = 0; i < list.length; i += 100) {
+    const batch = list.slice(i, i + 100).map(c => { const p = c.properties || {}; const type = TYPES.has(p.user_type) ? p.user_type : 'student';
+      const m = emailsMod.countdown(stage, { email: c.email, firstName: c.first_name, type, teacherSeat: Number(p.founding_teacher_seat) || 0, launchDateStr, appUrl });
+      return { from: m.from, to: [m.to], subject: m.subject, html: m.html, text: m.text, headers: m.headers, tags: [{ name: 'stage', value: stage }, { name: 'cohort', value: type }] }; });
+    const r = await resend('POST', '/emails/batch', batch);
+    if (r.ok) ok += batch.length; else { failed += batch.length; console.error('[launch] batch failed', r.status, JSON.stringify(r.json).slice(0, 300)); }
+    await new Promise(r => setTimeout(r, 600));
+  }
+  sent[stage] = { at: new Date().toISOString(), count: ok };
+  return { ok: failed === 0, sent: ok, failed };
+}
+app.get('/api/waitlist/launch', (req, res) => {
+  if (!admin(req, res)) return;
+  const key = encodeURIComponent(req.query.key), date = process.env.LAUNCH_DATE_STR || 'Monday 21 September', appUrl = process.env.APP_URL || 'https://app.knowhere.me';
+  const live = contacts.filter(c => !c.unsubscribed).length, unsub = contacts.length - live;
+  const row = (k, v) => `<tr><td style="padding:6px 14px 6px 0;color:#8C9389">${k}</td><td style="padding:6px 0;font-weight:600">${v}</td></tr>`;
+  const stageBox = (st, label) => `<div style="border:1px solid #262B26;border-radius:12px;padding:16px 18px;margin:10px 0;background:#111311">
+    <div style="font-weight:700;font-size:16px">${label} ${sent[st] ? `<span style="font-size:12px;color:#7BEA5A;margin-left:8px">sent ${sent[st].count} at ${sent[st].at.slice(11,16)} UTC</span>` : ''}</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+      <a href="/api/waitlist/preview?key=${key}&which=${st}&type=student" target="_blank" style="color:#9b9a96;font-size:13px;align-self:center">preview student</a>
+      <a href="/api/waitlist/preview?key=${key}&which=${st}&type=parent" target="_blank" style="color:#9b9a96;font-size:13px;align-self:center">parent</a>
+      <a href="/api/waitlist/preview?key=${key}&which=${st}&type=teacher" target="_blank" style="color:#9b9a96;font-size:13px;align-self:center">teacher</a>
+      <form method="post" action="/api/waitlist/send?key=${key}" style="margin-left:auto;display:flex;gap:6px;align-items:center"><input type="hidden" name="stage" value="${st}"><input name="testTo" placeholder="test to (your email)" style="background:#0C0E0B;border:1px solid #262B26;border-radius:8px;color:#EDECE8;padding:8px 10px;font:inherit;width:190px"><select name="testAs" style="background:#0C0E0B;border:1px solid #262B26;border-radius:8px;color:#EDECE8;padding:8px;font:inherit"><option>student</option><option>parent</option><option>teacher</option></select><button style="background:transparent;border:1px solid #7BEA5A;color:#7BEA5A;border-radius:8px;padding:8px 12px;font:inherit;cursor:pointer">send test</button></form>
+      <form method="post" action="/api/waitlist/send?key=${key}" onsubmit="return confirm('Send ${label} to ${live} people? This cannot be undone.')" style="display:flex;gap:6px;align-items:center"><input type="hidden" name="stage" value="${st}"><input type="hidden" name="confirm" value="YES"><button style="background:#7BEA5A;border:0;color:#070708;border-radius:8px;padding:9px 14px;font:700 14px Geist,inherit;cursor:pointer">send to ${live}</button></form>
+    </div></div>`;
+  res.set('Content-Type', 'text/html; charset=utf-8').send(`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>launch console — knowhere</title></head>
+  <body style="margin:0;background:#070708;color:#EDECE8;font-family:Geist,system-ui,sans-serif;padding:34px"><div style="max-width:720px;margin:0 auto">
+  <p style="font-family:ui-monospace,monospace;font-size:11px;letter-spacing:.26em;color:#7BEA5A;margin:0 0 8px">LAUNCH CONSOLE</p>
+  <h1 style="margin:0 0 18px;font-size:30px;letter-spacing:-.03em">the waitlist, right now.</h1>
+  <table style="border-collapse:collapse;font-size:15px">${row('on the list', live)}${row('unsubscribed', unsub)}${row('students / parents / teachers', `${stats.byType.student || 0} / ${stats.byType.parent || 0} / ${stats.byType.teacher || 0}`)}${row('by state', Object.entries(stats.byState).map(([k, v]) => k + ' ' + v).join(' · ') || '—')}${row('founding seats left', Math.max(0, TEACHER_SEATS - stats.teachers))}${row('launch date in emails', date + ' <span style="color:#6B6A66;font-weight:400">(LAUNCH_DATE_STR in Railway)</span>')}${row('app link (T-0)', appUrl)}</table>
+  <p style="color:#8C9389;font-size:13px;margin:18px 0 6px">Each button sends the real thing to everyone still subscribed, with per-cohort copy. Send yourself a test first. <a href="/api/waitlist/export.csv?key=${key}" style="color:#9b9a96">download CSV</a></p>
+  ${stageBox('t7', 'T-7 · one week out')}${stageBox('t3', 'T-3 · three days out')}${stageBox('t0', 'T-0 · launch day')}
+  </div></body></html>`);
+});
+app.post('/api/waitlist/send', express.urlencoded({ extended: false }), async (req, res) => {
+  if (!admin(req, res)) return;
+  const stage = String(req.body.stage || ''); if (!['t7', 't3', 't0'].includes(stage)) return res.status(400).send('bad stage');
+  const date = process.env.LAUNCH_DATE_STR || 'Monday 21 September', appUrl = process.env.APP_URL || 'https://app.knowhere.me';
+  const testTo = clean(req.body.testTo, 160);
+  if (!testTo && req.body.confirm !== 'YES') return res.status(400).send('not confirmed');
+  if (!testTo && sent[stage]) return res.status(409).send(`${stage} already sent at ${sent[stage].at} (${sent[stage].count}). Restart the service if you really need to resend.`);
+  const r = await sendStage(stage, date, appUrl, testTo || null, clean(req.body.testAs, 10));
+  res.set('Content-Type', 'text/html; charset=utf-8').send(`<!doctype html><body style="background:#070708;color:#EDECE8;font-family:Geist,system-ui,sans-serif;padding:34px"><h1 style="letter-spacing:-.03em">${r.ok ? 'sent.' : 'hmm.'}</h1><p>${stage}: ${r.sent} sent, ${r.failed} failed${testTo ? ' (test → ' + testTo + ')' : ''}.</p>${r.detail && !r.ok ? '<pre style="color:#F15524">' + JSON.stringify(r.detail).slice(0, 500) + '</pre>' : ''}<p><a href="/api/waitlist/launch?key=${encodeURIComponent(req.query.key)}" style="color:#7BEA5A">← back to the console</a></p></body>`);
+});
+
 // for-teachers.html already polls this shape: { remaining, total }
 app.get('/api/staffroom-seats', (req, res) => {
   res.set('Cache-Control', 'no-store');
