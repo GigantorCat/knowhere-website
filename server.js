@@ -140,7 +140,7 @@ async function sendStage(stage, launchDateStr, appUrl, testTo, testAs) {
   for (let i = 0; i < list.length; i += 100) {
     const batch = list.slice(i, i + 100).map(c => { const p = c.properties || {}; const type = TYPES.has(p.user_type) ? p.user_type : 'student';
       const m = emailsMod.countdown(stage, { email: c.email, firstName: c.first_name, type, teacherSeat: Number(p.founding_teacher_seat) || 0, launchDateStr, appUrl });
-      return { from: m.from, to: [m.to], subject: m.subject, html: m.html, text: m.text, headers: m.headers, tags: [{ name: 'stage', value: stage }, { name: 'cohort', value: type }] }; });
+      return { from: m.from, reply_to: m.reply_to, to: [m.to], subject: m.subject, html: m.html, text: m.text, headers: m.headers, tags: [{ name: 'stage', value: stage }, { name: 'cohort', value: type }] }; });
     const r = await resend('POST', '/emails/batch', batch);
     if (r.ok) ok += batch.length; else { failed += batch.length; console.error('[launch] batch failed', r.status, JSON.stringify(r.json).slice(0, 300)); }
     await new Promise(r => setTimeout(r, 600));
@@ -237,7 +237,7 @@ app.post('/api/waitlist', async (req, res) => {
       if (teacherSeat) stats.teachers = teacherSeat;
       contacts.push({ email, first_name: firstName, properties, created_at: properties.joined_at }); tally({ properties });
       const mail = emails.welcome({ email, firstName, type, position, teacherSeat });
-      resend('POST', '/emails', { from: mail.from, to: [email], subject: mail.subject, html: mail.html, text: mail.text })
+      resend('POST', '/emails', { from: mail.from, reply_to: mail.reply_to, to: [email], subject: mail.subject, html: mail.html, text: mail.text })
         .then(m => { if (!m.ok) console.warn('[waitlist] welcome email failed', m.status, m.json); }).catch(() => {});
     }
     return res.json({ ok: true, existed, position: existed ? null : position, teacherSeat: existed ? null : teacherSeat, teacherSeatsLeft: Math.max(0, TEACHER_SEATS - stats.teachers) });

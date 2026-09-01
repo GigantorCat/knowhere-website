@@ -7,6 +7,9 @@ const SITE = process.env.SITE_URL || 'https://knowhere.me';
 const ASSETS = (process.env.EMAIL_ASSET_BASE || SITE) + '/email-assets';
 const FROM_MAIN = process.env.FROM_EMAIL || 'knowhere <hello@knowhere.me>';
 const FROM_GOAT = process.env.FROM_EMAIL_GOAT || 'The Goat at knowhere <hello@knowhere.me>';
+// Replies always land on the root domain's real mailbox, never on the sending
+// subdomain (send.knowhere.me has no inbox). Set REPLY_TO to override.
+const REPLY_TO = process.env.REPLY_TO || 'hello@knowhere.me';
 const SECRET = process.env.ADMIN_KEY || 'dev';
 const TEACHER_SEATS = Number(process.env.TEACHER_SEATS || 50);
 
@@ -72,7 +75,7 @@ function welcome({ email, firstName, type, position, teacherSeat }) {
       + B.btn('Poke the real thing meanwhile →', `${SITE}/experience-it.html`) + B.sig(),
     footHtml: `Sent to ${email} because you joined the waitlist at knowhere.me. Not you? Ignore this and nothing else will arrive.`, unsub: unsubUrl(email),
   });
-  return { from: FROM_GOAT, to: email, subject: seat ? `You're in — founding teacher seat #${teacherSeat} 🐐` : `You're in 🐐`, html, text: strip(html) };
+  return { from: FROM_GOAT, reply_to: REPLY_TO, to: email, subject: seat ? `You're in — founding teacher seat #${teacherSeat} 🐐` : `You're in 🐐`, html, text: strip(html) };
 }
 
 /* ── 2. countdown: t7 / t3 / t0 — per cohort ── */
@@ -111,7 +114,7 @@ function countdown(stage, { email, firstName, type, teacherSeat, launchDateStr, 
   }
   const html = shell({ goat, pill, bodyHtml: B.eyebrow(eyebrow) + B.h1(h1) + paras.map(B.p).join('') + B.btn(btn[0], btn[1]) + B.sig(), footHtml: `Sent to ${email} because you joined the waitlist at knowhere.me.`, unsub: unsubUrl(email) });
   const subject = { t7: { student: 'Seven days to knowing', parent: 'One week until knowhere opens', teacher: 'One week out — founding teachers' }, t3: { student: 'Three days.', parent: 'Three days to go', teacher: 'Three days out' }, t0: { student: "The door's open. Go.", parent: "knowhere is live — your kid's first concept is waiting", teacher: 'Students are in. Teachers are next.' } }[T][type];
-  return { from: T === 't0' ? FROM_GOAT : FROM_MAIN, to: email, subject, html, text: strip(html), headers: { 'List-Unsubscribe': `<${unsubUrl(email)}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' } };
+  return { from: T === 't0' ? FROM_GOAT : FROM_MAIN, reply_to: REPLY_TO, to: email, subject, html, text: strip(html), headers: { 'List-Unsubscribe': `<${unsubUrl(email)}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' } };
 }
 
 module.exports = { welcome, countdown, unsubToken, unsubUrl, DATES };
