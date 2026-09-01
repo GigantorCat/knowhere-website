@@ -2,6 +2,7 @@
 // "nowhere"; brat-green particles then sweep in to build the leading "k"
 // (nowhere → knowhere); finally every particle turns brat green. Lockup +
 // single CTA fade in beneath the word. Self-contained web component.
+// v19: PRESS added to footer nav (Cat, 1 Sep).
 // v18: small-text greys lifted to #8C8B87 (contrast ruling, Cat 15 Aug).
 // v17: hidden outro CTA is visibility-gated (keyboard a11y).
 // v16: nav CTA answers the headline (let&#39;s go, a Cat-ruled exception to
@@ -257,6 +258,7 @@
                 '<span style="display:flex;align-items:center;gap:10px;margin-right:14px"><span data-kfn-logo style="display:flex;align-items:center;color:#EDECE8"></span><span style="font-size:18px;font-weight:700;letter-spacing:-0.04em;color:#EDECE8">know<b style="color:#7BEA5A">here</b></span></span>' +
                 '<a class="kfn-link" href="know-us.html">know us</a>' +
                 '<a class="kfn-link" href="mission.html">mission</a>' +
+                '<a class="kfn-link" href="press.html">press</a>' +
                 '<a class="kfn-link" href="talk-to-us.html">talk to us</a>' +
               '</div>' +
               '<div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:22px;padding-top:26px;border-top:1px solid rgba(255,255,255,0.06)">' +
