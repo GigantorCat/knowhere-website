@@ -121,12 +121,13 @@ app.all('/api/waitlist/unsubscribe', async (req, res) => {
   const c = contacts.find(x => x.email === email); if (c) c.unsubscribed = !back;
   res.send(unsubPage({ state: back ? 'back' : 'out', resubUrl: back ? '' : emails.unsubUrl(email) + '&resub=1' }));
 });
-// admin preview of any email:  /api/waitlist/preview?key=…&which=welcome|t7|t3|t0&type=student|parent|teacher
+// admin preview of any email:  /api/waitlist/preview?key=…&which=welcome|t7|t3|t0|t4&type=student|parent|teacher  (t4 is students only)
 app.get('/api/waitlist/preview', (req, res) => {
   if (!admin(req, res)) return;
   const type = String(req.query.type || 'student'), which = String(req.query.which || 'welcome');
   const args = { email: 'preview@knowhere.me', firstName: 'Cat', type, position: 42, teacherSeat: type === 'teacher' ? 7 : 0, launchDateStr: process.env.LAUNCH_DATE_STR || 'Monday 21 September', appUrl: process.env.APP_URL || 'https://app.knowhere.me' };
-  const m = which === 'welcome' ? emails.welcome(args) : emails.countdown(which, args);
+  const m = which === 'welcome' ? emails.welcome(args) : emails.build(which, args);
+  if (!m) return res.status(404).send(`no ${which} email goes to ${type}s`);
   res.set('Content-Type', 'text/html; charset=utf-8').send(m.html);
 });
 
@@ -134,13 +135,14 @@ app.get('/api/waitlist/preview', (req, res) => {
 const sent = {}; // stage -> { at, count } (in-memory guard against double-sends within a process lifetime)
 async function sendStage(stage, launchDateStr, appUrl, testTo, testAs) {
   const emailsMod = emails;
-  if (testTo) { const m = emailsMod.countdown(stage, { email: testTo, firstName: 'Cat', type: testAs || 'student', teacherSeat: testAs === 'teacher' ? 7 : 0, launchDateStr, appUrl }); const r = await resend('POST', '/emails', m); return { ok: r.ok, sent: r.ok ? 1 : 0, failed: r.ok ? 0 : 1, detail: r.json }; }
-  const list = contacts.filter(c => !c.unsubscribed);
+  if (testTo) { const m = emailsMod.build(stage, { email: testTo, firstName: 'Cat', type: testAs || 'student', teacherSeat: testAs === 'teacher' ? 7 : 0, launchDateStr, appUrl }); if (!m) return { ok: false, sent: 0, failed: 1, detail: { message: `no ${stage} email goes to ${testAs || 'student'}s — pick another cohort` } }; const r = await resend('POST', '/emails', m); return { ok: r.ok, sent: r.ok ? 1 : 0, failed: r.ok ? 0 : 1, detail: r.json }; }
+  // Build every message first, then batch: a stage can return null for a cohort (t4 is students only) and those are simply skipped.
+  const msgs = contacts.filter(c => !c.unsubscribed).map(c => { const p = c.properties || {}; const type = TYPES.has(p.user_type) ? p.user_type : 'student';
+      const m = emailsMod.build(stage, { email: c.email, firstName: c.first_name, type, teacherSeat: Number(p.founding_teacher_seat) || 0, launchDateStr, appUrl });
+      return m && { from: m.from, reply_to: m.reply_to, to: [m.to], subject: m.subject, html: m.html, text: m.text, headers: m.headers, tags: [{ name: 'stage', value: stage }, { name: 'cohort', value: type }] }; }).filter(Boolean);
   let ok = 0, failed = 0;
-  for (let i = 0; i < list.length; i += 100) {
-    const batch = list.slice(i, i + 100).map(c => { const p = c.properties || {}; const type = TYPES.has(p.user_type) ? p.user_type : 'student';
-      const m = emailsMod.countdown(stage, { email: c.email, firstName: c.first_name, type, teacherSeat: Number(p.founding_teacher_seat) || 0, launchDateStr, appUrl });
-      return { from: m.from, reply_to: m.reply_to, to: [m.to], subject: m.subject, html: m.html, text: m.text, headers: m.headers, tags: [{ name: 'stage', value: stage }, { name: 'cohort', value: type }] }; });
+  for (let i = 0; i < msgs.length; i += 100) {
+    const batch = msgs.slice(i, i + 100);
     const r = await resend('POST', '/emails/batch', batch);
     if (r.ok) ok += batch.length; else { failed += batch.length; console.error('[launch] batch failed', r.status, JSON.stringify(r.json).slice(0, 300)); }
     await new Promise(r => setTimeout(r, 600));
@@ -153,8 +155,8 @@ app.get('/api/waitlist/launch', (req, res) => {
   const key = encodeURIComponent(req.query.key), date = process.env.LAUNCH_DATE_STR || 'Monday 21 September', appUrl = process.env.APP_URL || 'https://app.knowhere.me';
   const live = contacts.filter(c => !c.unsubscribed).length, unsub = contacts.length - live;
   const row = (k, v) => `<tr><td style="padding:6px 14px 6px 0;color:#8C9389">${k}</td><td style="padding:6px 0;font-weight:600">${v}</td></tr>`;
-  const stageBox = (st, label) => `<div style="border:1px solid #262B26;border-radius:12px;padding:16px 18px;margin:10px 0;background:#111311">
-    <div style="font-weight:700;font-size:16px">${label} ${sent[st] ? `<span style="font-size:12px;color:#7BEA5A;margin-left:8px">sent ${sent[st].count} at ${sent[st].at.slice(11,16)} UTC</span>` : ''}</div>
+  const stageBox = (st, label, note) => `<div style="border:1px solid #262B26;border-radius:12px;padding:16px 18px;margin:10px 0;background:#111311">
+    <div style="font-weight:700;font-size:16px">${label} ${note ? `<span style="font-size:12px;color:#8C9389;font-weight:400;margin-left:8px">${note}</span>` : ''} ${sent[st] ? `<span style="font-size:12px;color:#7BEA5A;margin-left:8px">sent ${sent[st].count} at ${sent[st].at.slice(11,16)} UTC</span>` : ''}</div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
       <a href="/api/waitlist/preview?key=${key}&which=${st}&type=student" target="_blank" style="color:#9b9a96;font-size:13px;align-self:center">preview student</a>
       <a href="/api/waitlist/preview?key=${key}&which=${st}&type=parent" target="_blank" style="color:#9b9a96;font-size:13px;align-self:center">parent</a>
@@ -168,12 +170,12 @@ app.get('/api/waitlist/launch', (req, res) => {
   <h1 style="margin:0 0 18px;font-size:30px;letter-spacing:-.03em">the waitlist, right now.</h1>
   <table style="border-collapse:collapse;font-size:15px">${row('on the list', live)}${row('unsubscribed', unsub)}${row('students / parents / teachers', `${stats.byType.student || 0} / ${stats.byType.parent || 0} / ${stats.byType.teacher || 0}`)}${row('by state', Object.entries(stats.byState).map(([k, v]) => k + ' ' + v).join(' · ') || '—')}${row('founding seats left', Math.max(0, TEACHER_SEATS - stats.teachers))}${row('launch date in emails', date + ' <span style="color:#6B6A66;font-weight:400">(LAUNCH_DATE_STR in Railway)</span>')}${row('app link (T-0)', appUrl)}</table>
   <p style="color:#8C9389;font-size:13px;margin:18px 0 6px">Each button sends the real thing to everyone still subscribed, with per-cohort copy. Send yourself a test first. <a href="/api/waitlist/export.csv?key=${key}" style="color:#9b9a96">download CSV</a></p>
-  ${stageBox('t7', 'T-7 · one week out')}${stageBox('t3', 'T-3 · three days out')}${stageBox('t0', 'T-0 · launch day')}
+  ${stageBox('t7', 'T-7 · one week out')}${stageBox('t3', 'T-3 · three days out')}${stageBox('t0', 'T-0 · launch day')}${stageBox('t4', 'T+4 · send this to your parent', 'students only — parents and teachers are skipped automatically')}
   </div></body></html>`);
 });
 app.post('/api/waitlist/send', express.urlencoded({ extended: false }), async (req, res) => {
   if (!admin(req, res)) return;
-  const stage = String(req.body.stage || ''); if (!['t7', 't3', 't0'].includes(stage)) return res.status(400).send('bad stage');
+  const stage = String(req.body.stage || ''); if (!emails.STAGES.includes(stage)) return res.status(400).send('bad stage');
   const date = process.env.LAUNCH_DATE_STR || 'Monday 21 September', appUrl = process.env.APP_URL || 'https://app.knowhere.me';
   const testTo = clean(req.body.testTo, 160);
   if (!testTo && req.body.confirm !== 'YES') return res.status(400).send('not confirmed');
