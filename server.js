@@ -1,11 +1,13 @@
 // knowhere.me — static site + waitlist API
 // Serves every file in this folder and exposes:
 //   POST /api/waitlist        → creates/updates a contact in Resend (segment: Waitlist)
+//   POST /api/contact         → talk-to-us form → email to CONTACT_TO (default hello@knowhere.me) via Resend
 //   GET  /api/waitlist/stats  → { total, teacherSeatsLeft }
 // Env (Railway → Variables):
 //   RESEND_API_KEY      full-access key (contacts + sending)
 //   RESEND_SEGMENT_ID   the "Waitlist" segment id
 //   FROM_EMAIL          e.g. "knowhere <hello@knowhere.me>"
+//   CONTACT_TO          where talk-to-us messages land (default hello@knowhere.me)
 //   TEACHER_SEATS       founding-teacher seats (default 50)
 //   PORT                set by Railway
 
@@ -30,7 +32,7 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 app.disable('x-powered-by');
 app.set('trust proxy', 1);
-app.use(express.json({ limit: '8kb' }));
+app.use(express.json({ limit: '16kb' }));
 
 // ---------- in-memory counters (re-seeded from Resend at boot) ----------
 const stats = { total: 0, teachers: 0, seeded: false, byType: {}, byState: {}, byYear: {}, byPlan: {} };
@@ -246,6 +248,44 @@ app.post('/api/waitlist', async (req, res) => {
   } catch (e) {
     console.error('[waitlist] error', e);
     return res.status(500).json({ ok: false, error: 'Something broke on our side. Email hello@knowhere.me and we\'ll add you.' });
+  }
+});
+
+// ---------- contact form (talk-to-us.html) ----------
+// POST /api/contact  { name, email, who, msg, website(honeypot), source } → emails CONTACT_TO via Resend, reply_to = sender
+const CONTACT_TO = process.env.CONTACT_TO || 'hello@knowhere.me';
+const WHO = new Set(['a student', 'a parent', 'a teacher', 'none of the above']);
+app.post('/api/contact', async (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  const b = req.body || {};
+  if (b.website) return res.json({ ok: true }); // honeypot: pretend
+  if (limited(req.ip)) return res.status(429).json({ ok: false, error: 'Slow down — try again in a few minutes.' });
+
+  const name = clean(b.name, 120);
+  const email = clean(b.email, 160).toLowerCase();
+  const who = WHO.has(String(b.who || '').toLowerCase()) ? String(b.who).toLowerCase() : 'unspecified';
+  const msg = String(b.msg == null ? '' : b.msg).replace(/[^\S\r\n\t]+/g, ' ').replace(/[\x00-\x08\x0b\x0c\x0e-\x1f<>]/g, '').trim().slice(0, 5000);
+  const source = clean(b.source, 120);
+
+  if (!name) return res.status(400).json({ ok: false, error: 'We do need something to call you.' });
+  if (!EMAIL_RE.test(email)) return res.status(400).json({ ok: false, error: 'That email doesn\'t look right.' });
+  if (!msg) return res.status(400).json({ ok: false, error: 'The message box is lonely.' });
+  if (!RESEND_KEY) return res.status(503).json({ ok: false, error: 'The form isn\'t wired up yet. Email hello@knowhere.me and a human will reply.' });
+
+  const subject = `Talk to us: ${name} (${who})`;
+  const text = `Name: ${name}\nEmail: ${email}\nWho: ${who}\nFrom page: ${source || 'talk-to-us'}\nWhen: ${new Date().toISOString()}\n\n${msg}`;
+  const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const html = `<div style="font-family:system-ui,sans-serif;font-size:15px;line-height:1.6;color:#111"><p><b>${esc(name)}</b> &lt;${esc(email)}&gt; · ${esc(who)}</p><p style="white-space:pre-wrap">${esc(msg)}</p><p style="color:#888;font-size:12px">via ${esc(source || 'talk-to-us')} · reply to this email to answer them</p></div>`;
+  try {
+    const r = await resend('POST', '/emails', { from: FROM, to: [CONTACT_TO], reply_to: email, subject, text, html });
+    if (!r.ok) {
+      console.error('[contact] resend error', r.status, r.json);
+      return res.status(502).json({ ok: false, error: 'Couldn\'t send that just now. Try again, or email hello@knowhere.me.' });
+    }
+    return res.json({ ok: true });
+  } catch (e) {
+    console.error('[contact] error', e);
+    return res.status(500).json({ ok: false, error: 'Something broke on our side. Email hello@knowhere.me instead.' });
   }
 });
 
