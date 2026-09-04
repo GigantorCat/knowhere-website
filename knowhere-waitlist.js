@@ -8,7 +8,9 @@
  */
 (function () {
   'use strict';
-  if (window.KNOWHERE_LIVE) return;
+  /* 4 Sep 2026 — LIVE. The CTA interception below is skipped; open/mount stay available so the teacher
+     waitlist (R2 by ruling) and /waitlist.html keep working. */
+  var LIVE = !!window.KNOWHERE_LIVE;
   if (window.KnowhereWaitlist) return; // the dc runtime can execute helmet scripts a second time
   var API = (window.KNOWHERE_WAITLIST_API || '') + '/api/waitlist';
   var STATES = ['NSW', 'VIC', 'QLD', 'WA', 'SA', 'TAS', 'ACT', 'NT', 'Outside AU'];
@@ -338,7 +340,7 @@
     if (a.getAttribute('data-waitlist-type')) return a.getAttribute('data-waitlist-type');
     var p = location.pathname; if (/for-parents/.test(p)) return 'parent'; if (/for-teachers/.test(p)) return 'teacher'; return 'student';
   }
-  document.addEventListener('click', function (e) {
+  if (!LIVE) document.addEventListener('click', function (e) {
     var a = e.target.closest && e.target.closest('a'); if (!a || !a.matches(CTA_SEL)) return;
     var href = a.getAttribute('href') || '';
     var isLogin = /app\.knowhere\.me|log ?in/i.test(href + ' ' + a.textContent);
@@ -359,7 +361,7 @@
       seats.forEach(function (n) { n.textContent = s.teacherSeatsLeft; });
       document.querySelectorAll('[data-seats-total-live]').forEach(function (n) { n.textContent = s.teacherSeatsTotal; });
     }).catch(function () {});
-    if (/[?#]waitlist/.test(location.href)) openModal({ type: typeOf(document.body), source: location.pathname.replace(/^\//, '') + '#auto' });
+    if (!LIVE && /[?#]waitlist/.test(location.href)) openModal({ type: typeOf(document.body), source: location.pathname.replace(/^\//, '') + '#auto' });
   });
 
   window.KnowhereWaitlist = { open: openModal, close: closeModal, mount: mount };
