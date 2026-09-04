@@ -2,6 +2,8 @@
 // "nowhere"; brat-green particles then sweep in to build the leading "k"
 // (nowhere → knowhere); finally every particle turns brat green. Lockup +
 // single CTA fade in beneath the word. Self-contained web component.
+// v20: SOCIAL row in the footer nav (Cat, 4 Sep, release day) — Instagram · TikTok ·
+//      YouTube · Facebook · LinkedIn, from KnowhereMarks.social (knowhere-marks.js).
 // v19: PRESS added to footer nav (Cat, 1 Sep).
 // v18: small-text greys lifted to #8C8B87 (contrast ruling, Cat 15 Aug).
 // v17: hidden outro CTA is visibility-gated (keyboard a11y).
@@ -240,7 +242,12 @@
             '.kfn-link{font-size:15px;font-weight:600;letter-spacing:-0.01em;color:#9b9a96;text-decoration:none;transition:color .16s}' +
             '.kfn-link:hover{color:#7BEA5A}' +
             '.kfn-legal{font-size:12px;color:#56554f;text-decoration:none;transition:color .16s}' +
-            '.kfn-legal:hover{color:#8C8B87}';
+            '.kfn-legal:hover{color:#8C8B87}' +
+            '.kfn-socs{display:flex;align-items:center;gap:2px;margin-left:auto}' +
+            '.kfn-soc{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;color:#9b9a96;text-decoration:none;transition:color .16s,background .16s}' +
+            '.kfn-soc:hover,.kfn-soc:focus-visible{color:#7BEA5A;background:rgba(123,234,90,.08)}' +
+            '.kfn-soc:focus-visible{outline:2px solid #7BEA5A;outline-offset:2px}' +
+            '.kfn-soc i{display:block;width:17px;height:17px;background:currentColor;-webkit-mask:var(--ico) center/contain no-repeat;mask:var(--ico) center/contain no-repeat}';
           document.head.appendChild(st);
         }
         this.innerHTML =
@@ -260,6 +267,7 @@
                 '<a class="kfn-link" href="mission.html">mission</a>' +
                 '<a class="kfn-link" href="press.html">press</a>' +
                 '<a class="kfn-link" href="talk-to-us.html">talk to us</a>' +
+                (window.KnowhereMarks && window.KnowhereMarks.socialHtml ? '<span class="kfn-socs">' + window.KnowhereMarks.socialHtml('kfn-soc') + '</span>' : '') +
               '</div>' +
               '<div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:22px;padding-top:26px;border-top:1px solid rgba(255,255,255,0.06)">' +
                 '<span class="kfn-legal" style="cursor:default">from nowhere to knowing.</span>' +

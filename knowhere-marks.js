@@ -279,5 +279,20 @@
     return function(){ cancelAnimationFrame(raf); };
   }
 
-  window.KnowhereMarks = { logoSvg: logoSvg, mount: mount, colors: SUBCOLORS };
+  // the five handles (Cat, 4 Sep 2026) — read by the footer nav and the mobile menu.
+  // Glyphs: vendor/social/*.svg (Font Awesome Free brands, CC BY 4.0), coloured by CSS mask.
+  var SOCIAL = [
+    ['Instagram', 'https://www.instagram.com/knowheregoat/', 'instagram'],
+    ['TikTok', 'https://www.tiktok.com/@knowhere.me', 'tiktok'],
+    ['YouTube', 'https://www.youtube.com/@knowhere-me', 'youtube'],
+    ['Facebook', 'https://www.facebook.com/profile.php?id=61594042136502', 'facebook-f'],
+    ['LinkedIn', 'https://www.linkedin.com/company/knowhere-me/', 'linkedin-in']
+  ];
+  function socialHtml(cls){
+    return SOCIAL.map(function(h){
+      return '<a class="'+cls+'" href="'+h[1]+'" target="_blank" rel="noopener" aria-label="knowhere on '+h[0]+'" title="'+h[0]+'">'+
+        '<i style="--ico:url(vendor/social/'+h[2]+'.svg)" aria-hidden="true"></i></a>';
+    }).join('');
+  }
+  window.KnowhereMarks = { logoSvg: logoSvg, mount: mount, colors: SUBCOLORS, social: SOCIAL, socialHtml: socialHtml };
 })();

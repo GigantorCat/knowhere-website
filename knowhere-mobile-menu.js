@@ -1,5 +1,9 @@
 /* ─────────────────────────────────────────────────────────────
-   knowhere-mobile-menu.js v5 — shared mobile menu (≤820px).
+   knowhere-mobile-menu.js v7 — shared mobile menu (≤820px).
+   v7 also: the ≤820px rule that hides the nav's app link was hiding the panel's
+   own "Log in" too (the panel is a <nav>) — scoped to nav:not(.kwm-panel).
+   v7: social icon row under "Log in" (Cat, 4 Sep) — from KnowhereMarks.socialHtml
+   (knowhere-marks.js, the one list). No list = no row.
    Replaces the per-page inline "kwm v4" blocks. Self-contained:
    injects its own CSS, builds the ☰ button into <nav> (or
    [data-kw-nav]) and the panel into <body>.
@@ -24,7 +28,10 @@
     ".kwm-panel a:focus-visible{outline:2px solid #7BEA5A;outline-offset:-2px}" +
     ".kwm-panel a.here{background:rgba(123,234,90,.12);color:#7BEA5A}" +
     ".kwm-panel a.kwm-login{border-top:1px solid rgba(255,255,255,.08);border-radius:0 0 11px 11px;margin-top:4px;color:#8C8B87}" +
-    "@media (max-width:820px){.kwm-btn{display:flex}nav a[href*=\"app.knowhere.me\"]{display:none !important}}";
+    ".kwm-panel .kwm-soc{display:flex;align-items:center;gap:2px;padding:6px 8px 2px;margin-top:4px;border-top:1px solid rgba(255,255,255,.08)}" +
+    ".kwm-panel .kwm-soc a{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;padding:0;border-radius:11px;color:#8C8B87}" +
+    ".kwm-panel .kwm-soc a i{display:block;width:17px;height:17px;background:currentColor;-webkit-mask:var(--ico) center/contain no-repeat;mask:var(--ico) center/contain no-repeat}" +
+    "@media (max-width:820px){.kwm-btn{display:flex}nav:not(.kwm-panel) a[href*=\"app.knowhere.me\"]{display:none !important}}";
 
   var LINKS =
     '<a href="index.html">Home</a>' +
@@ -60,7 +67,7 @@
       var panel = document.createElement("nav");
       panel.className = "kwm-panel"; panel.id = "kwm-panel";
       panel.setAttribute("aria-label", "Mobile");
-      panel.innerHTML = LINKS;
+      panel.innerHTML = LINKS + (window.KnowhereMarks && window.KnowhereMarks.socialHtml ? '<div class="kwm-soc">' + window.KnowhereMarks.socialHtml('') + '</div>' : '');
       var here = (location.pathname.split("/").pop() || "index.html");
       panel.querySelectorAll("a").forEach(function (a) {
         if (a.getAttribute("href") === here) { a.classList.add("here"); a.setAttribute("aria-current", "page"); }
