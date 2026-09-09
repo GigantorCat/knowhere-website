@@ -245,7 +245,6 @@
         .then(function (x) {
           if (!x.j || !x.j.ok) { throw new Error((x.j && x.j.error) || 'Something went wrong.'); }
           try { if (window.umami) window.umami.track('waitlist_join', { type: type, state: body.state, plan: body.plan || 'none' }); } catch (_) {}
-          try { if (window.kwPixel) window.kwPixel('Lead', { content_name: type }); } catch (_) {}
           try { localStorage.setItem('kw_waitlist', JSON.stringify({ email: email, type: type, position: x.j.position, seat: x.j.teacherSeat })); } catch (_) {}
           onDone(Object.assign({ type: type, firstName: body.firstName, compact: !!opts.compact }, x.j));
         })

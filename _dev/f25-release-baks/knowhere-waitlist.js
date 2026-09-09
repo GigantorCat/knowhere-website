@@ -8,9 +8,7 @@
  */
 (function () {
   'use strict';
-  /* 4 Sep 2026 — LIVE. The CTA interception below is skipped; open/mount stay available so the teacher
-     waitlist (R2 by ruling) and /waitlist.html keep working. */
-  var LIVE = !!window.KNOWHERE_LIVE;
+  if (window.KNOWHERE_LIVE) return;
   if (window.KnowhereWaitlist) return; // the dc runtime can execute helmet scripts a second time
   var API = (window.KNOWHERE_WAITLIST_API || '') + '/api/waitlist';
   var STATES = ['NSW', 'VIC', 'QLD', 'WA', 'SA', 'TAS', 'ACT', 'NT', 'Outside AU'];
@@ -245,7 +243,6 @@
         .then(function (x) {
           if (!x.j || !x.j.ok) { throw new Error((x.j && x.j.error) || 'Something went wrong.'); }
           try { if (window.umami) window.umami.track('waitlist_join', { type: type, state: body.state, plan: body.plan || 'none' }); } catch (_) {}
-          try { if (window.kwPixel) window.kwPixel('Lead', { content_name: type }); } catch (_) {}
           try { localStorage.setItem('kw_waitlist', JSON.stringify({ email: email, type: type, position: x.j.position, seat: x.j.teacherSeat })); } catch (_) {}
           onDone(Object.assign({ type: type, firstName: body.firstName, compact: !!opts.compact }, x.j));
         })
@@ -341,7 +338,7 @@
     if (a.getAttribute('data-waitlist-type')) return a.getAttribute('data-waitlist-type');
     var p = location.pathname; if (/for-parents/.test(p)) return 'parent'; if (/for-teachers/.test(p)) return 'teacher'; return 'student';
   }
-  if (!LIVE) document.addEventListener('click', function (e) {
+  document.addEventListener('click', function (e) {
     var a = e.target.closest && e.target.closest('a'); if (!a || !a.matches(CTA_SEL)) return;
     var href = a.getAttribute('href') || '';
     var isLogin = /app\.knowhere\.me|log ?in/i.test(href + ' ' + a.textContent);
@@ -362,7 +359,7 @@
       seats.forEach(function (n) { n.textContent = s.teacherSeatsLeft; });
       document.querySelectorAll('[data-seats-total-live]').forEach(function (n) { n.textContent = s.teacherSeatsTotal; });
     }).catch(function () {});
-    if (!LIVE && /[?#]waitlist/.test(location.href)) openModal({ type: typeOf(document.body), source: location.pathname.replace(/^\//, '') + '#auto' });
+    if (/[?#]waitlist/.test(location.href)) openModal({ type: typeOf(document.body), source: location.pathname.replace(/^\//, '') + '#auto' });
   });
 
   window.KnowhereWaitlist = { open: openModal, close: closeModal, mount: mount };
