@@ -240,6 +240,8 @@
       btn.disabled = true; btn.textContent = 'One sec…';
       var body = { email: email, type: type, state: fState.input.value, year: fYear.input.value, firstName: fName.input.value.trim(),
         school: type === 'teacher' ? fSchool.input.value.trim() : '', plan: opts.plan || '', source: opts.source || location.pathname.replace(/^\//, '') || 'index.html', website: hp.value };
+      /* f32: the ad that introduced them, if there was one */
+      try { var acq = window.kwAcq && window.kwAcq(); if (acq) { body.acqAd = acq.ad || ''; body.acqCampaign = acq.campaign || ''; } } catch (_) {}
       fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
         .then(function (r) { return r.json().then(function (j) { return { s: r.status, j: j }; }); })
         .then(function (x) {

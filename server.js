@@ -104,7 +104,7 @@ app.get('/api/waitlist/admin', (req, res) => {
 });
 app.get('/api/waitlist/export.csv', (req, res) => {
   if (!admin(req, res)) return;
-  const cols = ['email', 'first_name', 'user_type', 'state', 'year_level', 'plan_interest', 'school', 'source_page', 'waitlist_position', 'founding_teacher_seat', 'joined_at'];
+  const cols = ['email', 'first_name', 'user_type', 'state', 'year_level', 'plan_interest', 'school', 'source_page', 'acq_ad', 'acq_campaign', 'waitlist_position', 'founding_teacher_seat', 'joined_at'];
   const esc = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
   const lines = [cols.join(',')].concat(contacts.map(c => cols.map(k => esc(k === 'email' ? c.email : k === 'first_name' ? c.first_name : c.properties[k])).join(',')));
   res.set('Content-Type', 'text/csv; charset=utf-8'); res.set('Content-Disposition', 'attachment; filename="knowhere-waitlist.csv"');
@@ -206,6 +206,8 @@ app.post('/api/waitlist', async (req, res) => {
   const firstName = clean(b.firstName, 60);
   const school = clean(b.school, 120);
   const source = clean(b.source, 120);
+  const acqAd = clean(b.acqAd, 60);            /* f32: the P-code from utm_content */
+  const acqCampaign = clean(b.acqCampaign, 60);
 
   if (!EMAIL_RE.test(email)) return res.status(400).json({ ok: false, error: 'That email doesn\'t look right.' });
   if (!TYPES.has(type)) return res.status(400).json({ ok: false, error: 'Tell us who you are — student, parent or teacher.' });
@@ -218,7 +220,8 @@ app.post('/api/waitlist', async (req, res) => {
   const teacherSeat = type === 'teacher' && stats.teachers < TEACHER_SEATS ? stats.teachers + 1 : 0;
   const properties = {
     user_type: type, state, year_level: year, plan_interest: plan || 'none', school: school || 'none',
-    source_page: source || 'direct', waitlist_position: position, founding_teacher_seat: teacherSeat,
+    source_page: source || 'direct', acq_ad: acqAd || 'none', acq_campaign: acqCampaign || 'none',
+    waitlist_position: position, founding_teacher_seat: teacherSeat,
     joined_at: new Date().toISOString(),
   };
   const payload = { email, first_name: firstName || undefined, unsubscribed: false, properties, segments: SEGMENT_ID ? [{ id: SEGMENT_ID }] : undefined };
@@ -229,7 +232,9 @@ app.post('/api/waitlist', async (req, res) => {
     if (!r.ok && (r.status === 409 || /exist/i.test(JSON.stringify(r.json)))) {
       existed = true;
       // keep their original position; just refresh the details
+      /* f32: acquisition is first-touch too — a returning submitter keeps the ad that introduced them */
       delete properties.waitlist_position; delete properties.founding_teacher_seat; delete properties.joined_at;
+      delete properties.acq_ad; delete properties.acq_campaign;
       r = await resend('PATCH', '/contacts/' + encodeURIComponent(email), { first_name: firstName || undefined, properties, segments: payload.segments });
     }
     if (!r.ok) {
