@@ -262,7 +262,7 @@
                 '</div>' +
               '</div>' +
               '<div style="display:flex;align-items:center;gap:30px;flex-wrap:wrap;margin-top:auto;padding-top:12px">' +
-                '<span style="display:flex;align-items:center;gap:10px;margin-right:14px"><span data-kfn-logo style="display:flex;align-items:center;color:#EDECE8"></span><span style="font-size:18px;font-weight:700;letter-spacing:-0.04em;color:#EDECE8">know<b style="color:#7BEA5A">here</b></span></span>' +
+                '<span style="display:flex;align-items:center;gap:10px;margin-right:14px"><span data-kfn-logo style="display:flex;align-items:center;color:#EDECE8"></span><span style="font-size:18px;font-weight:700;letter-spacing:-0.04em;color:#EDECE8">know<b style="color:#7BEA5A">here</b><sup style="font-size:0.48em;font-weight:600;letter-spacing:0;vertical-align:super;opacity:0.55;margin-left:1px">™</sup></span></span>' +
                 '<a class="kfn-link" href="know-us.html">know us</a>' +
                 '<a class="kfn-link" href="mission.html">mission</a>' +
                 '<a class="kfn-link" href="press.html">press</a>' +
@@ -274,7 +274,7 @@
                 '<span style="flex:1"></span>' +
                 '<a class="kfn-legal" href="privacy.html">privacy</a>' +
                 '<a class="kfn-legal" href="terms.html">terms of use</a>' +
-                '<span class="kfn-legal" style="cursor:default">\u00A9 2026 knowhere</span>' +
+                '<span class="kfn-legal" style="cursor:default">\u00A9 2026 knowhere\u2122</span>' +
               '</div>' +
             '</div>' +
           '</div>';
