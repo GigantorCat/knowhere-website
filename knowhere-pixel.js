@@ -5,7 +5,7 @@
    loads nothing from Meta — it is safe to ship un-filled, and the CTA
    analytics event still works. The app carries the same block inline;
    if you change one, change both. */
-var KW_PIXEL_ID = '';
+var KW_PIXEL_ID = '1829181431399314';
 
 (function () {
   'use strict';
