@@ -59,7 +59,7 @@ PAGES = {
     ("What happens to my child's data?",
      "It is handled under the Australian Privacy Act 1988. Your child's learning data is used to personalise their learning — not sold, not shared for advertising. The full policy is available before you sign anything."),
     ("Does knowhere replace school or a tutor?",
-     "It works alongside school — the explain-it-again, explain-it-differently layer school can't provide for thirty students at once. Many families use it instead of a $64/hr tutor; some use both."),
+     "It works alongside school — the explain-it-again, explain-it-differently layer school can't provide for thirty students at once. A month of knowhere costs less than one hour with a tutor, and the two don't fight: plenty of families will want both."),
     ("What does it cost to try?",
      "Nothing today. You pick a plan and start the free week — A$0 is taken now, and the first payment is 7 days later. Cancel any time before then and you are not charged, with no lock-in on monthly plans."),
    ]),
@@ -353,8 +353,14 @@ JS_LOGIC = {
 # Wiring for /compare — exact anchors, each asserted once (or already applied)
 WIRE_EDITS = {
   "for-parents.html": [
+    # softened 11 Sep: no user-count claims until there are users (positioning brief §5)
+    ('Many families use it instead of a $64/hr tutor; some use both. <a href="/compare" style="color:var(--brat)">See how it compares &rarr;</a></p>',
+     'A month of knowhere costs less than one hour with a tutor, and the two don&#8217;t fight &#8212; plenty of families will want both. <a href="/compare" style="color:var(--brat)">See how it compares &rarr;</a></p>'),
     ('Many families use it instead of a $64/hr tutor; some use both.</p>',
-     'Many families use it instead of a $64/hr tutor; some use both. <a href="/compare" style="color:var(--brat)">See how it compares &rarr;</a></p>'),
+     'A month of knowhere costs less than one hour with a tutor, and the two don&#8217;t fight &#8212; plenty of families will want both. <a href="/compare" style="color:var(--brat)">See how it compares &rarr;</a></p>'),
+    # hero: a visible way to the comparison
+    ('<a class="ghost" href="/how-it-works">See how it works</a>\n      </div>\n    </div>\n    <a class="scroll-cue" href="#par-content"',
+     '<a class="ghost" href="/how-it-works">See how it works</a>\n        <a class="ghost" href="/compare">How it compares</a>\n      </div>\n    </div>\n    <a class="scroll-cue" href="#par-content"'),
   ],
   "pricing.html": [
     ('plans and prices change &mdash; always confirm on their sites.</p>',
