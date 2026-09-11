@@ -294,6 +294,28 @@ app.post('/api/contact', async (req, res) => {
   }
 });
 
+// KNOWHERE:SEO-REDIRECTS v2 — canonical host + clean URLs (301). www -> apex, /x.html -> /x, /index.html -> / (http->https is Railway's job)
+const SEO_PAGES = new Set(["experience-it", "for-parents", "for-teachers", "how-it-works", "know-us", "mission", "press", "pricing", "privacy", "talk-to-us", "terms", "waitlist"]);
+app.use((req, res, next) => {
+  if (req.method !== 'GET' && req.method !== 'HEAD') return next();
+  const host = String(req.headers.host || '').toLowerCase();
+  if (host !== 'knowhere.me' && host !== 'www.knowhere.me') {
+    // localhost / Railway preview host: serve as-is, but keep it out of the index
+    res.set('X-Robots-Tag', 'noindex');
+    return next();
+  }
+  let p = req.path, changed = false;
+  if (host === 'www.knowhere.me') changed = true;
+  const m = p.match(/^\/([A-Za-z0-9-]+)(\.html)?\/?$/i);
+  const slug = m ? m[1].toLowerCase() : null;
+  if (p === '/index.html' || p === '/index' || p === '/index/') { p = '/'; changed = true; }
+  else if (slug && SEO_PAGES.has(slug) && p !== '/' + slug) { p = '/' + slug; changed = true; }
+  if (!changed) return next();
+  const q = req.originalUrl.indexOf('?');
+  return res.redirect(301, 'https://knowhere.me' + p + (q >= 0 ? req.originalUrl.slice(q) : ''));
+});
+// /KNOWHERE:SEO-REDIRECTS
+
 // ---------- static site ----------
 app.use((req, res, next) => {
   // never serve backups, patch scripts, the app prototype or server files

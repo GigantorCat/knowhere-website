@@ -30,7 +30,7 @@
           '<div data-kf-cta style="position:absolute;left:0;right:0;top:calc(40vh + 132px + clamp(44px,7vh,76px));display:flex;flex-direction:column;align-items:center;gap:16px;opacity:0;transform:translateY(24px);pointer-events:none;font-family:\'Geist\',system-ui,sans-serif">' +
             '<div style="font-size:15px;font-weight:600;letter-spacing:-0.01em;color:#9b9a96">you&#39;re one letter away.</div>' +
             '<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="kf-goo-filter" x="-50%" y="-50%" width="200%" height="200%"><feComponentTransfer><feFuncA type="discrete" tableValues="0 1"/></feComponentTransfer><feGaussianBlur stdDeviation="5"/><feComponentTransfer><feFuncA type="table" tableValues="-5 11"/></feComponentTransfer></filter></svg>' +
-            '<a data-kf-goo href="pricing.html" style="--gx:50;--gy:32;position:relative;isolation:isolate;display:inline-flex;align-items:center;justify-content:center;font-family:inherit;font-size:clamp(19px,2.2vw,24px);font-weight:650;letter-spacing:-0.01em;line-height:1;color:#0a1f06;text-decoration:none;text-transform:lowercase;padding:1.5em 2.4em;transform:scale(.94);transition:transform .9s cubic-bezier(.3,1.4,.5,1)">' +
+            '<a data-kf-goo href="/pricing" style="--gx:50;--gy:32;position:relative;isolation:isolate;display:inline-flex;align-items:center;justify-content:center;font-family:inherit;font-size:clamp(19px,2.2vw,24px);font-weight:650;letter-spacing:-0.01em;line-height:1;color:#0a1f06;text-decoration:none;text-transform:lowercase;padding:1.5em 2.4em;transform:scale(.94);transition:transform .9s cubic-bezier(.3,1.4,.5,1)">' +
               '<span data-kf-goo-fx style="position:absolute;inset:0;z-index:-1;padding:20px;pointer-events:none;filter:blur(10px) url(#kf-goo-filter) drop-shadow(0 .25em .5em rgba(0,0,0,.5));background-image:linear-gradient(0deg,#7BEA5A,#7BEA5A),radial-gradient(40% 70% at calc(var(--gx)*1%) calc(var(--gy)*1%),hsl(106 90% 82%) 0%,transparent 90%);background-clip:content-box,border-box"></span>' +
               '<span style="position:relative">start knowing</span>' +
             '</a>' +
@@ -258,22 +258,22 @@
                 '<div style="max-width:820px">' +
                   '<div style="font-size:11px;font-weight:700;letter-spacing:0.26em;text-transform:uppercase;color:#8C8B87;margin-bottom:18px">no gatekeeping. iykyk.</div>' +
                   '<div style="font-size:clamp(32px,4.4vw,58px);font-weight:800;letter-spacing:-0.045em;line-height:1.04;color:rgba(237,236,232,0.84);text-wrap:balance">ready to claim your <span style="background-image:linear-gradient(90deg,#7BEA5A,#23A4DD,#9B5AEA,#E8C63F,#7BEA5A);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:kfnSpectrum 7s linear infinite">unfair advantage</span>, or are we still pretending all-nighters work?</div>' +
-                  '<div style="margin-top:30px"><a href="pricing.html" style="display:inline-flex;align-items:center;font-size:15px;font-weight:700;color:#070708;background:#7BEA5A;border-radius:12px;padding:15px 28px;text-decoration:none;letter-spacing:-0.01em;box-shadow:0 10px 40px rgba(123,234,90,.32)">let&#39;s go</a></div>' +
+                  '<div style="margin-top:30px"><a href="/pricing" style="display:inline-flex;align-items:center;font-size:15px;font-weight:700;color:#070708;background:#7BEA5A;border-radius:12px;padding:15px 28px;text-decoration:none;letter-spacing:-0.01em;box-shadow:0 10px 40px rgba(123,234,90,.32)">let&#39;s go</a></div>' +
                 '</div>' +
               '</div>' +
               '<div style="display:flex;align-items:center;gap:30px;flex-wrap:wrap;margin-top:auto;padding-top:12px">' +
                 '<span style="display:flex;align-items:center;gap:10px;margin-right:14px"><span data-kfn-logo style="display:flex;align-items:center;color:#EDECE8"></span><span style="font-size:18px;font-weight:700;letter-spacing:-0.04em;color:#EDECE8">know<b style="color:#7BEA5A">here</b><sup style="font-size:0.48em;font-weight:600;letter-spacing:0;vertical-align:super;opacity:0.55;margin-left:1px">™</sup></span></span>' +
-                '<a class="kfn-link" href="know-us.html">know us</a>' +
-                '<a class="kfn-link" href="mission.html">mission</a>' +
-                '<a class="kfn-link" href="press.html">press</a>' +
-                '<a class="kfn-link" href="talk-to-us.html">talk to us</a>' +
+                '<a class="kfn-link" href="/know-us">know us</a>' +
+                '<a class="kfn-link" href="/mission">mission</a>' +
+                '<a class="kfn-link" href="/press">press</a>' +
+                '<a class="kfn-link" href="/talk-to-us">talk to us</a>' +
                 (window.KnowhereMarks && window.KnowhereMarks.socialHtml ? '<span class="kfn-socs">' + window.KnowhereMarks.socialHtml('kfn-soc') + '</span>' : '') +
               '</div>' +
               '<div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:22px;padding-top:26px;border-top:1px solid rgba(255,255,255,0.06)">' +
                 '<span class="kfn-legal" style="cursor:default">from nowhere to knowing.</span>' +
                 '<span style="flex:1"></span>' +
-                '<a class="kfn-legal" href="privacy.html">privacy</a>' +
-                '<a class="kfn-legal" href="terms.html">terms of use</a>' +
+                '<a class="kfn-legal" href="/privacy">privacy</a>' +
+                '<a class="kfn-legal" href="/terms">terms of use</a>' +
                 '<span class="kfn-legal" style="cursor:default">\u00A9 2026 knowhere\u2122</span>' +
               '</div>' +
             '</div>' +

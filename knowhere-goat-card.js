@@ -17,7 +17,7 @@ var CONFIG={
   line:"welcome to knowing.",
   sub:"year 12 study that gets how you think.",
   ctaLabel:"start knowing",
-  ctaHref:"pricing.html",        /* real signup route lands at Stripe session */
+  ctaHref:"/pricing",        /* real signup route lands at Stripe session */
   dismissLabel:"ta",
   onceKey:"kn_goat_card_v1",   /* bump the suffix to re-show after a redesign */
   showOnce:true                  /* set false while styling, true to ship */

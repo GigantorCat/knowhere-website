@@ -34,12 +34,12 @@
     "@media (max-width:820px){.kwm-btn{display:flex}nav:not(.kwm-panel) a[href*=\"app.knowhere.me\"]{display:none !important}}";
 
   var LINKS =
-    '<a href="index.html">Home</a>' +
-    '<a href="how-it-works.html">How it works</a>' +
-    '<a href="experience-it.html">Experience it</a>' +
-    '<a href="pricing.html">Pricing</a>' +
-    '<a href="for-parents.html">For parents</a>' +
-    '<a href="for-teachers.html">For teachers</a>' +
+    '<a href="/">Home</a>' +
+    '<a href="/how-it-works">How it works</a>' +
+    '<a href="/experience-it">Experience it</a>' +
+    '<a href="/pricing">Pricing</a>' +
+    '<a href="/for-parents">For parents</a>' +
+    '<a href="/for-teachers">For teachers</a>' +
     '<a class="kwm-login" href="https://app.knowhere.me/login">Log in</a>';
 
   function panelEl() { return document.getElementById("kwm-panel"); }
@@ -68,9 +68,10 @@
       panel.className = "kwm-panel"; panel.id = "kwm-panel";
       panel.setAttribute("aria-label", "Mobile");
       panel.innerHTML = LINKS + (window.KnowhereMarks && window.KnowhereMarks.socialHtml ? '<div class="kwm-soc">' + window.KnowhereMarks.socialHtml('') + '</div>' : '');
-      var here = (location.pathname.split("/").pop() || "index.html");
+      var here = "/" + location.pathname.replace(/^\/+|\/+$/g, "").replace(/\.html$/, ""); if (here === "/index") here = "/";
       panel.querySelectorAll("a").forEach(function (a) {
-        if (a.getAttribute("href") === here) { a.classList.add("here"); a.setAttribute("aria-current", "page"); }
+        var h = (a.getAttribute("href") || "").replace(/^\.\//, "").replace(/\.html$/, ""); if (h === "" || h === "index") h = "/"; else if (h.charAt(0) !== "/") h = "/" + h;
+        if (h === here) { a.classList.add("here"); a.setAttribute("aria-current", "page"); }
       });
       document.body.appendChild(panel);
     }

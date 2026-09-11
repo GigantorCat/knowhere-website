@@ -201,7 +201,7 @@
     var hp = el('input', { 'class': 'kwl-hp', type: 'text', name: 'website', tabindex: '-1', autocomplete: 'off', 'aria-hidden': 'true' });
     var btn = el('button', { 'class': 'kwl-btn', type: 'submit', text: 'Join the waitlist' });
     var msg = el('p', { 'class': 'kwl-msg', role: 'alert', 'aria-live': 'polite' });
-    var fine = el('p', { 'class': 'kwl-fine', html: "Unsubscribe any time · <a href=\"privacy.html\">privacy</a>" });
+    var fine = el('p', { 'class': 'kwl-fine', html: "Unsubscribe any time · <a href=\"/privacy\">privacy</a>" });
 
     var grid = el('div', { 'class': 'kwl-grid' }, [fName.f, fEmail.f, fState.f, fYear.f, fSchool.f]);
     fEmail.f.classList.add('full'); fName.f.classList.add('full');
@@ -273,7 +273,7 @@
       wrap.appendChild(el('p', { 'class': 'kwl-lead', text: p }));
     }
     var share = el('div', { 'class': 'kwl-share' });
-    var url = 'https://knowhere.me/waitlist.html';
+    var url = 'https://knowhere.me/waitlist';
     if (r.type === 'student') {
       share.appendChild(el('a', { href: 'mailto:?subject=' + encodeURIComponent('This is the study app I want for Year 12') + '&body=' + encodeURIComponent("It's built around how your brain learns, every subject. I'm on the waitlist — the parent plan has a progress view so you can stop asking me how study's going. " + url), text: 'send it to your parent' }));
     } else if (r.type === 'parent') {
@@ -281,7 +281,7 @@
     } else {
       share.appendChild(el('a', { href: 'mailto:?subject=' + encodeURIComponent('Founding teacher seats — knowhere') + '&body=' + encodeURIComponent('First 50 teachers get three months free. ' + url), text: 'tell the staffroom' }));
     }
-    share.appendChild(el('a', { href: 'experience-it.html', text: 'poke the real thing →' }));
+    share.appendChild(el('a', { href: '/experience-it', text: 'poke the real thing →' }));
     wrap.appendChild(share);
     return wrap;
   }
@@ -329,7 +329,7 @@
   }
 
   // ---------- CTA interception ----------
-  var CTA_SEL = 'a.cta,a.kp-cta,a.nav-cta,a.soft,a.kwm-login,a[data-kf-goo],a[href$="pricing.html"],a[href*="app.knowhere.me"],a[data-waitlist]';
+  var CTA_SEL = 'a.cta,a.kp-cta,a.nav-cta,a.soft,a.kwm-login,a[data-kf-goo],a[href$="pricing.html"],a[href$="/pricing"],a[href*="app.knowhere.me"],a[data-waitlist]';
   var CTA_TEXT = /start knowing|free week|free trial|start their|claim|founding|join the (wait)?list|get on the list|let.s go|log ?in/i;
   function planOf(a) {
     var card = a.closest('[data-plan]'); if (card) return card.getAttribute('data-plan');
