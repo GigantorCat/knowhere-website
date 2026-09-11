@@ -295,7 +295,7 @@ app.post('/api/contact', async (req, res) => {
 });
 
 // KNOWHERE:SEO-REDIRECTS v2 — canonical host + clean URLs (301). www -> apex, /x.html -> /x, /index.html -> / (http->https is Railway's job)
-const SEO_PAGES = new Set(["experience-it", "for-parents", "for-teachers", "how-it-works", "know-us", "mission", "press", "pricing", "privacy", "talk-to-us", "terms", "waitlist"]);
+const SEO_PAGES = new Set(["compare", "experience-it", "for-parents", "for-teachers", "how-it-works", "know-us", "mission", "press", "pricing", "privacy", "talk-to-us", "terms", "waitlist"]);
 app.use((req, res, next) => {
   if (req.method !== 'GET' && req.method !== 'HEAD') return next();
   const host = String(req.headers.host || '').toLowerCase();

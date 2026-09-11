@@ -75,6 +75,24 @@ PAGES = {
     ("Can I use knowhere for lesson planning?",
      "Right now it is the best explain-it-again layer you'll find. Lesson building, class groups and progress views are next — and teachers on the platform get first say in how they work."),
    ]),
+ "compare.html": dict(path="/compare", kind="faq",
+   title="knowhere vs Atomi vs Edrolo vs a tutor — honest comparison",
+   desc="Year 12 study options compared for HSC and VCE parents: knowhere, Atomi, Edrolo and private tutoring. What each is, what it costs in 2026, and who it suits.",
+   name="Compare",
+   faq=[
+    ("Is knowhere a replacement for Atomi or Edrolo?",
+     "For some families, yes: every HSC and VCE subject is included on every knowhere plan, and it is cheaper. For others it is the layer underneath: Atomi or Edrolo for the lesson, knowhere for the moment the lesson didn't land."),
+    ("Can I use knowhere alongside a tutor?",
+     "Yes. A tutor for the one brutal subject, knowhere for all of them. The tutor gets a kid who arrives already knowing which bit didn't land."),
+    ("Which is cheapest for a full Year 12 load?",
+     "knowhere: A$276–468 a year covers every subject. Atomi is A$470–720 a year, Edrolo roughly A$720–750 for five subjects, and one private tutor for one subject is around A$3,000 a year. Prices as at 11 September 2026; confirm on each provider's site before paying."),
+    ("Does knowhere have video lessons?",
+     "No. Every concept is an interactive model available in four modes: see it, hear it, try it, or talk it through. If a video lecture is what your kid needs, Atomi or Edrolo do that well."),
+    ("Is knowhere aligned to the actual HSC and VCE curriculum?",
+     "Yes. Every concept maps to the NESA syllabus or VCAA study design your kid is examined on. Content that is examinable in one state and not the other is badged, not hidden."),
+    ("What happens after the free week?",
+     "Nothing is charged today. The first payment is 7 days later; cancel any time before then and you pay nothing. Monthly plans have no lock-in."),
+   ]),
  "mission.html": dict(path="/mission", kind="about",
    title="Our mission — learn how you learn | knowhere",
    desc="Nobody's scared of the subject — they've never been shown how they learn. knowhere is Year 12 study that teaches you your own method, so you can learn anything.",
@@ -332,6 +350,47 @@ JS_LOGIC = {
   ],
 }
 
+# Wiring for /compare — exact anchors, each asserted once (or already applied)
+WIRE_EDITS = {
+  "for-parents.html": [
+    ('Many families use it instead of a $64/hr tutor; some use both.</p>',
+     'Many families use it instead of a $64/hr tutor; some use both. <a href="/compare" style="color:var(--brat)">See how it compares &rarr;</a></p>'),
+  ],
+  "pricing.html": [
+    ('plans and prices change &mdash; always confirm on their sites.</p>',
+     'plans and prices change &mdash; always confirm on their sites. <a href="/compare" style="color:var(--brat)">Full comparison, cons included &rarr;</a></p>'),
+    ('plans and prices change — always confirm on their sites.</p>',
+     'plans and prices change — always confirm on their sites. <a href="/compare" style="color:var(--brat)">Full comparison, cons included &rarr;</a></p>'),
+  ],
+  "knowhere-footer.js": [
+    ("'<a class=\"kfn-link\" href=\"/know-us\">know us</a>' +",
+     "'<a class=\"kfn-link\" href=\"/compare\">compare</a>' +\n                '<a class=\"kfn-link\" href=\"/know-us\">know us</a>' +"),
+  ],
+}
+
+def patch_wiring():
+    changed = []
+    for fname, pairs in WIRE_EDITS.items():
+        path = os.path.join(ROOT, fname)
+        if not os.path.exists(path): print(f"  skip {fname} (not in repo)"); continue
+        src = open(path, encoding="utf-8").read(); out = src
+        hit = False
+        for old, new in pairs:
+            if new in out: hit = True; continue
+            if old in out:
+                assert out.count(old) == 1, f"{fname}: anchor not unique: {old[:50]!r}"
+                out = out.replace(old, new, 1); hit = True
+        assert hit, f"{fname}: no wiring anchor matched"
+        if out != src:
+            save(path, out); changed.append(fname)
+    # footer cache-bust: v=20 -> v=21 on every root html
+    for path in sorted(glob.glob(os.path.join(ROOT, "*.html"))):
+        src = open(path, encoding="utf-8").read()
+        out = src.replace("knowhere-footer.js?v=20", "knowhere-footer.js?v=21")
+        if out != src:
+            save(path, out); changed.append(os.path.basename(path) + " (footer v21)")
+    return changed
+
 def patch_js_logic():
     changed = []
     for fname, pairs in JS_LOGIC.items():
@@ -348,7 +407,7 @@ def patch_js_logic():
 
 SERVER_MARK = "// KNOWHERE:SEO-REDIRECTS v2"
 SERVER_ANCHOR = "// ---------- static site ----------"
-SERVER_SNIPPET = SERVER_MARK + r""" — canonical host + clean URLs (301). www -> apex, http -> https, /x.html -> /x, /index.html -> /
+SERVER_SNIPPET = SERVER_MARK + r""" — canonical host + clean URLs (301). www -> apex, /x.html -> /x, /index.html -> / (http->https is Railway's job)
 const SEO_PAGES = new Set(%s);
 app.use((req, res, next) => {
   if (req.method !== 'GET' && req.method !== 'HEAD') return next();
@@ -358,14 +417,12 @@ app.use((req, res, next) => {
     res.set('X-Robots-Tag', 'noindex');
     return next();
   }
-  const proto = String(req.headers['x-forwarded-proto'] || req.protocol || '').split(',')[0].trim();
   let p = req.path, changed = false;
   if (host === 'www.knowhere.me') changed = true;
   const m = p.match(/^\/([A-Za-z0-9-]+)(\.html)?\/?$/i);
   const slug = m ? m[1].toLowerCase() : null;
   if (p === '/index.html' || p === '/index' || p === '/index/') { p = '/'; changed = true; }
   else if (slug && SEO_PAGES.has(slug) && p !== '/' + slug) { p = '/' + slug; changed = true; }
-  if (!changed && host === 'knowhere.me' && proto === 'http') changed = true;
   if (!changed) return next();
   const q = req.originalUrl.indexOf('?');
   return res.redirect(301, 'https://knowhere.me' + p + (q >= 0 ? req.originalUrl.slice(q) : ''));
@@ -378,7 +435,12 @@ def patch_server():
     path = os.path.join(ROOT, "server.js")
     src = open(path, encoding="utf-8").read()
     if SERVER_MARK in src:
-        return False
+        # already patched: refresh the page set only (new pages such as /compare)
+        want = "const SEO_PAGES = new Set(%s);" % json.dumps(sorted(v.lstrip("/") for v in CLEAN.values() if v != "/"))
+        cur = re.findall(r"const SEO_PAGES = new Set\(.*?\);", src)
+        assert len(cur) == 1, "server.js: SEO_PAGES not found exactly once"
+        if cur[0] == want: return False
+        save(path, src.replace(cur[0], want, 1)); return True
     assert src.count(SERVER_ANCHOR) == 1, "server.js: static-site anchor not found exactly once"
     out = src.replace(SERVER_ANCHOR, SERVER_SNIPPET + SERVER_ANCHOR, 1)
     save(path, out)
@@ -386,10 +448,11 @@ def patch_server():
 
 def write_sitemap():
     prio = {"/":"1.0","/how-it-works":"0.9","/experience-it":"0.9","/pricing":"0.9","/for-parents":"0.8","/for-teachers":"0.8",
-            "/mission":"0.6","/know-us":"0.6","/press":"0.6","/talk-to-us":"0.5","/privacy":"0.3","/terms":"0.3"}
+            "/compare":"0.8","/mission":"0.6","/know-us":"0.6","/press":"0.6","/talk-to-us":"0.5","/privacy":"0.3","/terms":"0.3"}
     rows = []
     for f, p in PAGES.items():
         if not p["path"] or p["kind"] in ("noindex","404"): continue
+        if not os.path.exists(os.path.join(ROOT, f)): continue
         u = SITE + p["path"]
         rows.append(f"  <url><loc>{u}</loc><lastmod>{TODAY}</lastmod><priority>{prio.get(p['path'],'0.5')}</priority></url>")
     xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "\n".join(rows) + "\n</urlset>\n"
@@ -436,6 +499,7 @@ def main():
     for js in ("knowhere-footer.js","knowhere-mobile-menu.js","knowhere-goat-card.js","knowhere-waitlist.js"):
         if patch_js(js): changed.append(js)
     changed += [f for f in patch_js_logic() if f not in changed]
+    changed += [f for f in patch_wiring() if f not in changed]
     if patch_server(): changed.append("server.js")
     if write_sitemap(): changed.append("sitemap.xml")
     if write_robots(): changed.append("robots.txt")
@@ -465,6 +529,12 @@ def main():
         leftovers = len(re.findall(r'href="(\./|/)?[a-z0-9-]+\.html', s))
         print(f"  {'OK ' if ok else 'BAD'} {fname:22s} ld+json:{len(lds)}  .html hrefs left:{leftovers}")
         bad += (not ok)
+    if os.path.exists(os.path.join(ROOT, "compare.html")):
+        fp = open(os.path.join(ROOT, "for-parents.html"), encoding="utf-8").read()
+        ft = open(os.path.join(ROOT, "knowhere-footer.js"), encoding="utf-8").read()
+        v21 = sum(1 for f in glob.glob(os.path.join(ROOT, "*.html")) if "knowhere-footer.js?v=21" in open(f, encoding="utf-8").read())
+        wired = ('href="/compare"' in fp) and ('href="/compare"' in ft)
+        print(f"  {'OK ' if wired else 'BAD'} /compare linked from for-parents + footer; footer v21 on {v21} pages")
     srv = open(os.path.join(ROOT, "server.js"), encoding="utf-8").read()
     print(f"  {'OK ' if SERVER_MARK in srv else 'BAD'} server.js redirects present")
     print(f"  sitemap urls: {open(os.path.join(ROOT,'sitemap.xml'),encoding='utf-8').read().count('<loc>')}")
