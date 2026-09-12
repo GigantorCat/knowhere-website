@@ -180,9 +180,11 @@ def app(full=False):
                             "Unstuck — a different explanation on demand (Pro, Max)","Gap Map (Pro, Max)","Parent dashboard (Max)"]
     return a
 
-def webpage(url, title, desc, typ="WebPage", crumb=None):
+PAGE_DATES = {}   # fname -> dateModified actually used (feeds the sitemap)
+
+def webpage(url, title, desc, typ="WebPage", crumb=None, date=None):
     w = {"@type":typ,"@id":url+"#webpage","url":url,"name":title,"description":desc,"inLanguage":"en-AU",
-         "isPartOf":{"@id":SITE+"/#site"},"about":{"@id":SITE+"/#org"},"dateModified":TODAY}
+         "isPartOf":{"@id":SITE+"/#site"},"about":{"@id":SITE+"/#org"},"dateModified":date or TODAY}
     if crumb: w["breadcrumb"] = {"@id":url+"#breadcrumb"}
     return w
 
@@ -195,24 +197,24 @@ def faqpage(url, qa):
     return {"@type":"FAQPage","@id":url+"#faq","mainEntity":[
         {"@type":"Question","name":q,"acceptedAnswer":{"@type":"Answer","text":a}} for q,a in qa]}
 
-def graph_for(fname, p):
+def graph_for(fname, p, date=None):
     url = SITE + (p["path"] if p["path"] != "/" else "/")
     g = [org(), founder(), website()]
     k = p["kind"]
     if k == "home":
-        g += [app(), webpage(url, p["title"], p["desc"])]
+        g += [app(), webpage(url, p["title"], p["desc"], date=date)]
     elif k == "pricing":
-        g += [app(full=True), webpage(url, p["title"], p["desc"], crumb=True), breadcrumb(url, p["name"])]
+        g += [app(full=True), webpage(url, p["title"], p["desc"], crumb=True, date=date), breadcrumb(url, p["name"])]
     elif k == "faq":
-        g += [webpage(url, p["title"], p["desc"], crumb=True), breadcrumb(url, p["name"]), faqpage(url, p["faq"])]
+        g += [webpage(url, p["title"], p["desc"], crumb=True, date=date), breadcrumb(url, p["name"]), faqpage(url, p["faq"])]
     elif k == "about":
-        g += [webpage(url, p["title"], p["desc"], "AboutPage", crumb=True), breadcrumb(url, p["name"])]
+        g += [webpage(url, p["title"], p["desc"], "AboutPage", crumb=True, date=date), breadcrumb(url, p["name"])]
     elif k == "contact":
-        g += [webpage(url, p["title"], p["desc"], "ContactPage", crumb=True), breadcrumb(url, p["name"])]
+        g += [webpage(url, p["title"], p["desc"], "ContactPage", crumb=True, date=date), breadcrumb(url, p["name"])]
     elif k == "press":
-        g += [webpage(url, p["title"], p["desc"], crumb=True), breadcrumb(url, p["name"])]
+        g += [webpage(url, p["title"], p["desc"], crumb=True, date=date), breadcrumb(url, p["name"])]
     elif k in ("page","legal"):
-        g += [webpage(url, p["title"], p["desc"], crumb=True), breadcrumb(url, p["name"])]
+        g += [webpage(url, p["title"], p["desc"], crumb=True, date=date), breadcrumb(url, p["name"])]
     else:
         return None
     return {"@context":"https://schema.org","@graph":g}
@@ -221,7 +223,7 @@ def graph_for(fname, p):
 def esc(s):
     return s.replace("&","&amp;").replace('"',"&quot;").replace("'","&#39;")
 
-def head_block(fname, p):
+def head_block(fname, p, date=None):
     lines = ["<!-- KNOWHERE:SEO-HEAD v2 -->"]
     lines.append(f"<title>{esc(p['title'])}</title>")
     lines.append(f'<meta name="description" content="{esc(p["desc"])}">')
@@ -250,7 +252,7 @@ def head_block(fname, p):
                   f'<meta name="twitter:title" content="{esc(ogt)}">',
                   f'<meta name="twitter:description" content="{esc(ogd)}">',
                   f'<meta name="twitter:image" content="{SITE}/og-image.png">']
-        g = graph_for(fname, p)
+        g = graph_for(fname, p, date)
         if g:
             lines.append('<script type="application/ld+json">')
             lines.append(json.dumps(g, ensure_ascii=False, separators=(",",":")))
@@ -305,9 +307,16 @@ def patch_page(fname, p):
     m = HEAD_RE.search(src)
     assert m, f"{fname}: no <head>"
     head = m.group(2)
+    # keep the previous dateModified unless something outside the SEO block actually changes this run
+    prev = re.search(r'"dateModified":"(\d{4}-\d{2}-\d{2})"', head)
+    old_rest = STRIP_HEAD[0].sub("", src)
+    old_rest = HTML_TAG_RE.sub('<html lang="en-AU">', old_rest, count=1)
+    new_rest = rewrite_links(old_rest)
+    date = prev.group(1) if (prev and new_rest == old_rest) else TODAY
+    PAGE_DATES[fname] = date
     for rx in STRIP_HEAD:
         head = rx.sub("", head)
-    block = head_block(fname, p)
+    block = head_block(fname, p, date)
     vm = VIEWPORT_RE.search(head)
     if vm:
         head = head[:vm.end()] + "\n" + block + head[vm.end():]
@@ -352,22 +361,8 @@ JS_LOGIC = {
 
 # Wiring for /compare — exact anchors, each asserted once (or already applied)
 WIRE_EDITS = {
-  "for-parents.html": [
-    # softened 11 Sep: no user-count claims until there are users (positioning brief §5)
-    ('Many families use it instead of a $64/hr tutor; some use both. <a href="/compare" style="color:var(--brat)">See how it compares &rarr;</a></p>',
-     'A month of knowhere costs less than one hour with a tutor, and the two don&#8217;t fight &#8212; plenty of families will want both. <a href="/compare" style="color:var(--brat)">See how it compares &rarr;</a></p>'),
-    ('Many families use it instead of a $64/hr tutor; some use both.</p>',
-     'A month of knowhere costs less than one hour with a tutor, and the two don&#8217;t fight &#8212; plenty of families will want both. <a href="/compare" style="color:var(--brat)">See how it compares &rarr;</a></p>'),
-    # hero: a visible way to the comparison
-    ('<a class="ghost" href="/how-it-works">See how it works</a>\n      </div>\n    </div>\n    <a class="scroll-cue" href="#par-content"',
-     '<a class="ghost" href="/how-it-works">See how it works</a>\n        <a class="ghost" href="/compare">How it compares</a>\n      </div>\n    </div>\n    <a class="scroll-cue" href="#par-content"'),
-  ],
-  "pricing.html": [
-    ('plans and prices change &mdash; always confirm on their sites.</p>',
-     'plans and prices change &mdash; always confirm on their sites. <a href="/compare" style="color:var(--brat)">Full comparison, cons included &rarr;</a></p>'),
-    ('plans and prices change — always confirm on their sites.</p>',
-     'plans and prices change — always confirm on their sites. <a href="/compare" style="color:var(--brat)">Full comparison, cons included &rarr;</a></p>'),
-  ],
+  # for-parents / pricing compare links were wired 11 Sep and are committed; copy on those pages is now owned by
+  # knowhere-copy-12sep.sh, so this script no longer touches their body text.
   "knowhere-footer.js": [
     ("'<a class=\"kfn-link\" href=\"/know-us\">know us</a>' +",
      "'<a class=\"kfn-link\" href=\"/compare\">compare</a>' +\n                '<a class=\"kfn-link\" href=\"/know-us\">know us</a>' +"),
@@ -460,7 +455,8 @@ def write_sitemap():
         if not p["path"] or p["kind"] in ("noindex","404"): continue
         if not os.path.exists(os.path.join(ROOT, f)): continue
         u = SITE + p["path"]
-        rows.append(f"  <url><loc>{u}</loc><lastmod>{TODAY}</lastmod><priority>{prio.get(p['path'],'0.5')}</priority></url>")
+        lm = PAGE_DATES.get(f, TODAY)
+        rows.append(f"  <url><loc>{u}</loc><lastmod>{lm}</lastmod><priority>{prio.get(p['path'],'0.5')}</priority></url>")
     xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "\n".join(rows) + "\n</urlset>\n"
     path = os.path.join(ROOT, "sitemap.xml")
     if open(path, encoding="utf-8").read() != xml:
@@ -539,8 +535,9 @@ def main():
         fp = open(os.path.join(ROOT, "for-parents.html"), encoding="utf-8").read()
         ft = open(os.path.join(ROOT, "knowhere-footer.js"), encoding="utf-8").read()
         v21 = sum(1 for f in glob.glob(os.path.join(ROOT, "*.html")) if "knowhere-footer.js?v=21" in open(f, encoding="utf-8").read())
-        wired = ('href="/compare"' in fp) and ('href="/compare"' in ft)
-        print(f"  {'OK ' if wired else 'BAD'} /compare linked from for-parents + footer; footer v21 on {v21} pages")
+        wired = 'href="/compare"' in ft
+        fp_links = 'yes' if 'href="/compare"' in fp else 'no (copy script owns that)'
+        print(f"  {'OK ' if wired else 'BAD'} /compare in footer; footer v21 on {v21} pages; for-parents links it: {fp_links}")
     srv = open(os.path.join(ROOT, "server.js"), encoding="utf-8").read()
     print(f"  {'OK ' if SERVER_MARK in srv else 'BAD'} server.js redirects present")
     print(f"  sitemap urls: {open(os.path.join(ROOT,'sitemap.xml'),encoding='utf-8').read().count('<loc>')}")
