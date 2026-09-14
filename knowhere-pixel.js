@@ -71,6 +71,71 @@ var KW_PIXEL_ID = '1829181431399314';
     } catch (err) {}
   }, true);
 
+  /* ---- scroll depth ---------------------------------------------------
+     A bounce tells you someone left; it does not tell you whether they read
+     anything first. These two events separate "the first screen lost them"
+     from "the first screen worked and something below it did not".
+     Paid landing pages only, the same two ViewContent covers, so a free
+     Umami tier is not spent on fourteen pages nobody advertises.
+     Milestones fire once each. The exit beacon is the important one: at a
+     97% bounce most people never reach 25%, and without it they leave no
+     trace at all, which reads identically to the script never running. */
+  (function () {
+    var path = location.pathname;
+    if (path.indexOf('for-parents') === -1 && path.indexOf('experience-it') === -1) return;
+
+    var MARKS = [25, 50, 75, 90];
+    var hit = {}, maxPct = 0, started = Date.now(), ticking = false, sent = false;
+
+    function track(name, data) {
+      try { if (window.umami) window.umami.track(name, data); } catch (e) {}
+    }
+
+    function depth() {
+      var doc = document.documentElement;
+      var h = Math.max(doc.scrollHeight, document.body ? document.body.scrollHeight : 0);
+      if (h <= window.innerHeight) return 100;
+      return Math.round(((window.scrollY + window.innerHeight) / h) * 100);
+    }
+
+    function measure() {
+      ticking = false;
+      var d = depth();
+      if (d > maxPct) maxPct = d;
+      for (var i = 0; i < MARKS.length; i++) {
+        if (d >= MARKS[i] && !hit[MARKS[i]]) {
+          hit[MARKS[i]] = 1;
+          track('scroll_depth', { page: path, depth: MARKS[i] });
+        }
+      }
+    }
+
+    window.addEventListener('scroll', function () {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(measure);
+    }, { passive: true });
+
+    /* Fires once, on the way out. visibilitychange is the only handler a
+       phone reliably still runs on a back-tap. */
+    function bail() {
+      if (sent) return;
+      sent = true;
+      measure();
+      track('scroll_exit', {
+        page: path,
+        max: Math.min(100, Math.floor(maxPct / 10) * 10),
+        seconds: Math.round((Date.now() - started) / 1000)
+      });
+    }
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'hidden') bail();
+    });
+    window.addEventListener('pagehide', bail);
+
+    measure();
+  })();
+
   if (!ID) return;
 
   /* Meta base code — the standard snippet, unmodified. */
