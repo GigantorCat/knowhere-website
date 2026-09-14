@@ -446,7 +446,7 @@ class Component extends DCLogic {
       const url=mc.toDataURL('image/png');
       host.style.webkitMaskImage='url('+url+')'; host.style.maskImage='url('+url+')';
       host.style.webkitMaskSize='100% 100%'; host.style.maskSize='100% 100%';
-      host.style.opacity='1';
+      host.style.opacity=this._vidReady?'1':'0'; /* KW:R8 — wait for a frame; frame() takes over from here */
       this._mHostEl=host;
     };
     const pushMask=()=>{
@@ -524,6 +524,9 @@ class Component extends DCLogic {
       dctx.globalAlpha=1;
     };
     const play=()=>{ if(vid&&!reduce){ vid.muted=true; vid.play().catch(()=>{}); } };
+    /* KW:R8 — first frame available: let the video fade in and the particle word fade out (see frame()) */
+    const onReady=()=>{ if(this._vidReady) return; this._vidReady=true; this._vidReadyT=performance.now(); if(host){ host.style.transition='opacity .9s ease'; } };
+    if(vid){ vid.addEventListener('loadeddata',onReady); vid.addEventListener('canplay',onReady); if(vid.readyState>=2) onReady(); }
     const green=this.greenRef, FADE=0.75;
     let prevT=0, fadingOut=false, outStart=0;
     const loop=(now)=>{
@@ -1257,7 +1260,7 @@ class Component extends DCLogic {
 
     /* ── retarget on any beat change; the morph runs on its own clock ── */
     const def=(()=>{
-      if(want===0) return {form:this.bannerShape||this.targets[0],acc:g,off:0,rot:0,mode:'warm',pulse:0};
+      if(want===0) return {form:this.bannerShape||this.targets[0],acc:g,off:0,rot:0,mode:'warm',pulse:this._vidReady?0:0.35}; /* KW:R8 twinkle while loading */
       if(want===1) return {form:this.targets[1],acc:g,off:vw*0.20,rot:1,mode:'spec',pulse:0.9};
       if(want===2) return {form:this.targets[2],acc:g,off:0,rot:1,mode:'plain',pulse:0,konst:1,edges:1};
       if(want===3) return {form:this.targets[3],acc:g,off:0,rot:1,mode:'plain',pulse:0,konst:1,eq:1};
@@ -1308,8 +1311,10 @@ class Component extends DCLogic {
     if(Math.abs(eT-this._p)<0.004) this._p=eT;
     if(bh&&this.bannerShape&&window.scrollY<bh*1.4){
       const eP=this._p;
-      if(this._mHostEl) this._mHostEl.style.opacity=Math.max(0,Math.min(1,1-(eP-0.10)*1.7)).toFixed(3);
-      gAl=(this.beat===0)?0:(this._bornT0?Math.max(0,Math.min(1,(now-this._bornT0-900)/550)):Math.max(0,Math.min(1,(eP-0.80)/0.20)));
+      /* KW:R8 — preload: particles hold the word until the video has a frame, then hand over */
+      const vidIn=this._vidReady?Math.max(0,Math.min(1,(now-this._vidReadyT)/900)):0;
+      if(this._mHostEl) this._mHostEl.style.opacity=(vidIn*Math.max(0,Math.min(1,1-(eP-0.10)*1.7))).toFixed(3);
+      gAl=(this.beat===0)?(1-vidIn):(this._bornT0?Math.max(0,Math.min(1,(now-this._bornT0-900)/550)):Math.max(0,Math.min(1,(eP-0.80)/0.20)));
       const fadeP=Math.min(1,eP*1.25);
       for(const ch of bn.querySelectorAll('[data-bn-fade]')){
         ch.style.opacity=(1-fadeP).toFixed(3);
