@@ -16,8 +16,8 @@ var CONFIG={
   kick:"first visit",
   line:"welcome to knowing.",
   sub:"year 12 study that gets how you think.",
-  ctaLabel:"start knowing",
-  ctaHref:"/pricing",        /* real signup route lands at Stripe session */
+  ctaLabel:"start your free week",   /* KW:LABELS 14 Sep — one label site-wide; pages load knowhere-footer.js?v=22 */
+  ctaHref:"https://app.knowhere.me/signup",        /* real signup route lands at Stripe session */
   dismissLabel:"ta",
   onceKey:"kn_goat_card_v1",   /* bump the suffix to re-show after a redesign */
   showOnce:true                  /* set false while styling, true to ship */

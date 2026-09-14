@@ -2,6 +2,7 @@
 // "nowhere"; brat-green particles then sweep in to build the leading "k"
 // (nowhere → knowhere); finally every particle turns brat green. Lockup +
 // single CTA fade in beneath the word. Self-contained web component.
+// v22: one CTA label site-wide (start your free week), footer CTAs mirror the page's nav CTA — KW:LABELS (Muppet, 14 Sep); pages load knowhere-footer.js?v=22.
 // v20: SOCIAL row in the footer nav (Cat, 4 Sep, release day) — Instagram · TikTok ·
 //      YouTube · Facebook · LinkedIn, from KnowhereMarks.social (knowhere-marks.js).
 // v19: PRESS added to footer nav (Cat, 1 Sep).
@@ -13,6 +14,11 @@
 // in beneath the lockup once it lands (time-driven, no extra scroll). Requires
 // knowhere-goo.js on the page; degrades to unstyled link without it.
 (function () {
+  /* KW:LABELS — the footer's CTAs say what the page's nav CTA says (parents → ?as=parent, teachers → /waitlist) */
+  window.kwMirrorCta = function (a, labelEl) {
+    try { var pc = document.querySelector('nav:not(.kwm-panel) [data-kw-cta]'); if (!pc || !a) return;
+      a.setAttribute('href', pc.getAttribute('href')); (labelEl || a).textContent = (pc.textContent || '').trim(); } catch (e) {}
+  };
   if (customElements.get('knowhere-footer')) return;
   var BRAT = [123, 234, 90], WARM = [237, 236, 230];
 
@@ -30,9 +36,9 @@
           '<div data-kf-cta style="position:absolute;left:0;right:0;top:calc(40vh + 132px + clamp(44px,7vh,76px));display:flex;flex-direction:column;align-items:center;gap:16px;opacity:0;transform:translateY(24px);pointer-events:none;font-family:\'Geist\',system-ui,sans-serif">' +
             '<div style="font-size:15px;font-weight:600;letter-spacing:-0.01em;color:#9b9a96">you&#39;re one letter away.</div>' +
             '<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="kf-goo-filter" x="-50%" y="-50%" width="200%" height="200%"><feComponentTransfer><feFuncA type="discrete" tableValues="0 1"/></feComponentTransfer><feGaussianBlur stdDeviation="5"/><feComponentTransfer><feFuncA type="table" tableValues="-5 11"/></feComponentTransfer></filter></svg>' +
-            '<a data-kf-goo href="/pricing" style="--gx:50;--gy:32;position:relative;isolation:isolate;display:inline-flex;align-items:center;justify-content:center;font-family:inherit;font-size:clamp(19px,2.2vw,24px);font-weight:650;letter-spacing:-0.01em;line-height:1;color:#0a1f06;text-decoration:none;text-transform:lowercase;padding:1.5em 2.4em;transform:scale(.94);transition:transform .9s cubic-bezier(.3,1.4,.5,1)">' +
+            '<a data-kf-goo href="https://app.knowhere.me/signup" style="--gx:50;--gy:32;position:relative;isolation:isolate;display:inline-flex;align-items:center;justify-content:center;font-family:inherit;font-size:clamp(19px,2.2vw,24px);font-weight:650;letter-spacing:-0.01em;line-height:1;color:#0a1f06;text-decoration:none;text-transform:lowercase;padding:1.5em 2.4em;transform:scale(.94);transition:transform .9s cubic-bezier(.3,1.4,.5,1)">' +
               '<span data-kf-goo-fx style="position:absolute;inset:0;z-index:-1;padding:20px;pointer-events:none;filter:blur(10px) url(#kf-goo-filter) drop-shadow(0 .25em .5em rgba(0,0,0,.5));background-image:linear-gradient(0deg,#7BEA5A,#7BEA5A),radial-gradient(40% 70% at calc(var(--gx)*1%) calc(var(--gy)*1%),hsl(106 90% 82%) 0%,transparent 90%);background-clip:content-box,border-box"></span>' +
-              '<span style="position:relative">start knowing</span>' +
+              '<span data-kf-goo-label style="position:relative">start your free week</span>' +
             '</a>' +
             '<div style="font-family:ui-monospace,monospace;font-size:11.5px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:#8C8B87">free for 7 days</div>' +
           '</div>' +
@@ -43,6 +49,7 @@
       this._cv = this.querySelector('[data-kf-cv]');
       this._lockup = this.querySelector('[data-kf-lockup]');
       this._cta = this.querySelector('[data-kf-cta]');
+      window.kwMirrorCta && window.kwMirrorCta(this.querySelector('[data-kf-goo]'), this.querySelector('[data-kf-goo-label]'));
       // self-contained goo driver (dc-runtime import scope half-applies external
       // class CSS — inline styles + own filter def render reliably; see v14/v15 saga)
       this._goo = this.querySelector('[data-kf-goo]');
@@ -258,7 +265,7 @@
                 '<div style="max-width:820px">' +
                   '<div style="font-size:11px;font-weight:700;letter-spacing:0.26em;text-transform:uppercase;color:#8C8B87;margin-bottom:18px">no gatekeeping. iykyk.</div>' +
                   '<div style="font-size:clamp(32px,4.4vw,58px);font-weight:800;letter-spacing:-0.045em;line-height:1.04;color:rgba(237,236,232,0.84);text-wrap:balance">ready to claim your <span style="background-image:linear-gradient(90deg,#7BEA5A,#23A4DD,#9B5AEA,#E8C63F,#7BEA5A);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:kfnSpectrum 7s linear infinite">unfair advantage</span>, or are we still pretending all-nighters work?</div>' +
-                  '<div style="margin-top:30px"><a href="/pricing" style="display:inline-flex;align-items:center;font-size:15px;font-weight:700;color:#070708;background:#7BEA5A;border-radius:12px;padding:15px 28px;text-decoration:none;letter-spacing:-0.01em;box-shadow:0 10px 40px rgba(123,234,90,.32)">let&#39;s go</a></div>' +
+                  '<div style="margin-top:30px"><a data-kf-nav-cta href="https://app.knowhere.me/signup" style="display:inline-flex;align-items:center;font-size:15px;font-weight:700;color:#070708;background:#7BEA5A;border-radius:12px;padding:15px 28px;text-decoration:none;letter-spacing:-0.01em;box-shadow:0 10px 40px rgba(123,234,90,.32)">start your free week</a></div>' +
                 '</div>' +
               '</div>' +
               '<div style="display:flex;align-items:center;gap:30px;flex-wrap:wrap;margin-top:auto;padding-top:12px">' +
@@ -279,6 +286,7 @@
               '</div>' +
             '</div>' +
           '</div>';
+        window.kwMirrorCta && window.kwMirrorCta(this.querySelector('[data-kf-nav-cta]'), null);
         var slot = this.querySelector('[data-kfn-logo]');
         var put = function () {
           if (window.KnowhereMarks && window.KnowhereMarks.logoSvg) { slot.innerHTML = window.KnowhereMarks.logoSvg(30, '#EDECE8'); }
