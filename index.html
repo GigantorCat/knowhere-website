@@ -104,12 +104,41 @@
   @media (max-width:740px){
     html,body{overflow-x:clip}
     nav{padding:12px 16px !important;gap:10px !important}
-    nav a[href*="app.knowhere.me"]{padding:9px 13px !important;font-size:12px !important}
+    nav:not(.kwm-panel) a[href*="app.knowhere.me"]{padding:9px 13px !important;font-size:12px !important}
     nav .kp-cta{padding:9px 13px !important;font-size:12px !important}
     section[data-screen-label]{padding-left:20px !important;padding-right:20px !important}
     div[style*="padding:38px 44px"]{padding:26px 20px !important}
     div[style*="padding: 48px 56px"],div[style*="padding:48px 56px"]{padding:30px 22px !important}
     input,select,textarea{font-size:16px}
+  }
+  /* KW:HOME-MOBILE — copy sits in the top ~45% of the screen, the formation is pushed under it (see frame(): oy) */
+  @media (max-width:740px){
+    section[data-screen-label] [data-fade]{align-items:flex-start !important;justify-content:flex-start !important;padding:82px 20px 0 !important;text-align:left !important}
+    section[data-screen-label] [data-fade]>div{margin:0 !important;max-width:none !important}
+    section[data-screen-label] [data-fade] h2{font-size:26px !important;line-height:1.05 !important;margin-top:10px !important;max-width:none !important}
+    section[data-screen-label] [data-fade] h2 br{display:none}
+    section[data-screen-label] [data-fade] p{font-size:14px !important;line-height:1.5 !important;margin:10px 0 0 !important;max-width:none !important}
+    section[data-screen-label] [data-fade] h3{font-size:16px !important;margin-top:12px !important}
+    section[data-screen-label] [data-fade] div[style*="inline-flex"]{margin-bottom:8px !important}
+    section[data-screen-label="Equaliser"] [data-fade] h2 .kp-irid{font-size:44px !important;margin-bottom:4px !important}
+    section[data-screen-label="Constellation"] [data-fade]:has(.kc-chip){display:none !important}
+    section[data-screen-label="Poke it"] [data-fade] div:has(> .kp-cta){margin-top:16px !important}
+    section[data-screen-label="Fingerprint"] div[style*="sticky"]{justify-content:flex-start !important;padding:82px 20px 0 !important}
+    section[data-screen-label="Fingerprint"] div[style*="grid"]{align-self:flex-start !important}
+    section[data-screen-label="Fingerprint"] [data-cin]{align-self:start !important}
+    section[data-screen-label="Outro"] div[style*="sticky"]{padding:80px 20px 16vh !important}
+    section[data-screen-label="Outro"] div[style*="0.24em"]{font-size:19px !important;letter-spacing:.2em !important;line-height:1.3 !important}
+    section[data-screen-label="Outro"] p{font-size:14px !important}
+    section[data-screen-label="Fingerprint"] [data-fp-title]{top:82px !important;left:20px !important;right:20px !important}
+    section[data-screen-label="Fingerprint"] [data-fp-title] h2{font-size:26px !important;margin-top:10px !important}
+    section[data-screen-label="Fingerprint"] [data-fp-title] p{font-size:14px !important}
+    section[data-screen-label="Fingerprint"] [data-cin]{padding:20px 18px !important;width:100% !important}
+    section[data-screen-label="Fingerprint"] [data-cin] h4{font-size:21px !important;margin-bottom:10px !important}
+    section[data-screen-label="Fingerprint"] [data-cin] p{font-size:14px !important;line-height:1.55 !important}
+    section[data-screen-label="Fingerprint"] h3{font-size:34px !important}
+    section[data-screen-label="Fingerprint"] [data-step="0.83"]{font-size:17px !important;margin-top:16px !important}
+    section[data-screen-label="Fingerprint"] [data-step="0.845"]{font-size:64px !important}
+    section[data-screen-label="Fingerprint"] [data-step="0.86"]{margin-top:24px !important}
   }
 </style>
 </helmet>
@@ -133,7 +162,7 @@
     <a href="/pricing" class="kp-navlink" style="font-size:13px;font-weight:500;color:#8C8B87;letter-spacing:-0.01em;text-decoration:none">Pricing</a>
     <a href="/for-parents" class="kp-navlink" style="font-size:13px;font-weight:500;color:#8C8B87;letter-spacing:-0.01em;text-decoration:none">For parents</a><a href="/for-teachers" class="kp-navlink" style="font-size:13px;font-weight:500;color:#8C8B87;letter-spacing:-0.01em;text-decoration:none">For teachers</a>
     <a href="https://app.knowhere.me/login" style="display:inline-block;padding:10px 18px;font-size:13px;font-weight:700;letter-spacing:-0.01em;color:#070708;background:#EDECE8;border-radius:12px;text-decoration:none;box-shadow:0 6px 22px rgba(237,236,232,.18);transition:transform .18s,background .18s,box-shadow .18s">Log in</a>
-      <a href="/pricing" class="kp-cta" style="padding:10px 18px;font-size:13px;animation:none;box-shadow:0 6px 22px rgba(123,234,90,.25)">start knowing</a>
+      <a href="https://app.knowhere.me/signup" class="kp-cta" data-kw-cta style="padding:10px 18px;font-size:13px;animation:none;box-shadow:0 6px 22px rgba(123,234,90,.25);white-space:nowrap">start your free week</a>
   </nav>
 
   <!-- 0 · IYKYK VIDEO MASK BANNER -->
@@ -1200,6 +1229,7 @@ class Component extends DCLogic {
     ctx.setTransform(this.dpr,0,0,this.dpr,0,0);
     ctx.clearRect(0,0,vw,vh);
     const t=(now-this.t0)/1000;
+    const mob=vw<=740; /* KW:HOME-MOBILE */
     const {idx}=this.scrollState();
     const g={r:123,g:234,b:90};
 
@@ -1241,6 +1271,13 @@ class Component extends DCLogic {
       const form=stage===1?this.outFull:this.outNowhere;
       return {form,acc:g,off:0,rot:0,mode:'plain',pulse:0,outK:stage>=1?1:0};
     })();
+    /* KW:HOME-MOBILE: on a phone the copy owns the top of the screen, so every formation drops into the
+       lower half (oy, a screen-space y offset like off) and never slides sideways. */
+    if(mob){ def.off=0;
+      var ring=(want===4&&sub===4);
+      def.oy=ring?0:(({1:0.22,2:0.25,3:0.27,4:0.28,5:0.22,6:0.18,7:-0.10})[want]||0)*vh;
+      def.ms=ring?0.82:(({2:0.62,3:0.72,4:0.75})[want]||0.82);
+    } else { def.oy=0; def.ms=1; }
     const key=want+'/'+sub+'/'+(want===7?(ost>=1?1:0):0);
     if(key!==this._beatKey){
       this._beatKey=key; this._prev=this._cur; this._cur=def; this._mT0=now; this.boost=1;
@@ -1282,7 +1319,10 @@ class Component extends DCLogic {
 
     const rot=Math.sin(t*0.38)*0.42*rotW;
     const cosR=Math.cos(rot), sinR=Math.sin(rot);
-    const cx=vw/2, cy=vh/2, fov=900;
+    const oyA=this._prev.oy||0, oyB=this._cur.oy||0;
+    const msA=this._prev.ms||1, msB=this._cur.ms||1;
+    const mS=this._mS=msA+(msB-msA)*mE; /* KW:HOME-MOBILE: formations shrink on a phone, per beat */
+    const cx=vw/2, cy=vh/2+(oyA+(oyB-oyA)*mE), fov=900;
     ctx.globalCompositeOperation='lighter';
     const warm={r:237,g:236,b:230};
     const kSpring=0.075+0.10*this.boost; this.boost*=0.94;
@@ -1323,7 +1363,7 @@ class Component extends DCLogic {
       const x=this.px[i3], y=this.px[i3+1], z=this.px[i3+2];
       const rx=x*cosR+z*sinR, rz=-x*sinR+z*cosR;
       const sc=fov/(fov+rz);
-      const sx=cx+rx*sc+(offA+(offB-offA)*e), sy=cy+y*sc;
+      const sx=cx+rx*sc*mS+(offA+(offB-offA)*e), sy=cy+y*sc*mS;
       if(sx<-10||sx>vw+10||sy<-10||sy>vh+10) continue;
       const depth=Math.max(0,Math.min(1,(sc-0.8)*2.4));
       const gI=this.greens[i];
@@ -1465,7 +1505,7 @@ class Component extends DCLogic {
   }
   proj(x,y,z,cosR,sinR,cx,cy,fov){
     const rx=x*cosR+z*sinR, rz=-x*sinR+z*cosR, sc=fov/(fov+rz);
-    return [cx+rx*sc, cy+y*sc];
+    const mS=this._mS||1; return [cx+rx*sc*mS, cy+y*sc*mS];
   }
 
   renderVals(){
@@ -1482,6 +1522,6 @@ class Component extends DCLogic {
 </script>
 
 
-<script src="./knowhere-mobile-menu.js?v=7" defer></script>
+<script src="./knowhere-mobile-menu.js?v=8" defer></script>
 </body>
 </html>

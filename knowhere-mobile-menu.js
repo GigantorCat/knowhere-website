@@ -1,5 +1,8 @@
 /* ─────────────────────────────────────────────────────────────
-   knowhere-mobile-menu.js v7 — shared mobile menu (≤820px).
+   knowhere-mobile-menu.js v8 — shared mobile menu (≤820px).
+   v8: the page's nav CTA ([data-kw-cta]) is hidden from the bar at ≤820px and
+   rendered as the first item of the panel, green, with the page's own label and
+   destination (parents → ?as=parent, teachers → /waitlist, else student signup).
    v7 also: the ≤820px rule that hides the nav's app link was hiding the panel's
    own "Log in" too (the panel is a <nav>) — scoped to nav:not(.kwm-panel).
    v7: social icon row under "Log in" (Cat, 4 Sep) — from KnowhereMarks.socialHtml
@@ -28,10 +31,12 @@
     ".kwm-panel a:focus-visible{outline:2px solid #7BEA5A;outline-offset:-2px}" +
     ".kwm-panel a.here{background:rgba(123,234,90,.12);color:#7BEA5A}" +
     ".kwm-panel a.kwm-login{border-top:1px solid rgba(255,255,255,.08);border-radius:0 0 11px 11px;margin-top:4px;color:#8C8B87}" +
+    ".kwm-panel a.kwm-cta{background:#7BEA5A;color:#070708;text-align:center;font-weight:700;margin:2px 2px 8px;box-shadow:0 8px 24px rgba(123,234,90,.22)}" +
+    ".kwm-panel a.kwm-cta:hover,.kwm-panel a.kwm-cta:active{background:#8ff06e;color:#070708}" +
     ".kwm-panel .kwm-soc{display:flex;align-items:center;gap:2px;padding:6px 8px 2px;margin-top:4px;border-top:1px solid rgba(255,255,255,.08)}" +
     ".kwm-panel .kwm-soc a{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;padding:0;border-radius:11px;color:#8C8B87}" +
     ".kwm-panel .kwm-soc a i{display:block;width:17px;height:17px;background:currentColor;-webkit-mask:var(--ico) center/contain no-repeat;mask:var(--ico) center/contain no-repeat}" +
-    "@media (max-width:820px){.kwm-btn{display:flex}nav:not(.kwm-panel) a[href*=\"app.knowhere.me\"]{display:none !important}}";
+    "@media (max-width:820px){.kwm-btn{display:flex}nav:not(.kwm-panel) a[href*=\"app.knowhere.me\"],nav:not(.kwm-panel) [data-kw-cta]{display:none !important}}";
 
   var LINKS =
     '<a href="/">Home</a>' +
@@ -67,7 +72,11 @@
       var panel = document.createElement("nav");
       panel.className = "kwm-panel"; panel.id = "kwm-panel";
       panel.setAttribute("aria-label", "Mobile");
-      panel.innerHTML = LINKS + (window.KnowhereMarks && window.KnowhereMarks.socialHtml ? '<div class="kwm-soc">' + window.KnowhereMarks.socialHtml('') + '</div>' : '');
+      var pageCta = document.querySelector("nav:not(.kwm-panel) [data-kw-cta]");
+      var ctaHref = pageCta ? pageCta.getAttribute("href") : "https://app.knowhere.me/signup";
+      var ctaText = pageCta ? (pageCta.textContent || "").trim() : "start your free week";
+      var CTA = '<a class="kwm-cta" href="' + ctaHref.replace(/"/g, "&quot;") + '">' + ctaText.replace(/[<>&]/g, function (c) { return { "<": "&lt;", ">": "&gt;", "&": "&amp;" }[c]; }) + "</a>";
+      panel.innerHTML = CTA + LINKS + (window.KnowhereMarks && window.KnowhereMarks.socialHtml ? '<div class="kwm-soc">' + window.KnowhereMarks.socialHtml('') + '</div>' : '');
       var here = "/" + location.pathname.replace(/^\/+|\/+$/g, "").replace(/\.html$/, ""); if (here === "/index") here = "/";
       panel.querySelectorAll("a").forEach(function (a) {
         var h = (a.getAttribute("href") || "").replace(/^\.\//, "").replace(/\.html$/, ""); if (h === "" || h === "index") h = "/"; else if (h.charAt(0) !== "/") h = "/" + h;
