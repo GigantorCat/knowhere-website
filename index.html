@@ -58,7 +58,7 @@
 <script>window.KNOWHERE_LIVE=true</script>
 <script src="./knowhere-waitlist.js?v=7" defer></script>
 <script src="./knowhere-goo.js?v=6"></script>
-<script src="./knowhere-footer.js?v=22"></script>
+<script src="./knowhere-footer.js?v=23"></script>
 <style>
   .kp *{box-sizing:border-box}
   body{margin:0}
@@ -329,7 +329,7 @@
       <p data-ostep="0.44" style="opacity:0;font-size:13px;font-weight:600;letter-spacing:0.06em;color:#8C8B87;margin:0 0 12px">Built to work alongside school — not to replace it.</p>
       <p data-ostep="0.50" style="opacity:0;font-size:16.5px;line-height:1.55;color:#9b9a96;margin:0 auto;max-width:42ch">You're one letter away. Tell us how you learn — it takes a minute — and watch your first concept come alive tonight.</p>
       <div data-ostep="0.58" style="opacity:0;display:flex;gap:13px;justify-content:center;margin-top:30px;flex-wrap:wrap">
-        <a href="https://app.knowhere.me/signup" class="kw-goo kw-goo--m">start your free week</a>
+        <a href="https://app.knowhere.me/signup" class="kp-cta" style="font-size:16px;padding:16px 30px" data-kw-goo-off="restore with class kw-goo--m + kw-goo, see knowhere-goo.js">start your free week</a>
       <span style="width:100%;text-align:center;font-family:ui-monospace,monospace;font-size:11.5px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:#8C8B87">seven days free</span></div>
     </div>
     </div>
@@ -602,7 +602,7 @@ class Component extends DCLogic {
       const rj=0.87+rnd()*0.20;
       const cr=12+Math.sqrt(su.n)*2.5;
       const cnt=(k===K-1)?(this.N-pAcc):Math.round(this.N*su.n/totalC);
-      clusters.push({x:Math.cos(ang)*Rx*rj,y:Math.sin(ang)*Ry*rj,r:cr,start:pAcc,count:cnt,n:su.n,name:su.name,rgb:su.rgb});
+      clusters.push({x:Math.cos(ang)*Rx*rj,y:Math.sin(ang)*Ry*rj,z:Math.cos(ang)*Rx*0.45,r:cr,start:pAcc,count:cnt,n:su.n,name:su.name,rgb:su.rgb});
       pAcc+=cnt;
     }
     let pi=0;
@@ -614,7 +614,7 @@ class Component extends DCLogic {
         const th=rnd()*6.283, rr=Math.sqrt(rnd())*c.r;
         shape[pi*3]=c.x+Math.cos(th)*rr*1.15;
         shape[pi*3+1]=c.y+Math.sin(th)*rr*0.9;
-        shape[pi*3+2]=(rnd()-0.5)*c.r*1.6;
+        shape[pi*3+2]=c.z+(rnd()-0.5)*c.r*1.6;
         col[pi*3]=c.rgb[0]; col[pi*3+1]=c.rgb[1]; col[pi*3+2]=c.rgb[2];
       }
     }
@@ -1271,11 +1271,12 @@ class Component extends DCLogic {
       const form=stage===1?this.outFull:this.outNowhere;
       return {form,acc:g,off:0,rot:0,mode:'plain',pulse:0,outK:stage>=1?1:0};
     })();
+    def.ra=(want===2)?1.6:1; /* KW:POLISH — the library swings wider so the hoop reads in 3D */
     /* KW:HOME-MOBILE: on a phone the copy owns the top of the screen, so every formation drops into the
        lower half (oy, a screen-space y offset like off) and never slides sideways. */
     if(mob){ def.off=0;
       var ring=(want===4&&sub===4);
-      def.oy=ring?0:(({1:0.22,2:0.30,3:0.27,4:0.28,5:0.22,6:0.18,7:-0.10})[want]||0)*vh;
+      def.oy=ring?0:(({1:0.17,2:0.23,3:0.27,4:0.22,5:0.17,6:0.13,7:-0.10})[want]||0)*vh;
       def.ms=ring?0.82:(({2:0.56,3:0.72,4:0.75})[want]||0.82);
     } else { def.oy=0; def.ms=1; }
     const key=want+'/'+sub+'/'+(want===7?(ost>=1?1:0):0);
@@ -1317,12 +1318,13 @@ class Component extends DCLogic {
       }
     }
 
-    const rot=Math.sin(t*0.38)*0.42*rotW;
+    const raA=this._prev.ra||1, raB=this._cur.ra||1, raW=raA+(raB-raA)*mE;
+    const rot=Math.sin(t*0.38)*0.42*rotW*raW;
     const cosR=Math.cos(rot), sinR=Math.sin(rot);
     const oyA=this._prev.oy||0, oyB=this._cur.oy||0;
     const msA=this._prev.ms||1, msB=this._cur.ms||1;
     const mS=this._mS=msA+(msB-msA)*mE; /* KW:HOME-MOBILE: formations shrink on a phone, per beat */
-    const cx=vw/2, cy=vh/2+(oyA+(oyB-oyA)*mE), fov=900;
+    const cx=vw/2, cy=vh/2+(oyA+(oyB-oyA)*mE), fov=mob?520:900;
     ctx.globalCompositeOperation='lighter';
     const warm={r:237,g:236,b:230};
     const kSpring=0.075+0.10*this.boost; this.boost*=0.94;
@@ -1438,7 +1440,7 @@ class Component extends DCLogic {
       ctx.font="600 11px 'Geist',system-ui,sans-serif";
       ctx.fillStyle='rgba(237,236,232,'+(0.62*constVis).toFixed(3)+')';
       for(const c of this.constClusters){
-        const lp=this.proj(c.x,c.y,0,cosR,sinR,cx,cy,fov);
+        const lp=this.proj(c.x,c.y,c.z||0,cosR,sinR,cx,cy,fov);
         const dx=lp[0]+off-cx, dy=lp[1]-cy, dl=Math.hypot(dx,dy)||1;
         const lx=Math.max(50,Math.min(vw-50,lp[0]+off+dx/dl*(c.r+20)));
         const ly=Math.max(22,Math.min(vh-14,lp[1]+dy/dl*(c.r+16)));

@@ -2,6 +2,7 @@
 // "nowhere"; brat-green particles then sweep in to build the leading "k"
 // (nowhere → knowhere); finally every particle turns brat green. Lockup +
 // single CTA fade in beneath the word. Self-contained web component.
+// v23: goo CTA parked behind KF_GOO (standard button by default) — KW:GOO-OFF; pages load knowhere-footer.js?v=23.
 // v22: one CTA label site-wide (start your free week), footer CTAs mirror the page's nav CTA — KW:LABELS (Muppet, 14 Sep); pages load knowhere-footer.js?v=22.
 // v20: SOCIAL row in the footer nav (Cat, 4 Sep, release day) — Instagram · TikTok ·
 //      YouTube · Facebook · LinkedIn, from KnowhereMarks.social (knowhere-marks.js).
@@ -21,6 +22,9 @@
   };
   if (customElements.get('knowhere-footer')) return;
   var BRAT = [123, 234, 90], WARM = [237, 236, 230];
+  /* KW:GOO-OFF (Cat, 14 Sep 2026): the goo CTA is parked — it does not play well on phones. Flip KF_GOO to true to
+     get it back exactly as it was: the filter def, the fx span, the pointer/idle driver below are all still here. */
+  var KF_GOO = false;
 
   class KnowhereFooter extends HTMLElement {
     connectedCallback() {
@@ -36,8 +40,9 @@
           '<div data-kf-cta style="position:absolute;left:0;right:0;top:calc(40vh + 132px + clamp(44px,7vh,76px));display:flex;flex-direction:column;align-items:center;gap:16px;opacity:0;transform:translateY(24px);pointer-events:none;font-family:\'Geist\',system-ui,sans-serif">' +
             '<div style="font-size:15px;font-weight:600;letter-spacing:-0.01em;color:#9b9a96">you&#39;re one letter away.</div>' +
             '<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="kf-goo-filter" x="-50%" y="-50%" width="200%" height="200%"><feComponentTransfer><feFuncA type="discrete" tableValues="0 1"/></feComponentTransfer><feGaussianBlur stdDeviation="5"/><feComponentTransfer><feFuncA type="table" tableValues="-5 11"/></feComponentTransfer></filter></svg>' +
-            '<a data-kf-goo href="https://app.knowhere.me/signup" style="--gx:50;--gy:32;position:relative;isolation:isolate;display:inline-flex;align-items:center;justify-content:center;font-family:inherit;font-size:clamp(19px,2.2vw,24px);font-weight:650;letter-spacing:-0.01em;line-height:1;color:#0a1f06;text-decoration:none;text-transform:lowercase;padding:1.5em 2.4em;transform:scale(.94);transition:transform .9s cubic-bezier(.3,1.4,.5,1)">' +
-              '<span data-kf-goo-fx style="position:absolute;inset:0;z-index:-1;padding:20px;pointer-events:none;filter:blur(10px) url(#kf-goo-filter) drop-shadow(0 .25em .5em rgba(0,0,0,.5));background-image:linear-gradient(0deg,#7BEA5A,#7BEA5A),radial-gradient(40% 70% at calc(var(--gx)*1%) calc(var(--gy)*1%),hsl(106 90% 82%) 0%,transparent 90%);background-clip:content-box,border-box"></span>' +
+            (KF_GOO ? '<a data-kf-goo href="https://app.knowhere.me/signup" style="--gx:50;--gy:32;position:relative;isolation:isolate;display:inline-flex;align-items:center;justify-content:center;font-family:inherit;font-size:clamp(19px,2.2vw,24px);font-weight:650;letter-spacing:-0.01em;line-height:1;color:#0a1f06;text-decoration:none;text-transform:lowercase;padding:1.5em 2.4em;transform:scale(.94);transition:transform .9s cubic-bezier(.3,1.4,.5,1)">' +
+              '<span data-kf-goo-fx style="position:absolute;inset:0;z-index:-1;padding:20px;pointer-events:none;filter:blur(10px) url(#kf-goo-filter) drop-shadow(0 .25em .5em rgba(0,0,0,.5));background-image:linear-gradient(0deg,#7BEA5A,#7BEA5A),radial-gradient(40% 70% at calc(var(--gx)*1%) calc(var(--gy)*1%),hsl(106 90% 82%) 0%,transparent 90%);background-clip:content-box,border-box"></span>'
+              : '<a data-kf-goo href="https://app.knowhere.me/signup" style="display:inline-flex;align-items:center;justify-content:center;font-family:inherit;font-size:16px;font-weight:700;letter-spacing:-0.01em;color:#070708;background:#7BEA5A;border-radius:12px;padding:16px 30px;text-decoration:none;text-transform:lowercase;box-shadow:0 10px 40px rgba(123,234,90,.32);transition:transform .18s">') +
               '<span data-kf-goo-label style="position:relative">start your free week</span>' +
             '</a>' +
             '<div style="font-family:ui-monospace,monospace;font-size:11.5px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:#8C8B87">free for 7 days</div>' +
@@ -57,7 +62,7 @@
       this._gooPh = Math.random() * 10;
       this._gooHover = false;
       var gooReduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (this._goo && !gooReduce) {
+      if (this._goo && this._gooFx && !gooReduce) {
         var self = this;
         var setXY = function (x, y) {
           self._gooFx.style.setProperty('--gx', x);
