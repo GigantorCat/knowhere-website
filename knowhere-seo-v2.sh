@@ -62,7 +62,7 @@ PAGES = {
     ("Does knowhere replace school or a tutor?",
      "It works alongside school — the explain-it-again, explain-it-differently layer school can't provide for thirty students at once. A month of knowhere costs less than one hour with a tutor, and the two don't fight: plenty of families will want both."),
     ("What does it cost to try?",
-     "Nothing today. You pick a plan and start the free week — A$0 is taken now, and the first payment is 7 days later. Cancel any time before then and you are not charged, with no lock-in on monthly plans."),
+     "Nothing today. Free for a week, then the 2026 exam pass — A$49 once. No subscription; it ends when the exams do. Cancel any time in the free week and you are not charged. The price doesn't move; the days do."),  # KW:PASS — keep in step with for-parents.html
    ]),
  "for-teachers.html": dict(path="/for-teachers", kind="faq",
    title="knowhere for teachers — HSC & VCE concepts for the projector",
