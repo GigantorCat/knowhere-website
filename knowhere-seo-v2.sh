@@ -27,7 +27,11 @@ SITE = "https://knowhere.me"
 TODAY = datetime.date.today().isoformat()
 
 # ---- fill these in when you have them (Organization.sameAs — LinkedIn, Instagram, TikTok, YouTube, Product Hunt, Crunchbase) ----
-SAME_AS = []
+SAME_AS = [
+  "https://www.linkedin.com/company/knowhere-me",
+  "https://www.producthunt.com/products/knowhere-5",
+  "https://www.instagram.com/knowheregoat",
+]  # KW:SAME_AS 16 Sep 2026 — entity anchors (SEO-PLAN-11SEP §4). Add TikTok/YouTube/Crunchbase here when they exist.
 
 # ------------------------------------------------------------------ page copy
 # path = clean URL. title <= 60 chars, desc <= 160 chars (warned, not fatal).
@@ -237,6 +241,8 @@ def head_block(fname, p, date=None):
         lines.append('<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">')
     lines.append('<meta name="theme-color" content="#070708">')
     lines.append('<link rel="icon" href="/favicon.svg" type="image/svg+xml">')
+    lines.append('<link rel="icon" href="/favicon.ico" sizes="32x32">')            # KW:ICONS 16 Sep 2026 — added to the site 12 Sep;
+    lines.append('<link rel="apple-touch-icon" href="/apple-touch-icon.png">')     # the regen stripped them until they lived here
     if p["path"]:
         ogt = p.get("og_title", p["title"]); ogd = p.get("og_desc", p["desc"])
         lines += ['<meta property="og:type" content="website">',
@@ -355,9 +361,8 @@ JS_LOGIC = {
     ("'https://knowhere.me/waitlist.html'", "'https://knowhere.me/waitlist'"),
     ("href: 'experience-it.html'", "href: '/experience-it'"),
   ],
-  "knowhere-goat-card.js": [
-    ('ctaHref:"pricing.html",', 'ctaHref:"/pricing",'),
-  ],
+  # knowhere-goat-card.js: removed 16 Sep 2026 — its ctaHref moved to app.knowhere.me/signup on 14 Sep, so the
+  # pricing.html anchor no longer exists in either form and the assert below killed every run (booby trap).
 }
 
 # Wiring for /compare — exact anchors, each asserted once (or already applied)

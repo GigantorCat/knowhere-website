@@ -82,7 +82,8 @@ var KW_PIXEL_ID = '1829181431399314';
      trace at all, which reads identically to the script never running. */
   (function () {
     var path = location.pathname;
-    if (path.indexOf('for-parents') === -1 && path.indexOf('experience-it') === -1) return;
+    /* KW:CONCEPT — the concept pages (/hsc/…, /vce/…) are paid destinations too (P3 -LP-concept, G-SUBJ) */
+    if (path.indexOf('for-parents') === -1 && path.indexOf('experience-it') === -1 && path.indexOf('/hsc/') !== 0 && path.indexOf('/vce/') !== 0) return;
 
     var MARKS = [25, 50, 75, 90];
     var hit = {}, maxPct = 0, started = Date.now(), ticking = false, sent = false;
@@ -156,4 +157,5 @@ var KW_PIXEL_ID = '1829181431399314';
   var p = location.pathname;
   if (p.indexOf('for-parents') > -1) window.kwPixel('ViewContent', { content_name: 'for-parents' });
   else if (p.indexOf('experience-it') > -1) window.kwPixel('ViewContent', { content_name: 'experience-it' });
+  else if (p.indexOf('/hsc/') === 0 || p.indexOf('/vce/') === 0) window.kwPixel('ViewContent', { content_name: p.replace(/^\//, '').replace(/\/$/, '') }); /* KW:CONCEPT */
 })();
