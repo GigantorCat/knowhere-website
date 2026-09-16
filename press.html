@@ -42,7 +42,10 @@
   .kw-tk a{text-decoration:none}
   .kw-tk .eyebrow-sm{font-size:11px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--brat);margin-bottom:14px}
   .kw-tk main{position:relative;z-index:2}
-  .kw-tk [data-reveal]{opacity:0;transform:translateY(26px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
+  .kw-tk [data-reveal]{transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
+  /* KW:FIRSTPAINT — hidden only once JS arms it (html.kw-armed), never by default; :where() keeps the
+     reduced-motion rule below winning, exactly as before */
+  :where(html.kw-armed) .kw-tk [data-reveal]:where(:not(.in)){opacity:0;transform:translateY(26px)}
   .kw-tk [data-reveal].in{opacity:1;transform:none}
   @keyframes kwBreathe{0%,100%{transform:scale(1);opacity:.5}50%{transform:scale(1.35);opacity:.15}}
   @keyframes kwMarkPulse{0%,100%{color:#EDECE8}50%{color:#7BEA5A}}
@@ -221,7 +224,10 @@
   var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var WARM=[237,236,230],BRAT=[123,234,90];
   var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:0.12});
-  root.querySelectorAll('[data-reveal]').forEach(function(el){io.observe(el);});
+  /* KW:FIRSTPAINT — on-screen now → .in before arming; the rest wait for the observer */
+  var kwVh=window.innerHeight||document.documentElement.clientHeight;
+  root.querySelectorAll('[data-reveal]').forEach(function(el){var r=el.getBoundingClientRect();if(r.bottom>0&&r.top<kwVh){el.classList.add('in');}else{io.observe(el);}});
+  document.documentElement.classList.add('kw-armed');
   (function inj(){if(window.KnowhereMarks){root.querySelectorAll('[data-kw-logo]').forEach(function(el){el.innerHTML=window.KnowhereMarks.logoSvg(parseInt(el.getAttribute('data-kw-logo')||'24',10),el.getAttribute('data-kw-logo-color')||undefined);});}else{setTimeout(inj,60);}})();
 
 

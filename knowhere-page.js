@@ -15,7 +15,15 @@
     var io = new IntersectionObserver(function (es) {
       es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
     }, { threshold: 0.12 });
-    root.querySelectorAll('[data-reveal]').forEach(function (el) { io.observe(el); });
+    /* KW:FIRSTPAINT — the hidden state is armed HERE, never in CSS by default. Anything
+       already on screen when JS arrives is marked .in first, so the first screen is
+       visible from first paint and never blinks out. Only below-the-fold waits to reveal. */
+    var vh = window.innerHeight || document.documentElement.clientHeight;
+    root.querySelectorAll('[data-reveal]').forEach(function (el) {
+      var r = el.getBoundingClientRect();
+      if (r.bottom > 0 && r.top < vh) el.classList.add('in'); else io.observe(el);
+    });
+    document.documentElement.classList.add('kw-armed');
     return io;
   }
 
