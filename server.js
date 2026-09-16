@@ -322,6 +322,19 @@ app.post('/api/contact', async (req, res) => {
   }
 });
 
+// KNOWHERE:GO-LINKS v1 — short links for creator bios (302 so the destination can change). Add a slug here, redeploy, done.
+const GO_LINKS = {
+  acevce:   'https://knowhere.me/experience-it?utm_source=creator&utm_medium=influencer&utm_campaign=kw-launch-2026&utm_term=stu&utm_content=C1',
+  road2med: 'https://knowhere.me/experience-it?utm_source=creator&utm_medium=influencer&utm_campaign=kw-launch-2026&utm_term=stu&utm_content=C2',
+};
+app.get(/^\/([A-Za-z0-9-]+)\/?$/, (req, res, next) => {
+  const to = GO_LINKS[req.params[0].toLowerCase()];
+  if (!to) return next();
+  res.set('Cache-Control', 'no-store');
+  return res.redirect(302, to);
+});
+// /KNOWHERE:GO-LINKS
+
 // KNOWHERE:SEO-REDIRECTS v2 — canonical host + clean URLs (301). www -> apex, /x.html -> /x, /index.html -> / (http->https is Railway's job)
 const SEO_PAGES = new Set(["compare", "experience-it", "for-parents", "for-teachers", "how-it-works", "know-us", "mission", "press", "pricing", "privacy", "talk-to-us", "terms", "waitlist"]);
 app.use((req, res, next) => {
