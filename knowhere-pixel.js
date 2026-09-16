@@ -86,7 +86,7 @@ var KW_PIXEL_ID = '1829181431399314';
     if (path.indexOf('for-parents') === -1 && path.indexOf('experience-it') === -1 && path.indexOf('/hsc/') !== 0 && path.indexOf('/vce/') !== 0) return;
 
     var MARKS = [25, 50, 75, 90];
-    var hit = {}, maxPct = 0, started = Date.now(), ticking = false, sent = false;
+    var hit = {}, maxPct = 0, started = Date.now(), ticking = false, sent = false, measured = false;
 
     function track(name, data) {
       try { if (window.umami) window.umami.track(name, data); } catch (e) {}
@@ -95,13 +95,21 @@ var KW_PIXEL_ID = '1829181431399314';
     function depth() {
       var doc = document.documentElement;
       var h = Math.max(doc.scrollHeight, document.body ? document.body.scrollHeight : 0);
-      if (h <= window.innerHeight) return 100;
+      /* KW:SCROLLFIX — page is not taller than the viewport: either there is
+         genuinely nothing to scroll, or layout has not settled yet. Either way
+         the depth is UNMEASURABLE. Returning 100 here stamped a complete read
+         on every visitor at load and fired all four scroll_depth marks, which
+         is what faked the bounce rate down. +1 absorbs sub-pixel rounding on
+         fractional device pixel ratios. */
+      if (h <= window.innerHeight + 1) return null;
       return Math.round(((window.scrollY + window.innerHeight) / h) * 100);
     }
 
     function measure() {
       ticking = false;
       var d = depth();
+      if (d === null) return;          /* unmeasurable — never latch it into maxPct */
+      measured = true;
       if (d > maxPct) maxPct = d;
       for (var i = 0; i < MARKS.length; i++) {
         if (d >= MARKS[i] && !hit[MARKS[i]]) {
@@ -123,18 +131,31 @@ var KW_PIXEL_ID = '1829181431399314';
       if (sent) return;
       sent = true;
       measure();
-      track('scroll_exit', {
+      var payload = {
         page: path,
-        max: Math.min(100, Math.floor(maxPct / 10) * 10),
         seconds: Math.round((Date.now() - started) / 1000)
-      });
+      };
+      /* Omit max entirely rather than send a fake 0 when we never got a valid
+         reading (very short page, or the visitor left before layout settled). */
+      if (measured) payload.max = Math.min(100, Math.floor(maxPct / 10) * 10);
+      track('scroll_exit', payload);
     }
     document.addEventListener('visibilitychange', function () {
       if (document.visibilityState === 'hidden') bail();
     });
     window.addEventListener('pagehide', bail);
 
-    measure();
+    /* Do not take a baseline reading until layout has actually settled. A
+       deferred script runs while the document can still measure exactly one
+       viewport tall — the state that used to report 100%. Two rAFs after
+       load puts us past first paint and past the banner/goo mounting. */
+    function startMeasuring() {
+      window.requestAnimationFrame(function () {
+        window.requestAnimationFrame(measure);
+      });
+    }
+    if (document.readyState === 'complete') startMeasuring();
+    else window.addEventListener('load', startMeasuring, { once: true });
   })();
 
   if (!ID) return;
