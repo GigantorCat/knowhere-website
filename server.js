@@ -256,6 +256,34 @@ app.post('/api/waitlist', async (req, res) => {
   }
 });
 
+// ---------- the handoff (KW:HANDOFF-GOAT, 16 Sep 2026) ----------
+// POST /api/handoff { parentEmail, firstName, where, website(honeypot) } → the Goat emails the parent (emails.handoffParent).
+// Fixed copy, no free text: the only things a submitter controls are an address and a first name, and the name is
+// letters only. Same limiter as the waitlist (8 per 10 min per IP). No list, no unsubscribe — one email per submit.
+const NAME_RE = /^[\p{L}][\p{L}'’\- ]{0,23}$/u;
+app.post('/api/handoff', async (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  const b = req.body || {};
+  if (b.website) return res.json({ ok: true }); // honeypot: pretend
+  if (limited(req.ip)) return res.status(429).json({ ok: false, error: 'Slow down — try again in a few minutes.' });
+  const parentEmail = clean(b.parentEmail, 160).toLowerCase();
+  const firstName = clean(b.firstName, 24);
+  const where = clean(b.where, 40).toLowerCase().replace(/[^a-z0-9-]/g, '') || 'site';
+  if (!EMAIL_RE.test(parentEmail)) return res.status(400).json({ ok: false, error: 'That email doesn\'t look right.' });
+  if (firstName && !NAME_RE.test(firstName)) return res.status(400).json({ ok: false, error: 'Just your first name — letters only.' });
+  if (!RESEND_KEY) return res.status(503).json({ ok: false, error: 'Email isn\'t wired up just now. Share the link instead.' });
+  try {
+    const mail = emails.handoffParent({ parentEmail, kidName: firstName, where });
+    const r = await resend('POST', '/emails', { from: mail.from, reply_to: mail.reply_to, to: [mail.to], subject: mail.subject, html: mail.html, text: mail.text, tags: [{ name: 'stage', value: 'handoff' }, { name: 'where', value: where }] });
+    if (!r.ok) { console.error('[handoff] resend error', r.status, r.json); return res.status(502).json({ ok: false, error: 'Couldn\'t send that just now. Share the link instead.' }); }
+    console.log('[handoff] sent → @' + parentEmail.split('@')[1] + ' · from ' + (firstName || '(no name)') + ' · ' + where);
+    return res.json({ ok: true });
+  } catch (e) {
+    console.error('[handoff] error', e);
+    return res.status(500).json({ ok: false, error: 'Something broke on our side. Share the link instead.' });
+  }
+});
+
 // ---------- contact form (talk-to-us.html) ----------
 // POST /api/contact  { name, email, who, msg, website(honeypot), source } → emails CONTACT_TO via Resend, reply_to = sender
 const CONTACT_TO = process.env.CONTACT_TO || 'hello@knowhere.me';

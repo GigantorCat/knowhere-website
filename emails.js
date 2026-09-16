@@ -62,7 +62,7 @@ const strip = h => h.replace(/<style[\s\S]*?<\/style>/g, '').replace(/<[^>]+>/g,
 function welcome({ email, firstName, type, position, teacherSeat }) {
   const seat = type === 'teacher' && teacherSeat;
   const body = {
-    student: `You're on the list. When the doors open you'll be first through them — every subject, every concept, rebuilt for the way your brain actually fires.`,
+    student: `You're on the list. When the doors open you'll be first through them — 15 HSC and 16 VCE subjects, every concept, rebuilt for the way your brain actually fires.`,
     parent: `You're on the list. When the doors open you'll be first to know — and first to see how your kid is really going, without the dinner-table interrogation.`,
     teacher: seat
       ? `You've got founding-teacher seat <strong style="color:#F2F0EB">#${teacherSeat} of ${TEACHER_SEATS}</strong>. That's three months free once the teacher experience lands, and first say in how the classroom tools work.`
@@ -106,7 +106,7 @@ function countdown(stage, { email, firstName, type, teacherSeat, launchDateStr, 
     eyebrow = "the door's open"; goat = 'delighted'; pill = 'Launch day';
     h1 = { student: `${hey(firstName)}. Go.`, parent: `${hey(firstName)}. It's live.`, teacher: `${hey(firstName)}. Students are in.` }[type];
     paras = {
-      student: [`knowhere is live. Seven days free, every subject, every concept, built for your brain. Tap the button, tell it how you learn, and watch your first concept come alive.`, `You're one letter away.`],
+      student: [`knowhere is live. Seven days free, 15 HSC and 16 VCE subjects, every concept, built for your brain. Tap the button, tell it how you learn, and watch your first concept come alive.`, `You're one letter away.`],
       parent: [`knowhere is live. Seven days free on every plan. Send this to your kid or set them up yourself — it takes four minutes, and the parent dashboard (Max) shows you how it's really going from week one.`],
       teacher: [`The student app is live today. The teacher experience is next${seat ? `, and seat #${teacherSeat} is yours` : ''} — we'll write the day it lands.`, `Want to see what your students are seeing? The full app is open on a free trial; the projector-ready concepts are on the site.`],
     }[type];
@@ -129,9 +129,43 @@ const H2 = t => `<h2 style="margin:0 0 12px;font-family:'Geist',system-ui,Arial,
 const SMALL = t => `<p style="margin:8px 0 0;font-family:'Geist',system-ui,Arial,sans-serif;font-size:14.5px;line-height:1.6;color:#B4B9B0">${t}</p>`;
 const LINE = t => `</td></tr><tr><td style="padding:0 32px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-top:1px dashed #3A4038;font-size:0;line-height:0">&nbsp;</td></tr></table><p style="margin:-9px 0 0;text-align:center;font-size:0;line-height:0"><span style="display:inline-block;background:#191B18;padding:0 10px;font-family:'JetBrains Mono','Courier New',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#8C9389;line-height:1.4">${t}</span></p></td></tr><tr><td style="padding:30px 32px 30px">`;
 const LNK = 'color:#7BEA5A;text-decoration:underline';
+/* KW:HANDOFF-GOAT — the parent context, shared by t4 and the Goat-sent handoff. What knowhere is, the pass, the
+   dashboard, the exam window, Cat's line, and the one button. `where` tags the button's utm_content. */
+const PARENT_URL = where => `${SITE}/for-parents?as=parent&utm_source=handoff&utm_medium=email&utm_campaign=kw-launch-2026&utm_content=${encodeURIComponent(where || 'email')}`;
+function parentContext({ where, extra = '' }) {
+  return B.p(`knowhere is a Year 12 study app for the HSC and VCE. Every concept in 15 HSC and 16 VCE subjects is rebuilt as an interactive model, then reshaped to how your kid actually learns — what motivates them, how their brain processes things (ADHD, autism and dyslexia treated as operating systems, not deficits), and whether they think in pictures, sound or by doing. The curriculum never changes. Only the way in does.`)
+    + `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 22px;border-bottom:1px solid #262B26">`
+    + FACT('cost', 'The 2026 exam pass: free for a week, then $49 once. No subscription — it ends itself on Friday 20 November, after the last exam. Less than an hour of tutoring, for the whole run-in.')
+    + FACT('the trial', 'Nothing today. The free week starts when you add a card, and nothing keeps running past 20 November.')
+    + FACT('for you', 'A parent dashboard: a weekly digest and a Gap Map of what’s ready and what isn’t — without interrogating anyone at dinner.')
+    + FACT('the exams', 'HSC written exams start 13 Oct. VCE 26 Oct. That’s the window this is built for.')
+    + `</table>`
+    + B.p(`I built it because I was the kid pulled out of class in Year 12 for taking notes in pictures — and still finished in the top 10% of the state. The gap was never ability. It was format.`)
+    + B.btn('start their free week →', PARENT_URL(where))
+    + SMALL(`<a href="${SITE}/pricing" style="${LNK}">Plans and pricing</a>  ·  <a href="${SITE}/experience-it" style="${LNK}">Try a concept yourself</a>${extra}  ·  Questions? Reply to this — it comes to me.`);
+}
+/* The Goat-sent handoff: a kid on the site (no account, no card) types a parent's address; the parent gets the kid's
+   one-liner on top and the context below the line. One email, fixed copy, no list, no unsubscribe. */
+const KID_LINE = `I've been using a study app called knowhere and it's actually helping. It's free for a week, then $49 once till the last exam — no subscription. Can you look?`;
+function handoffParent({ parentEmail, kidName, where }) {
+  const kid = first(kidName) || '';
+  const who = kid || 'Your kid';
+  const bodyHtml =
+    B.eyebrow(kid ? `from ${kid}` : 'from your kid')
+    + B.callout(`<span style="font-family:'Geist',system-ui,Arial,sans-serif;font-size:16px;line-height:1.6;color:#EDECE8">“${KID_LINE}”</span>`)
+    + SMALL(`${kid ? kid : 'They'} sent this from knowhere.me. The bit below is from us, so you know what you're looking at.`)
+    + LINE('↓ what it is ↓')
+    + B.eyebrow('for parents') + H2(`${who} found knowhere. Here's what it is.`)
+    + parentContext({ where: where || 'site' })
+    + B.sig();
+  const html = shell({ goat: 'one brow', pill: 'The handoff', bodyHtml, footHtml: `Sent to ${parentEmail} because ${kid || 'someone'} typed your address at knowhere.me. That's the only email you'll get from us unless you sign up.` });
+  const subject = kid ? `${kid} wants you to look at knowhere` : `Someone wants you to look at knowhere`;
+  return { from: FROM_GOAT, reply_to: REPLY_TO, to: parentEmail, subject, html, text: strip(html) };
+}
 function handoffMailto() {
   const subject = 'Can you look at this? (knowhere)';
-  const body = `Hey,\n\nI've been using a study app called knowhere this week and it's actually helping. It's $23–39 a month after the free week, which ends soon.\n\nThe page for parents: ${SITE}/for-parents.html\nPricing: ${SITE}/pricing.html\n\nCan you have a look?`;
+  /* KW:HANDOFF-PASS — the same words as the app link (f47) and the site buttons (knowhere-handoff.js). One voice. */
+  const body = `Hey,\n\nI've been using a study app called knowhere and it's actually helping. It's free for a week, then $49 once till the last exam — no subscription. Can you look?\n\n${SITE}/for-parents?as=parent&utm_source=handoff&utm_medium=email&utm_campaign=kw-launch-2026&utm_content=t4`;
   return `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 function handoff({ email, firstName, type, appUrl }) {
@@ -139,24 +173,15 @@ function handoff({ email, firstName, type, appUrl }) {
   const app = appUrl || 'https://app.knowhere.me';
   const bodyHtml =
     B.eyebrow("this bit's for you") + B.h1(`${hey(firstName)}. Time to hand this up the chain.`)
-    + B.p(`You've had knowhere for a few days now. If it's working — if a concept finally clicked, if Unstuck rescued a Tuesday — here's the honest part: after the free week it's $23 a month, and that's probably not your card.`)
+    + B.p(`You've had knowhere for a few days now. If it's working — if a concept finally clicked, if Unstuck rescued a Tuesday — here's the honest part: after the free week it's $49 once for the 2026 exam pass, and that's probably not your card.`)
     + B.p(`So I've written the bit below for your parent. Forward this whole email, or hit the button and I'll draft the message for you. You add the please.`)
     + B.btn('write the email for me →', handoffMailto())
     + SMALL(`Or just forward this. Everything they need is under the line.`) + B.sig()
     + LINE('↓ for the person with the card ↓')
     + B.eyebrow('for parents') + H2(`Your kid's been using knowhere this week. Here's what it is.`)
-    + B.p(`knowhere is a Year 12 study app for the HSC and VCE. Every concept in every subject is rebuilt as an interactive model, then reshaped to how your kid actually learns — what motivates them, how their brain processes things (ADHD, autism and dyslexia treated as operating systems, not deficits), and whether they think in pictures, sound or by doing. The curriculum never changes. Only the way in does.`)
-    + `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 22px;border-bottom:1px solid #262B26">`
-    + FACT('cost', '$23–39 a month. Less than half an hour of tutoring. No lock-in, cancel any time.')
-    + FACT('the trial', 'Their free week ends soon. Nothing keeps running unless you decide it should.')
-    + FACT('for you', 'On the Max plan you get a parent dashboard: a weekly digest and a Gap Map of what’s ready and what isn’t — without interrogating anyone at dinner.')
-    + FACT('the exams', 'HSC written exams start 13 Oct. VCE 26 Oct. That’s the window this is built for.')
-    + `</table>`
-    + B.p(`I built it because I was the kid pulled out of class in Year 12 for taking notes in pictures — and still finished in the top 10% of the state. The gap was never ability. It was format.`)
-    + B.btn('see their week →', `${SITE}/for-parents.html`)
-    + SMALL(`<a href="${SITE}/pricing.html" style="${LNK}">Plans and pricing</a>  ·  <a href="${app}" style="${LNK}">Log in and add a card</a>  ·  Questions? Reply to this — it comes to me.`)
+    + parentContext({ where: 't4', extra: `  ·  <a href="${app}" style="${LNK}">Log in and add a card</a>` })
     + B.sig();
-  const html = shell({ goat: 'one brow', pill: 'The handoff', bodyHtml, footHtml: `Sent to ${email} because you joined the waitlist at knowhere.me.`, unsub: unsubUrl(email) });
+  const html = shell({ goat: 'one brow', pill: 'The handoff', bodyHtml, footHtml: `Sent to ${email} because you have a knowhere account.`, unsub: unsubUrl(email) });
   return { from: FROM_GOAT, reply_to: REPLY_TO, to: email, subject: 'Send this to your parent', html, text: strip(html), headers: { 'List-Unsubscribe': `<${unsubUrl(email)}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' } };
 }
 
@@ -164,4 +189,4 @@ function handoff({ email, firstName, type, appUrl }) {
 const STAGES = ['t7', 't3', 't0', 't4'];
 function build(stage, args) { return stage === 't4' ? handoff(args) : countdown(stage, args); }
 
-module.exports = { welcome, countdown, handoff, build, STAGES, unsubToken, unsubUrl, DATES };
+module.exports = { welcome, countdown, handoff, handoffParent, build, STAGES, unsubToken, unsubUrl, DATES };

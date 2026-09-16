@@ -141,7 +141,7 @@ def org():
          "alternateName":["knowhere.me","knowhere study app"],
          "legalName":"Gigantor Studios Pty Ltd","url":SITE+"/",
          "logo":{"@type":"ImageObject","url":SITE+"/og-image.png","width":1200,"height":630},
-         "description":"knowhere is an Australian personalised study app for Year 12 students sitting the HSC (NSW) and VCE (Victoria). Every concept in every subject is rebuilt for the way each learner thinks — motivation, neurology and mode — instead of teaching everyone the same way.",
+         "description":"knowhere is an Australian personalised study app for Year 12 students sitting the HSC (NSW) and VCE (Victoria). Every concept in 15 HSC and 16 VCE subjects is rebuilt for the way each learner thinks — motivation, neurology and mode — instead of teaching everyone the same way.",
          "disambiguatingDescription":"Australian education technology product for HSC and VCE students, made by Gigantor Studios Pty Ltd. Not affiliated with NESA or VCAA.",
          "foundingDate":"2026","founder":{"@id":SITE+"/#founder"},
          "email":"hello@knowhere.me",

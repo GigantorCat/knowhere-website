@@ -275,7 +275,7 @@
     var share = el('div', { 'class': 'kwl-share' });
     var url = 'https://knowhere.me/waitlist';
     if (r.type === 'student') {
-      share.appendChild(el('a', { href: 'mailto:?subject=' + encodeURIComponent('This is the study app I want for Year 12') + '&body=' + encodeURIComponent("It's built around how your brain learns, every subject. I'm on the waitlist — the parent plan has a progress view so you can stop asking me how study's going. " + url), text: 'send it to your parent' }));
+      share.appendChild(el('a', { href: 'mailto:?subject=' + encodeURIComponent('This is the study app I want for Year 12') + '&body=' + encodeURIComponent("It's built around how your brain learns, 15 HSC and 16 VCE subjects. I'm on the waitlist — the parent plan has a progress view so you can stop asking me how study's going. " + url), text: 'send it to your parent' }));
     } else if (r.type === 'parent') {
       share.appendChild(el('a', { href: 'mailto:?subject=' + encodeURIComponent('Year 12 study app worth a look') + '&body=' + encodeURIComponent('Built around how each kid actually learns — worth a look before the exams. ' + url), text: 'tell another parent' }));
     } else {
