@@ -1,0 +1,586 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Logarithmic Functions and Log Laws — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #2FA94E;
+  --ag: rgba(47, 169, 78, .7);
+  --ag1: rgba(47, 169, 78, .12);
+  --ag2: rgba(47, 169, 78, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 0;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 28px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: white;
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-container {
+  margin-bottom: 10px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+}
+
+.base-slider {
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 50%), #23291f var(--fill, 50%));
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+.base-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  transition: box-shadow .15s;
+  cursor: pointer;
+}
+
+.base-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  transition: box-shadow .15s;
+  cursor: pointer;
+}
+
+.base-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.base-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  margin-top: 6px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.toggle-card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(47, 169, 78,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(47, 169, 78,.18);
+}
+
+.knowdrop-divider {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.knowdrop-text {
+  font-family: 'Geist', sans-serif;
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-this-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 10px;
+}
+
+.know-this-body {
+  font-family: 'Geist', sans-serif;
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (max-width: 360px) {
+  body { padding: 32px 12px 0; }
+  .card, .toggle-card { padding: 14px; }
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Interactive logarithmic function reflection visualisation</h2>
+  
+  <h1>Logarithms are just exponentials <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">reflected</span></h1>
+  
+  <p class="intro">Every exponential curve has a mirror twin — flip it across y = x and you get its logarithm. The base controls how steeply both curves rise. Drag the slider to change the base and watch the reflection symmetry hold perfectly.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-label">Reflection Visualiser</div>
+      <div class="live-tag" id="liveBase">Base = 2.0</div>
+    </div>
+    <div class="card-hint">Mirror line y = x shows perfect symmetry</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="reflectionCanvas"></canvas>
+      <div class="canvas-overlay" id="canvasOverlay">y = 2.0ˣ ⟷ y = log₂(x)</div>
+    </div>
+
+    <div class="slider-container">
+      <div class="slider-label">Base Value</div>
+      <input type="range" class="base-slider" id="baseSlider" min="1.1" max="5" step="0.1" value="2">
+      <div class="tick-labels">
+        <span>1.1</span>
+        <span>3.0</span>
+        <span>5.0</span>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-label">Point on y = aˣ</div>
+        <div class="stat-value" id="expPoint" style="color:var(--amb);">(1, 2.0)</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Reflected on y = log_a(x)</div>
+        <div class="stat-value" id="logPoint" style="color:var(--acc);">(2.0, 1)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toggle-card">
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" data-law="product">Product Law</button>
+      <button class="toggle-btn" data-law="quotient">Quotient Law</button>
+      <button class="toggle-btn" data-law="power">Power Law</button>
+    </div>
+    
+    <div class="knowdrop-divider">
+      <p class="knowdrop-text" id="lawText">The product law says log(mn) = log m + log n. Multiplication inside the log becomes addition outside. This happens because logs are exponents — when you multiply powers of the same base, you add their exponents. For example, log(8 × 4) = log 8 + log 4 because 2³ × 2² = 2⁵. The log converts the product back into a sum of exponents, which is why logs turn multiplication into addition.</p>
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-this-tag">Know This</div>
+    <div class="know-this-body">A <span style="color:var(--acc);">logarithm</span> is the inverse of an exponential, so <span style="color:var(--acc);">log_a(x)</span> and <span style="color:var(--acc);">a^x</span> are reflections in <span style="color:var(--acc);">y = x</span>, with a <span style="color:var(--acc);">vertical asymptote</span> at x = 0 and passing through (1, 0).</div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('reflectionCanvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d', { alpha: false });
+
+const slider = document.getElementById('baseSlider');
+const liveBase = document.getElementById('liveBase');
+const canvasOverlay = document.getElementById('canvasOverlay');
+const expPoint = document.getElementById('expPoint');
+const logPoint = document.getElementById('logPoint');
+
+let base = parseFloat(slider.value);
+let animFrame;
+
+function resize() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  draw();
+}
+
+function draw() {
+  const w = canvas.width / Math.min(window.devicePixelRatio || 1, 2);
+  const h = canvas.height / Math.min(window.devicePixelRatio || 1, 2);
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+
+  const cx = w / 2;
+  const cy = h / 2;
+  const scale = Math.min(w, h) / 8;
+
+  // Grid
+  ctx.strokeStyle = 'rgba(38,43,38,0.5)';
+  ctx.lineWidth = 0.8;
+  for (let i = -4; i <= 4; i++) {
+    if (i === 0) continue;
+    ctx.beginPath();
+    ctx.moveTo(cx + i * scale, 0);
+    ctx.lineTo(cx + i * scale, h);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(0, cy + i * scale);
+    ctx.lineTo(w, cy + i * scale);
+    ctx.stroke();
+  }
+
+  // Axes
+  ctx.strokeStyle = 'rgba(141,147,137,0.7)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(0, cy);
+  ctx.lineTo(w, cy);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(cx, 0);
+  ctx.lineTo(cx, h);
+  ctx.stroke();
+
+  // Mirror line y = x
+  ctx.strokeStyle = 'rgba(141,147,137,0.4)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(0, h);
+  ctx.lineTo(w, 0);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Exponential curve y = base^x (amber)
+  ctx.strokeStyle = '#FAC775';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  let started = false;
+  for (let px = 0; px < w; px += 1) {
+    const x = (px - cx) / scale;
+    const y = Math.pow(base, x);
+    const py = cy - y * scale;
+    if (py > -100 && py < h + 100) {
+      if (!started) {
+        ctx.moveTo(px, py);
+        started = true;
+      } else {
+        ctx.lineTo(px, py);
+      }
+    }
+  }
+  ctx.stroke();
+
+  // Log curve y = log_base(x) (accent green)
+  ctx.strokeStyle = '#2FA94E';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  started = false;
+  for (let px = 1; px < w; px += 1) {
+    const x = (px - cx) / scale;
+    if (x <= 0) continue;
+    const y = Math.log(x) / Math.log(base);
+    const py = cy - y * scale;
+    if (py > -100 && py < h + 100) {
+      if (!started) {
+        ctx.moveTo(px, py);
+        started = true;
+      } else {
+        ctx.lineTo(px, py);
+      }
+    }
+  }
+  ctx.stroke();
+
+  // Reflection points (1, base) on exp and (base, 1) on log
+  const expX = cx + 1 * scale;
+  const expY = cy - base * scale;
+  const logX = cx + base * scale;
+  const logY = cy - 1 * scale;
+
+  // Connection line between reflection pair
+  ctx.strokeStyle = 'rgba(141,147,137,0.35)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([3, 3]);
+  ctx.beginPath();
+  ctx.moveTo(expX, expY);
+  ctx.lineTo(logX, logY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Exp point (amber)
+  ctx.fillStyle = '#FAC775';
+  ctx.beginPath();
+  ctx.arc(expX, expY, 5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#0B0D0C';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Log point (accent)
+  ctx.fillStyle = '#2FA94E';
+  ctx.beginPath();
+  ctx.arc(logX, logY, 5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#0B0D0C';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+}
+
+slider.addEventListener('input', (e) => {
+  base = parseFloat(e.target.value);
+  const fill = ((base - 1.1) / (5 - 1.1)) * 100;
+  slider.style.setProperty('--fill', fill + '%');
+  
+  liveBase.textContent = `Base = ${base.toFixed(1)}`;
+  canvasOverlay.textContent = `y = ${base.toFixed(1)}ˣ ⟷ y = log₍${base.toFixed(1)}₎(x)`;
+  expPoint.textContent = `(1, ${base.toFixed(1)})`;
+  logPoint.textContent = `(${base.toFixed(1)}, 1)`;
+  
+  if (animFrame) cancelAnimationFrame(animFrame);
+  animFrame = requestAnimationFrame(draw);
+});
+
+// Initialize slider fill
+const initFill = ((base - 1.1) / (5 - 1.1)) * 100;
+slider.style.setProperty('--fill', initFill + '%');
+
+window.addEventListener('resize', resize);
+resize();
+
+// Toggle buttons
+const lawTexts = {
+  product: "The product law says log(mn) = log m + log n. Multiplication inside the log becomes addition outside. This happens because logs are exponents — when you multiply powers of the same base, you add their exponents. For example, log(8 × 4) = log 8 + log 4 because 2³ × 2² = 2⁵. The log converts the product back into a sum of exponents, which is why logs turn multiplication into addition.",
+  
+  quotient: "The quotient law says log(m/n) = log m − log n. Division inside the log becomes subtraction outside. When you divide powers of the same base, you subtract their exponents — that's the exponent rule behind this law. For example, log(32 ÷ 4) = log 32 − log 4 because 2⁵ ÷ 2² = 2³. The log extracts the exponents and turns division into subtraction, which is the inverse operation.",
+  
+  power: "The power law says log(m^p) = p log m. An exponent inside the log gets pulled out front as a multiplier. This works because raising a power to another power multiplies the exponents. For example, log(8²) = 2 log 8 because (2³)² = 2⁶, and 6 = 2 × 3. The log sees the repeated multiplication and factors out how many times you're multiplying, leaving just the base exponent."
+};
+
+const toggleBtns = document.querySelectorAll('.toggle-btn');
+const lawText = document.getElementById('lawText');
+
+toggleBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    toggleBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const law = btn.dataset.law;
+    lawText.textContent = lawTexts[law];
+  });
+});
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'logarithmic-functions-and-log-laws'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

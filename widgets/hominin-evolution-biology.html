@@ -1,0 +1,618 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Hominin Evolution — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #5AADD4;
+  --ag: rgba(90, 173, 212, .7);
+  --ag1: rgba(90, 173, 212, .12);
+  --ag2: rgba(90, 173, 212, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container { max-width: 720px; margin: 0 auto; }
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  line-height: 1.55;
+  max-width: 58ch;
+  margin-bottom: 28px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: white;
+  font-weight: 400;
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+  font-weight: 400;
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-wrapper { margin-bottom: 12px; }
+
+.evo-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  outline: none;
+  cursor: pointer;
+}
+
+.evo-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.evo-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.evo-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.evo-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  text-transform: uppercase;
+  margin-top: 8px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.toggle-group {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(90,173,212,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(90,173,212,.18);
+}
+
+.knowdrop-divider {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.knowdrop-text {
+  font-family: 'Geist', sans-serif;
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-this-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.know-this-body {
+  font-family: 'Geist', sans-serif;
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (max-width: 360px) {
+  body { padding: 32px 14px 0; }
+  .toggle-group { flex-direction: column; }
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Interactive timeline showing the evolutionary trend of increasing brain size in hominins over millions of years</h2>
+
+  <h1>Our brains grew later than we <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">walked</span></h1>
+  
+  <p class="intro">Human evolution wasn't a straight line — it's a bush with many extinct branches. The surprising truth: bipedalism evolved millions of years before large brains or tool use. Drag the slider to explore how cranial capacity increased across the Homo lineage.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Timeline</span>
+      <span class="live-tag" id="liveTag">3.0 MYA • Early Bipeds</span>
+    </div>
+    <p class="card-hint">Drag to see brain size change across hominin species</p>
+    
+    <div class="canvas-wrapper">
+      <canvas id="evoCanvas"></canvas>
+      <div class="canvas-overlay" id="canvasTag">Australopithecus • 450 cm³</div>
+    </div>
+
+    <div class="slider-wrapper">
+      <input type="range" class="evo-slider" id="timeSlider" min="0" max="100" value="0">
+    </div>
+    <div class="tick-labels">
+      <span>3.0 MYA</span>
+      <span>2.0 MYA</span>
+      <span>1.0 MYA</span>
+      <span>Present</span>
+    </div>
+
+    <div class="stats">
+      <div class="stat-item">
+        <span class="stat-label">Cranial capacity</span>
+        <span class="stat-value" id="brainStat" style="color:var(--acc)">450 cm³</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Time elapsed</span>
+        <span class="stat-value" id="timeStat" style="color:var(--amb)">3.0 MYA</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-group">
+      <button class="toggle-btn active" data-view="bipedal">Bipedalism First</button>
+      <button class="toggle-btn" data-view="african">African Origin</button>
+    </div>
+    <div class="knowdrop-divider">
+      <p class="knowdrop-text" id="knowdropText">Bipedalism appeared around 6–7 million years ago in early hominins like Sahelanthropus and Ardipithecus, long before the Homo genus emerged. Walking upright freed the hands and changed energy efficiency, but brain size remained chimpanzee-like (around 400–500 cm³) for millions of years. Only with the appearance of Homo habilis around 2.4 million years ago did cranial capacity begin increasing noticeably, eventually tripling to modern Homo sapiens levels of ~1350 cm³. Tool use followed brain expansion — the oldest stone tools date to 3.3 million years ago, but sophisticated toolmaking correlates with larger brains in the Homo lineage.</p>
+    </div>
+  </div>
+
+  <div class="know-this">
+    <span class="know-this-tag">Know This</span>
+    <p class="know-this-body"><span style="color:var(--acc)">Hominins</span> are the group including humans and our extinct bipedal relatives — <span style="color:var(--acc)">bipedalism evolved long before large brain size</span>, and <span style="color:var(--acc)">cranial capacity increased across the Homo lineage</span> from ~600 cm³ in early Homo to ~1350 cm³ in modern humans.</p>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('evoCanvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const slider = document.getElementById('timeSlider');
+const liveTag = document.getElementById('liveTag');
+const canvasTag = document.getElementById('canvasTag');
+const brainStat = document.getElementById('brainStat');
+const timeStat = document.getElementById('timeStat');
+const knowdropText = document.getElementById('knowdropText');
+const toggleBtns = document.querySelectorAll('.toggle-btn');
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d', { alpha: false });
+
+// Hominin species data: [time in MYA, cranial capacity in cm³, name, era label]
+const species = [
+  [3.0, 450, 'Australopithecus', 'Early Bipeds'],
+  [2.4, 600, 'Homo habilis', 'Early Homo'],
+  [1.8, 900, 'Homo erectus', 'Expanding Range'],
+  [0.6, 1100, 'Homo heidelbergensis', 'Archaic Humans'],
+  [0.3, 1350, 'Homo neanderthalensis', 'Neanderthals'],
+  [0.0, 1350, 'Homo sapiens', 'Modern Humans']
+];
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  draw();
+}
+
+function interpolate(t) {
+  const timeVal = 3.0 - t * 3.0; // 3.0 MYA to 0.0 (present)
+  
+  // Find bracketing species
+  let lower = species[0];
+  let upper = species[species.length - 1];
+  
+  for (let i = 0; i < species.length - 1; i++) {
+    if (timeVal <= species[i][0] && timeVal >= species[i + 1][0]) {
+      lower = species[i];
+      upper = species[i + 1];
+      break;
+    }
+  }
+  
+  // Linear interpolation of brain size
+  const timeFrac = (lower[0] - timeVal) / (lower[0] - upper[0]);
+  const brainSize = Math.round(lower[1] + (upper[1] - lower[1]) * timeFrac);
+  
+  // Determine which species we're closest to
+  let closestSpecies = lower;
+  if (timeFrac > 0.5) closestSpecies = upper;
+  
+  return {
+    time: timeVal,
+    brain: brainSize,
+    species: closestSpecies[2],
+    era: closestSpecies[3]
+  };
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  const cx = w / 2;
+  const cy = h / 2;
+  
+  // Clear
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  // Subtle starfield for deep time feeling
+  ctx.save();
+  ctx.globalAlpha = 0.25;
+  const stars = 80;
+  const seed = 42;
+  for (let i = 0; i < stars; i++) {
+    const x = ((i * 73 + seed) % 997) / 997 * w;
+    const y = ((i * 137 + seed) % 991) / 991 * h;
+    const r = 0.5 + ((i * 53) % 10) / 10;
+    ctx.fillStyle = (i % 5 === 0) ? 'rgba(90,173,212,0.4)' : 'rgba(237,237,232,0.3)';
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+  
+  // Draw evolutionary timeline curve
+  const t = parseFloat(slider.value) / 100;
+  const data = interpolate(t);
+  
+  // Plot all species points
+  const padding = 60;
+  const graphWidth = w - padding * 2;
+  const graphHeight = h * 0.5;
+  const graphY = h - padding - 20;
+  
+  // Axes
+  ctx.strokeStyle = 'rgba(237,237,232,0.15)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(padding, graphY);
+  ctx.lineTo(w - padding, graphY);
+  ctx.stroke();
+  
+  ctx.beginPath();
+  ctx.moveTo(padding, graphY);
+  ctx.lineTo(padding, graphY - graphHeight);
+  ctx.stroke();
+  
+  // Draw curve through all points
+  ctx.beginPath();
+  ctx.strokeStyle = 'rgba(90,173,212,0.35)';
+  ctx.lineWidth = 2;
+  
+  for (let i = 0; i < species.length; i++) {
+    const sp = species[i];
+    const x = padding + (1 - sp[0] / 3.0) * graphWidth;
+    const y = graphY - (sp[1] - 400) / 1000 * graphHeight;
+    
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+  
+  // Draw points for each species
+  for (let i = 0; i < species.length; i++) {
+    const sp = species[i];
+    const x = padding + (1 - sp[0] / 3.0) * graphWidth;
+    const y = graphY - (sp[1] - 400) / 1000 * graphHeight;
+    
+    const isActive = Math.abs(sp[0] - data.time) < 0.4;
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    
+    if (isActive) {
+      // Active species gets glow
+      const glow = ctx.createRadialGradient(x, y, 0, x, y, 16);
+      glow.addColorStop(0, 'rgba(90,173,212,0.6)');
+      glow.addColorStop(0.5, 'rgba(90,173,212,0.2)');
+      glow.addColorStop(1, 'rgba(90,173,212,0)');
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(x, y, 16, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.fillStyle = '#5AADD4';
+      ctx.beginPath();
+      ctx.arc(x, y, 4, 0, Math.PI * 2);
+      ctx.fill();
+    } else {
+      ctx.fillStyle = 'rgba(237,237,232,0.3)';
+      ctx.beginPath();
+      ctx.arc(x, y, 2.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+  
+  // Current position indicator
+  const currentX = padding + (1 - data.time / 3.0) * graphWidth;
+  const currentY = graphY - (data.brain - 400) / 1000 * graphHeight;
+  
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  
+  // Vertical line from current point
+  ctx.strokeStyle = 'rgba(90,173,212,0.25)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([3, 3]);
+  ctx.beginPath();
+  ctx.moveTo(currentX, graphY);
+  ctx.lineTo(currentX, currentY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  
+  // Pulsing indicator at current position
+  const pulseSize = 8 + Math.sin(Date.now() / 400) * 2;
+  const glow = ctx.createRadialGradient(currentX, currentY, 0, currentX, currentY, pulseSize * 2);
+  glow.addColorStop(0, 'rgba(90,173,212,0.7)');
+  glow.addColorStop(0.5, 'rgba(90,173,212,0.3)');
+  glow.addColorStop(1, 'rgba(90,173,212,0)');
+  ctx.fillStyle = glow;
+  ctx.beginPath();
+  ctx.arc(currentX, currentY, pulseSize * 2, 0, Math.PI * 2);
+  ctx.fill();
+  
+  ctx.fillStyle = '#5AADD4';
+  ctx.beginPath();
+  ctx.arc(currentX, currentY, pulseSize / 2, 0, Math.PI * 2);
+  ctx.fill();
+  
+  ctx.restore();
+  
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+}
+
+function updateUI() {
+  const t = parseFloat(slider.value) / 100;
+  const data = interpolate(t);
+  
+  slider.style.setProperty('--fill', (t * 100) + '%');
+  
+  const timeStr = data.time.toFixed(1);
+  liveTag.textContent = `${timeStr} MYA • ${data.era}`;
+  canvasTag.textContent = `${data.species} • ${data.brain} cm³`;
+  brainStat.textContent = `${data.brain} cm³`;
+  timeStat.textContent = `${timeStr} MYA`;
+  
+  draw();
+}
+
+slider.addEventListener('input', updateUI);
+
+toggleBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    toggleBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    
+    const view = btn.dataset.view;
+    if (view === 'bipedal') {
+      knowdropText.textContent = 'Bipedalism appeared around 6–7 million years ago in early hominins like Sahelanthropus and Ardipithecus, long before the Homo genus emerged. Walking upright freed the hands and changed energy efficiency, but brain size remained chimpanzee-like (around 400–500 cm³) for millions of years. Only with the appearance of Homo habilis around 2.4 million years ago did cranial capacity begin increasing noticeably, eventually tripling to modern Homo sapiens levels of ~1350 cm³. Tool use followed brain expansion — the oldest stone tools date to 3.3 million years ago, but sophisticated toolmaking correlates with larger brains in the Homo lineage.';
+    } else {
+      knowdropText.textContent = 'Mitochondrial DNA and fossil evidence converge on a recent African origin for Homo sapiens around 300,000 years ago. Modern humans began migrating out of Africa in waves starting roughly 70,000–100,000 years ago, eventually replacing or interbreeding with archaic populations like Neanderthals and Denisovans. All living humans share a common mitochondrial ancestor (mitochondrial Eve) who lived in Africa, and genetic diversity is highest in African populations — consistent with Africa being the ancestral homeland. This "Out of Africa" model is supported by molecular clocks, fossil dating, and the distribution of genetic variants across global populations.';
+    }
+  });
+});
+
+window.addEventListener('resize', resize);
+resize();
+updateUI();
+
+// Animation loop for pulsing indicator
+function animate() {
+  draw();
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'hominin-evolution'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

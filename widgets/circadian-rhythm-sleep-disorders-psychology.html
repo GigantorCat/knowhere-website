@@ -1,0 +1,595 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Circadian Rhythm Sleep Disorders — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #6A60D4;
+  --ag: rgba(106, 96, 212, .7);
+  --ag1: rgba(106, 96, 212, .12);
+  --ag2: rgba(106, 96, 212, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 0;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 28px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: white;
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-wrapper {
+  margin-bottom: 8px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+}
+
+.cr-slider {
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+.cr-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  transition: box-shadow .15s;
+  cursor: pointer;
+}
+
+.cr-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.cr-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  transition: box-shadow .15s;
+  cursor: pointer;
+}
+
+.cr-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  padding: 0 2px;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  margin-top: 16px;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 4px;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.toggle-card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toggle-btn.active {
+  background: rgba(106,96,212,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(106,96,212,.18);
+}
+
+.knowdrop-divider {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.knowdrop-text {
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-this-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 8px;
+}
+
+.know-this-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.know-this-body .acc {
+  color: var(--acc);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Interactive visualisation of circadian rhythm sleep disorders showing internal clock misalignment</h2>
+  
+  <h1>Your sleep clock works perfectly — it's just set to the <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">wrong time</span></h1>
+  
+  <p class="intro">Circadian rhythm disorders aren't about a broken clock — they're about misalignment between your internal rhythm and the external world. The biological mechanism runs fine; the phase is shifted. Drag the slider to shift the internal clock relative to the 24-hour day.</p>
+  
+  <div class="card">
+    <div class="card-header">
+      <div class="card-label">Clock Phase Alignment</div>
+      <div class="live-tag" id="phase-tag">Typical (0h shift)</div>
+    </div>
+    <div class="card-hint">Shift represents hours earlier (−) or later (+) than typical alignment</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="clock-canvas"></canvas>
+      <div class="canvas-overlay" id="overlay-tag">Internal rhythm aligned with external day</div>
+    </div>
+    
+    <div class="slider-wrapper">
+      <div class="slider-label">Phase Shift (hours)</div>
+      <input type="range" min="-6" max="6" value="0" step="0.5" class="cr-slider" id="phase-slider">
+    </div>
+    
+    <div class="tick-labels">
+      <span>−6h (ASPS)</span>
+      <span>0h</span>
+      <span>+6h (DSPS)</span>
+    </div>
+    
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Peak Sleep Pressure</div>
+        <div class="stat-value" style="color:var(--acc)" id="sleep-time">23:00</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Misalignment</div>
+        <div class="stat-value" style="color:var(--amb)" id="misalign-val">0h</div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="toggle-card">
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" data-mode="dsps">DSPS</button>
+      <button class="toggle-btn" data-mode="asps">ASPS</button>
+      <button class="toggle-btn" data-mode="shift">Shift Work</button>
+    </div>
+    
+    <div class="knowdrop-divider">
+      <p class="knowdrop-text" id="knowdrop-content">Delayed Sleep Phase Syndrome is most common in adolescence when the circadian rhythm naturally shifts later. The internal clock generates sleep pressure around 2–4 AM instead of 10–11 PM. The person isn't choosing to stay up late — their melatonin surge happens later. When forced to wake at 7 AM for school, they're cutting into the biological sleep window, creating chronic sleep deprivation. The rhythm itself runs at 24 hours and is perfectly healthy; it's just phase-delayed relative to social schedules.</p>
+    </div>
+  </div>
+  
+  <div class="know-this">
+    <div class="know-this-tag">Know This</div>
+    <div class="know-this-body">Circadian rhythm disorders involve <span class="acc">intact rhythms with misaligned timing</span> — the internal clock runs normally but peaks at the wrong time relative to external demands.</div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('clock-canvas');
+const ctx = canvas.getContext('2d');
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d');
+
+const slider = document.getElementById('phase-slider');
+const phaseTag = document.getElementById('phase-tag');
+const overlayTag = document.getElementById('overlay-tag');
+const sleepTime = document.getElementById('sleep-time');
+const misalignVal = document.getElementById('misalign-val');
+const knowdropContent = document.getElementById('knowdrop-content');
+const toggleButtons = document.querySelectorAll('.toggle-btn');
+
+let phase = 0;
+let time = 0;
+
+const knowdropTexts = {
+  dsps: "Delayed Sleep Phase Syndrome is most common in adolescence when the circadian rhythm naturally shifts later. The internal clock generates sleep pressure around 2–4 AM instead of 10–11 PM. The person isn't choosing to stay up late — their melatonin surge happens later. When forced to wake at 7 AM for school, they're cutting into the biological sleep window, creating chronic sleep deprivation. The rhythm itself runs at 24 hours and is perfectly healthy; it's just phase-delayed relative to social schedules.",
+  asps: "Advanced Sleep Phase Syndrome becomes more common with age. The internal clock generates sleep pressure around 6–8 PM instead of 10–11 PM, and the person wakes naturally around 3–5 AM. This isn't insomnia — they get a full sleep duration, it's just shifted earlier. The issue arises when social obligations require staying awake into the evening, forcing them to stay up past their biological bedtime. The circadian rhythm itself is intact and regular; it's phase-advanced relative to conventional schedules.",
+  shift: "Shift work disorder occurs when external work schedules force wakefulness during the biological night. Unlike DSPS or ASPS where the rhythm is stably shifted, shift workers often face rotating schedules that prevent the clock from re-entraining. The SCN continues signaling sleep during night shifts and alertness during the day when they're trying to sleep. This creates chronic misalignment because the rhythm can't settle into a new stable phase. The disorder isn't about the rhythm being broken — it's about external demands that won't let it stabilise."
+};
+
+function resize() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function updateUI() {
+  const shift = parseFloat(slider.value);
+  phase = shift;
+  
+  const fillPercent = ((shift + 6) / 12) * 100;
+  slider.style.setProperty('--fill', fillPercent + '%');
+  
+  phaseTag.textContent = shift === 0 ? 'Typical (0h shift)' : 
+                         shift > 0 ? `Delayed (+${shift}h)` : 
+                         `Advanced (${shift}h)`;
+  
+  const baseHour = 23;
+  const shiftedHour = (baseHour + shift + 24) % 24;
+  const hourInt = Math.floor(shiftedHour);
+  const minutes = Math.round((shiftedHour - hourInt) * 60);
+  sleepTime.textContent = `${hourInt.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+  
+  misalignVal.textContent = shift === 0 ? '0h' : Math.abs(shift) + 'h';
+  
+  if (shift === 0) {
+    overlayTag.textContent = 'Internal rhythm aligned with external day';
+  } else if (shift > 0) {
+    overlayTag.textContent = `Sleep onset delayed by ${shift}h — DSPS pattern`;
+  } else {
+    overlayTag.textContent = `Sleep onset advanced by ${Math.abs(shift)}h — ASPS pattern`;
+  }
+}
+
+function draw() {
+  const w = canvas.width / Math.min(window.devicePixelRatio || 1, 2);
+  const h = canvas.height / Math.min(window.devicePixelRatio || 1, 2);
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  const cx = w / 2;
+  const cy = h / 2;
+  const outerR = Math.min(w, h) * 0.38;
+  const innerR = outerR * 0.72;
+  
+  // External 24h clock (fixed)
+  ctx.save();
+  for (let i = 0; i < 24; i++) {
+    const angle = (i / 24) * Math.PI * 2 - Math.PI / 2;
+    const x1 = cx + Math.cos(angle) * (outerR - 8);
+    const x2 = cx + Math.cos(angle) * outerR;
+    const y1 = cy + Math.sin(angle) * (outerR - 8);
+    const y2 = cy + Math.sin(angle) * outerR;
+    
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.strokeStyle = i % 6 === 0 ? 'rgba(237,237,232,0.4)' : 'rgba(237,237,232,0.15)';
+    ctx.lineWidth = i % 6 === 0 ? 1.5 : 0.8;
+    ctx.stroke();
+    
+    if (i % 6 === 0) {
+      const tx = cx + Math.cos(angle) * (outerR + 14);
+      const ty = cy + Math.sin(angle) * (outerR + 14);
+      ctx.fillStyle = 'rgba(237,237,232,0.5)';
+      ctx.font = '11px JetBrains Mono';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(i.toString(), tx, ty);
+    }
+  }
+  ctx.restore();
+  
+  // Internal clock (rotated by phase)
+  ctx.save();
+  const phaseAngle = (phase / 24) * Math.PI * 2;
+  for (let i = 0; i < 24; i++) {
+    const angle = (i / 24) * Math.PI * 2 - Math.PI / 2 + phaseAngle;
+    const x1 = cx + Math.cos(angle) * (innerR - 8);
+    const x2 = cx + Math.cos(angle) * innerR;
+    const y1 = cy + Math.sin(angle) * (innerR - 8);
+    const y2 = cy + Math.sin(angle) * innerR;
+    
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.strokeStyle = i % 6 === 0 ? 'rgba(106,96,212,0.6)' : 'rgba(106,96,212,0.25)';
+    ctx.lineWidth = i % 6 === 0 ? 1.5 : 0.8;
+    ctx.stroke();
+  }
+  ctx.restore();
+  
+  // Sleep pressure arc on internal clock (23:00 baseline = hour 23)
+  const sleepHour = 23;
+  const sleepAngle = (sleepHour / 24) * Math.PI * 2 - Math.PI / 2 + phaseAngle;
+  const arcStart = sleepAngle - 0.3;
+  const arcEnd = sleepAngle + 0.3;
+  
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  const sleepGrad = ctx.createRadialGradient(cx, cy, innerR * 0.5, cx, cy, innerR);
+  sleepGrad.addColorStop(0, 'rgba(106,96,212,0)');
+  sleepGrad.addColorStop(1, 'rgba(106,96,212,0.55)');
+  ctx.fillStyle = sleepGrad;
+  ctx.beginPath();
+  ctx.arc(cx, cy, innerR, arcStart, arcEnd);
+  ctx.lineTo(cx, cy);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+  
+  // Glow at sleep pressure peak
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  const peakX = cx + Math.cos(sleepAngle) * innerR;
+  const peakY = cy + Math.sin(sleepAngle) * innerR;
+  const peakGlow = ctx.createRadialGradient(peakX, peakY, 0, peakX, peakY, 24);
+  peakGlow.addColorStop(0, 'rgba(106,96,212,0.8)');
+  peakGlow.addColorStop(0.5, 'rgba(106,96,212,0.3)');
+  peakGlow.addColorStop(1, 'rgba(106,96,212,0)');
+  ctx.fillStyle = peakGlow;
+  ctx.beginPath();
+  ctx.arc(peakX, peakY, 24, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+  
+  // Rotating time indicator (pulsing)
+  const rotSpeed = 0.0003;
+  const currentAngle = (time * rotSpeed) % (Math.PI * 2) - Math.PI / 2;
+  const pulse = 0.7 + 0.3 * Math.sin(time * 0.002);
+  
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(currentAngle);
+  ctx.strokeStyle = `rgba(250,199,117,${pulse})`;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.lineTo(outerR - 18, 0);
+  ctx.stroke();
+  ctx.restore();
+  
+  // Center labels
+  ctx.fillStyle = 'rgba(237,237,232,0.3)';
+  ctx.font = '9px JetBrains Mono';
+  ctx.textAlign = 'center';
+  ctx.fillText('EXTERNAL', cx, cy - 8);
+  
+  ctx.fillStyle = 'rgba(106,96,212,0.7)';
+  ctx.fillText('INTERNAL', cx, cy + 8);
+  
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+  
+  time += 16;
+  requestAnimationFrame(draw);
+}
+
+slider.addEventListener('input', updateUI);
+
+toggleButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    toggleButtons.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const mode = btn.dataset.mode;
+    knowdropContent.textContent = knowdropTexts[mode];
+  });
+});
+
+window.addEventListener('resize', resize);
+resize();
+updateUI();
+draw();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'circadian-rhythm-sleep-disorders'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

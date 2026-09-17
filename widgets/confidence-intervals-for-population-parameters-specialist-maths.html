@@ -1,0 +1,597 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Confidence Intervals for Population Parameters — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #24803F;
+  --ag: rgba(36, 128, 63, .7);
+  --ag1: rgba(36, 128, 63, .12);
+  --ag2: rgba(36, 128, 63, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 72px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(30px, 8vw, 52px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  margin-bottom: 16px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 20px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-row {
+  margin-bottom: 12px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 10px;
+}
+
+.ci-slider {
+  width: 100%;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  border-radius: 3px;
+  outline: none;
+}
+
+.ci-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.ci-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.ci-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.ci-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.toggle-card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 20px;
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(36, 128, 63,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(36, 128, 63,.18);
+}
+
+.knowdrop {
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 34px;
+}
+
+.know-this-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 8px;
+}
+
+.know-this-body {
+  font-size: 17.4px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.footer {
+  margin-top: 34px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 10px var(--acc);
+  animation: ciPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes ciPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: .35;
+    transform: scale(.6);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse-dot {
+    animation: none;
+  }
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Interactive confidence interval demonstration showing how sample size affects interval width</h2>
+
+  <h1>Bigger samples make you <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">certain</span></h1>
+  
+  <p class="intro">Most people think a 95% confidence interval means "95% chance the true value is inside." Wrong. It means if you repeated the sampling forever, 95% of your intervals would capture the truth. Drag the slider to see how sample size changes the width of the interval.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-label">Interval Width</div>
+      <div class="live-tag" id="liveTag">n = 30</div>
+    </div>
+    <div class="card-hint">Population mean μ = 100, σ = 15</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="ciCanvas"></canvas>
+      <div class="canvas-overlay" id="overlayTag">95% CI: [94.6, 105.4]</div>
+    </div>
+
+    <div class="slider-row">
+      <div class="slider-label">Sample Size (n)</div>
+      <input type="range" class="ci-slider" id="sampleSlider" min="10" max="200" value="30" step="1">
+      <div class="tick-labels">
+        <span>10</span>
+        <span>50</span>
+        <span>100</span>
+        <span>150</span>
+        <span>200</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Width</div>
+        <div class="stat-value" id="widthStat" style="color:var(--acc)">10.8</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Margin ±</div>
+        <div class="stat-value" id="marginStat" style="color:var(--amb)">5.4</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toggle-card">
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" id="knownBtn">σ known</button>
+      <button class="toggle-btn" id="unknownBtn">σ unknown</button>
+    </div>
+    <div class="knowdrop" id="knowdropText">
+      For large samples with known population standard deviation, the interval formula is <span style="color:var(--acc)">x̄ ± z* × (σ/√n)</span>. The z-critical value comes from the normal distribution — for 95% confidence, z* = 1.96. As sample size increases, the denominator √n gets larger, so the margin of error shrinks. This is why bigger samples give tighter, more precise intervals. The confidence level stays at 95%, but the interval narrows because we have more data.
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-this-tag">Know This</div>
+    <div class="know-this-body">
+      <span style="color:var(--acc)">Wider confidence intervals</span> result from higher confidence levels, smaller sample sizes, or greater population variability — all three factors increase uncertainty in your estimate.
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="pulse-dot"></div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('ciCanvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const slider = document.getElementById('sampleSlider');
+const liveTag = document.getElementById('liveTag');
+const overlayTag = document.getElementById('overlayTag');
+const widthStat = document.getElementById('widthStat');
+const marginStat = document.getElementById('marginStat');
+const knownBtn = document.getElementById('knownBtn');
+const unknownBtn = document.getElementById('unknownBtn');
+const knowdropText = document.getElementById('knowdropText');
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d');
+
+let n = 30;
+let useT = false;
+
+const mu = 100;
+const sigma = 15;
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  draw();
+}
+
+function updateSliderFill() {
+  const pct = ((slider.value - slider.min) / (slider.max - slider.min)) * 100;
+  slider.style.setProperty('--fill', pct + '%');
+}
+
+function getCritical() {
+  if (useT) {
+    const df = n - 1;
+    // Approximate t-critical for 95% CI
+    if (df < 30) return 2.042 + (30 - df) * 0.01;
+    return 1.96 + 0.5 / Math.sqrt(df);
+  }
+  return 1.96;
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+
+  const critical = getCritical();
+  const se = sigma / Math.sqrt(n);
+  const margin = critical * se;
+  const lower = mu - margin;
+  const upper = mu + margin;
+  const width = upper - lower;
+
+  // Update stats
+  widthStat.textContent = width.toFixed(1);
+  marginStat.textContent = margin.toFixed(1);
+  liveTag.textContent = `n = ${n}`;
+  overlayTag.textContent = `95% CI: [${lower.toFixed(1)}, ${upper.toFixed(1)}]`;
+
+  // Draw number line
+  const centerX = w / 2;
+  const centerY = h / 2;
+  const scale = w / 60;
+
+  // Axis
+  ctx.strokeStyle = 'rgba(237,237,232,0.15)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(w * 0.1, centerY);
+  ctx.lineTo(w * 0.9, centerY);
+  ctx.stroke();
+
+  // Tick marks
+  ctx.font = '10px JetBrains Mono';
+  ctx.fillStyle = 'rgba(237,237,232,0.4)';
+  ctx.textAlign = 'center';
+  for (let val = 80; val <= 120; val += 10) {
+    const x = centerX + (val - mu) * scale;
+    ctx.beginPath();
+    ctx.moveTo(x, centerY - 4);
+    ctx.lineTo(x, centerY + 4);
+    ctx.stroke();
+    ctx.fillText(val.toString(), x, centerY + 18);
+  }
+
+  // True mean marker
+  ctx.fillStyle = 'rgba(250,199,117,0.8)';
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, 4, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.font = '11px JetBrains Mono';
+  ctx.fillStyle = '#FAC775';
+  ctx.textAlign = 'center';
+  ctx.fillText('μ', centerX, centerY - 12);
+
+  // Confidence interval
+  const lowerX = centerX + (lower - mu) * scale;
+  const upperX = centerX + (upper - mu) * scale;
+
+  // Glow rectangle
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.fillStyle = 'rgba(36, 128, 63,0.08)';
+  ctx.fillRect(lowerX, centerY - 30, upperX - lowerX, 60);
+  ctx.restore();
+
+  // Interval bar
+  ctx.strokeStyle = 'rgba(36, 128, 63,0.7)';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(lowerX, centerY);
+  ctx.lineTo(upperX, centerY);
+  ctx.stroke();
+
+  // End caps
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(lowerX, centerY - 8);
+  ctx.lineTo(lowerX, centerY + 8);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(upperX, centerY - 8);
+  ctx.lineTo(upperX, centerY + 8);
+  ctx.stroke();
+
+  // Sample mean marker (x̄ = 100 for visualization)
+  ctx.fillStyle = '#24803F';
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, 5, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Flowing dots along interval
+  const time = Date.now() / 1000;
+  for (let i = 0; i < 5; i++) {
+    const phase = (time * 0.4 + i / 5) % 1;
+    const dotX = lowerX + phase * (upperX - lowerX);
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.fillStyle = 'rgba(36, 128, 63,0.6)';
+    ctx.beginPath();
+    ctx.arc(dotX, centerY - 20, 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+
+  // Vignette
+  const vig = ctx.createRadialGradient(centerX, centerY, h * 0.28, centerX, centerY, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+
+  requestAnimationFrame(draw);
+}
+
+slider.addEventListener('input', () => {
+  n = parseInt(slider.value);
+  updateSliderFill();
+});
+
+knownBtn.addEventListener('click', () => {
+  useT = false;
+  knownBtn.classList.add('active');
+  unknownBtn.classList.remove('active');
+  knowdropText.innerHTML = 'For large samples with known population standard deviation, the interval formula is <span style="color:var(--acc)">x̄ ± z* × (σ/√n)</span>. The z-critical value comes from the normal distribution — for 95% confidence, z* = 1.96. As sample size increases, the denominator √n gets larger, so the margin of error shrinks. This is why bigger samples give tighter, more precise intervals. The confidence level stays at 95%, but the interval narrows because we have more data.';
+});
+
+unknownBtn.addEventListener('click', () => {
+  useT = true;
+  knownBtn.classList.remove('active');
+  unknownBtn.classList.add('active');
+  knowdropText.innerHTML = 'When the population standard deviation is unknown, we substitute the sample standard deviation and use <span style="color:var(--acc)">t-distribution critical values with n−1 degrees of freedom</span>. The t-distribution has heavier tails than the normal, so t* > z* for the same confidence level. This accounts for the extra uncertainty from estimating σ. As n grows, the t-distribution converges to normal, so the difference becomes negligible. For n = 30, t* ≈ 2.045; for n = 200, t* ≈ 1.972, very close to z* = 1.96.';
+});
+
+window.addEventListener('resize', resize);
+updateSliderFill();
+resize();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'confidence-intervals-for-population-parameters'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

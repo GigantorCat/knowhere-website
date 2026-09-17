@@ -1,0 +1,637 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Force Field Analysis — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #E85D97;
+  --ag: rgba(232, 93, 151, .7);
+  --ag1: rgba(232, 93, 151, .12);
+  --ag2: rgba(232, 93, 151, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 72px;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(30px, 8vw, 52px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  margin-bottom: 16px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: white;
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 16px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-row {
+  margin-bottom: 12px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+}
+
+.ffa-slider {
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 50%), #23291f var(--fill, 50%));
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.ffa-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.ffa-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.ffa-slider:hover::-webkit-slider-thumb {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.ffa-slider:hover::-moz-range-thumb {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  margin-top: 6px;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.toggle-section {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: #12160F;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(232,93,151,.1);
+  border-color: var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(232,93,151,.18);
+}
+
+.knowdrop-divider {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.knowdrop-text {
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 34px;
+}
+
+.know-this-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 10px;
+}
+
+.know-this-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.footer {
+  margin-top: 34px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 10px var(--acc);
+  animation: ffaPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes ffaPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .35; transform: scale(.6); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Force Field Analysis Interactive Widget</h2>
+  
+  <h1>Weakening restraints beats <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">pushing harder</span></h1>
+  
+  <p class="intro">Change doesn't fail because drivers are weak — it fails because restraints lock the system in place. Most leaders amplify urgency when they should be dismantling barriers. Drag the slider to shift the balance between driving and restraining forces, then watch how equilibrium moves.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Force Field Canvas</span>
+      <span class="live-tag" id="liveTag">Equilibrium: Current State</span>
+    </div>
+    <div class="card-hint">Balance drives change position — restraints anchor status quo</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="canvas"></canvas>
+      <div class="canvas-overlay" id="overlayTag">Equilibrium: Current State</div>
+    </div>
+
+    <div class="slider-row">
+      <div class="slider-label">Force Balance (← Restraint Dominant | Driver Dominant →)</div>
+      <input type="range" min="0" max="100" value="50" class="ffa-slider" id="forceSlider">
+      <div class="tick-labels">
+        <span>Status Quo Lock</span>
+        <span>Neutral</span>
+        <span>Change Momentum</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Net Force</div>
+        <div class="stat-value" style="color:var(--acc)" id="netForce">0 N</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Equilibrium Shift</div>
+        <div class="stat-value" style="color:var(--amb)" id="eqShift">0%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-section">
+      <button class="toggle-btn active" id="btnDrivers">Amplify Drivers</button>
+      <button class="toggle-btn" id="btnRestraints">Weaken Restraints</button>
+    </div>
+    <div class="knowdrop-divider">
+      <p class="knowdrop-text" id="knowdropText">Amplifying drivers — technological obsolescence, competitive pressure, regulatory deadlines — creates urgency but often triggers defensive reactions. When you push harder for change without addressing barriers, restraining forces strengthen in response. Employees dig in when they lack skills for new systems, finance teams block unfunded initiatives, cultural norms reassert themselves. The equilibrium barely shifts because every increase in driving force meets equal and opposite resistance. Change fatigue sets in, momentum stalls, and the organisation returns to baseline despite heroic effort.</p>
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-this-tag">Know This</div>
+    <div class="know-this-body">Strategic change management succeeds by <span style="color:var(--acc)">weakening specific restraints</span> through training, communication, or phased implementation rather than only intensifying the <span style="color:var(--acc)">drivers</span> pushing for change.</div>
+  </div>
+
+  <div class="footer">
+    <div class="pulse-dot"></div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const liveTag = document.getElementById('liveTag');
+const overlayTag = document.getElementById('overlayTag');
+const forceSlider = document.getElementById('forceSlider');
+const netForce = document.getElementById('netForce');
+const eqShift = document.getElementById('eqShift');
+const btnDrivers = document.getElementById('btnDrivers');
+const btnRestraints = document.getElementById('btnRestraints');
+const knowdropText = document.getElementById('knowdropText');
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d');
+
+let balance = 50;
+let eqPosition = 0;
+let time = 0;
+let animFrame;
+
+const driverTexts = [
+  'Tech Obsolescence',
+  'Competitive Pressure',
+  'Regulatory Deadline',
+  'Efficiency Gain'
+];
+
+const restraintTexts = [
+  'Skill Gaps',
+  'Financial Cost',
+  'Cultural Norms',
+  'Fear of Job Loss'
+];
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function updateStats() {
+  const netF = ((balance - 50) * 2).toFixed(0);
+  netForce.textContent = netF + ' N';
+  
+  const shift = ((balance - 50) * 2).toFixed(0);
+  eqShift.textContent = shift + '%';
+  
+  let state;
+  if (balance < 35) state = 'Restraint Dominant';
+  else if (balance > 65) state = 'Change Accelerating';
+  else state = 'Equilibrium: Balanced';
+  
+  liveTag.textContent = state;
+  overlayTag.textContent = state;
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  const cx = w / 2;
+  const cy = h / 2;
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  // Target equilibrium
+  eqPosition += ((balance - 50) / 50 * 0.35 - eqPosition) * 0.08;
+  const eqX = cx + eqPosition * w * 0.32;
+  
+  // Centre line
+  ctx.strokeStyle = 'rgba(38,43,38,0.7)';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(cx, cy - h * 0.35);
+  ctx.lineTo(cx, cy + h * 0.35);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  
+  // Equilibrium marker
+  const eqGlow = ctx.createRadialGradient(eqX, cy, 0, eqX, cy, 40);
+  eqGlow.addColorStop(0, 'rgba(250,199,117,0.9)');
+  eqGlow.addColorStop(0.5, 'rgba(250,199,117,0.3)');
+  eqGlow.addColorStop(1, 'rgba(250,199,117,0)');
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.fillStyle = eqGlow;
+  ctx.beginPath();
+  ctx.arc(eqX, cy, 40, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+  
+  ctx.fillStyle = '#FAC775';
+  ctx.beginPath();
+  ctx.arc(eqX, cy, 7, 0, Math.PI * 2);
+  ctx.fill();
+  
+  ctx.strokeStyle = '#FAC775';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([3, 3]);
+  ctx.beginPath();
+  ctx.moveTo(eqX, cy - h * 0.35);
+  ctx.lineTo(eqX, cy + h * 0.35);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  
+  // Driving forces (right side)
+  const driverForce = balance / 100;
+  for (let i = 0; i < 4; i++) {
+    const startX = w * 0.92;
+    const y = cy - h * 0.28 + (i / 3) * h * 0.56;
+    const length = driverForce * w * 0.30;
+    const endX = startX - length;
+    
+    const arrowGrad = ctx.createLinearGradient(startX, y, endX, y);
+    arrowGrad.addColorStop(0, 'rgba(232,93,151,0.15)');
+    arrowGrad.addColorStop(1, 'rgba(232,93,151,0.85)');
+    
+    ctx.strokeStyle = arrowGrad;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(startX, y);
+    ctx.lineTo(endX, y);
+    ctx.stroke();
+    
+    // Arrow head
+    ctx.fillStyle = 'rgba(232,93,151,0.85)';
+    ctx.beginPath();
+    ctx.moveTo(endX, y);
+    ctx.lineTo(endX + 8, y - 5);
+    ctx.lineTo(endX + 8, y + 5);
+    ctx.closePath();
+    ctx.fill();
+    
+    // Glow
+    if (driverForce > 0.3) {
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.strokeStyle = 'rgba(232,93,151,' + (driverForce * 0.3) + ')';
+      ctx.lineWidth = 6;
+      ctx.beginPath();
+      ctx.moveTo(startX, y);
+      ctx.lineTo(endX, y);
+      ctx.stroke();
+      ctx.restore();
+    }
+    
+    // Label
+    ctx.fillStyle = 'rgba(232,93,151,0.6)';
+    ctx.font = '11px "JetBrains Mono"';
+    ctx.textAlign = 'right';
+    ctx.fillText(driverTexts[i], w * 0.96, y + 4);
+  }
+  
+  // Restraining forces (left side)
+  const restraintForce = (100 - balance) / 100;
+  for (let i = 0; i < 4; i++) {
+    const startX = w * 0.08;
+    const y = cy - h * 0.28 + (i / 3) * h * 0.56;
+    const length = restraintForce * w * 0.30;
+    const endX = startX + length;
+    
+    const arrowGrad = ctx.createLinearGradient(startX, y, endX, y);
+    arrowGrad.addColorStop(0, 'rgba(140,147,137,0.15)');
+    arrowGrad.addColorStop(1, 'rgba(140,147,137,0.85)');
+    
+    ctx.strokeStyle = arrowGrad;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(startX, y);
+    ctx.lineTo(endX, y);
+    ctx.stroke();
+    
+    // Arrow head
+    ctx.fillStyle = 'rgba(140,147,137,0.85)';
+    ctx.beginPath();
+    ctx.moveTo(endX, y);
+    ctx.lineTo(endX - 8, y - 5);
+    ctx.lineTo(endX - 8, y + 5);
+    ctx.closePath();
+    ctx.fill();
+    
+    // Glow
+    if (restraintForce > 0.3) {
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.strokeStyle = 'rgba(140,147,137,' + (restraintForce * 0.25) + ')';
+      ctx.lineWidth = 6;
+      ctx.beginPath();
+      ctx.moveTo(startX, y);
+      ctx.lineTo(endX, y);
+      ctx.stroke();
+      ctx.restore();
+    }
+    
+    // Label
+    ctx.fillStyle = 'rgba(140,147,137,0.6)';
+    ctx.font = '11px "JetBrains Mono"';
+    ctx.textAlign = 'left';
+    ctx.fillText(restraintTexts[i], w * 0.04, y + 4);
+  }
+  
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+  
+  time += 0.016;
+  animFrame = requestAnimationFrame(draw);
+}
+
+forceSlider.addEventListener('input', (e) => {
+  balance = parseFloat(e.target.value);
+  const fillPct = balance;
+  e.target.style.setProperty('--fill', fillPct + '%');
+  updateStats();
+});
+
+btnDrivers.addEventListener('click', () => {
+  btnDrivers.classList.add('active');
+  btnRestraints.classList.remove('active');
+  knowdropText.textContent = 'Amplifying drivers — technological obsolescence, competitive pressure, regulatory deadlines — creates urgency but often triggers defensive reactions. When you push harder for change without addressing barriers, restraining forces strengthen in response. Employees dig in when they lack skills for new systems, finance teams block unfunded initiatives, cultural norms reassert themselves. The equilibrium barely shifts because every increase in driving force meets equal and opposite resistance. Change fatigue sets in, momentum stalls, and the organisation returns to baseline despite heroic effort.';
+});
+
+btnRestraints.addEventListener('click', () => {
+  btnRestraints.classList.add('active');
+  btnDrivers.classList.remove('active');
+  knowdropText.textContent = 'Weakening restraints removes the barriers that lock equilibrium in place. Targeted training eliminates skill gaps so employees can adopt new systems confidently. Transparent communication addresses fear of job loss before resistance hardens into sabotage. Phased implementation spreads financial costs across quarters, turning budget constraints into manageable investments. Cultural change workshops surface unspoken norms and reframe them collaboratively. Each restraint you dismantle shifts equilibrium toward change without increasing pressure. The system moves because friction disappears, not because force intensifies.';
+});
+
+window.addEventListener('resize', resize);
+resize();
+updateStats();
+forceSlider.style.setProperty('--fill', '50%');
+draw();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'force-field-analysis'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

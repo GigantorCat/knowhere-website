@@ -1,0 +1,582 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Budgeting and the Cost of Borrowing — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #7ED97A;
+  --ag: rgba(126, 217, 122, .7);
+  --ag1: rgba(126, 217, 122, .12);
+  --ag2: rgba(126, 217, 122, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container { max-width: 720px; margin: 0 auto; }
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  line-height: 1.55;
+  max-width: 58ch;
+  margin-bottom: 28px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-container {
+  margin-bottom: 10px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.budget-slider {
+  width: 100%;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+}
+
+.budget-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  transition: box-shadow .15s;
+  cursor: pointer;
+}
+
+.budget-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  transition: box-shadow .15s;
+  cursor: pointer;
+}
+
+.budget-slider:hover::-webkit-slider-thumb {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.budget-slider:hover::-moz-range-thumb {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+  display: block;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+  display: block;
+}
+
+.stat-value.acc { color: var(--acc); }
+.stat-value.amb { color: var(--amb); }
+
+.toggle-card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: #12160F;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(126, 217, 122,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(126, 217, 122,.18);
+}
+
+.knowdrop-divider {
+  border-top: 1px solid var(--line);
+  margin-bottom: 16px;
+}
+
+.knowdrop-text {
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-this-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.know-this-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Interactive budget and borrowing cost calculator showing how variable costs and interest add up</h2>
+  
+  <h1>Your monthly bills are a ticking clock that never <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">stops</span></h1>
+  
+  <p class="intro">Most people think they know where their money goes — until they actually track it. Fixed costs are locked in, variable costs creep up, and borrowing quietly multiplies everything. Drag the slider to watch your monthly outflow grow in real time.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Monthly Budget Breakdown</span>
+      <span class="live-tag" id="budgetTag">Balance: +$0</span>
+    </div>
+    <div class="card-hint">Slide to increase variable spending (food, transport, extras)</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="budgetCanvas"></canvas>
+      <div class="canvas-overlay" id="canvasOverlay">Total Outflow: $0/month</div>
+    </div>
+
+    <div class="slider-container">
+      <label class="slider-label" for="budgetSlider">Variable Costs (Per Month)</label>
+      <input type="range" id="budgetSlider" class="budget-slider" min="200" max="1200" value="400" step="50">
+    </div>
+    <div class="tick-labels">
+      <span>$200</span>
+      <span>$700</span>
+      <span>$1200</span>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <span class="stat-label">Money Left</span>
+        <span class="stat-value acc" id="leftoverStat">$1200</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">% of Income</span>
+        <span class="stat-value amb" id="percentStat">40%</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="toggle-card">
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" data-mode="credit">Credit Card</button>
+      <button class="toggle-btn" data-mode="loan">Personal Loan</button>
+    </div>
+    <div class="knowdrop-divider"></div>
+    <div class="knowdrop-text" id="knowdropText">
+      You buy a $1200 laptop on a credit card with 19% annual interest. If you only pay the minimum ($50/month), you'll take over two years to pay it off — and you'll pay around $300 extra in interest alone. That laptop actually cost you $1500. Credit cards are designed for convenience, but the interest compounds daily, turning small purchases into long-term debt traps if you don't clear the balance fast.
+    </div>
+  </div>
+
+  <div class="know-this">
+    <span class="know-this-tag">Know This</span>
+    <p class="know-this-body">A <span style="color:var(--acc)">budget</span> tracks income against <span style="color:var(--acc)">fixed costs</span> (rent, insurance) and <span style="color:var(--acc)">variable costs</span> (food, petrol) — borrowing always adds <span style="color:var(--acc)">interest</span> on top of the original amount.</p>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('budgetCanvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d', { alpha: false });
+
+const slider = document.getElementById('budgetSlider');
+const budgetTag = document.getElementById('budgetTag');
+const canvasOverlay = document.getElementById('canvasOverlay');
+const leftoverStat = document.getElementById('leftoverStat');
+const percentStat = document.getElementById('percentStat');
+
+const toggleButtons = document.querySelectorAll('.toggle-btn');
+const knowdropText = document.getElementById('knowdropText');
+
+const income = 3000;
+const fixedCosts = 1400;
+
+let variableCosts = parseInt(slider.value);
+let time = 0;
+let animFrame;
+
+const knowdrops = {
+  credit: "You buy a $1200 laptop on a credit card with 19% annual interest. If you only pay the minimum ($50/month), you'll take over two years to pay it off — and you'll pay around $300 extra in interest alone. That laptop actually cost you $1500. Credit cards are designed for convenience, but the interest compounds daily, turning small purchases into long-term debt traps if you don't clear the balance fast.",
+  loan: "A $10,000 personal loan at 12% interest over 3 years means monthly repayments of around $330. But you won't just pay back $10,000 — you'll pay nearly $12,000 total. That extra $2000 is the real cost of borrowing. Compare loan offers carefully: a 2% difference in the interest rate can save you hundreds. Always check the total amount repayable, not just the monthly figure."
+};
+
+function resize() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function updateUI() {
+  const total = fixedCosts + variableCosts;
+  const leftover = income - total;
+  const percentSpent = Math.round((total / income) * 100);
+  
+  budgetTag.textContent = leftover >= 0 ? `Balance: +$${leftover}` : `Deficit: −$${Math.abs(leftover)}`;
+  canvasOverlay.textContent = `Total Outflow: $${total}/month`;
+  leftoverStat.textContent = leftover >= 0 ? `$${leftover}` : `−$${Math.abs(leftover)}`;
+  percentStat.textContent = `${percentSpent}%`;
+  
+  const fillPercent = ((variableCosts - 200) / (1200 - 200)) * 100;
+  slider.style.setProperty('--fill', fillPercent + '%');
+}
+
+function draw() {
+  const w = canvas.width / (Math.min(window.devicePixelRatio || 1, 2));
+  const h = canvas.height / (Math.min(window.devicePixelRatio || 1, 2));
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  const barWidth = w * 0.18;
+  const gap = w * 0.08;
+  const maxHeight = h * 0.7;
+  const baseY = h * 0.82;
+  
+  const incomeHeight = maxHeight;
+  const fixedHeight = (fixedCosts / income) * maxHeight;
+  const variableHeight = (variableCosts / income) * maxHeight;
+  const totalSpent = fixedCosts + variableCosts;
+  const totalHeight = (totalSpent / income) * maxHeight;
+  
+  const pulse = 0.85 + 0.15 * Math.sin(time * 1.2);
+  
+  // Income bar (left)
+  const incomeX = w * 0.15;
+  const incomeGrad = ctx.createLinearGradient(0, baseY - incomeHeight, 0, baseY);
+  incomeGrad.addColorStop(0, 'rgba(126, 217, 122,0.9)');
+  incomeGrad.addColorStop(1, 'rgba(126, 217, 122,0.4)');
+  ctx.fillStyle = incomeGrad;
+  ctx.fillRect(incomeX, baseY - incomeHeight, barWidth, incomeHeight);
+  
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.shadowColor = 'rgba(126, 217, 122,0.6)';
+  ctx.shadowBlur = 20;
+  ctx.fillRect(incomeX, baseY - incomeHeight, barWidth, incomeHeight);
+  ctx.restore();
+  
+  ctx.fillStyle = 'rgba(126, 217, 122,0.9)';
+  ctx.font = '500 11px "JetBrains Mono"';
+  ctx.textAlign = 'center';
+  ctx.fillText('INCOME', incomeX + barWidth / 2, baseY + 18);
+  ctx.font = '600 16px "JetBrains Mono"';
+  ctx.fillText('$' + income, incomeX + barWidth / 2, baseY - incomeHeight - 10);
+  
+  // Fixed costs (middle-left)
+  const fixedX = incomeX + barWidth + gap;
+  ctx.fillStyle = '#FAC775';
+  ctx.fillRect(fixedX, baseY - fixedHeight, barWidth, fixedHeight);
+  
+  ctx.fillStyle = '#FAC775';
+  ctx.font = '500 11px "JetBrains Mono"';
+  ctx.fillText('FIXED', fixedX + barWidth / 2, baseY + 18);
+  ctx.font = '600 14px "JetBrains Mono"';
+  ctx.fillText('$' + fixedCosts, fixedX + barWidth / 2, baseY - fixedHeight - 8);
+  
+  // Variable costs (middle-right)
+  const varX = fixedX + barWidth + gap * 0.5;
+  const varGrad = ctx.createLinearGradient(0, baseY - variableHeight, 0, baseY);
+  varGrad.addColorStop(0, 'rgba(250,199,117,1)');
+  varGrad.addColorStop(1, 'rgba(250,199,117,0.5)');
+  ctx.fillStyle = varGrad;
+  ctx.fillRect(varX, baseY - variableHeight, barWidth, variableHeight);
+  
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.shadowColor = 'rgba(250,199,117,' + pulse * 0.5 + ')';
+  ctx.shadowBlur = 18;
+  ctx.fillRect(varX, baseY - variableHeight, barWidth, variableHeight);
+  ctx.restore();
+  
+  ctx.fillStyle = 'rgba(250,199,117,1)';
+  ctx.font = '500 11px "JetBrains Mono"';
+  ctx.textAlign = 'center';
+  ctx.fillText('VARIABLE', varX + barWidth / 2, baseY + 18);
+  ctx.font = '600 14px "JetBrains Mono"';
+  ctx.fillText('$' + variableCosts, varX + barWidth / 2, baseY - variableHeight - 8);
+  
+  // Total spent bar (right)
+  const totalX = w * 0.77;
+  const totalGrad = ctx.createLinearGradient(0, baseY - totalHeight, 0, baseY);
+  if (totalSpent > income) {
+    totalGrad.addColorStop(0, 'rgba(255,80,80,0.95)');
+    totalGrad.addColorStop(1, 'rgba(255,80,80,0.5)');
+  } else {
+    totalGrad.addColorStop(0, 'rgba(126, 217, 122,0.75)');
+    totalGrad.addColorStop(1, 'rgba(126, 217, 122,0.35)');
+  }
+  ctx.fillStyle = totalGrad;
+  ctx.fillRect(totalX, baseY - totalHeight, barWidth, totalHeight);
+  
+  if (totalSpent > income) {
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.shadowColor = 'rgba(255,80,80,0.5)';
+    ctx.shadowBlur = 22;
+    ctx.fillRect(totalX, baseY - totalHeight, barWidth, totalHeight);
+    ctx.restore();
+  }
+  
+  ctx.fillStyle = totalSpent > income ? '#FF5050' : 'rgba(126, 217, 122,0.9)';
+  ctx.font = '500 11px "JetBrains Mono"';
+  ctx.textAlign = 'center';
+  ctx.fillText('TOTAL', totalX + barWidth / 2, baseY + 18);
+  ctx.font = '600 16px "JetBrains Mono"';
+  ctx.fillText('$' + totalSpent, totalX + barWidth / 2, baseY - totalHeight - 10);
+  
+  // Baseline
+  ctx.strokeStyle = 'rgba(126, 217, 122,0.2)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(0, baseY);
+  ctx.lineTo(w, baseY);
+  ctx.stroke();
+  
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const cx = w / 2;
+  const cy = h / 2;
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+}
+
+function animate() {
+  time += 0.016;
+  draw();
+  animFrame = requestAnimationFrame(animate);
+}
+
+slider.addEventListener('input', (e) => {
+  variableCosts = parseInt(e.target.value);
+  updateUI();
+});
+
+toggleButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    toggleButtons.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const mode = btn.dataset.mode;
+    knowdropText.textContent = knowdrops[mode];
+  });
+});
+
+resize();
+updateUI();
+animate();
+
+window.addEventListener('resize', resize);
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'budgeting-and-the-cost-of-borrowing'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

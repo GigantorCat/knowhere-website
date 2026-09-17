@@ -43,6 +43,31 @@ const appHtml = fs.readFileSync(path.join(APP, 'knowhere.html'), 'utf8');
 const pi = appHtml.indexOf('const SUBJECT_COLORS={');
 if (pi < 0) die('SUBJECT_COLORS not found in knowhere.html');
 const SUBJECT_COLORS = new Function(appHtml.slice(pi, appHtml.indexOf('};', pi) + 2) + '; return SUBJECT_COLORS;')();
+/* SUBJECT_COLORS only covers 9 subjects. The app's own SUBJECTS tables carry a colour for 31 ids, keyed
+   both bare and hsc-prefixed, and by display name — lift all three so a subject is not left on brat green,
+   which is the CTA colour and would make the accent say nothing. */
+const SUBJECT_HUE = new Map();
+for (const m of appHtml.matchAll(/\{id:'([a-z0-9-]+)',name:'([^']+)',icon:'[^']*',color:'(#[0-9A-Fa-f]{6})'/g)) {
+  SUBJECT_HUE.set(m[1], m[3]);
+  SUBJECT_HUE.set(m[1].replace(/^hsc-/, ''), SUBJECT_HUE.get(m[1].replace(/^hsc-/, '')) || m[3]);
+  SUBJECT_HUE.set(m[2].toLowerCase(), m[3]);
+}
+const accentFor = (cert, dir, subject) =>
+  SUBJECT_HUE.get(canonId(cert, dir)) || SUBJECT_HUE.get(`${cert}-${dir}`) || SUBJECT_HUE.get(dir)
+  || SUBJECT_HUE.get(String(subject).toLowerCase()) || SUBJECT_COLORS[dir] || SUBJECT_COLORS['default'];
+
+/* WHAT THE PRODUCT ACTUALLY SHIPS is the app's own subject tables — 15 HSC + 16 VCE, the doctrine's 31.
+   The manifest carries concepts for subjects that are NOT in release 1 (Cat, 17 Sep: "exclude — it is not
+   in the curriculum for release 1"). A public page for a subject the app does not have is a promise it
+   cannot keep, so the gate is derived from the product, not from a list anyone has to remember to update. */
+const SHIPPED = new Set();
+for (const m of appHtml.matchAll(/\{id:'([a-z0-9-]+)',name:'[^']+',icon:'[^']*',color:'#[0-9A-Fa-f]{6}'/g)) SHIPPED.add(m[1]);
+/* the manifest's subject name and the app's id differ in three places */
+const ID_ALIAS = { 'hsc-english-advanced': 'hsc-english', 'vce-physical-education': 'phys-ed' };
+function canonId(cert, dir) { const k = `${cert}-${dir}`; return ID_ALIAS[k] || (cert === 'hsc' ? k : dir); }
+/* exact only. A loose `hsc-${dir}` fallback let VCE Modern History through on the strength of HSC Modern
+   History existing — and put "also VCE Decolonisation" on a page for a subject release 1 does not have. */
+const isShipped = (cert, dir) => SHIPPED.has(canonId(cert, dir));
 
 const srv = fs.readFileSync(path.join(APP, 'server.js'), 'utf8');
 const ai = srv.indexOf('function injectAccent(html, accent) {');
@@ -97,15 +122,45 @@ const metaOf = id => {
 const subjSlug = s => String(s).toLowerCase().replace(/&/g, '').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
 const targets = scapes.pages.filter(p => !ONLY || p.slug === ONLY);
+/* A page's URL must not depend on which subjects happen to be in this run — otherwise adding a subject
+   silently moves a page that is already live and already in an ad. So the home cell is derived from the
+   CONCEPT's own mappings: HSC before VCE, then alphabetical, preferring the mapping that matches the
+   concept's discipline. Discipline alone is not enough — 'history' covers both HSC Modern History and
+   VCE History: Revolutions, and would split one subject across two folders. */
+function homeOf(concept) {
+  const ms = (concept.curriculumMappings || []).filter(m => m.subject);
+  if (!ms.length) return null;
+  /* CERT FIRST: if a concept is on an HSC syllabus at all, the page is an HSC page. NSW is the larger
+     market and its exams run first, so "HSC Mathematics Advanced" must not end up living under VCE Maths
+     Methods because the two share a discipline. Discipline only breaks ties WITHIN the chosen cert —
+     which is what keeps Research Methods in Psychology rather than alphabetically in Biology. */
+  const cert = ms.some(m => m.curriculum === 'HSC') ? 'HSC' : ms[0].curriculum;
+  const own = ms.filter(m => m.curriculum === cert).sort((a, b) => String(a.subject).localeCompare(String(b.subject)));
+  const d = subjSlug(concept.discipline || '');
+  return own.find(m => subjSlug(m.subject) === d) || own[0];
+}
+const skipped = [];
 for (const p of targets) {
-  const cert = p.cells.some(c => c.curriculum === 'HSC') ? 'hsc' : 'vce';
+  const concept = byId.get(p.id);
+  const home = concept && homeOf(concept);
+  if (!home) { skipped.push([p.slug, 'no curriculum mapping']); continue; }
+  const cert = home.curriculum === 'HSC' ? 'hsc' : 'vce';
   p.cert = cert;
-  p.dir = subjSlug(p.subject);
+  p.dir = subjSlug(home.subject);
+  p.homeSubject = home.subject;
+  if (!isShipped(cert, p.dir)) { skipped.push([p.slug, `${home.curriculum} ${home.subject} is not in release 1`]); continue; }
   p.url = `https://knowhere.me/${cert}/${p.dir}/${p.slug}`;
   p.file = path.join(cert, p.dir, p.slug + '.html');
   pageFor.set(p.slug, p);
 }
-console.log(`${targets.length} pages · ${scapes.cells.length} cells · subjects ${scapes.subjects.join(', ')}`);
+const live = targets.filter(p => pageFor.has(p.slug));
+if (skipped.length) {
+  const why = new Map();
+  for (const [, reason] of skipped) why.set(reason, (why.get(reason) || 0) + 1);
+  console.log('\nnot built — not in release 1:');
+  for (const [reason, n] of [...why].sort((a, b) => b[1] - a[1])) console.log(`  ${String(n).padStart(3)} pages · ${reason}`);
+}
+console.log(`${targets.length} nominated · ${scapes.cells.length} cells`);
 
 /* ── the shared template ───────────────────────────────────────────────────────────────────────────── */
 const CSS = `
@@ -224,9 +279,13 @@ const firstSentence = s => { const m = /^[\s\S]*?[.!?](\s|$)/.exec(String(s || '
 function buildPage(p) {
   const concept = byId.get(p.id) || die('no manifest concept for ' + p.slug);
   const meta = metaOf(p.id) || die('no sidecar meta for ' + p.slug);
-  const accent = SUBJECT_COLORS[p.dir] || SUBJECT_COLORS['default'];
-  const cells = p.cells.slice().sort(a => (a.curriculum === certName(p.cert) ? -1 : 1));
-  const home = cells[0];
+  const accent = accentFor(p.cert, p.dir, p.subject);
+  const home = homeOf(concept);
+  /* the eyebrow and the JSON-LD alignment name only subjects the product actually has — an "also VCE
+     Modern History" on a page would advertise a subject that is not in release 1 */
+  const cells = [home, ...p.cells.filter(c =>
+    !(c.curriculum === home.curriculum && c.topic === home.topic)
+    && isShipped(c.curriculum === 'HSC' ? 'hsc' : 'vce', subjSlug(c.subject)))];
   const cellRec = scapes.cells.find(c => c.curriculum === home.curriculum && c.subject === home.subject && c.topic === home.topic);
   const idea = bigIdeas.get(`${home.subject}/${home.topic}`);
   /* An ITW scene belongs to a TOPIC and its analogy names ONE concept in that topic. When that is not this
@@ -245,12 +304,20 @@ function buildPage(p) {
     if (!sw.length || sw.some(w => bag.has(w))) scene = rawScene;
   }
   const title = meta.title || titleOf(p.slug);
+  /* The level is DERIVED, never assumed. Six concepts in the full map are Year 11 only — a page that says
+     Year 12 over a Year 11 concept is wrong in the description, in the JSON-LD and to the reader. */
+  const levels = new Set((concept.curriculumMappings || []).map(m => m.level).filter(Boolean));
+  const level = levels.has('Year 12') ? 'Year 12' : (levels.has('Year 11') ? 'Year 11' : 'Year 12');
 
   /* ── 1. the widget: the app's own accent bake, done once at build ── */
   const srcFile = fileById.get(p.id) || die('no widget on disk for ' + p.slug);
   const raw = fs.readFileSync(path.join(FLAT, srcFile), 'utf8');
   const baked = injectAccent(raw, accent);
   if (/#3AADA0/i.test(baked)) die(`teal survived the bake in ${p.slug}`);
+  /* "drag it" is a lie on a widget with nothing to drag. The verb follows what the widget actually has. */
+  const draggable = /<input[^>]+type\s*=\s*["']?range/i.test(raw) || /(pointerdown|mousedown|touchstart)/i.test(raw);
+  const verb = draggable ? 'drag it' : 'play with it';
+  const heroVerb = draggable ? 'Drag it. Watch what actually changes.' : 'Try it. Watch what actually changes.';
   const widgetName = `${p.slug}-${p.dir}.html`;
   const widget = `<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>${esc(title)} — live knowscape</title>${MOBFIX}</head><body>
 ${baked}
@@ -263,7 +330,7 @@ ${beacon(p.slug)}</body></html>`;
      (doctrine — never "Australia"), so it is reserved before the concept's own sentence is allowed in,
      and a long summary is trimmed at a word boundary rather than cutting the tail off. ~158 chars, the
      width Google actually shows. */
-  const tail = ` A live knowscape — ${home.curriculum} ${home.subject}, Year 12 in NSW and Victoria.`;
+  const tail = ` A live knowscape — ${home.curriculum} ${home.subject}, ${level} in NSW and Victoria.`;
   const headBudget = 158 - tail.length;
   let head = firstSentence(meta.summary || meta.explanation).replace(/\s+/g, ' ').trim();
   if (head.length > headBudget) head = head.slice(0, headBudget).replace(/[\s,;:]+\S*$/, '').replace(/[.,;:]$/, '') + '…';
@@ -279,7 +346,7 @@ ${beacon(p.slug)}</body></html>`;
     '@context': 'https://schema.org', '@graph': [
       {
         '@type': 'LearningResource', '@id': p.url + '#resource', name: `${title} — live knowscape`, url: p.url,
-        description: DESC, inLanguage: 'en-AU', learningResourceType: 'interactive resource', educationalLevel: 'Year 12',
+        description: DESC, inLanguage: 'en-AU', learningResourceType: 'interactive resource', educationalLevel: level,
         teaches: meta.summary || meta.explanation || title,
         about: (concept.knowledgeTags || []).slice(0, 6).map(t => ({ '@type': 'Thing', name: String(t).replace(/-/g, ' ') })),
         educationalAlignment: alignments,
@@ -433,10 +500,10 @@ ${beacon(p.slug)}</body></html>`;
     </div>
     <h1>${esc(title)}</h1>
     <p class="big">${stars(meta.explanation || meta.summary || '')}
-      <small>This is the real knowscape from knowhere, not a picture of one. Drag it. Watch what actually changes.</small></p>
+      <small>This is the real knowscape from knowhere, not a picture of one. ${heroVerb}</small></p>
 
     <div class="panel">
-      <div class="chrome"><span class="l">${esc(home.subject.toLowerCase())} · ${esc(home.topic.toLowerCase())} · ${esc(title.toLowerCase())}</span><span class="r">drag it · it is yours</span></div>
+      <div class="chrome"><span class="l">${esc(home.subject.toLowerCase())} · ${esc(home.topic.toLowerCase())} · ${esc(title.toLowerCase())}</span><span class="r">${verb} · it is yours</span></div>
       <iframe id="kwFrame" src="/widgets/${widgetName}" title="${esc(title)} — interactive knowscape" loading="eager" scrolling="no"></iframe>
     </div>
   </header>
@@ -496,7 +563,7 @@ ${wild}${points}${under}${rest}
 const MARK = 'KNOWHERE:CONCEPT-PAGE v2';
 const preserved = [];
 const built = [];
-for (const p of targets) {
+for (const p of live) {
   if (fs.existsSync(p.file) && !fs.readFileSync(p.file, 'utf8').includes(MARK)) { preserved.push(p); continue; }
   built.push({ p, ...buildPage(p) });
 }
@@ -535,7 +602,40 @@ for (const cert of ['hsc', 'vce']) {
   }
 }
 for (const b of built) onDisk.add(b.p.file);
-const sitemap = sitemapWith([...onDisk].sort());
+/* A page on disk that nothing nominates any more is an orphan: it still serves, still goes in the sitemap,
+   and now duplicates a page at the correct URL. Report it rather than quietly indexing both. */
+const nominated = new Set(live.map(p => p.file));
+const orphans = [...onDisk].filter(f => !nominated.has(f) && !preserved.some(p => p.file === f));
+if (orphans.length) {
+  console.log('\n⚠ ORPHANS — on disk, no longer nominated. Quarantine these before applying:');
+  for (const o of orphans) console.log('    ' + o);
+}
+
+/* STALE WIDGETS — the same check, for widgets/. Two rules, both learned the hard way (17 Sep):
+   1. A widget is only stale if NOTHING on the whole site references it — experience-it.html renders five
+      hand-built demos that no concept page points at, and sweeping by concept pages alone would break it.
+   2. A widget this generator did not write is NEVER swept, however unreferenced it is. Two hand-built
+      knowscapes (fluvial geomorphology, June; an English writing-modes one, August) were only kept because
+      Cat recognised one of them. Hand-built outranks the generator here exactly as it does for pages. */
+try {
+  const referenced = new Set();
+  const walk = dir => { for (const f of fs.readdirSync(dir)) {
+    if (/^(_|node_modules|\.git)/.test(f)) continue;
+    const q = path.join(dir, f);
+    if (fs.statSync(q).isDirectory()) { walk(q); continue; }
+    if (!/\.(html|js|mjs)$/.test(f) || q.startsWith('widgets' + path.sep)) continue;
+    for (const m of fs.readFileSync(q, 'utf8').matchAll(/widgets\/([A-Za-z0-9._-]+\.html)/g)) referenced.add(m[1]);
+  } };
+  walk('.');
+  const mine = w => { const h = fs.readFileSync(path.join('widgets', w), 'utf8'); return h.includes('kwMobFix') && h.includes('kwH'); };
+  const staleWidgets = fs.readdirSync('widgets')
+    .filter(f => f.endsWith('.html') && !f.includes('.bak') && !referenced.has(f) && mine(f));
+  if (staleWidgets.length) {
+    console.log('\n⚠ STALE WIDGETS — generator-written, referenced by nothing. Safe to quarantine:');
+    for (const w of staleWidgets) console.log('    widgets/' + w);
+  }
+} catch (e) { console.log('  (widget sweep skipped: ' + e.message + ')'); }
+const sitemap = sitemapWith([...onDisk].filter(f => !orphans.includes(f)).sort());
 console.log(`\nsitemap: ${(sitemap.match(/<url>/g) || []).length} urls (${onDisk.size} concept pages)`);
 
 if (!APPLY) { console.log('\nnothing written — re-run with --apply'); process.exit(0); }

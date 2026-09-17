@@ -361,7 +361,13 @@ app.use((req, res, next) => {
 app.use((req, res, next) => {
   // never serve backups, patch scripts, the app prototype or server files
   const p = req.path;
-  const blocked = /\.bak/i.test(p) || /\.(sh|md|json)$/i.test(p) || /^\/(server\.js|knowhere\.html|\.git|_)/i.test(p);
+  // KW:SCRIPTS 17 Sep 2026 — build and server-side scripts were fetchable at the root (build-concept-pages.mjs,
+  // emails.js, ...). Blocked by extension (.mjs/.py) and by name. The client scripts the pages actually load —
+  // knowhere-*.js, press-goat.js, support.js, vendor-resources.js — are untouched, as is anything in a subfolder.
+  const blocked = /\.bak/i.test(p)
+    || /\.(sh|md|json|mjs|py)$/i.test(p)
+    || /^\/(server\.js|emails\.js|unsub-page\.js|send-launch\.js|knowhere\.html|\.git|_)/i.test(p)
+    || /^\/(build|nominate|setup|apply|patch|defuse|add|audit|wire)-[^\/]*\.js$/i.test(p);
   if (blocked) return res.status(404).end();
   next();
 });

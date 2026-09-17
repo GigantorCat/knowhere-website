@@ -1,0 +1,596 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Antimicrobial Resistance — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #5AADD4;
+  --ag: rgba(90, 173, 212, .7);
+  --ag1: rgba(90, 173, 212, .12);
+  --ag2: rgba(90, 173, 212, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 72px;
+  line-height: 1.5;
+}
+
+.container { max-width: 720px; margin: 0 auto; }
+
+h1 {
+  font-size: clamp(30px,8vw,52px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  margin-bottom: 16px;
+}
+
+.intro {
+  font-size: 15.5px;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 24px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 16px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-group {
+  margin-bottom: 12px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+}
+
+.amr-slider {
+  width: 100%;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: linear-gradient(90deg, var(--acc) var(--fill,0%), #23291f var(--fill,0%));
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+}
+
+.amr-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.amr-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.amr-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.amr-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 2px;
+  margin-top: 6px;
+}
+
+.tick-labels span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.stat:first-child .stat-value { color: var(--acc); }
+.stat:last-child .stat-value { color: var(--amb); }
+
+.toggle-section {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(90,173,212,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(90,173,212,.18);
+}
+
+.knowdrop {
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.knowdrop p {
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 24px;
+}
+
+.know-this-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 8px;
+}
+
+.know-this p {
+  font-size: 17.4px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.footer {
+  margin-top: 34px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 10px var(--acc);
+  animation: amrPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes amrPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .35; transform: scale(.6); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse-dot { animation: none; }
+  * { transition: none !important; }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Antimicrobial Resistance Interactive: Understanding how antibiotics create selection pressure</h2>
+
+  <h1>We don't <i>give</i> bacteria resistance — we reveal the <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">survivors</span></h1>
+
+  <p class="intro">Antibiotics don't create resistance; they kill vulnerable microbes and leave resistant ones to multiply. Every dose is a selection event. Drag the slider to see how antibiotic pressure shifts the population toward resistant strains.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Population Selection</span>
+      <span class="live-tag" id="liveTag">0% antibiotic pressure</span>
+    </div>
+    <p class="card-hint">Drag to increase antibiotic exposure</p>
+
+    <div class="canvas-wrapper">
+      <canvas id="amrCanvas"></canvas>
+      <div class="canvas-overlay" id="canvasOverlay">Baseline: mixed population</div>
+    </div>
+
+    <div class="slider-group">
+      <div class="slider-label">Antibiotic Pressure</div>
+      <input type="range" class="amr-slider" id="pressureSlider" min="0" max="100" value="0">
+      <div class="tick-labels">
+        <span>None</span>
+        <span>Low</span>
+        <span>Moderate</span>
+        <span>High</span>
+        <span>Extreme</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Resistant %</div>
+        <div class="stat-value" id="resistantPct">8%</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Susceptible %</div>
+        <div class="stat-value" id="susceptiblePct">92%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-section">
+      <button class="toggle-btn active" id="btnVertical">Vertical Transfer</button>
+      <button class="toggle-btn" id="btnHorizontal">Horizontal Transfer</button>
+    </div>
+
+    <div class="knowdrop">
+      <p id="knowdropText">Vertical gene transfer is the inheritance of resistance from parent to offspring during cell division. Once a bacterium survives antibiotic exposure, it passes resistance genes to all descendants. This is classic Darwinian selection: resistant microbes reproduce, susceptible ones die. Over successive generations, the resistant lineage dominates the population. Vertical transfer alone can shift a community toward resistance in days under sustained antibiotic pressure.</p>
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-this-tag">Know This</div>
+    <p><span style="color:var(--acc)">Resistance is selected for, not created</span> — antibiotics don't cause mutations; they kill off vulnerable microbes and let the <span style="color:var(--acc)">naturally resistant survivors</span> take over the population.</p>
+  </div>
+
+  <div class="footer">
+    <div class="pulse-dot"></div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('amrCanvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const slider = document.getElementById('pressureSlider');
+const liveTag = document.getElementById('liveTag');
+const canvasOverlay = document.getElementById('canvasOverlay');
+const resistantPct = document.getElementById('resistantPct');
+const susceptiblePct = document.getElementById('susceptiblePct');
+const btnVertical = document.getElementById('btnVertical');
+const btnHorizontal = document.getElementById('btnHorizontal');
+const knowdropText = document.getElementById('knowdropText');
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d');
+
+let pressure = 0;
+let cells = [];
+let time = 0;
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  initCells();
+}
+
+function initCells() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  cells = [];
+  for (let i = 0; i < 240; i++) {
+    cells.push({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      vx: (Math.random() - 0.5) * 0.8,
+      vy: (Math.random() - 0.5) * 0.8,
+      r: Math.random() * 3.5 + 2.5,
+      resistant: Math.random() < 0.08,
+      alive: true,
+      deathTime: 0,
+      phase: Math.random() * Math.PI * 2
+    });
+  }
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  const cx = w / 2;
+  const cy = h / 2;
+
+  time += 0.016;
+
+  // Update cell death based on pressure
+  let aliveResistant = 0;
+  let aliveSusceptible = 0;
+
+  cells.forEach(c => {
+    if (!c.alive) return;
+
+    // Susceptible cells die under pressure
+    if (!c.resistant && pressure > 0) {
+      const deathProb = pressure * 0.008;
+      if (Math.random() < deathProb) {
+        c.alive = false;
+        c.deathTime = time;
+      }
+    }
+
+    if (c.alive) {
+      // Move cells
+      c.x += c.vx;
+      c.y += c.vy;
+      if (c.x < 0 || c.x > w) c.vx *= -1;
+      if (c.y < 0 || c.y > h) c.vy *= -1;
+      c.x = Math.max(0, Math.min(w, c.x));
+      c.y = Math.max(0, Math.min(h, c.y));
+
+      if (c.resistant) aliveResistant++;
+      else aliveSusceptible++;
+    }
+  });
+
+  // Respawn dead cells as resistant under high pressure
+  if (pressure > 50) {
+    cells.forEach(c => {
+      if (!c.alive && time - c.deathTime > 1.5) {
+        c.alive = true;
+        c.resistant = true;
+        c.x = Math.random() * w;
+        c.y = Math.random() * h;
+      }
+    });
+  }
+
+  const total = aliveResistant + aliveSusceptible;
+  const resPct = total > 0 ? Math.round((aliveResistant / total) * 100) : 0;
+  const susPct = 100 - resPct;
+
+  resistantPct.textContent = resPct + '%';
+  susceptiblePct.textContent = susPct + '%';
+
+  // Clear
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+
+  // Draw cells
+  cells.forEach(c => {
+    if (!c.alive) return;
+
+    const pulse = 0.85 + 0.15 * Math.sin(time * 2.5 + c.phase);
+    const cellR = c.r * pulse;
+
+    if (c.resistant) {
+      // Resistant cells — blue/acc
+      const grad = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, cellR * 2.8);
+      grad.addColorStop(0, 'rgba(90,173,212,0.9)');
+      grad.addColorStop(0.5, 'rgba(90,173,212,0.4)');
+      grad.addColorStop(1, 'rgba(90,173,212,0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(c.x, c.y, cellR * 2.8, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#5AADD4';
+      ctx.beginPath();
+      ctx.arc(c.x, c.y, cellR, 0, Math.PI * 2);
+      ctx.fill();
+    } else {
+      // Susceptible cells — dim grey/white
+      const grad = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, cellR * 2.2);
+      grad.addColorStop(0, 'rgba(237,237,232,0.45)');
+      grad.addColorStop(0.5, 'rgba(237,237,232,0.18)');
+      grad.addColorStop(1, 'rgba(237,237,232,0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(c.x, c.y, cellR * 2.2, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = 'rgba(237,237,232,0.75)';
+      ctx.beginPath();
+      ctx.arc(c.x, c.y, cellR, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  });
+
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+
+  requestAnimationFrame(draw);
+}
+
+slider.addEventListener('input', () => {
+  pressure = parseInt(slider.value);
+  const fill = pressure;
+  slider.style.setProperty('--fill', fill + '%');
+
+  liveTag.textContent = pressure + '% antibiotic pressure';
+
+  if (pressure === 0) {
+    canvasOverlay.textContent = 'Baseline: mixed population';
+  } else if (pressure < 30) {
+    canvasOverlay.textContent = 'Low pressure: some die-off';
+  } else if (pressure < 60) {
+    canvasOverlay.textContent = 'Moderate: susceptible declining';
+  } else if (pressure < 90) {
+    canvasOverlay.textContent = 'High: resistant dominating';
+  } else {
+    canvasOverlay.textContent = 'Extreme: near-total resistance';
+  }
+});
+
+btnVertical.addEventListener('click', () => {
+  btnVertical.classList.add('active');
+  btnHorizontal.classList.remove('active');
+  knowdropText.textContent = 'Vertical gene transfer is the inheritance of resistance from parent to offspring during cell division. Once a bacterium survives antibiotic exposure, it passes resistance genes to all descendants. This is classic Darwinian selection: resistant microbes reproduce, susceptible ones die. Over successive generations, the resistant lineage dominates the population. Vertical transfer alone can shift a community toward resistance in days under sustained antibiotic pressure.';
+});
+
+btnHorizontal.addEventListener('click', () => {
+  btnHorizontal.classList.add('active');
+  btnVertical.classList.remove('active');
+  knowdropText.textContent = 'Horizontal gene transfer allows bacteria to share resistance genes across species boundaries via plasmids, small DNA loops that replicate independently. A resistant E. coli can transfer a plasmid to Salmonella or Klebsiella in hours, bypassing the need for reproduction. This mechanism spreads resistance through diverse microbial communities at alarming speed. Conjugation, transformation, and transduction are the three main pathways. Horizontal transfer is why a single resistance gene can appear in unrelated pathogens almost simultaneously.';
+});
+
+slider.style.setProperty('--fill', '0%');
+
+window.addEventListener('resize', resize);
+resize();
+draw();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'antimicrobial-resistance'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

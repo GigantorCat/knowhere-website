@@ -1,0 +1,923 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Scheduling and Timetables — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #7ED97A;
+  --ag: rgba(126, 217, 122, .7);
+  --ag1: rgba(126, 217, 122, .12);
+  --ag2: rgba(126, 217, 122, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--ink);
+  font-weight: 400;
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+  font-weight: 400;
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 18px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+  letter-spacing: 0.05em;
+}
+
+.slider-group {
+  margin-bottom: 16px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.schedule-slider {
+  width: 100%;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+}
+
+.schedule-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+
+.schedule-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.schedule-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+
+.schedule-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+
+.tick {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+  display: block;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.stat-value.acc { color: var(--acc); }
+.stat-value.amb { color: var(--amb); }
+
+.toggle-section {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toggle-btn.active {
+  background: rgba(126, 217, 122,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(126, 217, 122,.18);
+}
+
+.knowdrop-divider {
+  border-top: 1px solid var(--line);
+  margin-bottom: 16px;
+}
+
+.knowdrop-text {
+  font-family: 'Geist', sans-serif;
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-top: 18px;
+  margin-bottom: 0;
+}
+
+.know-this-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.know-this-body {
+  font-family: 'Geist', sans-serif;
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.know-this-body .acc { color: var(--acc); }
+</style>
+
+<h2 class="sr-only">Interactive widget covering the three scheduling skills: sequencing tasks, reading rosters, and reading timetables</h2>
+
+<div class="container">
+  <h1>The hardest part isn't doing the work — it's figuring out what <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">order</span></h1>
+  
+  <p class="intro">Three skills, one habit of mind. <strong>Sequencing tasks</strong> is about dependencies — most delays happen because someone started a task before the thing it needed was ready. Reading <strong>rosters</strong> is about two directions at once: across a row for one person's week, down a column for one day's coverage. Reading <strong>timetables</strong> is about working <em>backwards</em> from when you must arrive. Pick a view and drag the slider.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Project timeline</span>
+      <span class="live-tag" id="statusTag">Planning phase</span>
+    </div>
+    <div class="card-hint" id="viewHint">Drag to advance through project stages</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="scheduleCanvas"></canvas>
+      <div class="canvas-overlay" id="canvasOverlay">Week 0 • Planning</div>
+    </div>
+
+    <div class="slider-group">
+      <label class="slider-label" for="weekSlider" id="sliderLabel">Project week</label>
+      <input type="range" id="weekSlider" class="schedule-slider" min="0" max="100" value="0" step="1">
+      <div class="tick-labels">
+        <span class="tick" id="tk0">Start</span>
+        <span class="tick" id="tk1">Week 3</span>
+        <span class="tick" id="tk2">Week 6</span>
+        <span class="tick" id="tk3">Week 9</span>
+        <span class="tick" id="tk4">Done</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <span class="stat-label" id="statLabelA">Tasks complete</span>
+        <div class="stat-value acc" id="tasksComplete">0/8</div>
+      </div>
+      <div class="stat">
+        <span class="stat-label" id="statLabelB">Days ahead/behind</span>
+        <div class="stat-value amb" id="scheduleHealth">On track</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-buttons" role="group" aria-label="Choose a scheduling view" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px">
+      <button class="toggle-btn active" data-mode="sequential" aria-pressed="true">Sequential</button>
+      <button class="toggle-btn" data-mode="parallel" aria-pressed="false">Parallel</button>
+      <button class="toggle-btn" data-mode="roster" aria-pressed="false">Roster</button>
+      <button class="toggle-btn" data-mode="timetable" aria-pressed="false">Timetable</button>
+    </div>
+
+    <div class="knowdrop-divider"></div>
+
+    <div class="knowdrop-text" id="knowdropText">
+      Sequential scheduling means tasks happen one after another — you finish Task A, then start Task B. This is safer when tasks depend on each other, like you can't paint a wall before you've built it. But sequential schedules take longer because nothing overlaps. If your eight tasks each take one week and you do them sequentially, your project takes eight weeks. The trade-off is predictability: you always know exactly where you are, and you're never juggling multiple moving parts at once.
+    </div>
+  </div>
+
+  <div class="know-this">
+    <span class="know-this-tag">Know This</span>
+    <p class="know-this-body">A <span class="acc">dependency</span> is any task that must finish before another can start — understanding these relationships determines whether you can run tasks in <span class="acc">parallel</span> or must schedule them <span class="acc">sequentially</span>. The same reading skill runs through all three views: <span class="acc">rosters</span> are read in two directions — across a row for one person, down a column for one day — and <span class="acc">timetables</span> are read backwards from the time you must arrive, never forwards from when you would like to leave.</p>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('scheduleCanvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d', { alpha: false });
+const slider = document.getElementById('weekSlider');
+const statusTag = document.getElementById('statusTag');
+const canvasOverlay = document.getElementById('canvasOverlay');
+const tasksComplete = document.getElementById('tasksComplete');
+const scheduleHealth = document.getElementById('scheduleHealth');
+const knowdropText = document.getElementById('knowdropText');
+const toggleBtns = document.querySelectorAll('.toggle-btn');
+const viewHint = document.getElementById('viewHint');
+const sliderLabel = document.getElementById('sliderLabel');
+const statLabelA = document.getElementById('statLabelA');
+const statLabelB = document.getElementById('statLabelB');
+const tkEls = [document.getElementById('tk0'), document.getElementById('tk1'),
+               document.getElementById('tk2'), document.getElementById('tk3'),
+               document.getElementById('tk4')];
+
+let mode = 'sequential';
+let time = 0;
+
+const tasks = [
+  { name: 'Plan', start: 0, dur: 1, color: [126,217,122] },
+  { name: 'Research', start: 1, dur: 1.5, color: [126,217,122] },
+  { name: 'Design', start: 2.5, dur: 2, color: [126,217,122] },
+  { name: 'Build A', start: 4.5, dur: 1.5, color: [250,199,117] },
+  { name: 'Build B', start: 6, dur: 1.5, color: [250,199,117] },
+  { name: 'Test', start: 7.5, dur: 1, color: [126,217,122] },
+  { name: 'Polish', start: 8.5, dur: 0.75, color: [250,199,117] },
+  { name: 'Launch', start: 9.25, dur: 0.75, color: [126,217,122] }
+];
+
+const tasksParallel = [
+  { name: 'Plan', start: 0, dur: 1, color: [126,217,122] },
+  { name: 'Research', start: 1, dur: 1.5, color: [126,217,122] },
+  { name: 'Design', start: 2.5, dur: 2, color: [126,217,122] },
+  { name: 'Build A', start: 4.5, dur: 1.5, color: [250,199,117] },
+  { name: 'Build B', start: 4.5, dur: 1.5, color: [250,199,117] },
+  { name: 'Test', start: 6, dur: 1, color: [126,217,122] },
+  { name: 'Polish', start: 7, dur: 0.75, color: [250,199,117] },
+  { name: 'Launch', start: 7.75, dur: 0.75, color: [126,217,122] }
+];
+
+function resize() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  draw();
+}
+
+/* ── Roster and timetable data ────────────────────────────────────────────
+   Sequencing tasks was only the first third of this dot point. Reading a
+   ROSTER and reading a TIMETABLE are the other two, and both are named in the
+   copy, so both get a view of their own rather than a mention. */
+const STAFF = ['Amina', 'Ben', 'Cass', 'Dev', 'Eli'];
+const DAYS  = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+/* 0 = off · 1 = early (6am to 2pm) · 2 = late (2pm to 10pm) */
+const ROSTER = [
+  [1,1,0,2,2,0,0],
+  [2,0,1,1,0,2,2],
+  [0,2,2,0,1,1,0],
+  [1,1,1,0,0,0,2],
+  [0,0,2,2,1,1,1]
+];
+const SHIFT_HOURS = 8;
+
+const STOPS = ['Depot', 'Riverside', 'Kings Rd', 'Central', 'Hospital'];
+const LEG = [0, 9, 17, 26, 34];                   /* minutes from the depot */
+const SERVICES = [370, 410, 450, 485, 522, 560];  /* depot departure, minutes after midnight */
+const RIDE = LEG[LEG.length - 1];
+
+function hhmm(m) {
+  const hh = Math.floor(m / 60), r = m % 60;
+  return hh + ':' + (r < 10 ? '0' : '') + r;
+}
+
+function dprNow() { return Math.min(window.devicePixelRatio || 1, 2); }
+
+/* the house finish, shared by all three views */
+function drawFrame(w, h) {
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  ctx.filter = 'none';
+  const vig = ctx.createRadialGradient(w / 2, h / 2, h * 0.28, w / 2, h / 2, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+}
+
+function rosterDay() { return Math.min(6, Math.floor((slider.value / 100) * 6.999)); }
+function arriveBy() { return 400 + Math.round((slider.value / 100) * 200); }
+function servicePick(by) {
+  let pick = -1;
+  for (let i = 0; i < SERVICES.length; i++) if (SERVICES[i] + RIDE <= by) pick = i;
+  return pick;
+}
+
+function drawRoster() {
+  const dpr = dprNow();
+  const w = canvas.width / dpr, h = canvas.height / dpr;
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+
+  const day = rosterDay();
+  const left = 78, top = 40;
+  const gridW = w - left - 22, gridH = h - top - 40;
+  const cw = gridW / 7, ch = gridH / STAFF.length;
+
+  ctx.fillStyle = 'rgba(126, 217, 122,0.09)';
+  ctx.fillRect(left + cw * day, top - 6, cw, gridH + 10);
+
+  ctx.font = '10px JetBrains Mono';
+  ctx.textAlign = 'center';
+  for (let d = 0; d < 7; d++) {
+    ctx.fillStyle = d === day ? 'rgba(126, 217, 122,1)' : 'rgba(140,147,137,0.65)';
+    ctx.fillText(DAYS[d], left + cw * (d + 0.5), top - 14);
+  }
+  ctx.textAlign = 'right';
+  for (let s = 0; s < STAFF.length; s++) {
+    ctx.fillStyle = 'rgba(237,237,232,0.85)';
+    ctx.fillText(STAFF[s], left - 10, top + ch * (s + 0.5) + 4);
+  }
+
+  for (let s = 0; s < STAFF.length; s++) {
+    for (let d = 0; d < 7; d++) {
+      const v = ROSTER[s][d];
+      const x = left + cw * d + 3, y = top + ch * s + 3;
+      const bw = cw - 6, bh = ch - 6;
+      if (v === 0) {
+        ctx.fillStyle = 'rgba(38,43,38,0.45)';
+        ctx.fillRect(x, y, bw, bh);
+        ctx.strokeStyle = 'rgba(38,43,38,0.9)';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(x, y, bw, bh);
+      } else {
+        const c = v === 1 ? [126,217,122] : [250,199,117];
+        const a = d === day ? 0.85 : 0.40;
+        ctx.fillStyle = 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + a + ')';
+        ctx.fillRect(x, y, bw, bh);
+        if (d === day) {
+          ctx.save();
+          ctx.globalCompositeOperation = 'lighter';
+          ctx.shadowColor = 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',0.7)';
+          ctx.shadowBlur = 10;
+          ctx.strokeStyle = 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',0.9)';
+          ctx.lineWidth = 1.5;
+          ctx.strokeRect(x, y, bw, bh);
+          ctx.restore();
+        }
+        ctx.fillStyle = 'rgba(11,13,12,0.92)';
+        ctx.font = '9px JetBrains Mono';
+        ctx.textAlign = 'center';
+        ctx.fillText(v === 1 ? 'EARLY' : 'LATE', x + bw / 2, y + bh / 2 + 3);
+      }
+    }
+  }
+
+  ctx.textAlign = 'left';
+  ctx.font = '9px JetBrains Mono';
+  ctx.fillStyle = 'rgba(126, 217, 122,0.85)';
+  ctx.fillText('EARLY 6am-2pm', left, h - 14);
+  ctx.fillStyle = 'rgba(250,199,117,0.85)';
+  ctx.fillText('LATE 2pm-10pm', left + 108, h - 14);
+  ctx.fillStyle = 'rgba(140,147,137,0.7)';
+  ctx.fillText('OFF', left + 216, h - 14);
+
+  drawFrame(w, h);
+}
+
+function drawTimetable() {
+  const dpr = dprNow();
+  const w = canvas.width / dpr, h = canvas.height / dpr;
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+
+  const by = arriveBy();
+  const pick = servicePick(by);
+
+  const left = 88, top = 38;
+  const gridW = w - left - 22, gridH = h - top - 50;
+  const cw = gridW / SERVICES.length, rh = gridH / STOPS.length;
+
+  if (pick >= 0) {
+    ctx.fillStyle = 'rgba(126, 217, 122,0.10)';
+    ctx.fillRect(left + cw * pick, top - 6, cw, gridH + 10);
+  }
+
+  ctx.font = '10px JetBrains Mono';
+  ctx.textAlign = 'center';
+  for (let i = 0; i < SERVICES.length; i++) {
+    ctx.fillStyle = i === pick ? 'rgba(126, 217, 122,1)' : 'rgba(140,147,137,0.6)';
+    ctx.fillText('S' + (i + 1), left + cw * (i + 0.5), top - 14);
+  }
+  ctx.textAlign = 'right';
+  for (let s = 0; s < STOPS.length; s++) {
+    ctx.fillStyle = s === STOPS.length - 1 ? 'rgba(250,199,117,0.95)' : 'rgba(237,237,232,0.8)';
+    ctx.fillText(STOPS[s], left - 10, top + rh * (s + 0.5) + 4);
+  }
+
+  ctx.textAlign = 'center';
+  for (let i = 0; i < SERVICES.length; i++) {
+    const misses = SERVICES[i] + RIDE > by;
+    for (let s = 0; s < STOPS.length; s++) {
+      ctx.font = (i === pick ? '11px' : '10px') + ' JetBrains Mono';
+      ctx.fillStyle = i === pick ? 'rgba(126, 217, 122,1)'
+                    : misses     ? 'rgba(200,96,96,0.5)'
+                                 : 'rgba(237,237,232,0.5)';
+      ctx.fillText(hhmm(SERVICES[i] + LEG[s]), left + cw * (i + 0.5), top + rh * (s + 0.5) + 4);
+    }
+  }
+
+  ctx.strokeStyle = 'rgba(250,199,117,0.85)';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(left - 8, top + gridH + 8);
+  ctx.lineTo(w - 22, top + gridH + 8);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.textAlign = 'left';
+  ctx.font = '10px JetBrains Mono';
+  ctx.fillStyle = 'rgba(250,199,117,0.95)';
+  ctx.fillText('Must be at ' + STOPS[STOPS.length - 1] + ' by ' + hhmm(by) + ' — read UP the column from there', left - 8, h - 16);
+
+  drawFrame(w, h);
+}
+
+function draw() {
+  if (mode === 'roster') return drawRoster();
+  if (mode === 'timetable') return drawTimetable();
+  return drawGantt();
+}
+
+function drawGantt() {
+  const w = canvas.width / Math.min(window.devicePixelRatio || 1, 2);
+  const h = canvas.height / Math.min(window.devicePixelRatio || 1, 2);
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+
+  const currentTasks = mode === 'sequential' ? tasks : tasksParallel;
+  const maxWeek = mode === 'sequential' ? 10 : 8.5;
+  const progress = (slider.value / 100) * maxWeek;
+
+  // Grid
+  ctx.strokeStyle = 'rgba(38,43,38,0.6)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 10; i++) {
+    const x = 40 + (w - 80) * (i / 10);
+    ctx.beginPath();
+    ctx.moveTo(x, 30);
+    ctx.lineTo(x, h - 30);
+    ctx.stroke();
+  }
+
+  // Week labels
+  ctx.font = '9px JetBrains Mono';
+  ctx.fillStyle = 'rgba(140,147,137,0.7)';
+  ctx.textAlign = 'center';
+  for (let i = 0; i <= 10; i++) {
+    const x = 40 + (w - 80) * (i / 10);
+    ctx.fillText(`W${i}`, x, h - 12);
+  }
+
+  // Task bars
+  const taskHeight = 22;
+  const taskSpacing = 8;
+  const startY = 50;
+
+  currentTasks.forEach((task, idx) => {
+    const y = startY + idx * (taskHeight + taskSpacing);
+    const barStart = 40 + (w - 80) * (task.start / maxWeek);
+    const barWidth = (w - 80) * (task.dur / maxWeek);
+    
+    const complete = progress >= task.start + task.dur;
+    const active = progress >= task.start && progress < task.start + task.dur;
+    const pending = progress < task.start;
+
+    // Bar background
+    if (pending) {
+      ctx.fillStyle = 'rgba(38,43,38,0.4)';
+    } else if (active) {
+      const fillProgress = (progress - task.start) / task.dur;
+      const grad = ctx.createLinearGradient(barStart, 0, barStart + barWidth, 0);
+      grad.addColorStop(0, `rgba(${task.color[0]},${task.color[1]},${task.color[2]},0.6)`);
+      grad.addColorStop(fillProgress, `rgba(${task.color[0]},${task.color[1]},${task.color[2]},0.6)`);
+      grad.addColorStop(fillProgress, 'rgba(38,43,38,0.4)');
+      grad.addColorStop(1, 'rgba(38,43,38,0.4)');
+      ctx.fillStyle = grad;
+    } else {
+      ctx.fillStyle = `rgba(${task.color[0]},${task.color[1]},${task.color[2]},0.6)`;
+    }
+
+    ctx.fillRect(barStart, y, barWidth, taskHeight);
+
+    // Bar border
+    ctx.strokeStyle = complete ? `rgba(${task.color[0]},${task.color[1]},${task.color[2]},0.9)` : 'rgba(38,43,38,0.8)';
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(barStart, y, barWidth, taskHeight);
+
+    // Glow if active
+    if (active) {
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.shadowColor = `rgba(${task.color[0]},${task.color[1]},${task.color[2]},0.6)`;
+      ctx.shadowBlur = 12;
+      ctx.strokeRect(barStart, y, barWidth, taskHeight);
+      ctx.restore();
+    }
+
+    // Task label
+    ctx.font = '11px JetBrains Mono';
+    ctx.fillStyle = complete ? `rgba(${task.color[0]},${task.color[1]},${task.color[2]},1)` : pending ? 'rgba(140,147,137,0.5)' : 'rgba(237,237,232,0.9)';
+    ctx.textAlign = 'left';
+    ctx.fillText(task.name, barStart + 8, y + 15);
+
+    // Checkmark if complete
+    if (complete) {
+      ctx.fillStyle = `rgba(${task.color[0]},${task.color[1]},${task.color[2]},1)`;
+      ctx.font = '14px sans-serif';
+      ctx.fillText('✓', barStart + barWidth - 20, y + 16);
+    }
+  });
+
+  // Current progress line
+  const progressX = 40 + (w - 80) * (progress / maxWeek);
+  ctx.strokeStyle = 'rgba(126, 217, 122,0.9)';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(progressX, 30);
+  ctx.lineTo(progressX, h - 30);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Progress marker
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.fillStyle = 'rgba(126, 217, 122,0.8)';
+  ctx.shadowColor = 'rgba(126, 217, 122,0.8)';
+  ctx.shadowBlur = 16;
+  ctx.beginPath();
+  ctx.arc(progressX, 30, 5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+
+  // Vignette
+  const cx = w / 2;
+  const cy = h / 2;
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+}
+
+function updateUI() {
+  slider.style.setProperty('--fill', slider.value + '%');
+  if (mode === 'roster') return updateRoster();
+  if (mode === 'timetable') return updateTimetable();
+  return updateGantt();
+}
+
+function updateRoster() {
+  const day = rosterDay();
+  let on = 0;
+  for (let s = 0; s < STAFF.length; s++) if (ROSTER[s][day] !== 0) on++;
+  let best = 0, bestName = STAFF[0];
+  for (let s = 0; s < STAFF.length; s++) {
+    let hrs = 0;
+    for (let d = 0; d < 7; d++) if (ROSTER[s][d] !== 0) hrs += SHIFT_HOURS;
+    if (hrs > best) { best = hrs; bestName = STAFF[s]; }
+  }
+  tasksComplete.textContent = on + '/' + STAFF.length;
+  scheduleHealth.textContent = bestName + ' ' + best + 'h';
+  statusTag.textContent = DAYS[day] + ' · ' + on + ' rostered on';
+  canvasOverlay.textContent = DAYS[day] + ' • down a column for cover, across a row for one person';
+  canvas.setAttribute('aria-label',
+    'Staff roster, five people across seven days. On ' + DAYS[day] + ', ' + on + ' of ' +
+    STAFF.length + ' staff are rostered on. Longest week: ' + bestName + ' at ' + best + ' hours.');
+}
+
+function updateTimetable() {
+  const by = arriveBy();
+  const pick = servicePick(by);
+  if (pick < 0) {
+    tasksComplete.textContent = 'none';
+    scheduleHealth.textContent = '—';
+    statusTag.textContent = 'No service arrives in time';
+    canvasOverlay.textContent = 'Arrive by ' + hhmm(by) + ' • nothing gets you there';
+  } else {
+    const dep = SERVICES[pick], arr = dep + RIDE;
+    tasksComplete.textContent = hhmm(dep);
+    scheduleHealth.textContent = (by - arr) + ' min spare';
+    statusTag.textContent = 'Service ' + (pick + 1) + ' · ' + RIDE + ' min journey';
+    canvasOverlay.textContent = 'Leave the depot ' + hhmm(dep) + ' • arrive ' + hhmm(arr);
+  }
+  canvas.setAttribute('aria-label',
+    'Bus timetable, five stops down and six services across, read backwards from an arrival deadline of ' +
+    hhmm(by) + '. ' + (pick < 0 ? 'No service arrives in time.' : 'Service ' + (pick + 1) + ' is the last one that does.'));
+}
+
+function updateGantt() {
+  const currentTasks = mode === 'sequential' ? tasks : tasksParallel;
+  const maxWeek = mode === 'sequential' ? 10 : 8.5;
+  const progress = (slider.value / 100) * maxWeek;
+  
+  const completed = currentTasks.filter(t => progress >= t.start + t.dur).length;
+  tasksComplete.textContent = `${completed}/8`;
+
+  const expectedWeek = (completed / 8) * maxWeek;
+  const delta = progress - expectedWeek;
+  
+  if (Math.abs(delta) < 0.3) {
+    scheduleHealth.textContent = 'On track';
+  } else if (delta > 0) {
+    scheduleHealth.textContent = `${Math.round(delta * 7)} days behind`;
+  } else {
+    scheduleHealth.textContent = `${Math.round(Math.abs(delta) * 7)} days ahead`;
+  }
+
+  const week = Math.floor(progress);
+  let phase = 'Planning';
+  if (progress < 1) phase = 'Planning';
+  else if (progress < 2.5) phase = 'Research';
+  else if (progress < 4.5) phase = 'Design';
+  else if (progress < (mode === 'sequential' ? 7.5 : 6)) phase = 'Building';
+  else if (progress < (mode === 'sequential' ? 8.5 : 7)) phase = 'Testing';
+  else if (progress < (mode === 'sequential' ? 9.25 : 7.75)) phase = 'Polishing';
+  else if (progress < maxWeek) phase = 'Launch prep';
+  else phase = 'Complete';
+
+  statusTag.textContent = phase;
+  canvasOverlay.textContent = `Week ${week} • ${phase}`;
+
+  const fillPercent = (slider.value / 100) * 100;
+  slider.style.setProperty('--fill', fillPercent + '%');
+}
+
+slider.addEventListener('input', () => {
+  updateUI();
+  draw();
+});
+
+const VIEWS = {
+  sequential: {
+    hint: 'Drag to advance through project stages',
+    label: 'Project week',
+    ticks: ['Start', 'Week 3', 'Week 6', 'Week 9', 'Done'],
+    statA: 'Tasks complete', statB: 'Days ahead/behind',
+    drop: "Sequential scheduling means tasks happen one after another — you finish Task A, then start Task B. This is safer when tasks depend on each other, like you can't paint a wall before you've built it. But sequential schedules take longer because nothing overlaps. If your eight tasks each take one week and you do them sequentially, your project takes eight weeks. The trade-off is predictability: you always know exactly where you are, and you're never juggling multiple moving parts at once."
+  },
+  parallel: {
+    hint: 'Drag to advance through project stages',
+    label: 'Project week',
+    ticks: ['Start', 'Week 3', 'Week 6', 'Week 8.5', 'Done'],
+    statA: 'Tasks complete', statB: 'Days ahead/behind',
+    drop: "Parallel scheduling means running independent tasks at the same time. If Build A and Build B don't depend on each other, you can do them both in Week 5 instead of waiting until Week 6 to start Build B. This cuts your total timeline from ten weeks to 8.5 weeks — a 15% saving. But parallel work is riskier: you need more resources at once, coordination gets harder, and if one task blocks another you didn't expect, you create bottlenecks. The key is knowing which tasks are truly independent."
+  },
+  roster: {
+    hint: 'Drag through the week. Read DOWN a column for one day, ACROSS a row for one person.',
+    label: 'Day of the week',
+    ticks: ['Mon', 'Tue', 'Thu', 'Sat', 'Sun'],
+    statA: 'Rostered on today', statB: 'Longest week',
+    drop: "Rosters answer two different questions, and you read them in two different directions. Read ACROSS a row and you get one person's week: which days they work, which shift, how many hours they are owed. Read DOWN a column and you get one day's coverage: how many people are on, whether early and late are both filled, who you would call if someone pulled out. Most real-world roster mistakes come from only ever reading the row you care about — your own — and never checking the column, which is where understaffing hides. Both shift codes here are worth eight hours, so anyone's weekly hours are just their non-off cells times eight. Notice Amina and Eli work the same number of shifts but never the same days: a roster is a coverage document first and a personal schedule second."
+  },
+  timetable: {
+    hint: 'Drag to set when you must ARRIVE. Green is the last service that still gets you there.',
+    label: 'Be at the hospital by',
+    ticks: ['6:40', '7:30', '8:20', '9:10', '10:00'],
+    statA: 'Depart depot', statB: 'Time to spare',
+    drop: "Timetables are read backwards. The instinct is to find when you would like to leave and read forward; the skill is to start from when you must ARRIVE and work back up the column. Here each column is one service and each row is one stop, so a single journey is a column read top to bottom, while one stop across the whole morning is a row read left to right. Every service takes the same 34 minutes, which keeps the arithmetic clean — real timetables stretch the legs at peak hour, and that is exactly where marks are lost, because the journey time you assumed at 6am is not the journey time at 8am. Drag to the earliest deadlines and watch every service turn red: sometimes the honest answer is that no service gets you there, and the plan has to change instead of the reading."
+  }
+};
+
+toggleBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    toggleBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
+    btn.classList.add('active');
+    btn.setAttribute('aria-pressed', 'true');
+    mode = btn.dataset.mode;
+
+    const v = VIEWS[mode];
+    knowdropText.textContent = v.drop;
+    viewHint.textContent = v.hint;
+    sliderLabel.textContent = v.label;
+    for (let i = 0; i < 5; i++) tkEls[i].textContent = v.ticks[i];
+    statLabelA.textContent = v.statA;
+    statLabelB.textContent = v.statB;
+
+    updateUI();
+    draw();
+  });
+});
+
+window.addEventListener('resize', resize);
+resize();
+
+let animFrame;
+function animate() {
+  time += 0.016;
+  draw();
+  animFrame = requestAnimationFrame(animate);
+}
+animate();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'scheduling-and-timetables'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

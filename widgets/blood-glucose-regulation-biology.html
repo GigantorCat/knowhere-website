@@ -1,0 +1,645 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Blood Glucose Regulation — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #5AADD4;
+  --ag: rgba(90, 173, 212, .7);
+  --ag1: rgba(90, 173, 212, .12);
+  --ag2: rgba(90, 173, 212, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 72px;
+}
+
+.container { max-width: 720px; margin: 0 auto; }
+
+h1 {
+  font-size: clamp(30px, 8vw, 52px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  margin-bottom: 18px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  line-height: 1.55;
+  max-width: 58ch;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: white;
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-group { margin-bottom: 12px; }
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.bg-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 50%), #23291f var(--fill, 50%));
+  outline: none;
+  margin-bottom: 8px;
+}
+
+.bg-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.bg-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.bg-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.bg-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.stat-value.accent { color: var(--acc); }
+.stat-value.amber { color: var(--amb); }
+
+.toggle-section {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(90,173,212,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(90,173,212,.18);
+}
+
+.knowdrop {
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 34px;
+}
+
+.know-this-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.know-this-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.footer {
+  margin-top: 34px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 10px var(--acc);
+  animation: bgPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes bgPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .35; transform: scale(.6); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Blood Glucose Regulation Interactive Widget</h2>
+  
+  <h1>Your body fights glucose spikes with <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">opposite</span> hormones</h1>
+  
+  <p class="intro">Insulin and glucagon work antagonistically — when one rises, the other falls. This push-pull control maintains blood glucose within a narrow 4-6 mmol/L range despite constant fluctuations from eating and fasting. Drag the slider to simulate changing blood glucose levels and watch how hormone secretion responds.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Antagonistic Control</span>
+      <span class="live-tag" id="liveTag">Normal Range</span>
+    </div>
+    <div class="card-hint">Drag to simulate glucose change after eating or fasting</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="canvas"></canvas>
+      <div class="canvas-overlay" id="canvasOverlay">Blood Glucose: 5.0 mmol/L</div>
+    </div>
+
+    <div class="slider-group">
+      <label class="slider-label" for="bgSlider">Blood Glucose Level</label>
+      <input type="range" id="bgSlider" class="bg-slider" min="3" max="10" step="0.1" value="5" style="--fill:28.6%">
+      <div class="tick-labels">
+        <span>3 mmol/L</span>
+        <span>5 mmol/L</span>
+        <span>10 mmol/L</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-item">
+        <span class="stat-label">Insulin Level</span>
+        <span class="stat-value accent" id="insulinStat">Medium</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Glucagon Level</span>
+        <span class="stat-value amber" id="glucagonStat">Medium</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-section">
+      <button class="toggle-btn active" id="insulinBtn">Insulin</button>
+      <button class="toggle-btn" id="glucagonBtn">Glucagon</button>
+    </div>
+    
+    <div class="knowdrop" id="knowdropText">
+      Insulin is released by beta cells in the pancreas after eating and binds to receptors on liver and muscle cells. This binding triggers three key effects: it increases the number of glucose transport proteins in cell membranes allowing more glucose uptake, activates enzymes for glycogenesis to convert glucose into glycogen for storage, and increases glucose use in cellular respiration. The result is a rapid decrease in blood glucose levels back toward the normal range of 4-6 mmol/L.
+    </div>
+  </div>
+
+  <div class="know-this">
+    <span class="know-this-tag">Know This</span>
+    <p class="know-this-body">When blood glucose rises, <span style="color:var(--acc)">insulin</span> increases while <span style="color:var(--amb)">glucagon</span> decreases — they work as antagonistic hormones to maintain homeostasis in the narrow 4-6 mmol/L range.</p>
+  </div>
+
+  <div class="footer">
+    <div class="pulse-dot"></div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const slider = document.getElementById('bgSlider');
+const liveTag = document.getElementById('liveTag');
+const canvasOverlay = document.getElementById('canvasOverlay');
+const insulinStat = document.getElementById('insulinStat');
+const glucagonStat = document.getElementById('glucagonStat');
+const insulinBtn = document.getElementById('insulinBtn');
+const glucagonBtn = document.getElementById('glucagonBtn');
+const knowdropText = document.getElementById('knowdropText');
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d');
+
+let glucose = 5.0;
+let time = 0;
+
+const insulinText = "Insulin is released by beta cells in the pancreas after eating and binds to receptors on liver and muscle cells. This binding triggers three key effects: it increases the number of glucose transport proteins in cell membranes allowing more glucose uptake, activates enzymes for glycogenesis to convert glucose into glycogen for storage, and increases glucose use in cellular respiration. The result is a rapid decrease in blood glucose levels back toward the normal range of 4-6 mmol/L.";
+
+const glucagonText = "Glucagon is released by alpha cells in the pancreas during fasting and binds to receptors on liver cells. This binding activates enzymes for glycogenolysis that hydrolyses glycogen back into glucose releasing it into the bloodstream, promotes gluconeogenesis which converts amino acids and glycerol into new glucose molecules, and reduces cellular glucose uptake to preserve blood glucose. These combined effects raise blood glucose levels back toward the normal homeostatic range.";
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function updateUI() {
+  glucose = parseFloat(slider.value);
+  const fill = ((glucose - 3) / 7) * 100;
+  slider.style.setProperty('--fill', fill + '%');
+  
+  canvasOverlay.textContent = `Blood Glucose: ${glucose.toFixed(1)} mmol/L`;
+  
+  if (glucose < 4) {
+    liveTag.textContent = 'Hypoglycemia';
+  } else if (glucose <= 6) {
+    liveTag.textContent = 'Normal Range';
+  } else if (glucose <= 8) {
+    liveTag.textContent = 'Elevated';
+  } else {
+    liveTag.textContent = 'Hyperglycemia';
+  }
+  
+  // Insulin increases with glucose
+  if (glucose < 4) {
+    insulinStat.textContent = 'Very Low';
+  } else if (glucose < 5) {
+    insulinStat.textContent = 'Low';
+  } else if (glucose <= 6) {
+    insulinStat.textContent = 'Medium';
+  } else if (glucose <= 8) {
+    insulinStat.textContent = 'High';
+  } else {
+    insulinStat.textContent = 'Very High';
+  }
+  
+  // Glucagon decreases with glucose (antagonistic)
+  if (glucose < 4) {
+    glucagonStat.textContent = 'Very High';
+  } else if (glucose < 5) {
+    glucagonStat.textContent = 'High';
+  } else if (glucose <= 6) {
+    glucagonStat.textContent = 'Medium';
+  } else if (glucose <= 8) {
+    glucagonStat.textContent = 'Low';
+  } else {
+    glucagonStat.textContent = 'Very Low';
+  }
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  const cx = w / 2;
+  const cy = h / 2;
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  // Draw coordinate system
+  ctx.strokeStyle = 'rgba(90,173,212,0.08)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(40, cy);
+  ctx.lineTo(w - 20, cy);
+  ctx.stroke();
+  
+  ctx.beginPath();
+  ctx.moveTo(40, 20);
+  ctx.lineTo(40, h - 20);
+  ctx.stroke();
+  
+  // Reference range box (4-6 mmol/L)
+  const refMin = cy - 30;
+  const refMax = cy + 30;
+  ctx.fillStyle = 'rgba(90,173,212,0.05)';
+  ctx.fillRect(40, refMin, w - 60, refMax - refMin);
+  
+  ctx.strokeStyle = 'rgba(90,173,212,0.15)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(40, refMin);
+  ctx.lineTo(w - 20, refMin);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(40, refMax);
+  ctx.lineTo(w - 20, refMax);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  
+  // Map glucose (3-10) to y position
+  const glucoseY = h - 20 - ((glucose - 3) / 7) * (h - 40);
+  
+  // Insulin curve (rises with glucose) - accent green
+  ctx.strokeStyle = 'rgba(90,173,212,0.6)';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  for (let i = 0; i <= 100; i++) {
+    const x = 40 + (w - 60) * (i / 100);
+    const g = 3 + 7 * (i / 100);
+    const insulinLevel = Math.max(0, Math.min(1, (g - 3) / 7));
+    const y = h - 20 - insulinLevel * (h - 40) * 0.8;
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+  
+  // Glucagon curve (falls with glucose) - amber
+  ctx.strokeStyle = 'rgba(250,199,117,0.6)';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  for (let i = 0; i <= 100; i++) {
+    const x = 40 + (w - 60) * (i / 100);
+    const g = 3 + 7 * (i / 100);
+    const glucagonLevel = Math.max(0, Math.min(1, 1 - (g - 3) / 7));
+    const y = h - 20 - glucagonLevel * (h - 40) * 0.8;
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+  
+  // Current glucose indicator
+  const currentX = 40 + (w - 60) * ((glucose - 3) / 7);
+  
+  // Vertical indicator line
+  ctx.strokeStyle = 'rgba(237,237,232,0.3)';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([3, 3]);
+  ctx.beginPath();
+  ctx.moveTo(currentX, 20);
+  ctx.lineTo(currentX, h - 20);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  
+  // Insulin level marker (green)
+  const insulinLevel = Math.max(0, Math.min(1, (glucose - 3) / 7));
+  const insulinY = h - 20 - insulinLevel * (h - 40) * 0.8;
+  
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  const insulinGlow = ctx.createRadialGradient(currentX, insulinY, 0, currentX, insulinY, 16);
+  insulinGlow.addColorStop(0, 'rgba(90,173,212,0.8)');
+  insulinGlow.addColorStop(1, 'rgba(90,173,212,0)');
+  ctx.fillStyle = insulinGlow;
+  ctx.beginPath();
+  ctx.arc(currentX, insulinY, 16, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+  
+  ctx.fillStyle = 'rgba(90,173,212,1)';
+  ctx.beginPath();
+  ctx.arc(currentX, insulinY, 5, 0, Math.PI * 2);
+  ctx.fill();
+  
+  // Glucagon level marker (amber)
+  const glucagonLevel = Math.max(0, Math.min(1, 1 - (glucose - 3) / 7));
+  const glucagonY = h - 20 - glucagonLevel * (h - 40) * 0.8;
+  
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  const glucagonGlow = ctx.createRadialGradient(currentX, glucagonY, 0, currentX, glucagonY, 16);
+  glucagonGlow.addColorStop(0, 'rgba(250,199,117,0.8)');
+  glucagonGlow.addColorStop(1, 'rgba(250,199,117,0)');
+  ctx.fillStyle = glucagonGlow;
+  ctx.beginPath();
+  ctx.arc(currentX, glucagonY, 16, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+  
+  ctx.fillStyle = 'rgba(250,199,117,1)';
+  ctx.beginPath();
+  ctx.arc(currentX, glucagonY, 5, 0, Math.PI * 2);
+  ctx.fill();
+  
+  // Animated particles along curves
+  const numParticles = 8;
+  for (let i = 0; i < numParticles; i++) {
+    const offset = (time * 0.3 + i * (1 / numParticles)) % 1;
+    const px = 40 + (w - 60) * offset;
+    const pg = 3 + 7 * offset;
+    
+    // Insulin particle
+    const pInsY = h - 20 - Math.max(0, Math.min(1, (pg - 3) / 7)) * (h - 40) * 0.8;
+    ctx.fillStyle = `rgba(90,173,212,${0.3 + 0.3 * Math.sin(time * 2 + i)})`;
+    ctx.beginPath();
+    ctx.arc(px, pInsY, 2, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Glucagon particle
+    const pGlucY = h - 20 - Math.max(0, Math.min(1, 1 - (pg - 3) / 7)) * (h - 40) * 0.8;
+    ctx.fillStyle = `rgba(250,199,117,${0.3 + 0.3 * Math.sin(time * 2 + i + Math.PI)})`;
+    ctx.beginPath();
+    ctx.arc(px, pGlucY, 2, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+}
+
+function animate() {
+  time += 0.016;
+  draw();
+  requestAnimationFrame(animate);
+}
+
+slider.addEventListener('input', updateUI);
+
+insulinBtn.addEventListener('click', () => {
+  insulinBtn.classList.add('active');
+  glucagonBtn.classList.remove('active');
+  knowdropText.textContent = insulinText;
+});
+
+glucagonBtn.addEventListener('click', () => {
+  glucagonBtn.classList.add('active');
+  insulinBtn.classList.remove('active');
+  knowdropText.textContent = glucagonText;
+});
+
+window.addEventListener('resize', resize);
+resize();
+updateUI();
+animate();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'blood-glucose-regulation'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

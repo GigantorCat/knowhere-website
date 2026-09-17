@@ -1,0 +1,576 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Preparing the Balance Sheet — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #CE4480;
+  --ag: rgba(206, 68, 128, .7);
+  --ag1: rgba(206, 68, 128, .12);
+  --ag2: rgba(206, 68, 128, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 0;
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 28px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 18px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-container {
+  margin-bottom: 12px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 10px;
+}
+
+.balance-slider {
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  margin-bottom: 8px;
+}
+
+.balance-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.balance-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.balance-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.balance-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  padding: 0 2px;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.toggle-section {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(206,68,128,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(206,68,128,.18);
+}
+
+.knowdrop {
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-this-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.know-this-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Balance Sheet Interactive Widget</h2>
+  
+  <h1>A balance sheet must always <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">balance</span></h1>
+  
+  <p class="intro">The accounting equation isn't just theory — it's an ironclad mathematical truth enforced on every balance sheet. Watch what happens when you adjust one side: the scales must tip back to equilibrium. Drag the slider to change total assets.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Balance Sheet Scales</span>
+      <span class="live-tag" id="liveTag">In Balance</span>
+    </div>
+    <div class="card-hint">Assets always equal Liabilities + Owner's Equity</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="balanceCanvas"></canvas>
+      <div class="canvas-overlay" id="canvasOverlay">Assets = Liabilities + Equity</div>
+    </div>
+
+    <div class="slider-container">
+      <div class="slider-label">Total Assets</div>
+      <input type="range" min="0" max="100" value="50" class="balance-slider" id="assetSlider">
+      <div class="tick-labels">
+        <span>$0</span>
+        <span>$250k</span>
+        <span>$500k</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Left Side</div>
+        <div class="stat-value" style="color:var(--acc)" id="leftStat">$250k</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Right Side</div>
+        <div class="stat-value" style="color:var(--amb)" id="rightStat">$250k</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-section">
+      <button class="toggle-btn active" id="btnCurrent">Current</button>
+      <button class="toggle-btn" id="btnNonCurrent">Non-Current</button>
+    </div>
+    <div class="knowdrop" id="knowdropText">
+      Current assets and liabilities settle within 12 months — cash, receivables, inventory, payables. They flow fast. Non-current stretch beyond the year: land, equipment, long-term debt. This classification reveals liquidity at a glance. A business with strong current assets can meet short-term obligations. Too many non-current liabilities and equity might signal long-term commitments without near-term flexibility. Classified format transforms raw numbers into strategic insight.
+    </div>
+  </div>
+
+  <div class="know-this">
+    <span class="know-this-tag">Know This</span>
+    <div class="know-this-body">The balance sheet is a <span style="color:var(--acc)">snapshot of financial position at a point in time</span>, proving <span style="color:var(--acc)">Assets = Liabilities + Owner's Equity</span> through its classified format.</div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('balanceCanvas');
+const ctx = canvas.getContext('2d');
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d');
+const slider = document.getElementById('assetSlider');
+const liveTag = document.getElementById('liveTag');
+const canvasOverlay = document.getElementById('canvasOverlay');
+const leftStat = document.getElementById('leftStat');
+const rightStat = document.getElementById('rightStat');
+const btnCurrent = document.getElementById('btnCurrent');
+const btnNonCurrent = document.getElementById('btnNonCurrent');
+const knowdropText = document.getElementById('knowdropText');
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+let assets = 50;
+let targetTilt = 0;
+let currentTilt = 0;
+
+const knowdropContent = {
+  current: "Current assets and liabilities settle within 12 months — cash, receivables, inventory, payables. They flow fast. Non-current stretch beyond the year: land, equipment, long-term debt. This classification reveals liquidity at a glance. A business with strong current assets can meet short-term obligations. Too many non-current liabilities and equity might signal long-term commitments without near-term flexibility. Classified format transforms raw numbers into strategic insight.",
+  noncurrent: "Non-current assets and liabilities extend beyond 12 months. Property, plant, equipment anchor the business for years. Long-term debt funds expansion, equity represents owners' stake. While current items measure operational health, non-current structure shows strategic capacity. A manufacturing firm needs heavy non-current assets; a consulting practice runs lean. Reading both classifications together reveals the full financial architecture — what cycles fast versus what endures."
+};
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function formatCurrency(val) {
+  return '$' + Math.round(val) + 'k';
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  const cx = w / 2;
+  const cy = h / 2;
+
+  ctx.clearRect(0, 0, w, h);
+
+  // Smooth tilt transition
+  currentTilt += (targetTilt - currentTilt) * 0.12;
+
+  // Balance beam
+  const beamWidth = w * 0.7;
+  const beamHeight = 8;
+  const beamY = cy;
+
+  ctx.save();
+  ctx.translate(cx, beamY);
+  ctx.rotate(currentTilt);
+
+  // Beam glow
+  const beamGlow = ctx.createLinearGradient(0, -beamHeight/2, 0, beamHeight/2);
+  beamGlow.addColorStop(0, 'rgba(206,68,128,0.25)');
+  beamGlow.addColorStop(0.5, 'rgba(206,68,128,0.45)');
+  beamGlow.addColorStop(1, 'rgba(206,68,128,0.25)');
+  ctx.fillStyle = beamGlow;
+  ctx.fillRect(-beamWidth/2, -beamHeight/2, beamWidth, beamHeight);
+
+  // Beam solid
+  ctx.fillStyle = 'rgba(206,68,128,0.8)';
+  ctx.fillRect(-beamWidth/2, -beamHeight/2-1, beamWidth, 2);
+  ctx.fillRect(-beamWidth/2, beamHeight/2-1, beamWidth, 2);
+
+  // Left pan (Assets)
+  const panOffset = beamWidth * 0.38;
+  const panWidth = w * 0.18;
+  const panHeight = h * 0.12;
+  const chainLength = h * 0.15;
+
+  // Left chain
+  ctx.strokeStyle = 'rgba(206,68,128,0.6)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(-panOffset, 0);
+  ctx.lineTo(-panOffset, chainLength);
+  ctx.stroke();
+
+  // Left pan
+  ctx.translate(-panOffset, chainLength);
+  ctx.rotate(-currentTilt); // Counter-rotate to keep pan level
+  
+  const leftPanGrad = ctx.createLinearGradient(0, 0, 0, panHeight);
+  leftPanGrad.addColorStop(0, 'rgba(206,68,128,0.3)');
+  leftPanGrad.addColorStop(1, 'rgba(206,68,128,0.15)');
+  ctx.fillStyle = leftPanGrad;
+  ctx.fillRect(-panWidth/2, 0, panWidth, panHeight);
+  
+  ctx.strokeStyle = 'rgba(206,68,128,0.7)';
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(-panWidth/2, 0, panWidth, panHeight);
+
+  // Left label
+  ctx.fillStyle = 'rgba(206,68,128,1)';
+  ctx.font = '500 11px "JetBrains Mono"';
+  ctx.textAlign = 'center';
+  ctx.fillText('ASSETS', 0, panHeight/2 + 4);
+
+  ctx.rotate(currentTilt);
+  ctx.translate(panOffset, -chainLength);
+
+  // Right chain
+  ctx.strokeStyle = 'rgba(250,199,117,0.6)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(panOffset, 0);
+  ctx.lineTo(panOffset, chainLength);
+  ctx.stroke();
+
+  // Right pan
+  ctx.translate(panOffset, chainLength);
+  ctx.rotate(-currentTilt);
+  
+  const rightPanGrad = ctx.createLinearGradient(0, 0, 0, panHeight);
+  rightPanGrad.addColorStop(0, 'rgba(250,199,117,0.3)');
+  rightPanGrad.addColorStop(1, 'rgba(250,199,117,0.15)');
+  ctx.fillStyle = rightPanGrad;
+  ctx.fillRect(-panWidth/2, 0, panWidth, panHeight);
+  
+  ctx.strokeStyle = 'rgba(250,199,117,0.7)';
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(-panWidth/2, 0, panWidth, panHeight);
+
+  // Right label top
+  ctx.fillStyle = 'rgba(250,199,117,1)';
+  ctx.font = '500 9px "JetBrains Mono"';
+  ctx.textAlign = 'center';
+  ctx.fillText('LIABILITIES', 0, panHeight * 0.35);
+  ctx.fillText('+ EQUITY', 0, panHeight * 0.65);
+
+  ctx.restore();
+
+  // Fulcrum
+  const fulcrumSize = 16;
+  ctx.fillStyle = 'rgba(206,68,128,0.5)';
+  ctx.beginPath();
+  ctx.moveTo(cx - fulcrumSize, beamY);
+  ctx.lineTo(cx, beamY + fulcrumSize);
+  ctx.lineTo(cx + fulcrumSize, beamY);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.strokeStyle = 'rgba(206,68,128,0.8)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+
+  requestAnimationFrame(draw);
+}
+
+function updateBalance() {
+  const val = parseFloat(slider.value);
+  assets = val;
+  
+  // Calculate imbalance
+  const imbalance = (val - 50) / 50;
+  targetTilt = imbalance * 0.15;
+
+  // Update stats
+  const assetVal = val * 5;
+  leftStat.textContent = formatCurrency(assetVal);
+  rightStat.textContent = formatCurrency(assetVal);
+
+  // Update slider track fill
+  slider.style.setProperty('--fill', val + '%');
+
+  // Update tags
+  if (Math.abs(imbalance) < 0.02) {
+    liveTag.textContent = 'In Balance';
+    canvasOverlay.textContent = 'Assets = Liabilities + Equity';
+  } else {
+    liveTag.textContent = 'Balancing...';
+    canvasOverlay.textContent = 'Equation Holds: ' + formatCurrency(assetVal) + ' = ' + formatCurrency(assetVal);
+  }
+}
+
+slider.addEventListener('input', updateBalance);
+
+btnCurrent.addEventListener('click', () => {
+  btnCurrent.classList.add('active');
+  btnNonCurrent.classList.remove('active');
+  knowdropText.textContent = knowdropContent.current;
+});
+
+btnNonCurrent.addEventListener('click', () => {
+  btnNonCurrent.classList.add('active');
+  btnCurrent.classList.remove('active');
+  knowdropText.textContent = knowdropContent.noncurrent;
+});
+
+window.addEventListener('resize', resize);
+resize();
+updateBalance();
+draw();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'preparing-the-balance-sheet'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

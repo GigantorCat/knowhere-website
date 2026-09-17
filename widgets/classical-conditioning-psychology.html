@@ -1,0 +1,655 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Classical Conditioning — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #6A60D4;
+  --ag: rgba(106, 96, 212, .7);
+  --ag1: rgba(106, 96, 212, .12);
+  --ag2: rgba(106, 96, 212, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 0;
+  line-height: 1.5;
+}
+
+.container { max-width: 720px; margin: 0 auto; }
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 28px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 18px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.cc-slider {
+  width: 100%;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  border-radius: 3px;
+  outline: none;
+  margin-bottom: 8px;
+}
+
+.cc-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.cc-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.cc-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.cc-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  text-transform: uppercase;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  margin-top: 16px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.toggle-card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 18px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: #12160F;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(106,96,212,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(106,96,212,.18);
+}
+
+.knowdrop-divider {
+  border-top: 1px solid var(--line);
+  margin-bottom: 16px;
+}
+
+.knowdrop-text {
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-this-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.know-this-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Classical Conditioning Interactive Widget</h2>
+  
+  <h1>Your brain learns some things <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">passively</span></h1>
+  
+  <p class="intro">Not all learning requires effort or awareness. Classical conditioning shows how your nervous system can create entirely new reflexes just by experiencing two things together repeatedly. Drag the slider to see how a neutral stimulus becomes a conditioned trigger.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Conditioning Timeline</span>
+      <span class="live-tag" id="phase-tag">Before</span>
+    </div>
+    <p class="card-hint">Drag to move through the three phases of conditioning</p>
+    
+    <div class="canvas-wrapper">
+      <canvas id="conditioning-canvas"></canvas>
+      <div class="canvas-overlay" id="overlay-tag">NS → nothing</div>
+    </div>
+
+    <input type="range" min="0" max="100" value="0" class="cc-slider" id="phase-slider">
+    <div class="tick-labels">
+      <span>Before</span>
+      <span>During</span>
+      <span>After</span>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <span class="stat-label">Current Phase</span>
+        <span class="stat-value" style="color:var(--acc)" id="phase-name">Before</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Pairings</span>
+        <span class="stat-value" style="color:var(--amb)" id="pairing-count">0</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="toggle-card">
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" data-mode="pavlov">Pavlov's Dogs</button>
+      <button class="toggle-btn" data-mode="phobia">Fear Conditioning</button>
+    </div>
+    <div class="knowdrop-divider"></div>
+    <p class="knowdrop-text" id="knowdrop-text">Pavlov discovered classical conditioning by accident while studying digestion in dogs. He noticed dogs began salivating before food arrived — just at the sound of his footsteps. He systematically paired a bell (NS) with meat powder (UCS) that naturally caused salivation (UCR). After repeated pairings, the bell alone (now CS) triggered salivation (CR). The dogs had no control over this response — their autonomic nervous system had formed a new association automatically. This demonstrated that reflexive responses could be transferred to previously neutral stimuli through temporal pairing, a process that happens without conscious awareness or voluntary behaviour.</p>
+  </div>
+
+  <div class="know-this">
+    <span class="know-this-tag">Know This</span>
+    <p class="know-this-body">Classical conditioning produces <span style="color:var(--acc)">involuntary reflexive responses</span> through repeated pairing of a <span style="color:var(--acc)">neutral stimulus</span> with an <span style="color:var(--acc)">unconditioned stimulus</span> — the learner remains passive throughout the entire process.</p>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('conditioning-canvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const slider = document.getElementById('phase-slider');
+const phaseTag = document.getElementById('phase-tag');
+const overlayTag = document.getElementById('overlay-tag');
+const phaseName = document.getElementById('phase-name');
+const pairingCount = document.getElementById('pairing-count');
+const knowdropText = document.getElementById('knowdrop-text');
+const toggleBtns = document.querySelectorAll('.toggle-btn');
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d', { alpha: false });
+
+let animFrame;
+let currentMode = 'pavlov';
+
+const knowdrops = {
+  pavlov: "Pavlov discovered classical conditioning by accident while studying digestion in dogs. He noticed dogs began salivating before food arrived — just at the sound of his footsteps. He systematically paired a bell (NS) with meat powder (UCS) that naturally caused salivation (UCR). After repeated pairings, the bell alone (now CS) triggered salivation (CR). The dogs had no control over this response — their autonomic nervous system had formed a new association automatically. This demonstrated that reflexive responses could be transferred to previously neutral stimuli through temporal pairing, a process that happens without conscious awareness or voluntary behaviour.",
+  phobia: "Little Albert was an 11-month-old infant conditioned to fear a white rat through classical conditioning. Initially, Albert showed no fear of the rat (NS). Watson paired the rat's presentation with a loud frightening noise (UCS) that naturally caused fear (UCR). After seven pairings over several weeks, Albert began crying and trying to escape whenever he saw the rat alone (CS → CR). The fear response generalised to similar white furry objects. This demonstrated that emotional responses like fear and anxiety can be classically conditioned, explaining how phobias may develop through traumatic associations. The conditioning occurred automatically through Albert's autonomic nervous system without conscious processing or decision-making."
+};
+
+toggleBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    toggleBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentMode = btn.dataset.mode;
+    knowdropText.textContent = knowdrops[currentMode];
+  });
+});
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+resize();
+window.addEventListener('resize', resize);
+
+slider.addEventListener('input', (e) => {
+  const val = parseFloat(e.target.value);
+  slider.style.setProperty('--fill', val + '%');
+});
+
+slider.style.setProperty('--fill', '0%');
+
+let particles = [];
+let connectionPulse = 0;
+
+function updatePhase(val) {
+  if (val < 33) {
+    phaseTag.textContent = 'Before';
+    phaseName.textContent = 'Before';
+    pairingCount.textContent = '0';
+    overlayTag.textContent = 'NS → nothing';
+  } else if (val < 67) {
+    phaseTag.textContent = 'During';
+    phaseName.textContent = 'During';
+    const pairings = Math.floor(((val - 33) / 34) * 15) + 1;
+    pairingCount.textContent = pairings;
+    overlayTag.textContent = 'NS + UCS pairing';
+  } else {
+    phaseTag.textContent = 'After';
+    phaseName.textContent = 'After';
+    pairingCount.textContent = '15';
+    overlayTag.textContent = 'CS → CR';
+  }
+}
+
+slider.addEventListener('input', (e) => {
+  updatePhase(parseFloat(e.target.value));
+});
+
+updatePhase(0);
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  const cx = w / 2;
+  const cy = h / 2;
+  const val = parseFloat(slider.value);
+  const time = performance.now() / 1000;
+
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+
+  // Determine phase
+  let phase = 0; // 0=before, 1=during, 2=after
+  if (val >= 67) phase = 2;
+  else if (val >= 33) phase = 1;
+
+  const nsX = cx - w * 0.22;
+  const nsY = cy;
+  const ucsX = cx + w * 0.22;
+  const ucsY = cy;
+  const responseY = cy + h * 0.24;
+
+  // Draw NS node (bell icon simplified as circle with line)
+  ctx.save();
+  ctx.fillStyle = phase === 2 ? 'rgba(106,96,212,0.85)' : 'rgba(237,237,232,0.5)';
+  ctx.beginPath();
+  ctx.arc(nsX, nsY, 28, 0, Math.PI * 2);
+  ctx.fill();
+  
+  if (phase === 2) {
+    const glow = ctx.createRadialGradient(nsX, nsY, 0, nsX, nsY, 60);
+    glow.addColorStop(0, 'rgba(106,96,212,0.4)');
+    glow.addColorStop(1, 'rgba(106,96,212,0)');
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(nsX, nsY, 60, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+
+  ctx.fillStyle = '#000';
+  ctx.font = '600 11px JetBrains Mono';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(phase === 2 ? 'CS' : 'NS', nsX, nsY);
+
+  // Draw UCS node (food simplified as circle)
+  ctx.save();
+  ctx.fillStyle = 'rgba(250,199,117,0.85)';
+  ctx.beginPath();
+  ctx.arc(ucsX, ucsY, 28, 0, Math.PI * 2);
+  ctx.fill();
+
+  const ucsGlow = ctx.createRadialGradient(ucsX, ucsY, 0, ucsX, ucsY, 60);
+  ucsGlow.addColorStop(0, 'rgba(250,199,117,0.3)');
+  ucsGlow.addColorStop(1, 'rgba(250,199,117,0)');
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.fillStyle = ucsGlow;
+  ctx.beginPath();
+  ctx.arc(ucsX, ucsY, 60, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+  ctx.fillStyle = '#000';
+  ctx.fillText('UCS', ucsX, ucsY);
+
+  // Draw response zone
+  ctx.save();
+  const responseActive = phase === 1 || phase === 2;
+  ctx.fillStyle = responseActive ? 'rgba(106,96,212,0.15)' : 'rgba(237,237,232,0.08)';
+  ctx.beginPath();
+  ctx.roundRect(cx - w * 0.3, responseY - 22, w * 0.6, 44, 12);
+  ctx.fill();
+
+  ctx.strokeStyle = responseActive ? 'rgba(106,96,212,0.4)' : 'rgba(237,237,232,0.2)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  ctx.restore();
+
+  ctx.fillStyle = responseActive ? 'var(--acc)' : 'rgba(237,237,232,0.4)';
+  ctx.font = '600 13px JetBrains Mono';
+  ctx.textAlign = 'center';
+  ctx.fillText(phase === 2 ? 'CR' : 'UCR', cx, responseY);
+
+  // Connection logic
+  connectionPulse = (connectionPulse + 0.02) % (Math.PI * 2);
+
+  // Phase 0: UCS → UCR only
+  if (phase === 0) {
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.strokeStyle = 'rgba(250,199,117,0.6)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([4, 4]);
+    ctx.lineDashOffset = -time * 20;
+    ctx.beginPath();
+    ctx.moveTo(ucsX, ucsY + 28);
+    ctx.lineTo(ucsX, responseY - 22);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // Phase 1: Both connections forming
+  if (phase === 1) {
+    // UCS → UCR
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.strokeStyle = 'rgba(250,199,117,0.6)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([4, 4]);
+    ctx.lineDashOffset = -time * 20;
+    ctx.beginPath();
+    ctx.moveTo(ucsX, ucsY + 28);
+    ctx.lineTo(ucsX, responseY - 22);
+    ctx.stroke();
+    ctx.restore();
+
+    // NS → Response (forming)
+    const strength = (val - 33) / 34;
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.strokeStyle = `rgba(106,96,212,${0.3 * strength})`;
+    ctx.lineWidth = 2 * strength;
+    ctx.setLineDash([6, 6]);
+    ctx.lineDashOffset = -time * 15;
+    ctx.beginPath();
+    ctx.moveTo(nsX, nsY + 28);
+    ctx.lineTo(nsX, responseY - 22);
+    ctx.stroke();
+    ctx.restore();
+
+    // Pairing connection between NS and UCS
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.strokeStyle = `rgba(106,96,212,${0.4 + 0.2 * Math.sin(connectionPulse)})`;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(nsX + 28, nsY);
+    ctx.lineTo(ucsX - 28, ucsY);
+    ctx.stroke();
+    ctx.restore();
+
+    // Particles along pairing line
+    if (Math.random() < 0.1) {
+      particles.push({
+        x: nsX + 28,
+        y: nsY,
+        targetX: ucsX - 28,
+        targetY: ucsY,
+        progress: 0,
+        life: 1
+      });
+    }
+  }
+
+  // Phase 2: CS → CR direct
+  if (phase === 2) {
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.strokeStyle = `rgba(106,96,212,${0.7 + 0.2 * Math.sin(connectionPulse)})`;
+    ctx.lineWidth = 3;
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    ctx.moveTo(nsX, nsY + 28);
+    ctx.lineTo(nsX, responseY - 22);
+    ctx.stroke();
+    ctx.restore();
+
+    // Persistent flow particles
+    if (Math.random() < 0.15) {
+      particles.push({
+        x: nsX,
+        y: nsY + 28,
+        targetX: nsX,
+        targetY: responseY - 22,
+        progress: 0,
+        life: 1
+      });
+    }
+  }
+
+  // Draw particles
+  particles = particles.filter(p => {
+    p.progress += 0.025;
+    if (p.progress > 1) return false;
+
+    const x = p.x + (p.targetX - p.x) * p.progress;
+    const y = p.y + (p.targetY - p.y) * p.progress;
+
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.fillStyle = `rgba(106,96,212,${(1 - p.progress) * 0.8})`;
+    ctx.beginPath();
+    ctx.arc(x, y, 3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    return true;
+  });
+
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+
+  animFrame = requestAnimationFrame(draw);
+}
+
+draw();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'classical-conditioning'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

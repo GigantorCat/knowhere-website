@@ -1,0 +1,581 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Geometric Proofs Using Vectors — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #23833F;
+  --acc-rgb: 35, 131, 63;
+  --ag: rgba(var(--acc-rgb), 0.7);
+  --ag1: rgba(var(--acc-rgb), 0.12);
+  --ag2: rgba(var(--acc-rgb), 0.45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  min-height: 100vh;
+  padding: 40px 16px 0;
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,0.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-section {
+  margin-bottom: 14px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.vec-slider {
+  width: 100%;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  outline: none;
+  margin-bottom: 8px;
+}
+
+.vec-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+
+.vec-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.vec-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+
+.vec-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.stat:first-child .stat-value {
+  color: var(--acc);
+}
+
+.stat:last-child .stat-value {
+  color: var(--amb);
+}
+
+.toggle-section {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toggle-btn.active {
+  background: rgba(var(--acc-rgb), 0.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(var(--acc-rgb), 0.18);
+}
+
+.knowdrop {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-tag-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 11px;
+}
+
+.know-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 8px var(--acc);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+.know-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+}
+
+.know-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+</style>
+
+<h2 class="sr-only">Interactive vector geometry proof visualization showing how algebraic methods replace diagram-based reasoning</h2>
+
+<div class="container">
+  <h1>Geometry becomes algebra when you turn points into <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">vectors</span></h1>
+  
+  <p class="intro">No diagrams, no "by inspection", no appeals to symmetry. Position vectors turn classical theorems into algebraic identities that work in any dimension. Drag the slider to morph a quadrilateral and watch the diagonals stay perpendicular — the rhombus condition enforced by the scalar product.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Rhombus Diagonal Test</span>
+      <span class="live-tag" id="shapeTag">Square</span>
+    </div>
+    <div class="card-hint">Drag to adjust side ratio • scalar product stays zero</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="vecCanvas"></canvas>
+      <div class="canvas-overlay" id="canvasTag">AC · BD = 0</div>
+    </div>
+
+    <div class="slider-section">
+      <label class="slider-label" for="ratioSlider">Side length ratio</label>
+      <input type="range" id="ratioSlider" class="vec-slider" min="0" max="100" value="50" step="1">
+      <div class="tick-labels">
+        <span>0.5</span>
+        <span>1.0</span>
+        <span>1.5</span>
+        <span>2.0</span>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-label">Diagonal AC length</div>
+        <div class="stat-value" id="ac">1.41</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Diagonal BD length</div>
+        <div class="stat-value" id="bd">1.41</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-section">
+      <button class="toggle-btn active" data-proof="medians">Medians Concur</button>
+      <button class="toggle-btn" data-proof="rhombus">Rhombus Diagonals</button>
+    </div>
+    
+    <div class="knowdrop" id="knowdrop">
+      Given triangle ABC with position vectors <strong>a</strong>, <strong>b</strong>, <strong>c</strong>, the medians meet at the centroid <strong>G</strong> = (<strong>a</strong> + <strong>b</strong> + <strong>c</strong>)/3. To prove: show that <strong>G</strong> lies on each median. The midpoint of BC is <strong>m</strong> = (<strong>b</strong> + <strong>c</strong>)/2. The median from A is the line <strong>r</strong> = <strong>a</strong> + λ(<strong>m</strong> − <strong>a</strong>). Substitute <strong>G</strong>: we need (<strong>a</strong> + <strong>b</strong> + <strong>c</strong>)/3 = <strong>a</strong> + λ((<strong>b</strong> + <strong>c</strong>)/2 − <strong>a</strong>). Solving gives λ = 2/3, confirming <strong>G</strong> lies on this median. The other two medians follow by symmetry. No diagram needed — the algebra forces concurrency.
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-tag-row">
+      <div class="know-dot"></div>
+      <div class="know-tag">Know This</div>
+    </div>
+    <div class="know-body">Vector proofs replace geometric intuition with <span style="color:var(--acc)">algebraic identities</span>: equal sides become <span style="color:var(--acc)">equal magnitudes</span>, perpendicular lines become <span style="color:var(--acc)">zero scalar products</span>.</div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('vecCanvas');
+const ctx = canvas.getContext('2d');
+const slider = document.getElementById('ratioSlider');
+const shapeTag = document.getElementById('shapeTag');
+const canvasTag = document.getElementById('canvasTag');
+const acStat = document.getElementById('ac');
+const bdStat = document.getElementById('bd');
+const knowdrop = document.getElementById('knowdrop');
+const toggleBtns = document.querySelectorAll('.toggle-btn');
+
+const CSS = getComputedStyle(document.documentElement);
+const ACC = CSS.getPropertyValue('--acc').trim();
+const RGB = CSS.getPropertyValue('--acc-rgb').trim();
+const AMB = CSS.getPropertyValue('--amb').trim();
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d');
+
+let ratio = 1.0;
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  draw();
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  const cx = w / 2;
+  const cy = h / 2;
+  const scale = Math.min(w, h) * 0.28;
+  
+  // Define rhombus vertices as position vectors
+  // A at origin, B along x, D along y-axis rotated
+  const angle = Math.PI / 3; // 60 degrees for visual appeal
+  const baseLen = ratio;
+  
+  // Position vectors (centered for display)
+  const A = { x: cx, y: cy + scale * 0.5 };
+  const B = { x: cx + scale * baseLen, y: cy + scale * 0.5 };
+  const D = { x: cx + scale * Math.cos(angle), y: cy + scale * 0.5 - scale * Math.sin(angle) };
+  const C = { x: B.x + (D.x - A.x), y: B.y + (D.y - A.y) };
+  
+  // Draw rhombus
+  ctx.strokeStyle = 'rgba(' + RGB + ', 0.4)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(A.x, A.y);
+  ctx.lineTo(B.x, B.y);
+  ctx.lineTo(C.x, C.y);
+  ctx.lineTo(D.x, D.y);
+  ctx.closePath();
+  ctx.stroke();
+  
+  // Draw diagonals AC and BD
+  ctx.save();
+  ctx.strokeStyle = ACC;
+  ctx.lineWidth = 2;
+  ctx.globalCompositeOperation = 'lighter';
+  
+  // Diagonal AC
+  ctx.beginPath();
+  ctx.moveTo(A.x, A.y);
+  ctx.lineTo(C.x, C.y);
+  ctx.stroke();
+  
+  // Diagonal BD
+  ctx.beginPath();
+  ctx.moveTo(B.x, B.y);
+  ctx.lineTo(D.x, D.y);
+  ctx.stroke();
+  ctx.restore();
+  
+  // Intersection point (midpoint of both diagonals in a rhombus)
+  const M = { x: (A.x + C.x) / 2, y: (A.y + C.y) / 2 };
+  
+  // Draw intersection glow
+  const glow = ctx.createRadialGradient(M.x, M.y, 0, M.x, M.y, 20);
+  glow.addColorStop(0, 'rgba(' + RGB + ', 0.6)');
+  glow.addColorStop(0.5, 'rgba(' + RGB + ', 0.2)');
+  glow.addColorStop(1, 'rgba(' + RGB + ', 0)');
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.fillStyle = glow;
+  ctx.beginPath();
+  ctx.arc(M.x, M.y, 20, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+  
+  // Draw vertices
+  [A, B, C, D].forEach((p, i) => {
+    ctx.fillStyle = ACC;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Labels
+    ctx.fillStyle = 'rgba(' + RGB + ', 0.8)';
+    ctx.font = '12px "JetBrains Mono"';
+    ctx.textAlign = 'center';
+    const labels = ['A', 'B', 'C', 'D'];
+    const offsets = [
+      { x: 0, y: 18 },
+      { x: 18, y: 18 },
+      { x: 0, y: -8 },
+      { x: -18, y: -8 }
+    ];
+    ctx.fillText(labels[i], p.x + offsets[i].x, p.y + offsets[i].y);
+  });
+  
+  // Calculate diagonal vectors and scalar product
+  const AC = { x: C.x - A.x, y: C.y - A.y };
+  const BD = { x: D.x - B.x, y: D.y - B.y };
+  const dotProduct = AC.x * BD.x + AC.y * BD.y;
+  
+  // Calculate lengths
+  const acLen = Math.sqrt(AC.x * AC.x + AC.y * AC.y) / scale;
+  const bdLen = Math.sqrt(BD.x * BD.x + BD.y * BD.y) / scale;
+  
+  acStat.textContent = acLen.toFixed(2);
+  bdStat.textContent = bdLen.toFixed(2);
+  
+  // Update tags
+  canvasTag.textContent = 'AC · BD = ' + dotProduct.toFixed(1);
+  
+  if (Math.abs(ratio - 1.0) < 0.05) {
+    shapeTag.textContent = 'Square';
+  } else {
+    shapeTag.textContent = 'Rhombus';
+  }
+  
+  // Bloom effect
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+}
+
+slider.addEventListener('input', (e) => {
+  const val = parseFloat(e.target.value);
+  ratio = 0.5 + (val / 100) * 1.5;
+  slider.style.setProperty('--fill', val + '%');
+  draw();
+});
+
+// Initial slider fill
+slider.style.setProperty('--fill', '50%');
+
+const proofs = {
+  medians: `Given triangle ABC with position vectors <strong>a</strong>, <strong>b</strong>, <strong>c</strong>, the medians meet at the centroid <strong>G</strong> = (<strong>a</strong> + <strong>b</strong> + <strong>c</strong>)/3. To prove: show that <strong>G</strong> lies on each median. The midpoint of BC is <strong>m</strong> = (<strong>b</strong> + <strong>c</strong>)/2. The median from A is the line <strong>r</strong> = <strong>a</strong> + λ(<strong>m</strong> − <strong>a</strong>). Substitute <strong>G</strong>: we need (<strong>a</strong> + <strong>b</strong> + <strong>c</strong>)/3 = <strong>a</strong> + λ((<strong>b</strong> + <strong>c</strong>)/2 − <strong>a</strong>). Solving gives λ = 2/3, confirming <strong>G</strong> lies on this median. The other two medians follow by symmetry. No diagram needed — the algebra forces concurrency.`,
+  
+  rhombus: `Given rhombus ABCD with position vectors <strong>a</strong>, <strong>b</strong>, <strong>c</strong>, <strong>d</strong>, all sides equal means |<strong>AB</strong>| = |<strong>BC</strong>| = |<strong>CD</strong>| = |<strong>DA</strong>|. The diagonals are <strong>AC</strong> = <strong>c</strong> − <strong>a</strong> and <strong>BD</strong> = <strong>d</strong> − <strong>b</strong>. To prove perpendicularity, show <strong>AC</strong> · <strong>BD</strong> = 0. Since <strong>c</strong> = <strong>b</strong> + (<strong>d</strong> − <strong>a</strong>) in a rhombus, we have (<strong>c</strong> − <strong>a</strong>) · (<strong>d</strong> − <strong>b</strong>) = (<strong>b</strong> + <strong>d</strong> − 2<strong>a</strong>) · (<strong>d</strong> − <strong>b</strong>). Expanding and using |<strong>AB</strong>|² = |<strong>BC</strong>|² gives the scalar product zero. Perpendicularity emerges from equal side lengths alone.`
+};
+
+toggleBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    toggleBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const proof = btn.dataset.proof;
+    knowdrop.innerHTML = proofs[proof];
+  });
+});
+
+window.addEventListener('resize', resize);
+resize();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'geometric-proofs-using-vectors'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

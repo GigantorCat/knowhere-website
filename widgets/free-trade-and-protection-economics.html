@@ -1,0 +1,590 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Free Trade and Protection — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #F187B6;
+  --ag: rgba(241, 135, 182, .7);
+  --ag1: rgba(241, 135, 182, .12);
+  --ag2: rgba(241, 135, 182, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 16px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  line-height: 1.55;
+  max-width: 58ch;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 18px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--ink);
+  font-weight: 400;
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+  font-weight: 400;
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+  font-weight: 400;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+  font-weight: 400;
+}
+
+.slider-wrapper {
+  margin-bottom: 10px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 10px;
+  font-weight: 400;
+}
+
+.trade-slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  outline: none;
+  margin-bottom: 8px;
+}
+
+.trade-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  cursor: pointer;
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  transition: box-shadow .15s;
+}
+
+.trade-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  cursor: pointer;
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  transition: box-shadow .15s;
+}
+
+.trade-slider:hover::-webkit-slider-thumb {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.trade-slider:hover::-moz-range-thumb {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  font-weight: 400;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+  font-weight: 400;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.toggle-section {
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 16px;
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+  font-weight: 400;
+}
+
+.toggle-btn.active {
+  background: rgba(241,135,182,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(241,135,182,.18);
+}
+
+.knowdrop {
+  font-family: 'Geist', sans-serif;
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 10px;
+  font-weight: 400;
+}
+
+.know-body {
+  font-family: 'Geist', sans-serif;
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Interactive widget exploring free trade versus protectionism in the Australian economy</h2>
+
+  <h1>Protecting jobs costs everyone else <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">more</span></h1>
+
+  <p class="intro">Tariffs and quotas shield specific industries from foreign competition, preserving local jobs in those sectors. But that protection raises prices for all consumers and reduces overall economic efficiency. Drag the slider to see how the trade-off between protection and efficiency plays out.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Trade Policy Simulator</span>
+      <span class="live-tag" id="liveTag">Free Trade</span>
+    </div>
+    <div class="card-hint">Drag to shift between free trade and protectionism</div>
+
+    <div class="canvas-wrapper">
+      <canvas id="canvas"></canvas>
+      <div class="canvas-overlay" id="canvasOverlay">Free Trade — Maximum Efficiency</div>
+    </div>
+
+    <div class="slider-wrapper">
+      <div class="slider-label">Protection Level</div>
+      <input type="range" min="0" max="100" value="0" class="trade-slider" id="tradeSlider">
+      <div class="tick-labels">
+        <span>Free Trade</span>
+        <span>Protected</span>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-label">Consumer Prices</div>
+        <div class="stat-value" style="color:var(--acc)" id="priceValue">100</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Protected Jobs</div>
+        <div class="stat-value" style="color:var(--amb)" id="jobValue">0</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-section">
+      <div class="toggle-buttons">
+        <button class="toggle-btn active" id="btnTariff">Tariffs</button>
+        <button class="toggle-btn" id="btnSubsidy">Subsidies</button>
+      </div>
+    </div>
+    <div class="knowdrop" id="knowdropText">
+      A tariff is a tax on imported goods that raises their price in the domestic market. When Australia imposes a tariff on steel imports, foreign steel becomes more expensive, making local steel producers more competitive. This protects jobs in the Australian steel industry. However, every industry that uses steel — construction, manufacturing, car assembly — now pays higher prices for their raw materials. Those costs flow through to consumers as higher prices for buildings, machines, and cars. The protected steel workers benefit, but millions of consumers pay the cost through reduced purchasing power.
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-tag">Know This</div>
+    <div class="know-body">
+      <span style="color:var(--acc)">Protection</span> shields specific industries from foreign competition but raises <span style="color:var(--acc)">consumer prices</span> and reduces overall <span style="color:var(--acc)">economic efficiency</span> — the many pay more so the few keep their jobs.
+    </div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const slider = document.getElementById('tradeSlider');
+const liveTag = document.getElementById('liveTag');
+const canvasOverlay = document.getElementById('canvasOverlay');
+const priceValue = document.getElementById('priceValue');
+const jobValue = document.getElementById('jobValue');
+const btnTariff = document.getElementById('btnTariff');
+const btnSubsidy = document.getElementById('btnSubsidy');
+const knowdropText = document.getElementById('knowdropText');
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d', { alpha: false });
+
+let protection = 0;
+let particles = [];
+let barriers = [];
+let time = 0;
+
+const tariffText = `A tariff is a tax on imported goods that raises their price in the domestic market. When Australia imposes a tariff on steel imports, foreign steel becomes more expensive, making local steel producers more competitive. This protects jobs in the Australian steel industry. However, every industry that uses steel — construction, manufacturing, car assembly — now pays higher prices for their raw materials. Those costs flow through to consumers as higher prices for buildings, machines, and cars. The protected steel workers benefit, but millions of consumers pay the cost through reduced purchasing power.`;
+
+const subsidyText = `A subsidy is a government payment to local producers that lowers their costs and lets them compete with cheaper imports. When Australia subsidizes farmers, it keeps food production in local hands and preserves agricultural jobs. But those subsidies come from taxpayer funds — money that could have been spent on healthcare, education, or infrastructure. Consumers pay twice: once through their taxes to fund the subsidy, and again through higher prices because protected local producers face less competitive pressure to cut costs. Quotas work similarly, limiting the quantity of imports allowed, which artificially raises prices by restricting supply. All three tools — tariffs, subsidies, quotas — trade economic efficiency for targeted job preservation.`;
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  initParticles();
+}
+
+function initParticles() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  particles = [];
+  
+  for (let i = 0; i < 80; i++) {
+    particles.push({
+      x: Math.random() * w * 0.4,
+      y: Math.random() * h,
+      vx: 1.2 + Math.random() * 0.8,
+      vy: (Math.random() - 0.5) * 0.4,
+      r: 2 + Math.random() * 2,
+      hue: Math.random() < 0.3 ? 'acc' : 'dim',
+      blocked: false
+    });
+  }
+  
+  barriers = [];
+}
+
+function updateSlider() {
+  protection = parseFloat(slider.value);
+  const fillPct = protection;
+  slider.style.setProperty('--fill', fillPct + '%');
+  
+  const basePrice = 100;
+  const price = Math.round(basePrice + (protection * 0.85));
+  priceValue.textContent = price;
+  
+  const jobs = Math.round(protection * 0.42);
+  jobValue.textContent = jobs;
+  
+  if (protection < 25) {
+    liveTag.textContent = 'Free Trade';
+    canvasOverlay.textContent = 'Free Trade — Maximum Efficiency';
+  } else if (protection < 60) {
+    liveTag.textContent = 'Moderate Protection';
+    canvasOverlay.textContent = 'Moderate Protection — Rising Costs';
+  } else {
+    liveTag.textContent = 'High Protection';
+    canvasOverlay.textContent = 'High Protection — Reduced Flow';
+  }
+}
+
+slider.addEventListener('input', updateSlider);
+updateSlider();
+
+btnTariff.addEventListener('click', () => {
+  btnTariff.classList.add('active');
+  btnSubsidy.classList.remove('active');
+  knowdropText.textContent = tariffText;
+});
+
+btnSubsidy.addEventListener('click', () => {
+  btnSubsidy.classList.add('active');
+  btnTariff.classList.remove('active');
+  knowdropText.textContent = subsidyText;
+});
+
+function draw() {
+  time += 0.016;
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  const barrierCount = Math.floor(protection / 20);
+  const barrierHeight = h * 0.6;
+  const barrierSpacing = w / (barrierCount + 1);
+  
+  while (barriers.length < barrierCount) {
+    const idx = barriers.length;
+    barriers.push({
+      x: barrierSpacing * (idx + 1),
+      y: h * 0.5 - barrierHeight * 0.5,
+      h: barrierHeight,
+      phase: Math.random() * Math.PI * 2
+    });
+  }
+  while (barriers.length > barrierCount) {
+    barriers.pop();
+  }
+  
+  barriers.forEach((bar, i) => {
+    const glow = 0.4 + 0.3 * Math.sin(time * 1.5 + bar.phase);
+    const grad = ctx.createLinearGradient(bar.x - 3, bar.y, bar.x + 3, bar.y + bar.h);
+    grad.addColorStop(0, 'rgba(241,135,182,0)');
+    grad.addColorStop(0.5, `rgba(241,135,182,${glow})`);
+    grad.addColorStop(1, 'rgba(241,135,182,0)');
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.fillStyle = grad;
+    ctx.fillRect(bar.x - 3, bar.y, 6, bar.h);
+    ctx.restore();
+    
+    ctx.strokeStyle = `rgba(241,135,182,${glow * 0.7})`;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(bar.x, bar.y);
+    ctx.lineTo(bar.x, bar.y + bar.h);
+    ctx.stroke();
+  });
+  
+  particles.forEach(p => {
+    p.blocked = false;
+    for (let bar of barriers) {
+      if (p.x > bar.x - 8 && p.x < bar.x + 8 && p.y > bar.y && p.y < bar.y + bar.h) {
+        p.blocked = true;
+        p.vx *= -0.6;
+        p.vy += (Math.random() - 0.5) * 0.8;
+        break;
+      }
+    }
+    
+    if (!p.blocked) {
+      p.x += p.vx;
+      p.y += p.vy;
+    }
+    
+    if (p.x > w + 10) {
+      p.x = -10;
+      p.y = Math.random() * h;
+      p.vx = 1.2 + Math.random() * 0.8;
+      p.vy = (Math.random() - 0.5) * 0.4;
+    }
+    
+    if (p.y < 0 || p.y > h) {
+      p.vy *= -1;
+      p.y = Math.max(0, Math.min(h, p.y));
+    }
+    
+    const color = p.hue === 'acc' ? '74,160,192' : '237,237,232';
+    const alpha = p.blocked ? 0.25 : 0.75;
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.fillStyle = `rgba(${color},${alpha})`;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fill();
+    
+    if (!p.blocked && p.hue === 'acc') {
+      const halo = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 3);
+      halo.addColorStop(0, `rgba(${color},0.3)`);
+      halo.addColorStop(1, `rgba(${color},0)`);
+      ctx.fillStyle = halo;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r * 3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  });
+  
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  const cx = w * 0.5;
+  const cy = h * 0.5;
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+  
+  requestAnimationFrame(draw);
+}
+
+window.addEventListener('resize', resize);
+resize();
+draw();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'free-trade-and-protection'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

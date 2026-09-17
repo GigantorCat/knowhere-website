@@ -1,0 +1,648 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Koch, Pasteur and Germ Theory — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #5AADD4;
+  --acc-rgb: 90, 173, 212;
+  --ag: rgba(var(--acc-rgb), .7);
+  --ag1: rgba(var(--acc-rgb), .12);
+  --ag2: rgba(var(--acc-rgb), .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 0;
+}
+
+.container { max-width: 720px; margin: 0 auto; }
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-container { margin-bottom: 12px; }
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.germ-slider {
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  appearance: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.germ-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  transition: box-shadow .15s;
+  cursor: pointer;
+}
+
+.germ-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.germ-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  transition: box-shadow .15s;
+  cursor: pointer;
+}
+
+.germ-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  margin-top: 6px;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.toggle-knowdrop {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .15s;
+}
+
+.toggle-btn.active {
+  background: rgba(var(--acc-rgb), .1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(var(--acc-rgb), .18);
+}
+
+.knowdrop-divider {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.knowdrop-text {
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-this-tag {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 12px;
+}
+
+.know-this-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 8px var(--acc);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+.know-this-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+}
+
+.know-this-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+
+<h2 class="sr-only">Explore how germ theory replaced miasma theory through Pasteur's swan-neck flask experiment and Koch's postulates</h2>
+
+<div class="container">
+  <h1>The microbes were always there — we just blamed the wrong <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">air</span></h1>
+  
+  <p class="intro">For millennia, disease was bad smells and imbalanced humours. Then Pasteur killed spontaneous generation with a swan-neck flask, and Koch proved microbes cause disease with four simple rules. Drag the slider to watch miasma theory crumble under experimental evidence.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Pasteur's Swan-Neck Flask</span>
+      <span class="live-tag" id="live-tag">Miasma era</span>
+    </div>
+    <p class="card-hint">Exposing broth to air — is the flask shape protecting against microbes or just "bad air"?</p>
+    
+    <div class="canvas-wrapper">
+      <canvas id="canvas"></canvas>
+      <div class="canvas-overlay" id="overlay">Miasma theory: Disease from bad air</div>
+    </div>
+
+    <div class="slider-container">
+      <label class="slider-label" for="time-slider">Time elapsed</label>
+      <input type="range" id="time-slider" class="germ-slider" min="0" max="100" value="0" style="--fill:0%">
+      <div class="tick-labels">
+        <span>Flask sealed</span>
+        <span>Weeks pass</span>
+        <span>Neck broken</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <span class="stat-label">Microbe count</span>
+        <span class="stat-value" style="color:var(--acc)" id="microbe-count">0</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Theory confidence</span>
+        <span class="stat-value" style="color:var(--amb)" id="confidence">Miasma</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-knowdrop">
+      <div class="toggle-buttons">
+        <button class="toggle-btn active" data-mode="pasteur">Pasteur's method</button>
+        <button class="toggle-btn" data-mode="koch">Koch's proof</button>
+      </div>
+      
+      <div class="knowdrop-divider">
+        <p class="knowdrop-text" id="knowdrop-text">Pasteur's swan-neck flask let air in but trapped dust and microbes in the curve. Broth stayed clear for months. Break the neck, and within days the broth teemed with life. Spontaneous generation was dead — microbes came from microbes, not thin air. This simple experiment forced medicine to look for living causes of disease, not bad vapours or moral failings. Pasteurisation applied the same insight: heat kills microbes, careful handling keeps them out.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-this-tag">
+      <div class="know-this-dot"></div>
+      <span class="know-this-label">Know This</span>
+    </div>
+    <p class="know-this-body"><span style="color:var(--acc)">Germ theory</span> replaced miasma by proving microbes cause disease through <span style="color:var(--acc)">Pasteur's swan-neck flasks</span> and <span style="color:var(--acc)">Koch's four postulates</span>, unlocking antisepsis, vaccines, and modern public health.</p>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d');
+const slider = document.getElementById('time-slider');
+const liveTag = document.getElementById('live-tag');
+const overlay = document.getElementById('overlay');
+const microbeCount = document.getElementById('microbe-count');
+const confidence = document.getElementById('confidence');
+const knowdropText = document.getElementById('knowdrop-text');
+const toggleBtns = document.querySelectorAll('.toggle-btn');
+
+const CSS = getComputedStyle(document.documentElement);
+const ACC = CSS.getPropertyValue('--acc').trim();
+const RGB = CSS.getPropertyValue('--acc-rgb').trim();
+
+let time = 0;
+let microbesInBroth = [];
+let microbesInAir = [];
+let microbesTrapped = [];
+
+const knowdropContent = {
+  pasteur: "Pasteur's swan-neck flask let air in but trapped dust and microbes in the curve. Broth stayed clear for months. Break the neck, and within days the broth teemed with life. Spontaneous generation was dead — microbes came from microbes, not thin air. This simple experiment forced medicine to look for living causes of disease, not bad vapours or moral failings. Pasteurisation applied the same insight: heat kills microbes, careful handling keeps them out.",
+  koch: "Koch's four postulates turned 'this microbe causes this disease' into rigorous proof: 1) the microbe must be found in all diseased hosts, 2) isolated and grown in pure culture, 3) cause disease when introduced to a healthy host, 4) be re-isolated from that new host. This framework identified the bacteria behind anthrax, tuberculosis, and cholera. Modern limits: viruses need living cells to grow, asymptomatic carriers break rule 1, and many microbes resist lab culture. But Koch's logic still anchors disease causation."
+};
+
+toggleBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    toggleBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const mode = btn.dataset.mode;
+    knowdropText.textContent = knowdropContent[mode];
+  });
+});
+
+function resize() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+window.addEventListener('resize', resize);
+resize();
+
+slider.addEventListener('input', (e) => {
+  const val = parseFloat(e.target.value);
+  e.target.style.setProperty('--fill', val + '%');
+  time = val;
+  
+  if (val < 70) {
+    liveTag.textContent = val < 30 ? 'Miasma era' : 'Flask intact';
+    overlay.textContent = val < 30 ? 'Miasma theory: Disease from bad air' : 'Swan-neck traps microbes';
+    microbeCount.textContent = '0';
+    confidence.textContent = 'Miasma';
+  } else {
+    liveTag.textContent = 'Neck broken';
+    overlay.textContent = 'Microbes flooding in — germ theory proven';
+    const count = Math.floor((val - 70) * 3);
+    microbeCount.textContent = count;
+    confidence.textContent = 'Germ';
+  }
+});
+
+function draw() {
+  const w = canvas.width / Math.min(window.devicePixelRatio || 1, 2);
+  const h = canvas.height / Math.min(window.devicePixelRatio || 1, 2);
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  const cx = w / 2;
+  const cy = h * 0.5;
+  
+  // Flask body
+  const flaskW = w * 0.18;
+  const flaskH = h * 0.6;
+  const flaskX = cx - flaskW / 2;
+  const flaskY = cy - flaskH / 2;
+  
+  // Broth level
+  const brothY = flaskY + flaskH * 0.4;
+  const brothH = flaskH * 0.5;
+  
+  // Air microbes floating around (visible from time > 0)
+  if (time > 0) {
+    const targetAirMicrobes = time >= 70 ? 25 : 15;
+    while (microbesInAir.length < targetAirMicrobes) {
+      microbesInAir.push({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        r: Math.random() * 1.5 + 0.8,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4
+      });
+    }
+    
+    microbesInAir.forEach(m => {
+      m.x += m.vx;
+      m.y += m.vy;
+      
+      if (m.x < 0 || m.x > w) m.vx *= -1;
+      if (m.y < 0 || m.y > h) m.vy *= -1;
+      
+      m.x = Math.max(0, Math.min(w, m.x));
+      m.y = Math.max(0, Math.min(h, m.y));
+      
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      const grd = ctx.createRadialGradient(m.x, m.y, 0, m.x, m.y, m.r * 2.5);
+      grd.addColorStop(0, 'rgba(' + RGB + ', 0.35)');
+      grd.addColorStop(1, 'rgba(' + RGB + ', 0)');
+      ctx.fillStyle = grd;
+      ctx.beginPath();
+      ctx.arc(m.x, m.y, m.r * 2.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+      
+      ctx.fillStyle = 'rgba(' + RGB + ', 0.6)';
+      ctx.beginPath();
+      ctx.arc(m.x, m.y, m.r, 0, Math.PI * 2);
+      ctx.fill();
+    });
+  }
+  
+  // Flask body drawing
+  ctx.save();
+  ctx.strokeStyle = 'rgba(' + RGB + ', 0.3)';
+  ctx.lineWidth = 2;
+  ctx.fillStyle = 'rgba(' + RGB + ', 0.05)';
+  ctx.beginPath();
+  ctx.roundRect(flaskX, flaskY, flaskW, flaskH, 8);
+  ctx.fill();
+  ctx.stroke();
+  ctx.restore();
+  
+  // Broth appearance
+  const brokenNeck = time >= 70;
+  ctx.fillStyle = brokenNeck ? 'rgba(180, 140, 80, 0.3)' : 'rgba(200, 180, 140, 0.15)';
+  ctx.fillRect(flaskX + 4, brothY, flaskW - 8, brothH);
+  
+  // Swan neck
+  const neckStartX = flaskX + flaskW / 2;
+  const neckStartY = flaskY;
+  const neckCurveX = cx + w * 0.25;
+  const neckCurveY = cy - h * 0.2;
+  
+  ctx.save();
+  ctx.strokeStyle = time >= 70 ? 'rgba(' + RGB + ', 0.15)' : 'rgba(' + RGB + ', 0.4)';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(neckStartX, neckStartY);
+  
+  if (time < 70) {
+    ctx.quadraticCurveTo(neckCurveX, neckStartY - h * 0.15, neckCurveX, neckCurveY);
+    ctx.lineTo(neckCurveX, neckCurveY - h * 0.08);
+  } else {
+    const breakPoint = 0.6;
+    const bx = neckStartX + (neckCurveX - neckStartX) * breakPoint;
+    const by = neckStartY - h * 0.15 * breakPoint;
+    ctx.quadraticCurveTo(neckStartX + (neckCurveX - neckStartX) * 0.3, neckStartY - h * 0.05, bx, by);
+  }
+  ctx.stroke();
+  ctx.restore();
+  
+  // Trapped microbes in neck curve (before break, time 30-70)
+  if (time > 30 && time < 70) {
+    const targetTrapped = Math.floor((time - 30) / 2);
+    while (microbesTrapped.length < targetTrapped) {
+      microbesTrapped.push({
+        x: neckCurveX - 10 + Math.random() * 20,
+        y: neckCurveY - 15 + Math.random() * 30,
+        r: Math.random() * 1.2 + 0.8
+      });
+    }
+    
+    microbesTrapped.forEach(m => {
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      const grd = ctx.createRadialGradient(m.x, m.y, 0, m.x, m.y, m.r * 2);
+      grd.addColorStop(0, 'rgba(' + RGB + ', 0.5)');
+      grd.addColorStop(1, 'rgba(' + RGB + ', 0)');
+      ctx.fillStyle = grd;
+      ctx.beginPath();
+      ctx.arc(m.x, m.y, m.r * 2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+      
+      ctx.fillStyle = 'rgba(' + RGB + ', 0.7)';
+      ctx.beginPath();
+      ctx.arc(m.x, m.y, m.r, 0, Math.PI * 2);
+      ctx.fill();
+    });
+  }
+  
+  // When neck breaks, show trapped microbes falling into broth
+  if (time >= 70) {
+    microbesTrapped = [];
+    
+    const targetInBroth = Math.floor((time - 70) * 3);
+    while (microbesInBroth.length < targetInBroth) {
+      microbesInBroth.push({
+        x: flaskX + 8 + Math.random() * (flaskW - 16),
+        y: brothY + Math.random() * brothH,
+        r: Math.random() * 2 + 1,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3
+      });
+    }
+    
+    microbesInBroth.forEach(m => {
+      m.x += m.vx;
+      m.y += m.vy;
+      
+      if (m.x < flaskX + 8 || m.x > flaskX + flaskW - 8) m.vx *= -1;
+      if (m.y < brothY || m.y > brothY + brothH) m.vy *= -1;
+      
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      const grd = ctx.createRadialGradient(m.x, m.y, 0, m.x, m.y, m.r * 3);
+      grd.addColorStop(0, 'rgba(' + RGB + ', 0.8)');
+      grd.addColorStop(1, 'rgba(' + RGB + ', 0)');
+      ctx.fillStyle = grd;
+      ctx.beginPath();
+      ctx.arc(m.x, m.y, m.r * 3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+      
+      ctx.fillStyle = ACC;
+      ctx.beginPath();
+      ctx.arc(m.x, m.y, m.r, 0, Math.PI * 2);
+      ctx.fill();
+    });
+  } else {
+    microbesInBroth = [];
+  }
+  
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+  
+  requestAnimationFrame(draw);
+}
+
+draw();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'koch-pasteur-and-germ-theory'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

@@ -1,0 +1,676 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Market Equilibrium and Price Mechanism — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #F187B6;
+  --ag: rgba(241, 135, 182, .7);
+  --ag1: rgba(241, 135, 182, .12);
+  --ag2: rgba(241, 135, 182, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 72px;
+}
+
+.container { max-width: 720px; margin: 0 auto; }
+
+h1 {
+  font-size: clamp(30px,8vw,52px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  margin-bottom: 16px;
+}
+
+.intro {
+  font-size: 15.5px;
+  color: var(--ink-dim);
+  line-height: 1.55;
+  max-width: 58ch;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 4px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: white;
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-container {
+  margin-bottom: 10px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+}
+
+.eq-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  outline: none;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 50%), #23291f var(--fill, 50%));
+}
+
+.eq-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.eq-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.eq-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.eq-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  margin-top: 6px;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.stat:first-child .stat-value { color: var(--acc); }
+.stat:last-child .stat-value { color: var(--amb); }
+
+.toggle-section {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: #12160F;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(241,135,182,.1);
+  border-color: var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(241,135,182,.18);
+}
+
+.knowdrop {
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 34px;
+}
+
+.know-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.know-body {
+  font-size: 17.4px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.footer {
+  margin-top: 34px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 10px var(--acc);
+  animation: eqPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes eqPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .35; transform: scale(.6); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Market Equilibrium Interactive Widget</h2>
+  
+  <h1>Prices find their own level without anyone <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">deciding</span></h1>
+  
+  <p class="intro">When price sits away from equilibrium, markets self-correct through millions of individual decisions—surpluses force sellers to cut prices, shortages drive buyers to bid up. Drag the slider to set a price and watch the invisible hand push back.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-label">Market Dynamics</div>
+      <div class="live-tag" id="liveTag">Equilibrium</div>
+    </div>
+    <div class="card-hint">Price adjusts quantity demanded and supplied</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="canvas"></canvas>
+      <div class="canvas-overlay" id="canvasOverlay">EQUILIBRIUM — Market Clears</div>
+    </div>
+
+    <div class="slider-container">
+      <div class="slider-label">Market Price</div>
+      <input type="range" class="eq-slider" id="priceSlider" min="0" max="100" value="50" step="1">
+      <div class="tick-labels">
+        <span>Low</span>
+        <span>Equilibrium</span>
+        <span>High</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Market State</div>
+        <div class="stat-value" id="stateValue">Balanced</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Pressure</div>
+        <div class="stat-value" id="pressureValue">None</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-section">
+      <button class="toggle-btn active" id="surplusBtn">Surplus</button>
+      <button class="toggle-btn" id="shortageBtn">Shortage</button>
+    </div>
+    <div class="knowdrop" id="knowdrop">
+      When price exceeds equilibrium, quantity supplied outstrips quantity demanded—shelves fill with unsold inventory. Sellers face storage costs and capital tied up in stock, creating fierce competition to move product. Each seller cuts price independently to attract buyers, creating downward momentum. This cascade continues until price falls enough that quantity demanded rises to meet quantity supplied, clearing the surplus. No central planner orchestrates this—self-interest alone drives convergence back to equilibrium.
+    </div>
+  </div>
+
+  <div class="know-this">
+    <span class="know-tag">Know This</span>
+    <div class="know-body">
+      <span style="color:var(--acc)">Equilibrium price</span> clears the market so quantity demanded equals quantity supplied with no <span style="color:var(--acc)">surplus</span> or <span style="color:var(--acc)">shortage</span>.
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="pulse-dot"></div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d');
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+const slider = document.getElementById('priceSlider');
+const liveTag = document.getElementById('liveTag');
+const canvasOverlay = document.getElementById('canvasOverlay');
+const stateValue = document.getElementById('stateValue');
+const pressureValue = document.getElementById('pressureValue');
+
+const surplusBtn = document.getElementById('surplusBtn');
+const shortageBtn = document.getElementById('shortageBtn');
+const knowdrop = document.getElementById('knowdrop');
+
+let price = 50;
+let time = 0;
+let particles = [];
+
+const surplusText = "When price exceeds equilibrium, quantity supplied outstrips quantity demanded—shelves fill with unsold inventory. Sellers face storage costs and capital tied up in stock, creating fierce competition to move product. Each seller cuts price independently to attract buyers, creating downward momentum. This cascade continues until price falls enough that quantity demanded rises to meet quantity supplied, clearing the surplus. No central planner orchestrates this—self-interest alone drives convergence back to equilibrium.";
+
+const shortageText = "When price sits below equilibrium, quantity demanded exceeds quantity supplied—buyers scramble for scarce goods. Frustrated consumers unable to purchase at the posted price signal willingness to pay more, bidding up the effective price. Sellers recognize excess demand and raise prices to ration limited supply to those valuing it most. Black markets and queues emerge as symptoms of sustained shortage. Upward price pressure persists until quantity demanded contracts enough to match quantity supplied, restoring balance without any coordination beyond individual transactions.";
+
+surplusBtn.addEventListener('click', () => {
+  surplusBtn.classList.add('active');
+  shortageBtn.classList.remove('active');
+  knowdrop.textContent = surplusText;
+});
+
+shortageBtn.addEventListener('click', () => {
+  shortageBtn.classList.add('active');
+  surplusBtn.classList.remove('active');
+  knowdrop.textContent = shortageText;
+});
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+resize();
+window.addEventListener('resize', resize);
+
+slider.addEventListener('input', (e) => {
+  price = parseInt(e.target.value);
+  const fill = price;
+  slider.style.setProperty('--fill', fill + '%');
+  updateLabels();
+});
+
+function updateLabels() {
+  const diff = Math.abs(price - 50);
+  
+  if (price === 50) {
+    liveTag.textContent = 'Equilibrium';
+    canvasOverlay.textContent = 'EQUILIBRIUM — Market Clears';
+    stateValue.textContent = 'Balanced';
+    pressureValue.textContent = 'None';
+  } else if (price > 50) {
+    liveTag.textContent = 'Above Equilibrium';
+    const surplus = Math.round((price - 50) * 1.8);
+    canvasOverlay.textContent = `SURPLUS — ${surplus} Units Unsold`;
+    stateValue.textContent = 'Surplus';
+    pressureValue.textContent = '↓ Down';
+  } else {
+    liveTag.textContent = 'Below Equilibrium';
+    const shortage = Math.round((50 - price) * 1.8);
+    canvasOverlay.textContent = `SHORTAGE — ${shortage} Units Unmet`;
+    stateValue.textContent = 'Shortage';
+    pressureValue.textContent = '↑ Up';
+  }
+}
+
+updateLabels();
+slider.style.setProperty('--fill', '50%');
+
+class Particle {
+  constructor(type) {
+    this.type = type; // 'demand' or 'supply'
+    this.reset();
+  }
+  
+  reset() {
+    this.x = Math.random();
+    this.y = Math.random();
+    this.speed = 0.0008 + Math.random() * 0.0012;
+    this.phase = Math.random() * Math.PI * 2;
+    this.size = 2 + Math.random() * 2;
+  }
+  
+  update(dt, w, h) {
+    const eqPoint = 0.5;
+    const priceNorm = price / 100;
+    
+    if (this.type === 'demand') {
+      // Demand particles move toward low prices
+      const target = priceNorm < eqPoint ? 0.3 : 0.7;
+      this.x += (target - this.x) * this.speed * dt;
+    } else {
+      // Supply particles move toward high prices
+      const target = priceNorm > eqPoint ? 0.7 : 0.3;
+      this.x += (target - this.x) * this.speed * dt;
+    }
+    
+    this.y += Math.sin(time * 0.001 + this.phase) * 0.0002 * dt;
+    
+    if (this.y < 0) this.y = 1;
+    if (this.y > 1) this.y = 0;
+  }
+  
+  draw(ctx, w, h) {
+    const px = this.x * w;
+    const py = this.y * h;
+    const priceNorm = price / 100;
+    const eqPoint = 0.5;
+    const diff = Math.abs(priceNorm - eqPoint);
+    
+    let alpha = 0.3;
+    if (this.type === 'demand' && priceNorm < eqPoint) alpha = 0.6 + diff * 0.8;
+    if (this.type === 'supply' && priceNorm > eqPoint) alpha = 0.6 + diff * 0.8;
+    
+    const color = this.type === 'demand' ? '241,135,182' : '250,199,117';
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.fillStyle = `rgba(${color},${alpha})`;
+    ctx.beginPath();
+    ctx.arc(px, py, this.size, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+for (let i = 0; i < 40; i++) {
+  particles.push(new Particle('demand'));
+  particles.push(new Particle('supply'));
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  const cx = w / 2;
+  const cy = h / 2;
+  const priceNorm = price / 100;
+  const eqPoint = 0.5;
+  const diff = Math.abs(priceNorm - eqPoint);
+  
+  // Grid
+  ctx.strokeStyle = 'rgba(38,43,38,0.5)';
+  ctx.lineWidth = 0.5;
+  for (let i = 0; i <= 5; i++) {
+    const x = (i / 5) * w;
+    const y = (i / 5) * h;
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, h);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(w, y);
+    ctx.stroke();
+  }
+  
+  // Equilibrium line
+  ctx.strokeStyle = 'rgba(241,135,182,0.3)';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(cx, 0);
+  ctx.lineTo(cx, h);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  
+  // Price line
+  const px = priceNorm * w;
+  ctx.strokeStyle = price === 50 ? 'rgba(241,135,182,0.6)' : 'rgba(250,199,117,0.6)';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(px, 0);
+  ctx.lineTo(px, h);
+  ctx.stroke();
+  
+  // Demand curve
+  ctx.strokeStyle = 'rgba(241,135,182,0.5)';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  for (let i = 0; i <= 50; i++) {
+    const t = i / 50;
+    const qx = t * w;
+    const qy = h * (0.15 + 0.7 * t);
+    if (i === 0) ctx.moveTo(qx, qy);
+    else ctx.lineTo(qx, qy);
+  }
+  ctx.stroke();
+  
+  // Supply curve
+  ctx.strokeStyle = 'rgba(250,199,117,0.5)';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  for (let i = 0; i <= 50; i++) {
+    const t = i / 50;
+    const qx = t * w;
+    const qy = h * (0.85 - 0.7 * t);
+    if (i === 0) ctx.moveTo(qx, qy);
+    else ctx.lineTo(qx, qy);
+  }
+  ctx.stroke();
+  
+  // Particles
+  const dt = 16;
+  particles.forEach(p => {
+    p.update(dt, w, h);
+    p.draw(ctx, w, h);
+  });
+  
+  // Equilibrium glow
+  if (price === 50) {
+    const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, 80);
+    glow.addColorStop(0, 'rgba(241,135,182,0.25)');
+    glow.addColorStop(1, 'rgba(241,135,182,0)');
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.fillStyle = glow;
+    ctx.fillRect(cx - 80, cy - 80, 160, 160);
+    ctx.restore();
+  } else {
+    // Pressure arrows
+    const arrowY = cy;
+    const arrowLen = 40 + diff * 60;
+    ctx.strokeStyle = 'rgba(250,199,117,0.6)';
+    ctx.fillStyle = 'rgba(250,199,117,0.6)';
+    ctx.lineWidth = 3;
+    
+    if (price > 50) {
+      // Down arrows
+      for (let i = 0; i < 3; i++) {
+        const ay = h * (0.2 + i * 0.25) + Math.sin(time * 0.002 + i) * 10;
+        ctx.beginPath();
+        ctx.moveTo(px, ay);
+        ctx.lineTo(px, ay + arrowLen);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(px, ay + arrowLen);
+        ctx.lineTo(px - 5, ay + arrowLen - 8);
+        ctx.lineTo(px + 5, ay + arrowLen - 8);
+        ctx.closePath();
+        ctx.fill();
+      }
+    } else {
+      // Up arrows
+      for (let i = 0; i < 3; i++) {
+        const ay = h * (0.3 + i * 0.25) + Math.sin(time * 0.002 + i) * 10;
+        ctx.beginPath();
+        ctx.moveTo(px, ay + arrowLen);
+        ctx.lineTo(px, ay);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(px, ay);
+        ctx.lineTo(px - 5, ay + 8);
+        ctx.lineTo(px + 5, ay + 8);
+        ctx.closePath();
+        ctx.fill();
+      }
+    }
+  }
+  
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+  
+  time += 16;
+  requestAnimationFrame(draw);
+}
+
+draw();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'market-equilibrium-and-price-mechanism'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

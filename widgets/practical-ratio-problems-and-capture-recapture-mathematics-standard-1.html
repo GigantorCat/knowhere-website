@@ -1,0 +1,789 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Practical Ratio Problems and Capture-Recapture — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #7ED97A;
+  --acc-rgb: 126, 217, 122;
+  --ag: rgba(var(--acc-rgb), 0.7);
+  --ag1: rgba(var(--acc-rgb), 0.12);
+  --ag2: rgba(var(--acc-rgb), 0.45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  min-height: 100vh;
+  padding: 40px 16px 0;
+  color: var(--ink);
+  line-height: 1.5;
+}
+
+.container { max-width: 720px; margin: 0 auto; }
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 16px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,0.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 20px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: white;
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 16px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-row {
+  margin-bottom: 10px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+}
+
+.cr-slider {
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.cr-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+
+.cr-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+
+.cr-slider:hover::-webkit-slider-thumb {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.cr-slider:hover::-moz-range-thumb {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  margin-top: 6px;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+  margin-top: 16px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.stat:first-child .stat-value { color: var(--acc); }
+.stat:last-child .stat-value { color: var(--amb); }
+
+.toggle-card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,0.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 20px;
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toggle-btn.active {
+  background: rgba(var(--acc-rgb), 0.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(var(--acc-rgb), 0.18);
+}
+
+.knowdrop-divider {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.knowdrop-text {
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-this-tag {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 12px;
+}
+
+.know-this-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 8px var(--acc);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+.know-this-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+}
+
+.know-this-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+
+<h2 class="sr-only">Interactive capture-recapture population estimation widget</h2>
+
+<div class="container">
+  <h1>Two Small Samples Reveal the <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">Whole</span></h1>
+  
+  <p class="intro">A biologist catches 20 fish, tags them, and releases them back into a lake. A week later, they catch 30 fish and find 5 are tagged. Somehow, this tells us there are roughly 120 fish in the entire lake — no need to drain it. Adjust the recapture sample size below and watch the population estimate shift as the proportion reveals what's hidden beneath the surface.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-label">Population Estimator</div>
+      <div class="live-tag" id="liveTag">Recapture: 30 fish</div>
+    </div>
+    <div class="card-hint">Drag to change how many fish we catch in the second sample</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="crCanvas"></canvas>
+      <div class="canvas-overlay" id="canvasOverlay">Estimated Population: 120 fish</div>
+    </div>
+
+    <div class="slider-row">
+      <div class="slider-label">Recapture Sample Size</div>
+      <input type="range" class="cr-slider" id="recaptureSlider" min="10" max="80" value="30" step="1">
+      <div class="tick-labels">
+        <span>10</span>
+        <span>80</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Tagged Found</div>
+        <div class="stat-value" id="taggedFound">5</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Proportion</div>
+        <div class="stat-value" id="proportion">16.7%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toggle-card">
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" id="btnMethod">The Method</button>
+      <button class="toggle-btn" id="btnLimits">When It Fails</button>
+    </div>
+    
+    <div class="knowdrop-divider">
+      <p class="knowdrop-text" id="knowdropText">Capture-recapture relies on a simple proportion: if tagged fish make up a certain fraction of our second sample, they should make up that same fraction of the whole population. We use the formula: Population = (First catch × Second catch) ÷ Tagged in second catch. In our example, (20 × 30) ÷ 5 = 120 fish. The key assumption is that tagged fish mix evenly back into the population, so our second sample is a fair random grab. This method is used by ecologists worldwide to estimate populations of fish, birds, insects, and even endangered species without disturbing the whole habitat.</p>
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-this-tag">
+      <div class="know-this-dot"></div>
+      <div class="know-this-label">Know This</div>
+    </div>
+    <div class="know-this-body">Capture-recapture transforms <span style="color:var(--acc)">two small samples</span> into a population estimate by assuming the <span style="color:var(--acc)">proportion of tagged individuals</span> in the recapture matches their proportion in the <span style="color:var(--acc)">entire population</span>.</div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('crCanvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d', { alpha: false });
+
+const CSS = getComputedStyle(document.documentElement);
+const ACC = CSS.getPropertyValue('--acc').trim();
+const RGB = CSS.getPropertyValue('--acc-rgb').trim();
+const AMB = CSS.getPropertyValue('--amb').trim();
+
+const slider = document.getElementById('recaptureSlider');
+const liveTag = document.getElementById('liveTag');
+const canvasOverlay = document.getElementById('canvasOverlay');
+const taggedFoundEl = document.getElementById('taggedFound');
+const proportionEl = document.getElementById('proportion');
+const knowdropText = document.getElementById('knowdropText');
+const btnMethod = document.getElementById('btnMethod');
+const btnLimits = document.getElementById('btnLimits');
+
+let recapture = 30;
+const firstCatch = 20;
+
+// Lake population
+const totalPop = 120;
+const fish = [];
+for (let i = 0; i < totalPop; i++) {
+  fish.push({
+    x: Math.random(),
+    y: Math.random(),
+    tagged: i < firstCatch,
+    vx: (Math.random() - 0.5) * 0.3,
+    vy: (Math.random() - 0.5) * 0.3,
+    wobble: Math.random() * Math.PI * 2,
+    size: 2.8 + Math.random() * 1.4
+  });
+}
+
+let time = 0;
+let tagged = 5;
+
+function resize() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function draw() {
+  const w = canvas.width / Math.min(window.devicePixelRatio || 1, 2);
+  const h = canvas.height / Math.min(window.devicePixelRatio || 1, 2);
+  
+  time += 0.012;
+  
+  // Animate fish
+  fish.forEach(f => {
+    f.x += f.vx * 0.01;
+    f.y += f.vy * 0.01;
+    f.wobble += 0.02;
+    
+    // Bounce at edges
+    if (f.x < 0.05 || f.x > 0.95) f.vx *= -1;
+    if (f.y < 0.05 || f.y > 0.95) f.vy *= -1;
+    
+    // Keep within bounds
+    f.x = Math.max(0.05, Math.min(0.95, f.x));
+    f.y = Math.max(0.05, Math.min(0.95, f.y));
+    
+    // Occasional direction change
+    if (Math.random() < 0.015) {
+      f.vx += (Math.random() - 0.5) * 0.1;
+      f.vy += (Math.random() - 0.5) * 0.1;
+      const speed = Math.sqrt(f.vx * f.vx + f.vy * f.vy);
+      if (speed > 0.35) {
+        f.vx *= 0.35 / speed;
+        f.vy *= 0.35 / speed;
+      }
+    }
+  });
+  
+  // Background
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  // Water gradient
+  const water = ctx.createLinearGradient(0, 0, 0, h);
+  water.addColorStop(0, 'rgba(8, 35, 50, 0.5)');
+  water.addColorStop(0.5, 'rgba(5, 22, 32, 0.6)');
+  water.addColorStop(1, 'rgba(3, 15, 22, 0.7)');
+  ctx.fillStyle = water;
+  ctx.fillRect(0, 0, w, h);
+  
+  // Animated caustics (light patterns on water)
+  for (let i = 0; i < 8; i++) {
+    const cx = (Math.sin(time * 0.3 + i * 0.8) * 0.3 + 0.5) * w;
+    const cy = (Math.cos(time * 0.25 + i * 1.2) * 0.3 + 0.4) * h;
+    const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 80);
+    grad.addColorStop(0, 'rgba(100, 180, 220, 0.08)');
+    grad.addColorStop(1, 'rgba(100, 180, 220, 0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+  }
+  
+  // Draw entire population
+  const lakeX = w * 0.5;
+  const lakeY = h * 0.5;
+  const lakeW = w * 0.85;
+  const lakeH = h * 0.75;
+  
+  // Lake boundary
+  ctx.save();
+  ctx.strokeStyle = 'rgba(126, 217, 122, 0.2)';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([8, 6]);
+  ctx.strokeRect(lakeX - lakeW/2, lakeY - lakeH/2, lakeW, lakeH);
+  ctx.restore();
+  
+  // Draw all fish swimming
+  fish.forEach(f => {
+    const fx = lakeX - lakeW/2 + f.x * lakeW;
+    const fy = lakeY - lakeH/2 + f.y * lakeH;
+    
+    ctx.save();
+    
+    if (f.tagged) {
+      // Tagged fish with green pulse
+      const pulse = 0.6 + Math.sin(time * 3 + f.wobble) * 0.4;
+      const glowSize = f.size * 5 * pulse;
+      const glow = ctx.createRadialGradient(fx, fy, 0, fx, fy, glowSize);
+      glow.addColorStop(0, `rgba(${RGB}, ${pulse * 0.8})`);
+      glow.addColorStop(0.4, `rgba(${RGB}, ${pulse * 0.3})`);
+      glow.addColorStop(1, `rgba(${RGB}, 0)`);
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(fx, fy, glowSize, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Tag marker
+      ctx.fillStyle = ACC;
+      ctx.shadowColor = ACC;
+      ctx.shadowBlur = 8;
+      ctx.beginPath();
+      ctx.arc(fx, fy, f.size, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Inner bright core
+      ctx.fillStyle = '#fff';
+      ctx.shadowBlur = 4;
+      ctx.beginPath();
+      ctx.arc(fx, fy, f.size * 0.4, 0, Math.PI * 2);
+      ctx.fill();
+    } else {
+      // Untagged fish
+      ctx.fillStyle = 'rgba(180, 200, 220, 0.5)';
+      ctx.shadowBlur = 0;
+      ctx.beginPath();
+      ctx.arc(fx, fy, f.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    
+    ctx.restore();
+  });
+  
+  // Step 1: Initial capture zone (top left)
+  const cap1X = w * 0.22;
+  const cap1Y = h * 0.28;
+  const cap1R = 65;
+  
+  ctx.save();
+  ctx.strokeStyle = `rgba(${RGB}, 0.6)`;
+  ctx.lineWidth = 2.5;
+  ctx.setLineDash([6, 4]);
+  ctx.shadowColor = ACC;
+  ctx.shadowBlur = 12;
+  ctx.beginPath();
+  ctx.arc(cap1X, cap1Y, cap1R, 0, Math.PI * 2);
+  ctx.stroke();
+  
+  const cap1Fill = ctx.createRadialGradient(cap1X, cap1Y, 0, cap1X, cap1Y, cap1R);
+  cap1Fill.addColorStop(0, `rgba(${RGB}, 0.15)`);
+  cap1Fill.addColorStop(1, `rgba(${RGB}, 0)`);
+  ctx.fillStyle = cap1Fill;
+  ctx.shadowBlur = 0;
+  ctx.fill();
+  ctx.restore();
+  
+  // Label
+  ctx.font = '11px "JetBrains Mono"';
+  ctx.fillStyle = ACC;
+  ctx.textAlign = 'center';
+  ctx.shadowColor = 'rgba(0,0,0,0.8)';
+  ctx.shadowBlur = 4;
+  ctx.fillText('STEP 1: CAPTURE', cap1X, cap1Y - cap1R - 10);
+  ctx.font = '9px "JetBrains Mono"';
+  ctx.fillStyle = `rgba(${RGB}, 0.8)`;
+  ctx.fillText(`Tag ${firstCatch} fish`, cap1X, cap1Y - cap1R + 4);
+  ctx.shadowBlur = 0;
+  
+  // Step 2: Release (middle)
+  const relX = w * 0.5;
+  const relY = h * 0.28;
+  
+  // Animated particles showing release
+  for (let i = 0; i < 12; i++) {
+    const angle = (i / 12) * Math.PI * 2 + time * 2;
+    const dist = 40 + Math.sin(time * 3 + i) * 15;
+    const px = relX + Math.cos(angle) * dist;
+    const py = relY + Math.sin(angle) * dist;
+    const alpha = 0.3 + Math.sin(time * 4 + i) * 0.3;
+    
+    ctx.fillStyle = `rgba(${RGB}, ${alpha})`;
+    ctx.beginPath();
+    ctx.arc(px, py, 2, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  
+  ctx.font = '11px "JetBrains Mono"';
+  ctx.fillStyle = ACC;
+  ctx.textAlign = 'center';
+  ctx.shadowColor = 'rgba(0,0,0,0.8)';
+  ctx.shadowBlur = 4;
+  ctx.fillText('STEP 2: RELEASE', relX, relY - 50);
+  ctx.font = '9px "JetBrains Mono"';
+  ctx.fillStyle = `rgba(${RGB}, 0.8)`;
+  ctx.fillText('Tagged fish mix back', relX, relY - 36);
+  ctx.shadowBlur = 0;
+  
+  // Arrow from capture to release
+  ctx.save();
+  ctx.strokeStyle = `rgba(${RGB}, 0.4)`;
+  ctx.lineWidth = 2;
+  ctx.setLineDash([4, 4]);
+  const arrowDash = (time * 20) % 8;
+  ctx.lineDashOffset = -arrowDash;
+  ctx.beginPath();
+  ctx.moveTo(cap1X + cap1R, cap1Y);
+  ctx.lineTo(relX - 50, relY);
+  ctx.stroke();
+  ctx.restore();
+  
+  // Step 3: Recapture zone (top right)
+  const cap2X = w * 0.78;
+  const cap2Y = h * 0.28;
+  const cap2R = 65;
+  
+  ctx.save();
+  ctx.strokeStyle = `rgba(250, 199, 117, 0.6)`;
+  ctx.lineWidth = 2.5;
+  ctx.setLineDash([6, 4]);
+  ctx.shadowColor = AMB;
+  ctx.shadowBlur = 12;
+  ctx.beginPath();
+  ctx.arc(cap2X, cap2Y, cap2R, 0, Math.PI * 2);
+  ctx.stroke();
+  
+  const cap2Fill = ctx.createRadialGradient(cap2X, cap2Y, 0, cap2X, cap2Y, cap2R);
+  cap2Fill.addColorStop(0, 'rgba(250, 199, 117, 0.15)');
+  cap2Fill.addColorStop(1, 'rgba(250, 199, 117, 0)');
+  ctx.fillStyle = cap2Fill;
+  ctx.shadowBlur = 0;
+  ctx.fill();
+  ctx.restore();
+  
+  // Label
+  ctx.font = '11px "JetBrains Mono"';
+  ctx.fillStyle = AMB;
+  ctx.textAlign = 'center';
+  ctx.shadowColor = 'rgba(0,0,0,0.8)';
+  ctx.shadowBlur = 4;
+  ctx.fillText('STEP 3: RECAPTURE', cap2X, cap2Y - cap2R - 10);
+  ctx.font = '9px "JetBrains Mono"';
+  ctx.fillStyle = 'rgba(250, 199, 117, 0.8)';
+  ctx.fillText(`Catch ${recapture} fish`, cap2X, cap2Y - cap2R + 4);
+  ctx.shadowBlur = 0;
+  
+  // Arrow from release to recapture
+  ctx.save();
+  ctx.strokeStyle = 'rgba(250, 199, 117, 0.4)';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([4, 4]);
+  ctx.lineDashOffset = -arrowDash;
+  ctx.beginPath();
+  ctx.moveTo(relX + 50, relY);
+  ctx.lineTo(cap2X - cap2R, cap2Y);
+  ctx.stroke();
+  ctx.restore();
+  
+  // Visual proportion display at bottom
+  const propX = w * 0.5;
+  const propY = h * 0.82;
+  const barW = w * 0.7;
+  const barH = 32;
+  
+  // Background bar
+  ctx.fillStyle = 'rgba(50, 60, 70, 0.4)';
+  ctx.fillRect(propX - barW/2, propY, barW, barH);
+  
+  // Tagged proportion in recapture
+  const taggedProp = tagged / recapture;
+  const taggedWidth = barW * taggedProp;
+  
+  const propGrad = ctx.createLinearGradient(propX - barW/2, 0, propX - barW/2 + taggedWidth, 0);
+  propGrad.addColorStop(0, ACC);
+  propGrad.addColorStop(1, `rgba(${RGB}, 0.6)`);
+  ctx.fillStyle = propGrad;
+  ctx.fillRect(propX - barW/2, propY, taggedWidth, barH);
+  
+  // Border
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(propX - barW/2, propY, barW, barH);
+  
+  // Labels
+  ctx.font = '10px "JetBrains Mono"';
+  ctx.fillStyle = ACC;
+  ctx.textAlign = 'left';
+  ctx.fillText(`${tagged} Tagged`, propX - barW/2 + 8, propY + barH/2 + 4);
+  
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+  ctx.textAlign = 'right';
+  ctx.fillText(`${recapture - tagged} Untagged`, propX + barW/2 - 8, propY + barH/2 + 4);
+  
+  // Proportion equation visualization
+  const eqY = propY + barH + 24;
+  ctx.font = '12px "JetBrains Mono"';
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+  ctx.textAlign = 'center';
+  const proportion = (taggedProp * 100).toFixed(1);
+  ctx.fillText(`${tagged}/${recapture} = ${proportion}% → Estimate: ${Math.round((firstCatch * recapture) / tagged)} total fish`, propX, eqY);
+  
+  // Bloom effect
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.35;
+  ctx.filter = 'blur(6px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Subtle vignette
+  const vig = ctx.createRadialGradient(w/2, h/2, h * 0.3, w/2, h/2, w * 0.65);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.4)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+  
+  requestAnimationFrame(draw);
+}
+
+function update() {
+  recapture = parseInt(slider.value);
+  
+  // Calculate expected tagged based on true proportion
+  tagged = Math.max(1, Math.round((firstCatch / totalPop) * recapture));
+  
+  // Calculate estimated population
+  const estimatedPop = Math.round((firstCatch * recapture) / tagged);
+  
+  // Update proportion
+  const prop = (tagged / recapture * 100).toFixed(1);
+  
+  // Update UI
+  liveTag.textContent = `Recapture: ${recapture} fish`;
+  canvasOverlay.textContent = `Estimated Population: ${estimatedPop} fish`;
+  taggedFoundEl.textContent = tagged;
+  proportionEl.textContent = `${prop}%`;
+  
+  // Update slider fill
+  const percent = ((recapture - 10) / (80 - 10)) * 100;
+  slider.style.setProperty('--fill', percent + '%');
+}
+
+slider.addEventListener('input', update);
+
+btnMethod.addEventListener('click', () => {
+  btnMethod.classList.add('active');
+  btnLimits.classList.remove('active');
+  knowdropText.textContent = "Capture-recapture relies on a simple proportion: if tagged fish make up a certain fraction of our second sample, they should make up that same fraction of the whole population. We use the formula: Population = (First catch × Second catch) ÷ Tagged in second catch. In our example, (20 × 30) ÷ 5 = 120 fish. The key assumption is that tagged fish mix evenly back into the population, so our second sample is a fair random grab. This method is used by ecologists worldwide to estimate populations of fish, birds, insects, and even endangered species without disturbing the whole habitat.";
+});
+
+btnLimits.addEventListener('click', () => {
+  btnLimits.classList.add('active');
+  btnMethod.classList.remove('active');
+  knowdropText.textContent = "The method breaks down when its core assumption fails: random mixing. If tagged fish avoid nets after their first capture, we'll undercount them in the recapture and overestimate the population. If they die or emigrate between samples, same problem. If the population isn't closed — births, deaths, migration happening between captures — our estimate is a snapshot of a moving target. The method also fails with small samples: catching 2 fish and finding 1 tagged gives wildly different estimates than 200 and 100. Ecologists compensate by using larger samples, shorter time gaps, and checking assumptions with pilot studies before trusting the numbers.";
+});
+
+window.addEventListener('resize', resize);
+resize();
+update();
+draw();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'practical-ratio-problems-and-capture-recapture'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

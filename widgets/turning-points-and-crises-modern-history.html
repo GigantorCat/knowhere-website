@@ -1,0 +1,711 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Turning points and crises — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #9A5FD2;
+  --acc-rgb: 154, 95, 210;
+  --ag: rgba(var(--acc-rgb), .7);
+  --ag1: rgba(var(--acc-rgb), .12);
+  --ag2: rgba(var(--acc-rgb), .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 0;
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: white;
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.tp-slider {
+  margin-bottom: 8px;
+}
+
+.tp-slider input[type="range"] {
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.tp-slider input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.tp-slider input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.tp-slider input[type="range"]::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tp-slider input[type="range"]::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  padding: 0 2px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+  margin-top: 16px;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.toggle-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: #12160F;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(var(--acc-rgb), .1);
+  border-color: var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(var(--acc-rgb), .18);
+}
+
+.knowdrop-section {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.knowdrop-body {
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-this-tag {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 10px;
+}
+
+.know-this-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 8px var(--acc);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+.know-this-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+}
+
+.know-this-body {
+  font-size: 17.4px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Interactive timeline showing how turning points and crises created branching paths in twentieth-century conflicts</h2>
+
+  <h1>History is written by decisions <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">not taken</span></h1>
+  
+  <p class="intro">Every turning point splits the timeline: the path chosen versus the path avoided. Drag the slider to rewind history and see how each crisis created two futures — one real, one imagined.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-label">Timeline Branches</div>
+      <div class="live-tag" id="liveTag">1941 • Barbarossa</div>
+    </div>
+    <div class="card-hint">Each crisis splits into two paths: history taken (solid) and history avoided (dashed)</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="timelineCanvas"></canvas>
+      <div class="canvas-overlay" id="canvasOverlay">Operation Barbarossa • June 1941</div>
+    </div>
+
+    <div class="tp-slider">
+      <input type="range" id="timeSlider" min="0" max="6" value="0" step="1">
+    </div>
+    <div class="tick-labels">
+      <span>1941</span>
+      <span>1942</span>
+      <span>1961</span>
+      <span>1962</span>
+      <span>1968</span>
+      <span>1968</span>
+      <span>1991</span>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-label">Path Taken</div>
+        <div class="stat-value" id="takenStat" style="color:var(--acc)">Soviet Victory</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Path Avoided</div>
+        <div class="stat-value" id="avoidedStat" style="color:var(--amb)">Axis Triumph</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-grid">
+      <button class="toggle-btn active" data-mode="sources">Historical Sources</button>
+      <button class="toggle-btn" data-mode="impact">Historian Debate</button>
+    </div>
+    
+    <div class="knowdrop-section">
+      <div class="knowdrop-body" id="knowdropText">
+        Turning points are not obvious when they happen. Operation Barbarossa appeared unstoppable in its first weeks, yet Stalingrad reversed the entire eastern front. The Tet Offensive was a military defeat for North Vietnam but destroyed American public support for the war. Historians identify turning points retrospectively, looking for the moment when the range of possible futures narrowed. Primary sources from the time often show confusion, not clarity — participants rarely know they are living through history's pivot. The turning point becomes visible only when we can see both branches: the world that emerged and the world that did not.
+      </div>
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-this-tag">
+      <div class="know-this-dot"></div>
+      <div class="know-this-label">Know This</div>
+    </div>
+    <div class="know-this-body">
+      Turning points only exist in hindsight — contemporaries saw <span style="color:var(--acc)">uncertainty</span>, not <span style="color:var(--acc)">inevitability</span>, and historians construct the pivot by comparing what happened against <span style="color:var(--acc)">what nearly did</span>.
+    </div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById("timelineCanvas");
+const ctx = canvas.getContext("2d");
+const slider = document.getElementById("timeSlider");
+const liveTag = document.getElementById("liveTag");
+const canvasOverlay = document.getElementById("canvasOverlay");
+const takenStat = document.getElementById("takenStat");
+const avoidedStat = document.getElementById("avoidedStat");
+
+const CSS = getComputedStyle(document.documentElement);
+const ACC = CSS.getPropertyValue("--acc").trim();
+const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+const AMB = CSS.getPropertyValue("--amb").trim();
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement("canvas");
+const bctx = buf.getContext("2d");
+
+const crises = [
+  { 
+    year: "1941", 
+    name: "Operation Barbarossa", 
+    full: "Operation Barbarossa • June 1941",
+    taken: "Soviet Victory",
+    avoided: "Axis Triumph"
+  },
+  { 
+    year: "1942", 
+    name: "Battle of Midway", 
+    full: "Battle of Midway • June 1942",
+    taken: "Pacific Turn",
+    avoided: "Japan Dominant"
+  },
+  { 
+    year: "1961", 
+    name: "Berlin Wall", 
+    full: "Berlin Wall • August 1961",
+    taken: "Division Set",
+    avoided: "Open Border"
+  },
+  { 
+    year: "1962", 
+    name: "Cuban Missile Crisis", 
+    full: "Cuban Missile Crisis • October 1962",
+    taken: "Negotiation",
+    avoided: "Nuclear War"
+  },
+  { 
+    year: "1968", 
+    name: "Tet Offensive", 
+    full: "Tet Offensive • January 1968",
+    taken: "US Withdrawal",
+    avoided: "Escalation"
+  },
+  { 
+    year: "1968", 
+    name: "Prague Spring", 
+    full: "Prague Spring • August 1968",
+    taken: "Soviet Control",
+    avoided: "Czech Freedom"
+  },
+  { 
+    year: "1991", 
+    name: "Gulf War", 
+    full: "Gulf War • February 1991",
+    taken: "Coalition Win",
+    avoided: "Regional Chaos"
+  }
+];
+
+let currentIndex = 0;
+let branchOpacities = [0, 0, 0, 0, 0, 0, 0];
+let animationFrame = null;
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  draw();
+}
+
+function animateBranches() {
+  let needsUpdate = false;
+  
+  for (let i = 0; i < branchOpacities.length; i++) {
+    const target = i === currentIndex ? 1 : 0;
+    const current = branchOpacities[i];
+    
+    if (Math.abs(current - target) > 0.01) {
+      branchOpacities[i] += (target - current) * 0.12;
+      needsUpdate = true;
+    } else {
+      branchOpacities[i] = target;
+    }
+  }
+  
+  if (needsUpdate) {
+    draw();
+    animationFrame = requestAnimationFrame(animateBranches);
+  } else {
+    animationFrame = null;
+  }
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  
+  ctx.clearRect(0, 0, w, h);
+  
+  const marginX = w * 0.05;
+  const marginY = h * 0.18;
+  const startX = marginX;
+  const endX = w - marginX * 3;
+  const centerY = h * 0.5;
+  
+  // Persistent TAKEN label at top
+  ctx.fillStyle = ACC;
+  ctx.font = "11px 'JetBrains Mono'";
+  ctx.textAlign = "center";
+  ctx.fillText("TAKEN", w / 2, marginY * 0.45);
+  
+  // Persistent AVOIDED label at bottom - moved up
+  ctx.fillStyle = AMB;
+  ctx.font = "11px 'JetBrains Mono'";
+  ctx.textAlign = "center";
+  ctx.fillText("AVOIDED", w / 2, h - marginY * 0.7);
+  
+  // Timeline base
+  ctx.strokeStyle = "rgba(" + RGB + ", 0.25)";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(startX, centerY);
+  ctx.lineTo(endX, centerY);
+  ctx.stroke();
+  
+  // Draw all crisis points and branches
+  const numCrises = crises.length;
+  const spacing = (endX - startX) / (numCrises - 1);
+  
+  for (let i = 0; i < numCrises; i++) {
+    const x = startX + i * spacing;
+    const isActive = i === currentIndex;
+    const isPast = i < currentIndex;
+    
+    // Crisis node
+    ctx.beginPath();
+    ctx.arc(x, centerY, isActive ? 7 : 5, 0, Math.PI * 2);
+    if (isActive) {
+      ctx.fillStyle = ACC;
+      ctx.fill();
+      ctx.strokeStyle = ACC;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      
+      // Glow
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      const glow = ctx.createRadialGradient(x, centerY, 0, x, centerY, 22);
+      glow.addColorStop(0, "rgba(" + RGB + ", 0.5)");
+      glow.addColorStop(1, "rgba(" + RGB + ", 0)");
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(x, centerY, 22, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    } else if (isPast) {
+      ctx.fillStyle = "rgba(" + RGB + ", 0.4)";
+      ctx.fill();
+    } else {
+      ctx.fillStyle = "#23291f";
+      ctx.fill();
+      ctx.strokeStyle = "#3a3f37";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+    
+    // Year label
+    ctx.fillStyle = isActive ? ACC : (isPast ? "rgba(" + RGB + ", 0.6)" : "#5a5f57");
+    ctx.font = "10px 'JetBrains Mono'";
+    ctx.textAlign = "center";
+    ctx.fillText(crises[i].year, x, centerY - 20);
+    
+    // Draw branches only for current crisis with fade
+    const opacity = branchOpacities[i];
+    if (opacity > 0.01) {
+      const branchLength = (h - 2 * marginY) * 0.35;
+      const branchAngle = Math.PI / 6;
+      
+      // Taken path (solid, upward)
+      const takenEndX = x + branchLength * Math.cos(-branchAngle);
+      const takenEndY = centerY + branchLength * Math.sin(-branchAngle);
+      
+      ctx.globalAlpha = opacity;
+      ctx.strokeStyle = ACC;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(x, centerY);
+      ctx.lineTo(takenEndX, takenEndY);
+      ctx.stroke();
+      
+      // Arrow head for taken
+      const arrowSize = 8;
+      const takenAngle = -branchAngle;
+      ctx.fillStyle = ACC;
+      ctx.beginPath();
+      ctx.moveTo(takenEndX, takenEndY);
+      ctx.lineTo(
+        takenEndX - arrowSize * Math.cos(takenAngle - Math.PI / 6),
+        takenEndY - arrowSize * Math.sin(takenAngle - Math.PI / 6)
+      );
+      ctx.lineTo(
+        takenEndX - arrowSize * Math.cos(takenAngle + Math.PI / 6),
+        takenEndY - arrowSize * Math.sin(takenAngle + Math.PI / 6)
+      );
+      ctx.closePath();
+      ctx.fill();
+      
+      // Taken outcome label
+      ctx.fillStyle = ACC;
+      ctx.font = "10px 'JetBrains Mono'";
+      ctx.textAlign = "center";
+      ctx.fillText(crises[i].taken, takenEndX, takenEndY - 8);
+      
+      // Avoided path (dashed, downward)
+      const avoidedEndX = x + branchLength * Math.cos(branchAngle);
+      const avoidedEndY = centerY + branchLength * Math.sin(branchAngle);
+      
+      ctx.strokeStyle = AMB;
+      ctx.lineWidth = 3;
+      ctx.setLineDash([6, 4]);
+      ctx.beginPath();
+      ctx.moveTo(x, centerY);
+      ctx.lineTo(avoidedEndX, avoidedEndY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      
+      // Arrow head for avoided
+      const avoidedAngle = branchAngle;
+      ctx.fillStyle = AMB;
+      ctx.beginPath();
+      ctx.moveTo(avoidedEndX, avoidedEndY);
+      ctx.lineTo(
+        avoidedEndX - arrowSize * Math.cos(avoidedAngle - Math.PI / 6),
+        avoidedEndY - arrowSize * Math.sin(avoidedAngle - Math.PI / 6)
+      );
+      ctx.lineTo(
+        avoidedEndX - arrowSize * Math.cos(avoidedAngle + Math.PI / 6),
+        avoidedEndY - arrowSize * Math.sin(avoidedAngle + Math.PI / 6)
+      );
+      ctx.closePath();
+      ctx.fill();
+      
+      // Avoided outcome label
+      ctx.fillStyle = AMB;
+      ctx.font = "10px 'JetBrains Mono'";
+      ctx.textAlign = "center";
+      ctx.fillText(crises[i].avoided, avoidedEndX, avoidedEndY + 16);
+      
+      ctx.globalAlpha = 1;
+    }
+  }
+  
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = "lighter";
+  ctx.globalAlpha = 0.38;
+  ctx.filter = "blur(7px)";
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const vig = ctx.createRadialGradient(w/2, h/2, h * 0.28, w/2, h/2, w * 0.72);
+  vig.addColorStop(0, "rgba(0,0,0,0)");
+  vig.addColorStop(1, "rgba(0,0,0,0.52)");
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+}
+
+function updateUI() {
+  const crisis = crises[currentIndex];
+  liveTag.textContent = crisis.year + " • " + crisis.name;
+  canvasOverlay.textContent = crisis.full;
+  takenStat.textContent = crisis.taken;
+  avoidedStat.textContent = crisis.avoided;
+  
+  const fill = (currentIndex / 6) * 100;
+  slider.style.setProperty("--fill", fill + "%");
+}
+
+slider.addEventListener("input", function() {
+  currentIndex = parseInt(this.value);
+  updateUI();
+  if (!animationFrame) {
+    animateBranches();
+  }
+});
+
+// Toggle buttons
+const toggleBtns = document.querySelectorAll(".toggle-btn");
+const knowdropText = document.getElementById("knowdropText");
+
+const knowdropContent = {
+  sources: "Turning points are not obvious when they happen. Operation Barbarossa appeared unstoppable in its first weeks, yet Stalingrad reversed the entire eastern front. The Tet Offensive was a military defeat for North Vietnam but destroyed American public support for the war. Historians identify turning points retrospectively, looking for the moment when the range of possible futures narrowed. Primary sources from the time often show confusion, not clarity — participants rarely know they are living through history's pivot. The turning point becomes visible only when we can see both branches: the world that emerged and the world that did not.",
+  
+  impact: "The Cuban Missile Crisis is remembered as the moment humanity avoided nuclear war, but that framing depends on treating nuclear war as the default outcome. Historians debate whether Kennedy and Khrushchev ever intended to launch, or whether the crisis was political theatre with minimal real danger. Similarly, the Berlin Wall is taught as cementing the Cold War division, but some argue the division was already permanent and the Wall simply made it visible. Turning points gain their status through narrative construction: we select them because they fit the story we want to tell about how we got here. A different historian, asking different questions, might identify entirely different pivots in the same sequence of events."
+};
+
+toggleBtns.forEach(btn => {
+  btn.addEventListener("click", function() {
+    toggleBtns.forEach(b => b.classList.remove("active"));
+    this.classList.add("active");
+    const mode = this.dataset.mode;
+    knowdropText.textContent = knowdropContent[mode];
+  });
+});
+
+window.addEventListener("resize", resize);
+resize();
+updateUI();
+branchOpacities[currentIndex] = 1;
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'turning-points-and-crises'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

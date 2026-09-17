@@ -1,0 +1,608 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Acute Responses to Exercise — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #E86A32;
+  --ag: rgba(232, 106, 50, .7);
+  --ag1: rgba(232, 106, 50, .12);
+  --ag2: rgba(232, 106, 50, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 0;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 28px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-wrapper {
+  margin-bottom: 12px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.ex-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  outline: none;
+  margin-bottom: 8px;
+}
+
+.ex-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.ex-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.ex-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.ex-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.toggle-card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: #12160F;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(232,106,50,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(232,106,50,.18);
+}
+
+.knowdrop-divider {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.knowdrop {
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-this-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 10px;
+}
+
+.know-this-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (max-width: 360px) {
+  body {
+    padding: 32px 12px 0;
+  }
+  .card, .toggle-card {
+    padding: 14px;
+  }
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Interactive visualization of acute physiological responses to exercise</h2>
+  
+  <h1>Your body shifts into exercise mode <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">immediately</span></h1>
+  
+  <p class="intro">The cardiovascular, respiratory and muscular systems don't wait to respond — they react in the first seconds of movement, ramping up delivery and clearance before you've even noticed you're working. Slide the intensity slider to see how each system responds.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Acute Response Cascade</span>
+      <span class="live-tag" id="intensity-tag">Resting</span>
+    </div>
+    <div class="card-hint">Drag to simulate exercise intensity (rest → moderate → vigorous)</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="canvas"></canvas>
+      <div class="canvas-overlay" id="overlay-tag">Systems at baseline</div>
+    </div>
+
+    <div class="slider-wrapper">
+      <label class="slider-label" for="intensity-slider">Exercise Intensity</label>
+      <input type="range" id="intensity-slider" class="ex-slider" min="0" max="100" value="0" style="--fill: 0%">
+      <div class="tick-labels">
+        <span>Rest</span>
+        <span>Moderate</span>
+        <span>Vigorous</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Heart Rate</div>
+        <div class="stat-value" id="hr-stat" style="color:var(--acc)">72</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Cardiac Output</div>
+        <div class="stat-value" id="co-stat" style="color:var(--amb)">5.0</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toggle-card">
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" data-system="cardio">Cardiovascular</button>
+      <button class="toggle-btn" data-system="resp">Respiratory</button>
+    </div>
+    
+    <div class="knowdrop-divider">
+      <p class="knowdrop" id="knowdrop-text">
+        When you start moving, the heart immediately increases its rate and the volume of blood pumped per beat (stroke volume). Heart rate can climb from around 70 bpm at rest to 180+ bpm during vigorous exercise. Stroke volume rises as the heart contracts more forcefully. Together, these two changes drive cardiac output up — sometimes to five times resting levels — flooding working muscles with oxygen-rich blood and clearing carbon dioxide and metabolic waste faster.
+      </p>
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-this-tag">Know This</div>
+    <p class="know-this-body">
+      Acute responses — <span style="color:var(--acc)">heart rate</span>, <span style="color:var(--acc)">breathing rate</span>, <span style="color:var(--acc)">muscle temperature</span> — happen within seconds of starting exercise and return to baseline soon after you stop.
+    </p>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d', { alpha: false });
+
+const slider = document.getElementById('intensity-slider');
+const intensityTag = document.getElementById('intensity-tag');
+const overlayTag = document.getElementById('overlay-tag');
+const hrStat = document.getElementById('hr-stat');
+const coStat = document.getElementById('co-stat');
+const toggleBtns = document.querySelectorAll('.toggle-btn');
+const knowdropText = document.getElementById('knowdrop-text');
+
+let intensity = 0;
+let time = 0;
+let animFrame;
+
+const knowdrops = {
+  cardio: "When you start moving, the heart immediately increases its rate and the volume of blood pumped per beat (stroke volume). Heart rate can climb from around 70 bpm at rest to 180+ bpm during vigorous exercise. Stroke volume rises as the heart contracts more forcefully. Together, these two changes drive cardiac output up — sometimes to five times resting levels — flooding working muscles with oxygen-rich blood and clearing carbon dioxide and metabolic waste faster.",
+  resp: "Breathing rate and depth both increase within seconds of exercise onset. At rest, you might breathe 12–15 times per minute, taking shallow breaths. During vigorous exercise, breathing rate can double or triple, and each breath becomes much deeper as the diaphragm and intercostal muscles work harder. This delivers more oxygen to the lungs and expels carbon dioxide faster. The respiratory system is immediately responsive — no delay, no warm-up needed."
+};
+
+function resize() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  bctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+window.addEventListener('resize', resize);
+resize();
+
+// Particles representing oxygen/blood flow
+const particles = Array.from({ length: 80 }, () => ({
+  x: Math.random(),
+  y: Math.random(),
+  vx: (Math.random() - 0.5) * 0.3,
+  vy: (Math.random() - 0.5) * 0.3,
+  r: Math.random() * 1.5 + 0.8,
+  phase: Math.random() * Math.PI * 2
+}));
+
+function draw() {
+  const w = canvas.width / Math.min(window.devicePixelRatio || 1, 2);
+  const h = canvas.height / Math.min(window.devicePixelRatio || 1, 2);
+  const cx = w / 2;
+  const cy = h / 2;
+
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+
+  time += 0.016;
+  
+  // Base flow speed on intensity
+  const flowSpeed = 0.2 + intensity * 1.5;
+  
+  // Update and draw particles
+  particles.forEach(p => {
+    // Move particles
+    p.x += p.vx * flowSpeed * 0.01;
+    p.y += p.vy * flowSpeed * 0.01;
+    
+    // Wrap around
+    if (p.x < 0) p.x = 1;
+    if (p.x > 1) p.x = 0;
+    if (p.y < 0) p.y = 1;
+    if (p.y > 1) p.y = 0;
+    
+    const px = p.x * w;
+    const py = p.y * h;
+    
+    // Pulsing alpha
+    const alpha = 0.4 + 0.3 * Math.sin(time * 2 + p.phase) * intensity;
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    
+    // Particle glow
+    const grad = ctx.createRadialGradient(px, py, 0, px, py, p.r * 4);
+    grad.addColorStop(0, `rgba(232,106,50,${alpha})`);
+    grad.addColorStop(0.5, `rgba(232,106,50,${alpha * 0.3})`);
+    grad.addColorStop(1, 'rgba(232,106,50,0)');
+    
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(px, py, p.r * 4, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Core particle
+    ctx.fillStyle = `rgba(237,237,232,${0.6 + alpha * 0.4})`;
+    ctx.beginPath();
+    ctx.arc(px, py, p.r, 0, Math.PI * 2);
+    ctx.fill();
+    
+    ctx.restore();
+  });
+
+  // Central heart pulse visualization
+  const heartbeat = Math.sin(time * (3 + intensity * 4)) * 0.5 + 0.5;
+  const baseR = Math.min(w, h) * 0.12;
+  const pulseR = baseR * (1 + heartbeat * intensity * 0.4);
+  
+  // Heart glow rings
+  for (let i = 3; i >= 1; i--) {
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.strokeStyle = `rgba(232,106,50,${(1 - i/4) * intensity * 0.3})`;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, pulseR + i * 15 * intensity, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+  }
+  
+  // Heart core
+  const coreGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, pulseR * 2);
+  coreGrad.addColorStop(0, `rgba(232,106,50,${0.5 + intensity * 0.3})`);
+  coreGrad.addColorStop(0.4, `rgba(232,106,50,${0.2 + intensity * 0.2})`);
+  coreGrad.addColorStop(1, 'rgba(232,106,50,0)');
+  
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.fillStyle = coreGrad;
+  ctx.beginPath();
+  ctx.arc(cx, cy, pulseR * 2, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+  
+  // Solid heart
+  ctx.fillStyle = `rgba(232,106,50,${0.8 + intensity * 0.2})`;
+  ctx.beginPath();
+  ctx.arc(cx, cy, pulseR * 0.6, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Flow lines radiating from center
+  const lineCount = Math.floor(8 + intensity * 16);
+  for (let i = 0; i < lineCount; i++) {
+    const angle = (i / lineCount) * Math.PI * 2 + time * 0.3;
+    const dist = pulseR * 2 + Math.sin(time * 2 + i) * 10;
+    const endDist = dist + 40 + intensity * 60;
+    
+    const sx = cx + Math.cos(angle) * dist;
+    const sy = cy + Math.sin(angle) * dist;
+    const ex = cx + Math.cos(angle) * endDist;
+    const ey = cy + Math.sin(angle) * endDist;
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    const lineGrad = ctx.createLinearGradient(sx, sy, ex, ey);
+    lineGrad.addColorStop(0, `rgba(232,106,50,${0.4 * intensity})`);
+    lineGrad.addColorStop(1, 'rgba(232,106,50,0)');
+    ctx.strokeStyle = lineGrad;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(sx, sy);
+    ctx.lineTo(ex, ey);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // Bloom effect
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+
+  animFrame = requestAnimationFrame(draw);
+}
+
+slider.addEventListener('input', (e) => {
+  const val = parseFloat(e.target.value);
+  slider.style.setProperty('--fill', val + '%');
+  intensity = val / 100;
+  
+  // Update tags
+  let tag, overlay;
+  if (val < 35) {
+    tag = 'Resting';
+    overlay = 'Baseline state';
+  } else if (val < 70) {
+    tag = 'Moderate';
+    overlay = 'Systems ramping';
+  } else {
+    tag = 'Vigorous';
+    overlay = 'Maximum output';
+  }
+  intensityTag.textContent = tag;
+  overlayTag.textContent = overlay;
+  
+  // Update stats
+  const hr = Math.round(72 + intensity * 108); // 72 → 180
+  const co = (5.0 + intensity * 20).toFixed(1); // 5.0 → 25.0 L/min
+  hrStat.textContent = hr;
+  coStat.textContent = co;
+});
+
+toggleBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    toggleBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const system = btn.dataset.system;
+    knowdropText.textContent = knowdrops[system];
+  });
+});
+
+draw();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'acute-responses-to-exercise'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

@@ -1,0 +1,652 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Market-Based Supply Policies — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #F187B6;
+  --ag: rgba(241, 135, 182, .7);
+  --ag1: rgba(241, 135, 182, .12);
+  --ag2: rgba(241, 135, 182, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  line-height: 1.55;
+  max-width: 58ch;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: white;
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 18px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+  pointer-events: none;
+}
+
+.slider-container {
+  margin-bottom: 10px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+}
+
+.intensity-slider {
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+
+.intensity-slider::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  transition: box-shadow 0.15s;
+  cursor: pointer;
+}
+
+.intensity-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.intensity-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  transition: box-shadow 0.15s;
+  cursor: pointer;
+}
+
+.intensity-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  margin-top: 6px;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.stat-value.acc {
+  color: var(--acc);
+}
+
+.stat-value.amb {
+  color: var(--amb);
+}
+
+.toggle-card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toggle-btn:hover {
+  border-color: var(--acc);
+}
+
+.toggle-btn.active {
+  background: rgba(241,135,182,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(241,135,182,.18);
+}
+
+.knowdrop-divider {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.knowdrop-text {
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-this-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.know-this-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+</style>
+
+<h2 class="sr-only">Market-Based Supply Policies Interactive Widget</h2>
+
+<div class="container">
+  <h1>The best supply policies don't add resources — they sharpen <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">incentives</span></h1>
+  
+  <p class="intro">Market-based supply policies boost long-run aggregate supply not by injecting government spending, but by changing the rules of the game so firms and workers face stronger reasons to invest, innovate and compete. Drag the slider to increase policy intensity and watch how incentive pressure reshapes the supply curve.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-label">Incentive Intensity</div>
+      <div class="live-tag" id="liveTag">Minimal Reform</div>
+    </div>
+    <div class="card-hint">Drag to increase tax cuts, deregulation and trade openness</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="supplyCanvas"></canvas>
+      <div class="canvas-overlay" id="canvasOverlay">LRAS shift: +0%</div>
+    </div>
+
+    <div class="slider-container">
+      <div class="slider-label">Policy Intensity</div>
+      <input 
+        type="range" 
+        min="0" 
+        max="100" 
+        value="15" 
+        class="intensity-slider" 
+        id="intensitySlider"
+        style="--fill: 15%"
+      >
+      <div class="tick-labels">
+        <span>Minimal</span>
+        <span>Moderate</span>
+        <span>Aggressive</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Investment Response</div>
+        <div class="stat-value acc" id="investStat">+2.4%</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Productivity Gain</div>
+        <div class="stat-value amb" id="productivityStat">+1.1%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toggle-card">
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" data-mechanism="tax">Tax Reform</button>
+      <button class="toggle-btn" data-mechanism="competition">Competition Policy</button>
+    </div>
+    
+    <div class="knowdrop-divider">
+      <p class="knowdrop-text" id="knowdropText">Lower company tax raises the after-tax return on investment, pulling capital into the economy and lifting the marginal product of labour. Personal income tax cuts strengthen the incentive to supply additional hours or upskill. Both shift LRAS right by raising the economy's productive capacity without requiring government to pick winners or fund specific projects. The key is sharpening the return to effort and enterprise across all sectors simultaneously.</p>
+    </div>
+  </div>
+
+  <div class="know-this">
+    <span class="know-this-tag">Know This</span>
+    <p class="know-this-body"><span style="color:var(--acc)">Market-based supply policies</span> expand long-run aggregate supply by raising <span style="color:var(--acc)">incentives to invest, work and compete</span> rather than directly funding infrastructure or training.</p>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('supplyCanvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const slider = document.getElementById('intensitySlider');
+const liveTag = document.getElementById('liveTag');
+const canvasOverlay = document.getElementById('canvasOverlay');
+const investStat = document.getElementById('investStat');
+const productivityStat = document.getElementById('productivityStat');
+const knowdropText = document.getElementById('knowdropText');
+const toggleBtns = document.querySelectorAll('.toggle-btn');
+
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d', { alpha: false });
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+let intensity = 15;
+let time = 0;
+let raf;
+
+const knowdrops = {
+  tax: "Lower company tax raises the after-tax return on investment, pulling capital into the economy and lifting the marginal product of labour. Personal income tax cuts strengthen the incentive to supply additional hours or upskill. Both shift LRAS right by raising the economy's productive capacity without requiring government to pick winners or fund specific projects. The key is sharpening the return to effort and enterprise across all sectors simultaneously.",
+  competition: "Competition policy and deregulation force firms to minimise costs, adopt best-practice technology and innovate or perish. Trade liberalisation exposes domestic producers to global benchmarks, eliminating the rent-seeking comfort of protected markets. Together these policies raise allocative and productive efficiency, shifting LRAS outward as resources flow to their highest-value uses and X-inefficiency falls. The mechanism is creative destruction rather than subsidy."
+};
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+
+  const padX = w * 0.12;
+  const padY = h * 0.14;
+  const chartW = w - padX * 2;
+  const chartH = h - padY * 2;
+  const originX = padX;
+  const originY = padY + chartH;
+
+  // Grid
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  ctx.lineWidth = 0.8;
+  for (let i = 1; i <= 4; i++) {
+    const x = originX + (chartW / 4) * i;
+    ctx.beginPath();
+    ctx.moveTo(x, padY);
+    ctx.lineTo(x, originY);
+    ctx.stroke();
+  }
+  for (let i = 1; i <= 3; i++) {
+    const y = originY - (chartH / 4) * i;
+    ctx.beginPath();
+    ctx.moveTo(originX, y);
+    ctx.lineTo(originX + chartW, y);
+    ctx.stroke();
+  }
+
+  // Axes
+  ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(originX, padY);
+  ctx.lineTo(originX, originY);
+  ctx.lineTo(originX + chartW, originY);
+  ctx.stroke();
+
+  // Axis labels
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.font = '10px JetBrains Mono';
+  ctx.textAlign = 'center';
+  ctx.fillText('Real GDP', originX + chartW / 2, originY + 22);
+  ctx.save();
+  ctx.translate(originX - 24, padY + chartH / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillText('Price Level', 0, 0);
+  ctx.restore();
+
+  // AD curve (downward sloping)
+  const adPoints = [];
+  for (let i = 0; i <= 50; i++) {
+    const t = i / 50;
+    const x = originX + chartW * 0.2 + chartW * 0.6 * t;
+    const rawY = 1 - Math.pow(t, 0.6);
+    const y = originY - chartH * 0.15 - chartH * 0.7 * rawY;
+    adPoints.push({ x, y });
+  }
+  
+  ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  adPoints.forEach((p, i) => {
+    if (i === 0) ctx.moveTo(p.x, p.y);
+    else ctx.lineTo(p.x, p.y);
+  });
+  ctx.stroke();
+
+  // LRAS (original)
+  const lrasX0 = originX + chartW * 0.48;
+  ctx.strokeStyle = 'rgba(250,199,117,0.5)';
+  ctx.lineWidth = 2.5;
+  ctx.setLineDash([6, 4]);
+  ctx.beginPath();
+  ctx.moveTo(lrasX0, padY);
+  ctx.lineTo(lrasX0, originY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // LRAS (shifted) - shifts right with intensity
+  const shift = (intensity / 100) * chartW * 0.28;
+  const lrasX1 = lrasX0 + shift;
+  
+  const lrasGrad = ctx.createLinearGradient(lrasX1, padY, lrasX1, originY);
+  lrasGrad.addColorStop(0, 'rgba(241,135,182,0.9)');
+  lrasGrad.addColorStop(1, 'rgba(241,135,182,0.5)');
+  
+  ctx.strokeStyle = lrasGrad;
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(lrasX1, padY);
+  ctx.lineTo(lrasX1, originY);
+  ctx.stroke();
+
+  // Glow on new LRAS
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.strokeStyle = 'rgba(241,135,182,0.35)';
+  ctx.lineWidth = 8;
+  ctx.filter = 'blur(6px)';
+  ctx.beginPath();
+  ctx.moveTo(lrasX1, padY);
+  ctx.lineTo(lrasX1, originY);
+  ctx.stroke();
+  ctx.restore();
+
+  // Incentive pressure particles flowing toward new LRAS
+  const numParticles = Math.floor(8 + intensity * 0.15);
+  for (let i = 0; i < numParticles; i++) {
+    const phase = (time * 0.8 + i * 2.3) % 6.28;
+    const lifeT = (Math.sin(phase) + 1) / 2;
+    const startX = originX + chartW * 0.1;
+    const px = startX + (lrasX1 - startX) * lifeT;
+    const wave = Math.sin(time * 1.2 + i * 0.7) * 8;
+    const py = originY - chartH * 0.3 + wave;
+    
+    const radius = 2.5 + lifeT * 1.5;
+    const alpha = lifeT < 0.9 ? 0.7 : 0.7 * (1 - (lifeT - 0.9) / 0.1);
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    const particleGrad = ctx.createRadialGradient(px, py, 0, px, py, radius * 2);
+    particleGrad.addColorStop(0, `rgba(241,135,182,${alpha})`);
+    particleGrad.addColorStop(1, 'rgba(241,135,182,0)');
+    ctx.fillStyle = particleGrad;
+    ctx.beginPath();
+    ctx.arc(px, py, radius * 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // Efficiency arrows pointing at LRAS
+  if (intensity > 25) {
+    const arrowY = originY - chartH * 0.6;
+    const arrowStartX = lrasX1 - 40;
+    const arrowEndX = lrasX1 - 8;
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.strokeStyle = `rgba(241,135,182,${Math.min(intensity / 100, 0.6)})`;
+    ctx.fillStyle = `rgba(241,135,182,${Math.min(intensity / 100, 0.6)})`;
+    ctx.lineWidth = 2;
+    
+    ctx.beginPath();
+    ctx.moveTo(arrowStartX, arrowY);
+    ctx.lineTo(arrowEndX, arrowY);
+    ctx.stroke();
+    
+    ctx.beginPath();
+    ctx.moveTo(arrowEndX, arrowY);
+    ctx.lineTo(arrowEndX - 6, arrowY - 4);
+    ctx.lineTo(arrowEndX - 6, arrowY + 4);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+
+  // Vignette
+  const cx = w / 2;
+  const cy = h / 2;
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+}
+
+function animate() {
+  time += 0.016;
+  draw();
+  raf = requestAnimationFrame(animate);
+}
+
+function updateUI() {
+  slider.style.setProperty('--fill', intensity + '%');
+  
+  let tagText = 'Minimal Reform';
+  if (intensity > 66) tagText = 'Aggressive Reform';
+  else if (intensity > 33) tagText = 'Moderate Reform';
+  liveTag.textContent = tagText;
+  
+  const shiftPct = Math.round((intensity / 100) * 8.5 * 10) / 10;
+  canvasOverlay.textContent = `LRAS shift: +${shiftPct}%`;
+  
+  const invest = 0.8 + (intensity / 100) * 6.5;
+  const prod = 0.4 + (intensity / 100) * 3.2;
+  investStat.textContent = `+${invest.toFixed(1)}%`;
+  productivityStat.textContent = `+${prod.toFixed(1)}%`;
+}
+
+slider.addEventListener('input', (e) => {
+  intensity = parseFloat(e.target.value);
+  updateUI();
+});
+
+toggleBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    toggleBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const mechanism = btn.dataset.mechanism;
+    knowdropText.textContent = knowdrops[mechanism];
+  });
+});
+
+window.addEventListener('resize', resize);
+resize();
+updateUI();
+animate();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'market-based-supply-policies'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

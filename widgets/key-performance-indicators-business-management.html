@@ -1,0 +1,535 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Key Performance Indicators — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #E85D97;
+  --ag: rgba(232, 93, 151, .7);
+  --ag1: rgba(232, 93, 151, .12);
+  --ag2: rgba(232, 93, 151, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 0;
+  line-height: 1.5;
+}
+
+.container { max-width: 720px; margin: 0 auto; }
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 28px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 18px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+  pointer-events: none;
+}
+
+.slider-row {
+  margin-bottom: 10px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.kpi-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  outline: none;
+  margin-bottom: 8px;
+}
+
+.kpi-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.kpi-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.kpi-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.kpi-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.toggle-section {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(232,93,151,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(232,93,151,.18);
+}
+
+.knowdrop {
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-this-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.know-this-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Key Performance Indicators Interactive Widget</h2>
+  
+  <h1>The invisible becomes <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">measurable</span></h1>
+  
+  <p class="intro">Every business is doing something — but is it actually performing? KPIs turn invisible work into measurable indicators that diagnose whether you're winning or just busy. Drag the slider to see how KPIs reveal the real performance story.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Performance Dashboard</span>
+      <span class="live-tag" id="liveTag">3 KPIs tracked</span>
+    </div>
+    <div class="card-hint">Watch how visible metrics change with slider position</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="canvas"></canvas>
+      <div class="canvas-overlay" id="canvasOverlay">Tracking 3 indicators</div>
+    </div>
+
+    <div class="slider-row">
+      <label class="slider-label" for="kpiSlider">Business activity level</label>
+      <input type="range" id="kpiSlider" class="kpi-slider" min="0" max="100" value="40" style="--fill: 40%">
+      <div class="tick-labels">
+        <span>Low</span>
+        <span>Medium</span>
+        <span>High</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <span class="stat-label">Market share</span>
+        <span class="stat-value" style="color:var(--acc)" id="marketShare">22%</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Net profit</span>
+        <span class="stat-value" style="color:var(--amb)" id="netProfit">$148k</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-section">
+      <button class="toggle-btn active" id="btnFinancial">Financial</button>
+      <button class="toggle-btn" id="btnOperational">Operational</button>
+    </div>
+
+    <div class="knowdrop" id="knowdropText">
+      Financial KPIs like <strong>market share</strong> and <strong>net profit</strong> tell you the outcome — whether you're making money and winning customers. These are the numbers investors and boards care about because they directly measure commercial success. But they're lagging indicators: by the time net profit drops, the damage is already done. You can track them monthly or quarterly, but they show you where you've been, not where you're going. Smart businesses pair financial KPIs with operational ones to get the full picture.
+    </div>
+  </div>
+
+  <div class="know-this">
+    <span class="know-this-tag">Know This</span>
+    <div class="know-this-body">
+      <span style="color:var(--acc)">KPIs are measurable indicators of performance</span> — specific numbers like market share, net profit, productivity growth, staff turnover, absenteeism, wastage, and complaints that diagnose whether a business needs to change.
+    </div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const slider = document.getElementById('kpiSlider');
+const liveTag = document.getElementById('liveTag');
+const canvasOverlay = document.getElementById('canvasOverlay');
+const marketShare = document.getElementById('marketShare');
+const netProfit = document.getElementById('netProfit');
+const btnFinancial = document.getElementById('btnFinancial');
+const btnOperational = document.getElementById('btnOperational');
+const knowdropText = document.getElementById('knowdropText');
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d');
+
+let animFrame;
+let time = 0;
+
+const kpis = [
+  { name: 'Market Share', y: 0.25, color: 'rgba(232,93,151,', targetY: 0.25, data: [] },
+  { name: 'Net Profit', y: 0.5, color: 'rgba(250,199,117,', targetY: 0.5, data: [] },
+  { name: 'Productivity', y: 0.75, color: 'rgba(237,237,232,', targetY: 0.75, data: [] }
+];
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function updateKPIs(value) {
+  const normalized = value / 100;
+  kpis[0].targetY = 0.25 + normalized * 0.15;
+  kpis[1].targetY = 0.5 + normalized * 0.2;
+  kpis[2].targetY = 0.75 - normalized * 0.25;
+  
+  const marketVal = Math.round(15 + normalized * 25);
+  const profitVal = Math.round(80 + normalized * 200);
+  marketShare.textContent = marketVal + '%';
+  netProfit.textContent = '$' + profitVal + 'k';
+  
+  const count = Math.min(3, Math.floor(normalized * 4) + 1);
+  liveTag.textContent = count + ' KPI' + (count === 1 ? '' : 's') + ' tracked';
+  canvasOverlay.textContent = 'Tracking ' + count + ' indicator' + (count === 1 ? '' : 's');
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  const padding = w * 0.08;
+  const chartX = padding;
+  const chartW = w - padding * 2;
+  const chartH = h * 0.75;
+  const chartY = h * 0.12;
+  
+  ctx.strokeStyle = 'rgba(38,43,38,0.8)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = chartY + (chartH / 4) * i;
+    ctx.beginPath();
+    ctx.moveTo(chartX, y);
+    ctx.lineTo(chartX + chartW, y);
+    ctx.stroke();
+  }
+  
+  kpis.forEach((kpi, idx) => {
+    kpi.y += (kpi.targetY - kpi.y) * 0.08;
+    const val = 1 - ((kpi.y - 0.15) / 0.7);
+    kpi.data.push({ x: time, y: val });
+    if (kpi.data.length > 80) kpi.data.shift();
+    
+    const visible = kpi.data.length > 1;
+    if (!visible) return;
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    
+    ctx.beginPath();
+    for (let i = 0; i < kpi.data.length; i++) {
+      const pt = kpi.data[i];
+      const x = chartX + (chartW / 80) * i;
+      const y = chartY + chartH - pt.y * chartH;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = kpi.color + '0.7)';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+    
+    ctx.beginPath();
+    for (let i = 0; i < kpi.data.length; i++) {
+      const pt = kpi.data[i];
+      const x = chartX + (chartW / 80) * i;
+      const y = chartY + chartH - pt.y * chartH;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.lineTo(chartX + chartW, chartY + chartH);
+    ctx.lineTo(chartX, chartY + chartH);
+    ctx.closePath();
+    const grad = ctx.createLinearGradient(0, chartY, 0, chartY + chartH);
+    grad.addColorStop(0, kpi.color + '0.25)');
+    grad.addColorStop(1, kpi.color + '0)');
+    ctx.fillStyle = grad;
+    ctx.fill();
+    
+    ctx.restore();
+    
+    const lastPt = kpi.data[kpi.data.length - 1];
+    const dotX = chartX + chartW;
+    const dotY = chartY + chartH - lastPt.y * chartH;
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    const pulse = 0.7 + 0.3 * Math.sin(time * 0.05);
+    ctx.fillStyle = kpi.color + pulse + ')';
+    ctx.beginPath();
+    ctx.arc(dotX, dotY, 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  });
+  
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  const cx = w / 2;
+  const cy = h / 2;
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+  
+  time++;
+  animFrame = requestAnimationFrame(draw);
+}
+
+slider.addEventListener('input', (e) => {
+  const val = e.target.value;
+  e.target.style.setProperty('--fill', val + '%');
+  updateKPIs(parseInt(val));
+});
+
+btnFinancial.addEventListener('click', () => {
+  btnFinancial.classList.add('active');
+  btnOperational.classList.remove('active');
+  knowdropText.innerHTML = "Financial KPIs like <strong>market share</strong> and <strong>net profit</strong> tell you the outcome — whether you're making money and winning customers. These are the numbers investors and boards care about because they directly measure commercial success. But they're lagging indicators: by the time net profit drops, the damage is already done. You can track them monthly or quarterly, but they show you where you've been, not where you're going. Smart businesses pair financial KPIs with operational ones to get the full picture.";
+});
+
+btnOperational.addEventListener('click', () => {
+  btnOperational.classList.add('active');
+  btnFinancial.classList.remove('active');
+  knowdropText.innerHTML = "Operational KPIs like <strong>staff turnover</strong>, <strong>absenteeism</strong>, <strong>wastage</strong>, and <strong>complaints</strong> are leading indicators — they predict what's coming. High absenteeism this month means lower productivity next month. Rising complaints signal customer loss before it shows up in revenue. These metrics tell you what's happening inside the business day-to-day, giving you time to intervene before financial KPIs turn red. They're harder to track because they require internal systems, but they give you control over the future instead of just reporting the past.";
+});
+
+window.addEventListener('resize', resize);
+resize();
+updateKPIs(40);
+draw();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'key-performance-indicators'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

@@ -1,0 +1,673 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Running a historical investigation — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #9A5FD2;
+  --acc-rgb: 154, 95, 210;
+  --ag: rgba(var(--acc-rgb), 0.7);
+  --ag1: rgba(var(--acc-rgb), 0.12);
+  --ag2: rgba(var(--acc-rgb), 0.45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  min-height: 100vh;
+  padding: 40px 16px 0;
+  color: var(--ink);
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,0.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.funnel-slider {
+  width: 100%;
+  height: 20px;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.funnel-slider::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+}
+
+.funnel-slider::-moz-range-track {
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+}
+
+.funnel-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  margin-top: -8px;
+  transition: box-shadow 0.15s;
+}
+
+.funnel-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+
+.funnel-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.funnel-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  margin-bottom: 16px;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.toggle-section {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: #12160F;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toggle-btn.active {
+  background: rgba(var(--acc-rgb), 0.1);
+  border-color: var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(var(--acc-rgb), 0.18);
+}
+
+.knowdrop {
+  font-family: 'Geist', sans-serif;
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--ink);
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-this-tag {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 12px;
+}
+
+.pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 8px var(--acc);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+.know-this-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+}
+
+.know-this-body {
+  font-family: 'Geist', sans-serif;
+  font-size: 17.4px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+
+<h2 class="sr-only">Historical Investigation Process — Interactive Funnel Visualisation</h2>
+
+<div class="container">
+  <h1>A great question is already half the <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">answer</span></h1>
+  
+  <p class="intro">Every historical investigation starts with framing a question sharp enough to guide the search. Drag the slider to narrow the inquiry — watch how a broad curiosity becomes a focused research plan with specific sources.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-label">Investigation Funnel</div>
+      <div class="live-tag" id="stageTag">BROAD QUESTION</div>
+    </div>
+    <div class="card-hint">Drag to refine from question to research plan</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="funnelCanvas"></canvas>
+      <div class="canvas-overlay" id="overlayTag">FORMULATING INITIAL QUESTION</div>
+    </div>
+
+    <input type="range" min="0" max="100" value="0" class="funnel-slider" id="funnelSlider" style="--fill:0%">
+    
+    <div class="tick-labels">
+      <span>Question</span>
+      <span>Scope</span>
+      <span>Sources</span>
+      <span>Plan</span>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Investigation Phase</div>
+        <div class="stat-value" style="color:var(--acc)" id="phaseNum">1</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Sources Identified</div>
+        <div class="stat-value" style="color:var(--amb)" id="sourceCount">0</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" data-phase="framing">Framing</button>
+      <button class="toggle-btn" data-phase="sourcing">Sourcing</button>
+    </div>
+    
+    <div class="knowdrop" id="knowdropText">
+      Framing questions is an active skill: a good historical question is specific enough to guide research but broad enough to allow discovery. It names a particular period, context, or group, and asks about change, causation, significance, or perspective — not just what happened. The question determines which sources matter and which do not, so refining the question early saves weeks of unfocused reading. This is why historians return to the question repeatedly as evidence accumulates.
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-this-tag">
+      <div class="pulse-dot"></div>
+      <div class="know-this-label">Know This</div>
+    </div>
+    <div class="know-this-body">
+      Historians <span style="color:var(--acc)">frame questions</span> to guide inquiry, develop a <span style="color:var(--acc)">coherent research plan</span>, use evidence from a <span style="color:var(--acc)">range of sources</span>, and acknowledge every one of them appropriately.
+    </div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById("funnelCanvas");
+const ctx = canvas.getContext("2d", { alpha: false });
+const slider = document.getElementById("funnelSlider");
+const stageTag = document.getElementById("stageTag");
+const overlayTag = document.getElementById("overlayTag");
+const phaseNum = document.getElementById("phaseNum");
+const sourceCount = document.getElementById("sourceCount");
+const toggleBtns = document.querySelectorAll(".toggle-btn");
+const knowdropText = document.getElementById("knowdropText");
+
+const CSS = getComputedStyle(document.documentElement);
+const ACC = CSS.getPropertyValue("--acc").trim();
+const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+const AMB = CSS.getPropertyValue("--amb").trim();
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement("canvas");
+const bctx = buf.getContext("2d");
+
+let progress = 0;
+let animTime = 0;
+
+const stages = [
+  { name: "BROAD QUESTION", overlay: "FORMULATING INITIAL QUESTION", phase: 1, sources: 0 },
+  { name: "NARROWING SCOPE", overlay: "DEFINING TIME/PLACE/ACTORS", phase: 2, sources: 2 },
+  { name: "IDENTIFYING SOURCES", overlay: "MAPPING PRIMARY & SECONDARY EVIDENCE", phase: 3, sources: 5 },
+  { name: "RESEARCH PLAN", overlay: "COHERENT INVESTIGATION STRUCTURE", phase: 4, sources: 8 }
+];
+
+const knowdropContent = {
+  framing: "Framing questions is an active skill: a good historical question is specific enough to guide research but broad enough to allow discovery. It names a particular period, context, or group, and asks about change, causation, significance, or perspective — not just what happened. The question determines which sources matter and which do not, so refining the question early saves weeks of unfocused reading. This is why historians return to the question repeatedly as evidence accumulates.",
+  sourcing: "Using evidence from a range of sources means consulting both primary documents (letters, records, artefacts from the period) and secondary scholarship (historians interpreting those documents). A single source type cannot triangulate perspective or reveal bias. Acknowledging sources appropriately is not decoration: citation shows the reader exactly where a claim originates, allows verification, and credits the intellectual labour of others. Every assertion in historical writing must be traceable to a named source."
+};
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  draw();
+}
+
+function getStage(p) {
+  if (p < 25) return 0;
+  if (p < 50) return 1;
+  if (p < 75) return 2;
+  return 3;
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  const cx = w / 2;
+  
+  ctx.fillStyle = "#000";
+  ctx.fillRect(0, 0, w, h);
+
+  const stageIdx = getStage(progress);
+  const localP = (progress % 25) / 25;
+
+  // Funnel structure: wide at top (question), narrow at bottom (plan)
+  const topY = h * 0.12;
+  const botY = h * 0.88;
+  const topW = w * 0.72;
+  const botW = w * 0.24;
+
+  // Funnel outline with gradient fill
+  const funnelGrad = ctx.createLinearGradient(cx, topY, cx, botY);
+  funnelGrad.addColorStop(0, "rgba(" + RGB + ", 0.08)");
+  funnelGrad.addColorStop(1, "rgba(" + RGB + ", 0.18)");
+  
+  ctx.fillStyle = funnelGrad;
+  ctx.beginPath();
+  ctx.moveTo(cx - topW/2, topY);
+  ctx.lineTo(cx + topW/2, topY);
+  ctx.lineTo(cx + botW/2, botY);
+  ctx.lineTo(cx - botW/2, botY);
+  ctx.closePath();
+  ctx.fill();
+
+  // Funnel edge lines
+  ctx.strokeStyle = "rgba(" + RGB + ", 0.45)";
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(cx - topW/2, topY);
+  ctx.lineTo(cx - botW/2, botY);
+  ctx.moveTo(cx + topW/2, topY);
+  ctx.lineTo(cx + botW/2, botY);
+  ctx.stroke();
+
+  // Horizontal dividers for stages (4 stages = 3 dividers)
+  const divY = [
+    topY + (botY - topY) * 0.25,
+    topY + (botY - topY) * 0.5,
+    topY + (botY - topY) * 0.75
+  ];
+
+  for (let i = 0; i < 3; i++) {
+    const y = divY[i];
+    const divW = topW - ((topW - botW) * ((i + 1) / 4));
+    ctx.strokeStyle = "rgba(" + RGB + ", 0.25)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(cx - divW/2, y);
+    ctx.lineTo(cx + divW/2, y);
+    ctx.stroke();
+  }
+
+  // Fill level based on progress
+  const fillY = topY + (botY - topY) * (progress / 100);
+  const fillW = topW - ((topW - botW) * (progress / 100));
+  
+  const fillGrad = ctx.createLinearGradient(cx, topY, cx, fillY);
+  fillGrad.addColorStop(0, "rgba(" + RGB + ", 0.32)");
+  fillGrad.addColorStop(1, "rgba(" + RGB + ", 0.12)");
+
+  ctx.fillStyle = fillGrad;
+  ctx.beginPath();
+  ctx.moveTo(cx - topW/2, topY);
+  ctx.lineTo(cx + topW/2, topY);
+  ctx.lineTo(cx + fillW/2, fillY);
+  ctx.lineTo(cx - fillW/2, fillY);
+  ctx.closePath();
+  ctx.fill();
+
+  // Glow at fill line
+  ctx.save();
+  ctx.globalCompositeOperation = "lighter";
+  ctx.strokeStyle = "rgba(" + RGB + ", 0.6)";
+  ctx.lineWidth = 2;
+  ctx.shadowBlur = 12;
+  ctx.shadowColor = "rgba(" + RGB + ", 0.8)";
+  ctx.beginPath();
+  ctx.moveTo(cx - fillW/2, fillY);
+  ctx.lineTo(cx + fillW/2, fillY);
+  ctx.stroke();
+  ctx.restore();
+
+  // Particles flowing down through funnel
+  const particleCount = Math.floor(progress / 100 * 40) + 10;
+  for (let i = 0; i < particleCount; i++) {
+    const seed = i * 0.618033;
+    const py = topY + ((botY - topY) * ((animTime * 0.00015 + seed) % 1));
+    const pct = (py - topY) / (botY - topY);
+    const pw = topW - ((topW - botW) * pct);
+    const offsetX = (Math.sin(animTime * 0.001 + i) * 0.4 - 0.2) * pw;
+    const px = cx + offsetX;
+    
+    const opacity = Math.sin((animTime * 0.001 + seed) * Math.PI) * 0.3 + 0.2;
+    
+    ctx.fillStyle = "rgba(" + RGB + ", " + opacity + ")";
+    ctx.globalCompositeOperation = "lighter";
+    ctx.beginPath();
+    ctx.arc(px, py, 1.2, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // Stage labels inside funnel (left side)
+  const stageLabels = ["Question", "Scope", "Sources", "Plan"];
+  const labelY = [
+    topY + (botY - topY) * 0.125,
+    topY + (botY - topY) * 0.375,
+    topY + (botY - topY) * 0.625,
+    topY + (botY - topY) * 0.875
+  ];
+
+  ctx.globalCompositeOperation = "source-over";
+  ctx.font = "11px 'JetBrains Mono', monospace";
+  ctx.textAlign = "left";
+  
+  for (let i = 0; i < 4; i++) {
+    const y = labelY[i];
+    const labelW = topW - ((topW - botW) * ((i * 0.25) + 0.125));
+    const x = cx - labelW/2 + 12;
+    
+    if (i <= stageIdx) {
+      ctx.fillStyle = ACC;
+      ctx.shadowBlur = 6;
+      ctx.shadowColor = "rgba(" + RGB + ", 0.5)";
+    } else {
+      ctx.fillStyle = "rgba(140, 147, 137, 0.4)";
+      ctx.shadowBlur = 0;
+    }
+    
+    ctx.fillText(stageLabels[i].toUpperCase(), x, y);
+    ctx.shadowBlur = 0;
+  }
+
+  // Source nodes (right side) appearing as we progress
+  const sourcePositions = [
+    { stage: 1, y: 0.25, label: "Primary" },
+    { stage: 1, y: 0.35, label: "Secondary" },
+    { stage: 2, y: 0.45, label: "Archive" },
+    { stage: 2, y: 0.55, label: "Journal" },
+    { stage: 2, y: 0.65, label: "Memoir" },
+    { stage: 3, y: 0.72, label: "Official" },
+    { stage: 3, y: 0.78, label: "Letter" },
+    { stage: 3, y: 0.84, label: "Treaty" }
+  ];
+
+  ctx.textAlign = "right";
+  ctx.font = "10px 'JetBrains Mono', monospace";
+
+  sourcePositions.forEach((src, idx) => {
+    if (idx < stages[stageIdx].sources) {
+      const y = topY + (botY - topY) * src.y;
+      const nodeW = topW - ((topW - botW) * src.y);
+      const x = cx + nodeW/2 - 12;
+      
+      // Node dot
+      ctx.fillStyle = AMB;
+      ctx.shadowBlur = 8;
+      ctx.shadowColor = "rgba(250, 199, 117, 0.6)";
+      ctx.beginPath();
+      ctx.arc(x + 8, y, 3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      
+      // Label
+      ctx.fillStyle = AMB;
+      ctx.fillText(src.label.toUpperCase(), x, y + 1);
+    }
+  });
+
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = "lighter";
+  ctx.globalAlpha = 0.38;
+  ctx.filter = "blur(7px)";
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, h/2, h * 0.28, cx, h/2, w * 0.72);
+  vig.addColorStop(0, "rgba(0,0,0,0)");
+  vig.addColorStop(1, "rgba(0,0,0,0.52)");
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+}
+
+function updateUI() {
+  const stageIdx = getStage(progress);
+  const stage = stages[stageIdx];
+  
+  stageTag.textContent = stage.name;
+  overlayTag.textContent = stage.overlay;
+  phaseNum.textContent = stage.phase;
+  sourceCount.textContent = stage.sources;
+}
+
+slider.addEventListener("input", (e) => {
+  const val = parseFloat(e.target.value);
+  slider.style.setProperty("--fill", val + "%");
+  progress = val;
+  updateUI();
+  draw();
+});
+
+toggleBtns.forEach(btn => {
+  btn.addEventListener("click", () => {
+    toggleBtns.forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    const phase = btn.dataset.phase;
+    knowdropText.textContent = knowdropContent[phase];
+  });
+});
+
+function animate(time) {
+  animTime = time;
+  draw();
+  requestAnimationFrame(animate);
+}
+
+window.addEventListener("resize", resize);
+resize();
+requestAnimationFrame(animate);
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'running-a-historical-investigation'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

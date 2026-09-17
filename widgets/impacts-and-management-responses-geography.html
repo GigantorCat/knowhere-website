@@ -1,0 +1,643 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Impacts and Management Responses — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #7870C0;
+  --ag: rgba(120, 112, 192, .7);
+  --ag1: rgba(120, 112, 192, .12);
+  --ag2: rgba(120, 112, 192, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  min-height: 100vh;
+  padding: 40px 16px 0;
+  color: var(--ink);
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  line-height: 1.55;
+  max-width: 58ch;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: white;
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+  letter-spacing: 0.05em;
+}
+
+.slider-row {
+  margin-bottom: 12px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.lc-slider {
+  width: 100%;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+}
+
+.lc-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.lc-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.lc-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.lc-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 10px;
+  margin-top: 6px;
+}
+
+.tick-labels span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.stat:first-child .stat-value {
+  color: var(--acc);
+}
+
+.stat:last-child .stat-value {
+  color: var(--amb);
+}
+
+.toggle-section {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(120,112,192,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(120,112,192,.18);
+}
+
+.knowdrop-divider {
+  height: 1px;
+  background: var(--line);
+  margin-bottom: 16px;
+}
+
+.knowdrop {
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-top: 18px;
+  margin-bottom: 0;
+}
+
+.know-this-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.know-this-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+
+<h2 class="sr-only">Land Cover Change: Impacts and Management Responses Interactive</h2>
+
+<div class="container">
+  <h1>Every response creates <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">new impacts</span></h1>
+  
+  <p class="intro">Management strategies don't just solve problems — they trigger cascading effects across environmental, social, and economic systems. Strong answers evaluate whether the cure was worse than the disease. Drag the slider to see how a single response type ripples through all three impact domains.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Response Cascade Model</span>
+      <span class="live-tag" id="responseTag">Prevention Selected</span>
+    </div>
+    <div class="card-hint">Drag to shift from prevention → mitigation → restoration</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="cascadeCanvas"></canvas>
+      <div class="canvas-overlay" id="canvasOverlay">Prevention: blocks initial change</div>
+    </div>
+
+    <div class="slider-row">
+      <label class="slider-label" for="responseSlider">Response Type</label>
+      <input type="range" id="responseSlider" class="lc-slider" min="0" max="100" value="0" style="--fill: 0%">
+      <div class="tick-labels">
+        <span>Prevention</span>
+        <span>Mitigation</span>
+        <span>Restoration</span>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <span class="stat-label">Active Impacts</span>
+        <span class="stat-value" id="impactCount">3</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Effectiveness</span>
+        <span class="stat-value" id="effectiveness">High</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" data-scale="local">Local</button>
+      <button class="toggle-btn" data-scale="national">National</button>
+      <button class="toggle-btn" data-scale="international">International</button>
+    </div>
+    
+    <div class="knowdrop-divider"></div>
+    
+    <p class="knowdrop" id="scaleText">Local responses (community reforestation, urban greening, catchment restoration) are highly adaptive and directly accountable to affected populations, but they struggle with coordination across boundaries and often lack funding. A single council area protecting riparian vegetation can't control upstream deforestation. Effectiveness depends on whether the scale matches the process — local erosion control works; local climate mitigation doesn't. Always ask: does this scale match the system being changed?</p>
+  </div>
+
+  <div class="know-this">
+    <span class="know-this-tag">Know This</span>
+    <p class="know-this-body">Every <span style="color:var(--acc)">management response</span> generates its own set of <span style="color:var(--acc)">environmental, social, and economic impacts</span> — evaluation isn't optional, it's the geographical insight that separates description from analysis.</p>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('cascadeCanvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d', { alpha: false });
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+const slider = document.getElementById('responseSlider');
+const responseTag = document.getElementById('responseTag');
+const canvasOverlay = document.getElementById('canvasOverlay');
+const impactCount = document.getElementById('impactCount');
+const effectiveness = document.getElementById('effectiveness');
+
+const toggleBtns = document.querySelectorAll('.toggle-btn');
+const scaleText = document.getElementById('scaleText');
+
+const scaleData = {
+  local: "Local responses (community reforestation, urban greening, catchment restoration) are highly adaptive and directly accountable to affected populations, but they struggle with coordination across boundaries and often lack funding. A single council area protecting riparian vegetation can't control upstream deforestation. Effectiveness depends on whether the scale matches the process — local erosion control works; local climate mitigation doesn't. Always ask: does this scale match the system being changed?",
+  national: "National strategies (protected area networks, carbon pricing, agricultural subsidies) have legislative power and funding, but they're politically vulnerable and often too rigid for local contexts. Australia's carbon farming initiative incentivises land-use change, but its effectiveness varies wildly by region — what works in temperate woodlands fails in arid rangelands. National policy can ignore Indigenous land management that's worked for millennia. Evaluate whether the strategy actually reaches the ground, or just looks good in parliament.",
+  international: "International agreements (Paris, Ramsar, REDD+) set frameworks but depend entirely on national implementation — and enforcement is weak. REDD+ pays developing nations to protect forests, but it's created perverse incentives where countries claim credit for not clearing land they never planned to touch. The scale matches planetary systems (climate, biodiversity), but the response mechanisms are fragmented. Always evaluate: did the treaty change behaviour, or just create paperwork?"
+};
+
+let responseType = 0; // 0 = prevention, 0.5 = mitigation, 1 = restoration
+let time = 0;
+let lastTime = performance.now();
+
+// Nodes for cascade (environment, social, economic)
+const nodes = [
+  { x: 0.3, y: 0.35, label: 'ENV', r: 0, pulsePhase: 0 },
+  { x: 0.5, y: 0.65, label: 'SOC', r: 0, pulsePhase: Math.PI * 0.66 },
+  { x: 0.7, y: 0.35, label: 'ECO', r: 0, pulsePhase: Math.PI * 1.33 }
+];
+
+// Response source (top centre)
+const source = { x: 0.5, y: 0.15 };
+
+// Particles flowing from source to nodes
+let particles = [];
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function updateSlider() {
+  const val = parseFloat(slider.value);
+  slider.style.setProperty('--fill', val + '%');
+  
+  responseType = val / 100;
+  
+  if (val < 33) {
+    responseTag.textContent = 'Prevention Selected';
+    canvasOverlay.textContent = 'Prevention: blocks initial change';
+    impactCount.textContent = '3';
+    effectiveness.textContent = 'High';
+  } else if (val < 67) {
+    responseTag.textContent = 'Mitigation Active';
+    canvasOverlay.textContent = 'Mitigation: reduces ongoing damage';
+    impactCount.textContent = '5';
+    effectiveness.textContent = 'Medium';
+  } else {
+    responseTag.textContent = 'Restoration Mode';
+    canvasOverlay.textContent = 'Restoration: reverses past degradation';
+    impactCount.textContent = '7';
+    effectiveness.textContent = 'Variable';
+  }
+}
+
+slider.addEventListener('input', updateSlider);
+
+toggleBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    toggleBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const scale = btn.dataset.scale;
+    scaleText.textContent = scaleData[scale];
+  });
+});
+
+function spawnParticle() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  const targetNode = nodes[Math.floor(Math.random() * nodes.length)];
+  
+  particles.push({
+    x: source.x * w,
+    y: source.y * h,
+    tx: targetNode.x * w,
+    ty: targetNode.y * h,
+    progress: 0,
+    speed: 0.008 + Math.random() * 0.012,
+    size: 2 + Math.random() * 2
+  });
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  const cx = w / 2;
+  const cy = h / 2;
+  
+  // Clear
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  // Update node pulse based on response type
+  nodes.forEach(n => {
+    const targetR = 18 + responseType * 18;
+    n.r += (targetR - n.r) * 0.08;
+  });
+  
+  // Spawn particles
+  if (Math.random() < 0.15) spawnParticle();
+  
+  // Update and draw particles
+  particles = particles.filter(p => {
+    p.progress += p.speed;
+    if (p.progress >= 1) return false;
+    
+    const t = p.progress;
+    const px = p.x + (p.tx - p.x) * t;
+    const py = p.y + (p.ty - p.y) * t;
+    
+    const alpha = t < 0.1 ? t / 0.1 : (t > 0.9 ? (1 - t) / 0.1 : 1);
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.fillStyle = `rgba(120,112,192, ${alpha * 0.7})`;
+    ctx.beginPath();
+    ctx.arc(px, py, p.size, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+    
+    return true;
+  });
+  
+  // Draw beams from source to nodes
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  nodes.forEach(n => {
+    const grad = ctx.createLinearGradient(source.x * w, source.y * h, n.x * w, n.y * h);
+    grad.addColorStop(0, 'rgba(120,112,192, 0.12)');
+    grad.addColorStop(1, 'rgba(120,112,192, 0.3)');
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(source.x * w, source.y * h);
+    ctx.lineTo(n.x * w, n.y * h);
+    ctx.stroke();
+  });
+  ctx.restore();
+  
+  // Draw source
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  const sourceGlow = ctx.createRadialGradient(source.x * w, source.y * h, 0, source.x * w, source.y * h, 28);
+  sourceGlow.addColorStop(0, 'rgba(120,112,192, 0.6)');
+  sourceGlow.addColorStop(0.5, 'rgba(120,112,192, 0.2)');
+  sourceGlow.addColorStop(1, 'rgba(120,112,192, 0)');
+  ctx.fillStyle = sourceGlow;
+  ctx.beginPath();
+  ctx.arc(source.x * w, source.y * h, 28, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+  
+  ctx.fillStyle = '#7870C0';
+  ctx.beginPath();
+  ctx.arc(source.x * w, source.y * h, 8, 0, Math.PI * 2);
+  ctx.fill();
+  
+  // Draw nodes
+  nodes.forEach(n => {
+    const pulse = 0.85 + 0.15 * Math.sin(time * 1.2 + n.pulsePhase);
+    const r = n.r * pulse;
+    
+    // Glow
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    const glow = ctx.createRadialGradient(n.x * w, n.y * h, 0, n.x * w, n.y * h, r * 2.2);
+    glow.addColorStop(0, 'rgba(120,112,192, 0.5)');
+    glow.addColorStop(0.5, 'rgba(120,112,192, 0.2)');
+    glow.addColorStop(1, 'rgba(120,112,192, 0)');
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(n.x * w, n.y * h, r * 2.2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+    
+    // Core
+    ctx.fillStyle = '#0B0D0C';
+    ctx.beginPath();
+    ctx.arc(n.x * w, n.y * h, r, 0, Math.PI * 2);
+    ctx.fill();
+    
+    ctx.strokeStyle = '#7870C0';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
+    // Label
+    ctx.fillStyle = '#7870C0';
+    ctx.font = '500 11px "JetBrains Mono"';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(n.label, n.x * w, n.y * h);
+  });
+  
+  // Connecting lines between nodes (cascade)
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.strokeStyle = 'rgba(120,112,192, 0.25)';
+  ctx.lineWidth = 1.2;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(nodes[0].x * w, nodes[0].y * h);
+  ctx.lineTo(nodes[1].x * w, nodes[1].y * h);
+  ctx.lineTo(nodes[2].x * w, nodes[2].y * h);
+  ctx.lineTo(nodes[0].x * w, nodes[0].y * h);
+  ctx.stroke();
+  ctx.restore();
+  
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+}
+
+function animate(now) {
+  const dt = Math.min((now - lastTime) / 1000, 0.1);
+  time += dt;
+  lastTime = now;
+  
+  draw();
+  requestAnimationFrame(animate);
+}
+
+resize();
+window.addEventListener('resize', resize);
+updateSlider();
+requestAnimationFrame(animate);
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'impacts-and-management-responses'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

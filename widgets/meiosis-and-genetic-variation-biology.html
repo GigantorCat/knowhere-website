@@ -1,0 +1,652 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Meiosis and Genetic Variation — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #5AADD4;
+  --acc-rgb: 90, 173, 212;
+  --ag: rgba(var(--acc-rgb), .7);
+  --ag1: rgba(var(--acc-rgb), .12);
+  --ag2: rgba(var(--acc-rgb), .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 0;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 28px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-container {
+  margin-bottom: 10px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+}
+
+.meiosis-slider {
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  appearance: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.meiosis-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  transition: box-shadow .15s;
+  cursor: pointer;
+}
+
+.meiosis-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.meiosis-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  transition: box-shadow .15s;
+  cursor: pointer;
+}
+
+.meiosis-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  padding: 0 2px;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.stat-value.acc { color: var(--acc); }
+.stat-value.amb { color: var(--amb); }
+
+.toggle-card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(var(--acc-rgb), .1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(var(--acc-rgb), .18);
+}
+
+.knowdrop-divider {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.knowdrop-text {
+  font-family: 'Geist', sans-serif;
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-this-tag {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 12px;
+}
+
+.know-this-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 8px var(--acc);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+.know-this-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+}
+
+.know-this-body {
+  font-family: 'Geist', sans-serif;
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+
+<h2 class="sr-only">Meiosis and Genetic Variation Interactive Widget</h2>
+
+<div class="container">
+  <h1>Your genome isn't your parents' <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">average</span></h1>
+  
+  <p class="intro">Meiosis doesn't just halve chromosome count — it shuffles the deck twice before dealing. Independent assortment alone creates over 8 million possible combinations from one parent's chromosomes, and that's before crossing over or fertilisation. Drag the slider to watch chromosomes independently assort into gametes.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-label">Independent Assortment</div>
+      <div class="live-tag" id="live-tag">23 PAIRS → RANDOM MIX</div>
+    </div>
+    <div class="card-hint">Each pair has two choices — one from mum, one from dad</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="meiosis-canvas"></canvas>
+      <div class="canvas-overlay" id="canvas-overlay">8,388,608 POSSIBLE COMBINATIONS</div>
+    </div>
+
+    <div class="slider-container">
+      <div class="slider-label">Chromosome pairs</div>
+      <input 
+        type="range" 
+        min="1" 
+        max="23" 
+        value="5" 
+        class="meiosis-slider" 
+        id="pair-slider"
+        style="--fill: 17.4%"
+      >
+      <div class="tick-labels">
+        <span>1 pair</span>
+        <span>23 pairs</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Possible gametes</div>
+        <div class="stat-value acc" id="combinations">32</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">After fertilisation</div>
+        <div class="stat-value amb" id="offspring">1,024</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toggle-card">
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" id="btn-crossing">Crossing over</button>
+      <button class="toggle-btn" id="btn-errors">Non-disjunction</button>
+    </div>
+    
+    <div class="knowdrop-divider">
+      <p class="knowdrop-text" id="knowdrop-text">During prophase I, homologous chromosomes pair up and physically swap DNA segments at chiasmata — the crossover points. A single chromosome might contain your dad's eye-colour gene but your mum's blood-type gene, even though both came from the same original chromosome. This recombination happens before the chromosomes even line up for independent assortment, so every chromosome entering a gamete is already a unique mosaic. Crossing over typically occurs multiple times per chromosome pair, which is why the variation from this mechanism alone is effectively infinite — siblings inheriting the "same" chromosome from a parent are actually getting different recombinant versions every time.</p>
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-this-tag">
+      <div class="know-this-dot"></div>
+      <div class="know-this-label">Know This</div>
+    </div>
+    <p class="know-this-body">Meiosis generates variation through <span style="color:var(--acc)">independent assortment</span> (2<sup>23</sup> combinations from random chromosome sorting), <span style="color:var(--acc)">crossing over</span> (segment swaps during prophase I), and <span style="color:var(--acc)">random fertilisation</span> (any sperm meeting any egg).</p>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('meiosis-canvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const slider = document.getElementById('pair-slider');
+const liveTag = document.getElementById('live-tag');
+const canvasOverlay = document.getElementById('canvas-overlay');
+const combinationsEl = document.getElementById('combinations');
+const offspringEl = document.getElementById('offspring');
+const btnCrossing = document.getElementById('btn-crossing');
+const btnErrors = document.getElementById('btn-errors');
+const knowdropText = document.getElementById('knowdrop-text');
+
+const CSS = getComputedStyle(document.documentElement);
+const ACC = CSS.getPropertyValue('--acc').trim();
+const RGB = CSS.getPropertyValue('--acc-rgb').trim();
+const AMB = CSS.getPropertyValue('--amb').trim();
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d');
+
+let pairs = 5;
+let chromosomes = [];
+let time = 0;
+
+class Chromosome {
+  constructor(pairIndex, isMum) {
+    this.pairIndex = pairIndex;
+    this.isMum = isMum;
+    this.x = 0;
+    this.y = 0;
+    this.targetX = 0;
+    this.targetY = 0;
+    this.wobble = Math.random() * Math.PI * 2;
+    this.speed = 0.6 + Math.random() * 0.4;
+  }
+  
+  update(dt) {
+    this.x += (this.targetX - this.x) * 0.08;
+    this.y += (this.targetY - this.y) * 0.08;
+  }
+  
+  draw(ctx, w, h, t) {
+    const wobbleX = Math.sin(t * this.speed + this.wobble) * 1.5;
+    const wobbleY = Math.cos(t * this.speed * 0.7 + this.wobble) * 1.2;
+    
+    ctx.save();
+    ctx.translate(this.x + wobbleX, this.y + wobbleY);
+    
+    // Chromosome shape
+    const length = 28;
+    const width = 7;
+    
+    // Glow
+    ctx.shadowBlur = 12;
+    ctx.shadowColor = this.isMum ? ACC : AMB;
+    
+    // Body
+    ctx.fillStyle = this.isMum ? ACC : AMB;
+    ctx.beginPath();
+    ctx.moveTo(-width/2, -length/2);
+    ctx.lineTo(width/2, -length/2);
+    ctx.arc(width/2, 0, length/2, -Math.PI/2, Math.PI/2);
+    ctx.lineTo(-width/2, length/2);
+    ctx.arc(-width/2, 0, length/2, Math.PI/2, -Math.PI/2);
+    ctx.closePath();
+    ctx.fill();
+    
+    // Centromere
+    ctx.fillStyle = '#000';
+    ctx.fillRect(-width/2 - 1, -2, width + 2, 4);
+    
+    ctx.restore();
+  }
+}
+
+function initChromosomes() {
+  chromosomes = [];
+  for (let i = 0; i < pairs; i++) {
+    chromosomes.push(new Chromosome(i, true));
+    chromosomes.push(new Chromosome(i, false));
+  }
+}
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function positionChromosomes(w, h) {
+  const centerX = w / 2;
+  const topY = h * 0.3;
+  const bottomY = h * 0.7;
+  const spacing = Math.min(50, w / (pairs + 1));
+  const startX = centerX - (pairs - 1) * spacing / 2;
+  
+  chromosomes.forEach((chr, idx) => {
+    const pairIdx = chr.pairIndex;
+    const x = startX + pairIdx * spacing;
+    
+    // Alternate positioning for mum/dad
+    if (chr.isMum) {
+      chr.targetY = topY - 18;
+    } else {
+      chr.targetY = topY + 18;
+    }
+    chr.targetX = x;
+  });
+  
+  // Create gametes (bottom)
+  const gameteCount = 4;
+  const gameteSpacing = w / (gameteCount + 1);
+  
+  // For each gamete, randomly select one from each pair
+  for (let g = 0; g < gameteCount; g++) {
+    const gameteX = gameteSpacing * (g + 1);
+    const selections = [];
+    
+    for (let p = 0; p < pairs; p++) {
+      const choice = Math.random() < 0.5 ? 'mum' : 'dad';
+      selections.push(choice);
+    }
+    
+    // Position selected chromosomes
+    let offset = 0;
+    for (let p = 0; p < pairs; p++) {
+      const chr = chromosomes.find(c => c.pairIndex === p && (
+        (selections[p] === 'mum' && c.isMum) || 
+        (selections[p] === 'dad' && !c.isMum)
+      ));
+      if (chr && g === 0) { // Only affect first gamete for visual clarity
+        chr.targetY = bottomY;
+        chr.targetX = gameteX + offset;
+        offset += 12;
+      }
+    }
+  }
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  
+  time += 0.016;
+  
+  // Clear
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  // Update and draw chromosomes
+  chromosomes.forEach(chr => {
+    chr.update(0.016);
+    chr.draw(ctx, w, h, time);
+  });
+  
+  // Division line
+  ctx.strokeStyle = 'rgba(' + RGB + ', 0.2)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(0, h * 0.5);
+  ctx.lineTo(w, h * 0.5);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  
+  // Labels
+  ctx.font = '10px "JetBrains Mono"';
+  ctx.fillStyle = 'rgba(' + RGB + ', 0.5)';
+  ctx.fillText('MEIOSIS I', 12, h * 0.3 - 40);
+  ctx.fillText('MEIOSIS II', 12, h * 0.7 - 40);
+  
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const vig = ctx.createRadialGradient(w/2, h/2, h * 0.28, w/2, h/2, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+  
+  requestAnimationFrame(draw);
+}
+
+function updateStats() {
+  const combinations = Math.pow(2, pairs);
+  const offspring = combinations * combinations;
+  
+  combinationsEl.textContent = combinations.toLocaleString();
+  offspringEl.textContent = offspring.toLocaleString();
+  
+  canvasOverlay.textContent = combinations.toLocaleString() + ' POSSIBLE COMBINATIONS';
+  liveTag.textContent = pairs + ' PAIRS → ' + combinations.toLocaleString() + ' GAMETES';
+}
+
+slider.addEventListener('input', (e) => {
+  pairs = parseInt(e.target.value);
+  const fillPercent = ((pairs - 1) / 22) * 100;
+  slider.style.setProperty('--fill', fillPercent + '%');
+  
+  initChromosomes();
+  const rect = canvas.getBoundingClientRect();
+  const w = rect.width;
+  const h = rect.height;
+  positionChromosomes(w, h);
+  updateStats();
+});
+
+btnCrossing.addEventListener('click', () => {
+  btnCrossing.classList.add('active');
+  btnErrors.classList.remove('active');
+  knowdropText.textContent = "During prophase I, homologous chromosomes pair up and physically swap DNA segments at chiasmata — the crossover points. A single chromosome might contain your dad's eye-colour gene but your mum's blood-type gene, even though both came from the same original chromosome. This recombination happens before the chromosomes even line up for independent assortment, so every chromosome entering a gamete is already a unique mosaic. Crossing over typically occurs multiple times per chromosome pair, which is why the variation from this mechanism alone is effectively infinite — siblings inheriting the \"same\" chromosome from a parent are actually getting different recombinant versions every time.";
+});
+
+btnErrors.addEventListener('click', () => {
+  btnErrors.classList.add('active');
+  btnCrossing.classList.remove('active');
+  knowdropText.textContent = "Non-disjunction is when homologous chromosomes (in meiosis I) or sister chromatids (in meiosis II) fail to separate properly, leaving one gamete with an extra chromosome and another missing one entirely. If that gamete is fertilised, the zygote ends up with three copies of a chromosome (trisomy) or only one (monosomy) instead of the normal pair. Down syndrome results from trisomy 21 — three copies of chromosome 21 — usually caused by non-disjunction during egg formation, with risk increasing sharply after maternal age 35. Most autosomal trisomies are lethal, but trisomy 21, 18, and 13 can result in live births with developmental effects. Turner syndrome (45,X) and Klinefelter syndrome (47,XXY) are sex chromosome aneuploidies that demonstrate non-disjunction can affect any chromosome pair.";
+});
+
+window.addEventListener('resize', () => {
+  resize();
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  positionChromosomes(w, h);
+});
+
+resize();
+initChromosomes();
+const w = canvas.width / dpr;
+const h = canvas.height / dpr;
+positionChromosomes(w, h);
+updateStats();
+requestAnimationFrame(draw);
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'meiosis-and-genetic-variation'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

@@ -1,0 +1,650 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Inverse Normal Problems and Finding Unknown Values — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #3EB556;
+  --ag: rgba(62, 181, 86, .7);
+  --ag1: rgba(62, 181, 86, .12);
+  --ag2: rgba(62, 181, 86, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  min-height: 100vh;
+  padding: 40px 16px 72px;
+  color: var(--ink);
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(30px, 8vw, 52px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  margin-bottom: 16px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 28px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-row {
+  margin-bottom: 10px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+}
+
+.inv-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  outline: none;
+  margin-bottom: 8px;
+}
+
+.inv-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.inv-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.inv-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.inv-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+  margin-top: 14px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.stat-value.acc {
+  color: var(--acc);
+}
+
+.stat-value.amb {
+  color: var(--amb);
+}
+
+.toggle-card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: #12160F;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(62, 181, 86,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(62, 181, 86,.18);
+}
+
+.knowdrop-divider {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.knowdrop-text {
+  font-family: 'Geist', sans-serif;
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 34px;
+}
+
+.know-this-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 8px;
+}
+
+.know-this-body {
+  font-family: 'Geist', sans-serif;
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.footer {
+  margin-top: 34px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 10px var(--acc);
+  animation: invPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes invPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: .35;
+    transform: scale(.6);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+</style>
+
+<h2 class="sr-only">Inverse Normal Distribution Interactive — Finding Values from Probabilities</h2>
+
+<div class="container">
+  <h1>Normal Problems Run <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">Backwards</span></h1>
+  
+  <p class="intro">Most normal distribution questions give you a value and ask for its probability. But inverse problems flip the script — you're given a probability and must find the value that produces it. Adjust the target percentile below to see how the inverse normal function locates the exact z-score needed.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-label">Inverse Normal Transform</div>
+      <div class="live-tag" id="liveTag">50TH PERCENTILE</div>
+    </div>
+    <div class="card-hint">Slider sets target cumulative probability</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="canvas"></canvas>
+      <div class="canvas-overlay" id="canvasTag">Z = 0.00 → P = 50.0%</div>
+    </div>
+
+    <div class="slider-row">
+      <div class="slider-label">Target Percentile</div>
+      <input type="range" min="1" max="99" value="50" class="inv-slider" id="slider">
+      <div class="tick-labels">
+        <span>1%</span>
+        <span>25%</span>
+        <span>50%</span>
+        <span>75%</span>
+        <span>99%</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Z-SCORE</div>
+        <div class="stat-value acc" id="zVal">0.00</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">CUMULATIVE P</div>
+        <div class="stat-value amb" id="pVal">50.0%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toggle-card">
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" id="btn1">Percentiles</button>
+      <button class="toggle-btn" id="btn2">Symmetry</button>
+    </div>
+    
+    <div class="knowdrop-divider">
+      <p class="knowdrop-text" id="knowdropText">Percentile problems are inverse normal problems where the nth percentile is the value below which n percent of observations fall. When a question asks "find the 75th percentile," you're solving Φ⁻¹(0.75) to get the z-score, then transforming back using x = μ + zσ. The inverse normal function reverses the standard cumulative distribution, taking a probability as input and returning the corresponding z-score. This is essential for quality control specifications, clinical cutoffs, and standardised test scoring where thresholds must be set based on desired population percentages.</p>
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-this-tag">Know This</div>
+    <div class="know-this-body">The <span style="color:var(--acc)">inverse normal function Φ⁻¹</span> takes a probability and outputs the z-score that produces that cumulative probability, allowing you to find raw data values from <span style="color:var(--acc)">percentile targets</span> using x = μ + zσ.</div>
+  </div>
+
+  <div class="footer">
+    <div class="pulse-dot"></div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const slider = document.getElementById('slider');
+const liveTag = document.getElementById('liveTag');
+const canvasTag = document.getElementById('canvasTag');
+const zVal = document.getElementById('zVal');
+const pVal = document.getElementById('pVal');
+const btn1 = document.getElementById('btn1');
+const btn2 = document.getElementById('btn2');
+const knowdropText = document.getElementById('knowdropText');
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d', { alpha: false });
+
+let targetP = 0.5;
+
+// Inverse normal approximation (Beasley-Springer-Moro)
+function invNorm(p) {
+  if (p <= 0) return -6;
+  if (p >= 1) return 6;
+  
+  const a = [2.50662823884, -18.61500062529, 41.39119773534, -25.44106049637];
+  const b = [-8.47351093090, 23.08336743743, -21.06224101826, 3.13082909833];
+  const c = [0.3374754822726147, 0.9761690190917186, 0.1607979714918209,
+             0.0276438810333863, 0.0038405729373609, 0.0003951896511919,
+             0.0000321767881768, 0.0000002888167364, 0.0000003960315187];
+  
+  const y = p - 0.5;
+  
+  if (Math.abs(y) < 0.42) {
+    const r = y * y;
+    let x = y * (((a[3] * r + a[2]) * r + a[1]) * r + a[0]);
+    x /= ((((b[3] * r + b[2]) * r + b[1]) * r + b[0]) * r + 1);
+    return x;
+  }
+  
+  let r = p;
+  if (y > 0) r = 1 - p;
+  r = Math.log(-Math.log(r));
+  
+  let x = c[0];
+  for (let i = 1; i < c.length; i++) {
+    x += c[i] * Math.pow(r, i);
+  }
+  
+  if (y < 0) x = -x;
+  return x;
+}
+
+// Standard normal PDF
+function normPDF(x) {
+  return Math.exp(-0.5 * x * x) / Math.sqrt(2 * Math.PI);
+}
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  const cx = w / 2;
+  const cy = h * 0.68;
+  const scaleX = w / 8;
+  const scaleY = h * 1.2;
+  
+  const z = invNorm(targetP);
+  
+  // Grid
+  ctx.save();
+  ctx.strokeStyle = 'rgba(62, 181, 86,0.08)';
+  ctx.lineWidth = 0.8;
+  for (let i = -3; i <= 3; i++) {
+    const x = cx + i * scaleX;
+    ctx.beginPath();
+    ctx.moveTo(x, cy - h * 0.5);
+    ctx.lineTo(x, cy + h * 0.1);
+    ctx.stroke();
+  }
+  ctx.restore();
+  
+  // Curve
+  ctx.save();
+  ctx.beginPath();
+  for (let px = 0; px <= w; px += 1) {
+    const xVal = (px - cx) / scaleX;
+    const yVal = normPDF(xVal);
+    const py = cy - yVal * scaleY;
+    if (px === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
+  }
+  ctx.strokeStyle = 'rgba(250,199,117,0.7)';
+  ctx.lineWidth = 2.2;
+  ctx.stroke();
+  ctx.restore();
+  
+  // Shaded area
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.beginPath();
+  const zPx = cx + z * scaleX;
+  for (let px = 0; px <= zPx; px += 1) {
+    const xVal = (px - cx) / scaleX;
+    const yVal = normPDF(xVal);
+    const py = cy - yVal * scaleY;
+    if (px === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
+  }
+  ctx.lineTo(zPx, cy);
+  ctx.lineTo(0, cy);
+  ctx.closePath();
+  const grad = ctx.createLinearGradient(0, cy - h * 0.3, 0, cy);
+  grad.addColorStop(0, 'rgba(62, 181, 86,0.3)');
+  grad.addColorStop(1, 'rgba(62, 181, 86,0.08)');
+  ctx.fillStyle = grad;
+  ctx.fill();
+  ctx.restore();
+  
+  // Vertical line at z
+  ctx.save();
+  ctx.strokeStyle = 'rgba(62, 181, 86,0.85)';
+  ctx.lineWidth = 2.5;
+  ctx.setLineDash([6, 4]);
+  ctx.beginPath();
+  ctx.moveTo(zPx, cy - h * 0.5);
+  ctx.lineTo(zPx, cy);
+  ctx.stroke();
+  ctx.restore();
+  
+  // Marker at z
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  const glow = ctx.createRadialGradient(zPx, cy, 0, zPx, cy, 18);
+  glow.addColorStop(0, 'rgba(62, 181, 86,0.7)');
+  glow.addColorStop(1, 'rgba(62, 181, 86,0)');
+  ctx.fillStyle = glow;
+  ctx.beginPath();
+  ctx.arc(zPx, cy, 18, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+  
+  ctx.save();
+  ctx.fillStyle = '#3EB556';
+  ctx.beginPath();
+  ctx.arc(zPx, cy, 5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#000';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  ctx.restore();
+  
+  // Flowing dots along curve
+  const time = Date.now() / 1000;
+  for (let i = 0; i < 8; i++) {
+    const phase = (time * 0.5 + i * 0.3) % 1;
+    const xVal = -4 + phase * 8;
+    if (xVal > z) continue;
+    const yVal = normPDF(xVal);
+    const px = cx + xVal * scaleX;
+    const py = cy - yVal * scaleY;
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.fillStyle = 'rgba(62, 181, 86,0.6)';
+    ctx.beginPath();
+    ctx.arc(px, py, 2.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+  
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+  
+  requestAnimationFrame(draw);
+}
+
+function update() {
+  targetP = slider.value / 100;
+  const z = invNorm(targetP);
+  
+  const fill = slider.value;
+  slider.style.setProperty('--fill', fill + '%');
+  
+  liveTag.textContent = slider.value + 'TH PERCENTILE';
+  canvasTag.textContent = `Z = ${z.toFixed(2)} → P = ${(targetP * 100).toFixed(1)}%`;
+  zVal.textContent = z.toFixed(2);
+  pVal.textContent = (targetP * 100).toFixed(1) + '%';
+}
+
+slider.addEventListener('input', update);
+
+btn1.addEventListener('click', () => {
+  btn1.classList.add('active');
+  btn2.classList.remove('active');
+  knowdropText.textContent = "Percentile problems are inverse normal problems where the nth percentile is the value below which n percent of observations fall. When a question asks \"find the 75th percentile,\" you're solving Φ⁻¹(0.75) to get the z-score, then transforming back using x = μ + zσ. The inverse normal function reverses the standard cumulative distribution, taking a probability as input and returning the corresponding z-score. This is essential for quality control specifications, clinical cutoffs, and standardised test scoring where thresholds must be set based on desired population percentages.";
+});
+
+btn2.addEventListener('click', () => {
+  btn2.classList.add('active');
+  btn1.classList.remove('active');
+  knowdropText.textContent = "The symmetry property Φ(−z) = 1 − Φ(z) is powerful for inverse problems involving tail probabilities. If asked to find the value above which 20% of data falls, you're looking for the 80th percentile since the upper 20% starts where the lower 80% ends. This means solving Φ⁻¹(0.80) rather than trying to work with right-tail probabilities directly. The symmetry also means z-scores come in matching pairs: the 25th percentile has z ≈ −0.674 while the 75th percentile has z ≈ +0.674, equidistant from the mean in opposite directions.";
+});
+
+window.addEventListener('resize', resize);
+resize();
+update();
+requestAnimationFrame(draw);
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'inverse-normal-problems-and-finding-unknown-values'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

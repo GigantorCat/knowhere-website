@@ -1,0 +1,660 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Epidemiological Studies and Their Value — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #5AADD4;
+  --acc-rgb: 90, 173, 212;
+  --ag: rgba(var(--acc-rgb), .7);
+  --ag1: rgba(var(--acc-rgb), .12);
+  --ag2: rgba(var(--acc-rgb), .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  min-height: 100vh;
+  padding: 40px 16px 0;
+  color: var(--ink);
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: white;
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-container {
+  margin-bottom: 14px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+}
+
+.epi-slider {
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  appearance: none;
+  outline: none;
+  margin-bottom: 8px;
+}
+
+.epi-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.epi-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.epi-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.epi-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  padding: 0 2px;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.stat-value.acc { color: var(--acc); }
+.stat-value.amb { color: var(--amb); }
+
+.toggle-section {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(var(--acc-rgb), .1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(var(--acc-rgb), .18);
+}
+
+.knowdrop {
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-tag {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 10px;
+}
+
+.know-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 8px var(--acc);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+.know-tag-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+}
+
+.know-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Epidemiological Studies Interactive Widget</h2>
+  
+  <h1>We proved smoking kills without a single <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">experiment</span></h1>
+  
+  <p class="intro">Epidemiology studies whole populations to find disease patterns that experiments can't ethically test. Four study types give different strengths of evidence — understanding what each can prove is the key to judging real research. Drag the slider to explore how study strength changes what we can claim.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-label">Study Design Strength</div>
+      <div class="live-tag" id="study-tag">Descriptive</div>
+    </div>
+    <div class="card-hint">Weaker designs describe patterns; stronger designs test causation</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="epi-canvas"></canvas>
+      <div class="canvas-overlay" id="overlay-tag">Population patterns only</div>
+    </div>
+
+    <div class="slider-container">
+      <div class="slider-label">Study Type</div>
+      <input type="range" min="0" max="100" value="0" class="epi-slider" id="study-slider">
+      <div class="tick-labels">
+        <span>Descriptive</span>
+        <span>Case-Control</span>
+        <span>Cohort</span>
+        <span>Intervention</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Evidence Strength</div>
+        <div class="stat-value acc" id="strength-val">Weak</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Can Prove Cause?</div>
+        <div class="stat-value amb" id="cause-val">No</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-section">
+      <button class="toggle-btn active" data-mode="incidence">Incidence</button>
+      <button class="toggle-btn" data-mode="prevalence">Prevalence</button>
+    </div>
+    
+    <div class="knowdrop" id="knowdrop-text">
+      Incidence measures new cases appearing over time — the rate at which disease strikes. It's what changes when you intervene: smoking bans drop lung cancer incidence years later. Prevalence is a snapshot — total existing cases right now. High prevalence might mean high incidence or just people living longer with the disease. When folate fortification began in 1998, neural tube defect incidence fell immediately, but prevalence took years to drop as older cases aged out of the data.
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-tag">
+      <div class="know-dot"></div>
+      <div class="know-tag-text">Know This</div>
+    </div>
+    <div class="know-body">
+      <span style="color:var(--acc)">Correlation never proves causation</span>, but epidemiology builds the case through multiple studies — when <span style="color:var(--acc)">cohort strength</span> meets dose-response and biological plausibility, we act on the pattern without waiting for <span style="color:var(--acc)">intervention trials</span>.
+    </div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('epi-canvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const slider = document.getElementById('study-slider');
+const studyTag = document.getElementById('study-tag');
+const overlayTag = document.getElementById('overlay-tag');
+const strengthVal = document.getElementById('strength-val');
+const causeVal = document.getElementById('cause-val');
+const toggleBtns = document.querySelectorAll('.toggle-btn');
+const knowdropText = document.getElementById('knowdrop-text');
+
+const CSS = getComputedStyle(document.documentElement);
+const ACC = CSS.getPropertyValue('--acc').trim();
+const RGB = CSS.getPropertyValue('--acc-rgb').trim();
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d', { alpha: false });
+
+let w, h, cx, cy;
+let animFrame;
+let time = 0;
+
+// Study line colors
+const studyColors = [
+  { rgb: '90, 173, 212', name: 'Descriptive' },     // cyan (accent)
+  { rgb: '250, 199, 117', name: 'Case-Control' },   // amber
+  { rgb: '138, 201, 155', name: 'Cohort' },         // green
+  { rgb: '235, 107, 139', name: 'Intervention' }    // pink
+];
+
+const studies = [];
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  
+  w = canvas.width / dpr;
+  h = canvas.height / dpr;
+  cx = w / 2;
+  cy = h / 2;
+  
+  initStudies();
+}
+
+function initStudies() {
+  studies.length = 0;
+  
+  // Create 4 study types, each with multiple lines
+  for (let studyType = 0; studyType < 4; studyType++) {
+    const linesPerStudy = 8;
+    const color = studyColors[studyType];
+    
+    for (let i = 0; i < linesPerStudy; i++) {
+      const startX = (w * 0.1) + (Math.random() * w * 0.1);
+      const startY = (h * 0.2) + (Math.random() * h * 0.6);
+      const endX = (w * 0.8) + (Math.random() * w * 0.1);
+      const endY = cy + ((Math.random() - 0.5) * h * 0.3);
+      
+      const points = [];
+      const segments = 60;
+      for (let j = 0; j <= segments; j++) {
+        const t = j / segments;
+        const x = startX + (endX - startX) * t;
+        const baseY = startY + (endY - startY) * t;
+        const wave = Math.sin(t * Math.PI * 2 + i) * 15;
+        points.push({ x, y: baseY + wave });
+      }
+      
+      studies.push({
+        type: studyType,
+        color,
+        points,
+        opacity: 0,
+        targetOpacity: 0
+      });
+    }
+  }
+}
+
+function updateSlider() {
+  const val = parseFloat(slider.value);
+  slider.style.setProperty('--fill', val + '%');
+  
+  let stage = 0;
+  let tagText = 'Descriptive';
+  let overlayText = 'Population patterns only';
+  let strength = 'Weak';
+  let canCause = 'No';
+  
+  if (val < 25) {
+    stage = 0;
+    tagText = 'Descriptive';
+    overlayText = 'Population patterns only';
+    strength = 'Weak';
+    canCause = 'No';
+  } else if (val < 50) {
+    stage = 1;
+    tagText = 'Case-Control';
+    overlayText = 'Looks backward at exposure';
+    strength = 'Moderate';
+    canCause = 'No';
+  } else if (val < 75) {
+    stage = 2;
+    tagText = 'Cohort';
+    overlayText = 'Follows groups forward';
+    strength = 'Strong';
+    canCause = 'Maybe';
+  } else {
+    stage = 3;
+    tagText = 'Intervention';
+    overlayText = 'Controls the variable';
+    strength = 'Very Strong';
+    canCause = 'Yes';
+  }
+  
+  studyTag.textContent = tagText;
+  overlayTag.textContent = overlayText;
+  strengthVal.textContent = strength;
+  causeVal.textContent = canCause;
+  
+  // Update target opacity for each study based on slider position
+  for (let study of studies) {
+    if (study.type <= stage) {
+      study.targetOpacity = 0.7;
+    } else {
+      study.targetOpacity = 0;
+    }
+  }
+  
+  return { val, stage };
+}
+
+function draw() {
+  const { val, stage } = updateSlider();
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  // Smooth opacity transitions
+  for (let study of studies) {
+    const diff = study.targetOpacity - study.opacity;
+    study.opacity += diff * 0.08;
+  }
+  
+  // Draw study lines
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  
+  for (let study of studies) {
+    if (study.opacity < 0.01) continue;
+    
+    // Draw glow
+    ctx.strokeStyle = `rgba(${study.color.rgb}, ${study.opacity * 0.3})`;
+    ctx.lineWidth = 4;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.shadowBlur = 12;
+    ctx.shadowColor = `rgba(${study.color.rgb}, ${study.opacity * 0.6})`;
+    
+    ctx.beginPath();
+    ctx.moveTo(study.points[0].x, study.points[0].y);
+    for (let i = 1; i < study.points.length; i++) {
+      ctx.lineTo(study.points[i].x, study.points[i].y);
+    }
+    ctx.stroke();
+    
+    // Draw core line
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = `rgba(${study.color.rgb}, ${study.opacity})`;
+    ctx.lineWidth = 1.5;
+    
+    ctx.beginPath();
+    ctx.moveTo(study.points[0].x, study.points[0].y);
+    for (let i = 1; i < study.points.length; i++) {
+      ctx.lineTo(study.points[i].x, study.points[i].y);
+    }
+    ctx.stroke();
+  }
+  
+  ctx.restore();
+  
+  // Central convergence point - grows stronger with more studies
+  const activeStudies = studies.filter(s => s.opacity > 0.1).length;
+  if (activeStudies > 0) {
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    
+    const density = activeStudies / studies.length;
+    const glowSize = 40 + (density * 60);
+    const glowAlpha = 0.3 + (density * 0.4);
+    
+    // Mix colors based on active study types
+    let r = 0, g = 0, b = 0, count = 0;
+    for (let i = 0; i <= stage; i++) {
+      const parts = studyColors[i].rgb.split(',').map(x => parseInt(x.trim()));
+      r += parts[0];
+      g += parts[1];
+      b += parts[2];
+      count++;
+    }
+    r = Math.round(r / count);
+    g = Math.round(g / count);
+    b = Math.round(b / count);
+    
+    const centerGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, glowSize);
+    centerGrad.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${glowAlpha})`);
+    centerGrad.addColorStop(0.6, `rgba(${r}, ${g}, ${b}, ${glowAlpha * 0.3})`);
+    centerGrad.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0)`);
+    
+    ctx.fillStyle = centerGrad;
+    ctx.beginPath();
+    ctx.arc(cx, cy, glowSize, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+  
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.45;
+  ctx.filter = 'blur(8px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+  
+  time += 0.016;
+  animFrame = requestAnimationFrame(draw);
+}
+
+slider.addEventListener('input', () => {
+  updateSlider();
+});
+
+toggleBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    toggleBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    
+    const mode = btn.dataset.mode;
+    
+    if (mode === 'incidence') {
+      knowdropText.textContent = "Incidence measures new cases appearing over time — the rate at which disease strikes. It's what changes when you intervene: smoking bans drop lung cancer incidence years later. Prevalence is a snapshot — total existing cases right now. High prevalence might mean high incidence or just people living longer with the disease. When folate fortification began in 1998, neural tube defect incidence fell immediately, but prevalence took years to drop as older cases aged out of the data.";
+    } else {
+      knowdropText.textContent = "Prevalence counts everyone with the disease at one moment — it's the sum of old and new cases minus recoveries and deaths. A chronic disease with no cure shows high prevalence even if incidence is dropping, because people live with it for decades. That's why Australia's diabetes prevalence keeps rising while new diagnosis rates plateau — better treatment extends lives. Prevalence matters for healthcare planning (how many beds?), but only incidence tells you if prevention works.";
+    }
+  });
+});
+
+window.addEventListener('resize', () => {
+  cancelAnimationFrame(animFrame);
+  resize();
+  draw();
+});
+
+resize();
+updateSlider();
+draw();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'epidemiological-studies-and-their-value'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

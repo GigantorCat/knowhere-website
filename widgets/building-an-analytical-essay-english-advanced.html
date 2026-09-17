@@ -1,0 +1,426 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Building an Analytical Essay — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #BB6FE2;
+  --ag: rgba(187, 111, 226, .7);
+  --ag1: rgba(187, 111, 226, .12);
+  --ag2: rgba(187, 111, 226, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+body{
+  background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C 55%);
+  font-family:'Geist',sans-serif;
+  min-height:100vh;
+  padding:40px 16px 0;
+  color:var(--ink);
+}
+
+.container{max-width:720px;margin:0 auto}
+
+h1{
+  font-size:clamp(26px,6.5vw,44px);
+  font-weight:800;
+  letter-spacing:-0.03em;
+  line-height:1.05;
+  margin-bottom:14px;
+}
+
+.intro{
+  font-size:15.5px;
+  color:var(--ink-dim);
+  max-width:58ch;
+  line-height:1.55;
+  margin-bottom:28px;
+}
+
+.card{
+  background:linear-gradient(180deg,#12160F,#0d100b);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:16px;
+  box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);
+  margin-bottom:20px;
+}
+
+.card-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:6px;
+}
+
+.card-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  text-transform:uppercase;
+  color:var(--ink);
+}
+
+.live-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  text-transform:uppercase;
+  color:var(--acc);
+}
+
+.card-hint{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  color:var(--ink-dim);
+  margin-bottom:16px;
+}
+
+.passage-wrapper{
+  background:#000;
+  border-radius:12px;
+  padding:24px 20px;
+  margin-bottom:16px;
+  box-shadow:inset 0 0 0 1px var(--ag1);
+}
+
+.passage{
+  font-family:Georgia,serif;
+  font-size:16.5px;
+  line-height:1.75;
+  color:var(--ink);
+  margin-bottom:20px;
+}
+
+.passage span{
+  transition:all 0.3s ease;
+  display:inline;
+}
+
+.passage span.highlight{
+  background:var(--acc);
+  color:#000;
+  padding:2px 4px;
+  border-radius:3px;
+  text-shadow:0 0 12px var(--ag);
+  font-weight:500;
+}
+
+.passage span.dim{
+  opacity:0.2;
+}
+
+.annotation{
+  font-family:'Geist',sans-serif;
+  font-size:14px;
+  line-height:1.6;
+  color:var(--ink-dim);
+  padding:14px 16px;
+  background:rgba(187,111,226,.08);
+  border-left:3px solid var(--acc);
+  border-radius:0 8px 8px 0;
+  transition:opacity 0.3s ease;
+}
+
+.lens-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-bottom:16px;
+}
+
+.lens-btn{
+  font-family:'JetBrains Mono',monospace;
+  font-size:12.5px;
+  padding:11px 8px;
+  background:#12160F;
+  border:1px solid var(--line);
+  border-radius:11px;
+  color:var(--ink-dim);
+  cursor:pointer;
+  transition:all 0.2s ease;
+  text-align:center;
+}
+
+.lens-btn.active{
+  background:rgba(187,111,226,.1);
+  border:1px solid var(--acc);
+  color:var(--acc);
+  box-shadow:0 0 22px rgba(187,111,226,.18);
+}
+
+.lens-btn:hover:not(.active){
+  background:#1a1f1a;
+  border-color:var(--ag1);
+}
+
+.stat-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+  padding-top:16px;
+  border-top:1px solid var(--line);
+}
+
+.stat{
+  text-align:center;
+}
+
+.stat-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;
+  text-transform:uppercase;
+  color:var(--ink-dim);
+  margin-bottom:6px;
+  letter-spacing:0.05em;
+}
+
+.stat-value{
+  font-family:'JetBrains Mono',monospace;
+  font-size:24px;
+  font-weight:500;
+}
+
+.stat:first-child .stat-value{color:var(--acc)}
+.stat:last-child .stat-value{color:var(--amb)}
+
+.toggle-card{
+  background:linear-gradient(180deg,#12160F,#0d100b);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:16px;
+  box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);
+  margin-bottom:20px;
+}
+
+.toggle-btns{
+  display:flex;
+  gap:10px;
+  margin-bottom:16px;
+}
+
+.toggle-btn{
+  flex:1;
+  font-family:'JetBrains Mono',monospace;
+  font-size:14.5px;
+  padding:12px;
+  background:#12160F;
+  border:1px solid var(--line);
+  border-radius:11px;
+  color:var(--ink-dim);
+  cursor:pointer;
+  transition:all 0.2s ease;
+}
+
+.toggle-btn.active{
+  background:rgba(187,111,226,.1);
+  border:1px solid var(--acc);
+  color:var(--acc);
+  box-shadow:0 0 22px rgba(187,111,226,.18);
+}
+
+.toggle-divider{
+  border-top:1px solid var(--line);
+  margin-bottom:16px;
+}
+
+.knowdrop{
+  font-family:'Geist',sans-serif;
+  font-size:14.5px;
+  line-height:1.65;
+  color:var(--ink);
+}
+
+.know-this{
+  border-left:3px solid var(--acc);
+  padding:16px 18px;
+  background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));
+  border-radius:0 12px 12px 0;
+  margin-bottom:0;
+}
+
+.know-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  text-transform:uppercase;
+  letter-spacing:0.15em;
+  color:var(--acc);
+  margin-bottom:10px;
+  display:block;
+}
+
+.know-body{
+  font-family:'Geist',sans-serif;
+  font-size:17.4px;
+  line-height:1.55;
+  color:var(--ink);
+}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+
+@media(max-width:480px){
+  .lens-grid{grid-template-columns:1fr;gap:8px}
+  .toggle-btns{flex-direction:column;gap:8px}
+}
+</style>
+
+<h2 class="sr-only">Interactive text analysis widget showing how evidence strengthens contention in analytical essays</h2>
+
+<div class="container">
+  <h1>The essay isn't about evidence — it's about <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">position</span></h1>
+  
+  <p class="intro">Analysis without a contention is just a list of observations. The strongest essays take a stance and sustain it — every paragraph, every quote, driving one coherent argument. Select a lens below to see how different structural elements strengthen the same position.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Analytical Framework</span>
+      <span class="live-tag" id="liveTag">Contention</span>
+    </div>
+    <p class="card-hint">Select each lens to see how it operates in the passage</p>
+    
+    <div class="lens-grid">
+      <button class="lens-btn active" data-lens="contention">Contention</button>
+      <button class="lens-btn" data-lens="evidence">Evidence</button>
+      <button class="lens-btn" data-lens="integration">Integration</button>
+    </div>
+
+    <div class="passage-wrapper">
+      <div class="passage" id="passage">
+        <span data-contention>The play's central tragedy emerges not from Macbeth's ambition, but from his inability to reconcile aspiration with moral consequence.</span> <span data-evidence>When Lady Macbeth reads his letter, she immediately identifies his "nature" as "too full o' the milk of human kindness"</span> — <span data-integration>a tension that drives the entire psychological unraveling that follows.</span> <span data-evidence>The dagger soliloquy reveals this fracture explicitly: "Is this a dagger which I see before me?"</span> <span data-integration>Here, the hallucination functions not as supernatural intervention but as the external manifestation of internal collapse,</span> <span data-contention>reinforcing that Macbeth's destruction stems from cognitive dissonance rather than mere ambition.</span>
+      </div>
+
+      <div class="annotation" id="annotation">
+        Your <strong>contention</strong> is the through-line — the arguable position you hold across the entire essay. It's not a summary; it's a stance. Everything else serves this.
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Active Lens</div>
+        <div class="stat-value" id="lensName">Contention</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Instances</div>
+        <div class="stat-value" id="instanceCount">2</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toggle-card">
+    <div class="toggle-btns">
+      <button class="toggle-btn active" data-mode="weak">Weak Structure</button>
+      <button class="toggle-btn" data-mode="strong">Strong Structure</button>
+    </div>
+    <div class="toggle-divider"></div>
+    <p class="knowdrop" id="knowdropText">A weak essay presents observations in isolation: "Macbeth hallucinates a dagger. Lady Macbeth calls him kind. He feels guilty." Each point is accurate but disconnected. There's no through-line, no position being argued — just a sequence of true statements that don't build momentum. The reader finishes without understanding what you think the text means or why it matters.</p>
+  </div>
+
+  <div class="know-this">
+    <span class="know-tag">Know This</span>
+    <p class="know-body">An analytical essay is an <span style="color:var(--acc)">argument sustained across evidence</span>, not a collection of insights. Your contention shapes every paragraph; your evidence proves it; your integration shows <span style="color:var(--acc)">why that evidence matters</span> to the position you're defending.</p>
+  </div>
+</div>
+
+<script>
+const lenses = {
+  contention: {
+    tag: 'Contention',
+    annotation: 'Your <strong>contention</strong> is the through-line — the arguable position you hold across the entire essay. It\'s not a summary; it\'s a stance. Everything else serves this.',
+    selector: '[data-contention]'
+  },
+  evidence: {
+    tag: 'Evidence',
+    annotation: '<strong>Evidence</strong> means the specific textual moments you cite — quotes, techniques, structural choices. But evidence alone proves nothing; it only gains meaning when integrated into your argument.',
+    selector: '[data-evidence]'
+  },
+  integration: {
+    tag: 'Integration',
+    annotation: '<strong>Integration</strong> is the connective tissue — where you explain how this evidence supports your contention. It\'s the "so what?" that transforms observation into argument.',
+    selector: '[data-integration]'
+  }
+};
+
+const modes = {
+  weak: 'A weak essay presents observations in isolation: "Macbeth hallucinates a dagger. Lady Macbeth calls him kind. He feels guilty." Each point is accurate but disconnected. There\'s no through-line, no position being argued — just a sequence of true statements that don\'t build momentum. The reader finishes without understanding what you think the text means or why it matters.',
+  strong: 'A strong essay establishes a clear contention up front, then uses every paragraph to advance it. Evidence isn\'t decorative — it\'s weight on the scales of your argument. Integration shows the logical chain: "This quote reveals X, which proves my contention that Y." The essay doesn\'t meander; it builds. By the conclusion, the reader has traveled a deliberate path and arrived at your position because you\'ve proven it, step by step.'
+};
+
+let currentLens = 'contention';
+let currentMode = 'weak';
+
+const passage = document.getElementById('passage');
+const liveTag = document.getElementById('liveTag');
+const annotation = document.getElementById('annotation');
+const lensName = document.getElementById('lensName');
+const instanceCount = document.getElementById('instanceCount');
+const knowdropText = document.getElementById('knowdropText');
+
+function updateLens(lens) {
+  currentLens = lens;
+  const config = lenses[lens];
+  
+  // Update UI
+  liveTag.textContent = config.tag;
+  annotation.innerHTML = config.annotation;
+  lensName.textContent = config.tag;
+  
+  // Reset all spans
+  const allSpans = passage.querySelectorAll('span');
+  allSpans.forEach(span => {
+    span.classList.remove('highlight', 'dim');
+  });
+  
+  // Highlight current lens
+  const targetSpans = passage.querySelectorAll(config.selector);
+  targetSpans.forEach(span => span.classList.add('highlight'));
+  
+  // Dim others
+  allSpans.forEach(span => {
+    if (!span.classList.contains('highlight')) {
+      span.classList.add('dim');
+    }
+  });
+  
+  // Update count
+  instanceCount.textContent = targetSpans.length;
+  
+  // Update button states
+  document.querySelectorAll('.lens-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lens === lens);
+  });
+}
+
+function updateMode(mode) {
+  currentMode = mode;
+  knowdropText.textContent = modes[mode];
+  
+  document.querySelectorAll('.toggle-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.mode === mode);
+  });
+}
+
+document.querySelectorAll('.lens-btn').forEach(btn => {
+  btn.addEventListener('click', () => updateLens(btn.dataset.lens));
+});
+
+document.querySelectorAll('.toggle-btn').forEach(btn => {
+  btn.addEventListener('click', () => updateMode(btn.dataset.mode));
+});
+
+// Initialize
+updateLens('contention');
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'building-an-analytical-essay'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

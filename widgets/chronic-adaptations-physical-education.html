@@ -1,0 +1,655 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Chronic Adaptations — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #E86A32;
+  --ag: rgba(232, 106, 50, .7);
+  --ag1: rgba(232, 106, 50, .12);
+  --ag2: rgba(232, 106, 50, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 0;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 28px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-section {
+  margin-top: 16px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+}
+
+.adapt-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  outline: none;
+  margin-bottom: 8px;
+}
+
+.adapt-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.adapt-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.adapt-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.adapt-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  margin-top: 16px;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.stat:first-child .stat-value {
+  color: var(--acc);
+}
+
+.stat:last-child .stat-value {
+  color: var(--amb);
+}
+
+.toggle-section {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: #12160F;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(232,106,50,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(232,106,50,.18);
+}
+
+.knowdrop {
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-this-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 10px;
+}
+
+.know-this-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Interactive widget showing how chronic adaptations rebuild the body through consistent training</h2>
+  
+  <h1>Your body doesn't just <em>recover</em> from training — it <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">rebuilds</span></h1>
+  
+  <p class="intro">Train consistently and the body doesn't simply heal. It upgrades itself, restructuring tissues to meet the demands you place on it. Aerobic training remodels your heart and grows new capillaries; resistance work thickens muscle fibres. Drag the slider to see how weeks of training transform the body at a cellular level.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-label">Training Timeline</div>
+      <div class="live-tag" id="liveWeeks">Week 0</div>
+    </div>
+    <div class="card-hint">Chronic adaptations emerge over weeks, not days</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="adaptCanvas"></canvas>
+      <div class="canvas-overlay" id="canvasTag">Untrained baseline</div>
+    </div>
+
+    <div class="slider-section">
+      <div class="slider-label">Weeks of consistent training</div>
+      <input type="range" min="0" max="12" value="0" class="adapt-slider" id="weeksSlider">
+      <div class="tick-labels">
+        <span>0</span>
+        <span>3</span>
+        <span>6</span>
+        <span>9</span>
+        <span>12</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Mitochondria density</div>
+        <div class="stat-value" id="mitoStat">100%</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Muscle fibre size</div>
+        <div class="stat-value" id="muscleStat">100%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-section">
+      <button class="toggle-btn active" id="btnAerobic">Aerobic</button>
+      <button class="toggle-btn" id="btnResistance">Resistance</button>
+    </div>
+    
+    <div class="knowdrop" id="knowdropText">
+      Aerobic training triggers profound cardiovascular and cellular changes. The heart muscle thickens and chambers enlarge, increasing stroke volume so each beat pumps more blood. New capillaries sprout around muscle fibres, shortening the distance oxygen must diffuse. Inside muscle cells, mitochondria multiply and grow larger, boosting the capacity to generate ATP aerobically. These adaptations explain why trained athletes have lower resting heart rates and can sustain higher workloads — their bodies have literally rebuilt themselves to deliver and use oxygen more efficiently.
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-this-tag">Know This</div>
+    <div class="know-this-body">
+      <span style="color:var(--acc)">Adaptations are specific to the training done</span> — aerobic work grows mitochondria and capillaries, resistance training thickens muscle fibres, and your body rebuilds itself to match the stress you consistently apply.
+    </div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('adaptCanvas');
+const ctx = canvas.getContext('2d');
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d');
+
+const slider = document.getElementById('weeksSlider');
+const liveWeeks = document.getElementById('liveWeeks');
+const canvasTag = document.getElementById('canvasTag');
+const mitoStat = document.getElementById('mitoStat');
+const muscleStat = document.getElementById('muscleStat');
+
+const btnAerobic = document.getElementById('btnAerobic');
+const btnResistance = document.getElementById('btnResistance');
+const knowdropText = document.getElementById('knowdropText');
+
+let weeks = 0;
+let mode = 'aerobic';
+let time = 0;
+
+const aerobicText = "Aerobic training triggers profound cardiovascular and cellular changes. The heart muscle thickens and chambers enlarge, increasing stroke volume so each beat pumps more blood. New capillaries sprout around muscle fibres, shortening the distance oxygen must diffuse. Inside muscle cells, mitochondria multiply and grow larger, boosting the capacity to generate ATP aerobically. These adaptations explain why trained athletes have lower resting heart rates and can sustain higher workloads — their bodies have literally rebuilt themselves to deliver and use oxygen more efficiently.";
+
+const resistanceText = "Resistance training causes muscle fibres to thicken through hypertrophy — the enlargement of individual muscle cells, not an increase in their number. This occurs when microtrauma from heavy loads triggers satellite cells to donate nuclei to muscle fibres, enabling greater protein synthesis. Cross-sectional area of fibres increases, and myofibrils pack more densely, generating more force. Connective tissues also strengthen, and the nervous system learns to recruit motor units more efficiently. These adaptations are why you can lift heavier weights after weeks of training, even before visible size changes appear.";
+
+btnAerobic.addEventListener('click', () => {
+  mode = 'aerobic';
+  btnAerobic.classList.add('active');
+  btnResistance.classList.remove('active');
+  knowdropText.textContent = aerobicText;
+  draw();
+});
+
+btnResistance.addEventListener('click', () => {
+  mode = 'resistance';
+  btnResistance.classList.add('active');
+  btnAerobic.classList.remove('active');
+  knowdropText.textContent = resistanceText;
+  draw();
+});
+
+slider.addEventListener('input', (e) => {
+  weeks = parseFloat(e.target.value);
+  const pct = (weeks / 12) * 100;
+  slider.style.setProperty('--fill', pct + '%');
+  liveWeeks.textContent = `Week ${weeks}`;
+  
+  if (weeks === 0) {
+    canvasTag.textContent = 'Untrained baseline';
+  } else if (weeks <= 3) {
+    canvasTag.textContent = 'Early neural adaptations';
+  } else if (weeks <= 6) {
+    canvasTag.textContent = 'Structural changes emerging';
+  } else if (weeks <= 9) {
+    canvasTag.textContent = 'Significant remodelling';
+  } else {
+    canvasTag.textContent = 'Peak chronic adaptations';
+  }
+  
+  const mitoIncrease = 1 + (weeks / 12) * 0.85;
+  const muscleIncrease = 1 + (weeks / 12) * 0.35;
+  mitoStat.textContent = Math.round(mitoIncrease * 100) + '%';
+  muscleStat.textContent = Math.round(muscleIncrease * 100) + '%';
+  
+  draw();
+});
+
+function resize() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  draw();
+}
+
+function draw() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  const cx = w / 2;
+  const cy = h / 2;
+  
+  if (mode === 'aerobic') {
+    drawAerobic(w, h, cx, cy);
+  } else {
+    drawResistance(w, h, cx, cy);
+  }
+  
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+}
+
+function drawAerobic(w, h, cx, cy) {
+  // Show heart, capillaries, mitochondria
+  const progress = weeks / 12;
+  
+  // Heart (pulsing)
+  const heartSize = 30 + progress * 15;
+  const pulse = Math.sin(time * 1.2) * 0.08 + 1;
+  const heartR = heartSize * pulse;
+  
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  const heartGrad = ctx.createRadialGradient(cx, cy - h * 0.12, 0, cx, cy - h * 0.12, heartR * 2);
+  heartGrad.addColorStop(0, 'rgba(232,106,50,0.8)');
+  heartGrad.addColorStop(0.4, 'rgba(232,106,50,0.3)');
+  heartGrad.addColorStop(1, 'rgba(232,106,50,0)');
+  ctx.fillStyle = heartGrad;
+  ctx.beginPath();
+  ctx.arc(cx, cy - h * 0.12, heartR * 2, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+  
+  ctx.fillStyle = 'rgba(232,106,50,0.9)';
+  ctx.beginPath();
+  ctx.arc(cx, cy - h * 0.12, heartR, 0, Math.PI * 2);
+  ctx.fill();
+  
+  // Capillaries (branching network)
+  const capCount = Math.floor(8 + progress * 18);
+  ctx.strokeStyle = 'rgba(232,106,50,0.4)';
+  ctx.lineWidth = 1.5;
+  
+  for (let i = 0; i < capCount; i++) {
+    const angle = (i / capCount) * Math.PI * 2 + time * 0.3;
+    const r1 = heartR + 20;
+    const r2 = heartR + 40 + progress * 30;
+    const x1 = cx + Math.cos(angle) * r1;
+    const y1 = cy - h * 0.12 + Math.sin(angle) * r1;
+    const x2 = cx + Math.cos(angle) * r2;
+    const y2 = cy - h * 0.12 + Math.sin(angle) * r2;
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+    ctx.restore();
+    
+    // Branch endpoints
+    ctx.fillStyle = 'rgba(232,106,50,0.6)';
+    ctx.beginPath();
+    ctx.arc(x2, y2, 2, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  
+  // Mitochondria (scattered dots, more with progress)
+  const mitoCount = Math.floor(30 + progress * 60);
+  for (let i = 0; i < mitoCount; i++) {
+    const angle = (i / mitoCount) * Math.PI * 2 + i * 0.5;
+    const rad = 60 + (i % 3) * 25;
+    const x = cx + Math.cos(angle + time * 0.4) * rad;
+    const y = cy + h * 0.15 + Math.sin(angle + time * 0.4) * rad * 0.6;
+    
+    const size = 2 + Math.sin(time * 2 + i) * 0.5;
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.fillStyle = 'rgba(232,106,50,0.7)';
+    ctx.beginPath();
+    ctx.arc(x, y, size, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+  
+  // Labels
+  ctx.font = '11px "JetBrains Mono"';
+  ctx.fillStyle = 'rgba(237,237,232,0.5)';
+  ctx.textAlign = 'center';
+  ctx.fillText('HEART', cx, cy - h * 0.12 - heartR - 12);
+  ctx.fillText('CAPILLARIES', cx, cy - h * 0.12 + heartR + 65);
+  ctx.fillText('MITOCHONDRIA', cx, cy + h * 0.35);
+}
+
+function drawResistance(w, h, cx, cy) {
+  // Show muscle fibres thickening
+  const progress = weeks / 12;
+  
+  const fibreCount = 6;
+  const spacing = w * 0.12;
+  const startX = cx - (fibreCount - 1) * spacing / 2;
+  
+  for (let i = 0; i < fibreCount; i++) {
+    const x = startX + i * spacing;
+    
+    // Base width grows with weeks
+    const baseWidth = 8 + progress * 14;
+    const fibreHeight = h * 0.6;
+    
+    // Striations (darker bands)
+    const striations = 12;
+    for (let s = 0; s < striations; s++) {
+      const y = cy - fibreHeight / 2 + (s / striations) * fibreHeight;
+      const bandHeight = fibreHeight / striations;
+      
+      ctx.fillStyle = s % 2 === 0 ? 'rgba(232,106,50,0.3)' : 'rgba(232,106,50,0.5)';
+      ctx.fillRect(x - baseWidth / 2, y, baseWidth, bandHeight);
+    }
+    
+    // Outer glow
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    const fibreGrad = ctx.createRadialGradient(x, cy, 0, x, cy, baseWidth * 2);
+    fibreGrad.addColorStop(0, 'rgba(232,106,50,0.3)');
+    fibreGrad.addColorStop(0.6, 'rgba(232,106,50,0.1)');
+    fibreGrad.addColorStop(1, 'rgba(232,106,50,0)');
+    ctx.fillStyle = fibreGrad;
+    ctx.fillRect(x - baseWidth * 2, cy - fibreHeight / 2, baseWidth * 4, fibreHeight);
+    ctx.restore();
+    
+    // Myofibrils (thin lines inside, denser with progress)
+    const myoCount = Math.floor(3 + progress * 5);
+    ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+    ctx.lineWidth = 0.5;
+    for (let m = 0; m < myoCount; m++) {
+      const mx = x - baseWidth / 2 + (m / myoCount) * baseWidth;
+      ctx.beginPath();
+      ctx.moveTo(mx, cy - fibreHeight / 2);
+      ctx.lineTo(mx, cy + fibreHeight / 2);
+      ctx.stroke();
+    }
+  }
+  
+  // Satellite cells (small dots appearing during training)
+  if (progress > 0.1) {
+    const satCount = Math.floor(progress * 15);
+    for (let s = 0; s < satCount; s++) {
+      const fibreIdx = s % fibreCount;
+      const x = startX + fibreIdx * spacing + (Math.random() - 0.5) * 20;
+      const y = cy + (Math.random() - 0.5) * h * 0.5;
+      
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.fillStyle = 'rgba(250,199,117,0.6)';
+      ctx.beginPath();
+      ctx.arc(x, y, 2 + Math.sin(time * 3 + s) * 0.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+  
+  // Labels
+  ctx.font = '11px "JetBrains Mono"';
+  ctx.fillStyle = 'rgba(237,237,232,0.5)';
+  ctx.textAlign = 'center';
+  ctx.fillText('MUSCLE FIBRES', cx, cy - h * 0.38);
+  if (progress > 0.1) {
+    ctx.fillStyle = 'rgba(250,199,117,0.5)';
+    ctx.fillText('SATELLITE CELLS', cx, cy + h * 0.4);
+  }
+}
+
+function animate(timestamp) {
+  time = timestamp * 0.001;
+  draw();
+  requestAnimationFrame(animate);
+}
+
+window.addEventListener('resize', resize);
+resize();
+requestAnimationFrame(animate);
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'chronic-adaptations'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

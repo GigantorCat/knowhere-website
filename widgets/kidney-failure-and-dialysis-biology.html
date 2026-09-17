@@ -1,0 +1,798 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Kidney Failure and Dialysis — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #5AADD4;
+  --acc-rgb: 90, 173, 212;
+  --ag: rgba(var(--acc-rgb), .7);
+  --ag1: rgba(var(--acc-rgb), .12);
+  --ag2: rgba(var(--acc-rgb), .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 0;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 28px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: white;
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-wrapper {
+  margin-bottom: 8px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+}
+
+.kd-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  outline: none;
+  cursor: pointer;
+}
+
+.kd-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.kd-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.kd-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.kd-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  padding: 0 4px;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+  margin-top: 16px;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.stat-value.acc {
+  color: var(--acc);
+}
+
+.stat-value.amb {
+  color: var(--amb);
+}
+
+.toggle-section {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+  margin-top: 16px;
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: #12160F;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(var(--acc-rgb), .1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(var(--acc-rgb), .18);
+}
+
+.knowdrop-divider {
+  border-top: 1px solid var(--line);
+  margin-bottom: 16px;
+}
+
+.knowdrop-text {
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.knowthis {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.knowthis-tag {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 12px;
+}
+
+.knowthis-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 8px var(--acc);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+.knowthis-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+}
+
+.knowthis-content {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Kidney Failure and Dialysis Interactive</h2>
+  
+  <h1>A dialysis machine is just a nephron you can <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">unplug</span></h1>
+  
+  <p class="intro">The kidney does not "clean" blood — it does membrane exchange, solute by solute, across a million tiny filters. When kidney function drops, a dialysis machine replicates the same process using the same physics. Drag the slider to throttle kidney function and watch the machine take over the exchange.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-label">Filter Exchange</div>
+      <div class="live-tag" id="live-tag">100% Nephron / 0% Machine</div>
+    </div>
+    <div class="card-hint">Blood flows through both circuits — solutes cross membranes where concentration differs</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="canvas"></canvas>
+      <div class="canvas-overlay" id="overlay">Healthy kidney filtering — machine idle</div>
+    </div>
+
+    <div class="slider-wrapper">
+      <div class="slider-label">Kidney Function</div>
+      <input type="range" min="0" max="100" value="100" class="kd-slider" id="kidney-slider">
+      <div class="tick-labels">
+        <span>0%</span>
+        <span>25%</span>
+        <span>50%</span>
+        <span>75%</span>
+        <span>100%</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Waste Removed</div>
+        <div class="stat-value acc" id="waste-stat">100%</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Hours/Week</div>
+        <div class="stat-value amb" id="hours-stat">0h</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" data-mode="haemo">Haemodialysis</button>
+      <button class="toggle-btn" data-mode="peritoneal">Peritoneal</button>
+    </div>
+    
+    <div class="knowdrop-divider"></div>
+    
+    <div class="knowdrop-text" id="knowdrop-text">
+      Haemodialysis routes blood out of the body through a machine containing thousands of hollow fibres bathed in dialysate fluid. Blood flows inside the fibres, dialysate flows outside in the opposite direction. Waste molecules like urea and creatinine diffuse from blood to dialysate across the semi-permeable fibre walls, following their concentration gradient. The machine also applies negative pressure to pull excess water from the blood — ultrafiltration that mimics what a nephron does when it adjusts water balance. Each session runs three to four hours, three times per week, and patients must restrict potassium and phosphate in their diet because the machine cannot regulate these as precisely as a living kidney. The technology manages kidney failure but does not cure it — the moment dialysis stops, waste begins accumulating again.
+    </div>
+  </div>
+
+  <div class="knowthis">
+    <div class="knowthis-tag">
+      <div class="knowthis-dot"></div>
+      <div class="knowthis-label">Know This</div>
+    </div>
+    <div class="knowthis-content">
+      Dialysis is <span style="color:var(--acc)">membrane exchange</span> using the same concentration gradient physics as a nephron, but it requires <span style="color:var(--acc)">12 hours per week</span> to do what healthy kidneys do continuously, which is why it manages but never <span style="color:var(--acc)">replaces</span> kidney function.
+    </div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+const slider = document.getElementById("kidney-slider");
+const liveTag = document.getElementById("live-tag");
+const overlay = document.getElementById("overlay");
+const wasteStat = document.getElementById("waste-stat");
+const hoursStat = document.getElementById("hours-stat");
+const knowdropText = document.getElementById("knowdrop-text");
+const toggleBtns = document.querySelectorAll(".toggle-btn");
+
+const CSS = getComputedStyle(document.documentElement);
+const ACC = CSS.getPropertyValue("--acc").trim();
+const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+const AMB = CSS.getPropertyValue("--amb").trim();
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement("canvas");
+const bctx = buf.getContext("2d");
+
+let kidneyFunc = 100;
+
+// Particle systems
+let nephronParticles = [];
+let dialysisParticles = [];
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  
+  // Reinitialize particles on resize
+  initParticles();
+}
+
+function initParticles() {
+  nephronParticles = [];
+  dialysisParticles = [];
+  
+  // Create initial particles for both systems
+  for (let i = 0; i < 30; i++) {
+    nephronParticles.push(createNephronParticle());
+    dialysisParticles.push(createDialysisParticle());
+  }
+}
+
+function createNephronParticle() {
+  return {
+    phase: Math.random(), // 0-1, position in the flow path
+    type: Math.random() < 0.3 ? "waste" : "normal",
+    crossPhase: Math.random() < 0.5 ? 0.3 : 0.7, // when it crosses membrane
+    speed: 0.008 + Math.random() * 0.004
+  };
+}
+
+function createDialysisParticle() {
+  return {
+    phase: Math.random(),
+    type: Math.random() < 0.3 ? "waste" : "normal",
+    crossPhase: Math.random() < 0.5 ? 0.3 : 0.7,
+    speed: 0.008 + Math.random() * 0.004
+  };
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  
+  ctx.fillStyle = "#000";
+  ctx.fillRect(0, 0, w, h);
+  
+  const leftW = w * 0.48;
+  const rightX = w * 0.52;
+  const rightW = w * 0.48;
+  
+  // Draw divider line
+  ctx.strokeStyle = "rgba(" + RGB + ", 0.2)";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(w * 0.5, h * 0.1);
+  ctx.lineTo(w * 0.5, h * 0.9);
+  ctx.stroke();
+  
+  // NEPHRON SIDE (left)
+  drawNephron(leftW * 0.5, h * 0.5, leftW, h);
+  
+  // DIALYSIS SIDE (right)
+  drawDialysis(rightX + rightW * 0.5, h * 0.5, rightW, h);
+  
+  // Labels
+  ctx.font = "11px 'JetBrains Mono'";
+  ctx.textAlign = "center";
+  
+  const nephronAlpha = kidneyFunc / 100;
+  const dialysisAlpha = 1 - kidneyFunc / 100;
+  
+  ctx.fillStyle = "rgba(" + RGB + ", " + (0.4 + nephronAlpha * 0.6) + ")";
+  ctx.fillText("NEPHRON", leftW * 0.5, h * 0.08);
+  
+  ctx.fillStyle = "rgba(" + RGB + ", " + (0.4 + dialysisAlpha * 0.6) + ")";
+  ctx.fillText("DIALYSIS CIRCUIT", rightX + rightW * 0.5, h * 0.08);
+  
+  // Bloom effect
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = "lighter";
+  ctx.globalAlpha = 0.38;
+  ctx.filter = "blur(7px)";
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const vig = ctx.createRadialGradient(w * 0.5, h * 0.5, h * 0.28, w * 0.5, h * 0.5, w * 0.72);
+  vig.addColorStop(0, "rgba(0,0,0,0)");
+  vig.addColorStop(1, "rgba(0,0,0,0.52)");
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+}
+
+function drawNephron(cx, cy, w, h) {
+  const scale = Math.min(w, h) * 0.35;
+  const intensity = kidneyFunc / 100;
+  
+  // Draw nephron tubule structure
+  ctx.strokeStyle = "rgba(" + RGB + ", " + (0.25 * intensity) + ")";
+  ctx.lineWidth = 2;
+  
+  // Glomerulus (top)
+  ctx.beginPath();
+  ctx.arc(cx, cy - scale * 0.5, scale * 0.15, 0, Math.PI * 2);
+  ctx.stroke();
+  
+  // Tubule path (simplified loop)
+  ctx.beginPath();
+  ctx.moveTo(cx, cy - scale * 0.35);
+  ctx.lineTo(cx - scale * 0.3, cy - scale * 0.1);
+  ctx.lineTo(cx - scale * 0.3, cy + scale * 0.3);
+  ctx.lineTo(cx + scale * 0.3, cy + scale * 0.3);
+  ctx.lineTo(cx + scale * 0.3, cy + scale * 0.1);
+  ctx.lineTo(cx, cy + scale * 0.5);
+  ctx.stroke();
+  
+  // Membrane (dashed line showing filtration barrier)
+  ctx.setLineDash([4, 4]);
+  ctx.strokeStyle = "rgba(" + RGB + ", " + (0.35 * intensity) + ")";
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(cx - scale * 0.35, cy);
+  ctx.lineTo(cx + scale * 0.35, cy);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  
+  // Draw particles flowing through nephron
+  nephronParticles.forEach(p => {
+    if (intensity < 0.1) return; // No particles when kidney failed
+    
+    p.phase += p.speed * intensity;
+    if (p.phase > 1) p.phase -= 1;
+    
+    let px, py;
+    if (p.phase < 0.2) {
+      // In glomerulus
+      const a = p.phase * 10 * Math.PI;
+      px = cx + Math.cos(a) * scale * 0.1;
+      py = cy - scale * 0.5 + Math.sin(a) * scale * 0.1;
+    } else if (p.phase < 0.5) {
+      // Down left side
+      const t = (p.phase - 0.2) / 0.3;
+      px = cx - scale * 0.3;
+      py = cy - scale * 0.1 + t * (scale * 0.4);
+    } else if (p.phase < 0.7) {
+      // Across bottom
+      const t = (p.phase - 0.5) / 0.2;
+      px = cx - scale * 0.3 + t * (scale * 0.6);
+      py = cy + scale * 0.3;
+    } else {
+      // Up right side and out
+      const t = (p.phase - 0.7) / 0.3;
+      px = cx + scale * 0.3;
+      py = cy + scale * 0.3 - t * (scale * 0.2);
+    }
+    
+    // Waste particles cross membrane
+    const crossDist = Math.abs(p.phase - p.crossPhase);
+    const crossing = p.type === "waste" && crossDist < 0.05;
+    
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    
+    if (p.type === "waste") {
+      ctx.fillStyle = crossing ? "rgba(250, 199, 117, 0.8)" : "rgba(250, 199, 117, 0.6)";
+    } else {
+      ctx.fillStyle = "rgba(" + RGB + ", 0.5)";
+    }
+    
+    const size = crossing ? 3 : 2;
+    ctx.beginPath();
+    ctx.arc(px, py, size, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  });
+  
+  // Glow on active nephron
+  if (intensity > 0.3) {
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, scale * 0.8);
+    glow.addColorStop(0, "rgba(" + RGB + ", " + (intensity * 0.15) + ")");
+    glow.addColorStop(1, "rgba(" + RGB + ", 0)");
+    ctx.fillStyle = glow;
+    ctx.fillRect(cx - scale, cy - scale, scale * 2, scale * 2);
+    ctx.restore();
+  }
+}
+
+function drawDialysis(cx, cy, w, h) {
+  const scale = Math.min(w, h) * 0.35;
+  const intensity = 1 - kidneyFunc / 100;
+  
+  // Draw dialyzer (the artificial filter)
+  ctx.strokeStyle = "rgba(" + RGB + ", " + (0.25 * intensity) + ")";
+  ctx.lineWidth = 2;
+  
+  // Main dialyzer chamber (rectangle representing bundle of hollow fibres)
+  const chamberW = scale * 0.5;
+  const chamberH = scale * 0.7;
+  ctx.strokeRect(cx - chamberW / 2, cy - chamberH / 2, chamberW, chamberH);
+  
+  // Blood in/out tubes
+  ctx.beginPath();
+  // Blood in (top)
+  ctx.moveTo(cx - chamberW * 0.3, cy - chamberH * 0.5);
+  ctx.lineTo(cx - chamberW * 0.3, cy - scale * 0.8);
+  // Blood out (bottom)
+  ctx.moveTo(cx + chamberW * 0.3, cy + chamberH * 0.5);
+  ctx.lineTo(cx + chamberW * 0.3, cy + scale * 0.8);
+  ctx.stroke();
+  
+  // Dialysate flow (arrows showing counter-current)
+  ctx.strokeStyle = "rgba(250, 199, 117, " + (0.3 * intensity) + ")";
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  // Dialysate in (bottom, opposite to blood out)
+  ctx.moveTo(cx - chamberW * 0.7, cy + scale * 0.6);
+  ctx.lineTo(cx - chamberW * 0.7, cy + chamberH * 0.5);
+  // Dialysate out (top, opposite to blood in)
+  ctx.moveTo(cx + chamberW * 0.7, cy - chamberH * 0.5);
+  ctx.lineTo(cx + chamberW * 0.7, cy - scale * 0.6);
+  ctx.stroke();
+  
+  // Membrane (multiple lines showing hollow fibres)
+  ctx.strokeStyle = "rgba(" + RGB + ", " + (0.3 * intensity) + ")";
+  ctx.lineWidth = 1;
+  for (let i = 0; i < 5; i++) {
+    const y = cy - chamberH * 0.3 + (i / 4) * chamberH * 0.6;
+    ctx.beginPath();
+    ctx.moveTo(cx - chamberW * 0.4, y);
+    ctx.lineTo(cx + chamberW * 0.4, y);
+    ctx.stroke();
+  }
+  
+  // Draw particles flowing through dialysis
+  dialysisParticles.forEach(p => {
+    if (intensity < 0.1) return; // No flow when machine not needed
+    
+    p.phase += p.speed * intensity;
+    if (p.phase > 1) p.phase -= 1;
+    
+    let px, py;
+    if (p.phase < 0.3) {
+      // Blood flowing down into dialyzer
+      const t = p.phase / 0.3;
+      px = cx - chamberW * 0.3;
+      py = cy - scale * 0.8 + t * (scale * 0.8 - chamberH * 0.5);
+    } else if (p.phase < 0.6) {
+      // Inside dialyzer (membrane exchange happens here)
+      const t = (p.phase - 0.3) / 0.3;
+      px = cx - chamberW * 0.3 + t * (chamberW * 0.6);
+      py = cy;
+    } else {
+      // Blood flowing out
+      const t = (p.phase - 0.6) / 0.4;
+      px = cx + chamberW * 0.3;
+      py = cy + chamberH * 0.5 + t * (scale * 0.8 - chamberH * 0.5);
+    }
+    
+    // Waste crosses membrane in middle section
+    const crossDist = Math.abs(p.phase - p.crossPhase);
+    const crossing = p.type === "waste" && crossDist < 0.05;
+    
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    
+    if (p.type === "waste") {
+      ctx.fillStyle = crossing ? "rgba(250, 199, 117, 0.8)" : "rgba(250, 199, 117, 0.6)";
+    } else {
+      ctx.fillStyle = "rgba(" + RGB + ", 0.5)";
+    }
+    
+    const size = crossing ? 3 : 2;
+    ctx.beginPath();
+    ctx.arc(px, py, size, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  });
+  
+  // Glow on active dialyzer
+  if (intensity > 0.3) {
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, scale * 0.8);
+    glow.addColorStop(0, "rgba(" + RGB + ", " + (intensity * 0.15) + ")");
+    glow.addColorStop(1, "rgba(" + RGB + ", 0)");
+    ctx.fillStyle = glow;
+    ctx.fillRect(cx - scale, cy - scale, scale * 2, scale * 2);
+    ctx.restore();
+  }
+}
+
+function updateUI() {
+  const fill = kidneyFunc;
+  slider.style.setProperty("--fill", fill + "%");
+  
+  const machineFunc = 100 - kidneyFunc;
+  liveTag.textContent = kidneyFunc + "% Nephron / " + machineFunc + "% Machine";
+  
+  if (kidneyFunc > 80) {
+    overlay.textContent = "Healthy kidney filtering — machine idle";
+  } else if (kidneyFunc > 50) {
+    overlay.textContent = "Kidney function declining — partial machine support";
+  } else if (kidneyFunc > 20) {
+    overlay.textContent = "Severe kidney failure — machine doing most filtration";
+  } else {
+    overlay.textContent = "Near-total kidney failure — machine sustaining life";
+  }
+  
+  // Waste removal calculation
+  // Dialysis is less efficient: 100% kidney = 100% waste, 0% kidney = 70% waste (with dialysis)
+  const wasteRemoval = kidneyFunc + (100 - kidneyFunc) * 0.7;
+  wasteStat.textContent = Math.round(wasteRemoval) + "%";
+  
+  // Hours per week on dialysis
+  const hoursPerWeek = Math.round((100 - kidneyFunc) / 100 * 12);
+  hoursStat.textContent = hoursPerWeek + "h";
+}
+
+slider.addEventListener("input", (e) => {
+  kidneyFunc = parseFloat(e.target.value);
+  updateUI();
+  draw();
+});
+
+toggleBtns.forEach(btn => {
+  btn.addEventListener("click", () => {
+    toggleBtns.forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    
+    const mode = btn.dataset.mode;
+    if (mode === "haemo") {
+      knowdropText.textContent = "Haemodialysis routes blood out of the body through a machine containing thousands of hollow fibres bathed in dialysate fluid. Blood flows inside the fibres, dialysate flows outside in the opposite direction. Waste molecules like urea and creatinine diffuse from blood to dialysate across the semi-permeable fibre walls, following their concentration gradient. The machine also applies negative pressure to pull excess water from the blood — ultrafiltration that mimics what a nephron does when it adjusts water balance. Each session runs three to four hours, three times per week, and patients must restrict potassium and phosphate in their diet because the machine cannot regulate these as precisely as a living kidney. The technology manages kidney failure but does not cure it — the moment dialysis stops, waste begins accumulating again.";
+    } else {
+      knowdropText.textContent = "Peritoneal dialysis uses the patient's own peritoneal membrane — the lining of the abdominal cavity — as the filter instead of a machine membrane. Dialysate fluid is pumped into the abdomen through a surgically placed catheter, where it sits for several hours. Waste molecules and excess water diffuse from blood vessels in the peritoneal membrane into the dialysate, following the same concentration gradient principle as haemodialysis. The used fluid is then drained out and replaced with fresh dialysate. This can be done at home, either manually four times per day or automatically overnight using a cycling machine. Peritoneal dialysis offers more flexibility than haemodialysis and preserves residual kidney function longer, but it carries a higher risk of peritonitis — infection of the peritoneal cavity — and some patients cannot use it due to abdominal scarring or other anatomical issues.";
+    }
+  });
+});
+
+window.addEventListener("resize", () => {
+  resize();
+  draw();
+});
+
+// Animation loop
+let animFrame;
+function animate() {
+  draw();
+  animFrame = requestAnimationFrame(animate);
+}
+
+resize();
+updateUI();
+animate();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'kidney-failure-and-dialysis'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

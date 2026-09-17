@@ -1,0 +1,502 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Domain and Range — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+  :root{
+    --bg:#0B0D0C;
+    --bg2:#12160F;
+    --acc:#24803F;
+    --ag:rgba(36, 128, 63, .7);
+    --ag1:rgba(36, 128, 63, .12);
+    --ag2:rgba(36, 128, 63, .45);
+    --amb:#FAC775;
+    --ink:#EDEDE8;
+    --ink-dim:#8C9389;
+    --line:#262B26;
+  }
+  @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+    font-family:'Geist',sans-serif;
+    color:var(--ink);
+    min-height:100vh;
+    padding:40px 16px 0;
+  }
+  .dr-wrap{max-width:720px;margin:0 auto}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+  h1{
+    font-size:clamp(26px,6.5vw,44px);
+    font-weight:800;letter-spacing:-0.03em;line-height:1.05;
+    margin-bottom:14px;
+  }
+  .dr-intro{
+    font-size:15.5px;font-weight:400;color:var(--ink-dim);
+    max-width:58ch;line-height:1.55;margin-bottom:26px;
+  }
+
+  .dr-card{
+    background:linear-gradient(180deg,#12160F,#0d100b);
+    border:1px solid var(--line);
+    border-radius:18px;padding:16px;
+    box-shadow:0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+    margin-bottom:20px;
+  }
+  .dr-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:4px}
+  .dr-label{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;color:#fff;letter-spacing:.06em}
+  .dr-live{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--acc);letter-spacing:.08em;text-align:right}
+  .dr-hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin-bottom:12px}
+
+  .dr-fns{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+  .dr-fns button{
+    flex:1 1 30%;min-width:96px;
+    font-family:'JetBrains Mono',monospace;font-size:14.5px;
+    padding:12px;border-radius:11px;cursor:pointer;
+    background:#12160F;border:1px solid var(--line);color:var(--ink-dim);
+    transition:all .18s ease;
+  }
+  .dr-fns button.on{
+    background:rgba(36, 128, 63,.1);border:1px solid var(--acc);color:var(--acc);
+    box-shadow:0 0 22px rgba(36, 128, 63,.18);
+  }
+
+  .dr-canvas-wrap{
+    position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;
+    background:#000;box-shadow:inset 0 0 0 1px var(--ag1);margin-bottom:14px;
+  }
+  .dr-canvas-wrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .dr-overlay{
+    position:absolute;left:0;right:0;bottom:0;
+    background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);
+    padding:9px 16px;
+    font-family:'JetBrains Mono',monospace;font-size:14px;text-transform:uppercase;
+    color:var(--acc);text-align:center;letter-spacing:.04em;
+  }
+  .dr-overlay.broken{color:var(--amb)}
+
+  .dr-slider-label{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);letter-spacing:.1em;margin-bottom:8px}
+  .dr-slider{
+    -webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;
+    background:linear-gradient(90deg, var(--acc) var(--fill,0%), #23291f var(--fill,0%));
+    outline:none;cursor:pointer;
+  }
+  .dr-slider::-webkit-slider-thumb{
+    -webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;
+    background:#0B0D0C;border:2px solid var(--acc);
+    box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);
+    transition:box-shadow .15s;cursor:grab;
+  }
+  .dr-slider::-webkit-slider-thumb:hover{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+  .dr-slider::-moz-range-thumb{
+    width:20px;height:20px;border-radius:50%;
+    background:#0B0D0C;border:2px solid var(--acc);
+    box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);cursor:grab;
+  }
+  .dr-ticks{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink-dim);margin-top:6px}
+
+  .dr-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;border-top:1px solid var(--line);margin-top:16px;padding-top:14px}
+  .dr-stat-label{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);letter-spacing:.1em;margin-bottom:4px}
+  .dr-stat-val{font-family:'JetBrains Mono',monospace;font-size:clamp(15px,4.4vw,24px);font-weight:500}
+  .dr-stat-val.acc{color:var(--acc);text-shadow:0 0 18px var(--ag2)}
+  .dr-stat-val.amb{color:var(--amb)}
+
+  .dr-kd-btns{display:flex;gap:10px}
+  .dr-kd-btns button{
+    flex:1;font-family:'JetBrains Mono',monospace;font-size:14.5px;
+    padding:12px;border-radius:11px;cursor:pointer;
+    background:#12160F;border:1px solid var(--line);color:var(--ink-dim);
+    transition:all .18s ease;
+  }
+  .dr-kd-btns button.on{
+    background:rgba(36, 128, 63,.1);border:1px solid var(--acc);color:var(--acc);
+    box-shadow:0 0 22px rgba(36, 128, 63,.18);
+  }
+  .dr-kd-body{border-top:1px solid var(--line);margin-top:14px;padding-top:14px;font-size:14.5px;font-weight:400;line-height:1.65;color:var(--ink)}
+
+  .dr-callout{
+    border-left:3px solid var(--acc);
+    padding:16px 18px;
+    background:linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+    border-radius:0 12px 12px 0;
+    margin-bottom:0;padding-bottom:16px;
+  }
+  .dr-callout .tag{
+    font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;
+    letter-spacing:.15em;color:var(--acc);display:block;margin-bottom:8px;
+  }
+  .dr-callout p{font-size:17.4px;font-weight:400;line-height:1.55;color:var(--ink)}
+  .dr-callout .k{color:var(--acc);font-weight:600}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none!important;transition:none!important}
+  }
+</style>
+
+<div class="dr-wrap">
+  <h2 class="sr-only">Interactive function machine showing how domain restrictions and range limits arise for square root, reciprocal, logarithmic, quadratic and exponential functions. Choose a function, drag the x input, and see where the function is defined or undefined.</h2>
+
+  <h1>Every function that breaks, breaks in exactly three <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">ways</span></h1>
+  <p class="dr-intro">Domain is everything you're allowed to feed into the function machine; range is everything that can possibly come out. And every domain restriction on the course traces back to just three traps — a square root, a denominator, or a logarithm. Pick a function below, then drag x through the machine and watch exactly where it jams.</p>
+
+  <div class="dr-card">
+    <div class="dr-head">
+      <span class="dr-label">Function Machine</span>
+      <span class="dr-live" id="liveTag">LIVE · √(x−2)</span>
+    </div>
+    <div class="dr-hint">pick a function → drag x → green bar = legal inputs, amber bar = possible outputs</div>
+
+    <div class="dr-fns" id="fnBtns" role="group" aria-label="Choose a function">
+      <button data-fn="sqrt" class="on">√(x−2)</button>
+      <button data-fn="recip">1/(x−1)</button>
+      <button data-fn="log">ln(x)</button>
+      <button data-fn="quad">x²−3</button>
+      <button data-fn="exp">eˣ</button>
+    </div>
+
+    <div class="dr-canvas-wrap">
+      <canvas id="drCanvas" aria-label="Graph of the selected function with domain and range highlighted"></canvas>
+      <div class="dr-overlay" id="canvasTag">X = 4.00 → F(X) = 1.41 · IN DOMAIN ✓</div>
+    </div>
+
+    <div class="dr-slider-label">Input x — feed it into the machine</div>
+    <input type="range" class="dr-slider" id="xSlider" min="-6" max="6" step="0.05" value="4" aria-label="Input value x">
+    <div class="dr-ticks"><span>−6</span><span>−3</span><span>0</span><span>3</span><span>6</span></div>
+
+    <div class="dr-stats">
+      <div>
+        <div class="dr-stat-label">Domain (legal inputs)</div>
+        <div class="dr-stat-val acc" id="statDomain">[2, ∞)</div>
+      </div>
+      <div>
+        <div class="dr-stat-label">Range (possible outputs)</div>
+        <div class="dr-stat-val amb" id="statRange">[0, ∞)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dr-card">
+    <div class="dr-kd-btns" role="group" aria-label="Switch between domain rules and range rules">
+      <button id="kdDomain" class="on">Domain logic</button>
+      <button id="kdRange">Range logic</button>
+    </div>
+    <p class="dr-kd-body" id="kdText">Domain restrictions are never arbitrary — they come from exactly three failure modes. Square roots need non-negative values under the radical, so you solve the inequality inside ≥ 0. Denominators can never equal zero, so you exclude every x that zeroes the bottom of a fraction — that's where vertical asymptotes live. Logarithms demand strictly positive arguments: zero is just as illegal as a negative. On the graph these traps show up as hard endpoints and walls the curve refuses to cross. When an exam asks for the maximal domain, hunt for those three traps first, then write whatever survives in interval notation.</p>
+  </div>
+
+  <div class="dr-callout">
+    <span class="tag">Know This</span>
+    <p><span class="k">Domain</span> is what the machine can eat, <span class="k">range</span> is what it can spit out — and both must be written in <span class="k">interval notation</span> or set-builder notation, using round brackets for any value the function approaches but never actually reaches.</p>
+  </div>
+</div>
+
+<script>
+(function(){
+  const ACC='36,128,63', AMB='250,199,117', INK='237,237,232';
+  const canvas=document.getElementById('drCanvas');
+  const ctx=canvas.getContext('2d');
+  const dpr=Math.min(window.devicePixelRatio||1,2);
+  const buf=document.createElement('canvas');
+  const bctx=buf.getContext('2d');
+  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const XMIN=-6.5,XMAX=6.5,YMIN=-4.4,YMAX=4.4;
+
+  const FUNCS={
+    sqrt:{
+      label:'√(x−2)',
+      f:x=> x>=2 ? Math.sqrt(x-2) : NaN,
+      domain:'[2, ∞)', range:'[0, ∞)',
+      domBands:[[2,XMAX]], rngBands:[[0,YMAX]],
+      forbidden:[[XMIN,2]], vAsym:[], hAsym:[],
+      reason:'NEGATIVE UNDER √'
+    },
+    recip:{
+      label:'1/(x−1)',
+      f:x=> x===1 ? NaN : 1/(x-1),
+      domain:'(−∞,1) ∪ (1,∞)', range:'(−∞,0) ∪ (0,∞)',
+      domBands:[[XMIN,0.97],[1.03,XMAX]], rngBands:[[YMIN,-0.06],[0.06,YMAX]],
+      forbidden:[], vAsym:[1], hAsym:[0],
+      reason:'DIVISION BY ZERO'
+    },
+    log:{
+      label:'ln(x)',
+      f:x=> x>0 ? Math.log(x) : NaN,
+      domain:'(0, ∞)', range:'(−∞, ∞)',
+      domBands:[[0.03,XMAX]], rngBands:[[YMIN,YMAX]],
+      forbidden:[[XMIN,0]], vAsym:[0], hAsym:[],
+      reason:'LOG OF NON-POSITIVE'
+    },
+    quad:{
+      label:'x²−3',
+      f:x=> x*x-3,
+      domain:'(−∞, ∞)', range:'[−3, ∞)',
+      domBands:[[XMIN,XMAX]], rngBands:[[-3,YMAX]],
+      forbidden:[], vAsym:[], hAsym:[],
+      reason:''
+    },
+    exp:{
+      label:'eˣ',
+      f:x=> Math.exp(x),
+      domain:'(−∞, ∞)', range:'(0, ∞)',
+      domBands:[[XMIN,XMAX]], rngBands:[[0.06,YMAX]],
+      forbidden:[], vAsym:[], hAsym:[0],
+      reason:''
+    }
+  };
+
+  let cur='sqrt';
+  let xVal=4;
+  let time=0;
+
+  const dots=Array.from({length:9},()=>({p:Math.random(),sp:0.6+Math.random()*0.9}));
+
+  const slider=document.getElementById('xSlider');
+  const tag=document.getElementById('canvasTag');
+  const liveTag=document.getElementById('liveTag');
+  const statDomain=document.getElementById('statDomain');
+  const statRange=document.getElementById('statRange');
+
+  function resize(){
+    const rect=canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+    canvas.width=Math.round(rect.width*dpr);
+    canvas.height=Math.round(rect.height*dpr);
+    buf.width=canvas.width; buf.height=canvas.height;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    if(reduced) draw();
+  }
+
+  function setFill(){
+    const pct=((xVal-(-6))/12)*100;
+    slider.style.setProperty('--fill',pct+'%');
+  }
+
+  function updateReadout(){
+    const F=FUNCS[cur];
+    const y=F.f(xVal);
+    const ok=!isNaN(y)&&isFinite(y);
+    if(ok){
+      tag.textContent='X = '+xVal.toFixed(2)+' → F(X) = '+y.toFixed(2)+' · IN DOMAIN ✓';
+      tag.classList.remove('broken');
+    }else{
+      tag.textContent='X = '+xVal.toFixed(2)+' → UNDEFINED · '+F.reason;
+      tag.classList.add('broken');
+    }
+    liveTag.textContent='LIVE · '+F.label;
+    statDomain.textContent=F.domain;
+    statRange.textContent=F.range;
+  }
+
+  function draw(){
+    const w=canvas.width/dpr, h=canvas.height/dpr;
+    const F=FUNCS[cur];
+    const L=12,R=w-30,T=12,B=h-54;
+    const px=x=> L+(x-XMIN)/(XMAX-XMIN)*(R-L);
+    const py=y=> B-(y-YMIN)/(YMAX-YMIN)*(B-T);
+
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle='rgba(4,7,5,1)';
+    ctx.fillRect(0,0,w,h);
+
+    // grid
+    ctx.lineWidth=1;
+    for(let gx=Math.ceil(XMIN);gx<=XMAX;gx++){
+      ctx.strokeStyle= gx===0 ? 'rgba(255,255,255,0.16)' : 'rgba(255,255,255,0.045)';
+      ctx.beginPath();ctx.moveTo(px(gx),T);ctx.lineTo(px(gx),B);ctx.stroke();
+    }
+    for(let gy=Math.ceil(YMIN);gy<=YMAX;gy++){
+      ctx.strokeStyle= gy===0 ? 'rgba(255,255,255,0.16)' : 'rgba(255,255,255,0.045)';
+      ctx.beginPath();ctx.moveTo(L,py(gy));ctx.lineTo(R,py(gy));ctx.stroke();
+    }
+    // tick numbers
+    ctx.fillStyle='rgba(140,147,137,0.7)';
+    ctx.font='8px "JetBrains Mono",monospace';
+    ctx.textAlign='center';
+    [-6,-3,3,6].forEach(v=>ctx.fillText(v,px(v),py(0)+11));
+    [-3,3].forEach(v=>ctx.fillText(v,px(0)-9,py(v)+3));
+
+    // forbidden domain regions
+    F.forbidden.forEach(b=>{
+      ctx.fillStyle='rgba('+AMB+',0.05)';
+      ctx.fillRect(px(b[0]),T,px(b[1])-px(b[0]),B-T);
+      ctx.save();
+      ctx.strokeStyle='rgba('+AMB+',0.35)';
+      ctx.setLineDash([4,4]);ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(px(b[1]),T);ctx.lineTo(px(b[1]),B);ctx.stroke();
+      ctx.restore();
+    });
+
+    // asymptotes
+    ctx.save();
+    ctx.setLineDash([5,5]);ctx.lineWidth=1;
+    ctx.strokeStyle='rgba('+AMB+',0.45)';
+    F.vAsym.forEach(v=>{ctx.beginPath();ctx.moveTo(px(v),T);ctx.lineTo(px(v),B);ctx.stroke();});
+    F.hAsym.forEach(v=>{ctx.beginPath();ctx.moveTo(L,py(v));ctx.lineTo(R,py(v));ctx.stroke();});
+    ctx.restore();
+
+    // curve
+    function buildPath(){
+      ctx.beginPath();let pen=false;
+      for(let x=XMIN;x<=XMAX;x+=0.02){
+        const y=F.f(x);
+        if(isNaN(y)||!isFinite(y)||Math.abs(y)>60){pen=false;continue;}
+        const X=px(x),Y=py(y);
+        if(!pen){ctx.moveTo(X,Y);pen=true;}else ctx.lineTo(X,Y);
+      }
+    }
+    ctx.save();
+    ctx.beginPath();ctx.rect(L,T,R-L,B-T);ctx.clip();
+    ctx.save();
+    ctx.globalCompositeOperation='lighter';
+    buildPath();ctx.strokeStyle='rgba('+ACC+',0.4)';ctx.lineWidth=7;ctx.stroke();
+    ctx.restore();
+    buildPath();ctx.strokeStyle='rgba('+ACC+',1)';ctx.lineWidth=2.4;ctx.stroke();
+    buildPath();ctx.strokeStyle='rgba('+INK+',0.45)';ctx.lineWidth=1;ctx.stroke();
+
+    // flowing dots along curve
+    ctx.save();
+    ctx.globalCompositeOperation='lighter';
+    dots.forEach(d=>{
+      const t=(d.p + time*0.04*d.sp)%1;
+      const x=XMIN+t*(XMAX-XMIN);
+      const y=F.f(x);
+      if(!isNaN(y)&&isFinite(y)&&y>YMIN&&y<YMAX){
+        ctx.fillStyle='rgba('+ACC+',0.9)';
+        ctx.beginPath();ctx.arc(px(x),py(y),2.2,0,Math.PI*2);ctx.fill();
+        ctx.fillStyle='rgba('+ACC+',0.25)';
+        ctx.beginPath();ctx.arc(px(x),py(y),5.5,0,Math.PI*2);ctx.fill();
+      }
+    });
+    ctx.restore();
+    ctx.restore(); // clip
+
+    // probe
+    const yv=F.f(xVal);
+    const ok=!isNaN(yv)&&isFinite(yv);
+    ctx.save();
+    ctx.setLineDash([3,4]);ctx.lineWidth=1.2;
+    if(ok){
+      const yc=Math.max(YMIN,Math.min(YMAX,yv));
+      ctx.strokeStyle='rgba('+ACC+',0.75)';
+      ctx.beginPath();ctx.moveTo(px(xVal),py(0));ctx.lineTo(px(xVal),py(yc));ctx.stroke();
+      ctx.strokeStyle='rgba('+AMB+',0.65)';
+      ctx.beginPath();ctx.moveTo(px(xVal),py(yc));ctx.lineTo(R+6,py(yc));ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.save();ctx.globalCompositeOperation='lighter';
+      ctx.fillStyle='rgba('+ACC+',0.35)';
+      ctx.beginPath();ctx.arc(px(xVal),py(yc),9,0,Math.PI*2);ctx.fill();
+      ctx.restore();
+      ctx.fillStyle='rgba('+ACC+',1)';
+      ctx.beginPath();ctx.arc(px(xVal),py(yc),3.6,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='rgba('+INK+',0.9)';
+      ctx.beginPath();ctx.arc(px(xVal),py(yc),1.4,0,Math.PI*2);ctx.fill();
+    }else{
+      ctx.strokeStyle='rgba('+AMB+',0.8)';
+      ctx.beginPath();ctx.moveTo(px(xVal),T);ctx.lineTo(px(xVal),B);ctx.stroke();
+      ctx.setLineDash([]);
+      const X=px(xVal),Y=py(0);
+      ctx.lineWidth=2;
+      ctx.beginPath();ctx.moveTo(X-5,Y-5);ctx.lineTo(X+5,Y+5);ctx.moveTo(X+5,Y-5);ctx.lineTo(X-5,Y+5);ctx.stroke();
+    }
+    ctx.restore();
+
+    // domain bar (bottom, accent)
+    const dbY=B+9;
+    ctx.save();
+    ctx.globalCompositeOperation='lighter';
+    F.domBands.forEach(b=>{
+      ctx.fillStyle='rgba('+ACC+',0.85)';
+      ctx.fillRect(px(b[0]),dbY,px(b[1])-px(b[0]),3.5);
+      ctx.fillStyle='rgba('+ACC+',0.22)';
+      ctx.fillRect(px(b[0]),dbY-2,px(b[1])-px(b[0]),8);
+    });
+    ctx.restore();
+    ctx.fillStyle='rgba('+ACC+',0.9)';
+    ctx.font='8px "JetBrains Mono",monospace';
+    ctx.textAlign='left';
+    ctx.fillText('DOMAIN',L,dbY-4);
+
+    // range bar (right, amber)
+    const rbX=w-16;
+    ctx.save();
+    ctx.globalCompositeOperation='lighter';
+    F.rngBands.forEach(b=>{
+      const y1=py(b[1]),y2=py(b[0]);
+      ctx.fillStyle='rgba('+AMB+',0.8)';
+      ctx.fillRect(rbX,y1,3.5,y2-y1);
+      ctx.fillStyle='rgba('+AMB+',0.18)';
+      ctx.fillRect(rbX-2,y1,8,y2-y1);
+    });
+    ctx.restore();
+    ctx.fillStyle='rgba('+AMB+',0.9)';
+    ctx.textAlign='right';
+    ctx.fillText('RANGE',w-4,T-2>8?T+0:10);
+
+    // BLOOM
+    bctx.setTransform(1,0,0,1,0,0);
+    bctx.clearRect(0,0,buf.width,buf.height);
+    if (canvas.width && canvas.height) bctx.drawImage(canvas,0,0);
+    ctx.save();
+    ctx.globalCompositeOperation='lighter';
+    ctx.globalAlpha=0.38;
+    ctx.filter='blur(7px)';
+    if (buf.width && buf.height) ctx.drawImage(buf,0,0,w,h);
+    ctx.restore();
+
+    // VIGNETTE
+    const cx=w/2,cy=h/2;
+    const vig=ctx.createRadialGradient(cx,cy,h*0.28,cx,cy,w*0.72);
+    vig.addColorStop(0,'rgba(0,0,0,0)');
+    vig.addColorStop(1,'rgba(0,0,0,0.52)');
+    ctx.fillStyle=vig;ctx.fillRect(0,0,w,h);
+  }
+
+  // interactions
+  slider.addEventListener('input',function(){
+    xVal=parseFloat(this.value);
+    setFill();updateReadout();
+    if(reduced)draw();
+  });
+
+  document.getElementById('fnBtns').addEventListener('click',function(e){
+    const btn=e.target.closest('button[data-fn]');
+    if(!btn)return;
+    cur=btn.dataset.fn;
+    this.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b===btn));
+    updateReadout();
+    if(reduced)draw();
+  });
+
+  // knowdrop toggle
+  const kdTexts={
+    domain:'Domain restrictions are never arbitrary — they come from exactly three failure modes. Square roots need non-negative values under the radical, so you solve the inequality inside ≥ 0. Denominators can never equal zero, so you exclude every x that zeroes the bottom of a fraction — that\u2019s where vertical asymptotes live. Logarithms demand strictly positive arguments: zero is just as illegal as a negative. On the graph these traps show up as hard endpoints and walls the curve refuses to cross. When an exam asks for the maximal domain, hunt for those three traps first, then write whatever survives in interval notation.',
+    range:'Range is trickier because you can\u2019t just scan the formula — you have to think about what the function actually does. Quadratics have a turning point, so the range starts (or ends) at the minimum or maximum y-value: x² − 3 can never output anything below −3. Exponentials like eˣ are always strictly positive — the output gets arbitrarily close to zero but never touches it, which is exactly why y = 0 is a horizontal asymptote. Rational functions often have horizontal asymptotes too, and the asymptote value is usually excluded from the range. Sketch first, then read the range straight off the y-axis — and use round brackets for any value the function approaches but never reaches.'
+  };
+  const kdD=document.getElementById('kdDomain'),kdR=document.getElementById('kdRange'),kdText=document.getElementById('kdText');
+  kdD.addEventListener('click',()=>{kdD.classList.add('on');kdR.classList.remove('on');kdText.textContent=kdTexts.domain;});
+  kdR.addEventListener('click',()=>{kdR.classList.add('on');kdD.classList.remove('on');kdText.textContent=kdTexts.range;});
+
+  window.addEventListener('resize',resize);
+  resize();
+  setFill();
+  updateReadout();
+
+  if(reduced){
+    draw();
+  }else{
+    let last=performance.now();
+    function loop(now){
+      time+=(now-last)/1000;last=now;
+      draw();
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+  }
+})();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'domain-and-range'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

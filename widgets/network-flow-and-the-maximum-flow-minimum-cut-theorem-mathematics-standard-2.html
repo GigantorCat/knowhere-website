@@ -1,0 +1,653 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Network Flow and the Maximum-Flow Minimum-Cut Theorem — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #5CCE63;
+  --acc-rgb: 92, 206, 99;
+  --ag: rgba(var(--acc-rgb), 0.7);
+  --ag1: rgba(var(--acc-rgb), 0.12);
+  --ag2: rgba(var(--acc-rgb), 0.45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 0;
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 16px;
+}
+
+.intro {
+  font-size: 15.5px;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,0.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 20px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: white;
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-container {
+  margin-bottom: 12px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 10px;
+}
+
+.flow-slider {
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+.flow-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  transition: box-shadow 0.15s;
+  cursor: grab;
+}
+
+.flow-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.flow-slider::-webkit-slider-thumb:active {
+  cursor: grabbing;
+}
+
+.flow-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  transition: box-shadow 0.15s;
+  cursor: grab;
+}
+
+.flow-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.flow-slider::-moz-range-thumb:active {
+  cursor: grabbing;
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.stat-value.accent { color: var(--acc); }
+.stat-value.amber { color: var(--amb); }
+
+.toggle-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: #12160F;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toggle-btn.active {
+  background: rgba(var(--acc-rgb), 0.1);
+  border-color: var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(var(--acc-rgb), 0.18);
+}
+
+.knowdrop {
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-top: 20px;
+  margin-bottom: 0;
+}
+
+.know-this-tag {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 12px;
+}
+
+.pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 8px var(--acc);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+.know-this-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+}
+
+.know-this-body {
+  font-size: 17.4px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (max-width: 360px) {
+  body {
+    padding: 32px 12px 0;
+  }
+  .card {
+    padding: 14px;
+  }
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Network Flow and Maximum-Flow Minimum-Cut Theorem Interactive Widget</h2>
+
+  <h1>The tightest squeeze sets the <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">maximum</span></h1>
+  
+  <p class="intro">Every network has a bottleneck — the narrowest point that limits total flow. Surprisingly, the max flow you can push through equals the capacity of the tightest cut you can make. Drag the slider to watch flow pile up at the network's true limit.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-label">Network Flow</div>
+      <div class="live-tag" id="liveTag">Attempting 0 units/sec</div>
+    </div>
+    <div class="card-hint">Drag slider to increase attempted flow</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="flowCanvas"></canvas>
+      <div class="canvas-overlay" id="canvasTag">Bottleneck at cut: 0 / 0 capacity</div>
+    </div>
+
+    <div class="slider-container">
+      <div class="slider-label">Attempted Flow</div>
+      <input type="range" min="0" max="100" value="0" class="flow-slider" id="flowSlider">
+      <div class="tick-labels">
+        <span>0</span>
+        <span>50</span>
+        <span>100</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Actual Flow</div>
+        <div class="stat-value accent" id="actualFlow">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Min Cut Capacity</div>
+        <div class="stat-value amber" id="minCutCap">24</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-section">
+      <div class="toggle-buttons">
+        <button class="toggle-btn active" data-mode="theorem">The Theorem</button>
+        <button class="toggle-btn" data-mode="finding">Finding Max Flow</button>
+      </div>
+      <div class="knowdrop" id="knowdropText">
+        The max-flow min-cut theorem states that the maximum amount of flow you can push from source to sink equals the minimum capacity of any cut separating them. A cut is a partition of the network into two sets — one containing the source, one containing the sink — and its capacity is the sum of edge capacities crossing from source side to sink side. Why does this work? Because flow is conserved at every node (what comes in must go out), so all flow must cross any cut you make. The tightest cut is therefore the absolute ceiling. This principle applies to water pipes, road networks, data transmission, electrical grids, and evacuation routes — the bottleneck always wins.
+      </div>
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-this-tag">
+      <div class="pulse-dot"></div>
+      <div class="know-this-label">Know This</div>
+    </div>
+    <div class="know-this-body">
+      The <span style="color:var(--acc)">maximum flow</span> through any network always equals the capacity of its <span style="color:var(--acc)">minimum cut</span>, because every unit of flow must cross every cut separating <span style="color:var(--acc)">source from sink</span>.
+    </div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('flowCanvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const slider = document.getElementById('flowSlider');
+const liveTag = document.getElementById('liveTag');
+const canvasTag = document.getElementById('canvasTag');
+const actualFlowEl = document.getElementById('actualFlow');
+const minCutCapEl = document.getElementById('minCutCap');
+const knowdropText = document.getElementById('knowdropText');
+const toggleBtns = document.querySelectorAll('.toggle-btn');
+
+const CSS = getComputedStyle(document.documentElement);
+const ACC = CSS.getPropertyValue('--acc').trim();
+const RGB = CSS.getPropertyValue('--acc-rgb').trim();
+const AMB = CSS.getPropertyValue('--amb').trim();
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d', { alpha: false });
+
+let attemptedFlow = 0;
+let time = 0;
+let particles = [];
+
+// Network structure: source -> A, B -> sink
+// Edges: S->A(10), S->B(14), A->sink(18), B->sink(6)
+// Min cut is {S,A} vs {B,sink} with capacity 14+18=32? No.
+// Actually: S->A(10), S->B(14), A->B(4), A->sink(10), B->sink(14)
+// Min cut: {S} vs rest = 10+14=24
+const edges = [
+  { from: 'S', to: 'A', cap: 10, flow: 0, x1: 0.15, y1: 0.5, x2: 0.4, y2: 0.3 },
+  { from: 'S', to: 'B', cap: 14, flow: 0, x1: 0.15, y1: 0.5, x2: 0.4, y2: 0.7 },
+  { from: 'A', to: 'B', cap: 4, flow: 0, x1: 0.4, y1: 0.3, x2: 0.4, y2: 0.7 },
+  { from: 'A', to: 'T', cap: 10, flow: 0, x1: 0.4, y1: 0.3, x2: 0.85, y2: 0.5 },
+  { from: 'B', to: 'T', cap: 14, flow: 0, x1: 0.4, y1: 0.7, x2: 0.85, y2: 0.5 }
+];
+
+const nodes = {
+  S: { x: 0.15, y: 0.5, label: 'Source' },
+  A: { x: 0.4, y: 0.3, label: 'A' },
+  B: { x: 0.4, y: 0.7, label: 'B' },
+  T: { x: 0.85, y: 0.5, label: 'Sink' }
+};
+
+const minCutCapacity = 24; // S->A(10) + S->B(14)
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  bctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function updateFlow() {
+  attemptedFlow = parseInt(slider.value);
+  const actualFlow = Math.min(attemptedFlow, minCutCapacity);
+  
+  slider.style.setProperty('--fill', (attemptedFlow) + '%');
+  liveTag.textContent = `Attempting ${attemptedFlow} units/sec`;
+  actualFlowEl.textContent = actualFlow;
+  canvasTag.textContent = `Bottleneck at cut: ${actualFlow} / ${minCutCapacity} capacity`;
+  
+  // Distribute flow through network (simplified)
+  const flowRatio = actualFlow / minCutCapacity;
+  edges[0].flow = Math.min(10, actualFlow * 0.42); // S->A
+  edges[1].flow = Math.min(14, actualFlow * 0.58); // S->B
+  edges[2].flow = Math.min(4, edges[0].flow - Math.min(10, actualFlow * 0.42)); // A->B
+  edges[3].flow = Math.min(10, edges[0].flow); // A->T
+  edges[4].flow = Math.min(14, edges[1].flow + edges[2].flow); // B->T
+}
+
+function spawnParticle(edge) {
+  if (edge.flow > 0 && Math.random() < edge.flow / edge.cap * 0.15) {
+    particles.push({
+      edge,
+      progress: 0,
+      speed: 0.008 + Math.random() * 0.004,
+      size: 2 + Math.random() * 1.5
+    });
+  }
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  // Draw edges
+  edges.forEach(edge => {
+    const x1 = edge.x1 * w;
+    const y1 = edge.y1 * h;
+    const x2 = edge.x2 * w;
+    const y2 = edge.y2 * h;
+    
+    const flowRatio = edge.flow / edge.cap;
+    const baseWidth = 3;
+    const flowWidth = baseWidth + flowRatio * 6;
+    
+    // Base edge
+    ctx.strokeStyle = '#1a1f1a';
+    ctx.lineWidth = flowWidth + 4;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+    
+    // Flow overlay
+    if (flowRatio > 0) {
+      const grad = ctx.createLinearGradient(x1, y1, x2, y2);
+      grad.addColorStop(0, 'rgba(' + RGB + ',' + flowRatio * 0.7 + ')');
+      grad.addColorStop(1, 'rgba(' + RGB + ',' + flowRatio * 0.3 + ')');
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = flowWidth;
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+    }
+    
+    // Capacity label
+    ctx.font = '10px JetBrains Mono';
+    ctx.fillStyle = '#8C9389';
+    const mx = (x1 + x2) / 2;
+    const my = (y1 + y2) / 2;
+    const label = Math.round(edge.flow) + '/' + edge.cap;
+    const metrics = ctx.measureText(label);
+    ctx.fillText(label, mx - metrics.width / 2, my - 8);
+  });
+  
+  // Draw nodes
+  Object.entries(nodes).forEach(([key, node]) => {
+    const x = node.x * w;
+    const y = node.y * h;
+    const r = key === 'S' || key === 'T' ? 18 : 14;
+    
+    // Glow for source/sink
+    if (key === 'S' || key === 'T') {
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      const glow = ctx.createRadialGradient(x, y, 0, x, y, r * 2.2);
+      glow.addColorStop(0, 'rgba(' + RGB + ',0.35)');
+      glow.addColorStop(1, 'rgba(' + RGB + ',0)');
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(x, y, r * 2.2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+    
+    // Node circle
+    ctx.fillStyle = key === 'S' || key === 'T' ? ACC : '#12160F';
+    ctx.strokeStyle = key === 'S' || key === 'T' ? ACC : '#262B26';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    
+    // Label
+    ctx.font = key === 'S' || key === 'T' ? 'bold 11px JetBrains Mono' : '10px JetBrains Mono';
+    ctx.fillStyle = key === 'S' || key === 'T' ? '#0B0D0C' : '#EDEDE8';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(node.label, x, y);
+  });
+  
+  // Spawn and draw particles
+  edges.forEach(edge => spawnParticle(edge));
+  
+  particles = particles.filter(p => {
+    p.progress += p.speed;
+    if (p.progress > 1) return false;
+    
+    const x1 = p.edge.x1 * w;
+    const y1 = p.edge.y1 * h;
+    const x2 = p.edge.x2 * w;
+    const y2 = p.edge.y2 * h;
+    
+    const x = x1 + (x2 - x1) * p.progress;
+    const y = y1 + (y2 - y1) * p.progress;
+    
+    const alpha = Math.sin(p.progress * Math.PI) * 0.9;
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.fillStyle = 'rgba(' + RGB + ',' + alpha + ')';
+    ctx.beginPath();
+    ctx.arc(x, y, p.size, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+    
+    return true;
+  });
+  
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const vig = ctx.createRadialGradient(w / 2, h / 2, h * 0.28, w / 2, h / 2, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+  
+  time += 0.016;
+  requestAnimationFrame(draw);
+}
+
+slider.addEventListener('input', updateFlow);
+
+toggleBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    toggleBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    
+    const mode = btn.dataset.mode;
+    if (mode === 'theorem') {
+      knowdropText.textContent = "The max-flow min-cut theorem states that the maximum amount of flow you can push from source to sink equals the minimum capacity of any cut separating them. A cut is a partition of the network into two sets — one containing the source, one containing the sink — and its capacity is the sum of edge capacities crossing from source side to sink side. Why does this work? Because flow is conserved at every node (what comes in must go out), so all flow must cross any cut you make. The tightest cut is therefore the absolute ceiling. This principle applies to water pipes, road networks, data transmission, electrical grids, and evacuation routes — the bottleneck always wins.";
+    } else {
+      knowdropText.textContent = "To find maximum flow, start with zero flow everywhere. Look for any path from source to sink with available capacity (an augmenting path). Push as much flow as possible along that path — the limiting edge sets how much. Update the flows, then repeat: find another augmenting path, push flow, update. When no augmenting path exists, you have reached maximum flow. The Ford-Fulkerson algorithm automates this process. The final flow equals the min cut capacity because the algorithm stops exactly when flow saturates the bottleneck cut. Real applications use this for traffic routing, pipeline design, evacuation planning, and network bandwidth allocation.";
+    }
+  });
+});
+
+window.addEventListener('resize', resize);
+resize();
+updateFlow();
+draw();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'network-flow-and-the-maximum-flow-minimum-cut-theorem'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

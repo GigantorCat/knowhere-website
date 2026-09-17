@@ -1,0 +1,601 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Integration by Parts — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #23833F;
+  --ag: rgba(35, 131, 63, .7);
+  --ag1: rgba(35, 131, 63, .12);
+  --ag2: rgba(35, 131, 63, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  line-height: 1.55;
+  max-width: 58ch;
+  margin-bottom: 28px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 16px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 14px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-group {
+  margin-bottom: 12px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+}
+
+.ibp-slider {
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+  margin-bottom: 8px;
+}
+
+.ibp-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.ibp-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.ibp-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.ibp-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  padding: 0 4px;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+  margin-top: 14px;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.stat:first-child .stat-value { color: var(--acc); }
+.stat:last-child .stat-value { color: var(--amb); }
+
+.toggle-group {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: #12160F;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(35, 131, 63,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(35, 131, 63,.18);
+}
+
+.knowdrop {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.knowdrop-text {
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-this-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 10px;
+}
+
+.know-this-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.know-this-body .acc { color: var(--acc); }
+</style>
+
+<h2 class="sr-only">Integration by Parts Interactive Widget</h2>
+
+<div class="container">
+  <h1>Making one integral harder to make it <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">easier</span></h1>
+  
+  <p class="intro">Integration by parts deliberately creates a harder-looking integral than the one you started with — but if you choose correctly, the second integral actually solves itself. Drag the slider to see different choices of <em>u</em> and watch how complexity flows from one side to the other.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Integration Workspace</span>
+      <span class="live-tag" id="liveTag">u = x²</span>
+    </div>
+    <div class="card-hint">Drag slider to change which part becomes u</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="canvas"></canvas>
+      <div class="canvas-overlay" id="canvasOverlay">u = x² → Complexity: 68%</div>
+    </div>
+
+    <div class="slider-group">
+      <div class="slider-label">Choice of u</div>
+      <input type="range" class="ibp-slider" id="slider" min="0" max="100" value="60" />
+      <div class="tick-labels">
+        <span>e^x</span>
+        <span>x</span>
+        <span>x²</span>
+        <span>ln x</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Original Complexity</div>
+        <div class="stat-value" id="origComplexity">72%</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">New Integral</div>
+        <div class="stat-value" id="newComplexity">34%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-group">
+      <button class="toggle-btn active" data-mode="forward">Forward Strategy</button>
+      <button class="toggle-btn" data-mode="twice">Apply Twice</button>
+    </div>
+    <div class="knowdrop">
+      <p class="knowdrop-text" id="knowdropText">The key insight: choose u to be the part that becomes simpler when you differentiate it. Logarithms and inverse trig functions are almost always the right choice for u because they vanish or reduce when differentiated, while exponentials and powers stay manageable when integrated. If you choose u to be e^x or sin x, you just move complexity around without reducing it.</p>
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-this-tag">Know This</div>
+    <div class="know-this-body">
+      <span class="acc">The formula</span> ∫u dv = uv − ∫v du trades one integral for another, but only works when the <span class="acc">new integral is simpler</span> than the original.
+    </div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const slider = document.getElementById('slider');
+const liveTag = document.getElementById('liveTag');
+const canvasOverlay = document.getElementById('canvasOverlay');
+const origComplexity = document.getElementById('origComplexity');
+const newComplexity = document.getElementById('newComplexity');
+const knowdropText = document.getElementById('knowdropText');
+const toggleBtns = document.querySelectorAll('.toggle-btn');
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d', { alpha: false });
+
+let choice = 0.6;
+
+const choices = [
+  { pos: 0, label: 'e^x', orig: 72, next: 72, desc: 'e^x stays e^x when differentiated or integrated — you go in circles.' },
+  { pos: 0.33, label: 'x', orig: 72, next: 58, desc: 'x simplifies to 1 when differentiated, reducing the degree of the polynomial.' },
+  { pos: 0.6, label: 'x²', orig: 72, next: 34, desc: 'x² becomes 2x when differentiated — each application drops the power by 1.' },
+  { pos: 1, label: 'ln x', orig: 72, next: 12, desc: 'ln x becomes 1/x when differentiated, eliminating the logarithm entirely.' }
+];
+
+const knowdrops = {
+  forward: "The key insight: choose u to be the part that becomes simpler when you differentiate it. Logarithms and inverse trig functions are almost always the right choice for u because they vanish or reduce when differentiated, while exponentials and powers stay manageable when integrated. If you choose u to be e^x or sin x, you just move complexity around without reducing it.",
+  twice: "Some integrals require applying integration by parts twice. Classic example: ∫x²e^x dx. Choose u = x², dv = e^x dx. After the first pass you get x²e^x − ∫2xe^x dx, which still needs parts. Apply again with u = 2x, dv = e^x dx. After two rounds the polynomial vanishes and you're left with exponentials only. Occasionally the original integral reappears on the right side and you can solve algebraically by adding it to both sides."
+};
+
+function getChoice(val) {
+  val = val / 100;
+  let bestIdx = 0;
+  let bestDist = Math.abs(choices[0].pos - val);
+  for (let i = 1; i < choices.length; i++) {
+    const dist = Math.abs(choices[i].pos - val);
+    if (dist < bestDist) {
+      bestDist = dist;
+      bestIdx = i;
+    }
+  }
+  return choices[bestIdx];
+}
+
+function resizeCanvas() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function updateSliderFill() {
+  slider.style.setProperty('--fill', slider.value + '%');
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  const cx = w / 2;
+  const cy = h / 2;
+
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+
+  const ch = getChoice(slider.value);
+  const complexity = ch.next / 100;
+
+  // Grid background
+  ctx.strokeStyle = 'rgba(38,43,38,0.5)';
+  ctx.lineWidth = 0.5;
+  for (let i = 0; i < w; i += 30) {
+    ctx.beginPath();
+    ctx.moveTo(i, 0);
+    ctx.lineTo(i, h);
+    ctx.stroke();
+  }
+  for (let j = 0; j < h; j += 30) {
+    ctx.beginPath();
+    ctx.moveTo(0, j);
+    ctx.lineTo(w, j);
+    ctx.stroke();
+  }
+
+  // Original integral (left side) - flowing particles
+  const leftX = w * 0.25;
+  const particleCount = Math.floor(ch.orig / 3);
+  for (let i = 0; i < particleCount; i++) {
+    const angle = (i / particleCount) * Math.PI * 2 + Date.now() / 1000;
+    const r = 40 + Math.sin(Date.now() / 800 + i) * 8;
+    const px = leftX + Math.cos(angle) * r;
+    const py = cy + Math.sin(angle) * r;
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    const grad = ctx.createRadialGradient(px, py, 0, px, py, 6);
+    grad.addColorStop(0, 'rgba(250,199,117,0.8)');
+    grad.addColorStop(1, 'rgba(250,199,117,0)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(px, py, 6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // Original integral glow
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  const leftGlow = ctx.createRadialGradient(leftX, cy, 0, leftX, cy, 60);
+  leftGlow.addColorStop(0, 'rgba(250,199,117,0.3)');
+  leftGlow.addColorStop(1, 'rgba(250,199,117,0)');
+  ctx.fillStyle = leftGlow;
+  ctx.beginPath();
+  ctx.arc(leftX, cy, 60, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+  // Transfer beam
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  const beamGrad = ctx.createLinearGradient(leftX, cy, w * 0.75, cy);
+  beamGrad.addColorStop(0, 'rgba(250,199,117,0.4)');
+  beamGrad.addColorStop(0.5, 'rgba(35, 131, 63,0.4)');
+  beamGrad.addColorStop(1, 'rgba(35, 131, 63,0.4)');
+  ctx.strokeStyle = beamGrad;
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(leftX + 45, cy);
+  ctx.lineTo(w * 0.75 - 45, cy);
+  ctx.stroke();
+  ctx.restore();
+
+  // Arrow
+  ctx.save();
+  ctx.fillStyle = 'rgba(35, 131, 63,0.7)';
+  ctx.translate(w * 0.75 - 45, cy);
+  ctx.beginPath();
+  ctx.moveTo(0, -6);
+  ctx.lineTo(12, 0);
+  ctx.lineTo(0, 6);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+
+  // New integral (right side) - particle count based on complexity
+  const rightX = w * 0.75;
+  const newParticleCount = Math.floor(ch.next / 3);
+  for (let i = 0; i < newParticleCount; i++) {
+    const angle = (i / newParticleCount) * Math.PI * 2 - Date.now() / 1200;
+    const r = 40 + Math.sin(Date.now() / 900 + i) * 8;
+    const px = rightX + Math.cos(angle) * r;
+    const py = cy + Math.sin(angle) * r;
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    const grad = ctx.createRadialGradient(px, py, 0, px, py, 6);
+    grad.addColorStop(0, 'rgba(35, 131, 63,0.8)');
+    grad.addColorStop(1, 'rgba(35, 131, 63,0)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(px, py, 6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // New integral glow (intensity based on complexity)
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  const rightGlow = ctx.createRadialGradient(rightX, cy, 0, rightX, cy, 70);
+  rightGlow.addColorStop(0, `rgba(35, 131, 63,${0.5 - complexity * 0.4})`);
+  rightGlow.addColorStop(1, 'rgba(35, 131, 63,0)');
+  ctx.fillStyle = rightGlow;
+  ctx.beginPath();
+  ctx.arc(rightX, cy, 70, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+  // Labels
+  ctx.font = '14px "JetBrains Mono"';
+  ctx.textAlign = 'center';
+  ctx.fillStyle = 'rgba(250,199,117,0.9)';
+  ctx.fillText('∫ u dv', leftX, cy - 70);
+  ctx.fillStyle = complexity < 0.5 ? 'rgba(35, 131, 63,0.9)' : 'rgba(237,237,232,0.6)';
+  ctx.fillText('∫ v du', rightX, cy - 70);
+
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+
+  requestAnimationFrame(draw);
+}
+
+function updateUI() {
+  const ch = getChoice(slider.value);
+  liveTag.textContent = `u = ${ch.label}`;
+  canvasOverlay.textContent = `u = ${ch.label} → Complexity: ${ch.next}%`;
+  origComplexity.textContent = `${ch.orig}%`;
+  newComplexity.textContent = `${ch.next}%`;
+}
+
+slider.addEventListener('input', () => {
+  updateSliderFill();
+  updateUI();
+});
+
+toggleBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    toggleBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const mode = btn.dataset.mode;
+    knowdropText.textContent = knowdrops[mode];
+  });
+});
+
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+updateSliderFill();
+updateUI();
+draw();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'integration-by-parts'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

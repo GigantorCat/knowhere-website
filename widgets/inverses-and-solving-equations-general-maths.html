@@ -1,0 +1,601 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Inverses and Solving Equations — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #4FC65A;
+  --ag: rgba(79, 198, 90, .7);
+  --ag1: rgba(79, 198, 90, .12);
+  --ag2: rgba(79, 198, 90, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.container { max-width: 720px; margin: 0 auto; }
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  line-height: 1.55;
+  max-width: 58ch;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 12px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 14px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-group {
+  margin-top: 14px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.matrix-slider {
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  appearance: none;
+  outline: none;
+  cursor: pointer;
+  margin-bottom: 6px;
+}
+
+.matrix-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  transition: box-shadow .15s;
+  cursor: pointer;
+}
+
+.matrix-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  transition: box-shadow .15s;
+  cursor: pointer;
+}
+
+.matrix-slider:hover::-webkit-slider-thumb {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.matrix-slider:hover::-moz-range-thumb {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  padding: 0 2px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+  margin-top: 14px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.toggle-card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: #12160F;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(79, 198, 90,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(79, 198, 90,.18);
+}
+
+.knowdrop-divider {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.knowdrop-text {
+  font-family: 'Geist', sans-serif;
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.know-body {
+  font-family: 'Geist', sans-serif;
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.know-body .hl {
+  color: var(--acc);
+}
+</style>
+
+<h2 class="sr-only">Interactive matrix inverse demonstration showing how changing matrix values affects invertibility and equation solving</h2>
+
+<div class="container">
+  <h1>Division doesn't exist for matrices — but <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">inverses</span> do</h1>
+  
+  <p class="intro">You can't divide by a matrix, but if it has an inverse, you can multiply by that instead. The inverse "undoes" the original matrix like a reciprocal undoes a number. Watch what happens when you change the bottom-right value and cross the point where the matrix loses its inverse.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-label">Matrix Transform</div>
+      <div class="live-tag" id="statusTag">Invertible</div>
+    </div>
+    <div class="card-hint">Drag to change matrix value d</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="matrixCanvas"></canvas>
+      <div class="canvas-overlay" id="overlayTag">det(A) = 5.00</div>
+    </div>
+
+    <div class="slider-group">
+      <label class="slider-label" for="dSlider">Matrix element d</label>
+      <input type="range" id="dSlider" class="matrix-slider" min="-3" max="8" step="0.1" value="4" style="--fill: 63.6%">
+      <div class="tick-labels">
+        <span>−3</span>
+        <span>0</span>
+        <span>3</span>
+        <span>8</span>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-label">Determinant</div>
+        <div class="stat-value" style="color: var(--acc)" id="detValue">5.00</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Status</div>
+        <div class="stat-value" style="color: var(--amb)" id="statusValue">Invertible</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toggle-card">
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" data-mode="formula">Formula</button>
+      <button class="toggle-btn" data-mode="solving">Solving</button>
+    </div>
+    
+    <div class="knowdrop-divider">
+      <p class="knowdrop-text" id="knowdropText">For a 2×2 matrix A = [[a,b],[c,d]], the inverse is A⁻¹ = (1/det(A))·[[d,−b],[−c,a]]. Notice the determinant sits in the denominator — when det(A) = ad − bc = 0, division by zero makes the inverse undefined. The formula swaps the diagonal elements, negates the off-diagonal ones, then scales by 1/det(A). Only square matrices can have inverses, and only when their determinant is non-zero. A 3×3 or larger matrix uses a more complex formula, but the principle is identical: det(A) ≠ 0 is the gate.</p>
+    </div>
+  </div>
+
+  <div class="know-this">
+    <span class="know-tag">Know This</span>
+    <p class="know-body">The <span class="hl">inverse of a matrix</span> acts like a reciprocal: <span class="hl">A·A⁻¹ = I</span>, where I is the identity matrix, but it only exists for <span class="hl">square matrices with non-zero determinant</span>.</p>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('matrixCanvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d', { alpha: false });
+
+const slider = document.getElementById('dSlider');
+const statusTag = document.getElementById('statusTag');
+const overlayTag = document.getElementById('overlayTag');
+const detValue = document.getElementById('detValue');
+const statusValue = document.getElementById('statusValue');
+const knowdropText = document.getElementById('knowdropText');
+
+const toggleBtns = document.querySelectorAll('.toggle-btn');
+
+let dpr = Math.min(window.devicePixelRatio || 1, 2);
+let time = 0;
+let animFrame;
+
+// Matrix: [[2, 1], [1, d]]
+let d = 4;
+
+const knowdropContent = {
+  formula: "For a 2×2 matrix A = [[a,b],[c,d]], the inverse is A⁻¹ = (1/det(A))·[[d,−b],[−c,a]]. Notice the determinant sits in the denominator — when det(A) = ad − bc = 0, division by zero makes the inverse undefined. The formula swaps the diagonal elements, negates the off-diagonal ones, then scales by 1/det(A). Only square matrices can have inverses, and only when their determinant is non-zero. A 3×3 or larger matrix uses a more complex formula, but the principle is identical: det(A) ≠ 0 is the gate.",
+  solving: "To solve the system Ax = b, multiply both sides by A⁻¹ on the left: A⁻¹·A·x = A⁻¹·b. Since A⁻¹·A = I and I·x = x, this collapses to x = A⁻¹·b in one step. No elimination, no substitution. For example, if A = [[2,1],[1,4]] and b = [[5],[6]], then det(A) = 7, so A⁻¹ = (1/7)·[[4,−1],[−1,2]]. Multiply A⁻¹·b to get x = [[14/7],[8/7]] = [[2],[8/7]]. This method works for any square invertible system — it's the matrix equivalent of dividing both sides by a coefficient."
+};
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function updateSlider() {
+  d = parseFloat(slider.value);
+  const det = 2 * d - 1;
+  
+  detValue.textContent = det.toFixed(2);
+  overlayTag.textContent = `det(A) = ${det.toFixed(2)}`;
+  
+  if (Math.abs(det) < 0.01) {
+    statusTag.textContent = 'Singular';
+    statusValue.textContent = 'Singular';
+  } else {
+    statusTag.textContent = 'Invertible';
+    statusValue.textContent = 'Invertible';
+  }
+  
+  const pct = ((d + 3) / 11) * 100;
+  slider.style.setProperty('--fill', pct + '%');
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  const cx = w / 2;
+  const cy = h / 2;
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  const det = 2 * d - 1;
+  const gridSize = Math.min(w, h) * 0.32;
+  const spacing = gridSize / 5;
+  
+  // Draw coordinate grid (faint)
+  ctx.strokeStyle = 'rgba(79, 198, 90,0.08)';
+  ctx.lineWidth = 0.5;
+  for (let i = -5; i <= 5; i++) {
+    ctx.beginPath();
+    ctx.moveTo(cx + i * spacing, cy - gridSize);
+    ctx.lineTo(cx + i * spacing, cy + gridSize);
+    ctx.stroke();
+    
+    ctx.beginPath();
+    ctx.moveTo(cx - gridSize, cy + i * spacing);
+    ctx.lineTo(cx + gridSize, cy + i * spacing);
+    ctx.stroke();
+  }
+  
+  // Draw axes
+  ctx.strokeStyle = 'rgba(79, 198, 90,0.2)';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.moveTo(cx - gridSize, cy);
+  ctx.lineTo(cx + gridSize, cy);
+  ctx.stroke();
+  
+  ctx.beginPath();
+  ctx.moveTo(cx, cy - gridSize);
+  ctx.lineTo(cx, cy + gridSize);
+  ctx.stroke();
+  
+  // Original unit square (i, j basis vectors)
+  const scale = spacing * 1.2;
+  
+  // Original square in dim white
+  ctx.strokeStyle = 'rgba(237,237,232,0.3)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.lineTo(cx + scale, cy);
+  ctx.lineTo(cx + scale, cy - scale);
+  ctx.lineTo(cx, cy - scale);
+  ctx.closePath();
+  ctx.stroke();
+  
+  // Transformed square: Matrix [[2,1],[1,d]]
+  // New i-hat = (2, 1), new j-hat = (1, d)
+  const i_x = 2 * scale;
+  const i_y = -1 * scale;
+  const j_x = 1 * scale;
+  const j_y = -d * scale;
+  
+  // Draw transformed parallelogram
+  const near_singular = Math.abs(det) < 0.5;
+  const alpha = near_singular ? 0.3 + 0.3 * Math.abs(det) / 0.5 : 0.6;
+  
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  
+  // Fill
+  ctx.fillStyle = `rgba(79,198,90,${alpha * 0.15})`;
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.lineTo(cx + i_x, cy + i_y);
+  ctx.lineTo(cx + i_x + j_x, cy + i_y + j_y);
+  ctx.lineTo(cx + j_x, cy + j_y);
+  ctx.closePath();
+  ctx.fill();
+  
+  // Stroke with glow
+  ctx.strokeStyle = `rgba(79,198,90,${alpha})`;
+  ctx.lineWidth = near_singular ? 2.5 : 2;
+  ctx.shadowColor = 'rgba(79, 198, 90,0.6)';
+  ctx.shadowBlur = near_singular ? 18 : 12;
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.lineTo(cx + i_x, cy + i_y);
+  ctx.lineTo(cx + i_x + j_x, cy + i_y + j_y);
+  ctx.lineTo(cx + j_x, cy + j_y);
+  ctx.closePath();
+  ctx.stroke();
+  
+  ctx.restore();
+  
+  // Draw basis vectors with arrows
+  function drawVector(vx, vy, color, label) {
+    const endX = cx + vx;
+    const endY = cy + vy;
+    const angle = Math.atan2(vy, vx);
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 8;
+    
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(endX, endY);
+    ctx.stroke();
+    
+    // Arrowhead
+    const arrowSize = 8;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(endX, endY);
+    ctx.lineTo(endX - arrowSize * Math.cos(angle - 0.4), endY - arrowSize * Math.sin(angle - 0.4));
+    ctx.lineTo(endX - arrowSize * Math.cos(angle + 0.4), endY - arrowSize * Math.sin(angle + 0.4));
+    ctx.closePath();
+    ctx.fill();
+    
+    ctx.restore();
+    
+    // Label
+    ctx.fillStyle = color;
+    ctx.font = '12px JetBrains Mono';
+    ctx.fillText(label, endX + 8, endY - 8);
+  }
+  
+  drawVector(i_x, i_y, 'rgba(79, 198, 90,0.9)', 'i\'');
+  drawVector(j_x, j_y, 'rgba(250,199,117,0.9)', 'j\'');
+  
+  // Bloom effect
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+  
+  time += 0.016;
+  animFrame = requestAnimationFrame(draw);
+}
+
+slider.addEventListener('input', updateSlider);
+
+toggleBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    toggleBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const mode = btn.dataset.mode;
+    knowdropText.textContent = knowdropContent[mode];
+  });
+});
+
+window.addEventListener('resize', resize);
+resize();
+updateSlider();
+draw();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'inverses-and-solving-equations'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

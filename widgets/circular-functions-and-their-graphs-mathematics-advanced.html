@@ -1,0 +1,577 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Circular Functions and Their Graphs — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #3EB556;
+  --ag: rgba(62, 181, 86, .7);
+  --ag1: rgba(62, 181, 86, .12);
+  --ag2: rgba(62, 181, 86, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  min-height: 100vh;
+  padding: 40px 16px 0;
+  color: var(--ink);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 28px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-group {
+  margin-bottom: 18px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.wave-slider {
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 50%), #23291f var(--fill, 50%));
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+  margin-bottom: 6px;
+}
+
+.wave-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.wave-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.wave-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.wave-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  padding: 0 2px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 4px;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.stat-value.acc { color: var(--acc); }
+.stat-value.amb { color: var(--amb); }
+
+.toggle-section {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(62, 181, 86,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(62, 181, 86,.18);
+}
+
+.knowdrop {
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-top: 18px;
+  margin-bottom: 0;
+}
+
+.know-this-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 8px;
+}
+
+.know-this-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.know-this-body .hl {
+  color: var(--acc);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Interactive circular function graph transformation widget</h2>
+  
+  <h1>Every sine wave is just <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">coordinates</span></h1>
+  
+  <p class="intro">The parameters in y = a sin(n(x − h)) + k aren't abstract — they're literal instructions for moving and stretching the graph. Drag the slider to change the amplitude and watch the wave reshape in real time.</p>
+  
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Wave Transform</span>
+      <span class="live-tag" id="liveTag">Amplitude: 1.0</span>
+    </div>
+    <div class="card-hint">Adjust amplitude from -3 to +3</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="waveCanvas"></canvas>
+      <div class="canvas-overlay" id="canvasOverlay">y = 1.0 sin(x)</div>
+    </div>
+    
+    <div class="slider-group">
+      <label class="slider-label" for="ampSlider">Amplitude (a)</label>
+      <input 
+        type="range" 
+        id="ampSlider" 
+        class="wave-slider" 
+        min="-3" 
+        max="3" 
+        step="0.1" 
+        value="1"
+        style="--fill: 66.67%"
+      >
+      <div class="tick-labels">
+        <span>-3</span>
+        <span>-1.5</span>
+        <span>0</span>
+        <span>1.5</span>
+        <span>3</span>
+      </div>
+    </div>
+    
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-label">Amplitude |a|</div>
+        <div class="stat-value acc" id="ampValue">1.0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Range</div>
+        <div class="stat-value amb" id="rangeValue">[-1, 1]</div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="card">
+    <div class="toggle-section">
+      <button class="toggle-btn active" data-mode="params">Parameters</button>
+      <button class="toggle-btn" data-mode="shift">Phase Shift</button>
+    </div>
+    
+    <div class="knowdrop" id="knowdropText">
+      The equation y = a sin(n(x − h)) + k is a coordinate system for transformations. The amplitude a stretches vertically (height of the wave). The coefficient n compresses horizontally — period becomes 2π/n. The h value slides the entire graph left or right (phase shift), and k moves it up or down (vertical shift). The range is always [k − a, k + a]. Every parameter has a geometric meaning you can point to on the graph.
+    </div>
+  </div>
+  
+  <div class="know-this">
+    <div class="know-this-tag">Know This</div>
+    <div class="know-this-body">For y = a sin(n(x − h)) + k: <span class="hl">amplitude is |a|</span>, <span class="hl">period is 2π/n</span>, <span class="hl">h shifts the graph horizontally</span> (phase shift), <span class="hl">k shifts it vertically</span>.</div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('waveCanvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d', { alpha: false });
+
+const slider = document.getElementById('ampSlider');
+const liveTag = document.getElementById('liveTag');
+const canvasOverlay = document.getElementById('canvasOverlay');
+const ampValue = document.getElementById('ampValue');
+const rangeValue = document.getElementById('rangeValue');
+
+let dpr = Math.min(window.devicePixelRatio || 1, 2);
+let amp = 1.0;
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  draw();
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  const cx = w / 2;
+  const cy = h / 2;
+  const scale = Math.min(w, h) / 7;
+  
+  // Grid
+  ctx.strokeStyle = 'rgba(140,147,137,0.15)';
+  ctx.lineWidth = 0.8;
+  ctx.beginPath();
+  for (let i = -3; i <= 3; i++) {
+    const y = cy - i * scale;
+    ctx.moveTo(0, y);
+    ctx.lineTo(w, y);
+  }
+  const step = Math.PI / 2;
+  for (let x = 0; x <= Math.PI * 2; x += step) {
+    const px = cx - Math.PI * scale + x * scale;
+    ctx.moveTo(px, 0);
+    ctx.lineTo(px, h);
+  }
+  ctx.stroke();
+  
+  // Axes
+  ctx.strokeStyle = 'rgba(140,147,137,0.35)';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.moveTo(0, cy);
+  ctx.lineTo(w, cy);
+  ctx.stroke();
+  
+  // Zero amplitude guide
+  if (Math.abs(amp) < 0.15) {
+    ctx.strokeStyle = 'rgba(250,199,117,0.4)';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(0, cy);
+    ctx.lineTo(w, cy);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+  
+  // Amplitude envelope
+  if (Math.abs(amp) > 0.1) {
+    ctx.strokeStyle = 'rgba(62, 181, 86,0.12)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.moveTo(0, cy - amp * scale);
+    ctx.lineTo(w, cy - amp * scale);
+    ctx.moveTo(0, cy + amp * scale);
+    ctx.lineTo(w, cy + amp * scale);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+  
+  // Wave curve
+  ctx.strokeStyle = '#3EB556';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  const samples = 300;
+  for (let i = 0; i <= samples; i++) {
+    const t = (i / samples) * Math.PI * 2.5;
+    const x = cx - Math.PI * scale + t * scale;
+    const y = cy - amp * Math.sin(t) * scale;
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+  
+  // Peak/trough markers
+  if (Math.abs(amp) > 0.2) {
+    const peakX = cx + (Math.PI / 2) * scale;
+    const peakY = cy - amp * scale;
+    const troughX = cx + (3 * Math.PI / 2) * scale;
+    const troughY = cy + amp * scale;
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    
+    const peakGrad = ctx.createRadialGradient(peakX, peakY, 0, peakX, peakY, 18);
+    peakGrad.addColorStop(0, 'rgba(62, 181, 86,0.6)');
+    peakGrad.addColorStop(1, 'rgba(62, 181, 86,0)');
+    ctx.fillStyle = peakGrad;
+    ctx.beginPath();
+    ctx.arc(peakX, peakY, 18, 0, Math.PI * 2);
+    ctx.fill();
+    
+    const troughGrad = ctx.createRadialGradient(troughX, troughY, 0, troughX, troughY, 18);
+    troughGrad.addColorStop(0, 'rgba(62, 181, 86,0.6)');
+    troughGrad.addColorStop(1, 'rgba(62, 181, 86,0)');
+    ctx.fillStyle = troughGrad;
+    ctx.beginPath();
+    ctx.arc(troughX, troughY, 18, 0, Math.PI * 2);
+    ctx.fill();
+    
+    ctx.restore();
+    
+    ctx.fillStyle = '#3EB556';
+    ctx.beginPath();
+    ctx.arc(peakX, peakY, 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(troughX, troughY, 4, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+}
+
+function updateUI() {
+  const absAmp = Math.abs(amp);
+  const min = -absAmp;
+  const max = absAmp;
+  
+  ampValue.textContent = absAmp.toFixed(1);
+  rangeValue.textContent = `[${min.toFixed(1)}, ${max.toFixed(1)}]`;
+  liveTag.textContent = `Amplitude: ${amp.toFixed(1)}`;
+  canvasOverlay.textContent = `y = ${amp.toFixed(1)} sin(x)`;
+  
+  draw();
+}
+
+slider.addEventListener('input', (e) => {
+  amp = parseFloat(e.target.value);
+  const fillPercent = ((amp - (-3)) / 6) * 100;
+  slider.style.setProperty('--fill', fillPercent + '%');
+  updateUI();
+});
+
+// Toggle + Knowdrop
+const toggleBtns = document.querySelectorAll('.toggle-btn');
+const knowdropText = document.getElementById('knowdropText');
+
+const content = {
+  params: "The equation y = a sin(n(x − h)) + k is a coordinate system for transformations. The amplitude a stretches vertically (height of the wave). The coefficient n compresses horizontally — period becomes 2π/n. The h value slides the entire graph left or right (phase shift), and k moves it up or down (vertical shift). The range is always [k − a, k + a]. Every parameter has a geometric meaning you can point to on the graph.",
+  shift: "Cosine and sine are the same wave with different starting positions — cos(x) = sin(x + π/2). A phase shift of h units moves every point on the curve horizontally. If h is positive, the graph shifts right; if negative, it shifts left. This doesn't change the amplitude or period — it's purely a translation. The vertical shift k acts independently, moving the entire midline up or down without affecting the wave's shape or timing."
+};
+
+toggleBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    toggleBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const mode = btn.dataset.mode;
+    knowdropText.textContent = content[mode];
+  });
+});
+
+window.addEventListener('resize', resize);
+resize();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'circular-functions-and-their-graphs'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

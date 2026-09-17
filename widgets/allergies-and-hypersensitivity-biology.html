@@ -1,0 +1,679 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Allergies and Hypersensitivity — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #5AADD4;
+  --ag: rgba(90, 173, 212, .7);
+  --ag1: rgba(90, 173, 212, .12);
+  --ag2: rgba(90, 173, 212, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 0;
+  line-height: 1.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: white;
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-container {
+  margin-bottom: 10px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.exposure-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  outline: none;
+  margin-bottom: 6px;
+}
+
+.exposure-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.exposure-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.exposure-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.exposure-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  padding: 0 2px;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+  margin-top: 14px;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 4px;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.stat:first-child .stat-value {
+  color: var(--acc);
+}
+
+.stat:last-child .stat-value {
+  color: var(--amb);
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(90,173,212,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(90,173,212,.18);
+}
+
+.knowdrop-divider {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.knowdrop-text {
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-this-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.know-this-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.acc-text {
+  color: var(--acc);
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Interactive visualisation of allergic response and immune system sensitisation</h2>
+
+  <h1>Your body's overreaction is the <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">danger</span></h1>
+  
+  <p class="intro">Allergies aren't caused by the allergen itself — they're caused by your immune system's full-force response to something harmless. The damage is self-inflicted, which is why antihistamines block your own reaction rather than neutralising the trigger. Drag the slider to watch sensitisation happen, then see the cascade unleashed.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Immune Response Cascade</span>
+      <span class="live-tag" id="phaseTag">Baseline</span>
+    </div>
+    <p class="card-hint">Drag to simulate first exposure and subsequent re-exposures</p>
+    
+    <div class="canvas-wrapper">
+      <canvas id="canvas"></canvas>
+      <div class="canvas-overlay" id="overlayTag">No exposure</div>
+    </div>
+
+    <div class="slider-container">
+      <label class="slider-label" for="exposureSlider">Allergen Exposure</label>
+      <input 
+        type="range" 
+        id="exposureSlider" 
+        class="exposure-slider"
+        min="0" 
+        max="100" 
+        value="0"
+        style="--fill: 0%"
+      >
+      <div class="tick-labels">
+        <span>Naive</span>
+        <span>First contact</span>
+        <span>Sensitised</span>
+        <span>Re-exposure</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Mast Cells Primed</div>
+        <div class="stat-value" id="mastStat">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Histamine Released</div>
+        <div class="stat-value" id="histamineStat">None</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" id="btnLocal">Local Response</button>
+      <button class="toggle-btn" id="btnSystemic">Anaphylaxis</button>
+    </div>
+    
+    <div class="knowdrop-divider">
+      <p class="knowdrop-text" id="knowdropText">A local allergic reaction stays confined to the area of contact — sneezing from pollen, hives from a food allergen, or itching at a bee sting site. Histamine released by mast cells causes blood vessels to dilate and leak fluid, creating the classic symptoms: redness, swelling, mucus production, and itching. This is uncomfortable but not life-threatening. Antihistamines block histamine receptors, preventing these effects without touching the allergen itself. The reaction is self-limiting because only nearby mast cells degranulate, and the immune response doesn't cascade beyond the local tissue.</p>
+    </div>
+  </div>
+
+  <div class="know-this">
+    <span class="know-this-tag">Know This</span>
+    <p class="know-this-body">An <span class="acc-text">allergen</span> is a harmless substance treated as a threat — first exposure <span class="acc-text">sensitises</span> by creating IgE antibodies that bind to <span class="acc-text">mast cells</span>, then on re-exposure those cells release <span class="acc-text">histamine</span>, causing the damage you experience as symptoms.</p>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d', { alpha: false });
+
+const slider = document.getElementById('exposureSlider');
+const phaseTag = document.getElementById('phaseTag');
+const overlayTag = document.getElementById('overlayTag');
+const mastStat = document.getElementById('mastStat');
+const histamineStat = document.getElementById('histamineStat');
+const btnLocal = document.getElementById('btnLocal');
+const btnSystemic = document.getElementById('btnSystemic');
+const knowdropText = document.getElementById('knowdropText');
+
+let exposure = 0;
+let time = 0;
+let particles = [];
+let mastCells = [];
+let histamineParticles = [];
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  
+  // Initialize mast cells
+  mastCells = [];
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  for (let i = 0; i < 12; i++) {
+    mastCells.push({
+      x: Math.random() * w * 0.7 + w * 0.15,
+      y: Math.random() * h * 0.7 + h * 0.15,
+      primed: false,
+      primingProgress: 0,
+      releasing: false,
+      releaseProgress: 0,
+      igeCount: 0,
+      pulsePhase: Math.random() * Math.PI * 2
+    });
+  }
+}
+
+function updateStats() {
+  const primedCount = mastCells.filter(m => m.primed).length;
+  mastStat.textContent = primedCount;
+  
+  if (exposure > 75) {
+    histamineStat.textContent = 'High';
+  } else if (exposure > 50) {
+    histamineStat.textContent = 'Low';
+  } else {
+    histamineStat.textContent = 'None';
+  }
+}
+
+function updatePhase() {
+  if (exposure < 15) {
+    phaseTag.textContent = 'Baseline';
+    overlayTag.textContent = 'No exposure';
+  } else if (exposure < 40) {
+    phaseTag.textContent = 'First Contact';
+    overlayTag.textContent = 'IgE antibodies forming';
+  } else if (exposure < 65) {
+    phaseTag.textContent = 'Sensitisation';
+    overlayTag.textContent = 'IgE binding to mast cells';
+  } else {
+    phaseTag.textContent = 'Re-exposure';
+    overlayTag.textContent = 'Histamine cascade active';
+  }
+}
+
+slider.addEventListener('input', (e) => {
+  const val = parseInt(e.target.value);
+  exposure = val;
+  slider.style.setProperty('--fill', val + '%');
+  updatePhase();
+  updateStats();
+});
+
+btnLocal.addEventListener('click', () => {
+  btnLocal.classList.add('active');
+  btnSystemic.classList.remove('active');
+  knowdropText.textContent = 'A local allergic reaction stays confined to the area of contact — sneezing from pollen, hives from a food allergen, or itching at a bee sting site. Histamine released by mast cells causes blood vessels to dilate and leak fluid, creating the classic symptoms: redness, swelling, mucus production, and itching. This is uncomfortable but not life-threatening. Antihistamines block histamine receptors, preventing these effects without touching the allergen itself. The reaction is self-limiting because only nearby mast cells degranulate, and the immune response doesn\'t cascade beyond the local tissue.';
+});
+
+btnSystemic.addEventListener('click', () => {
+  btnSystemic.classList.add('active');
+  btnLocal.classList.remove('active');
+  knowdropText.textContent = 'Anaphylaxis is a systemic allergic reaction where the cascade spreads throughout the entire body within minutes. Widespread mast cell degranulation releases massive amounts of histamine into circulation, causing global vasodilation and fluid leakage. Blood pressure drops dangerously as plasma escapes vessels. Airways constrict, threatening breathing. This requires immediate adrenaline (epinephrine), which reverses vasodilation, stops mast cell degranulation, and stabilises blood pressure. Antihistamines alone cannot work fast enough in anaphylaxis — the reaction is too rapid and too severe. Adrenaline directly counteracts the physiological collapse, buying time for the immune response to settle.';
+});
+
+function draw() {
+  time += 0.016;
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  // Background cellular texture
+  ctx.save();
+  ctx.globalAlpha = 0.08;
+  for (let i = 0; i < 30; i++) {
+    const x = (Math.sin(i * 2.4 + time * 0.3) * 0.5 + 0.5) * w;
+    const y = (Math.cos(i * 1.7 + time * 0.2) * 0.5 + 0.5) * h;
+    const r = 15 + Math.sin(time + i) * 5;
+    const grad = ctx.createRadialGradient(x, y, 0, x, y, r);
+    grad.addColorStop(0, 'rgba(90,173,212,0.3)');
+    grad.addColorStop(1, 'rgba(90,173,212,0)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+  
+  // Allergen particles (phase 1)
+  if (exposure > 10 && exposure < 70) {
+    const targetCount = Math.floor((exposure - 10) / 60 * 15);
+    while (particles.length < targetCount) {
+      particles.push({
+        x: Math.random() * w,
+        y: -10,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: 0.5 + Math.random() * 0.5,
+        life: 1
+      });
+    }
+  }
+  
+  particles = particles.filter(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.life -= 0.003;
+    
+    if (p.life <= 0 || p.y > h + 10) return false;
+    
+    ctx.save();
+    ctx.globalAlpha = p.life * 0.7;
+    ctx.fillStyle = '#FAC775';
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+    
+    return true;
+  });
+  
+  // Mast cells
+  mastCells.forEach((mc, idx) => {
+    // Priming logic (exposure 40-65)
+    if (exposure >= 40 && exposure < 65 && !mc.primed) {
+      mc.primingProgress = Math.min(1, mc.primingProgress + 0.01);
+      if (mc.primingProgress >= 1) {
+        mc.primed = true;
+        mc.igeCount = Math.floor(Math.random() * 3) + 3;
+      }
+    }
+    
+    // Release logic (exposure > 65)
+    if (exposure >= 65 && mc.primed) {
+      mc.releasing = true;
+      mc.releaseProgress = Math.min(1, mc.releaseProgress + 0.008);
+      
+      // Spawn histamine particles
+      if (Math.random() < 0.15 && histamineParticles.length < 80) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 1.2 + Math.random() * 1.5;
+        histamineParticles.push({
+          x: mc.x,
+          y: mc.y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          life: 1,
+          size: 2 + Math.random() * 2
+        });
+      }
+    }
+    
+    // Draw mast cell
+    const baseR = 12;
+    const pulse = Math.sin(time * 2 + mc.pulsePhase) * 0.5 + 0.5;
+    const r = baseR + (mc.primed ? pulse * 2 : 0);
+    
+    // Cell body
+    const cellGrad = ctx.createRadialGradient(mc.x, mc.y, 0, mc.x, mc.y, r);
+    if (mc.releasing) {
+      cellGrad.addColorStop(0, 'rgba(90,173,212,0.6)');
+      cellGrad.addColorStop(0.7, 'rgba(90,173,212,0.3)');
+      cellGrad.addColorStop(1, 'rgba(90,173,212,0)');
+    } else if (mc.primed) {
+      cellGrad.addColorStop(0, 'rgba(90,173,212,0.4)');
+      cellGrad.addColorStop(1, 'rgba(90,173,212,0.1)');
+    } else {
+      cellGrad.addColorStop(0, 'rgba(140,147,137,0.3)');
+      cellGrad.addColorStop(1, 'rgba(140,147,137,0)');
+    }
+    
+    ctx.save();
+    ctx.fillStyle = cellGrad;
+    ctx.beginPath();
+    ctx.arc(mc.x, mc.y, r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+    
+    // IgE antibodies on surface
+    if (mc.primed) {
+      ctx.save();
+      for (let i = 0; i < mc.igeCount; i++) {
+        const angle = (i / mc.igeCount) * Math.PI * 2 + time * 0.3;
+        const rx = mc.x + Math.cos(angle) * (r - 3);
+        const ry = mc.y + Math.sin(angle) * (r - 3);
+        
+        ctx.fillStyle = mc.releasing ? 'rgba(90,173,212,0.9)' : 'rgba(90,173,212,0.6)';
+        ctx.beginPath();
+        ctx.arc(rx, ry, 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+    
+    // Glow when releasing
+    if (mc.releasing) {
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      const glowGrad = ctx.createRadialGradient(mc.x, mc.y, 0, mc.x, mc.y, r * 3);
+      glowGrad.addColorStop(0, 'rgba(90,173,212,0.4)');
+      glowGrad.addColorStop(1, 'rgba(90,173,212,0)');
+      ctx.fillStyle = glowGrad;
+      ctx.beginPath();
+      ctx.arc(mc.x, mc.y, r * 3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+  });
+  
+  // Histamine particles
+  histamineParticles = histamineParticles.filter(hp => {
+    hp.x += hp.vx;
+    hp.y += hp.vy;
+    hp.vx *= 0.98;
+    hp.vy *= 0.98;
+    hp.life -= 0.008;
+    
+    if (hp.life <= 0) return false;
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.globalAlpha = hp.life;
+    const hGrad = ctx.createRadialGradient(hp.x, hp.y, 0, hp.x, hp.y, hp.size * 2);
+    hGrad.addColorStop(0, 'rgba(250,199,117,0.8)');
+    hGrad.addColorStop(1, 'rgba(250,199,117,0)');
+    ctx.fillStyle = hGrad;
+    ctx.beginPath();
+    ctx.arc(hp.x, hp.y, hp.size * 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+    
+    return true;
+  });
+  
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const cx = w / 2;
+  const cy = h / 2;
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+  
+  requestAnimationFrame(draw);
+}
+
+resize();
+window.addEventListener('resize', resize);
+draw();
+updateStats();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'allergies-and-hypersensitivity'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

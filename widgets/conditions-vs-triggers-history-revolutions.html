@@ -1,0 +1,627 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Conditions vs Triggers — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #9A5FD2;
+  --ag: rgba(154, 95, 210, .7);
+  --ag1: rgba(154, 95, 210, .12);
+  --ag2: rgba(154, 95, 210, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  min-height: 100vh;
+  padding: 40px 16px 0;
+  color: var(--ink);
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 28px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-section {
+  margin-top: 16px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 10px;
+}
+
+.pressure-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  outline: none;
+  margin-bottom: 8px;
+}
+
+.pressure-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.pressure-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.pressure-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.pressure-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  margin-top: 16px;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.stat:first-child .stat-value {
+  color: var(--acc);
+}
+
+.stat:last-child .stat-value {
+  color: var(--amb);
+}
+
+.toggle-section {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(154, 95, 210,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(154, 95, 210,.18);
+}
+
+.knowdrop-section {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.knowdrop-text {
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-this-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.know-this-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.know-this-body .acc {
+  color: var(--acc);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (max-width: 360px) {
+  body {
+    padding: 32px 12px 0;
+  }
+  .card {
+    padding: 14px;
+  }
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Interactive widget exploring the difference between conditions and triggers in revolutions</h2>
+
+  <h1>Famine Alone Has Never Started a <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">Revolution</span></h1>
+  
+  <p class="intro">Long-term suffering creates pressure, but revolutions ignite from specific moments — a bread riot, a tax decree, a single arrest. Understanding the difference between conditions and triggers is the foundation of every strong historical argument. Drag the slider to see how pressure builds until a trigger sets it off.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Pressure System</span>
+      <span class="live-tag" id="header-tag">Building</span>
+    </div>
+    <div class="card-hint">Watch how conditions accumulate before the trigger event</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="canvas"></canvas>
+      <div class="canvas-overlay" id="overlay-tag">Conditions accumulating</div>
+    </div>
+
+    <div class="slider-section">
+      <div class="slider-label">Pressure Level</div>
+      <input type="range" min="0" max="100" value="0" class="pressure-slider" id="pressure" style="--fill: 0%">
+      <div class="tick-labels">
+        <span>Stable</span>
+        <span>Tension</span>
+        <span>Critical</span>
+        <span>Eruption</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Conditions Active</div>
+        <div class="stat-value" id="conditions-count">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Trigger Status</div>
+        <div class="stat-value" id="trigger-status">—</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-section">
+      <button class="toggle-btn active" id="btn-conditions">Conditions</button>
+      <button class="toggle-btn" id="btn-triggers">Triggers</button>
+    </div>
+    
+    <div class="knowdrop-section">
+      <p class="knowdrop-text" id="knowdrop">Long-term causes are the structural conditions that accumulate over years or decades: economic inequality, political exclusion, ideological shifts, fiscal crisis, crop failures. These build pressure like water behind a dam. The French Third Estate was locked out of power for centuries, Russian serfs endured brutal conditions for generations, colonial subjects faced systemic exploitation for decades. But conditions alone rarely produce eruption — they create fragility and anger, but revolution requires ignition. The critical insight: most societies endure terrible conditions without revolting. What tips them over is the trigger.</p>
+    </div>
+  </div>
+
+  <div class="know-this">
+    <span class="know-this-tag">Know This</span>
+    <p class="know-this-body">A strong answer always separates <span class="acc">long-term causes</span> (conditions building over years) from <span class="acc">short-term triggers</span> (specific igniting events), then shows how both were necessary — the conditions created the pressure, the trigger released it.</p>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const slider = document.getElementById('pressure');
+const headerTag = document.getElementById('header-tag');
+const overlayTag = document.getElementById('overlay-tag');
+const conditionsCount = document.getElementById('conditions-count');
+const triggerStatus = document.getElementById('trigger-status');
+const btnConditions = document.getElementById('btn-conditions');
+const btnTriggers = document.getElementById('btn-triggers');
+const knowdrop = document.getElementById('knowdrop');
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d');
+
+let pressure = 0;
+let nodes = [];
+let beams = [];
+let triggered = false;
+let explosionParticles = [];
+let time = 0;
+
+const conditionsText = "Long-term causes are the structural conditions that accumulate over years or decades: economic inequality, political exclusion, ideological shifts, fiscal crisis, crop failures. These build pressure like water behind a dam. The French Third Estate was locked out of power for centuries, Russian serfs endured brutal conditions for generations, colonial subjects faced systematic exploitation for decades. But conditions alone rarely produce eruption — they create fragility and anger, but revolution requires ignition. The critical insight: most societies endure terrible conditions without revolting. What tips them over is the trigger.";
+
+const triggersText = "Short-term triggers are specific, dateable events that ignite the accumulated pressure: the storming of a building, a massacre, a tax decree, a bread riot, an arrest, a failed harvest. The French Revolution ignited when the Assembly of Notables failed and Louis XVI called the Estates-General — not centuries of inequality, but a specific political crisis in 1788–89. The Russian Revolution's triggers were Bloody Sunday (1905) and the February bread riots (1917) — not abstract suffering, but concrete events. Triggers are necessary because they provide a focal point, a moment when resistance becomes coordinated. Without the trigger, pressure dissipates into grumbling and resignation.";
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  
+  initNodes();
+}
+
+function initNodes() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  const cx = w / 2;
+  const cy = h / 2;
+  
+  nodes = [];
+  const count = 8;
+  for (let i = 0; i < count; i++) {
+    const angle = (i / count) * Math.PI * 2;
+    const r = Math.min(w, h) * 0.38;
+    nodes.push({
+      x: cx + Math.cos(angle) * r,
+      y: cy + Math.sin(angle) * r,
+      active: false,
+      label: ['Inequality', 'Exclusion', 'Fiscal Crisis', 'Ideology', 'Famine', 'Oppression', 'Corruption', 'Debt'][i]
+    });
+  }
+}
+
+function updateSlider() {
+  pressure = parseFloat(slider.value);
+  slider.style.setProperty('--fill', pressure + '%');
+  
+  const activeCount = Math.floor((pressure / 100) * nodes.length);
+  nodes.forEach((n, i) => {
+    n.active = i < activeCount;
+  });
+  
+  conditionsCount.textContent = activeCount;
+  
+  if (pressure < 25) {
+    headerTag.textContent = 'Building';
+    overlayTag.textContent = 'Conditions accumulating';
+    triggered = false;
+    explosionParticles = [];
+  } else if (pressure < 75) {
+    headerTag.textContent = 'Pressure Rising';
+    overlayTag.textContent = 'Tension increasing';
+    triggered = false;
+    explosionParticles = [];
+  } else if (pressure < 95) {
+    headerTag.textContent = 'Critical Threshold';
+    overlayTag.textContent = 'Critical pressure — awaiting trigger';
+    triggered = false;
+    explosionParticles = [];
+  } else {
+    headerTag.textContent = 'Eruption';
+    overlayTag.textContent = 'Trigger event — revolution ignites';
+    if (!triggered) {
+      triggered = true;
+      createExplosion();
+    }
+    triggerStatus.textContent = 'FIRED';
+    return;
+  }
+  
+  triggerStatus.textContent = '—';
+}
+
+function createExplosion() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  const cx = w / 2;
+  const cy = h / 2;
+  
+  for (let i = 0; i < 60; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = 1.2 + Math.random() * 2.5;
+    explosionParticles.push({
+      x: cx,
+      y: cy,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      life: 1,
+      size: 2 + Math.random() * 3
+    });
+  }
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  const cx = w / 2;
+  const cy = h / 2;
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  // Draw beams from active nodes to center
+  nodes.forEach(n => {
+    if (n.active) {
+      const gradient = ctx.createLinearGradient(n.x, n.y, cx, cy);
+      gradient.addColorStop(0, 'rgba(154, 95, 210,0.05)');
+      gradient.addColorStop(1, 'rgba(154, 95, 210,0.35)');
+      
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.strokeStyle = gradient;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(n.x, n.y);
+      ctx.lineTo(cx, cy);
+      ctx.stroke();
+      ctx.restore();
+    }
+  });
+  
+  // Draw convergence glow at center
+  const activeCount = nodes.filter(n => n.active).length;
+  if (activeCount > 0) {
+    const intensity = (activeCount / nodes.length) * 0.6;
+    const coreGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 60);
+    coreGrad.addColorStop(0, `rgba(154, 95, 210,${intensity})`);
+    coreGrad.addColorStop(0.5, `rgba(154, 95, 210,${intensity * 0.4})`);
+    coreGrad.addColorStop(1, 'rgba(154, 95, 210,0)');
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.fillStyle = coreGrad;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 60, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+  
+  // Draw nodes
+  nodes.forEach(n => {
+    if (n.active) {
+      ctx.fillStyle = 'rgba(154, 95, 210,0.8)';
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.shadowColor = 'rgba(154, 95, 210,0.8)';
+      ctx.shadowBlur = 12;
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, 5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    } else {
+      ctx.fillStyle = 'rgba(140,147,137,0.3)';
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, 4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  });
+  
+  // Draw explosion particles if triggered
+  if (triggered && explosionParticles.length > 0) {
+    explosionParticles = explosionParticles.filter(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.life -= 0.015;
+      
+      if (p.life <= 0) return false;
+      
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.fillStyle = `rgba(154, 95, 210,${p.life * 0.9})`;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+      
+      return true;
+    });
+  }
+  
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+  
+  time++;
+  requestAnimationFrame(draw);
+}
+
+slider.addEventListener('input', updateSlider);
+
+btnConditions.addEventListener('click', () => {
+  btnConditions.classList.add('active');
+  btnTriggers.classList.remove('active');
+  knowdrop.textContent = conditionsText;
+});
+
+btnTriggers.addEventListener('click', () => {
+  btnTriggers.classList.add('active');
+  btnConditions.classList.remove('active');
+  knowdrop.textContent = triggersText;
+});
+
+window.addEventListener('resize', resize);
+resize();
+updateSlider();
+draw();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'conditions-vs-triggers'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

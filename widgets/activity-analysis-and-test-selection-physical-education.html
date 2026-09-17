@@ -1,0 +1,604 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Activity Analysis and Test Selection — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #E86A32;
+  --ag: rgba(232, 106, 50, .7);
+  --ag1: rgba(232, 106, 50, .12);
+  --ag2: rgba(232, 106, 50, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  min-height: 100vh;
+  padding: 40px 16px 0;
+  color: var(--ink);
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 28px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-control {
+  margin-bottom: 10px;
+}
+
+.match-slider {
+  width: 100%;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+}
+
+.match-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.match-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.match-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.match-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 4px;
+}
+
+.tick-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.toggle-card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: #12160F;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(232,106,50,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(232,106,50,.18);
+}
+
+.knowdrop-section {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.knowdrop-text {
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.know-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (max-width: 360px) {
+  body {
+    padding: 32px 12px 0;
+  }
+  .toggle-buttons {
+    flex-direction: column;
+  }
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Activity Analysis and Test Selection Interactive Widget</h2>
+  
+  <h1>The wrong test measures <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">nothing</span></h1>
+  
+  <p class="intro">A beep test won't tell you anything useful about a powerlifter. A bench press max won't predict a marathon time. Activity analysis first identifies what fitness components actually matter for the sport — then you select valid, reliable tests that measure those specific demands. Drag the slider to match sport demands with appropriate tests.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Test Selection Matrix</span>
+      <span class="live-tag" id="matchTag">Poor Match</span>
+    </div>
+    <div class="card-hint">Align sport demands with appropriate test methods</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="matchCanvas"></canvas>
+      <div class="canvas-overlay" id="canvasOverlay">MISMATCH: AEROBIC SPORT ↔ POWER TEST</div>
+    </div>
+
+    <div class="slider-control">
+      <input type="range" min="0" max="100" value="0" class="match-slider" id="matchSlider">
+    </div>
+    <div class="tick-labels">
+      <span class="tick-label">Mismatch</span>
+      <span class="tick-label">Partial</span>
+      <span class="tick-label">Optimal</span>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Test Validity</div>
+        <div class="stat-value" id="validityStat" style="color:var(--acc)">23%</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Match Quality</div>
+        <div class="stat-value" id="matchStat" style="color:var(--amb)">Poor</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toggle-card">
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" id="directBtn">Direct Testing</button>
+      <button class="toggle-btn" id="indirectBtn">Indirect Testing</button>
+    </div>
+    
+    <div class="knowdrop-section">
+      <p class="knowdrop-text" id="knowdropText">Direct testing measures the actual performance outcome in real conditions — a 3km time trial for a distance runner, a 1RM squat for a powerlifter, a Yo-Yo test for a footballer. These tests have high validity because they mirror the sport demands exactly. The downside? They require full effort, create fatigue, and need careful recovery planning. You're essentially asking the athlete to perform at competition intensity just to get data. Some direct tests also require expensive equipment or controlled environments — VO₂ max testing in a lab, for instance, is the gold standard for aerobic capacity but needs a metabolic cart and trained technicians.</p>
+    </div>
+  </div>
+
+  <div class="know-this">
+    <span class="know-tag">Know This</span>
+    <p class="know-body"><span style="color:var(--acc)">Activity analysis</span> identifies the specific physiological demands of a sport, which then determines which <span style="color:var(--acc)">fitness components</span> need testing — only then can you select <span style="color:var(--acc)">valid and reliable tests</span> that actually measure what matters for performance.</p>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('matchCanvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const slider = document.getElementById('matchSlider');
+const matchTag = document.getElementById('matchTag');
+const canvasOverlay = document.getElementById('canvasOverlay');
+const validityStat = document.getElementById('validityStat');
+const matchStat = document.getElementById('matchStat');
+const directBtn = document.getElementById('directBtn');
+const indirectBtn = document.getElementById('indirectBtn');
+const knowdropText = document.getElementById('knowdropText');
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d', { alpha: false });
+
+let match = 0;
+let particles = [];
+let time = 0;
+
+const directText = "Direct testing measures the actual performance outcome in real conditions — a 3km time trial for a distance runner, a 1RM squat for a powerlifter, a Yo-Yo test for a footballer. These tests have high validity because they mirror the sport demands exactly. The downside? They require full effort, create fatigue, and need careful recovery planning. You're essentially asking the athlete to perform at competition intensity just to get data. Some direct tests also require expensive equipment or controlled environments — VO₂ max testing in a lab, for instance, is the gold standard for aerobic capacity but needs a metabolic cart and trained technicians.";
+
+const indirectText = "Indirect testing estimates fitness components through submaximal protocols or prediction equations — a 1.6km walk test to predict VO₂ max, skinfold measurements for body composition, or a vertical jump to infer lower body power. These tests are practical: less fatigue, easier to administer, cheaper equipment, and you can test multiple athletes quickly. The trade-off is reduced validity. Prediction equations are built on population averages, so individual variation means the estimate might be off. A vertical jump correlates with power, but it's not the same as measuring force output directly on a force plate. Indirect tests work well for monitoring trends over time or screening large groups, but elite athletes often need direct measures for precision.";
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function initParticles() {
+  particles = [];
+  for (let i = 0; i < 80; i++) {
+    particles.push({
+      x: Math.random(),
+      y: Math.random(),
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3,
+      side: Math.random() < 0.5 ? 'sport' : 'test',
+      r: Math.random() * 2.5 + 1.5
+    });
+  }
+}
+
+slider.addEventListener('input', (e) => {
+  match = parseInt(e.target.value);
+  const fillPct = match + '%';
+  slider.style.setProperty('--fill', fillPct);
+  
+  const validity = Math.round(23 + (match * 0.77));
+  validityStat.textContent = validity + '%';
+  
+  if (match < 35) {
+    matchStat.textContent = 'Poor';
+    matchTag.textContent = 'Poor Match';
+    canvasOverlay.textContent = 'MISMATCH: AEROBIC SPORT ↔ POWER TEST';
+  } else if (match < 70) {
+    matchStat.textContent = 'Moderate';
+    matchTag.textContent = 'Partial Match';
+    canvasOverlay.textContent = 'PARTIAL: SOME COMPONENTS ALIGNED';
+  } else {
+    matchStat.textContent = 'Strong';
+    matchTag.textContent = 'Optimal Match';
+    canvasOverlay.textContent = 'OPTIMAL: SPORT DEMANDS ↔ TEST SELECTION';
+  }
+});
+
+directBtn.addEventListener('click', () => {
+  directBtn.classList.add('active');
+  indirectBtn.classList.remove('active');
+  knowdropText.textContent = directText;
+});
+
+indirectBtn.addEventListener('click', () => {
+  indirectBtn.classList.add('active');
+  directBtn.classList.remove('active');
+  knowdropText.textContent = indirectText;
+});
+
+function draw() {
+  time += 0.016;
+  
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  const cx = w / 2;
+  const cy = h / 2;
+  const alignment = match / 100;
+  
+  // Draw connection field
+  const connectionStrength = alignment * 0.6;
+  
+  // Update particles
+  particles.forEach(p => {
+    p.x += p.vx * 0.01;
+    p.y += p.vy * 0.01;
+    
+    if (p.x < 0 || p.x > 1) p.vx *= -1;
+    if (p.y < 0 || p.y > 1) p.vy *= -1;
+    
+    p.x = Math.max(0, Math.min(1, p.x));
+    p.y = Math.max(0, Math.min(1, p.y));
+  });
+  
+  // Draw connection lines with alignment-based intensity
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  
+  const sportParticles = particles.filter(p => p.side === 'sport');
+  const testParticles = particles.filter(p => p.side === 'test');
+  
+  for (let i = 0; i < Math.min(sportParticles.length, testParticles.length); i++) {
+    if (Math.random() > alignment * 0.4) continue;
+    
+    const sp = sportParticles[i];
+    const tp = testParticles[i];
+    
+    const sx = sp.x * w;
+    const sy = sp.y * h;
+    const tx = tp.x * w;
+    const ty = tp.y * h;
+    
+    const grad = ctx.createLinearGradient(sx, sy, tx, ty);
+    grad.addColorStop(0, `rgba(232,106,50,${connectionStrength * 0.3})`);
+    grad.addColorStop(0.5, `rgba(232,106,50,${connectionStrength * 0.5})`);
+    grad.addColorStop(1, `rgba(250,199,117,${connectionStrength * 0.3})`);
+    
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(sx, sy);
+    ctx.lineTo(tx, ty);
+    ctx.stroke();
+  }
+  ctx.restore();
+  
+  // Draw particles
+  particles.forEach(p => {
+    const px = p.x * w;
+    const py = p.y * h;
+    
+    const color = p.side === 'sport' ? 'rgba(232,106,50,0.8)' : 'rgba(250,199,117,0.8)';
+    const glowColor = p.side === 'sport' ? 'rgba(232,106,50,0.3)' : 'rgba(250,199,117,0.3)';
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    
+    // Glow
+    const glow = ctx.createRadialGradient(px, py, 0, px, py, p.r * 4);
+    glow.addColorStop(0, glowColor);
+    glow.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(px, py, p.r * 4, 0, Math.PI * 2);
+    ctx.fill();
+    
+    ctx.restore();
+    
+    // Core
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(px, py, p.r, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  
+  // Center convergence zone when aligned
+  if (alignment > 0.3) {
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    
+    const zoneR = 40 + alignment * 30;
+    const zoneGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, zoneR);
+    zoneGrad.addColorStop(0, `rgba(232,106,50,${alignment * 0.4})`);
+    zoneGrad.addColorStop(0.5, `rgba(232,106,50,${alignment * 0.2})`);
+    zoneGrad.addColorStop(1, 'rgba(232,106,50,0)');
+    
+    ctx.fillStyle = zoneGrad;
+    ctx.beginPath();
+    ctx.arc(cx, cy, zoneR, 0, Math.PI * 2);
+    ctx.fill();
+    
+    ctx.restore();
+  }
+  
+  // Labels
+  ctx.font = '500 13px "JetBrains Mono"';
+  ctx.textAlign = 'left';
+  ctx.fillStyle = 'rgba(232,106,50,0.9)';
+  ctx.fillText('SPORT DEMANDS', 16, 24);
+  
+  ctx.textAlign = 'right';
+  ctx.fillStyle = 'rgba(250,199,117,0.9)';
+  ctx.fillText('TEST METHODS', w - 16, 24);
+  
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+  
+  requestAnimationFrame(draw);
+}
+
+window.addEventListener('resize', resize);
+resize();
+initParticles();
+draw();
+
+slider.style.setProperty('--fill', '0%');
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'activity-analysis-and-test-selection'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

@@ -1,0 +1,594 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Compound Interest — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #7ED97A;
+  --ag: rgba(126, 217, 122, .7);
+  --ag1: rgba(126, 217, 122, .12);
+  --ag2: rgba(126, 217, 122, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+body{
+  background:radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family:'Geist',sans-serif;
+  color:var(--ink);
+  min-height:100vh;
+  padding:40px 16px 72px;
+}
+
+.container{max-width:720px;margin:0 auto}
+
+h1{
+  font-size:clamp(30px,8vw,52px);
+  font-weight:700;
+  letter-spacing:-0.03em;
+  line-height:1.02;
+  margin-bottom:14px;
+}
+
+.intro{
+  font-size:15.5px;
+  font-weight:400;
+  color:var(--ink-dim);
+  max-width:58ch;
+  line-height:1.55;
+  margin-bottom:32px;
+}
+
+.card{
+  background:linear-gradient(180deg,#12160F,#0d100b);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:16px;
+  box-shadow:0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom:20px;
+}
+
+.card-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:6px;
+}
+
+.card-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  text-transform:uppercase;
+  color:var(--ink);
+}
+
+.live-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  text-transform:uppercase;
+  color:var(--acc);
+}
+
+.card-hint{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  color:var(--ink-dim);
+  margin-bottom:14px;
+}
+
+.canvas-wrapper{
+  position:relative;
+  width:100%;
+  aspect-ratio:16/9;
+  border-radius:12px;
+  overflow:hidden;
+  background:#000;
+  box-shadow:inset 0 0 0 1px var(--ag1);
+  margin-bottom:16px;
+}
+
+canvas{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  display:block;
+}
+
+.canvas-overlay{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  background:rgba(0,0,0,0.55);
+  backdrop-filter:blur(4px);
+  padding:9px 16px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:14px;
+  text-transform:uppercase;
+  color:var(--acc);
+  text-align:center;
+}
+
+.slider-wrapper{
+  margin-bottom:12px;
+}
+
+.slider-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;
+  text-transform:uppercase;
+  color:var(--ink-dim);
+  margin-bottom:8px;
+}
+
+.ci-slider{
+  width:100%;
+  height:4px;
+  border-radius:3px;
+  background:linear-gradient(90deg, var(--acc) var(--fill,0%), #23291f var(--fill,0%));
+  appearance:none;
+  outline:none;
+  cursor:pointer;
+}
+
+.ci-slider::-webkit-slider-thumb{
+  appearance:none;
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  background:#0B0D0C;
+  border:2px solid var(--acc);
+  box-shadow:0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor:pointer;
+  transition:box-shadow .15s;
+}
+
+.ci-slider::-moz-range-thumb{
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  background:#0B0D0C;
+  border:2px solid var(--acc);
+  box-shadow:0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor:pointer;
+  transition:box-shadow .15s;
+}
+
+.ci-slider::-webkit-slider-thumb:hover{
+  box-shadow:0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.ci-slider::-moz-range-thumb:hover{
+  box-shadow:0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels{
+  display:flex;
+  justify-content:space-between;
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  color:var(--ink-dim);
+}
+
+.stat-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+  padding-top:16px;
+  border-top:1px solid var(--line);
+}
+
+.stat{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.stat-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;
+  text-transform:uppercase;
+  color:var(--ink-dim);
+}
+
+.stat-value{
+  font-family:'JetBrains Mono',monospace;
+  font-size:24px;
+  font-weight:500;
+}
+
+.stat:first-child .stat-value{color:var(--acc)}
+.stat:last-child .stat-value{color:var(--amb)}
+
+.toggle-section{
+  padding-top:16px;
+  border-top:1px solid var(--line);
+}
+
+.toggle-buttons{
+  display:flex;
+  gap:10px;
+  margin-bottom:16px;
+}
+
+.toggle-btn{
+  flex:1;
+  font-family:'JetBrains Mono',monospace;
+  font-size:14.5px;
+  padding:12px;
+  border-radius:11px;
+  border:1px solid var(--line);
+  background:#12160F;
+  color:var(--ink-dim);
+  cursor:pointer;
+  transition:all .2s;
+}
+
+.toggle-btn.active{
+  background:rgba(126, 217, 122,.1);
+  border-color:var(--acc);
+  color:var(--acc);
+  box-shadow:0 0 22px rgba(126, 217, 122,.18);
+}
+
+.knowdrop{
+  font-size:14.5px;
+  font-weight:400;
+  line-height:1.65;
+  color:var(--ink);
+}
+
+.know-this{
+  border-left:3px solid var(--acc);
+  padding:16px 18px;
+  background:linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius:0 12px 12px 0;
+  margin-bottom:34px;
+}
+
+.know-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  text-transform:uppercase;
+  letter-spacing:0.15em;
+  color:var(--acc);
+  margin-bottom:10px;
+  display:block;
+}
+
+.know-body{
+  font-size:17.4px;
+  font-weight:400;
+  line-height:1.55;
+  color:var(--ink);
+}
+
+.footer{
+  margin-top:34px;
+  padding-top:16px;
+  border-top:1px solid var(--line);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.pulse-dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--acc);
+  box-shadow:0 0 10px var(--acc);
+  animation:ciPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes ciPulse{
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:.35;transform:scale(.6)}
+}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important}
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Compound Interest Growth Visualisation</h2>
+  
+  <h1>Double the time means <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">quadruple</span> the money</h1>
+  
+  <p class="intro">Compound interest doesn't just add up linearly—it multiplies exponentially. Each period's interest earns its own interest, creating a growth curve that bends sharply upward. Drag the slider to see how dramatically time accelerates your returns.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-label">Investment Growth</div>
+      <div class="live-tag" id="liveTag">10 years · $10,000</div>
+    </div>
+    <div class="card-hint">Watch interest compound on itself</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="canvas"></canvas>
+      <div class="canvas-overlay" id="overlay">Final Amount: $16,289</div>
+    </div>
+
+    <div class="slider-wrapper">
+      <div class="slider-label">Time Period</div>
+      <input type="range" min="1" max="30" value="10" class="ci-slider" id="timeSlider">
+      <div class="tick-labels">
+        <span>1yr</span>
+        <span>15yrs</span>
+        <span>30yrs</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Growth Rate</div>
+        <div class="stat-value" id="growthRate">63%</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Total Interest</div>
+        <div class="stat-value" id="totalInterest">$6,289</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" id="btn1">Compound vs Simple</button>
+      <button class="toggle-btn" id="btn2">The Formula</button>
+    </div>
+    
+    <div class="toggle-section">
+      <p class="knowdrop" id="knowdrop">Simple interest calculates returns only on the original principal, giving you a straight line of growth. Compound interest recalculates each period on the new total, meaning your interest earns interest. Over 30 years at 5%, $10,000 becomes $50,000 with simple interest but $43,219 with compound—except the compound actually wins because the calculation shows compound beats simple dramatically. The gap widens exponentially: after 10 years simple gives $15,000, compound gives $16,289. After 20 years simple gives $20,000, compound gives $26,533. After 30 years simple gives $25,000, compound gives $43,219. The longer you wait, the more powerful compounding becomes.</p>
+    </div>
+  </div>
+
+  <div class="know-this">
+    <span class="know-tag">Know This</span>
+    <p class="know-body"><span style="color:var(--acc)">Final amount equals Principal times 1 plus rate raised to the number of periods</span>—the exponent is what creates exponential growth, making <span style="color:var(--acc)">interest earned on interest from previous periods</span> far more valuable than simple interest alone.</p>
+  </div>
+
+  <div class="footer">
+    <div class="pulse-dot"></div>
+  </div>
+</div>
+
+<script>
+const canvas=document.getElementById('canvas');
+const ctx=canvas.getContext('2d');
+const buf=document.createElement('canvas');
+const bctx=buf.getContext('2d');
+const dpr=Math.min(window.devicePixelRatio||1,2);
+
+const slider=document.getElementById('timeSlider');
+const liveTag=document.getElementById('liveTag');
+const overlay=document.getElementById('overlay');
+const growthRate=document.getElementById('growthRate');
+const totalInterest=document.getElementById('totalInterest');
+
+const btn1=document.getElementById('btn1');
+const btn2=document.getElementById('btn2');
+const knowdrop=document.getElementById('knowdrop');
+
+const P=10000;
+const r=0.05;
+
+let n=10;
+
+const drops=[];
+for(let i=0;i<80;i++){
+  drops.push({
+    x:Math.random(),
+    y:Math.random(),
+    speed:0.3+Math.random()*0.7,
+    size:1.2+Math.random()*2.2,
+    phase:Math.random()*Math.PI*2
+  });
+}
+
+function resize(){
+  const rect=canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width=Math.round(rect.width*dpr);
+  canvas.height=Math.round(rect.height*dpr);
+  buf.width=canvas.width;
+  buf.height=canvas.height;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  draw();
+}
+
+function draw(){
+  const w=canvas.width/dpr;
+  const h=canvas.height/dpr;
+  
+  ctx.fillStyle='#000';
+  ctx.fillRect(0,0,w,h);
+
+  const A=P*Math.pow(1+r,n);
+  const maxA=P*Math.pow(1+r,30);
+  const minA=P;
+  
+  const time=Date.now()/1000;
+  
+  // Grid
+  ctx.strokeStyle='rgba(126, 217, 122,0.08)';
+  ctx.lineWidth=0.8;
+  for(let gx=0;gx<=w;gx+=w/10){
+    ctx.beginPath();
+    ctx.moveTo(gx,0);
+    ctx.lineTo(gx,h);
+    ctx.stroke();
+  }
+  for(let gy=0;gy<=h;gy+=h/6){
+    ctx.beginPath();
+    ctx.moveTo(0,gy);
+    ctx.lineTo(w,gy);
+    ctx.stroke();
+  }
+
+  // Draw compound curve
+  ctx.beginPath();
+  ctx.strokeStyle='rgba(126, 217, 122,0.7)';
+  ctx.lineWidth=2.5;
+  for(let t=0;t<=30;t+=0.5){
+    const x=(t/30)*w;
+    const val=P*Math.pow(1+r,t);
+    const ynorm=(val-minA)/(maxA-minA);
+    const y=h-(ynorm*h*0.85)-h*0.075;
+    if(t===0) ctx.moveTo(x,y);
+    else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+
+  // Draw simple interest line for comparison
+  ctx.beginPath();
+  ctx.strokeStyle='rgba(255,255,255,0.25)';
+  ctx.lineWidth=1.5;
+  ctx.setLineDash([4,4]);
+  for(let t=0;t<=30;t+=1){
+    const x=(t/30)*w;
+    const val=P*(1+r*t);
+    const ynorm=(val-minA)/(maxA-minA);
+    const y=h-(ynorm*h*0.85)-h*0.075;
+    if(t===0) ctx.moveTo(x,y);
+    else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Current position marker
+  const xCur=(n/30)*w;
+  const ynorm=(A-minA)/(maxA-minA);
+  const yCur=h-(ynorm*h*0.85)-h*0.075;
+
+  // Vertical line to curve
+  ctx.save();
+  ctx.globalCompositeOperation='lighter';
+  ctx.strokeStyle='rgba(126, 217, 122,0.3)';
+  ctx.lineWidth=1.2;
+  ctx.beginPath();
+  ctx.moveTo(xCur,h);
+  ctx.lineTo(xCur,yCur);
+  ctx.stroke();
+  ctx.restore();
+
+  // Animated drops flowing along curve
+  drops.forEach(d=>{
+    d.y+=d.speed*0.0012;
+    if(d.y>1) d.y-=1;
+    
+    const t=d.y*30;
+    const val=P*Math.pow(1+r,t);
+    const yn=(val-minA)/(maxA-minA);
+    const px=(t/30)*w;
+    const py=h-(yn*h*0.85)-h*0.075;
+    
+    const alpha=0.5+0.5*Math.sin(time*1.5+d.phase);
+    ctx.save();
+    ctx.globalCompositeOperation='lighter';
+    ctx.fillStyle='rgba(126,217,122,'+alpha*0.6+')';
+    ctx.beginPath();
+    ctx.arc(px,py,d.size,0,Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+  });
+
+  // Glow at current point
+  ctx.save();
+  ctx.globalCompositeOperation='lighter';
+  const glow=ctx.createRadialGradient(xCur,yCur,0,xCur,yCur,28);
+  glow.addColorStop(0,'rgba(126, 217, 122,0.5)');
+  glow.addColorStop(0.5,'rgba(126, 217, 122,0.2)');
+  glow.addColorStop(1,'rgba(126, 217, 122,0)');
+  ctx.fillStyle=glow;
+  ctx.beginPath();
+  ctx.arc(xCur,yCur,28,0,Math.PI*2);
+  ctx.fill();
+  ctx.restore();
+
+  // Current point
+  ctx.fillStyle='#0B0D0C';
+  ctx.beginPath();
+  ctx.arc(xCur,yCur,6,0,Math.PI*2);
+  ctx.fill();
+  ctx.strokeStyle='#7ED97A';
+  ctx.lineWidth=2;
+  ctx.stroke();
+
+  // Bloom
+  bctx.setTransform(1,0,0,1,0,0);
+  bctx.clearRect(0,0,buf.width,buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas,0,0);
+  ctx.save();
+  ctx.globalCompositeOperation='lighter';
+  ctx.globalAlpha=0.38;
+  ctx.filter='blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf,0,0,w,h);
+  ctx.restore();
+
+  // Vignette
+  const cx=w/2;
+  const cy=h/2;
+  const vig=ctx.createRadialGradient(cx,cy,h*0.28,cx,cy,w*0.72);
+  vig.addColorStop(0,'rgba(0,0,0,0)');
+  vig.addColorStop(1,'rgba(0,0,0,0.52)');
+  ctx.fillStyle=vig;
+  ctx.fillRect(0,0,w,h);
+}
+
+function update(){
+  n=parseFloat(slider.value);
+  const fill=(n-1)/(30-1)*100;
+  slider.style.setProperty('--fill',fill+'%');
+  
+  const A=P*Math.pow(1+r,n);
+  const interest=A-P;
+  const growth=((A-P)/P)*100;
+  
+  liveTag.textContent=n+' year'+(n===1?'':'s')+' · $'+P.toLocaleString();
+  overlay.textContent='Final Amount: $'+Math.round(A).toLocaleString();
+  growthRate.textContent=Math.round(growth)+'%';
+  totalInterest.textContent='$'+Math.round(interest).toLocaleString();
+  
+  draw();
+}
+
+slider.addEventListener('input',update);
+
+btn1.addEventListener('click',()=>{
+  btn1.classList.add('active');
+  btn2.classList.remove('active');
+  knowdrop.textContent='Simple interest calculates returns only on the original principal, giving you a straight line of growth. Compound interest recalculates each period on the new total, meaning your interest earns interest. Over 30 years at 5%, $10,000 becomes $25,000 with simple interest but $43,219 with compound. The gap widens exponentially: after 10 years simple gives $15,000, compound gives $16,289. After 20 years simple gives $20,000, compound gives $26,533. The longer you wait, the more powerful compounding becomes—and why starting early matters far more than the amount you start with.';
+});
+
+btn2.addEventListener('click',()=>{
+  btn2.classList.add('active');
+  btn1.classList.remove('active');
+  knowdrop.textContent='The formula A = P(1 + r)ⁿ calculates compound interest where A is the final amount, P is principal, r is the interest rate per period (as a decimal), and n is the number of periods. The exponent n is what creates exponential growth—not a multiplier but repeated multiplication. Each period multiplies the previous total by (1 + r), so 1.05 × 1.05 × 1.05 compounds differently than 1 + 0.05 + 0.05 + 0.05. For $10,000 at 5% over 10 years: A = 10000(1.05)¹⁰ = $16,289. Change n to 20 and you get $26,533—not double, but 63% more than double.';
+});
+
+window.addEventListener('resize',resize);
+resize();
+update();
+
+let anim;
+function animate(){
+  draw();
+  anim=requestAnimationFrame(animate);
+}
+animate();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'compound-interest'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

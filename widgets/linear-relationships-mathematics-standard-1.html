@@ -1,0 +1,588 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Linear Relationships — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #7ED97A;
+  --ag: rgba(126, 217, 122, .7);
+  --ag1: rgba(126, 217, 122, .12);
+  --ag2: rgba(126, 217, 122, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  min-height: 100vh;
+  padding: 40px 16px 72px;
+  color: var(--ink);
+}
+
+.container { max-width: 720px; margin: 0 auto; }
+
+h1 {
+  font-size: clamp(30px, 8vw, 52px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  line-height: 1.55;
+  max-width: 58ch;
+  margin-bottom: 28px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: white;
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-wrapper { margin-bottom: 10px; }
+
+.lr-slider {
+  width: 100%;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 3px;
+  outline: none;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 50%), #23291f var(--fill, 50%));
+  cursor: pointer;
+}
+
+.lr-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.lr-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.lr-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.lr-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  padding: 0 4px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.stat-value.acc { color: var(--acc); }
+.stat-value.amb { color: var(--amb); }
+
+.toggle-card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: #12160F;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(126, 217, 122,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(126, 217, 122,.18);
+}
+
+.knowdrop-divider {
+  border-top: 1px solid var(--line);
+  margin-bottom: 16px;
+}
+
+.knowdrop-text {
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 34px;
+}
+
+.know-this-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 12px;
+}
+
+.know-this-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.know-this-body .hl {
+  color: var(--acc);
+}
+
+.footer {
+  margin-top: 34px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 10px var(--acc);
+  animation: lrPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes lrPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.6); }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Interactive linear relationship parameter explorer showing how gradient and y-intercept control line position</h2>
+  
+  <h1>Two numbers control <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">infinity</span></h1>
+  
+  <p class="intro">Every straight line — from taxi fares to depreciation — is completely defined by just two parameters: gradient m and y-intercept c. Change one slider and watch the entire line rotate or shift. The maths is simple. The power is absolute.</p>
+  
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Linear Control</span>
+      <span class="live-tag" id="liveTag">m = 1.0 • c = 0</span>
+    </div>
+    <div class="card-hint">Drag sliders to reshape the line</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="canvas"></canvas>
+      <div class="canvas-overlay" id="overlayTag">y = 1.0x + 0</div>
+    </div>
+    
+    <div class="slider-wrapper">
+      <input type="range" class="lr-slider" id="mSlider" min="-3" max="3" step="0.1" value="1" style="--fill: 66.67%">
+      <div class="tick-labels">
+        <span>m = -3</span>
+        <span>Gradient</span>
+        <span>m = 3</span>
+      </div>
+    </div>
+    
+    <div class="slider-wrapper">
+      <input type="range" class="lr-slider" id="cSlider" min="-4" max="4" step="0.5" value="0" style="--fill: 50%">
+      <div class="tick-labels">
+        <span>c = -4</span>
+        <span>Y-Intercept</span>
+        <span>c = 4</span>
+      </div>
+    </div>
+    
+    <div class="stats">
+      <div>
+        <div class="stat-label">Rise per run</div>
+        <div class="stat-value acc" id="riseRun">+1.0</div>
+      </div>
+      <div>
+        <div class="stat-label">Starting value</div>
+        <div class="stat-value amb" id="startVal">0</div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="toggle-card">
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" id="btnParallel">Parallel</button>
+      <button class="toggle-btn" id="btnPerp">Perpendicular</button>
+    </div>
+    <div class="knowdrop-divider"></div>
+    <div class="knowdrop-text" id="knowdropText">
+      Parallel lines are mathematical clones: they share identical gradients but live at different heights. If one line has m = 2, every parallel line also has m = 2, regardless of their y-intercepts. They'll never intersect because they're climbing at exactly the same rate. In real-world terms, this models scenarios where processes grow at the same rate but start from different baselines — think two investment accounts with identical interest rates but different initial deposits.
+    </div>
+  </div>
+  
+  <div class="know-this">
+    <div class="know-this-tag">Know This</div>
+    <div class="know-this-body">
+      The equation <span class="hl">y = mx + c</span> isn't just describing a line — it's predicting every single point that line will ever touch, using only two numbers.
+    </div>
+  </div>
+  
+  <div class="footer">
+    <div class="pulse-dot"></div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const mSlider = document.getElementById('mSlider');
+const cSlider = document.getElementById('cSlider');
+const liveTag = document.getElementById('liveTag');
+const overlayTag = document.getElementById('overlayTag');
+const riseRun = document.getElementById('riseRun');
+const startVal = document.getElementById('startVal');
+const btnParallel = document.getElementById('btnParallel');
+const btnPerp = document.getElementById('btnPerp');
+const knowdropText = document.getElementById('knowdropText');
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d');
+
+let m = parseFloat(mSlider.value);
+let c = parseFloat(cSlider.value);
+
+const parallelText = "Parallel lines are mathematical clones: they share identical gradients but live at different heights. If one line has m = 2, every parallel line also has m = 2, regardless of their y-intercepts. They'll never intersect because they're climbing at exactly the same rate. In real-world terms, this models scenarios where processes grow at the same rate but start from different baselines — think two investment accounts with identical interest rates but different initial deposits.";
+
+const perpText = "Perpendicular lines meet at perfect right angles, and their gradients multiply to exactly -1. If one line has gradient m, the perpendicular line has gradient -1/m. A line with m = 2 is perpendicular to a line with m = -0.5 because 2 × (-0.5) = -1. This relationship is fundamental in geometry and physics: velocity and perpendicular force, river flow and bank erosion, architectural supports and load distribution all rely on this -1 product rule.";
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  draw();
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  const cx = w / 2;
+  const cy = h / 2;
+  const xRange = 6;
+  const yRange = 6;
+  const xScale = w / (2 * xRange);
+  const yScale = h / (2 * yRange);
+  
+  // Grid
+  ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+  ctx.lineWidth = 0.8;
+  for (let x = -xRange; x <= xRange; x++) {
+    const sx = cx + x * xScale;
+    ctx.beginPath();
+    ctx.moveTo(sx, 0);
+    ctx.lineTo(sx, h);
+    ctx.stroke();
+  }
+  for (let y = -yRange; y <= yRange; y++) {
+    const sy = cy - y * yScale;
+    ctx.beginPath();
+    ctx.moveTo(0, sy);
+    ctx.lineTo(w, sy);
+    ctx.stroke();
+  }
+  
+  // Axes
+  ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(0, cy);
+  ctx.lineTo(w, cy);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(cx, 0);
+  ctx.lineTo(cx, h);
+  ctx.stroke();
+  
+  // Main line
+  ctx.save();
+  ctx.strokeStyle = 'rgba(126, 217, 122,0.9)';
+  ctx.lineWidth = 2.8;
+  ctx.shadowColor = 'rgba(126, 217, 122,0.6)';
+  ctx.shadowBlur = 14;
+  ctx.beginPath();
+  const x1 = -xRange - 1;
+  const y1 = m * x1 + c;
+  const x2 = xRange + 1;
+  const y2 = m * x2 + c;
+  const sx1 = cx + x1 * xScale;
+  const sy1 = cy - y1 * yScale;
+  const sx2 = cx + x2 * xScale;
+  const sy2 = cy - y2 * yScale;
+  ctx.moveTo(sx1, sy1);
+  ctx.lineTo(sx2, sy2);
+  ctx.stroke();
+  ctx.restore();
+  
+  // Y-intercept marker
+  const yIntY = cy - c * yScale;
+  if (yIntY >= 0 && yIntY <= h) {
+    ctx.save();
+    ctx.fillStyle = 'rgba(250,199,117,0.9)';
+    ctx.shadowColor = 'rgba(250,199,117,0.6)';
+    ctx.shadowBlur = 12;
+    ctx.beginPath();
+    ctx.arc(cx, yIntY, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+  
+  // Flowing dots along line
+  const numDots = 12;
+  const time = Date.now() * 0.0008;
+  for (let i = 0; i < numDots; i++) {
+    const offset = (time + i / numDots) % 1;
+    const lx = -xRange + offset * (2 * xRange);
+    const ly = m * lx + c;
+    const sx = cx + lx * xScale;
+    const sy = cy - ly * yScale;
+    if (sx >= 0 && sx <= w && sy >= 0 && sy <= h) {
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      const grad = ctx.createRadialGradient(sx, sy, 0, sx, sy, 8);
+      grad.addColorStop(0, 'rgba(126, 217, 122,0.7)');
+      grad.addColorStop(1, 'rgba(126, 217, 122,0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(sx, sy, 8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+  
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+  
+  requestAnimationFrame(draw);
+}
+
+function updateUI() {
+  const mStr = m.toFixed(1);
+  const cStr = c >= 0 ? '+' + c.toFixed(1) : c.toFixed(1);
+  const eqStr = `y = ${mStr}x ${c >= 0 ? '+' : ''}${c.toFixed(1)}`;
+  
+  liveTag.textContent = `m = ${mStr} • c = ${c.toFixed(1)}`;
+  overlayTag.textContent = eqStr;
+  riseRun.textContent = m >= 0 ? '+' + mStr : mStr;
+  startVal.textContent = c.toFixed(1);
+  
+  const mFill = ((m + 3) / 6) * 100;
+  mSlider.style.setProperty('--fill', mFill + '%');
+  
+  const cFill = ((c + 4) / 8) * 100;
+  cSlider.style.setProperty('--fill', cFill + '%');
+}
+
+mSlider.addEventListener('input', (e) => {
+  m = parseFloat(e.target.value);
+  updateUI();
+});
+
+cSlider.addEventListener('input', (e) => {
+  c = parseFloat(e.target.value);
+  updateUI();
+});
+
+btnParallel.addEventListener('click', () => {
+  btnParallel.classList.add('active');
+  btnPerp.classList.remove('active');
+  knowdropText.textContent = parallelText;
+});
+
+btnPerp.addEventListener('click', () => {
+  btnPerp.classList.add('active');
+  btnParallel.classList.remove('active');
+  knowdropText.textContent = perpText;
+});
+
+window.addEventListener('resize', resize);
+resize();
+updateUI();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'linear-relationships'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

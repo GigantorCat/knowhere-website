@@ -1,0 +1,616 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>DEAD CLIC Classification System — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+:root{
+  --bg:#0B0D0C;
+  --bg2:#12160F;
+  --acc:#CE4480;
+  --ag:rgba(206, 68, 128, .7);
+  --ag1:rgba(206, 68, 128, .12);
+  --ag2:rgba(206, 68, 128, .45);
+  --amb:#FAC775;
+  --ink:#EDEDE8;
+  --ink-dim:#8C9389;
+  --line:#262B26;
+}
+
+body{
+  background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C 55%);
+  font-family:'Geist',sans-serif;
+  color:var(--ink);
+  min-height:100vh;
+  padding:40px 16px 72px;
+}
+
+.container{max-width:720px;margin:0 auto}
+
+h1{
+  font-size:clamp(30px,8vw,52px);
+  font-weight:700;
+  letter-spacing:-0.03em;
+  line-height:1.02;
+  margin-bottom:14px;
+}
+
+.intro{
+  font-size:15.5px;
+  color:var(--ink-dim);
+  max-width:58ch;
+  line-height:1.55;
+  margin-bottom:32px;
+}
+
+.card{
+  background:linear-gradient(180deg,#12160F,#0d100b);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:16px;
+  box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);
+  margin-bottom:18px;
+}
+
+.card-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:6px;
+}
+
+.card-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  text-transform:uppercase;
+  color:var(--ink);
+}
+
+.live-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  text-transform:uppercase;
+  color:var(--acc);
+}
+
+.card-hint{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  color:var(--ink-dim);
+  margin-bottom:14px;
+}
+
+.canvas-wrapper{
+  position:relative;
+  width:100%;
+  aspect-ratio:16/9;
+  border-radius:12px;
+  overflow:hidden;
+  background:#000;
+  box-shadow:inset 0 0 0 1px var(--ag1);
+  margin-bottom:16px;
+}
+
+canvas{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  display:block;
+}
+
+.canvas-overlay{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  background:rgba(0,0,0,0.55);
+  backdrop-filter:blur(4px);
+  padding:9px 16px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:14px;
+  text-transform:uppercase;
+  color:var(--acc);
+  text-align:center;
+}
+
+.slider-group{margin-bottom:0}
+
+.slider-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;
+  text-transform:uppercase;
+  color:var(--ink-dim);
+  margin-bottom:8px;
+}
+
+.de-slider{
+  -webkit-appearance:none;
+  appearance:none;
+  width:100%;
+  height:4px;
+  border-radius:3px;
+  background:linear-gradient(90deg,var(--acc) var(--fill,50%),#23291f var(--fill,50%));
+  outline:none;
+  margin-bottom:8px;
+}
+
+.de-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  appearance:none;
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  background:#0B0D0C;
+  border:2px solid var(--acc);
+  box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);
+  cursor:pointer;
+  transition:box-shadow .15s;
+}
+
+.de-slider::-moz-range-thumb{
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  background:#0B0D0C;
+  border:2px solid var(--acc);
+  box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);
+  cursor:pointer;
+  transition:box-shadow .15s;
+}
+
+.de-slider::-webkit-slider-thumb:hover{
+  box-shadow:0 0 24px var(--acc),0 0 8px var(--ag);
+}
+
+.de-slider::-moz-range-thumb:hover{
+  box-shadow:0 0 24px var(--acc),0 0 8px var(--ag);
+}
+
+.tick-labels{
+  display:flex;
+  justify-content:space-between;
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  color:var(--ink-dim);
+  padding:0 4px;
+}
+
+.stat-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+  padding-top:16px;
+  margin-top:16px;
+  border-top:1px solid var(--line);
+}
+
+.stat{text-align:center}
+
+.stat-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;
+  text-transform:uppercase;
+  color:var(--ink-dim);
+  margin-bottom:6px;
+}
+
+.stat-value{
+  font-family:'JetBrains Mono',monospace;
+  font-size:24px;
+  font-weight:500;
+}
+
+.stat-value.acc{color:var(--acc)}
+.stat-value.amb{color:var(--amb)}
+
+.toggle-card{margin-bottom:18px}
+
+.toggle-buttons{
+  display:flex;
+  gap:10px;
+  margin-bottom:16px;
+}
+
+.toggle-btn{
+  flex:1;
+  font-family:'JetBrains Mono',monospace;
+  font-size:14.5px;
+  padding:12px;
+  border-radius:11px;
+  border:1px solid var(--line);
+  background:#12160F;
+  color:var(--ink-dim);
+  cursor:pointer;
+  transition:all .2s;
+}
+
+.toggle-btn.active{
+  background:rgba(206,68,128,.1);
+  border-color:var(--acc);
+  color:var(--acc);
+  box-shadow:0 0 22px rgba(206,68,128,.18);
+}
+
+.knowdrop-divider{
+  border-top:1px solid var(--line);
+  margin-bottom:16px;
+}
+
+.knowdrop{
+  font-size:14.5px;
+  line-height:1.65;
+  color:var(--ink);
+}
+
+.know-this{
+  border-left:3px solid var(--acc);
+  padding:16px 18px;
+  background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));
+  border-radius:0 12px 12px 0;
+  margin-bottom:34px;
+}
+
+.know-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  text-transform:uppercase;
+  letter-spacing:0.15em;
+  color:var(--acc);
+  margin-bottom:10px;
+}
+
+.know-body{
+  font-size:17.4px;
+  line-height:1.55;
+  color:var(--ink);
+}
+
+.footer{
+  margin-top:34px;
+  padding-top:16px;
+  border-top:1px solid var(--line);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.pulse-dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--acc);
+  box-shadow:0 0 10px var(--acc);
+  animation:dePulse 2.4s ease-in-out infinite;
+}
+
+@keyframes dePulse{
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:.35;transform:scale(.6)}
+}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+
+@media(max-width:400px){
+  body{padding:32px 14px 60px}
+  .card{padding:14px}
+  .toggle-buttons{flex-direction:column;gap:8px}
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">DEAD CLIC Classification System Interactive Widget</h2>
+  
+  <h1>Every debit creates an equal and opposite <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">credit</span></h1>
+  
+  <p class="intro">The double-entry system isn't about recording transactions twice — it's a universal law of balance where every account movement has a mirror image. DEAD and CLIC aren't just mnemonics; they're opposite sides of the accounting equation in motion. Drag the slider to see how transaction amounts flow between account types while maintaining perfect equilibrium.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-label">Balance Engine</div>
+      <div class="live-tag" id="balanceTag">Equilibrium</div>
+    </div>
+    <div class="card-hint">Transaction split between account categories</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="deCanvas"></canvas>
+      <div class="canvas-overlay" id="canvasOverlay">Debit: $2500 • Credit: $2500</div>
+    </div>
+
+    <div class="slider-group">
+      <div class="slider-label">Transaction amount</div>
+      <input type="range" min="500" max="9500" value="2500" step="100" class="de-slider" id="amountSlider">
+      <div class="tick-labels">
+        <span>$500</span>
+        <span>$5,000</span>
+        <span>$9,500</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Debit side total</div>
+        <div class="stat-value acc" id="debitStat">$2,500</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Credit side total</div>
+        <div class="stat-value amb" id="creditStat">$2,500</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card toggle-card">
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" id="deadBtn">DEAD</button>
+      <button class="toggle-btn" id="clicBtn">CLIC</button>
+    </div>
+    
+    <div class="knowdrop-divider"></div>
+    
+    <p class="knowdrop" id="knowdropText">DEAD accounts — Drawings, Expenses, Assets, and Dividends — all have debit balances and increase when debited. When you receive cash, that's an asset increasing, so you debit Cash. When you pay rent, that's an expense increasing, so you debit Rent Expense. Asset accounts like Cash, Inventory, and Accounts Receivable increase with debits and decrease with credits. Every transaction affecting a DEAD account requires an equal and opposite entry to keep the accounting equation balanced.</p>
+  </div>
+
+  <div class="know-this">
+    <div class="know-tag">Know This</div>
+    <div class="know-body"><span style="color:var(--acc)">Asset accounts</span> like Cash, Inventory, and Accounts Receivable increase with debits and decrease with credits, while <span style="color:var(--acc)">Liability accounts</span> like Accounts Payable and Loans increase with credits and decrease with debits — this opposite behaviour maintains the fundamental accounting equation where Assets = Liabilities + Equity.</div>
+  </div>
+
+  <div class="footer">
+    <div class="pulse-dot"></div>
+  </div>
+</div>
+
+<script>
+const canvas=document.getElementById('deCanvas');
+const ctx=canvas.getContext('2d',{alpha:false});
+const slider=document.getElementById('amountSlider');
+const balanceTag=document.getElementById('balanceTag');
+const overlay=document.getElementById('canvasOverlay');
+const debitStat=document.getElementById('debitStat');
+const creditStat=document.getElementById('creditStat');
+const deadBtn=document.getElementById('deadBtn');
+const clicBtn=document.getElementById('clicBtn');
+const knowdropText=document.getElementById('knowdropText');
+
+const dpr=Math.min(window.devicePixelRatio||1,2);
+const buf=document.createElement('canvas');
+const bctx=buf.getContext('2d',{alpha:false});
+
+let amount=2500;
+let particles=[];
+let time=0;
+
+const deadContent="DEAD accounts — Drawings, Expenses, Assets, and Dividends — all have debit balances and increase when debited. When you receive cash, that's an asset increasing, so you debit Cash. When you pay rent, that's an expense increasing, so you debit Rent Expense. Asset accounts like Cash, Inventory, and Accounts Receivable increase with debits and decrease with credits. Every transaction affecting a DEAD account requires an equal and opposite entry to keep the accounting equation balanced.";
+
+const clicContent="CLIC accounts — Capital, Liabilities, Income, and Contributed Equity — have credit balances and increase when credited. When you take out a loan, that's a liability increasing, so you credit Loans Payable. When you earn revenue, that's income increasing, so you credit Sales Revenue. Liability accounts like Accounts Payable and Loans increase with credits and decrease with debits. Income and Expense accounts follow these same rules to eventually affect equity through the profit calculation at year-end.";
+
+function resize(){
+  const rect=canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width=Math.round(rect.width*dpr);
+  canvas.height=Math.round(rect.height*dpr);
+  buf.width=canvas.width;
+  buf.height=canvas.height;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+
+resize();
+window.addEventListener('resize',resize);
+
+slider.addEventListener('input',e=>{
+  amount=parseInt(e.target.value);
+  const pct=(amount-500)/(9500-500)*100;
+  slider.style.setProperty('--fill',pct+'%');
+  updateStats();
+});
+
+slider.style.setProperty('--fill','22.22%');
+
+function updateStats(){
+  const fmt=new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',minimumFractionDigits:0,maximumFractionDigits:0});
+  debitStat.textContent=fmt.format(amount);
+  creditStat.textContent=fmt.format(amount);
+  overlay.textContent=`Debit: ${fmt.format(amount)} • Credit: ${fmt.format(amount)}`;
+  
+  if(amount<1500){
+    balanceTag.textContent='Low flow';
+  }else if(amount>7500){
+    balanceTag.textContent='High flow';
+  }else{
+    balanceTag.textContent='Equilibrium';
+  }
+}
+
+updateStats();
+
+deadBtn.addEventListener('click',()=>{
+  deadBtn.classList.add('active');
+  clicBtn.classList.remove('active');
+  knowdropText.textContent=deadContent;
+});
+
+clicBtn.addEventListener('click',()=>{
+  clicBtn.classList.add('active');
+  deadBtn.classList.remove('active');
+  knowdropText.textContent=clicContent;
+});
+
+class Particle{
+  constructor(isDebit){
+    this.isDebit=isDebit;
+    this.reset();
+  }
+  reset(){
+    this.y=Math.random();
+    this.x=this.isDebit?0:1;
+    this.speed=0.002+Math.random()*0.003;
+    this.size=1.2+Math.random()*1.8;
+    this.opacity=0.5+Math.random()*0.5;
+  }
+  update(){
+    if(this.isDebit){
+      this.x+=this.speed;
+      if(this.x>=0.5)this.reset();
+    }else{
+      this.x-=this.speed;
+      if(this.x<=0.5)this.reset();
+    }
+  }
+}
+
+for(let i=0;i<30;i++)particles.push(new Particle(true));
+for(let i=0;i<30;i++)particles.push(new Particle(false));
+
+function draw(){
+  time+=0.016;
+  const w=canvas.width/dpr;
+  const h=canvas.height/dpr;
+  
+  ctx.fillStyle='#000';
+  ctx.fillRect(0,0,w,h);
+  
+  const leftX=w*0.2;
+  const rightX=w*0.8;
+  const cy=h*0.5;
+  const scale=Math.max(0.5,amount/9500);
+  
+  // Grid background
+  ctx.save();
+  ctx.strokeStyle='rgba(38,43,38,0.4)';
+  ctx.lineWidth=0.8;
+  for(let x=0;x<=w;x+=w/16){
+    ctx.beginPath();
+    ctx.moveTo(x,0);
+    ctx.lineTo(x,h);
+    ctx.stroke();
+  }
+  for(let y=0;y<=h;y+=h/9){
+    ctx.beginPath();
+    ctx.moveTo(0,y);
+    ctx.lineTo(w,y);
+    ctx.stroke();
+  }
+  ctx.restore();
+  
+  // Particles flowing
+  particles.forEach(p=>{
+    p.update();
+    const px=p.x*w;
+    const py=p.y*h;
+    const col=p.isDebit?'206,68,128':'250,199,117';
+    ctx.fillStyle=`rgba(${col},${p.opacity*0.7})`;
+    ctx.beginPath();
+    ctx.arc(px,py,p.size,0,Math.PI*2);
+    ctx.fill();
+  });
+  
+  // Debit pillar (left, pink/acc)
+  const debitRadius=32*scale;
+  const debitGlow=ctx.createRadialGradient(leftX,cy,0,leftX,cy,debitRadius*3);
+  debitGlow.addColorStop(0,'rgba(206,68,128,0.6)');
+  debitGlow.addColorStop(0.4,'rgba(206,68,128,0.25)');
+  debitGlow.addColorStop(1,'rgba(206,68,128,0)');
+  
+  ctx.save();
+  ctx.globalCompositeOperation='lighter';
+  ctx.fillStyle=debitGlow;
+  ctx.beginPath();
+  ctx.arc(leftX,cy,debitRadius*3,0,Math.PI*2);
+  ctx.fill();
+  ctx.restore();
+  
+  ctx.fillStyle='rgba(206,68,128,0.85)';
+  ctx.beginPath();
+  ctx.arc(leftX,cy,debitRadius,0,Math.PI*2);
+  ctx.fill();
+  
+  // Credit pillar (right, amber)
+  const creditRadius=32*scale;
+  const creditGlow=ctx.createRadialGradient(rightX,cy,0,rightX,cy,creditRadius*3);
+  creditGlow.addColorStop(0,'rgba(250,199,117,0.6)');
+  creditGlow.addColorStop(0.4,'rgba(250,199,117,0.25)');
+  creditGlow.addColorStop(1,'rgba(250,199,117,0)');
+  
+  ctx.save();
+  ctx.globalCompositeOperation='lighter';
+  ctx.fillStyle=creditGlow;
+  ctx.beginPath();
+  ctx.arc(rightX,cy,creditRadius*3,0,Math.PI*2);
+  ctx.fill();
+  ctx.restore();
+  
+  ctx.fillStyle='rgba(250,199,117,0.85)';
+  ctx.beginPath();
+  ctx.arc(rightX,cy,creditRadius,0,Math.PI*2);
+  ctx.fill();
+  
+  // Balance beam connecting them
+  const beamWidth=2.5;
+  ctx.save();
+  ctx.strokeStyle='rgba(237,237,232,0.35)';
+  ctx.lineWidth=beamWidth;
+  ctx.beginPath();
+  ctx.moveTo(leftX,cy);
+  ctx.lineTo(rightX,cy);
+  ctx.stroke();
+  ctx.restore();
+  
+  // Centre equilibrium point
+  const centreX=w*0.5;
+  ctx.fillStyle='rgba(237,237,232,0.75)';
+  ctx.beginPath();
+  ctx.arc(centreX,cy,6,0,Math.PI*2);
+  ctx.fill();
+  
+  const centreGlow=ctx.createRadialGradient(centreX,cy,0,centreX,cy,24);
+  centreGlow.addColorStop(0,'rgba(237,237,232,0.4)');
+  centreGlow.addColorStop(1,'rgba(237,237,232,0)');
+  ctx.save();
+  ctx.globalCompositeOperation='lighter';
+  ctx.fillStyle=centreGlow;
+  ctx.beginPath();
+  ctx.arc(centreX,cy,24,0,Math.PI*2);
+  ctx.fill();
+  ctx.restore();
+  
+  // Labels
+  ctx.font='500 13px "JetBrains Mono"';
+  ctx.textAlign='center';
+  ctx.fillStyle='rgba(206,68,128,0.95)';
+  ctx.fillText('DEBIT',leftX,cy-debitRadius-14);
+  ctx.fillStyle='rgba(250,199,117,0.95)';
+  ctx.fillText('CREDIT',rightX,cy-creditRadius-14);
+  
+  // Bloom
+  bctx.setTransform(1,0,0,1,0,0);
+  bctx.clearRect(0,0,buf.width,buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas,0,0);
+  ctx.save();
+  ctx.globalCompositeOperation='lighter';
+  ctx.globalAlpha=0.38;
+  ctx.filter='blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf,0,0,w,h);
+  ctx.restore();
+  
+  // Vignette
+  const vig=ctx.createRadialGradient(w*0.5,cy,h*0.28,w*0.5,cy,w*0.72);
+  vig.addColorStop(0,'rgba(0,0,0,0)');
+  vig.addColorStop(1,'rgba(0,0,0,0.52)');
+  ctx.fillStyle=vig;
+  ctx.fillRect(0,0,w,h);
+  
+  requestAnimationFrame(draw);
+}
+
+draw();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'dead-clic-classification-system'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

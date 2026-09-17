@@ -1,0 +1,333 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Biological Contributors to Phobia — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #6A60D4;
+  --ag: rgba(106, 96, 212, .7);
+  --ag1: rgba(106, 96, 212, .12);
+  --ag2: rgba(106, 96, 212, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C 55%);font-family:'Geist',sans-serif;min-height:100vh;padding:40px 16px 0;color:var(--ink)}
+.container{max-width:720px;margin:0 auto}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+h1{font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin-bottom:14px}
+h1 .acc{color:var(--acc);text-shadow:0 0 26px var(--ag2)}
+.intro{font-size:15.5px;font-weight:400;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin-bottom:32px}
+
+.card{background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);margin-bottom:20px}
+.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.card-label{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;color:var(--ink)}
+.card-live{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--acc)}
+.card-hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin-bottom:16px}
+
+.canvas-wrapper{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1);margin-bottom:16px}
+canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.canvas-tag{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:14px;text-transform:uppercase;color:var(--acc);text-align:center}
+
+.slider-wrap{margin-bottom:10px}
+.slider-label{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:8px}
+.fear-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;background:linear-gradient(90deg,var(--acc) var(--fill,0%),#23291f var(--fill,0%));outline:none;cursor:pointer}
+.fear-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.fear-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.fear-slider::-webkit-slider-thumb:hover{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.fear-slider::-moz-range-thumb:hover{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.tick-labels{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink-dim);margin-top:6px}
+
+.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding-top:16px;border-top:1px solid var(--line)}
+.stat{display:flex;flex-direction:column;gap:4px}
+.stat-label{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim)}
+.stat-value{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500}
+.stat:first-child .stat-value{color:var(--acc)}
+.stat:last-child .stat-value{color:var(--amb)}
+
+.toggle-wrap{display:flex;gap:10px;margin-bottom:16px}
+.toggle-btn{flex:1;font-family:'JetBrains Mono',monospace;font-size:14.5px;padding:12px;border-radius:11px;border:1px solid var(--line);background:#12160F;color:var(--ink-dim);cursor:pointer;transition:all .2s}
+.toggle-btn.active{background:rgba(106,96,212,.1);border:1px solid var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(106,96,212,.18)}
+.knowdrop-divider{border-top:1px solid var(--line);padding-top:16px}
+.knowdrop-text{font-size:14.5px;font-weight:400;line-height:1.65;color:var(--ink)}
+
+.know-this{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));border-radius:0 12px 12px 0;margin-bottom:0}
+.know-tag{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:0.15em;color:var(--acc);margin-bottom:10px}
+.know-text{font-size:17.4px;font-weight:400;line-height:1.55;color:var(--ink)}
+.know-text .acc{color:var(--acc)}
+
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+</style>
+
+<div class="container">
+<h2 class="sr-only">Interactive demonstration of how GABA dysfunction creates runaway fear in phobias</h2>
+
+<h1>Your brain's brake pedal gets weaker every time you <span class="acc">panic</span></h1>
+<p class="intro">GABA is the neurotransmitter that stops fear signals from spiralling out of control. When it's dysfunctional, each fear response carves the pathway deeper through long-term potentiation — a vicious cycle that makes phobias harder to break. Drag the slider to see how GABA dysfunction removes the brake.</p>
+
+<div class="card">
+  <div class="card-header">
+    <span class="card-label">Fear Response Pathway</span>
+    <span class="card-live" id="live-tag">GABA NORMAL</span>
+  </div>
+  <div class="card-hint">GABA inhibits → Fear signal dampens quickly</div>
+  <div class="canvas-wrapper">
+    <canvas id="canvas"></canvas>
+    <div class="canvas-tag" id="canvas-tag">Inhibition strength: 100%</div>
+  </div>
+  <div class="slider-wrap">
+    <div class="slider-label">GABA Dysfunction Level</div>
+    <input type="range" min="0" max="100" value="0" class="fear-slider" id="fear-slider">
+    <div class="tick-labels">
+      <span>Normal</span>
+      <span>Mild</span>
+      <span>Moderate</span>
+      <span>Severe</span>
+    </div>
+  </div>
+  <div class="stat-row">
+    <div class="stat">
+      <div class="stat-label">Pathway Strength</div>
+      <div class="stat-value" id="strength-stat">1.0×</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Activation Count</div>
+      <div class="stat-value" id="activation-stat">0</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="toggle-wrap">
+    <button class="toggle-btn active" data-mode="gaba">GABA</button>
+    <button class="toggle-btn" data-mode="ltp">LTP</button>
+  </div>
+  <div class="knowdrop-divider">
+    <p class="knowdrop-text" id="knowdrop-text">GABA (gamma-aminobutyric acid) is the brain's primary inhibitory neurotransmitter — it puts the brakes on neural activity. In phobias, GABA dysfunction means the amygdala's fear response can't be shut down properly. When the usual threat signal arrives, there's insufficient inhibition to dampen it. The fear cascade activates unchecked: cortisol floods the system, the sympathetic nervous system fires up, heart rate spikes, and the person experiences full-blown panic even when the threat is minor or imagined. Without GABA's brake, the fear response becomes a runaway train.</p>
+  </div>
+</div>
+
+<div class="know-this">
+  <div class="know-tag">Know This</div>
+  <p class="know-text"><span class="acc">GABA dysfunction</span> removes the brain's inhibitory brake on fear responses, allowing unchecked activation of the amygdala and sympathetic arousal — each activation strengthens the pathway via <span class="acc">long-term potentiation</span>, making the phobia progressively harder to override.</p>
+</div>
+
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const slider = document.getElementById('fear-slider');
+const liveTag = document.getElementById('live-tag');
+const canvasTag = document.getElementById('canvas-tag');
+const strengthStat = document.getElementById('strength-stat');
+const activationStat = document.getElementById('activation-stat');
+const knowdropText = document.getElementById('knowdrop-text');
+const toggleBtns = document.querySelectorAll('.toggle-btn');
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d', { alpha: false });
+
+let dysfunction = 0;
+let activationCount = 0;
+let pulses = [];
+let time = 0;
+let lastPulse = 0;
+
+const knowdropContent = {
+  gaba: "GABA (gamma-aminobutyric acid) is the brain's primary inhibitory neurotransmitter — it puts the brakes on neural activity. In phobias, GABA dysfunction means the amygdala's fear response can't be shut down properly. When the usual threat signal arrives, there's insufficient inhibition to dampen it. The fear cascade activates unchecked: cortisol floods the system, the sympathetic nervous system fires up, heart rate spikes, and the person experiences full-blown panic even when the threat is minor or imagined. Without GABA's brake, the fear response becomes a runaway train.",
+  ltp: "Long-term potentiation (LTP) is the neural mechanism that strengthens synaptic connections through repeated activation. In phobia, every time the fear pathway fires — every panic attack, every avoidance behaviour, every anxious thought — LTP makes those synapses more efficient. The neurons literally become better at communicating the fear signal. It's like wearing a groove in a path: the more you walk it, the deeper it gets, the easier it becomes to follow. This is why phobias get worse over time if untreated. Each activation carves the fear association deeper into the brain's wiring, making the pattern harder to break."
+};
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  const cx = w * 0.5;
+  const cy = h * 0.5;
+
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+
+  // Draw amygdala (left) and cortex (right)
+  const amyX = w * 0.25;
+  const amyY = cy;
+  const cortexX = w * 0.75;
+  const cortexY = cy;
+  const nodeR = Math.min(w, h) * 0.08;
+
+  // Amygdala node (always active - fear source)
+  const amyGrad = ctx.createRadialGradient(amyX, amyY, 0, amyX, amyY, nodeR * 3);
+  amyGrad.addColorStop(0, 'rgba(250,199,117,0.6)');
+  amyGrad.addColorStop(0.5, 'rgba(250,199,117,0.2)');
+  amyGrad.addColorStop(1, 'rgba(250,199,117,0)');
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.fillStyle = amyGrad;
+  ctx.beginPath();
+  ctx.arc(amyX, amyY, nodeR * 3, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+  ctx.fillStyle = '#FAC775';
+  ctx.beginPath();
+  ctx.arc(amyX, amyY, nodeR, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Cortex node (GABA inhibition - dims with dysfunction)
+  const inhibStrength = 1 - dysfunction;
+  const cortexGrad = ctx.createRadialGradient(cortexX, cortexY, 0, cortexX, cortexY, nodeR * 3);
+  cortexGrad.addColorStop(0, `rgba(106,96,212,${0.6 * inhibStrength})`);
+  cortexGrad.addColorStop(0.5, `rgba(106,96,212,${0.2 * inhibStrength})`);
+  cortexGrad.addColorStop(1, 'rgba(106,96,212,0)');
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.fillStyle = cortexGrad;
+  ctx.beginPath();
+  ctx.arc(cortexX, cortexY, nodeR * 3, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+  ctx.fillStyle = `rgba(106,96,212,${inhibStrength})`;
+  ctx.beginPath();
+  ctx.arc(cortexX, cortexY, nodeR, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Connection line (gets brighter with dysfunction)
+  const lineAlpha = 0.15 + dysfunction * 0.35;
+  ctx.strokeStyle = `rgba(250,199,117,${lineAlpha})`;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(amyX + nodeR, amyY);
+  ctx.lineTo(cortexX - nodeR, cortexY);
+  ctx.stroke();
+
+  // Fear pulses travelling from amygdala to cortex
+  const pathwayStrength = 1 + activationCount * 0.15;
+  const pulseInterval = Math.max(800, 2000 - dysfunction * 1500);
+  
+  if (time - lastPulse > pulseInterval && dysfunction > 0.1) {
+    pulses.push({ x: amyX, born: time, speed: 0.15 + dysfunction * 0.25 });
+    lastPulse = time;
+    activationCount++;
+    activationStat.textContent = activationCount;
+    strengthStat.textContent = pathwayStrength.toFixed(1) + '×';
+  }
+
+  pulses = pulses.filter(p => {
+    const age = time - p.born;
+    p.x += p.speed * 16;
+    
+    const progress = (p.x - amyX) / (cortexX - amyX);
+    if (progress > 1) return false;
+
+    const py = amyY;
+    const size = 6 + pathwayStrength * 2;
+    
+    // If GABA strong, pulse fades before reaching cortex
+    const fadeStart = 0.5 - inhibStrength * 0.3;
+    let alpha = 1;
+    if (progress > fadeStart) {
+      alpha = Math.max(0, 1 - (progress - fadeStart) / (1 - fadeStart) * inhibStrength);
+    }
+
+    if (alpha > 0) {
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.fillStyle = `rgba(250,199,117,${alpha * 0.7})`;
+      ctx.beginPath();
+      ctx.arc(p.x, py, size, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Glow trail
+      const trailGrad = ctx.createRadialGradient(p.x, py, 0, p.x, py, size * 3);
+      trailGrad.addColorStop(0, `rgba(250,199,117,${alpha * 0.3})`);
+      trailGrad.addColorStop(1, 'rgba(250,199,117,0)');
+      ctx.fillStyle = trailGrad;
+      ctx.beginPath();
+      ctx.arc(p.x, py, size * 3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    return true;
+  });
+
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+
+  time += 16;
+  requestAnimationFrame(draw);
+}
+
+function updateUI() {
+  dysfunction = slider.value / 100;
+  const fill = dysfunction * 100;
+  slider.style.setProperty('--fill', fill + '%');
+
+  const inhibPct = Math.round((1 - dysfunction) * 100);
+  canvasTag.textContent = `Inhibition strength: ${inhibPct}%`;
+
+  if (dysfunction < 0.25) {
+    liveTag.textContent = 'GABA NORMAL';
+  } else if (dysfunction < 0.55) {
+    liveTag.textContent = 'MILD DYSFUNCTION';
+  } else if (dysfunction < 0.8) {
+    liveTag.textContent = 'MODERATE DYSFUNCTION';
+  } else {
+    liveTag.textContent = 'SEVERE DYSFUNCTION';
+  }
+}
+
+slider.addEventListener('input', updateUI);
+
+toggleBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    toggleBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const mode = btn.dataset.mode;
+    knowdropText.textContent = knowdropContent[mode];
+  });
+});
+
+window.addEventListener('resize', resize);
+resize();
+updateUI();
+requestAnimationFrame(draw);
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'biological-contributors-to-phobia'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

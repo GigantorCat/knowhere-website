@@ -1,0 +1,590 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Building the People's Republic — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #9A5FD2;
+  --ag: rgba(154, 95, 210, .7);
+  --ag1: rgba(154, 95, 210, .12);
+  --ag2: rgba(154, 95, 210, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  min-height: 100vh;
+  padding: 40px 16px 0;
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 28px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-row {
+  margin-bottom: 12px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+}
+
+.timeline-slider {
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  appearance: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.timeline-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  transition: box-shadow 0.15s;
+  cursor: pointer;
+}
+
+.timeline-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  transition: box-shadow 0.15s;
+  cursor: pointer;
+}
+
+.timeline-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.timeline-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  padding: 0 2px;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.toggle-section {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: #12160F;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toggle-btn.active {
+  background: rgba(154, 95, 210,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(154, 95, 210,.18);
+}
+
+.knowdrop-divider {
+  border-top: 1px solid var(--line);
+  margin-bottom: 16px;
+}
+
+.knowdrop-text {
+  font-family: 'Geist', sans-serif;
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-this-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 10px;
+}
+
+.know-this-body {
+  font-family: 'Geist', sans-serif;
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+</style>
+
+<h2 class="sr-only">Interactive timeline showing the rapid transformation of China from 1949-1953</h2>
+
+<div class="container">
+  <h1>Building a new society meant destroying the <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">old</span></h1>
+  
+  <p class="intro">The CCP didn't just redistribute land — it eliminated the landlord class entirely, often through public violence. In just four years, China transformed from feudal society to Soviet-style state. Drag the slider to see the rapid pace of transformation from 1949 to 1953.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Transformation Timeline</span>
+      <span class="live-tag" id="yearTag">1949 — Victory</span>
+    </div>
+    <div class="card-hint">Watch nodes activate as each reform phase begins</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="transformCanvas"></canvas>
+      <div class="canvas-overlay" id="phaseLabel">VICTORY — CCP takes power</div>
+    </div>
+
+    <div class="slider-row">
+      <div class="slider-label">Timeline</div>
+      <input type="range" min="1949" max="1953" value="1949" step="0.1" class="timeline-slider" id="yearSlider">
+      <div class="tick-labels">
+        <span>1949</span>
+        <span>1950</span>
+        <span>1951</span>
+        <span>1952</span>
+        <span>1953</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Active reforms</div>
+        <div class="stat-value" style="color:var(--acc)" id="reformCount">1</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Landlords killed</div>
+        <div class="stat-value" style="color:var(--amb)" id="deathCount">0</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" data-lens="land">Land Reform</button>
+      <button class="toggle-btn" data-lens="social">Social Change</button>
+    </div>
+    
+    <div class="knowdrop-divider"></div>
+    
+    <div class="knowdrop-text" id="knowdropText">
+      Land reform was about more than redistribution — it was revolutionary violence as policy. Between 1950 and 1952, the CCP organised "speak bitterness" meetings where peasants publicly accused landlords of exploitation. These gatherings often ended in immediate execution. The party deliberately fostered violence to destroy the old class structure and bind peasants to the revolution through shared complicity. An estimated 1-2 million landlords died. The violence wasn't incidental — it was the mechanism of transformation, ensuring no return to the feudal past.
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-this-tag">Know This</div>
+    <div class="know-this-body">The CCP used <span style="color:var(--acc)">organised violence</span> as a tool of state-building — <span style="color:var(--acc)">land reform</span> didn't just redistribute property, it physically eliminated the landlord class to ensure irreversible change.</div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('transformCanvas');
+const ctx = canvas.getContext('2d');
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d');
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+const slider = document.getElementById('yearSlider');
+const yearTag = document.getElementById('yearTag');
+const phaseLabel = document.getElementById('phaseLabel');
+const reformCount = document.getElementById('reformCount');
+const deathCount = document.getElementById('deathCount');
+
+const toggleBtns = document.querySelectorAll('.toggle-btn');
+const knowdropText = document.getElementById('knowdropText');
+
+const knowdrops = {
+  land: "Land reform was about more than redistribution — it was revolutionary violence as policy. Between 1950 and 1952, the CCP organised \"speak bitterness\" meetings where peasants publicly accused landlords of exploitation. These gatherings often ended in immediate execution. The party deliberately fostered violence to destroy the old class structure and bind peasants to the revolution through shared complicity. An estimated 1-2 million landlords died. The violence wasn't incidental — it was the mechanism of transformation, ensuring no return to the feudal past.",
+  social: "The 1950 Marriage Law was revolutionary in a society where women had been property. It outlawed arranged marriages, concubinage, child betrothal, and bride price. Women gained the right to divorce, own property, and choose their partners. The law faced fierce resistance in rural areas where traditional gender hierarchies were entrenched. Yet by 1953, divorce rates spiked as women exercised new freedoms. The CCP used the law to dismantle Confucian family structures and recruit women as political actors. Social transformation was inseparable from political consolidation — remaking the family meant remaking loyalty from kinship to party."
+};
+
+toggleBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    toggleBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const lens = btn.dataset.lens;
+    knowdropText.textContent = knowdrops[lens];
+  });
+});
+
+const nodes = [
+  { x: 0.5, y: 0.15, label: 'CCP Victory', year: 1949, phase: 'VICTORY — CCP takes power' },
+  { x: 0.25, y: 0.35, label: 'Land Reform', year: 1950, phase: 'LAND REFORM — Violence begins' },
+  { x: 0.75, y: 0.35, label: 'Marriage Law', year: 1950.4, phase: 'MARRIAGE LAW — Gender revolution' },
+  { x: 0.35, y: 0.65, label: 'One-Party State', year: 1951.2, phase: 'ONE-PARTY STATE — Consolidation' },
+  { x: 0.65, y: 0.65, label: 'Economic Planning', year: 1952.5, phase: 'SOVIET MODEL — Planning begins' }
+];
+
+let beams = [];
+let time = 0;
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function updateUI(year) {
+  const pct = ((year - 1949) / 4) * 100;
+  slider.style.setProperty('--fill', pct + '%');
+  
+  let active = 0;
+  let currentPhase = nodes[0].phase;
+  
+  nodes.forEach(n => {
+    if (year >= n.year) {
+      active++;
+      currentPhase = n.phase;
+    }
+  });
+  
+  yearTag.textContent = Math.floor(year) + ' — ' + nodes.find(n => Math.floor(n.year) === Math.floor(year))?.label.split(' ')[0] || 'Victory';
+  phaseLabel.textContent = currentPhase;
+  reformCount.textContent = active;
+  
+  const deaths = year <= 1950 ? 0 : Math.min(Math.floor((year - 1950) * 600000), 2000000);
+  deathCount.textContent = deaths.toLocaleString();
+}
+
+slider.addEventListener('input', (e) => {
+  updateUI(parseFloat(e.target.value));
+});
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  const cx = w / 2;
+  const cy = h / 2;
+  const year = parseFloat(slider.value);
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  const activeNodes = nodes.filter(n => year >= n.year);
+  
+  // Draw beams converging to center
+  activeNodes.forEach(n => {
+    const nx = n.x * w;
+    const ny = n.y * h;
+    
+    const grad = ctx.createLinearGradient(nx, ny, cx, cy);
+    grad.addColorStop(0, 'rgba(154, 95, 210,0.08)');
+    grad.addColorStop(0.5, 'rgba(154, 95, 210,0.22)');
+    grad.addColorStop(1, 'rgba(154, 95, 210,0.45)');
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(nx, ny);
+    ctx.lineTo(cx, cy);
+    ctx.stroke();
+    ctx.restore();
+  });
+  
+  // Flowing particles along beams
+  beams = beams.filter(b => {
+    b.t += 0.008;
+    if (b.t > 1) return false;
+    
+    const nx = b.node.x * w;
+    const ny = b.node.y * h;
+    const px = nx + (cx - nx) * b.t;
+    const py = ny + (cy - ny) * b.t;
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    const alpha = Math.sin(b.t * Math.PI) * 0.7;
+    ctx.fillStyle = `rgba(154, 95, 210,${alpha})`;
+    ctx.beginPath();
+    ctx.arc(px, py, 3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+    
+    return true;
+  });
+  
+  if (Math.random() < 0.15 && activeNodes.length > 0) {
+    const node = activeNodes[Math.floor(Math.random() * activeNodes.length)];
+    beams.push({ node, t: 0 });
+  }
+  
+  // Draw node points
+  nodes.forEach(n => {
+    const active = year >= n.year;
+    const nx = n.x * w;
+    const ny = n.y * h;
+    
+    if (active) {
+      // Glow
+      const glow = ctx.createRadialGradient(nx, ny, 0, nx, ny, 18);
+      glow.addColorStop(0, 'rgba(154, 95, 210,0.35)');
+      glow.addColorStop(1, 'rgba(154, 95, 210,0)');
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(nx, ny, 18, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+      
+      // Node
+      ctx.fillStyle = '#9A5FD2';
+      ctx.beginPath();
+      ctx.arc(nx, ny, 5, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Label
+      ctx.fillStyle = 'rgba(237,237,232,0.85)';
+      ctx.font = '10px "JetBrains Mono"';
+      ctx.textAlign = 'center';
+      ctx.fillText(n.label, nx, ny + 20);
+    } else {
+      ctx.fillStyle = 'rgba(140,147,137,0.3)';
+      ctx.beginPath();
+      ctx.arc(nx, ny, 3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  });
+  
+  // Center convergence glow
+  if (activeNodes.length > 0) {
+    const intensity = activeNodes.length / nodes.length;
+    const centerGlow = ctx.createRadialGradient(cx, cy, 0, cx, cy, 60 * intensity);
+    centerGlow.addColorStop(0, `rgba(154, 95, 210,${0.5 * intensity})`);
+    centerGlow.addColorStop(0.5, `rgba(154, 95, 210,${0.25 * intensity})`);
+    centerGlow.addColorStop(1, 'rgba(154, 95, 210,0)');
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.fillStyle = centerGlow;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 60 * intensity, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+  
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+  
+  time += 0.016;
+  requestAnimationFrame(draw);
+}
+
+window.addEventListener('resize', resize);
+resize();
+updateUI(1949);
+requestAnimationFrame(draw);
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'building-the-people-s-republic'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

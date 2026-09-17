@@ -1,0 +1,611 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Sustainable Settlements and Ecological Footprint — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #7870C0;
+  --acc-rgb: 120, 112, 192;
+  --ag: rgba(var(--acc-rgb), 0.7);
+  --ag1: rgba(var(--acc-rgb), 0.12);
+  --ag2: rgba(var(--acc-rgb), 0.45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 0;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,0.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: white;
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 16px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-container {
+  margin-bottom: 12px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.ef-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  outline: none;
+  margin-bottom: 8px;
+}
+
+.ef-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+
+.ef-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.ef-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+
+.ef-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toggle-btn.active {
+  background: rgba(var(--acc-rgb), 0.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(var(--acc-rgb), 0.18);
+}
+
+.knowdrop {
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-top: 18px;
+  margin-bottom: 0;
+}
+
+.know-this-tag {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 11px;
+}
+
+.know-this-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 8px var(--acc);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+.know-this-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+}
+
+.know-this-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+
+<h2 class="sr-only">Ecological Footprint Interactive: Explore how settlement design affects resource consumption</h2>
+
+<div class="container">
+  <h1>Dense cities consume <em>less</em> per person than <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">sprawl</span></h1>
+  
+  <p class="intro">Counter-intuitive but true: compact urban design shrinks a city's ecological footprint. Energy, food miles and waste flows all tighten when density, mixed use and transit replace car-dependent sprawl. Drag the slider to see how settlement patterns change the footprint arithmetic.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-label">Settlement Pattern</div>
+      <div class="live-tag" id="liveTag">Low Density Sprawl</div>
+    </div>
+    <div class="card-hint">Watch resource flows tighten or expand</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="footprintCanvas"></canvas>
+      <div class="canvas-overlay" id="canvasOverlay">FOOTPRINT: 8.4 HECTARES / PERSON</div>
+    </div>
+
+    <div class="slider-container">
+      <label class="slider-label" for="densitySlider">Urban Density</label>
+      <input type="range" id="densitySlider" class="ef-slider" min="0" max="100" value="0" style="--fill:0%">
+      <div class="tick-labels">
+        <span>Sprawl</span>
+        <span>Compact</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Footprint</div>
+        <div class="stat-value" style="color:var(--acc)" id="footprintValue">8.4</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Resource Loops</div>
+        <div class="stat-value" style="color:var(--amb)" id="loopsValue">12%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" data-mode="density">Density</button>
+      <button class="toggle-btn" data-mode="transit">Transit</button>
+    </div>
+    <div class="knowdrop" id="knowdrop">
+      Density done well means more people per hectare, shorter distances between home and services, and reduced per-capita infrastructure. When paired with mixed-use zoning, compact development cuts car dependence, shrinks energy bills and enables district heating networks that recover waste heat. The arithmetic is direct: double the density and you typically halve the land consumed for housing, roads and parking while energy use per person drops by 30–40%. High-density precincts also concentrate demand enough to support public transport, walking and cycling infrastructure that sprawl can never sustain.
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-this-tag">
+      <div class="know-this-dot"></div>
+      <div class="know-this-label">Know This</div>
+    </div>
+    <div class="know-this-body">
+      A city's <span style="color:var(--acc)">ecological footprint</span> is the land area needed to supply its resources and absorb its waste — and sustainable design shrinks it through <span style="color:var(--acc)">compact density</span>, <span style="color:var(--acc)">transit networks</span>, and circular resource flows.
+    </div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('footprintCanvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const slider = document.getElementById('densitySlider');
+const liveTag = document.getElementById('liveTag');
+const canvasOverlay = document.getElementById('canvasOverlay');
+const footprintValue = document.getElementById('footprintValue');
+const loopsValue = document.getElementById('loopsValue');
+const knowdrop = document.getElementById('knowdrop');
+const toggleButtons = document.querySelectorAll('.toggle-btn');
+
+const CSS = getComputedStyle(document.documentElement);
+const ACC = CSS.getPropertyValue('--acc').trim();
+const RGB = CSS.getPropertyValue('--acc-rgb').trim();
+const AMB = CSS.getPropertyValue('--amb').trim();
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d');
+
+let density = 0;
+let particles = [];
+let buildings = [];
+
+const knowdropContent = {
+  density: "Density done well means more people per hectare, shorter distances between home and services, and reduced per-capita infrastructure. When paired with mixed-use zoning, compact development cuts car dependence, shrinks energy bills and enables district heating networks that recover waste heat. The arithmetic is direct: double the density and you typically halve the land consumed for housing, roads and parking while energy use per person drops by 30–40%. High-density precincts also concentrate demand enough to support public transport, walking and cycling infrastructure that sprawl can never sustain.",
+  transit: "Public transport infrastructure transforms urban footprints by replacing individual car trips with shared mobility. A single metro line carries as many people as a six-lane motorway but uses 5% of the land and 30% of the energy per passenger-kilometre. Transit-oriented development clusters housing and jobs within 800 metres of stations, creating walkable catchments where 60–80% of trips need no car. The network effect compounds: better transit encourages density, density justifies more transit, and both reduce food miles by supporting local markets and distributed retail within walking range."
+};
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  initBuildings();
+  initParticles();
+}
+
+function initBuildings() {
+  buildings = [];
+  const w = canvas.width / dpr;
+  const count = Math.floor(8 + density * 0.12);
+  for (let i = 0; i < count; i++) {
+    buildings.push({
+      x: (i / count) * w + w / count * 0.5,
+      h: 20 + density * 0.8 + Math.random() * 40,
+      w: Math.max(15, 35 - density * 0.15)
+    });
+  }
+}
+
+function initParticles() {
+  particles = [];
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  const particleCount = Math.floor(80 + density * 1.2);
+  for (let i = 0; i < particleCount; i++) {
+    particles.push({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      vx: (Math.random() - 0.5) * (2 - density * 0.015),
+      vy: (Math.random() - 0.5) * (2 - density * 0.015),
+      r: 1 + Math.random() * 1.5,
+      type: Math.random() < 0.6 ? 'resource' : 'waste'
+    });
+  }
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+
+  // Draw resource field
+  const centerX = w * 0.5;
+  const centerY = h * 0.5;
+  const maxRadius = Math.max(w, h) * (0.8 - density * 0.004);
+  const fieldGrad = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, maxRadius);
+  fieldGrad.addColorStop(0, 'rgba(' + RGB + ', 0.08)');
+  fieldGrad.addColorStop(0.5, 'rgba(' + RGB + ', 0.03)');
+  fieldGrad.addColorStop(1, 'rgba(' + RGB + ', 0)');
+  ctx.fillStyle = fieldGrad;
+  ctx.fillRect(0, 0, w, h);
+
+  // Draw connecting web (tighter with density)
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  const webDensity = 0.3 + density * 0.005;
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i + 1; j < particles.length; j++) {
+      const dx = particles[j].x - particles[i].x;
+      const dy = particles[j].y - particles[i].y;
+      const dist = Math.hypot(dx, dy);
+      const maxDist = 120 - density * 0.4;
+      if (dist < maxDist) {
+        const alpha = (1 - dist / maxDist) * webDensity * 0.12;
+        ctx.strokeStyle = 'rgba(' + RGB + ', ' + alpha + ')';
+        ctx.lineWidth = 0.5;
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.stroke();
+      }
+    }
+  }
+  ctx.restore();
+
+  // Draw buildings
+  const baseY = h * 0.75;
+  buildings.forEach((b, i) => {
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    const buildGrad = ctx.createLinearGradient(b.x, baseY - b.h, b.x, baseY);
+    buildGrad.addColorStop(0, 'rgba(' + RGB + ', 0.4)');
+    buildGrad.addColorStop(1, 'rgba(' + RGB + ', 0.15)');
+    ctx.fillStyle = buildGrad;
+    ctx.fillRect(b.x - b.w / 2, baseY - b.h, b.w, b.h);
+    ctx.restore();
+    
+    // Building outline
+    ctx.strokeStyle = 'rgba(' + RGB + ', 0.6)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(b.x - b.w / 2, baseY - b.h, b.w, b.h);
+  });
+
+  // Draw particles
+  particles.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    if (p.x < 0 || p.x > w) p.vx *= -1;
+    if (p.y < 0 || p.y > h) p.vy *= -1;
+    p.x = Math.max(0, Math.min(w, p.x));
+    p.y = Math.max(0, Math.min(h, p.y));
+
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    const color = p.type === 'resource' ? RGB : '250, 199, 117';
+    const grd = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 3);
+    grd.addColorStop(0, 'rgba(' + color + ', 0.6)');
+    grd.addColorStop(1, 'rgba(' + color + ', 0)');
+    ctx.fillStyle = grd;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r * 3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    ctx.fillStyle = p.type === 'resource' ? ACC : AMB;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+
+  // Vignette
+  const vig = ctx.createRadialGradient(centerX, centerY, h * 0.28, centerX, centerY, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+
+  requestAnimationFrame(draw);
+}
+
+function updateStats() {
+  const footprint = 8.4 - density * 0.068;
+  const loops = 12 + density * 0.58;
+  
+  footprintValue.textContent = footprint.toFixed(1);
+  loopsValue.textContent = Math.round(loops) + '%';
+  
+  canvasOverlay.textContent = 'FOOTPRINT: ' + footprint.toFixed(1) + ' HECTARES / PERSON';
+  
+  if (density < 25) {
+    liveTag.textContent = 'Low Density Sprawl';
+  } else if (density < 60) {
+    liveTag.textContent = 'Medium Density';
+  } else {
+    liveTag.textContent = 'Compact Urban';
+  }
+}
+
+slider.addEventListener('input', (e) => {
+  density = parseFloat(e.target.value);
+  const fill = density + '%';
+  slider.style.setProperty('--fill', fill);
+  updateStats();
+  initBuildings();
+  
+  // Adjust particle speeds
+  particles.forEach(p => {
+    const speed = 2 - density * 0.015;
+    const currentSpeed = Math.hypot(p.vx, p.vy);
+    if (currentSpeed > 0) {
+      p.vx = (p.vx / currentSpeed) * speed;
+      p.vy = (p.vy / currentSpeed) * speed;
+    }
+  });
+});
+
+toggleButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    toggleButtons.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const mode = btn.dataset.mode;
+    knowdrop.textContent = knowdropContent[mode];
+  });
+});
+
+window.addEventListener('resize', resize);
+resize();
+updateStats();
+draw();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'sustainable-settlements-and-ecological-footprint'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

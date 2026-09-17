@@ -1,0 +1,621 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Cultural Change Mechanisms — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #E85D97;
+  --ag: rgba(232, 93, 151, .7);
+  --ag1: rgba(232, 93, 151, .12);
+  --ag2: rgba(232, 93, 151, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  min-height: 100vh;
+  padding: 40px 16px 72px;
+  color: var(--ink);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.container { max-width: 720px; margin: 0 auto; }
+
+h1 {
+  font-size: clamp(30px, 8vw, 52px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  margin-bottom: 16px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: white;
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 18px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-row {
+  margin-bottom: 14px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.ccm-slider {
+  width: 100%;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+}
+
+.ccm-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  transition: box-shadow .15s;
+  cursor: pointer;
+}
+
+.ccm-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  transition: box-shadow .15s;
+  cursor: pointer;
+}
+
+.ccm-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.ccm-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  margin-top: 6px;
+  padding: 0 2px;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.stat-value.primary { color: var(--acc); }
+.stat-value.secondary { color: var(--amb); }
+
+.toggle-section {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+  margin-top: 14px;
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(232,93,151,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(232,93,151,.18);
+}
+
+.knowdrop {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-top: 18px;
+}
+
+.know-this-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 10px;
+}
+
+.know-this-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.footer {
+  margin-top: 34px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 10px var(--acc);
+  animation: ccmPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes ccmPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .35; transform: scale(.6); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Corporate Culture Change Mechanisms Interactive Widget</h2>
+  
+  <h1>Culture change fails when you forget employees watch <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">actions</span></h1>
+  
+  <p class="intro">Organisations announce new values, but culture only shifts when multiple reinforcement mechanisms align. Symbolic leadership decisions, hiring choices, reward systems, and dismissal patterns send signals employees decode to learn what actually matters. Watch how cultural signal strength builds when mechanisms converge.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Culture Signal Network</span>
+      <span class="live-tag" id="liveTag">3 mechanisms active</span>
+    </div>
+    <div class="card-hint">Each mechanism sends signals to employees — activate or deactivate them</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="canvas"></canvas>
+      <div class="canvas-overlay" id="canvasOverlay">Cultural signal strength: 65%</div>
+    </div>
+
+    <div class="slider-row">
+      <label class="slider-label" for="alignmentSlider">Leadership commitment intensity</label>
+      <input type="range" id="alignmentSlider" class="ccm-slider" min="0" max="100" value="65" step="1">
+      <div class="tick-labels">
+        <span>Symbolic only</span>
+        <span>Consistent action</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Signal strength</div>
+        <div class="stat-value primary" id="strengthStat">65%</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Time to embed</div>
+        <div class="stat-value secondary" id="timeStat">18mo</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" data-mode="hiring">Hiring</button>
+      <button class="toggle-btn active" data-mode="rewards">Rewards</button>
+    </div>
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" data-mode="dismissal">Dismissal</button>
+      <button class="toggle-btn" data-mode="space">Space design</button>
+    </div>
+    
+    <div class="knowdrop" id="knowdrop">When all four mechanisms align, employees receive consistent signals about which behaviours truly matter. Hiring decisions filter for cultural fit, demonstrating entry standards. Reward systems reinforce desired behaviours through tangible recognition. Dismissal decisions define hard boundaries by showing which violations trigger consequences. Physical space design embeds cultural messages in daily environments, like open floor plans signalling transparency values or removing executive perks demonstrating equality.</div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-this-tag">Know This</div>
+    <div class="know-this-body"><span style="color:var(--acc)">Symbolic actions by leadership</span> create powerful culture signals, like CEOs removing executive parking spaces to demonstrate equality values — but only when <span style="color:var(--acc)">recruitment, dismissal decisions, and reward systems</span> consistently reinforce the same message.</div>
+  </div>
+
+  <div class="footer">
+    <div class="pulse-dot"></div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const liveTag = document.getElementById('liveTag');
+const canvasOverlay = document.getElementById('canvasOverlay');
+const strengthStat = document.getElementById('strengthStat');
+const timeStat = document.getElementById('timeStat');
+const slider = document.getElementById('alignmentSlider');
+const knowdrop = document.getElementById('knowdrop');
+const toggleBtns = document.querySelectorAll('.toggle-btn');
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d', { alpha: false });
+
+let mechanisms = {
+  hiring: true,
+  rewards: true,
+  dismissal: true,
+  space: false
+};
+
+let commitment = 65;
+let time = 0;
+let pulsePhase = 0;
+
+const mechanismColors = {
+  hiring: [232, 93, 151],
+  rewards: [232,93,151],
+  dismissal: [250, 199, 117],
+  space: [100, 180, 255]
+};
+
+const nodes = [
+  { x: 0.2, y: 0.3, type: 'hiring', label: 'HIRING' },
+  { x: 0.8, y: 0.3, type: 'rewards', label: 'REWARDS' },
+  { x: 0.2, y: 0.7, type: 'dismissal', label: 'DISMISSAL' },
+  { x: 0.8, y: 0.7, type: 'space', label: 'SPACE' }
+];
+
+const knowdropText = {
+  1: "With only one mechanism active, employees receive mixed signals about cultural priorities. Official values stated in meetings contradict the behaviours that actually get rewarded, hired, or tolerated. Rational employees trust actions over words, so they adapt to the real incentive structure rather than the announced culture. Culture change stalls because daily experiences don't reinforce the stated direction. Single-mechanism interventions, like redesigning office space without changing reward systems, create cynicism when employees notice the disconnect.",
+  2: "Two aligned mechanisms create stronger signals but still leave gaps where old culture persists. Employees notice partial consistency — perhaps hiring filters for new values while reward systems still incentivize legacy behaviours. This creates confusion and political tension as different groups interpret which signals to follow. Some staff adopt new behaviours in hiring contexts but revert to old patterns when performance reviews use traditional metrics. Partial alignment is better than none, but the remaining contradictions slow adoption and allow cultural pockets to resist change.",
+  3: "Three mechanisms working together reach critical mass for culture shift. Employees encounter consistent signals across most contexts — who gets hired, who gets promoted, who gets dismissed all reinforce the same values. The remaining gap (often physical space or symbolic actions) matters less because major touchpoints align. Trust in leadership messaging increases as staff verify that stated values match real consequences. Cultural change accelerates as new norms become socially reinforced through peer observation. Most organisations need this level of consistency to overcome inertia built over years.",
+  4: "When all four mechanisms align, employees receive consistent signals about which behaviours truly matter. Hiring decisions filter for cultural fit, demonstrating entry standards. Reward systems reinforce desired behaviours through tangible recognition. Dismissal decisions define hard boundaries by showing which violations trigger consequences. Physical space design embeds cultural messages in daily environments, like open floor plans signalling transparency values or removing executive perks demonstrating equality. Complete alignment creates social proof as employees observe consistent patterns across all contexts, accelerating adoption through both rational assessment and social conformity pressures."
+};
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  bctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function updateSliderFill() {
+  const percent = ((slider.value - slider.min) / (slider.max - slider.min)) * 100;
+  slider.style.setProperty('--fill', percent + '%');
+}
+
+function updateStats() {
+  const activeCount = Object.values(mechanisms).filter(Boolean).length;
+  const baseStrength = (activeCount / 4) * 100;
+  const commitmentBoost = commitment * 0.3;
+  const totalStrength = Math.min(100, baseStrength + commitmentBoost);
+  
+  strengthStat.textContent = Math.round(totalStrength) + '%';
+  canvasOverlay.textContent = `Cultural signal strength: ${Math.round(totalStrength)}%`;
+  
+  const baseTime = 36;
+  const timeReduction = (totalStrength / 100) * 24;
+  const months = Math.max(6, Math.round(baseTime - timeReduction));
+  timeStat.textContent = months + 'mo';
+  
+  const activeCountText = activeCount === 1 ? '1 mechanism active' : `${activeCount} mechanisms active`;
+  liveTag.textContent = activeCountText;
+  
+  knowdrop.textContent = knowdropText[activeCount];
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  const cx = w / 2;
+  const cy = h / 2;
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  time += 0.016;
+  pulsePhase = (time * 1.2) % (Math.PI * 2);
+  
+  const activeCount = Object.values(mechanisms).filter(Boolean).length;
+  const baseStrength = (activeCount / 4);
+  const commitmentFactor = commitment / 100;
+  const totalStrength = Math.min(1, baseStrength + commitmentFactor * 0.3);
+  
+  // Draw connection beams from active nodes to center
+  nodes.forEach((node, i) => {
+    if (!mechanisms[node.type]) return;
+    
+    const nx = w * node.x;
+    const ny = h * node.y;
+    const color = mechanismColors[node.type];
+    const pulse = 0.5 + 0.5 * Math.sin(pulsePhase + i * 0.5);
+    
+    const grad = ctx.createLinearGradient(nx, ny, cx, cy);
+    grad.addColorStop(0, `rgba(${color[0]},${color[1]},${color[2]},${0.6 * pulse * totalStrength})`);
+    grad.addColorStop(0.5, `rgba(${color[0]},${color[1]},${color[2]},${0.3 * pulse * totalStrength})`);
+    grad.addColorStop(1, `rgba(${color[0]},${color[1]},${color[2]},0)`);
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(nx, ny);
+    ctx.lineTo(cx, cy);
+    ctx.stroke();
+    ctx.restore();
+  });
+  
+  // Draw central convergence glow
+  if (activeCount > 0) {
+    const centralGlow = ctx.createRadialGradient(cx, cy, 0, cx, cy, h * 0.35);
+    centralGlow.addColorStop(0, `rgba(232,93,151,${0.7 * totalStrength})`);
+    centralGlow.addColorStop(0.4, `rgba(232,93,151,${0.35 * totalStrength})`);
+    centralGlow.addColorStop(1, 'rgba(232,93,151,0)');
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.fillStyle = centralGlow;
+    ctx.beginPath();
+    ctx.arc(cx, cy, h * 0.35, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+  
+  // Draw mechanism nodes
+  nodes.forEach((node, i) => {
+    const nx = w * node.x;
+    const ny = h * node.y;
+    const color = mechanismColors[node.type];
+    const active = mechanisms[node.type];
+    const pulse = 0.6 + 0.4 * Math.sin(pulsePhase + i * 0.7);
+    const nodeR = active ? 14 * pulse : 10;
+    
+    // Node glow
+    if (active) {
+      const nodeGlow = ctx.createRadialGradient(nx, ny, 0, nx, ny, nodeR * 3);
+      nodeGlow.addColorStop(0, `rgba(${color[0]},${color[1]},${color[2]},0.5)`);
+      nodeGlow.addColorStop(0.5, `rgba(${color[0]},${color[1]},${color[2]},0.2)`);
+      nodeGlow.addColorStop(1, `rgba(${color[0]},${color[1]},${color[2]},0)`);
+      
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.fillStyle = nodeGlow;
+      ctx.beginPath();
+      ctx.arc(nx, ny, nodeR * 3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+    
+    // Node core
+    ctx.fillStyle = active ? `rgba(${color[0]},${color[1]},${color[2]},0.9)` : 'rgba(140,147,137,0.3)';
+    ctx.beginPath();
+    ctx.arc(nx, ny, nodeR, 0, Math.PI * 2);
+    ctx.fill();
+    
+    if (active) {
+      ctx.strokeStyle = `rgba(${color[0]},${color[1]},${color[2]},1)`;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+    
+    // Label
+    ctx.save();
+    ctx.font = '9px "JetBrains Mono"';
+    ctx.fillStyle = active ? `rgb(${color[0]},${color[1]},${color[2]})` : 'rgba(140,147,137,0.5)';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const labelY = ny < h / 2 ? ny - nodeR - 10 : ny + nodeR + 10;
+    ctx.fillText(node.label, nx, labelY);
+    ctx.restore();
+  });
+  
+  // Bloom
+  bctx.fillStyle = '#000';
+  bctx.fillRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+  
+  requestAnimationFrame(draw);
+}
+
+slider.addEventListener('input', (e) => {
+  commitment = parseInt(e.target.value);
+  updateSliderFill();
+  updateStats();
+});
+
+toggleBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const mode = btn.dataset.mode;
+    mechanisms[mode] = !mechanisms[mode];
+    btn.classList.toggle('active');
+    updateStats();
+  });
+});
+
+window.addEventListener('resize', resize);
+resize();
+updateSliderFill();
+updateStats();
+draw();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'cultural-change-mechanisms'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

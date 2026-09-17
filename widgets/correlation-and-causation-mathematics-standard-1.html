@@ -1,0 +1,566 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Correlation and Causation — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #7ED97A;
+  --ag: rgba(126, 217, 122, .7);
+  --ag1: rgba(126, 217, 122, .12);
+  --ag2: rgba(126, 217, 122, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 0;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(26px,6.5vw,44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 28px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: white;
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-container {
+  margin-bottom: 8px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+}
+
+.corr-slider {
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill,50%), #23291f var(--fill,50%));
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.corr-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.corr-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.corr-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.corr-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  padding: 0 2px;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 4px;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.stat-value.accent { color: var(--acc); }
+.stat-value.amber { color: var(--amb); }
+
+.toggle-section {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(126, 217, 122,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(126, 217, 122,.18);
+}
+
+.knowdrop-divider {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.knowdrop-text {
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-this-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 10px;
+}
+
+.know-this-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (max-width: 360px) {
+  body { padding: 32px 12px 0; }
+  .card { padding: 14px; }
+}
+</style>
+
+<h2 class="sr-only">Correlation vs Causation Interactive Widget</h2>
+
+<div class="container">
+  <h1>Perfect correlation, <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">zero</span> causation</h1>
+  
+  <p class="intro">Two variables can move together in lockstep — <em>r</em> = ±1.0 — yet have nothing to do with each other. Drag the slider to explore how correlation strength changes while the causal story stays fixed.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-label">Scatterplot</div>
+      <div class="live-tag" id="liveCorr">r = 0.00</div>
+    </div>
+    <div class="card-hint">Drag slider to adjust correlation</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="scatterCanvas"></canvas>
+      <div class="canvas-overlay" id="canvasTag">No linear relationship</div>
+    </div>
+
+    <div class="slider-container">
+      <div class="slider-label">Correlation coefficient</div>
+      <input type="range" min="-100" max="100" value="0" class="corr-slider" id="corrSlider">
+      <div class="tick-labels">
+        <span>−1.0</span>
+        <span>0.0</span>
+        <span>+1.0</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">r value</div>
+        <div class="stat-value accent" id="rValue">0.00</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Causation</div>
+        <div class="stat-value amber">Zero</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-section">
+      <button class="toggle-btn active" id="btnCoincidence">Coincidence</button>
+      <button class="toggle-btn" id="btnCommon">Common cause</button>
+    </div>
+    
+    <div class="knowdrop-divider">
+      <p class="knowdrop-text" id="knowdropText">
+        Ice cream sales and drowning deaths have strong positive correlation every summer — yet buying ice cream doesn't cause drowning. This is pure coincidence driven by a hidden variable: warm weather. Both variables rise independently when temperature climbs. The exam loves this trap because the numbers look convincing, but the causal story is fiction. Always ask: what else could explain this pattern?
+      </p>
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-this-tag">Know This</div>
+    <div class="know-this-body">
+      <span style="color:var(--acc)">r</span> measures <span style="color:var(--acc)">strength and direction of linear association</span>, ranging from −1 to +1, but correlation <span style="color:var(--acc)">never proves causation</span> — watch for coincidence and common causes.
+    </div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('scatterCanvas');
+const ctx = canvas.getContext('2d');
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d');
+
+const slider = document.getElementById('corrSlider');
+const liveTag = document.getElementById('liveCorr');
+const canvasTag = document.getElementById('canvasTag');
+const rValue = document.getElementById('rValue');
+
+const btnCoincidence = document.getElementById('btnCoincidence');
+const btnCommon = document.getElementById('btnCommon');
+const knowdropText = document.getElementById('knowdropText');
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+let points = [];
+const nPoints = 65;
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  generatePoints();
+  draw();
+}
+
+function generatePoints() {
+  const r = parseFloat(slider.value) / 100;
+  points = [];
+  
+  for (let i = 0; i < nPoints; i++) {
+    const x = Math.random();
+    const yBase = Math.random();
+    const yCorr = x;
+    const y = yCorr * r + yBase * (1 - Math.abs(r));
+    points.push({ x, y });
+  }
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  // Grid
+  ctx.strokeStyle = 'rgba(126, 217, 122,0.08)';
+  ctx.lineWidth = 0.8;
+  for (let i = 0; i <= 5; i++) {
+    const x = (w * 0.15) + (i / 5) * (w * 0.7);
+    const y = (h * 0.15) + (i / 5) * (h * 0.7);
+    ctx.beginPath();
+    ctx.moveTo(x, h * 0.15);
+    ctx.lineTo(x, h * 0.85);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(w * 0.15, y);
+    ctx.lineTo(w * 0.85, y);
+    ctx.stroke();
+  }
+  
+  // Axes
+  ctx.strokeStyle = 'rgba(126, 217, 122,0.25)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(w * 0.15, h * 0.85);
+  ctx.lineTo(w * 0.85, h * 0.85);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(w * 0.15, h * 0.15);
+  ctx.lineTo(w * 0.15, h * 0.85);
+  ctx.stroke();
+  
+  // Points
+  const r = parseFloat(slider.value) / 100;
+  points.forEach(p => {
+    const px = w * 0.15 + p.x * (w * 0.7);
+    const py = h * 0.85 - p.y * (h * 0.7);
+    
+    // Glow
+    const glow = ctx.createRadialGradient(px, py, 0, px, py, 8);
+    glow.addColorStop(0, 'rgba(126, 217, 122,0.45)');
+    glow.addColorStop(1, 'rgba(126, 217, 122,0)');
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(px, py, 8, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+    
+    // Point
+    ctx.fillStyle = Math.abs(r) > 0.7 ? '#7ED97A' : 'rgba(126, 217, 122,0.75)';
+    ctx.beginPath();
+    ctx.arc(px, py, 2.8, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  
+  // Trend line if strong correlation
+  if (Math.abs(r) > 0.3) {
+    const slope = r;
+    const intercept = 0.5 - slope * 0.5;
+    const x1 = 0;
+    const y1 = intercept;
+    const x2 = 1;
+    const y2 = slope * x2 + intercept;
+    
+    const px1 = w * 0.15 + x1 * (w * 0.7);
+    const py1 = h * 0.85 - y1 * (h * 0.7);
+    const px2 = w * 0.15 + x2 * (w * 0.7);
+    const py2 = h * 0.85 - y2 * (h * 0.7);
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.strokeStyle = `rgba(126, 217, 122,${Math.abs(r) * 0.5})`;
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6, 4]);
+    ctx.beginPath();
+    ctx.moveTo(px1, py1);
+    ctx.lineTo(px2, py2);
+    ctx.stroke();
+    ctx.restore();
+  }
+  
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const cx = w / 2;
+  const cy = h / 2;
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+}
+
+function updateUI() {
+  const r = parseFloat(slider.value) / 100;
+  const fill = ((r + 1) / 2) * 100;
+  slider.style.setProperty('--fill', fill + '%');
+  
+  const rStr = r.toFixed(2);
+  liveTag.textContent = `r = ${rStr}`;
+  rValue.textContent = rStr;
+  
+  const abs = Math.abs(r);
+  if (abs < 0.3) {
+    canvasTag.textContent = 'No linear relationship';
+  } else if (abs < 0.7) {
+    canvasTag.textContent = r > 0 ? 'Moderate positive correlation' : 'Moderate negative correlation';
+  } else {
+    canvasTag.textContent = r > 0 ? 'Strong positive correlation' : 'Strong negative correlation';
+  }
+}
+
+slider.addEventListener('input', () => {
+  generatePoints();
+  draw();
+  updateUI();
+});
+
+btnCoincidence.addEventListener('click', () => {
+  btnCoincidence.classList.add('active');
+  btnCommon.classList.remove('active');
+  knowdropText.textContent = "Ice cream sales and drowning deaths have strong positive correlation every summer — yet buying ice cream doesn't cause drowning. This is pure coincidence driven by a hidden variable: warm weather. Both variables rise independently when temperature climbs. The exam loves this trap because the numbers look convincing, but the causal story is fiction. Always ask: what else could explain this pattern?";
+});
+
+btnCommon.addEventListener('click', () => {
+  btnCommon.classList.add('active');
+  btnCoincidence.classList.remove('active');
+  knowdropText.textContent = "Shoe size and reading ability correlate strongly in children — but bigger feet don't cause better reading. The common cause is age: older children have larger feet AND more reading practice. This is confounding, where a third variable drives both outcomes. In Methods exams, they'll show you perfect r values between variables that share an underlying cause. Your job is to spot the hidden driver and reject the direct causal claim.";
+});
+
+window.addEventListener('resize', resize);
+resize();
+updateUI();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'correlation-and-causation'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

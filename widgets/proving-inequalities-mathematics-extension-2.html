@@ -1,0 +1,614 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Proving Inequalities — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #23833F;
+  --acc-rgb: 35, 131, 63;
+  --ag: rgba(var(--acc-rgb),.7);
+  --ag1: rgba(var(--acc-rgb),.12);
+  --ag2: rgba(var(--acc-rgb),.45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 0;
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 18px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: white;
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+.canvas-wrapper canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-container {
+  margin-bottom: 16px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 10px;
+}
+
+.ineq-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  outline: none;
+  margin-bottom: 8px;
+}
+
+.ineq-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.ineq-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.ineq-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.ineq-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.stat-value.acc { color: var(--acc); }
+.stat-value.amb { color: var(--amb); }
+
+.toggle-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: #12160F;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(var(--acc-rgb),.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(var(--acc-rgb),.18);
+}
+
+.knowdrop-divider {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.knowdrop-text {
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-this-tag {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 12px;
+}
+
+.know-this-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 8px var(--acc);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+.know-this-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+}
+
+.know-this-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Interactive inequality proof visualisation showing Cauchy-Schwarz inequality</h2>
+
+  <h1>The best inequality proofs never touch <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">zero</span></h1>
+
+  <p class="intro">You prove A > B by showing A − B is something you already know can't be negative. Drag the slider to see the gap between two vectors and the Cauchy-Schwarz bound that guarantees it stays positive.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Cauchy-Schwarz Inequality</span>
+      <span class="live-tag" id="liveTag">Gap: +0.00</span>
+    </div>
+    <div class="card-hint">Drag to change vector angle — watch the gap never drop below zero</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="canvas"></canvas>
+      <div class="canvas-overlay" id="canvasOverlay">|⟨u,v⟩| ≤ ‖u‖‖v‖</div>
+    </div>
+
+    <div class="slider-container">
+      <div class="slider-label">Vector angle θ</div>
+      <input type="range" min="0" max="180" value="60" class="ineq-slider" id="angleSlider">
+      <div class="tick-labels">
+        <span>0°</span>
+        <span>45°</span>
+        <span>90°</span>
+        <span>135°</span>
+        <span>180°</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Dot product |⟨u,v⟩|</div>
+        <div class="stat-value acc" id="dotValue">0.87</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Upper bound ‖u‖‖v‖</div>
+        <div class="stat-value amb" id="boundValue">1.00</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-container">
+      <button class="toggle-btn active" id="btnSquare">Square Method</button>
+      <button class="toggle-btn" id="btnTriangle">Triangle Ineq</button>
+    </div>
+
+    <div class="knowdrop-divider">
+      <p class="knowdrop-text" id="knowdropText">The universal starting move: rearrange until you're proving something ≥ 0. Expand (a − b)² and you get a² − 2ab + b² which is never negative because it's literally a square. This lets you prove a² + b² ≥ 2ab instantly. Stack this trick into higher dimensions and you get Cauchy-Schwarz: the square of the dot product can never exceed the product of the squared magnitudes. Every classical inequality is this move wearing a different disguise.</p>
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-this-tag">
+      <div class="know-this-dot"></div>
+      <div class="know-this-label">Know This</div>
+    </div>
+    <p class="know-this-body">Proving an inequality means constructing a chain of steps that ends in <span style="color:var(--acc)">something obviously non-negative</span>, usually a <span style="color:var(--acc)">perfect square</span> or a <span style="color:var(--acc)">norm</span>.</p>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const slider = document.getElementById('angleSlider');
+const liveTag = document.getElementById('liveTag');
+const canvasOverlay = document.getElementById('canvasOverlay');
+const dotValue = document.getElementById('dotValue');
+const boundValue = document.getElementById('boundValue');
+
+const btnSquare = document.getElementById('btnSquare');
+const btnTriangle = document.getElementById('btnTriangle');
+const knowdropText = document.getElementById('knowdropText');
+
+const CSS = getComputedStyle(document.documentElement);
+const ACC = CSS.getPropertyValue('--acc').trim();
+const RGB = CSS.getPropertyValue('--acc-rgb').trim();
+const AMB = CSS.getPropertyValue('--amb').trim();
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d');
+
+let angle = 60;
+let time = 0;
+
+const knowdrops = {
+  square: "The universal starting move: rearrange until you're proving something ≥ 0. Expand (a − b)² and you get a² − 2ab + b² which is never negative because it's literally a square. This lets you prove a² + b² ≥ 2ab instantly. Stack this trick into higher dimensions and you get Cauchy-Schwarz: the square of the dot product can never exceed the product of the squared magnitudes. Every classical inequality is this move wearing a different disguise.",
+  triangle: "The triangle inequality says the direct path is always shortest: |a + b| ≤ |a| + |b|. In number form it looks trivial but in vector space it becomes a geometric guarantee. Any time you need to bound a sum of terms, the triangle inequality is your first tool. It composes: apply it twice and you can bound three terms, apply it n times and you have induction. Cauchy-Schwarz is what you reach for when triangle inequality isn't quite strong enough."
+};
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+
+  const cx = w / 2;
+  const cy = h / 2;
+  const scale = Math.min(w, h) * 0.28;
+
+  // Grid
+  ctx.save();
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  ctx.lineWidth = 0.5;
+  const gridStep = scale * 0.5;
+  for (let x = cx % gridStep; x < w; x += gridStep) {
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, h);
+    ctx.stroke();
+  }
+  for (let y = cy % gridStep; y < h; y += gridStep) {
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(w, y);
+    ctx.stroke();
+  }
+  ctx.restore();
+
+  // Axes
+  ctx.save();
+  ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(0, cy);
+  ctx.lineTo(w, cy);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(cx, 0);
+  ctx.lineTo(cx, h);
+  ctx.stroke();
+  ctx.restore();
+
+  // Vectors
+  const rad = (angle * Math.PI) / 180;
+  const u = { x: scale, y: 0 };
+  const v = { x: scale * Math.cos(rad), y: -scale * Math.sin(rad) };
+
+  // Vector u (amber)
+  ctx.save();
+  ctx.strokeStyle = AMB;
+  ctx.lineWidth = 2.5;
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.lineTo(cx + u.x, cy + u.y);
+  ctx.stroke();
+  ctx.fillStyle = AMB;
+  ctx.beginPath();
+  ctx.arc(cx + u.x, cy + u.y, 5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+  // Vector v (accent)
+  ctx.save();
+  ctx.strokeStyle = ACC;
+  ctx.lineWidth = 2.5;
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.lineTo(cx + v.x, cy + v.y);
+  ctx.stroke();
+  ctx.fillStyle = ACC;
+  ctx.beginPath();
+  ctx.arc(cx + v.x, cy + v.y, 5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+  // Angle arc
+  ctx.save();
+  ctx.strokeStyle = 'rgba(' + RGB + ',0.4)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.arc(cx, cy, scale * 0.35, 0, -rad, true);
+  ctx.stroke();
+  ctx.restore();
+
+  // Dot product projection line
+  const projLen = Math.cos(rad);
+  const projX = cx + u.x * projLen;
+  ctx.save();
+  ctx.setLineDash([4, 4]);
+  ctx.strokeStyle = 'rgba(' + RGB + ',0.5)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(cx + v.x, cy + v.y);
+  ctx.lineTo(projX, cy);
+  ctx.stroke();
+  ctx.restore();
+
+  // Labels
+  ctx.save();
+  ctx.fillStyle = AMB;
+  ctx.font = '500 13px "JetBrains Mono"';
+  ctx.fillText('u', cx + u.x + 12, cy + u.y + 5);
+  ctx.fillStyle = ACC;
+  ctx.fillText('v', cx + v.x + 12, cy + v.y);
+  ctx.restore();
+
+  // Glow halos
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  const haloU = ctx.createRadialGradient(cx + u.x, cy + u.y, 0, cx + u.x, cy + u.y, 22);
+  haloU.addColorStop(0, 'rgba(250,199,117,0.35)');
+  haloU.addColorStop(1, 'rgba(250,199,117,0)');
+  ctx.fillStyle = haloU;
+  ctx.fillRect(cx + u.x - 22, cy + u.y - 22, 44, 44);
+
+  const haloV = ctx.createRadialGradient(cx + v.x, cy + v.y, 0, cx + v.x, cy + v.y, 22);
+  haloV.addColorStop(0, 'rgba(' + RGB + ',0.35)');
+  haloV.addColorStop(1, 'rgba(' + RGB + ',0)');
+  ctx.fillStyle = haloV;
+  ctx.fillRect(cx + v.x - 22, cy + v.y - 22, 44, 44);
+  ctx.restore();
+
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+
+  time += 0.016;
+}
+
+function update() {
+  angle = parseFloat(slider.value);
+  const fillPct = (angle / 180) * 100;
+  slider.style.setProperty('--fill', fillPct + '%');
+
+  const rad = (angle * Math.PI) / 180;
+  const dotProd = Math.abs(Math.cos(rad));
+  const bound = 1.0;
+  const gap = bound - dotProd;
+
+  liveTag.textContent = `Gap: +${gap.toFixed(2)}`;
+  dotValue.textContent = dotProd.toFixed(2);
+  boundValue.textContent = bound.toFixed(2);
+
+  draw();
+  requestAnimationFrame(update);
+}
+
+slider.addEventListener('input', () => {
+  angle = parseFloat(slider.value);
+  const fillPct = (angle / 180) * 100;
+  slider.style.setProperty('--fill', fillPct + '%');
+});
+
+btnSquare.addEventListener('click', () => {
+  btnSquare.classList.add('active');
+  btnTriangle.classList.remove('active');
+  knowdropText.textContent = knowdrops.square;
+});
+
+btnTriangle.addEventListener('click', () => {
+  btnTriangle.classList.add('active');
+  btnSquare.classList.remove('active');
+  knowdropText.textContent = knowdrops.triangle;
+});
+
+window.addEventListener('resize', resize);
+resize();
+update();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'proving-inequalities'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

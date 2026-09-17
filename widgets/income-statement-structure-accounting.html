@@ -1,0 +1,707 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Income Statement Structure — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #CE4480;
+  --ag: rgba(206, 68, 128, .7);
+  --ag1: rgba(206, 68, 128, .12);
+  --ag2: rgba(206, 68, 128, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+.sr-only {
+  position:absolute;
+  width:1px;
+  height:1px;
+  padding:0;
+  margin:-1px;
+  overflow:hidden;
+  clip:rect(0,0,0,0);
+  white-space:nowrap;
+  border:0;
+}
+
+* {
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 72px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(30px,8vw,52px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  line-height: 1.55;
+  max-width: 58ch;
+  margin-bottom: 28px;
+}
+
+.card {
+  background: linear-gradient(180deg,#12160F,#0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 16px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--ink);
+  font-weight: 400;
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+  font-weight: 400;
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 14px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+  letter-spacing: 0.03em;
+}
+
+.is-slider {
+  margin: 18px 0 10px;
+}
+
+.is-slider input[type=range] {
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill,0%), #23291f var(--fill,0%));
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.is-slider input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.is-slider input[type=range]::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.is-slider input[type=range]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.is-slider input[type=range]::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  text-transform: uppercase;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  letter-spacing: 0.03em;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.toggle-card {
+  background: linear-gradient(180deg,#12160F,#0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 16px;
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: #12160F;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(206,68,128,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(206,68,128,.18);
+}
+
+.knowdrop {
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 34px;
+}
+
+.know-this-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.know-this-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.footer {
+  margin-top: 34px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 10px var(--acc);
+  animation: isPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes isPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .35; transform: scale(.6); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+
+<h2 class="sr-only">Income Statement Structure Interactive Widget</h2>
+
+<div class="container">
+  <h1>Each layer strips away another cost to reveal a different kind of <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">profit</span></h1>
+  
+  <p class="intro">An income statement isn't a single profit number — it's a cascade through three distinct profitability metrics, each serving a different analytical purpose. Drag the slider to watch how business operations flow from revenue through gross profit, operating profit, and finally net profit.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Income Statement Cascade</span>
+      <span class="live-tag" id="liveTag">Stage 1: Revenue</span>
+    </div>
+    <p class="card-hint">Watch the waterfall reveal each profit stage</p>
+    
+    <div class="canvas-wrapper">
+      <canvas id="canvas"></canvas>
+      <div class="canvas-overlay" id="overlayTag">Revenue: Starting Point</div>
+    </div>
+
+    <div class="is-slider">
+      <input type="range" id="slider" min="0" max="100" value="0" step="1">
+    </div>
+    <div class="tick-labels">
+      <span>Revenue</span>
+      <span>Gross Profit</span>
+      <span>Operating Profit</span>
+      <span>Net Profit</span>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <span class="stat-label">Current Stage</span>
+        <span class="stat-value" id="stageNum" style="color:var(--acc)">1</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Deductions Applied</span>
+        <span class="stat-value" id="deductCount" style="color:var(--amb)">0</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="toggle-card">
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" data-view="margins">Margin Analysis</button>
+      <button class="toggle-btn" data-view="decisions">Decision Uses</button>
+    </div>
+    <div class="knowdrop" id="knowdrop">Each profit level reveals a different margin that isolates specific business decisions. Gross profit margin shows production efficiency by isolating Cost of Sales. Operating profit margin reveals core business profitability by adding operating expenses. Net profit margin captures the complete picture after financing decisions and one-off items, making it the ultimate measure of shareholder return but also the most volatile.</div>
+  </div>
+
+  <div class="know-this">
+    <span class="know-this-tag">Know This</span>
+    <p class="know-this-body">The income statement structure is not arbitrary — each intermediate profit metric isolates a different management responsibility, from <span style="color:var(--acc)">production efficiency</span> (gross profit) to <span style="color:var(--acc)">operational control</span> (operating profit) to <span style="color:var(--acc)">overall financial performance</span> (net profit).</p>
+  </div>
+
+  <div class="footer">
+    <div class="pulse-dot"></div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const slider = document.getElementById('slider');
+const liveTag = document.getElementById('liveTag');
+const overlayTag = document.getElementById('overlayTag');
+const stageNum = document.getElementById('stageNum');
+const deductCount = document.getElementById('deductCount');
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d');
+
+let animProgress = 0;
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+window.addEventListener('resize', resize);
+resize();
+
+function updateUI() {
+  const p = animProgress / 100;
+  
+  let stage = 1;
+  let deductions = 0;
+  let stageName = 'Revenue';
+  let overlayText = 'Revenue: Starting Point';
+  
+  if (p < 0.33) {
+    stage = 1;
+    deductions = 0;
+    stageName = 'Stage 1: Revenue';
+    overlayText = 'Revenue: Starting Point';
+  } else if (p < 0.66) {
+    stage = 2;
+    deductions = 1;
+    stageName = 'Stage 2: Gross Profit';
+    overlayText = 'Revenue − Cost of Sales = Gross Profit';
+  } else if (p < 0.9) {
+    stage = 3;
+    deductions = 2;
+    stageName = 'Stage 3: Operating Profit';
+    overlayText = 'Gross Profit − Operating Expenses = Operating Profit';
+  } else {
+    stage = 4;
+    deductions = 3;
+    stageName = 'Stage 4: Net Profit';
+    overlayText = 'Operating Profit ± Other Items = Net Profit';
+  }
+  
+  liveTag.textContent = stageName;
+  overlayTag.textContent = overlayText;
+  stageNum.textContent = stage;
+  deductCount.textContent = deductions;
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  const p = animProgress / 100;
+  
+  // Waterfall blocks
+  const blockWidth = w * 0.18;
+  const spacing = w * 0.06;
+  const startX = w * 0.05;
+  
+  // Revenue block (always full height at start)
+  const revenueHeight = h * 0.75;
+  const revenueY = h * 0.13;
+  
+  ctx.fillStyle = 'rgba(206,68,128,0.25)';
+  ctx.fillRect(startX, revenueY, blockWidth, revenueHeight);
+  ctx.strokeStyle = 'rgba(206,68,128,0.7)';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(startX, revenueY, blockWidth, revenueHeight);
+  
+  // Label
+  ctx.fillStyle = '#EDEDE8';
+  ctx.font = '11px JetBrains Mono';
+  ctx.textAlign = 'center';
+  ctx.fillText('REVENUE', startX + blockWidth/2, h * 0.94);
+  
+  // Stage 1→2: Cost of Sales deduction
+  if (p > 0.01) {
+    const t1 = Math.min((p - 0.01) / 0.32, 1);
+    const deduct1 = revenueHeight * 0.3 * t1;
+    const gp1Y = revenueY + deduct1;
+    const gp1H = revenueHeight - deduct1;
+    
+    // Cost of Sales (red, falling)
+    if (t1 < 1) {
+      ctx.save();
+      ctx.globalAlpha = 1 - t1;
+      ctx.fillStyle = 'rgba(255,80,80,0.3)';
+      ctx.fillRect(startX, revenueY, blockWidth, deduct1);
+      ctx.strokeStyle = 'rgba(255,80,80,0.8)';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(startX, revenueY, blockWidth, deduct1);
+      ctx.restore();
+    }
+    
+    // Arrow showing deduction
+    const arrX = startX + blockWidth + spacing * 0.5;
+    const arrY = revenueY + deduct1 * 0.5;
+    ctx.strokeStyle = 'rgba(255,80,80,0.6)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(arrX, arrY);
+    ctx.lineTo(arrX, arrY + spacing * 1.2);
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(255,80,80,0.6)';
+    ctx.beginPath();
+    ctx.moveTo(arrX, arrY + spacing * 1.2);
+    ctx.lineTo(arrX - 4, arrY + spacing * 1.2 - 6);
+    ctx.lineTo(arrX + 4, arrY + spacing * 1.2 - 6);
+    ctx.fill();
+    
+    // Gross Profit block
+    const gp1X = startX + blockWidth + spacing;
+    ctx.fillStyle = 'rgba(206,68,128,0.25)';
+    ctx.fillRect(gp1X, gp1Y, blockWidth, gp1H);
+    ctx.strokeStyle = 'rgba(206,68,128,0.7)';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(gp1X, gp1Y, blockWidth, gp1H);
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    const gpGlow = ctx.createRadialGradient(gp1X + blockWidth/2, gp1Y + gp1H/2, 0, gp1X + blockWidth/2, gp1Y + gp1H/2, blockWidth * 0.8);
+    gpGlow.addColorStop(0, 'rgba(206,68,128,0.3)');
+    gpGlow.addColorStop(1, 'rgba(206,68,128,0)');
+    ctx.fillStyle = gpGlow;
+    ctx.fillRect(gp1X, gp1Y, blockWidth, gp1H);
+    ctx.restore();
+    
+    ctx.fillStyle = '#EDEDE8';
+    ctx.fillText('GROSS', gp1X + blockWidth/2, h * 0.94);
+    ctx.fillText('PROFIT', gp1X + blockWidth/2, h * 0.97);
+    
+    // Stage 2→3: Operating Expenses
+    if (p > 0.34) {
+      const t2 = Math.min((p - 0.34) / 0.32, 1);
+      const deduct2 = gp1H * 0.35 * t2;
+      const op2Y = gp1Y + deduct2;
+      const op2H = gp1H - deduct2;
+      
+      if (t2 < 1) {
+        ctx.save();
+        ctx.globalAlpha = 1 - t2;
+        ctx.fillStyle = 'rgba(255,140,60,0.3)';
+        ctx.fillRect(gp1X, gp1Y, blockWidth, deduct2);
+        ctx.strokeStyle = 'rgba(255,140,60,0.8)';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(gp1X, gp1Y, blockWidth, deduct2);
+        ctx.restore();
+      }
+      
+      const arr2X = gp1X + blockWidth + spacing * 0.5;
+      const arr2Y = gp1Y + deduct2 * 0.5;
+      ctx.strokeStyle = 'rgba(255,140,60,0.6)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(arr2X, arr2Y);
+      ctx.lineTo(arr2X, arr2Y + spacing * 1.2);
+      ctx.stroke();
+      ctx.fillStyle = 'rgba(255,140,60,0.6)';
+      ctx.beginPath();
+      ctx.moveTo(arr2X, arr2Y + spacing * 1.2);
+      ctx.lineTo(arr2X - 4, arr2Y + spacing * 1.2 - 6);
+      ctx.lineTo(arr2X + 4, arr2Y + spacing * 1.2 - 6);
+      ctx.fill();
+      
+      const op2X = gp1X + blockWidth + spacing;
+      ctx.fillStyle = 'rgba(206,68,128,0.25)';
+      ctx.fillRect(op2X, op2Y, blockWidth, op2H);
+      ctx.strokeStyle = 'rgba(206,68,128,0.7)';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(op2X, op2Y, blockWidth, op2H);
+      
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      const opGlow = ctx.createRadialGradient(op2X + blockWidth/2, op2Y + op2H/2, 0, op2X + blockWidth/2, op2Y + op2H/2, blockWidth * 0.8);
+      opGlow.addColorStop(0, 'rgba(206,68,128,0.3)');
+      opGlow.addColorStop(1, 'rgba(206,68,128,0)');
+      ctx.fillStyle = opGlow;
+      ctx.fillRect(op2X, op2Y, blockWidth, op2H);
+      ctx.restore();
+      
+      ctx.fillStyle = '#EDEDE8';
+      ctx.fillText('OPERATING', op2X + blockWidth/2, h * 0.94);
+      ctx.fillText('PROFIT', op2X + blockWidth/2, h * 0.97);
+      
+      // Stage 3→4: Other Items & Finance
+      if (p > 0.67) {
+        const t3 = Math.min((p - 0.67) / 0.23, 1);
+        const deduct3 = op2H * 0.2 * t3;
+        const np3Y = op2Y + deduct3;
+        const np3H = op2H - deduct3;
+        
+        if (t3 < 1) {
+          ctx.save();
+          ctx.globalAlpha = 1 - t3;
+          ctx.fillStyle = 'rgba(250,199,117,0.3)';
+          ctx.fillRect(op2X, op2Y, blockWidth, deduct3);
+          ctx.strokeStyle = 'rgba(250,199,117,0.8)';
+          ctx.lineWidth = 1.5;
+          ctx.strokeRect(op2X, op2Y, blockWidth, deduct3);
+          ctx.restore();
+        }
+        
+        const arr3X = op2X + blockWidth + spacing * 0.5;
+        const arr3Y = op2Y + deduct3 * 0.5;
+        ctx.strokeStyle = 'rgba(250,199,117,0.6)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(arr3X, arr3Y);
+        ctx.lineTo(arr3X, arr3Y + spacing * 1.2);
+        ctx.stroke();
+        ctx.fillStyle = 'rgba(250,199,117,0.6)';
+        ctx.beginPath();
+        ctx.moveTo(arr3X, arr3Y + spacing * 1.2);
+        ctx.lineTo(arr3X - 4, arr3Y + spacing * 1.2 - 6);
+        ctx.lineTo(arr3X + 4, arr3Y + spacing * 1.2 - 6);
+        ctx.fill();
+        
+        const np3X = op2X + blockWidth + spacing;
+        ctx.fillStyle = 'rgba(206,68,128,0.35)';
+        ctx.fillRect(np3X, np3Y, blockWidth, np3H);
+        ctx.strokeStyle = 'rgba(206,68,128,0.9)';
+        ctx.lineWidth = 2.5;
+        ctx.strokeRect(np3X, np3Y, blockWidth, np3H);
+        
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        const npGlow = ctx.createRadialGradient(np3X + blockWidth/2, np3Y + np3H/2, 0, np3X + blockWidth/2, np3Y + np3H/2, blockWidth * 1.2);
+        npGlow.addColorStop(0, 'rgba(206,68,128,0.5)');
+        npGlow.addColorStop(0.5, 'rgba(206,68,128,0.2)');
+        npGlow.addColorStop(1, 'rgba(206,68,128,0)');
+        ctx.fillStyle = npGlow;
+        ctx.fillRect(np3X - blockWidth * 0.2, np3Y - np3H * 0.2, blockWidth * 1.4, np3H * 1.4);
+        ctx.restore();
+        
+        ctx.fillStyle = '#EDEDE8';
+        ctx.font = 'bold 11px JetBrains Mono';
+        ctx.fillText('NET', np3X + blockWidth/2, h * 0.94);
+        ctx.fillText('PROFIT', np3X + blockWidth/2, h * 0.97);
+      }
+    }
+  }
+  
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const vig = ctx.createRadialGradient(w/2, h/2, h * 0.28, w/2, h/2, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+}
+
+function animate() {
+  draw();
+  requestAnimationFrame(animate);
+}
+
+slider.addEventListener('input', (e) => {
+  animProgress = parseFloat(e.target.value);
+  const fillPercent = (animProgress / 100) * 100;
+  slider.style.setProperty('--fill', fillPercent + '%');
+  updateUI();
+});
+
+// Initialize
+slider.style.setProperty('--fill', '0%');
+updateUI();
+animate();
+
+// Toggle functionality
+const toggleBtns = document.querySelectorAll('.toggle-btn');
+const knowdrop = document.getElementById('knowdrop');
+
+const content = {
+  margins: "Each profit level reveals a different margin that isolates specific business decisions. Gross profit margin shows production efficiency by isolating Cost of Sales. Operating profit margin reveals core business profitability by adding operating expenses. Net profit margin captures the complete picture after financing decisions and one-off items, making it the ultimate measure of shareholder return but also the most volatile.",
+  
+  decisions: "Investors use each profit metric to evaluate different aspects of management performance. Gross profit reveals pricing power and production cost control. Operating profit isolates the effectiveness of day-to-day business operations, free from capital structure decisions. Net profit includes everything, so it reflects board-level choices about financing, acquisitions, and one-off restructuring costs — the decisions that shape long-term strategy but can distort year-to-year comparisons."
+};
+
+toggleBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    toggleBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const view = btn.dataset.view;
+    knowdrop.textContent = content[view];
+  });
+});
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'income-statement-structure'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

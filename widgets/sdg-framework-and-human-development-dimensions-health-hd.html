@@ -1,0 +1,642 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>SDG Framework and Human Development Dimensions — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #F0A04E;
+  --ag: rgba(240, 160, 78, .7);
+  --ag1: rgba(240, 160, 78, .12);
+  --ag2: rgba(240, 160, 78, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 72px;
+  line-height: 1.5;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(30px, 8vw, 52px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  margin-bottom: 18px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--ink);
+  letter-spacing: 0.05em;
+}
+
+.card-live {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+  letter-spacing: 0.08em;
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+  letter-spacing: 0.05em;
+}
+
+.slider-section {
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 10px;
+  letter-spacing: 0.05em;
+}
+
+.sdg-slider {
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  margin-bottom: 8px;
+}
+
+.sdg-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+
+.sdg-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+
+.sdg-slider:hover::-webkit-slider-thumb {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.sdg-slider:hover::-moz-range-thumb {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  margin-top: 16px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  letter-spacing: 0.05em;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.1;
+}
+
+.stat:first-child .stat-value { color: var(--acc); }
+.stat:last-child .stat-value { color: var(--amb); }
+
+.toggle-card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: #12160F;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toggle-btn.active {
+  background: rgba(240,160,78,.1);
+  border-color: var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(240,160,78,.18);
+}
+
+.knowdrop-divider {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.knowdrop-text {
+  font-family: 'Geist', sans-serif;
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 18px;
+}
+
+.know-this-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.know-this-body {
+  font-family: 'Geist', sans-serif;
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.footer {
+  margin-top: 34px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 10px var(--acc);
+  animation: sdgPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes sdgPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.6); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Exploring how SDG interventions cascade through human development dimensions</h2>
+  
+  <h1>One SDG intervention ripples across <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">everything</span></h1>
+  
+  <p class="intro">When a country strengthens one Sustainable Development Goal, it sets off cascading effects through completely different development dimensions. A single poverty intervention simultaneously shifts infant mortality, intellectual capacity, and disease burden. Drag the slider to strengthen an SDG and watch how multiple development dimensions respond.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">SDG Impact Network</span>
+      <span class="card-live" id="liveTag">SDG 1 Active</span>
+    </div>
+    <div class="card-hint">Watch connections light up as intervention strength increases</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="sdgCanvas"></canvas>
+      <div class="canvas-overlay" id="canvasOverlay">3 Development Dimensions Affected</div>
+    </div>
+
+    <div class="slider-section">
+      <div class="slider-label">Intervention Strength</div>
+      <input type="range" min="0" max="100" value="45" class="sdg-slider" id="strengthSlider" style="--fill: 45%">
+      <div class="tick-labels">
+        <span>Minimal</span>
+        <span>Moderate</span>
+        <span>Strong</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Active Pathways</div>
+        <div class="stat-value" id="pathways">7</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Cascade Depth</div>
+        <div class="stat-value" id="depth">2.1x</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toggle-card">
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" data-sdg="1">SDG 1</button>
+      <button class="toggle-btn" data-sdg="3">SDG 3</button>
+      <button class="toggle-btn" data-sdg="4">SDG 4</button>
+    </div>
+    
+    <div class="knowdrop-divider">
+      <p class="knowdrop-text" id="knowdropText">SDG 1 No Poverty increases household income, which directly purchases nutritious food and healthcare access. This improved nutrition reduces infant mortality rates while better healthcare access lowers disease burden. The economic security also reduces maternal stress during pregnancy, improving birth outcomes. These effects compound: children who survive infancy with better nutrition show enhanced cognitive development, creating long-term intellectual capacity improvements that weren't the direct target of the poverty intervention.</p>
+    </div>
+  </div>
+
+  <div class="know-this">
+    <span class="know-this-tag">Know This</span>
+    <p class="know-this-body">Each <span style="color:var(--acc)">SDG</span> functions as an intervention point in an interconnected system where improvements in one dimension create <span style="color:var(--acc)">cascading effects</span> across multiple aspects of human development throughout the lifespan.</p>
+  </div>
+
+  <div class="footer">
+    <div class="pulse-dot"></div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('sdgCanvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const liveTag = document.getElementById('liveTag');
+const canvasOverlay = document.getElementById('canvasOverlay');
+const slider = document.getElementById('strengthSlider');
+const pathwaysEl = document.getElementById('pathways');
+const depthEl = document.getElementById('depth');
+const knowdropText = document.getElementById('knowdropText');
+const toggleBtns = document.querySelectorAll('.toggle-btn');
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d');
+
+let strength = 45;
+let currentSDG = 1;
+let time = 0;
+let animFrame;
+
+const sdgData = {
+  1: {
+    name: 'SDG 1',
+    color: '#E5243B',
+    targets: ['nutrition', 'infant_mortality', 'healthcare_access'],
+    text: 'SDG 1 No Poverty increases household income, which directly purchases nutritious food and healthcare access. This improved nutrition reduces infant mortality rates while better healthcare access lowers disease burden. The economic security also reduces maternal stress during pregnancy, improving birth outcomes. These effects compound: children who survive infancy with better nutrition show enhanced cognitive development, creating long-term intellectual capacity improvements that weren\'t the direct target of the poverty intervention.'
+  },
+  3: {
+    name: 'SDG 3',
+    color: '#F0A04E',
+    targets: ['mortality_rates', 'disease_burden', 'healthcare_services'],
+    text: 'SDG 3 Good Health and Wellbeing directly targets disease prevention and treatment infrastructure, reducing mortality rates across all age groups. Improved healthcare services lower the disease burden, which frees up household resources previously spent on medical treatment. This economic relief functions similarly to a poverty intervention, improving nutrition and education access. The reduction in chronic disease also enhances workforce productivity, creating broader economic development that loops back to support health system funding.'
+  },
+  4: {
+    name: 'SDG 4',
+    color: '#C5192D',
+    targets: ['intellectual_development', 'health_literacy', 'employment_capacity'],
+    text: 'SDG 4 Quality Education builds intellectual development and critical thinking capacity, which translates directly into health literacy—the ability to understand health information and make informed medical decisions. This health literacy reduces risky behaviours and improves treatment compliance, lowering disease burden without any direct health intervention. Enhanced education also increases employment prospects and income, which then funds better nutrition and healthcare access, creating the same cascading effects seen with poverty reduction but originating from a completely different entry point.'
+  }
+};
+
+const nodes = {
+  sdg: { x: 0.2, y: 0.5, label: 'SDG' },
+  nutrition: { x: 0.5, y: 0.2, label: 'Nutrition' },
+  infant_mortality: { x: 0.8, y: 0.35, label: 'Infant Mortality' },
+  healthcare_access: { x: 0.8, y: 0.65, label: 'Healthcare' },
+  mortality_rates: { x: 0.5, y: 0.3, label: 'Mortality' },
+  disease_burden: { x: 0.8, y: 0.5, label: 'Disease Burden' },
+  healthcare_services: { x: 0.5, y: 0.7, label: 'Services' },
+  intellectual_development: { x: 0.5, y: 0.25, label: 'Intellectual Dev' },
+  health_literacy: { x: 0.8, y: 0.4, label: 'Health Literacy' },
+  employment_capacity: { x: 0.8, y: 0.75, label: 'Employment' }
+};
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function hexToRgb(hex) {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return { r, g, b };
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  const sdg = sdgData[currentSDG];
+  const targets = sdg.targets;
+  const intensity = strength / 100;
+  
+  const sdgRgb = hexToRgb(sdg.color);
+  const accRgb = { r: 240, g: 160, b: 78 };
+  
+  // Draw connections with animated flow
+  ctx.globalCompositeOperation = 'lighter';
+  targets.forEach((target, i) => {
+    const startNode = nodes.sdg;
+    const endNode = nodes[target];
+    
+    const sx = startNode.x * w;
+    const sy = startNode.y * h;
+    const ex = endNode.x * w;
+    const ey = endNode.y * h;
+    
+    const flowOffset = (time * 0.3 + i * 0.7) % 1;
+    const opacity = intensity * 0.6;
+    
+    // Draw beam
+    const grad = ctx.createLinearGradient(sx, sy, ex, ey);
+    grad.addColorStop(0, `rgba(${sdgRgb.r},${sdgRgb.g},${sdgRgb.b},0)`);
+    grad.addColorStop(0.5, `rgba(${sdgRgb.r},${sdgRgb.g},${sdgRgb.b},${opacity})`);
+    grad.addColorStop(1, `rgba(${accRgb.r},${accRgb.g},${accRgb.b},${opacity * 0.7})`);
+    
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = 2 + intensity * 2;
+    ctx.beginPath();
+    ctx.moveTo(sx, sy);
+    ctx.lineTo(ex, ey);
+    ctx.stroke();
+    
+    // Flowing particle
+    const px = sx + (ex - sx) * flowOffset;
+    const py = sy + (ey - sy) * flowOffset;
+    const particleGlow = ctx.createRadialGradient(px, py, 0, px, py, 8);
+    particleGlow.addColorStop(0, `rgba(${accRgb.r},${accRgb.g},${accRgb.b},${intensity})`);
+    particleGlow.addColorStop(1, `rgba(${accRgb.r},${accRgb.g},${accRgb.b},0)`);
+    ctx.fillStyle = particleGlow;
+    ctx.beginPath();
+    ctx.arc(px, py, 8, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  
+  ctx.globalCompositeOperation = 'source-over';
+  
+  // Draw nodes
+  Object.entries(nodes).forEach(([key, node]) => {
+    const nx = node.x * w;
+    const ny = node.y * h;
+    
+    let isActive = false;
+    let nodeColor = accRgb;
+    
+    if (key === 'sdg') {
+      isActive = true;
+      nodeColor = sdgRgb;
+    } else if (targets.includes(key)) {
+      isActive = true;
+    }
+    
+    const alpha = isActive ? intensity * 0.9 + 0.1 : 0.2;
+    const radius = isActive ? 8 + intensity * 4 : 6;
+    
+    // Node glow
+    if (isActive) {
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      const nodeGlow = ctx.createRadialGradient(nx, ny, 0, nx, ny, radius * 3);
+      nodeGlow.addColorStop(0, `rgba(${nodeColor.r},${nodeColor.g},${nodeColor.b},${intensity * 0.4})`);
+      nodeGlow.addColorStop(1, `rgba(${nodeColor.r},${nodeColor.g},${nodeColor.b},0)`);
+      ctx.fillStyle = nodeGlow;
+      ctx.beginPath();
+      ctx.arc(nx, ny, radius * 3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+    
+    // Node core
+    ctx.fillStyle = `rgba(${nodeColor.r},${nodeColor.g},${nodeColor.b},${alpha})`;
+    ctx.beginPath();
+    ctx.arc(nx, ny, radius, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Label
+    ctx.fillStyle = isActive ? `rgba(${nodeColor.r},${nodeColor.g},${nodeColor.b},${alpha})` : 'rgba(140,147,137,0.5)';
+    ctx.font = '11px "JetBrains Mono"';
+    ctx.textAlign = 'center';
+    ctx.fillText(node.label, nx, ny - radius - 8);
+  });
+  
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const vig = ctx.createRadialGradient(w / 2, h / 2, h * 0.28, w / 2, h / 2, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+  
+  time += 0.016;
+  animFrame = requestAnimationFrame(draw);
+}
+
+function updateStats() {
+  const intensity = strength / 100;
+  const numPathways = Math.floor(3 + intensity * 7);
+  const cascadeDepth = (1 + intensity * 2.5).toFixed(1);
+  
+  pathwaysEl.textContent = numPathways;
+  depthEl.textContent = cascadeDepth + 'x';
+  
+  const affected = sdgData[currentSDG].targets.length;
+  canvasOverlay.textContent = `${affected} Development Dimensions Affected`;
+}
+
+slider.addEventListener('input', (e) => {
+  strength = parseInt(e.target.value);
+  slider.style.setProperty('--fill', strength + '%');
+  updateStats();
+});
+
+toggleBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    toggleBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    
+    currentSDG = parseInt(btn.dataset.sdg);
+    const sdg = sdgData[currentSDG];
+    
+    liveTag.textContent = sdg.name + ' Active';
+    knowdropText.textContent = sdg.text;
+    updateStats();
+  });
+});
+
+window.addEventListener('resize', resize);
+resize();
+updateStats();
+draw();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'sdg-framework-and-human-development-dimensions'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

@@ -1,0 +1,601 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Efficiency Ratios — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#0B0D0C;
+  --bg2:#12160F;
+  --acc:#E85D97;
+  --ag:rgba(232, 93, 151, .7);
+  --ag1:rgba(232, 93, 151, .12);
+  --ag2:rgba(232, 93, 151, .45);
+  --amb:#FAC775;
+  --ink:#EDEDE8;
+  --ink-dim:#8C9389;
+  --line:#262B26;
+}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important}
+}
+
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+body{
+  background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C 55%);
+  font-family:'Geist',sans-serif;
+  color:var(--ink);
+  min-height:100vh;
+  padding:40px 16px 72px;
+  -webkit-font-smoothing:antialiased
+}
+
+.container{max-width:720px;margin:0 auto}
+
+h1{
+  font-size:clamp(30px,8vw,52px);
+  font-weight:700;
+  letter-spacing:-0.03em;
+  line-height:1.02;
+  margin-bottom:14px
+}
+
+.intro{
+  font-size:15.5px;
+  color:var(--ink-dim);
+  line-height:1.55;
+  max-width:58ch;
+  margin-bottom:32px
+}
+
+.card{
+  background:linear-gradient(180deg,#12160F,#0d100b);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:16px;
+  box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);
+  margin-bottom:18px
+}
+
+.card-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:6px
+}
+
+.card-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  text-transform:uppercase;
+  color:#fff;
+  letter-spacing:0.04em
+}
+
+.live-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  text-transform:uppercase;
+  color:var(--acc);
+  letter-spacing:0.05em
+}
+
+.card-hint{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  color:var(--ink-dim);
+  margin-bottom:14px;
+  line-height:1.4
+}
+
+.canvas-wrapper{
+  position:relative;
+  width:100%;
+  aspect-ratio:16/9;
+  border-radius:12px;
+  overflow:hidden;
+  background:#000;
+  box-shadow:inset 0 0 0 1px var(--ag1);
+  margin-bottom:16px
+}
+
+canvas{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  display:block
+}
+
+.canvas-overlay{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  background:rgba(0,0,0,0.55);
+  backdrop-filter:blur(4px);
+  padding:9px 16px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:14px;
+  text-transform:uppercase;
+  color:var(--acc);
+  text-align:center;
+  letter-spacing:0.04em
+}
+
+.slider-group{margin-bottom:10px}
+
+.slider-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;
+  text-transform:uppercase;
+  color:var(--ink-dim);
+  margin-bottom:8px;
+  letter-spacing:0.05em
+}
+
+.itp-slider{
+  -webkit-appearance:none;
+  appearance:none;
+  width:100%;
+  height:4px;
+  border-radius:3px;
+  background:linear-gradient(90deg,var(--acc) var(--fill,0%),#23291f var(--fill,0%));
+  outline:none;
+  margin-bottom:6px
+}
+
+.itp-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  appearance:none;
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  background:#0B0D0C;
+  border:2px solid var(--acc);
+  box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);
+  cursor:pointer;
+  transition:box-shadow .15s
+}
+
+.itp-slider::-webkit-slider-thumb:hover{
+  box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)
+}
+
+.itp-slider::-moz-range-thumb{
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  background:#0B0D0C;
+  border:2px solid var(--acc);
+  box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);
+  cursor:pointer;
+  transition:box-shadow .15s
+}
+
+.itp-slider::-moz-range-thumb:hover{
+  box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)
+}
+
+.tick-labels{
+  display:flex;
+  justify-content:space-between;
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  color:var(--ink-dim);
+  padding:0 2px
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+  padding-top:16px;
+  border-top:1px solid var(--line)
+}
+
+.stat{
+  display:flex;
+  flex-direction:column;
+  gap:4px
+}
+
+.stat-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;
+  text-transform:uppercase;
+  color:var(--ink-dim);
+  letter-spacing:0.05em
+}
+
+.stat-value{
+  font-family:'JetBrains Mono',monospace;
+  font-size:24px;
+  font-weight:500
+}
+
+.toggle-card{
+  background:linear-gradient(180deg,#12160F,#0d100b);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:16px;
+  box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);
+  margin-bottom:18px
+}
+
+.toggle-buttons{
+  display:flex;
+  gap:10px;
+  margin-bottom:16px
+}
+
+.toggle-btn{
+  flex:1;
+  font-family:'JetBrains Mono',monospace;
+  font-size:14.5px;
+  padding:12px;
+  border-radius:11px;
+  border:1px solid var(--line);
+  background:#12160F;
+  color:var(--ink-dim);
+  cursor:pointer;
+  transition:all .2s;
+  text-align:center
+}
+
+.toggle-btn.active{
+  background:rgba(232, 93, 151,.1);
+  border:1px solid var(--acc);
+  color:var(--acc);
+  box-shadow:0 0 22px rgba(232, 93, 151,.18)
+}
+
+.knowdrop{
+  padding-top:16px;
+  border-top:1px solid var(--line);
+  font-size:14.5px;
+  line-height:1.65;
+  color:var(--ink)
+}
+
+.knowthis{
+  border-left:3px solid var(--acc);
+  padding:16px 18px;
+  background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));
+  border-radius:0 12px 12px 0;
+  margin-bottom:18px
+}
+
+.knowthis-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  text-transform:uppercase;
+  letter-spacing:0.15em;
+  color:var(--acc);
+  margin-bottom:8px
+}
+
+.knowthis-body{
+  font-size:17.4px;
+  line-height:1.55;
+  color:var(--ink)
+}
+
+.footer{
+  margin-top:34px;
+  padding-top:16px;
+  border-top:1px solid var(--line);
+  display:flex;
+  justify-content:center;
+  align-items:center
+}
+
+.pulse-dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--acc);
+  box-shadow:0 0 10px var(--acc);
+  animation:itpPulse 2.4s ease-in-out infinite
+}
+
+@keyframes itpPulse{
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:.35;transform:scale(.6)}
+}
+</style>
+
+<h2 class="sr-only">Efficiency Ratios Interactive Widget</h2>
+
+<div class="container">
+  <h1>Faster Isn't Always <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">Better</span></h1>
+  
+  <p class="intro">While faster turnover ratios signal efficient asset management and lower holding costs, extending payment periods can actually improve cash flow without harming supplier relationships. Drag the slider to see how inventory turnover period affects working capital dynamics.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-label">Turnover Period</div>
+      <div class="live-tag" id="liveTag">45 DAYS</div>
+    </div>
+    <div class="card-hint">Watch cash cycle compress as inventory moves faster</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="canvas"></canvas>
+      <div class="canvas-overlay" id="canvasOverlay">CASH CYCLE: 72 DAYS</div>
+    </div>
+
+    <div class="slider-group">
+      <div class="slider-label">Inventory Turnover Period (Days)</div>
+      <input type="range" min="15" max="90" value="45" class="itp-slider" id="itpSlider">
+      <div class="tick-labels">
+        <span>15</span>
+        <span>52.5</span>
+        <span>90</span>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-label">Days to convert</div>
+        <div class="stat-value" style="color:var(--acc)" id="convertStat">45</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Holding cost</div>
+        <div class="stat-value" style="color:var(--amb)" id="costStat">$4,500</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="knowthis">
+    <div class="knowthis-tag">Know This</div>
+    <div class="knowthis-body"><span style="color:var(--acc)">Inventory Turnover Period</span> equals Average Inventory divided by Cost of Sales times 365, revealing how many days stock sits unsold before conversion to cash or receivables.</div>
+  </div>
+
+  <div class="toggle-card">
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" id="btn1">Debtors</button>
+      <button class="toggle-btn" id="btn2">Creditors</button>
+    </div>
+    <div class="knowdrop" id="knowdrop">
+      Debtors Turnover Period equals Average Debtors divided by Credit Sales times 365, indicating how quickly customers pay their invoices. A 30-day period means the business collects receivables monthly on average. Lower values suggest strong credit control and faster cash conversion, but overly aggressive collection can damage customer relationships. The ideal balance depends on industry norms and competitive positioning. Extending credit strategically can increase sales volume while maintaining acceptable risk levels.
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="pulse-dot"></div>
+  </div>
+</div>
+
+<script>
+const canvas=document.getElementById('canvas');
+const ctx=canvas.getContext('2d');
+const liveTag=document.getElementById('liveTag');
+const canvasOverlay=document.getElementById('canvasOverlay');
+const slider=document.getElementById('itpSlider');
+const convertStat=document.getElementById('convertStat');
+const costStat=document.getElementById('costStat');
+const btn1=document.getElementById('btn1');
+const btn2=document.getElementById('btn2');
+const knowdrop=document.getElementById('knowdrop');
+
+const dpr=Math.min(window.devicePixelRatio||1,2);
+const buf=document.createElement('canvas');
+const bctx=buf.getContext('2d');
+
+let itpDays=45;
+const debtorDays=30;
+const creditorDays=42;
+
+function resize(){
+  const rect=canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width=Math.round(rect.width*dpr);
+  canvas.height=Math.round(rect.height*dpr);
+  buf.width=canvas.width;
+  buf.height=canvas.height;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  draw();
+}
+
+function updateUI(){
+  const fill=(itpDays-15)/(90-15)*100;
+  slider.style.setProperty('--fill',fill+'%');
+  liveTag.textContent=itpDays+' DAYS';
+  
+  const cashCycle=itpDays+debtorDays-creditorDays;
+  canvasOverlay.textContent='CASH CYCLE: '+cashCycle+' DAYS';
+  
+  convertStat.textContent=itpDays;
+  const cost=Math.round(itpDays*100);
+  costStat.textContent='$'+cost.toLocaleString();
+}
+
+function draw(){
+  const w=canvas.width/dpr;
+  const h=canvas.height/dpr;
+  
+  ctx.fillStyle='#000';
+  ctx.fillRect(0,0,w,h);
+  
+  const cx=w/2;
+  const cy=h/2;
+  
+  // Grid background
+  ctx.strokeStyle='rgba(38,43,38,0.4)';
+  ctx.lineWidth=0.8;
+  for(let x=0;x<=w;x+=w/12){
+    ctx.beginPath();
+    ctx.moveTo(x,0);
+    ctx.lineTo(x,h);
+    ctx.stroke();
+  }
+  for(let y=0;y<=h;y+=h/8){
+    ctx.beginPath();
+    ctx.moveTo(0,y);
+    ctx.lineTo(w,y);
+    ctx.stroke();
+  }
+  
+  // Three flow lanes: Inventory -> Debtors -> Cash
+  const laneY=[h*0.28,h*0.5,h*0.72];
+  const laneLabels=['INVENTORY','DEBTORS','CASH'];
+  const laneColors=['rgba(232, 93, 151,0.7)','rgba(250,199,117,0.7)','rgba(232, 93, 151,0.7)'];
+  
+  ctx.font='11px "JetBrains Mono"';
+  ctx.textAlign='center';
+  
+  for(let i=0;i<3;i++){
+    ctx.fillStyle=laneColors[i];
+    ctx.fillText(laneLabels[i],w*0.12,laneY[i]+4);
+  }
+  
+  // Inventory stage width proportional to ITP
+  const invWidth=(itpDays/90)*w*0.5;
+  const invX1=w*0.2;
+  const invX2=invX1+invWidth;
+  
+  // Debtors stage fixed 30 days
+  const debtWidth=(debtorDays/90)*w*0.5;
+  const debtX1=invX2+w*0.05;
+  const debtX2=debtX1+debtWidth;
+  
+  // Cash endpoint
+  const cashX=debtX2+w*0.05;
+  
+  // Draw inventory bar
+  ctx.save();
+  ctx.globalCompositeOperation='lighter';
+  const invGrad=ctx.createLinearGradient(invX1,0,invX2,0);
+  invGrad.addColorStop(0,'rgba(232, 93, 151,0.15)');
+  invGrad.addColorStop(1,'rgba(232, 93, 151,0.5)');
+  ctx.fillStyle=invGrad;
+  ctx.fillRect(invX1,laneY[0]-12,invWidth,24);
+  ctx.strokeStyle='rgba(232, 93, 151,0.8)';
+  ctx.lineWidth=1.5;
+  ctx.strokeRect(invX1,laneY[0]-12,invWidth,24);
+  ctx.restore();
+  
+  // Draw debtors bar
+  ctx.save();
+  ctx.globalCompositeOperation='lighter';
+  const debtGrad=ctx.createLinearGradient(debtX1,0,debtX2,0);
+  debtGrad.addColorStop(0,'rgba(250,199,117,0.15)');
+  debtGrad.addColorStop(1,'rgba(250,199,117,0.5)');
+  ctx.fillStyle=debtGrad;
+  ctx.fillRect(debtX1,laneY[1]-12,debtWidth,24);
+  ctx.strokeStyle='rgba(250,199,117,0.8)';
+  ctx.lineWidth=1.5;
+  ctx.strokeRect(debtX1,laneY[1]-12,debtWidth,24);
+  ctx.restore();
+  
+  // Cash circle
+  ctx.save();
+  ctx.globalCompositeOperation='lighter';
+  const cashGrad=ctx.createRadialGradient(cashX,laneY[2],0,cashX,laneY[2],18);
+  cashGrad.addColorStop(0,'rgba(232, 93, 151,0.6)');
+  cashGrad.addColorStop(0.5,'rgba(232, 93, 151,0.3)');
+  cashGrad.addColorStop(1,'rgba(232, 93, 151,0)');
+  ctx.fillStyle=cashGrad;
+  ctx.beginPath();
+  ctx.arc(cashX,laneY[2],18,0,Math.PI*2);
+  ctx.fill();
+  ctx.restore();
+  
+  ctx.strokeStyle='rgba(232, 93, 151,0.8)';
+  ctx.lineWidth=2;
+  ctx.beginPath();
+  ctx.arc(cashX,laneY[2],10,0,Math.PI*2);
+  ctx.stroke();
+  
+  // Flow arrows
+  ctx.strokeStyle='rgba(232, 93, 151,0.4)';
+  ctx.lineWidth=1.5;
+  ctx.setLineDash([4,4]);
+  ctx.beginPath();
+  ctx.moveTo(invX2+2,laneY[0]);
+  ctx.lineTo(debtX1-2,laneY[1]);
+  ctx.stroke();
+  
+  ctx.strokeStyle='rgba(250,199,117,0.4)';
+  ctx.beginPath();
+  ctx.moveTo(debtX2+2,laneY[1]);
+  ctx.lineTo(cashX-12,laneY[2]);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  
+  // Particle flows
+  const time=Date.now()*0.001;
+  for(let i=0;i<8;i++){
+    const phase=(time*0.6+i*0.4)%1;
+    const px=invX1+phase*invWidth;
+    ctx.save();
+    ctx.globalCompositeOperation='lighter';
+    ctx.fillStyle='rgba(232, 93, 151,'+(0.6-phase*0.3)+')';
+    ctx.beginPath();
+    ctx.arc(px,laneY[0],2.5,0,Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+  }
+  
+  for(let i=0;i<6;i++){
+    const phase=(time*0.7+i*0.5)%1;
+    const px=debtX1+phase*debtWidth;
+    ctx.save();
+    ctx.globalCompositeOperation='lighter';
+    ctx.fillStyle='rgba(250,199,117,'+(0.6-phase*0.3)+')';
+    ctx.beginPath();
+    ctx.arc(px,laneY[1],2.5,0,Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+  }
+  
+  // Bloom
+  bctx.setTransform(1,0,0,1,0,0);
+  bctx.clearRect(0,0,buf.width,buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas,0,0);
+  ctx.save();
+  ctx.globalCompositeOperation='lighter';
+  ctx.globalAlpha=0.38;
+  ctx.filter='blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf,0,0,w,h);
+  ctx.restore();
+  
+  // Vignette
+  const vig=ctx.createRadialGradient(cx,cy,h*0.28,cx,cy,w*0.72);
+  vig.addColorStop(0,'rgba(0,0,0,0)');
+  vig.addColorStop(1,'rgba(0,0,0,0.52)');
+  ctx.fillStyle=vig;
+  ctx.fillRect(0,0,w,h);
+  
+  requestAnimationFrame(draw);
+}
+
+slider.addEventListener('input',e=>{
+  itpDays=parseInt(e.target.value);
+  updateUI();
+});
+
+btn1.addEventListener('click',()=>{
+  btn1.classList.add('active');
+  btn2.classList.remove('active');
+  knowdrop.textContent='Debtors Turnover Period equals Average Debtors divided by Credit Sales times 365, indicating how quickly customers pay their invoices. A 30-day period means the business collects receivables monthly on average. Lower values suggest strong credit control and faster cash conversion, but overly aggressive collection can damage customer relationships. The ideal balance depends on industry norms and competitive positioning. Extending credit strategically can increase sales volume while maintaining acceptable risk levels.';
+});
+
+btn2.addEventListener('click',()=>{
+  btn2.classList.add('active');
+  btn1.classList.remove('active');
+  knowdrop.textContent='Creditors Turnover Period equals Average Creditors divided by Credit Purchases times 365, revealing payment timing to suppliers. A 42-day period means the business pays suppliers six weeks after purchase on average. Higher values improve short-term cash flow by delaying outflows, effectively using suppliers as interest-free financing. However, excessively slow payment risks supplier relationship damage and potential supply chain disruption. Smart businesses negotiate extended terms formally rather than simply delaying payment, maintaining goodwill while optimizing working capital.';
+});
+
+window.addEventListener('resize',resize);
+resize();
+updateUI();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'efficiency-ratios'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

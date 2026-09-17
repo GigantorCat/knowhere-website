@@ -1,0 +1,577 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Aggregate Demand and the Budget — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #F187B6;
+  --ag: rgba(241, 135, 182, .7);
+  --ag1: rgba(241, 135, 182, .12);
+  --ag2: rgba(241, 135, 182, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 0;
+}
+
+.container { max-width: 720px; margin: 0 auto; }
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 28px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 16px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: white;
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 12px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-wrapper { margin-bottom: 10px; }
+
+.ad-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 50%), #23291f var(--fill, 50%));
+  outline: none;
+  cursor: pointer;
+}
+
+.ad-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.ad-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.ad-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.ad-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.ticks {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  padding: 0 2px;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.toggle-knowdrop-card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 16px;
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: #12160F;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(241,135,182,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(241,135,182,.18);
+}
+
+.knowdrop-divider {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.knowdrop {
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-this-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 8px;
+}
+
+.know-this-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
+
+@media (max-width: 360px) {
+  body { padding: 24px 12px 0; }
+  .card, .toggle-knowdrop-card { padding: 12px; }
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Interactive visualization of how government spending and taxation directly shift aggregate demand in the economy</h2>
+
+  <h1>The budget moves the <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">demand</span></h1>
+  
+  <p class="intro">Government spending doesn't just fund services — it directly adds to total economic demand. Every dollar spent becomes someone's income, every tax dollar taken shrinks their spending power. Adjust the budget levers below to see aggregate demand shift in real time.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-label">AD Component Flows</div>
+      <div class="live-tag" id="liveTag">G at 50%</div>
+    </div>
+    <div class="card-hint">Drag to adjust government spending level</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="adCanvas"></canvas>
+      <div class="canvas-overlay" id="canvasOverlay">AD = C + I + G + (X − M)</div>
+    </div>
+
+    <div class="slider-wrapper">
+      <input type="range" min="0" max="100" value="50" class="ad-slider" id="gSlider" style="--fill: 50%">
+    </div>
+    <div class="ticks">
+      <span>Low G</span>
+      <span>Baseline</span>
+      <span>High G</span>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Total AD</div>
+        <div class="stat-value" id="adValue" style="color:var(--acc)">$520B</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">G Contribution</div>
+        <div class="stat-value" id="gValue" style="color:var(--amb)">25%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toggle-knowdrop-card">
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" id="btnSpending">Spending ↑</button>
+      <button class="toggle-btn" id="btnTax">Tax ↑</button>
+    </div>
+    
+    <div class="knowdrop-divider">
+      <p class="knowdrop" id="knowdropText">When government spending increases, the G component of AD rises directly — every dollar flows into the circular flow as income for contractors, employees, or suppliers. This immediate injection boosts total demand without any time lag. The multiplier effect then amplifies the impact as recipients spend their new income, generating further rounds of consumption. This is why fiscal stimulus through spending is considered the most direct demand-side lever available to policymakers.</p>
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-this-tag">Know This</div>
+    <div class="know-this-body"><span style="color:var(--acc)">Government spending adds directly to AD</span> while <span style="color:var(--acc)">taxation reduces disposable income</span> and shrinks the consumption component — making the budget the main fiscal lever on aggregate demand.</div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('adCanvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d', { alpha: false });
+
+const slider = document.getElementById('gSlider');
+const liveTag = document.getElementById('liveTag');
+const canvasOverlay = document.getElementById('canvasOverlay');
+const adValue = document.getElementById('adValue');
+const gValue = document.getElementById('gValue');
+
+const btnSpending = document.getElementById('btnSpending');
+const btnTax = document.getElementById('btnTax');
+const knowdropText = document.getElementById('knowdropText');
+
+let gLevel = 50;
+let targetAD = 520;
+let currentAD = 520;
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+resize();
+window.addEventListener('resize', resize);
+
+// Particles for each component
+const particles = {
+  C: [],
+  I: [],
+  G: [],
+  X: []
+};
+
+const colors = {
+  C: [255, 255, 255],
+  I: [250, 199, 117],
+  G: [241,135,182],
+  X: [139, 147, 137]
+};
+
+function createParticle(type, count) {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  
+  for (let i = 0; i < count; i++) {
+    particles[type].push({
+      x: Math.random() * w,
+      y: h + Math.random() * 20,
+      vy: -(0.4 + Math.random() * 0.6),
+      r: 1.2 + Math.random() * 1.8,
+      life: 1,
+      alpha: 0.6 + Math.random() * 0.4
+    });
+  }
+}
+
+function updateParticles(type, targetCount) {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  
+  // Update existing
+  particles[type] = particles[type].filter(p => {
+    p.y += p.vy;
+    p.life -= 0.003;
+    return p.life > 0 && p.y > -10;
+  });
+  
+  // Maintain target count
+  while (particles[type].length < targetCount) {
+    createParticle(type, 1);
+  }
+}
+
+let time = 0;
+
+function draw() {
+  time += 0.016;
+  
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  
+  // Clear
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  // Calculate component counts based on gLevel
+  const baseC = 80;
+  const baseI = 40;
+  const baseX = 30;
+  const gCount = Math.round(20 + (gLevel / 100) * 60);
+  
+  // Adjust C based on implicit tax (inverse of G for visual balance)
+  const taxEffect = (100 - gLevel) / 100;
+  const cCount = Math.round(baseC * (0.7 + taxEffect * 0.3));
+  
+  updateParticles('C', cCount);
+  updateParticles('I', baseI);
+  updateParticles('G', gCount);
+  updateParticles('X', baseX);
+  
+  // Draw all particles
+  ['C', 'I', 'G', 'X'].forEach(type => {
+    const [r, g, b] = colors[type];
+    particles[type].forEach(p => {
+      const alpha = p.life * p.alpha;
+      ctx.fillStyle = `rgba(${r},${g},${b},${alpha})`;
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fill();
+    });
+  });
+  
+  // Convergence point (top center)
+  const cx = w / 2;
+  const cy = h * 0.25;
+  
+  // Draw convergence glow
+  const totalParticles = cCount + baseI + gCount + baseX;
+  const intensity = Math.min(totalParticles / 200, 1);
+  
+  const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 60);
+  grad.addColorStop(0, `rgba(241,135,182,${intensity * 0.6})`);
+  grad.addColorStop(0.5, `rgba(241,135,182,${intensity * 0.3})`);
+  grad.addColorStop(1, 'rgba(241,135,182,0)');
+  
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.arc(cx, cy, 60, 0, Math.PI * 2);
+  ctx.fill();
+  
+  // Central AD marker
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.fillStyle = 'rgba(241,135,182,0.9)';
+  ctx.beginPath();
+  ctx.arc(cx, cy, 4, 0, Math.PI * 2);
+  ctx.fill();
+  
+  ctx.fillStyle = 'rgba(241,135,182,0.15)';
+  ctx.beginPath();
+  ctx.arc(cx, cy, 12, 0, Math.PI * 2);
+  ctx.fill();
+  
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  ctx.filter = 'none';
+  
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+  
+  requestAnimationFrame(draw);
+}
+
+draw();
+
+function updateStats() {
+  // Base values
+  const baseAD = 400;
+  const gContrib = 100 + (gLevel - 50) * 3;
+  targetAD = baseAD + gContrib;
+  
+  // Smooth transition
+  currentAD += (targetAD - currentAD) * 0.1;
+  
+  adValue.textContent = '$' + Math.round(currentAD) + 'B';
+  gValue.textContent = Math.round((gContrib / currentAD) * 100) + '%';
+  
+  liveTag.textContent = `G at ${gLevel}%`;
+  
+  if (gLevel < 33) {
+    canvasOverlay.textContent = 'Low G → Weaker AD';
+  } else if (gLevel > 67) {
+    canvasOverlay.textContent = 'High G → Stronger AD';
+  } else {
+    canvasOverlay.textContent = 'AD = C + I + G + (X − M)';
+  }
+}
+
+slider.addEventListener('input', (e) => {
+  gLevel = parseInt(e.target.value);
+  slider.style.setProperty('--fill', gLevel + '%');
+  updateStats();
+});
+
+updateStats();
+
+// Toggle buttons
+btnSpending.addEventListener('click', () => {
+  btnSpending.classList.add('active');
+  btnTax.classList.remove('active');
+  knowdropText.textContent = "When government spending increases, the G component of AD rises directly — every dollar flows into the circular flow as income for contractors, employees, or suppliers. This immediate injection boosts total demand without any time lag. The multiplier effect then amplifies the impact as recipients spend their new income, generating further rounds of consumption. This is why fiscal stimulus through spending is considered the most direct demand-side lever available to policymakers.";
+});
+
+btnTax.addEventListener('click', () => {
+  btnTax.classList.add('active');
+  btnSpending.classList.remove('active');
+  knowdropText.textContent = "When taxation increases, households have less disposable income — the C component of AD falls immediately. Unlike spending cuts which might take time to flow through, tax increases hit consumption straight away as people adjust their budgets. The effect compounds through the negative multiplier: reduced consumption lowers incomes elsewhere, triggering further spending cuts. This is why tax hikes are sometimes called 'fiscal drag' — they pull aggregate demand downward through the income channel.";
+});
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'aggregate-demand-and-the-budget'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

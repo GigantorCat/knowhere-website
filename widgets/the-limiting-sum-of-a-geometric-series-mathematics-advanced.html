@@ -1,0 +1,661 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>The Limiting Sum of a Geometric Series — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #3EB556;
+  --acc-rgb: 62, 181, 86;
+  --ag: rgba(var(--acc-rgb), 0.7);
+  --ag1: rgba(var(--acc-rgb), 0.12);
+  --ag2: rgba(var(--acc-rgb), 0.45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 0;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,0.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: white;
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-row {
+  margin-bottom: 10px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+}
+
+.series-slider {
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 50%), #23291f var(--fill, 50%));
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.series-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+
+.series-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.series-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+
+.series-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  margin-top: 6px;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.stat.acc .stat-value {
+  color: var(--acc);
+}
+
+.stat.amb .stat-value {
+  color: var(--amb);
+}
+
+.toggle-section {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: #12160F;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toggle-btn.active {
+  background: rgba(var(--acc-rgb), 0.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(var(--acc-rgb), 0.18);
+}
+
+.knowdrop {
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-this-tag {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 11px;
+}
+
+.know-this-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 8px var(--acc);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+.know-this-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+}
+
+.know-this-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+
+<h2 class="sr-only">Interactive visualization of geometric series convergence</h2>
+
+<div class="container">
+  <h1>Add infinitely many numbers and get a <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">finite answer</span></h1>
+  
+  <p class="intro">When a geometric series has a ratio between −1 and 1, adding infinite terms converges to a single value. The smaller the ratio, the faster the series settles. Drag the slider to change the ratio and watch the partial sums converge toward the limiting sum.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-label">Convergence visualiser</div>
+      <div class="live-tag" id="ratio-display">r = 0.5</div>
+    </div>
+    <div class="card-hint">Drag to change the ratio r — watch the series approach its limit</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="seriesCanvas"></canvas>
+      <div class="canvas-overlay" id="overlay-tag">Partial sum S₁₀ = 1.999</div>
+    </div>
+
+    <div class="slider-row">
+      <div class="slider-label">Common ratio r</div>
+      <input type="range" class="series-slider" id="ratioSlider" min="-95" max="95" value="50" step="1">
+      <div class="tick-labels">
+        <span>−0.95</span>
+        <span>0</span>
+        <span>0.95</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat acc">
+        <div class="stat-label">Limiting sum S∞</div>
+        <div class="stat-value" id="limit-value">2.000</div>
+      </div>
+      <div class="stat amb">
+        <div class="stat-label">Terms needed (99%)</div>
+        <div class="stat-value" id="terms-value">7</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" data-mode="derive">Derivation</button>
+      <button class="toggle-btn" data-mode="diverge">Divergence</button>
+    </div>
+    
+    <div class="knowdrop" id="knowdrop-text">
+      The limiting sum formula comes from the partial sum formula S<sub>n</sub> = a(1 − r<sup>n</sup>)/(1 − r). When |r| < 1, the term r<sup>n</sup> shrinks toward zero as n increases, because multiplying a fraction by itself repeatedly makes it vanishingly small. So as n → ∞, the expression 1 − r<sup>n</sup> approaches 1 − 0 = 1, leaving S = a/(1 − r). This is why the ratio must sit strictly between −1 and 1: outside that interval, r<sup>n</sup> grows instead of shrinking, the partial sums spiral away, and no finite limit exists.
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-this-tag">
+      <div class="know-this-dot"></div>
+      <div class="know-this-label">Know This</div>
+    </div>
+    <div class="know-this-body">
+      A geometric series converges to <span style="color:var(--acc)">S = a/(1−r)</span> if and only if <span style="color:var(--acc)">|r| < 1</span>, because only then does <span style="color:var(--acc)">r<sup>n</sup> → 0</span> as the number of terms approaches infinity.
+    </div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('seriesCanvas');
+const ctx = canvas.getContext('2d');
+const slider = document.getElementById('ratioSlider');
+const ratioDisplay = document.getElementById('ratio-display');
+const overlayTag = document.getElementById('overlay-tag');
+const limitValue = document.getElementById('limit-value');
+const termsValue = document.getElementById('terms-value');
+const knowdropText = document.getElementById('knowdrop-text');
+const toggleButtons = document.querySelectorAll('.toggle-btn');
+
+const CSS = getComputedStyle(document.documentElement);
+const ACC = CSS.getPropertyValue('--acc').trim();
+const RGB = CSS.getPropertyValue('--acc-rgb').trim();
+const AMB = CSS.getPropertyValue('--amb').trim();
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d');
+
+let r = 0.5;
+let a = 1;
+let animTime = 0;
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function updateStats() {
+  const absR = Math.abs(r);
+  
+  if (absR >= 1) {
+    limitValue.textContent = 'diverges';
+    termsValue.textContent = '—';
+  } else {
+    const limit = a / (1 - r);
+    limitValue.textContent = limit.toFixed(3);
+    
+    // Calculate terms needed to reach 99% of limit
+    const target = limit * 0.99;
+    let sum = 0;
+    let n = 0;
+    let term = a;
+    while (Math.abs(sum - limit) > Math.abs(limit - target) && n < 1000) {
+      sum += term;
+      term *= r;
+      n++;
+    }
+    termsValue.textContent = n.toString();
+  }
+  
+  // Update partial sum at n=10
+  let partialSum = 0;
+  let term = a;
+  for (let i = 0; i < 10; i++) {
+    partialSum += term;
+    term *= r;
+  }
+  overlayTag.textContent = `Partial sum S₁₀ = ${partialSum.toFixed(3)}`;
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  const margin = 50;
+  const plotW = w - 2 * margin;
+  const plotH = h - 2 * margin;
+  const originX = margin;
+  const originY = h - margin;
+  
+  // Grid
+  ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+  ctx.lineWidth = 0.5;
+  
+  // Vertical grid lines
+  for (let i = 0; i <= 10; i++) {
+    const x = originX + (plotW / 10) * i;
+    ctx.beginPath();
+    ctx.moveTo(x, margin);
+    ctx.lineTo(x, originY);
+    ctx.stroke();
+  }
+  
+  // Horizontal grid lines
+  const absR = Math.abs(r);
+  const limit = absR < 1 ? a / (1 - r) : 10;
+  const maxY = Math.max(Math.abs(limit) * 1.2, 3);
+  
+  for (let i = 0; i <= 5; i++) {
+    const y = originY - (plotH / 5) * i;
+    ctx.beginPath();
+    ctx.moveTo(originX, y);
+    ctx.lineTo(originX + plotW, y);
+    ctx.stroke();
+  }
+  
+  // Axes
+  ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(originX, margin);
+  ctx.lineTo(originX, originY);
+  ctx.lineTo(originX + plotW, originY);
+  ctx.stroke();
+  
+  // Calculate partial sums
+  const maxTerms = 20;
+  const partialSums = [];
+  let sum = 0;
+  let term = a;
+  
+  for (let i = 0; i <= maxTerms; i++) {
+    partialSums.push(sum);
+    sum += term;
+    term *= r;
+  }
+  
+  // Draw limiting sum line if convergent
+  if (absR < 1) {
+    const limitY = originY - ((limit / maxY) * plotH);
+    ctx.strokeStyle = `rgba(${RGB}, 0.3)`;
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(originX, limitY);
+    ctx.lineTo(originX + plotW, limitY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    
+    // Trust band around limit
+    const bandHeight = 10;
+    const grad = ctx.createLinearGradient(0, limitY - bandHeight, 0, limitY + bandHeight);
+    grad.addColorStop(0, 'rgba(' + RGB + ', 0)');
+    grad.addColorStop(0.5, 'rgba(' + RGB + ', 0.08)');
+    grad.addColorStop(1, 'rgba(' + RGB + ', 0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(originX, limitY - bandHeight, plotW, bandHeight * 2);
+  }
+  
+  // Draw partial sum curve
+  ctx.strokeStyle = ACC;
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  
+  for (let i = 0; i <= maxTerms; i++) {
+    const x = originX + (i / maxTerms) * plotW;
+    const y = originY - ((partialSums[i] / maxY) * plotH);
+    
+    if (i === 0) {
+      ctx.moveTo(x, y);
+    } else {
+      ctx.lineTo(x, y);
+    }
+  }
+  ctx.stroke();
+  
+  // Flowing dots along curve
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  
+  for (let d = 0; d < 5; d++) {
+    const progress = ((animTime * 0.3 + d * 0.2) % 1);
+    const idx = progress * maxTerms;
+    const i = Math.floor(idx);
+    const frac = idx - i;
+    
+    if (i < maxTerms) {
+      const x1 = originX + (i / maxTerms) * plotW;
+      const y1 = originY - ((partialSums[i] / maxY) * plotH);
+      const x2 = originX + ((i + 1) / maxTerms) * plotW;
+      const y2 = originY - ((partialSums[i + 1] / maxY) * plotH);
+      
+      const x = x1 + (x2 - x1) * frac;
+      const y = y1 + (y2 - y1) * frac;
+      
+      const dotGrad = ctx.createRadialGradient(x, y, 0, x, y, 8);
+      dotGrad.addColorStop(0, 'rgba(' + RGB + ', 0.8)');
+      dotGrad.addColorStop(1, 'rgba(' + RGB + ', 0)');
+      ctx.fillStyle = dotGrad;
+      ctx.beginPath();
+      ctx.arc(x, y, 8, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+  ctx.restore();
+  
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const vig = ctx.createRadialGradient(w / 2, h / 2, h * 0.28, w / 2, h / 2, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+}
+
+function animate() {
+  animTime += 0.016;
+  draw();
+  requestAnimationFrame(animate);
+}
+
+slider.addEventListener('input', (e) => {
+  const val = parseInt(e.target.value);
+  r = val / 100;
+  
+  // Update slider fill
+  const percent = ((val + 95) / 190) * 100;
+  slider.style.setProperty('--fill', percent + '%');
+  
+  ratioDisplay.textContent = `r = ${r.toFixed(2)}`;
+  updateStats();
+});
+
+// Initialize slider fill
+const initialVal = parseInt(slider.value);
+const initialPercent = ((initialVal + 95) / 190) * 100;
+slider.style.setProperty('--fill', initialPercent + '%');
+
+// Toggle buttons
+toggleButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    toggleButtons.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    
+    const mode = btn.dataset.mode;
+    
+    if (mode === 'derive') {
+      knowdropText.innerHTML = 'The limiting sum formula comes from the partial sum formula S<sub>n</sub> = a(1 − r<sup>n</sup>)/(1 − r). When |r| < 1, the term r<sup>n</sup> shrinks toward zero as n increases, because multiplying a fraction by itself repeatedly makes it vanishingly small. So as n → ∞, the expression 1 − r<sup>n</sup> approaches 1 − 0 = 1, leaving S = a/(1 − r). This is why the ratio must sit strictly between −1 and 1: outside that interval, r<sup>n</sup> grows instead of shrinking, the partial sums spiral away, and no finite limit exists.';
+    } else {
+      knowdropText.innerHTML = 'When |r| ≥ 1, the series diverges because each term is at least as large in magnitude as the previous one. If r = 1, every term equals a, so the sum grows linearly to infinity. If r = −1, the terms alternate between a and −a, oscillating forever without settling. If |r| > 1, each term grows exponentially, and the partial sums explode toward ±∞. The formula S = a/(1 − r) is meaningless here because it produces a denominator of zero or a negative inside the absolute value, both algebraic signals that no finite limit exists.';
+    }
+  });
+});
+
+window.addEventListener('resize', () => {
+  resize();
+  draw();
+});
+
+resize();
+updateStats();
+animate();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'the-limiting-sum-of-a-geometric-series'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

@@ -1,0 +1,630 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Simple Harmonic Motion — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #23833F;
+  --acc-rgb: 35, 131, 63;
+  --ag: rgba(var(--acc-rgb), 0.7);
+  --ag1: rgba(var(--acc-rgb), 0.12);
+  --ag2: rgba(var(--acc-rgb), 0.45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 0;
+  line-height: 1.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,0.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+.canvas-wrapper canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-container {
+  margin-top: 16px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+}
+
+.shm-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  outline: none;
+  margin-bottom: 6px;
+}
+
+.shm-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+
+.shm-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+
+.shm-slider:hover::-webkit-slider-thumb {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.shm-slider:hover::-moz-range-thumb {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+  margin-top: 14px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.toggle-section {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: #12160F;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toggle-btn.active {
+  background: rgba(var(--acc-rgb), 0.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(var(--acc-rgb), 0.18);
+}
+
+.knowdrop {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-this-tag {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 12px;
+}
+
+.know-this-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 8px var(--acc);
+  animation: pulse-dot 2.4s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+.know-this-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+}
+
+.know-this-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+</style>
+
+<h2 class="sr-only">Simple Harmonic Motion Interactive Widget</h2>
+
+<div class="container">
+  <h1>The equation that turns every wobble into the <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">same wobble</span></h1>
+  
+  <p class="intro">A pendulum, a spring, a bobbing buoy — they look nothing alike, but they are all the same motion wearing different costumes. The disguise runs deep until you write down the acceleration, and then the same equation appears every time. Drag the slider to change the displacement and watch the restoring force respond.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-label">Simple Harmonic Motion</div>
+      <div class="live-tag" id="liveTag">Equilibrium</div>
+    </div>
+    <div class="card-hint">Displacement x determines acceleration ẍ</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="shmCanvas"></canvas>
+      <div class="canvas-overlay" id="canvasOverlay">Restoring force = 0</div>
+    </div>
+
+    <div class="slider-container">
+      <div class="slider-label">Displacement (x)</div>
+      <input type="range" min="0" max="100" value="50" class="shm-slider" id="shmSlider">
+      <div class="tick-labels">
+        <span>−A</span>
+        <span>0</span>
+        <span>+A</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Acceleration</div>
+        <div class="stat-value" style="color:var(--acc)" id="accelValue">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Speed</div>
+        <div class="stat-value" style="color:var(--amb)" id="speedValue">MAX</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-section">
+      <button class="toggle-btn active" id="btnEquation">Equation</button>
+      <button class="toggle-btn" id="btnSolution">Solution</button>
+    </div>
+    <div class="knowdrop" id="knowdropText">
+      The equation ẍ = −n²(x − c) is not a description of simple harmonic motion, it IS the definition. Proving that something moves with SHM means showing that its acceleration takes exactly this form: proportional to displacement from centre c, and always pointing back towards it. The minus sign is what carries the physics — it makes F(x) = mẍ a restoring force, always aimed at the centre, never away from it. That is what makes the motion repeat instead of run away. Every spring, every pendulum, every bobbing object in stable oscillation obeys this single line, and everything else you know about SHM — the sine solution, the period, the energy exchange — follows from pushing this equation through calculus.
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-this-tag">
+      <div class="know-this-dot"></div>
+      <div class="know-this-label">Know This</div>
+    </div>
+    <div class="know-this-body">
+      The <span style="color:var(--acc)">equation IS the definition</span>: proving motion is simple harmonic means producing the form ẍ = −n²(x − c), and the <span style="color:var(--acc)">minus sign carries the physics</span> — acceleration always points back towards centre c, which is what makes the motion repeat instead of <span style="color:var(--acc)">run away</span>.
+    </div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById("shmCanvas");
+const ctx = canvas.getContext("2d");
+const slider = document.getElementById("shmSlider");
+const liveTag = document.getElementById("liveTag");
+const canvasOverlay = document.getElementById("canvasOverlay");
+const accelValue = document.getElementById("accelValue");
+const speedValue = document.getElementById("speedValue");
+const btnEquation = document.getElementById("btnEquation");
+const btnSolution = document.getElementById("btnSolution");
+const knowdropText = document.getElementById("knowdropText");
+
+const CSS = getComputedStyle(document.documentElement);
+const ACC = CSS.getPropertyValue("--acc").trim();
+const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+const AMB = CSS.getPropertyValue("--amb").trim();
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement("canvas");
+const bctx = buf.getContext("2d");
+
+let currentDisp = 0;
+let targetDisp = 0;
+let animating = false;
+let animFrame = null;
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  draw();
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  
+  ctx.fillStyle = "#000";
+  ctx.fillRect(0, 0, w, h);
+
+  const cx = w * 0.5;
+  const cy = h * 0.5;
+  const amplitude = w * 0.32;
+  
+  // Centre equilibrium line
+  ctx.strokeStyle = "rgba(" + RGB + ", 0.25)";
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(cx, h * 0.15);
+  ctx.lineTo(cx, h * 0.85);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Current position marker
+  const xPos = cx + currentDisp * amplitude;
+  
+  // Mass
+  const massR = 16;
+  ctx.save();
+  ctx.fillStyle = "#12160F";
+  ctx.strokeStyle = ACC;
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  ctx.arc(xPos, cy, massR, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.restore();
+
+  // Mass glow
+  const massGlow = ctx.createRadialGradient(xPos, cy, 0, xPos, cy, massR * 3);
+  massGlow.addColorStop(0, "rgba(" + RGB + ", 0.35)");
+  massGlow.addColorStop(0.5, "rgba(" + RGB + ", 0.12)");
+  massGlow.addColorStop(1, "rgba(" + RGB + ", 0)");
+  ctx.save();
+  ctx.globalCompositeOperation = "lighter";
+  ctx.fillStyle = massGlow;
+  ctx.beginPath();
+  ctx.arc(xPos, cy, massR * 3, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+  // Spring on left side
+  const springX = w * 0.08;
+  const springSegs = 18;
+  const springAmp = 8;
+  const totalLen = xPos - springX - massR;
+  const segLen = totalLen / springSegs;
+  
+  ctx.strokeStyle = "rgba(255,255,255,0.3)";
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(springX, cy);
+  for (let i = 1; i <= springSegs; i++) {
+    const sx = springX + i * segLen;
+    const sy = cy + (i % 2 === 0 ? springAmp : -springAmp);
+    ctx.lineTo(sx, sy);
+  }
+  ctx.lineTo(xPos - massR, cy);
+  ctx.stroke();
+
+  // Restoring force arrow
+  if (Math.abs(currentDisp) > 0.02) {
+    const arrowStartX = xPos;
+    const arrowEndX = cx;
+    const arrowY = cy + massR + 28;
+    const arrowLen = Math.abs(arrowEndX - arrowStartX);
+    
+    if (arrowLen > 4) {
+      const arrowIntensity = Math.abs(currentDisp);
+      ctx.strokeStyle = "rgba(" + RGB + ", " + (0.5 + arrowIntensity * 0.5) + ")";
+      ctx.fillStyle = "rgba(" + RGB + ", " + (0.5 + arrowIntensity * 0.5) + ")";
+      ctx.lineWidth = 2;
+      
+      ctx.beginPath();
+      ctx.moveTo(arrowStartX, arrowY);
+      ctx.lineTo(arrowEndX, arrowY);
+      ctx.stroke();
+      
+      // Arrowhead
+      const headSize = 8;
+      const dir = arrowEndX > arrowStartX ? 1 : -1;
+      ctx.beginPath();
+      ctx.moveTo(arrowEndX, arrowY);
+      ctx.lineTo(arrowEndX - dir * headSize, arrowY - headSize * 0.5);
+      ctx.lineTo(arrowEndX - dir * headSize, arrowY + headSize * 0.5);
+      ctx.closePath();
+      ctx.fill();
+
+      // Arrow glow
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      ctx.strokeStyle = "rgba(" + RGB + ", " + (arrowIntensity * 0.3) + ")";
+      ctx.lineWidth = 6;
+      ctx.beginPath();
+      ctx.moveTo(arrowStartX, arrowY);
+      ctx.lineTo(arrowEndX, arrowY);
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+
+  // Displacement labels
+  ctx.fillStyle = "rgba(255,255,255,0.4)";
+  ctx.font = "10px 'JetBrains Mono', monospace";
+  ctx.textAlign = "center";
+  ctx.fillText("−A", cx - amplitude, h * 0.88);
+  ctx.fillText("c", cx, h * 0.88);
+  ctx.fillText("+A", cx + amplitude, h * 0.88);
+
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = "lighter";
+  ctx.globalAlpha = 0.38;
+  ctx.filter = "blur(7px)";
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, "rgba(0,0,0,0)");
+  vig.addColorStop(1, "rgba(0,0,0,0.52)");
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+}
+
+function animate() {
+  const diff = targetDisp - currentDisp;
+  if (Math.abs(diff) > 0.001) {
+    currentDisp += diff * 0.15;
+    draw();
+    updateStats();
+    animFrame = requestAnimationFrame(animate);
+  } else {
+    currentDisp = targetDisp;
+    draw();
+    updateStats();
+    animating = false;
+    animFrame = null;
+  }
+}
+
+function updateStats() {
+  const accel = -currentDisp;
+  const absAccel = Math.abs(accel);
+  
+  if (absAccel < 0.02) {
+    accelValue.textContent = "0";
+    liveTag.textContent = "Equilibrium";
+  } else {
+    accelValue.textContent = (accel > 0 ? "+" : "") + accel.toFixed(2);
+    liveTag.textContent = accel > 0 ? "Accelerating Right" : "Accelerating Left";
+  }
+
+  const speed = Math.sqrt(Math.max(0, 1 - currentDisp * currentDisp));
+  if (speed > 0.98) {
+    speedValue.textContent = "MAX";
+  } else if (speed < 0.02) {
+    speedValue.textContent = "0";
+  } else {
+    speedValue.textContent = speed.toFixed(2);
+  }
+
+  const force = Math.abs(accel);
+  if (force < 0.02) {
+    canvasOverlay.textContent = "Restoring force = 0";
+  } else {
+    canvasOverlay.textContent = "F ∝ " + force.toFixed(2) + " towards centre";
+  }
+}
+
+slider.addEventListener("input", function() {
+  const val = parseFloat(this.value);
+  const fillPercent = val;
+  this.style.setProperty("--fill", fillPercent + "%");
+  
+  targetDisp = (val - 50) / 50;
+  
+  if (!animating) {
+    animating = true;
+    animate();
+  }
+});
+
+btnEquation.addEventListener("click", function() {
+  btnEquation.classList.add("active");
+  btnSolution.classList.remove("active");
+  knowdropText.textContent = "The equation ẍ = −n²(x − c) is not a description of simple harmonic motion, it IS the definition. Proving that something moves with SHM means showing that its acceleration takes exactly this form: proportional to displacement from centre c, and always pointing back towards it. The minus sign is what carries the physics — it makes F(x) = mẍ a restoring force, always aimed at the centre, never away from it. That is what makes the motion repeat instead of run away. Every spring, every pendulum, every bobbing object in stable oscillation obeys this single line, and everything else you know about SHM — the sine solution, the period, the energy exchange — follows from pushing this equation through calculus.";
+});
+
+btnSolution.addEventListener("click", function() {
+  btnSolution.classList.add("active");
+  btnEquation.classList.remove("active");
+  knowdropText.textContent = "The general solution x = A sin(nt + α) + c and x = A cos(nt + β) + c are the same solution in different clothes — one just starts the clock at a different point in the cycle. You verify the solution not by memorising it, but by differentiating it twice and watching the original equation ẍ = −n²(x − c) reappear. The constant n controls how fast the oscillation happens, and A is the amplitude, the furthest distance from centre. Differentiate once and you get velocity: ẋ = nA cos(nt + α). Differentiate again and you get ẍ = −n²A sin(nt + α) = −n²(x − c), exactly the equation we started with. The solution is not a fact to memorise — it is what happens when you solve the differential equation that defines SHM.";
+});
+
+window.addEventListener("resize", resize);
+resize();
+
+slider.style.setProperty("--fill", "50%");
+updateStats();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'simple-harmonic-motion'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

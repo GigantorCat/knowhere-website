@@ -1,0 +1,668 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Protein Structure and the Proteome — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #5AADD4;
+  --ag: rgba(90, 173, 212, .7);
+  --ag1: rgba(90, 173, 212, .12);
+  --ag2: rgba(90, 173, 212, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 0;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 28px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 16px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: white;
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-container {
+  margin-bottom: 10px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+}
+
+.ps-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  outline: none;
+  cursor: pointer;
+}
+
+.ps-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.ps-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.ps-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.ps-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  padding: 0 2px;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 4px;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.toggle-card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 16px;
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(90,173,212,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(90,173,212,.18);
+}
+
+.knowdrop-divider {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.knowdrop-text {
+  font-family: 'Geist', sans-serif;
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.know-body {
+  font-family: 'Geist', sans-serif;
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.acc { color: var(--acc); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (max-width: 360px) {
+  body { padding: 32px 12px 0; }
+  .card, .toggle-card { padding: 14px; }
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Interactive protein structure visualisation showing how amino acid sequence determines 3D shape</h2>
+
+  <h1>One wrong amino acid, <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">one deadly disease</span></h1>
+  
+  <p class="intro">A single substitution in haemoglobin's 574-amino-acid chain causes sickle cell anaemia. That's because a protein's function comes entirely from its shape, and its shape comes from its sequence. Drag the slider to see how the same chain folds through four levels of structure.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Protein folding</span>
+      <span class="live-tag" id="levelTag">Primary</span>
+    </div>
+    <div class="card-hint">Four structural levels from sequence to functional unit</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="canvas"></canvas>
+      <div class="canvas-overlay" id="overlayTag">Primary structure</div>
+    </div>
+
+    <div class="slider-container">
+      <input type="range" min="0" max="100" value="0" class="ps-slider" id="slider">
+      <div class="tick-labels">
+        <span>Primary</span>
+        <span>Secondary</span>
+        <span>Tertiary</span>
+        <span>Quaternary</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Structure level</div>
+        <div class="stat-value" style="color:var(--acc)" id="levelStat">1</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Complexity</div>
+        <div class="stat-value" style="color:var(--amb)" id="complexityStat">0%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toggle-card">
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" data-mode="mutation">Mutation impact</button>
+      <button class="toggle-btn" data-mode="proteome">The proteome</button>
+    </div>
+    
+    <div class="knowdrop-divider">
+      <p class="knowdrop-text" id="knowdropText">In sickle cell anaemia, a single glutamic acid is replaced by valine at position 6 of the beta chain. Glutamic acid is hydrophilic (polar), but valine is hydrophobic (non-polar). This one change alters the tertiary structure: valine creates a hydrophobic patch on the protein's surface, causing haemoglobin molecules to stick together into rigid fibres. Red blood cells deform into sickles, block capillaries, and rupture easily. Every symptom — pain crises, organ damage, shortened lifespan — traces back to that single amino acid substitution in primary structure.</p>
+    </div>
+  </div>
+
+  <div class="know-this">
+    <span class="know-tag">Know This</span>
+    <p class="know-body"><span class="acc">Primary structure</span> is the amino acid sequence itself, <span class="acc">secondary structure</span> is local folding into alpha helices and beta pleated sheets, <span class="acc">tertiary structure</span> is the overall 3D shape held by bonds between R groups, and <span class="acc">quaternary structure</span> is two or more polypeptide chains combined.</p>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const slider = document.getElementById('slider');
+const levelTag = document.getElementById('levelTag');
+const overlayTag = document.getElementById('overlayTag');
+const levelStat = document.getElementById('levelStat');
+const complexityStat = document.getElementById('complexityStat');
+const knowdropText = document.getElementById('knowdropText');
+const toggleBtns = document.querySelectorAll('.toggle-btn');
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d');
+
+let time = 0;
+let level = 0; // 0-3 for primary-quaternary
+
+const knowdrops = {
+  mutation: "In sickle cell anaemia, a single glutamic acid is replaced by valine at position 6 of the beta chain. Glutamic acid is hydrophilic (polar), but valine is hydrophobic (non-polar). This one change alters the tertiary structure: valine creates a hydrophobic patch on the protein's surface, causing haemoglobin molecules to stick together into rigid fibres. Red blood cells deform into sickles, block capillaries, and rupture easily. Every symptom — pain crises, organ damage, shortened lifespan — traces back to that single amino acid substitution in primary structure.",
+  proteome: "The proteome is every protein a cell can make — and it's far larger than the genome. Humans have about 20,000 protein-coding genes, but the proteome contains over 1 million distinct proteins. How? Alternative splicing lets one gene produce multiple mRNA variants. Post-translational modifications (phosphorylation, glycosylation, acetylation) create hundreds of functional variants from a single polypeptide. Different cell types express different subsets of genes, so a neuron's proteome differs drastically from a muscle cell's proteome. The proteome is dynamic: it changes with development, environmental signals, and disease states. Understanding the proteome, not just the genome, is essential for modern medicine."
+};
+
+toggleBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    toggleBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const mode = btn.dataset.mode;
+    knowdropText.textContent = knowdrops[mode];
+  });
+});
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+window.addEventListener('resize', resize);
+resize();
+
+slider.addEventListener('input', e => {
+  const val = parseFloat(e.target.value);
+  slider.style.setProperty('--fill', val + '%');
+  
+  if (val < 25) {
+    level = 0;
+    levelTag.textContent = 'Primary';
+    overlayTag.textContent = 'Primary structure';
+    levelStat.textContent = '1';
+  } else if (val < 50) {
+    level = 1;
+    levelTag.textContent = 'Secondary';
+    overlayTag.textContent = 'Secondary structure';
+    levelStat.textContent = '2';
+  } else if (val < 75) {
+    level = 2;
+    levelTag.textContent = 'Tertiary';
+    overlayTag.textContent = 'Tertiary structure';
+    levelStat.textContent = '3';
+  } else {
+    level = 3;
+    levelTag.textContent = 'Quaternary';
+    overlayTag.textContent = 'Quaternary structure';
+    levelStat.textContent = '4';
+  }
+  
+  complexityStat.textContent = Math.round(val) + '%';
+});
+
+slider.style.setProperty('--fill', '0%');
+
+// Amino acid chain positions for primary
+const aminoCount = 18;
+const aminoPositions = [];
+for (let i = 0; i < aminoCount; i++) {
+  aminoPositions.push({ x: i / (aminoCount - 1), y: 0.5, r: 3.5 + Math.random() * 1.5 });
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  const t = level / 3;
+  const cx = w * 0.5;
+  const cy = h * 0.5;
+  
+  if (level === 0) {
+    // Primary: linear chain
+    ctx.strokeStyle = 'rgba(90,173,212,0.3)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let i = 0; i < aminoCount; i++) {
+      const x = w * 0.1 + (w * 0.8) * (i / (aminoCount - 1));
+      const y = cy;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    
+    for (let i = 0; i < aminoCount; i++) {
+      const x = w * 0.1 + (w * 0.8) * (i / (aminoCount - 1));
+      const y = cy;
+      const grad = ctx.createRadialGradient(x, y, 0, x, y, aminoPositions[i].r * 2);
+      grad.addColorStop(0, 'rgba(90,173,212,0.8)');
+      grad.addColorStop(1, 'rgba(90,173,212,0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(x, y, aminoPositions[i].r * 2, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.fillStyle = '#5AADD4';
+      ctx.beginPath();
+      ctx.arc(x, y, aminoPositions[i].r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  } else if (level === 1) {
+    // Secondary: alpha helix
+    const turns = 3;
+    const points = 60;
+    const helixRadius = w * 0.08;
+    const helixHeight = h * 0.6;
+    
+    ctx.strokeStyle = 'rgba(90,173,212,0.25)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    for (let i = 0; i < points; i++) {
+      const prog = i / (points - 1);
+      const angle = prog * turns * Math.PI * 2;
+      const x = cx + Math.cos(angle) * helixRadius;
+      const y = cy - helixHeight / 2 + prog * helixHeight;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    
+    for (let i = 0; i < 12; i++) {
+      const prog = i / 11;
+      const angle = prog * turns * Math.PI * 2 + time * 0.3;
+      const x = cx + Math.cos(angle) * helixRadius;
+      const y = cy - helixHeight / 2 + prog * helixHeight;
+      const r = 4 + Math.sin(time * 1.2 + i * 0.5) * 0.8;
+      
+      const grad = ctx.createRadialGradient(x, y, 0, x, y, r * 2.5);
+      grad.addColorStop(0, 'rgba(90,173,212,0.9)');
+      grad.addColorStop(1, 'rgba(90,173,212,0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(x, y, r * 2.5, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.fillStyle = '#5AADD4';
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  } else if (level === 2) {
+    // Tertiary: complex 3D fold
+    const blob = 8;
+    const blobR = w * 0.16;
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    for (let i = 0; i < blob; i++) {
+      const angle = (i / blob) * Math.PI * 2 + time * 0.4;
+      const dist = blobR * (0.7 + 0.3 * Math.sin(time * 0.8 + i));
+      const x = cx + Math.cos(angle) * dist;
+      const y = cy + Math.sin(angle) * dist;
+      const r = 12 + Math.sin(time * 1.1 + i * 0.7) * 3;
+      
+      const grad = ctx.createRadialGradient(x, y, 0, x, y, r * 2.2);
+      grad.addColorStop(0, 'rgba(90,173,212,0.7)');
+      grad.addColorStop(0.5, 'rgba(90,173,212,0.3)');
+      grad.addColorStop(1, 'rgba(90,173,212,0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(x, y, r * 2.2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+    
+    // Central core
+    const coreGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, blobR * 1.4);
+    coreGrad.addColorStop(0, 'rgba(90,173,212,0.4)');
+    coreGrad.addColorStop(0.6, 'rgba(90,173,212,0.15)');
+    coreGrad.addColorStop(1, 'rgba(90,173,212,0)');
+    ctx.fillStyle = coreGrad;
+    ctx.beginPath();
+    ctx.arc(cx, cy, blobR * 1.4, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Bond lines
+    ctx.strokeStyle = 'rgba(90,173,212,0.25)';
+    ctx.lineWidth = 1.2;
+    for (let i = 0; i < blob; i++) {
+      const angle = (i / blob) * Math.PI * 2 + time * 0.4;
+      const dist = blobR * (0.7 + 0.3 * Math.sin(time * 0.8 + i));
+      const x = cx + Math.cos(angle) * dist;
+      const y = cy + Math.sin(angle) * dist;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(x, y);
+      ctx.stroke();
+    }
+  } else {
+    // Quaternary: two units combining
+    const offset = w * 0.15;
+    const unitR = w * 0.12;
+    
+    const x1 = cx - offset;
+    const x2 = cx + offset;
+    
+    // Draw both units
+    for (let u = 0; u < 2; u++) {
+      const ux = u === 0 ? x1 : x2;
+      const blob = 6;
+      
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      for (let i = 0; i < blob; i++) {
+        const angle = (i / blob) * Math.PI * 2 + time * 0.5 + u * Math.PI;
+        const dist = unitR * (0.7 + 0.3 * Math.sin(time * 0.9 + i + u * 2));
+        const x = ux + Math.cos(angle) * dist;
+        const y = cy + Math.sin(angle) * dist;
+        const r = 9 + Math.sin(time * 1.2 + i * 0.6 + u) * 2;
+        
+        const grad = ctx.createRadialGradient(x, y, 0, x, y, r * 2);
+        grad.addColorStop(0, 'rgba(90,173,212,0.75)');
+        grad.addColorStop(0.5, 'rgba(90,173,212,0.3)');
+        grad.addColorStop(1, 'rgba(90,173,212,0)');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(x, y, r * 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+      
+      const coreGrad = ctx.createRadialGradient(ux, cy, 0, ux, cy, unitR * 1.2);
+      coreGrad.addColorStop(0, 'rgba(90,173,212,0.45)');
+      coreGrad.addColorStop(0.6, 'rgba(90,173,212,0.18)');
+      coreGrad.addColorStop(1, 'rgba(90,173,212,0)');
+      ctx.fillStyle = coreGrad;
+      ctx.beginPath();
+      ctx.arc(ux, cy, unitR * 1.2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    
+    // Interaction bonds between units
+    ctx.strokeStyle = 'rgba(250,199,117,0.4)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([4, 6]);
+    for (let i = 0; i < 3; i++) {
+      const yOff = (i - 1) * h * 0.12;
+      ctx.beginPath();
+      ctx.moveTo(x1 + unitR * 0.6, cy + yOff);
+      ctx.lineTo(x2 - unitR * 0.6, cy + yOff);
+      ctx.stroke();
+    }
+    ctx.setLineDash([]);
+  }
+  
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+  
+  time += 0.016;
+  requestAnimationFrame(draw);
+}
+
+draw();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'protein-structure-and-the-proteome'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

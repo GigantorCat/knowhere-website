@@ -1,0 +1,634 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Aerobic System — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #E86A32;
+  --ag: rgba(232, 106, 50, .7);
+  --ag1: rgba(232, 106, 50, .12);
+  --ag2: rgba(232, 106, 50, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  min-height: 100vh;
+  padding: 40px 16px 72px;
+  color: var(--ink);
+}
+
+.container { max-width: 720px; margin: 0 auto; }
+
+h1 {
+  font-size: clamp(30px, 8vw, 52px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-container { margin-bottom: 10px; }
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+}
+
+.aer-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  outline: none;
+  cursor: pointer;
+}
+
+.aer-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.aer-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.aer-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.aer-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  margin-bottom: 16px;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.stat:first-child .stat-value { color: var(--acc); }
+.stat:last-child .stat-value { color: var(--amb); }
+
+.toggle-section {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(232,106,50,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(232,106,50,.18);
+}
+
+.knowdrop {
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 34px;
+}
+
+.know-this-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 10px;
+}
+
+.know-this-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.footer {
+  margin-top: 34px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 10px var(--acc);
+  animation: aerPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes aerPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .35; transform: scale(.6); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Aerobic System Energy Production Interactive</h2>
+  
+  <h1>Your body produces 19× more energy when it waits for <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">oxygen</span></h1>
+  
+  <p class="intro">The aerobic system generates 38 ATP molecules per glucose versus just 2 ATP from anaerobic glycolysis alone—a staggering efficiency gain when oxygen is available. Slide through exercise duration to see when aerobic metabolism takes over.</p>
+  
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Energy System Dominance</span>
+      <span class="live-tag" id="dominantSystem">ATP-PC</span>
+    </div>
+    <div class="card-hint">Drag to change exercise duration</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="aerCanvas"></canvas>
+      <div class="canvas-overlay" id="timeDisplay">0 seconds</div>
+    </div>
+    
+    <div class="slider-container">
+      <div class="slider-label">Exercise Duration</div>
+      <input type="range" class="aer-slider" id="timeSlider" min="0" max="600" value="0" step="1">
+      <div class="tick-labels">
+        <span>0s</span>
+        <span>2min</span>
+        <span>5min</span>
+        <span>10min</span>
+      </div>
+    </div>
+    
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Aerobic Contribution</div>
+        <div class="stat-value" id="aerobicPercent">0%</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">ATP Efficiency</div>
+        <div class="stat-value" id="atpMultiplier">2×</div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="card">
+    <div class="toggle-section">
+      <button class="toggle-btn active" id="btnStages">Three Stages</button>
+      <button class="toggle-btn" id="btnFuel">Fuel Sources</button>
+    </div>
+    
+    <div class="knowdrop" id="knowdropText">The aerobic system operates through three sequential stages: <strong>glycolysis</strong> breaks down glucose in the cytoplasm producing 2 ATP and pyruvate; the <strong>Krebs cycle</strong> (citric acid cycle) occurs in the mitochondrial matrix oxidising pyruvate to produce 2 more ATP plus electron carriers; and the <strong>electron transport chain</strong> in the inner mitochondrial membrane generates the remaining 34 ATP through oxidative phosphorylation. This three-stage cascade transforms a single glucose molecule into 38 ATP, compared to the 2 ATP produced when glycolysis operates anaerobically alone. The process requires 2-3 minutes to reach peak output as oxygen delivery systems ramp up, but once established can sustain ATP production indefinitely given adequate oxygen and substrate availability.</div>
+  </div>
+  
+  <div class="know-this">
+    <div class="know-this-tag">Know This</div>
+    <div class="know-this-body">The aerobic system <span style="color:var(--acc)">becomes predominant after 2 minutes</span> and sustains low to moderate intensity exercise indefinitely, producing <span style="color:var(--acc)">38 ATP per glucose molecule</span> compared to 2 ATP from glycolysis alone while utilizing <span style="color:var(--acc)">carbohydrates and fats as fuel</span> with protein contributing minimally during prolonged exercise.</div>
+  </div>
+  
+  <div class="footer">
+    <div class="pulse-dot"></div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('aerCanvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const timeSlider = document.getElementById('timeSlider');
+const timeDisplay = document.getElementById('timeDisplay');
+const dominantTag = document.getElementById('dominantSystem');
+const aerobicPercent = document.getElementById('aerobicPercent');
+const atpMultiplier = document.getElementById('atpMultiplier');
+const btnStages = document.getElementById('btnStages');
+const btnFuel = document.getElementById('btnFuel');
+const knowdropText = document.getElementById('knowdropText');
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d', { alpha: false });
+
+let time = 0;
+let particles = [];
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function updateSlider() {
+  const val = timeSlider.value;
+  const pct = (val / 600) * 100;
+  timeSlider.style.setProperty('--fill', pct + '%');
+  
+  const seconds = parseInt(val);
+  if (seconds < 60) {
+    timeDisplay.textContent = seconds + ' seconds';
+  } else {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    timeDisplay.textContent = mins + 'min ' + (secs > 0 ? secs + 's' : '');
+  }
+  
+  // System dominance logic
+  let dominant = 'ATP-PC';
+  if (seconds >= 120) {
+    dominant = 'AEROBIC';
+  } else if (seconds >= 10) {
+    dominant = 'GLYCOLYTIC';
+  }
+  dominantTag.textContent = dominant;
+  
+  // Aerobic contribution percentage
+  let aerobic = 0;
+  if (seconds < 10) {
+    aerobic = 0;
+  } else if (seconds < 120) {
+    aerobic = ((seconds - 10) / 110) * 50;
+  } else {
+    aerobic = 50 + ((seconds - 120) / 480) * 48;
+    if (aerobic > 98) aerobic = 98;
+  }
+  aerobicPercent.textContent = Math.round(aerobic) + '%';
+  
+  // ATP efficiency multiplier
+  const efficiency = 2 + (aerobic / 100) * 36;
+  atpMultiplier.textContent = efficiency.toFixed(0) + '×';
+}
+
+function getSystemContributions(t) {
+  // t in seconds
+  if (t < 10) {
+    const pc = 100 - (t / 10) * 60;
+    const gly = (t / 10) * 60;
+    return { pc, gly, aer: 0 };
+  } else if (t < 120) {
+    const progress = (t - 10) / 110;
+    const pc = 40 * (1 - progress);
+    const gly = 60 - progress * 10;
+    const aer = progress * 50;
+    return { pc, gly, aer };
+  } else {
+    const progress = Math.min((t - 120) / 480, 1);
+    const aer = 50 + progress * 48;
+    const gly = 50 - progress * 48;
+    return { pc: 0, gly, aer };
+  }
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  const t = parseFloat(timeSlider.value);
+  const contrib = getSystemContributions(t);
+  
+  // Draw three flowing layers representing energy systems
+  const yTop = h * 0.15;
+  const yBot = h * 0.85;
+  const layerHeight = yBot - yTop;
+  
+  // Calculate heights based on contribution
+  const total = contrib.pc + contrib.gly + contrib.aer;
+  const pcH = (contrib.pc / 100) * layerHeight;
+  const glyH = (contrib.gly / 100) * layerHeight;
+  const aerH = (contrib.aer / 100) * layerHeight;
+  
+  // Aerobic layer (bottom, orange)
+  if (aerH > 1) {
+    const aerTop = yBot - aerH;
+    const grad = ctx.createLinearGradient(0, aerTop, 0, yBot);
+    grad.addColorStop(0, 'rgba(232,106,50,0.2)');
+    grad.addColorStop(1, 'rgba(232,106,50,0.5)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, aerTop, w, aerH);
+    
+    // Add flowing particles
+    if (Math.random() < 0.15 && aerH > 20) {
+      particles.push({
+        x: Math.random() * w,
+        y: aerTop,
+        vy: 0.5 + Math.random() * 0.8,
+        r: 1.2 + Math.random() * 1.5,
+        life: 1,
+        type: 'aer'
+      });
+    }
+    
+    // Edge glow
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    const edgeGrad = ctx.createLinearGradient(0, aerTop - 8, 0, aerTop + 8);
+    edgeGrad.addColorStop(0, 'rgba(232,106,50,0)');
+    edgeGrad.addColorStop(0.5, 'rgba(232,106,50,0.4)');
+    edgeGrad.addColorStop(1, 'rgba(232,106,50,0)');
+    ctx.fillStyle = edgeGrad;
+    ctx.fillRect(0, aerTop - 8, w, 16);
+    ctx.restore();
+  }
+  
+  // Glycolytic layer (middle, amber)
+  if (glyH > 1) {
+    const glyTop = yBot - aerH - glyH;
+    const grad = ctx.createLinearGradient(0, glyTop, 0, glyTop + glyH);
+    grad.addColorStop(0, 'rgba(250,199,117,0.2)');
+    grad.addColorStop(1, 'rgba(250,199,117,0.45)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, glyTop, w, glyH);
+    
+    if (Math.random() < 0.12 && glyH > 20) {
+      particles.push({
+        x: Math.random() * w,
+        y: glyTop,
+        vy: 0.4 + Math.random() * 0.6,
+        r: 1 + Math.random() * 1.2,
+        life: 1,
+        type: 'gly'
+      });
+    }
+    
+    // Edge glow
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    const edgeGrad = ctx.createLinearGradient(0, glyTop - 6, 0, glyTop + 6);
+    edgeGrad.addColorStop(0, 'rgba(250,199,117,0)');
+    edgeGrad.addColorStop(0.5, 'rgba(250,199,117,0.3)');
+    edgeGrad.addColorStop(1, 'rgba(250,199,117,0)');
+    ctx.fillStyle = edgeGrad;
+    ctx.fillRect(0, glyTop - 6, w, 12);
+    ctx.restore();
+  }
+  
+  // ATP-PC layer (top, dim white)
+  if (pcH > 1) {
+    const pcTop = yTop;
+    const grad = ctx.createLinearGradient(0, pcTop, 0, pcTop + pcH);
+    grad.addColorStop(0, 'rgba(237,237,232,0.15)');
+    grad.addColorStop(1, 'rgba(237,237,232,0.3)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, pcTop, w, pcH);
+    
+    if (Math.random() < 0.08 && pcH > 20) {
+      particles.push({
+        x: Math.random() * w,
+        y: pcTop,
+        vy: 0.3 + Math.random() * 0.5,
+        r: 0.8 + Math.random() * 1,
+        life: 1,
+        type: 'pc'
+      });
+    }
+  }
+  
+  // Update and draw particles
+  particles = particles.filter(p => {
+    p.y += p.vy;
+    p.life -= 0.008;
+    if (p.life <= 0) return false;
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    let col = '255,255,255';
+    if (p.type === 'aer') col = '232,106,50';
+    else if (p.type === 'gly') col = '250,199,117';
+    ctx.fillStyle = 'rgba(' + col + ',' + (p.life * 0.6) + ')';
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+    
+    return p.y < h;
+  });
+  
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const cx = w / 2;
+  const cy = h / 2;
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+  
+  requestAnimationFrame(draw);
+}
+
+// Toggle buttons
+btnStages.addEventListener('click', () => {
+  btnStages.classList.add('active');
+  btnFuel.classList.remove('active');
+  knowdropText.innerHTML = 'The aerobic system operates through three sequential stages: <strong>glycolysis</strong> breaks down glucose in the cytoplasm producing 2 ATP and pyruvate; the <strong>Krebs cycle</strong> (citric acid cycle) occurs in the mitochondrial matrix oxidising pyruvate to produce 2 more ATP plus electron carriers; and the <strong>electron transport chain</strong> in the inner mitochondrial membrane generates the remaining 34 ATP through oxidative phosphorylation. This three-stage cascade transforms a single glucose molecule into 38 ATP, compared to the 2 ATP produced when glycolysis operates anaerobically alone. The process requires 2-3 minutes to reach peak output as oxygen delivery systems ramp up, but once established can sustain ATP production indefinitely given adequate oxygen and substrate availability.';
+});
+
+btnFuel.addEventListener('click', () => {
+  btnFuel.classList.add('active');
+  btnStages.classList.remove('active');
+  knowdropText.innerHTML = 'The aerobic system primarily utilizes <strong>carbohydrates</strong> (glucose and glycogen) and <strong>fats</strong> (fatty acids) as fuel sources, with their relative contribution depending on exercise intensity and duration. At lower intensities and longer durations, fat oxidation predominates as it yields more ATP per molecule but requires more oxygen and time to metabolize. As intensity increases toward moderate levels, carbohydrate utilization increases due to faster ATP production rates. <strong>Protein</strong> contributes minimally to aerobic energy production—typically less than 5% during most exercise—only becoming significant during ultra-endurance events exceeding several hours when glycogen stores deplete. The availability of oxygen determines whether these substrates enter aerobic or anaerobic pathways, with the aerobic system\'s 19-fold efficiency advantage making it the dominant energy source for sustained activity.';
+});
+
+timeSlider.addEventListener('input', updateSlider);
+
+window.addEventListener('resize', resize);
+resize();
+updateSlider();
+draw();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'aerobic-system'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

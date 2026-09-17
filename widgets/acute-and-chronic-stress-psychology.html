@@ -1,0 +1,556 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Acute and Chronic Stress — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #6A60D4;
+  --ag: rgba(106, 96, 212, .7);
+  --ag1: rgba(106, 96, 212, .12);
+  --ag2: rgba(106, 96, 212, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+body{
+  background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C 55%);
+  font-family:'Geist',sans-serif;
+  color:var(--ink);
+  min-height:100vh;
+  padding:40px 16px 0;
+  line-height:1.5;
+}
+
+.container{max-width:720px;margin:0 auto}
+
+h1{
+  font-size:clamp(26px,6.5vw,44px);
+  font-weight:800;
+  letter-spacing:-0.03em;
+  line-height:1.05;
+  margin-bottom:14px;
+}
+
+.intro{
+  font-size:15.5px;
+  font-weight:400;
+  color:var(--ink-dim);
+  max-width:58ch;
+  line-height:1.55;
+  margin-bottom:28px;
+}
+
+.card{
+  background:linear-gradient(180deg,#12160F,#0d100b);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:16px;
+  box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);
+  margin-bottom:18px;
+}
+
+.card-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:6px;
+}
+
+.card-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  text-transform:uppercase;
+  color:var(--ink);
+}
+
+.live-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  text-transform:uppercase;
+  color:var(--acc);
+}
+
+.card-hint{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  color:var(--ink-dim);
+  margin-bottom:14px;
+}
+
+.canvas-wrapper{
+  position:relative;
+  width:100%;
+  aspect-ratio:16/9;
+  border-radius:12px;
+  overflow:hidden;
+  background:#000;
+  box-shadow:inset 0 0 0 1px var(--ag1);
+  margin-bottom:16px;
+}
+
+canvas{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  display:block;
+}
+
+.canvas-overlay{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  background:rgba(0,0,0,0.55);
+  backdrop-filter:blur(4px);
+  padding:9px 16px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:14px;
+  text-transform:uppercase;
+  color:var(--acc);
+  text-align:center;
+}
+
+.stress-slider{
+  -webkit-appearance:none;
+  appearance:none;
+  width:100%;
+  height:4px;
+  border-radius:3px;
+  background:linear-gradient(90deg,var(--acc) var(--fill,0%),#23291f var(--fill,0%));
+  outline:none;
+  margin:18px 0 10px;
+}
+
+.stress-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  appearance:none;
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  background:#0B0D0C;
+  border:2px solid var(--acc);
+  box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);
+  cursor:pointer;
+  transition:box-shadow .15s;
+}
+
+.stress-slider::-moz-range-thumb{
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  background:#0B0D0C;
+  border:2px solid var(--acc);
+  box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);
+  cursor:pointer;
+  transition:box-shadow .15s;
+}
+
+.stress-slider::-webkit-slider-thumb:hover{
+  box-shadow:0 0 24px var(--acc),0 0 8px var(--ag);
+}
+
+.stress-slider::-moz-range-thumb:hover{
+  box-shadow:0 0 24px var(--acc),0 0 8px var(--ag);
+}
+
+.tick-labels{
+  display:flex;
+  justify-content:space-between;
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  color:var(--ink-dim);
+  text-transform:uppercase;
+}
+
+.stat-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+  border-top:1px solid var(--line);
+  padding-top:16px;
+  margin-top:16px;
+}
+
+.stat{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+
+.stat-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;
+  text-transform:uppercase;
+  color:var(--ink-dim);
+}
+
+.stat-value{
+  font-family:'JetBrains Mono',monospace;
+  font-size:24px;
+  font-weight:500;
+}
+
+.toggle-section{
+  display:flex;
+  gap:10px;
+  margin-bottom:16px;
+}
+
+.toggle-btn{
+  flex:1;
+  font-family:'JetBrains Mono',monospace;
+  font-size:14.5px;
+  padding:12px;
+  border-radius:11px;
+  border:1px solid var(--line);
+  background:#12160F;
+  color:var(--ink-dim);
+  cursor:pointer;
+  transition:all .2s;
+}
+
+.toggle-btn.active{
+  background:rgba(106,96,212,.1);
+  border:1px solid var(--acc);
+  color:var(--acc);
+  box-shadow:0 0 22px rgba(106,96,212,.18);
+}
+
+.knowdrop{
+  border-top:1px solid var(--line);
+  padding-top:16px;
+  font-size:14.5px;
+  line-height:1.65;
+}
+
+.know-this{
+  border-left:3px solid var(--acc);
+  padding:16px 18px;
+  background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));
+  border-radius:0 12px 12px 0;
+  margin-bottom:0;
+}
+
+.know-this-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  text-transform:uppercase;
+  letter-spacing:0.15em;
+  color:var(--acc);
+  margin-bottom:10px;
+  display:block;
+}
+
+.know-this-body{
+  font-size:17.4px;
+  line-height:1.55;
+  color:var(--ink);
+}
+</style>
+
+<h2 class="sr-only">Acute versus chronic stress response interactive visualization</h2>
+
+<div class="container">
+  <h1>Your survival mechanism becomes your <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">damage</span></h1>
+  
+  <p class="intro">Acute stress is a sprint your body was built for. Chronic stress is that same system left switched on — and the machinery that saves you over minutes damages you over months. Drag the slider to watch the same response system shift from adaptive to destructive.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-label">Stress Response Timeline</div>
+      <div class="live-tag" id="durationTag">Acute Phase</div>
+    </div>
+    <div class="card-hint">Watch how hormone dominance and immune function shift over time</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="stressCanvas"></canvas>
+      <div class="canvas-overlay" id="canvasTag">Minutes: Adrenaline dominant</div>
+    </div>
+
+    <input type="range" min="0" max="100" value="15" class="stress-slider" id="stressSlider" style="--fill:15%">
+    <div class="tick-labels">
+      <span>Minutes</span>
+      <span>Hours</span>
+      <span>Days</span>
+      <span>Weeks</span>
+      <span>Months</span>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Dominant Hormone</div>
+        <div class="stat-value" style="color:var(--acc)" id="hormoneValue">Adrenaline</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Immune Function</div>
+        <div class="stat-value" style="color:var(--amb)" id="immuneValue">100%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-section">
+      <button class="toggle-btn active" id="acuteBtn">Acute Stress</button>
+      <button class="toggle-btn" id="chronicBtn">Chronic Stress</button>
+    </div>
+    
+    <div class="knowdrop" id="knowdropText">
+      Acute stress is sudden, intense, and short-lived — your body's adaptive response to immediate threat. When you encounter danger, adrenaline floods your system within seconds: heart rate spikes, pupils dilate, blood rushes to muscles, and glucose floods your bloodstream. This is the fight-or-flight response, refined over millions of years to give you maximum performance in the moment. The system is designed to switch on hard, then switch off completely once the threat passes. Your immune system actually gets a temporary boost during acute stress, preparing to fight potential infections from injuries. This is your body working exactly as evolved — a brief, intense mobilization that saves your life.
+    </div>
+  </div>
+
+  <div class="know-this">
+    <span class="know-this-tag">Know This</span>
+    <div class="know-this-body">
+      <span style="color:var(--acc)">Acute stress</span> is adrenaline-driven and adaptive; <span style="color:var(--acc)">chronic stress</span> is cortisol-driven and wears down your immune system over time — the same response mechanism that saves you in minutes damages you when sustained for months.
+    </div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('stressCanvas');
+const ctx = canvas.getContext('2d');
+const slider = document.getElementById('stressSlider');
+const durationTag = document.getElementById('durationTag');
+const canvasTag = document.getElementById('canvasTag');
+const hormoneValue = document.getElementById('hormoneValue');
+const immuneValue = document.getElementById('immuneValue');
+const acuteBtn = document.getElementById('acuteBtn');
+const chronicBtn = document.getElementById('chronicBtn');
+const knowdropText = document.getElementById('knowdropText');
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d');
+
+let time = 0;
+let stressValue = 15;
+
+const acuteText = "Acute stress is sudden, intense, and short-lived — your body's adaptive response to immediate threat. When you encounter danger, adrenaline floods your system within seconds: heart rate spikes, pupils dilate, blood rushes to muscles, and glucose floods your bloodstream. This is the fight-or-flight response, refined over millions of years to give you maximum performance in the moment. The system is designed to switch on hard, then switch off completely once the threat passes. Your immune system actually gets a temporary boost during acute stress, preparing to fight potential infections from injuries. This is your body working exactly as evolved — a brief, intense mobilization that saves your life.";
+
+const chronicText = "Chronic stress is persistent, ongoing, and wearing — the same response system left activated day after day. When stress becomes chronic, cortisol takes over as the dominant hormone, flooding your bloodstream continuously instead of in brief pulses. Unlike adrenaline's quick spike and crash, cortisol stays elevated for hours or days, suppressing your immune system, disrupting sleep, and breaking down muscle tissue to fuel constant alertness. Your body interprets unrelenting work pressure, relationship conflict, or financial worry the same way it interprets a predator — but the threat never ends, so the system never shuts off. Over weeks and months, this continuous activation degrades the very systems that acute stress was designed to protect. The sprint response becomes a forced marathon your body cannot win.";
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function updateStats() {
+  const v = stressValue;
+  
+  if (v < 25) {
+    durationTag.textContent = 'Acute Phase';
+    canvasTag.textContent = 'Minutes: Adrenaline dominant';
+    hormoneValue.textContent = 'Adrenaline';
+    immuneValue.textContent = '100%';
+  } else if (v < 50) {
+    durationTag.textContent = 'Transition';
+    canvasTag.textContent = 'Hours: Cortisol rising';
+    hormoneValue.textContent = 'Mixed';
+    const immune = Math.round(100 - (v - 25) * 0.8);
+    immuneValue.textContent = immune + '%';
+  } else if (v < 75) {
+    durationTag.textContent = 'Early Chronic';
+    canvasTag.textContent = 'Days: Cortisol dominant';
+    hormoneValue.textContent = 'Cortisol';
+    const immune = Math.round(80 - (v - 50) * 1.2);
+    immuneValue.textContent = immune + '%';
+  } else {
+    durationTag.textContent = 'Chronic Phase';
+    canvasTag.textContent = 'Weeks–Months: Immune suppression';
+    hormoneValue.textContent = 'Cortisol';
+    const immune = Math.round(50 - (v - 75) * 1.2);
+    immuneValue.textContent = Math.max(20, immune) + '%';
+  }
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  const cx = w / 2;
+  const cy = h / 2;
+  
+  // Timeline axis
+  ctx.strokeStyle = 'rgba(237,237,232,0.15)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(40, cy);
+  ctx.lineTo(w - 40, cy);
+  ctx.stroke();
+  
+  // Time markers
+  const markers = [
+    { x: 0.1, label: 'Min' },
+    { x: 0.3, label: 'Hrs' },
+    { x: 0.5, label: 'Days' },
+    { x: 0.7, label: 'Wks' },
+    { x: 0.9, label: 'Mon' }
+  ];
+  
+  ctx.font = '9px JetBrains Mono';
+  ctx.fillStyle = 'rgba(237,237,232,0.3)';
+  ctx.textAlign = 'center';
+  markers.forEach(m => {
+    const mx = 40 + (w - 80) * m.x;
+    ctx.beginPath();
+    ctx.moveTo(mx, cy - 4);
+    ctx.lineTo(mx, cy + 4);
+    ctx.stroke();
+    ctx.fillText(m.label, mx, cy + 16);
+  });
+  
+  // Current position indicator
+  const progress = stressValue / 100;
+  const currentX = 40 + (w - 80) * progress;
+  
+  // Adrenaline curve (sharp spike, fast decay)
+  ctx.strokeStyle = '#6A60D4';
+  ctx.lineWidth = 2.5;
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.beginPath();
+  for (let i = 0; i <= 100; i++) {
+    const t = i / 100;
+    const x = 40 + (w - 80) * t;
+    const adrenalineLevel = Math.max(0, Math.exp(-t * 8) * (t < 0.15 ? t / 0.15 : 1));
+    const y = cy - adrenalineLevel * (h * 0.35);
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+  
+  // Adrenaline label
+  ctx.font = '11px JetBrains Mono';
+  ctx.fillStyle = '#6A60D4';
+  ctx.textAlign = 'left';
+  ctx.fillText('ADRENALINE', 45, cy - h * 0.32);
+  
+  // Cortisol curve (slow rise, sustained plateau)
+  ctx.strokeStyle = '#FAC775';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  for (let i = 0; i <= 100; i++) {
+    const t = i / 100;
+    const x = 40 + (w - 80) * t;
+    const cortisolLevel = Math.min(1, t * 2.5) * (t > 0.3 ? 1 : t / 0.3);
+    const y = cy - cortisolLevel * (h * 0.28);
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+  
+  // Cortisol label
+  ctx.fillStyle = '#FAC775';
+  ctx.textAlign = 'right';
+  ctx.fillText('CORTISOL', w - 45, cy - h * 0.24);
+  
+  // Current position pulse
+  const pulseSize = 12 + Math.sin(time * 2.8) * 3;
+  const pulseGlow = ctx.createRadialGradient(currentX, cy, 0, currentX, cy, pulseSize);
+  pulseGlow.addColorStop(0, 'rgba(106,96,212,0.8)');
+  pulseGlow.addColorStop(0.5, 'rgba(106,96,212,0.3)');
+  pulseGlow.addColorStop(1, 'rgba(106,96,212,0)');
+  ctx.fillStyle = pulseGlow;
+  ctx.beginPath();
+  ctx.arc(currentX, cy, pulseSize, 0, Math.PI * 2);
+  ctx.fill();
+  
+  ctx.fillStyle = '#6A60D4';
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.beginPath();
+  ctx.arc(currentX, cy, 6, 0, Math.PI * 2);
+  ctx.fill();
+  
+  // Immune system indicator (bottom area)
+  const immunePct = parseInt(immuneValue.textContent) / 100;
+  const immuneY = h - 28;
+  const immuneBarWidth = w - 80;
+  
+  ctx.fillStyle = 'rgba(237,237,232,0.08)';
+  ctx.fillRect(40, immuneY, immuneBarWidth, 8);
+  
+  const immuneGrad = ctx.createLinearGradient(40, 0, 40 + immuneBarWidth * immunePct, 0);
+  immuneGrad.addColorStop(0, '#FAC775');
+  immuneGrad.addColorStop(1, 'rgba(250,199,117,0.6)');
+  ctx.fillStyle = immuneGrad;
+  ctx.fillRect(40, immuneY, immuneBarWidth * immunePct, 8);
+  
+  ctx.font = '9px JetBrains Mono';
+  ctx.fillStyle = '#FAC775';
+  ctx.textAlign = 'left';
+  ctx.fillText('IMMUNE', 40, immuneY - 4);
+  
+  ctx.globalCompositeOperation = 'source-over';
+  
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+}
+
+function animate() {
+  time += 0.016;
+  draw();
+  requestAnimationFrame(animate);
+}
+
+slider.addEventListener('input', (e) => {
+  stressValue = parseInt(e.target.value);
+  slider.style.setProperty('--fill', stressValue + '%');
+  updateStats();
+});
+
+acuteBtn.addEventListener('click', () => {
+  acuteBtn.classList.add('active');
+  chronicBtn.classList.remove('active');
+  knowdropText.textContent = acuteText;
+});
+
+chronicBtn.addEventListener('click', () => {
+  chronicBtn.classList.add('active');
+  acuteBtn.classList.remove('active');
+  knowdropText.textContent = chronicText;
+});
+
+window.addEventListener('resize', resize);
+resize();
+updateStats();
+animate();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'acute-and-chronic-stress'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

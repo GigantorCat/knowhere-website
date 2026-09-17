@@ -1,0 +1,581 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Factors Behind Global Health Differences — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #F0A04E;
+  --ag: rgba(240, 160, 78, .7);
+  --ag1: rgba(240, 160, 78, .12);
+  --ag2: rgba(240, 160, 78, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  min-height: 100vh;
+  padding: 40px 16px 0;
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 16px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 20px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-container {
+  margin-bottom: 8px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 10px;
+}
+
+.inequality-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 50%), #23291f var(--fill, 50%));
+  outline: none;
+  cursor: pointer;
+}
+
+.inequality-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.inequality-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.inequality-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.inequality-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.stat-value.acc {
+  color: var(--acc);
+}
+
+.stat-value.amb {
+  color: var(--amb);
+}
+
+.toggle-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(240,160,78,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(240,160,78,.18);
+}
+
+.knowdrop-section {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.knowdrop {
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-this-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 10px;
+}
+
+.know-this-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.acc-text {
+  color: var(--acc);
+}
+</style>
+
+<h2 class="sr-only">Interactive widget showing how global inequality drives health differences worldwide</h2>
+
+<div class="container">
+  <h1>The gap between nations isn't fate — it's <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">amplified</span></h1>
+  
+  <p class="intro">The same forces that shape wealth inequality also shape health inequality. Poverty creates disease, but corporate marketing of harmful products — tobacco, alcohol, ultra-processed food — systematically targets lower-income countries, widening the health gap. Drag the slider to see how inequality concentrates risk.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Risk Concentration</span>
+      <span class="live-tag" id="liveTag">Moderate inequality</span>
+    </div>
+    <div class="card-hint">Distribution of health risk factors across income levels</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="canvas"></canvas>
+      <div class="canvas-overlay" id="overlayTag">50% inequality index</div>
+    </div>
+
+    <div class="slider-container">
+      <div class="slider-label">Global inequality</div>
+      <input type="range" min="0" max="100" value="50" class="inequality-slider" id="slider">
+      <div class="tick-labels">
+        <span>Equal</span>
+        <span>Extreme</span>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-label">High-income burden</div>
+        <div class="stat-value acc" id="highStat">23%</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Low-income burden</div>
+        <div class="stat-value amb" id="lowStat">77%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-container">
+      <button class="toggle-btn active" id="btnWater">Water</button>
+      <button class="toggle-btn" id="btnMarketing">Marketing</button>
+    </div>
+    
+    <div class="knowdrop-section">
+      <div class="knowdrop" id="knowdropText">
+        Access to safe water and sanitation remains the foundation of health — yet 2.2 billion people globally lack safe drinking water, and 4.2 billion lack safely managed sanitation. Waterborne diseases kill nearly 1.4 million people annually, most of them children under five. The burden falls overwhelmingly on low-income countries, where unsafe water drives diarrheal disease, cholera, typhoid, and parasitic infections. When communities lack basic infrastructure, every health intervention downstream becomes harder — maternal mortality rises, malnutrition worsens, chronic disease accelerates. Safe water isn't just one factor among many; it's the precondition for almost every other health gain.
+      </div>
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-this-tag">Know This</div>
+    <div class="know-this-body">
+      <span class="acc-text">Access to safe water and sanitation</span>, <span class="acc-text">poverty, inequality and discrimination</span>, and the <span class="acc-text">global marketing of tobacco, alcohol, and processed food</span> drive differences in health status — not randomly, but systematically concentrating disease burden in the world's poorest populations.
+    </div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const slider = document.getElementById('slider');
+const liveTag = document.getElementById('liveTag');
+const overlayTag = document.getElementById('overlayTag');
+const highStat = document.getElementById('highStat');
+const lowStat = document.getElementById('lowStat');
+const btnWater = document.getElementById('btnWater');
+const btnMarketing = document.getElementById('btnMarketing');
+const knowdropText = document.getElementById('knowdropText');
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d', { alpha: false });
+
+let particles = [];
+let inequality = 0.5;
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  initParticles();
+}
+
+function initParticles() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  particles = [];
+  
+  // Create risk particles (tobacco, alcohol, processed food represented as particles)
+  for (let i = 0; i < 180; i++) {
+    particles.push({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      vx: (Math.random() - 0.5) * 0.4,
+      vy: (Math.random() - 0.5) * 0.4,
+      r: Math.random() * 2.5 + 1,
+      hue: Math.random() < 0.33 ? 0 : (Math.random() < 0.5 ? 25 : 35), // red, orange, amber tones
+      income: Math.random() // 0=low income, 1=high income
+    });
+  }
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  // Draw income zones with gradient
+  const zoneGrad = ctx.createLinearGradient(0, 0, w, 0);
+  zoneGrad.addColorStop(0, 'rgba(240,160,78,0.08)');
+  zoneGrad.addColorStop(0.5, 'rgba(240,160,78,0)');
+  zoneGrad.addColorStop(1, 'rgba(250,199,117,0.08)');
+  ctx.fillStyle = zoneGrad;
+  ctx.fillRect(0, 0, w, h);
+  
+  // Update and draw particles
+  const threshold = 0.35 + inequality * 0.4; // Concentration threshold
+  
+  particles.forEach(p => {
+    // Gravity pulls particles based on income and inequality
+    // Higher inequality = stronger pull to low-income side (left)
+    const targetX = p.income < threshold ? w * 0.2 : w * 0.8;
+    const force = inequality * 0.08;
+    
+    p.vx += (targetX - p.x) * force * 0.0008;
+    p.vy += (h * 0.5 - p.y) * force * 0.0004;
+    
+    // Damping
+    p.vx *= 0.97;
+    p.vy *= 0.97;
+    
+    p.x += p.vx;
+    p.y += p.vy;
+    
+    // Bounce off edges
+    if (p.x < 0 || p.x > w) p.vx *= -0.8;
+    if (p.y < 0 || p.y > h) p.vy *= -0.8;
+    p.x = Math.max(0, Math.min(w, p.x));
+    p.y = Math.max(0, Math.min(h, p.y));
+    
+    // Draw particle
+    const isLowIncome = p.income < threshold;
+    const baseAlpha = isLowIncome ? 0.7 : 0.35;
+    const alpha = baseAlpha * (0.6 + 0.4 * Math.sin(Date.now() * 0.002 + p.x));
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    
+    // Glow
+    const glow = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 4);
+    glow.addColorStop(0, `hsla(${p.hue}, 85%, 60%, ${alpha * 0.6})`);
+    glow.addColorStop(0.5, `hsla(${p.hue}, 85%, 55%, ${alpha * 0.2})`);
+    glow.addColorStop(1, `hsla(${p.hue}, 85%, 50%, 0)`);
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r * 4, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Core
+    ctx.fillStyle = `hsla(${p.hue}, 90%, 65%, ${alpha})`;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fill();
+    
+    ctx.restore();
+  });
+  
+  // Draw dividing line
+  ctx.strokeStyle = 'rgba(140,147,137,0.25)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(w * 0.5, 0);
+  ctx.lineTo(w * 0.5, h);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  
+  // Labels
+  ctx.font = '11px "JetBrains Mono"';
+  ctx.textAlign = 'center';
+  ctx.fillStyle = 'rgba(250,199,117,0.6)';
+  ctx.fillText('LOW INCOME', w * 0.25, h - 12);
+  ctx.fillStyle = 'rgba(240,160,78,0.6)';
+  ctx.fillText('HIGH INCOME', w * 0.75, h - 12);
+  
+  // Bloom effect
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const cx = w / 2;
+  const cy = h / 2;
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+  
+  requestAnimationFrame(draw);
+}
+
+function updateStats() {
+  const threshold = 0.35 + inequality * 0.4;
+  const lowCount = particles.filter(p => p.income < threshold).length;
+  const highCount = particles.length - lowCount;
+  
+  const lowPct = Math.round((lowCount / particles.length) * 100);
+  const highPct = 100 - lowPct;
+  
+  highStat.textContent = highPct + '%';
+  lowStat.textContent = lowPct + '%';
+  
+  const val = Math.round(inequality * 100);
+  overlayTag.textContent = val + '% inequality index';
+  
+  if (inequality < 0.3) {
+    liveTag.textContent = 'Low inequality';
+  } else if (inequality < 0.7) {
+    liveTag.textContent = 'Moderate inequality';
+  } else {
+    liveTag.textContent = 'Extreme inequality';
+  }
+}
+
+slider.addEventListener('input', (e) => {
+  const val = e.target.value;
+  inequality = val / 100;
+  slider.style.setProperty('--fill', val + '%');
+  updateStats();
+});
+
+btnWater.addEventListener('click', () => {
+  btnWater.classList.add('active');
+  btnMarketing.classList.remove('active');
+  knowdropText.textContent = "Access to safe water and sanitation remains the foundation of health — yet 2.2 billion people globally lack safe drinking water, and 4.2 billion lack safely managed sanitation. Waterborne diseases kill nearly 1.4 million people annually, most of them children under five. The burden falls overwhelmingly on low-income countries, where unsafe water drives diarrheal disease, cholera, typhoid, and parasitic infections. When communities lack basic infrastructure, every health intervention downstream becomes harder — maternal mortality rises, malnutrition worsens, chronic disease accelerates. Safe water isn't just one factor among many; it's the precondition for almost every other health gain.";
+});
+
+btnMarketing.addEventListener('click', () => {
+  btnMarketing.classList.add('active');
+  btnWater.classList.remove('active');
+  knowdropText.textContent = "Global marketing of tobacco, alcohol, and processed food systematically targets low- and middle-income countries where regulation is weaker and populations are growing. Transnational corporations promote products known to cause non-communicable diseases — cancers, cardiovascular disease, diabetes, respiratory illness — using tactics banned in wealthier nations. This isn't accidental spillover; it's strategic expansion into markets with fewer restrictions. As smoking rates decline in high-income countries, tobacco companies aggressively market in Africa and Asia. As sugar-sweetened beverage consumption plateaus in the Global North, companies flood the Global South with advertising. The result: disease burdens shift to populations least equipped to manage them, widening global health inequality while profits concentrate elsewhere.";
+});
+
+slider.style.setProperty('--fill', '50%');
+
+window.addEventListener('resize', resize);
+resize();
+draw();
+updateStats();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'factors-behind-global-health-differences'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

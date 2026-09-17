@@ -1,0 +1,608 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>FIFO - First In First Out — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #CE4480;
+  --ag: rgba(206, 68, 128, .7);
+  --ag1: rgba(206, 68, 128, .12);
+  --ag2: rgba(206, 68, 128, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  min-height: 100vh;
+  padding: 40px 16px 72px;
+  color: var(--ink);
+}
+
+.container { max-width: 720px; margin: 0 auto; }
+
+h1 {
+  font-size: clamp(30px, 8vw, 52px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  margin-bottom: 16px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  line-height: 1.55;
+  max-width: 58ch;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 18px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-container { margin-bottom: 12px; }
+
+.fifo-slider {
+  width: 100%;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  border-radius: 3px;
+  outline: none;
+  margin: 18px 0 10px;
+}
+
+.fifo-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.fifo-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.fifo-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.fifo-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.toggle-card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: #12160F;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(206,68,128,.1);
+  border-color: var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(206,68,128,.18);
+}
+
+.knowdrop-divider {
+  border-top: 1px solid var(--line);
+  margin-bottom: 16px;
+}
+
+.knowdrop {
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 34px;
+}
+
+.know-this-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 10px;
+}
+
+.know-this-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.footer {
+  margin-top: 34px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 10px var(--acc);
+  animation: fifoPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes fifoPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .35; transform: scale(.6); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">FIFO Inventory Costing Interactive Widget</h2>
+  
+  <h1>Your Balance Sheet Lies About Cost — But FIFO Makes It <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">Truthful</span></h1>
+  
+  <p class="intro">In most accounting methods, your balance sheet shows what you paid historically, not what inventory is actually worth today. FIFO breaks this pattern by keeping your newest purchases in ending inventory, showing values close to current replacement cost. Drag the slider to see how rising or falling purchase prices affect your financial statements.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-label">Purchase Price Trend</div>
+      <div class="live-tag" id="trendTag">RISING +15%</div>
+    </div>
+    <div class="card-hint">Drag to simulate price inflation or deflation</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="fifoCanvas"></canvas>
+      <div class="canvas-overlay" id="canvasOverlay">NEWEST UNITS IN INVENTORY · OLDEST TO COGS</div>
+    </div>
+
+    <div class="slider-container">
+      <input type="range" min="-30" max="30" value="15" class="fifo-slider" id="priceSlider">
+      <div class="tick-labels">
+        <span>FALLING −30%</span>
+        <span>STABLE 0%</span>
+        <span>RISING +30%</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Ending Inventory</div>
+        <div class="stat-value" id="invValue" style="color:var(--acc)">$5,750</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Gross Profit</div>
+        <div class="stat-value" id="profitValue" style="color:var(--amb)">$3,250</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toggle-card">
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" id="btnRising">Rising Prices</button>
+      <button class="toggle-btn" id="btnFalling">Falling Prices</button>
+    </div>
+    <div class="knowdrop-divider"></div>
+    <p class="knowdrop" id="knowdropText">When purchase prices rise over time, FIFO allocates your oldest, cheapest costs to Cost of Goods Sold first, leaving your newest, most expensive purchases in ending inventory. This produces the highest ending inventory value on the balance sheet and the highest gross profit on the income statement. Because your ending inventory consists of recent purchases, the balance sheet figure closely approximates current replacement cost, making it economically relevant for decision-making. The physical flow assumption matches real business practices in sectors like grocery retail where older stock must move first to prevent spoilage or obsolescence.</p>
+  </div>
+
+  <div class="know-this">
+    <div class="know-this-tag">Know This</div>
+    <div class="know-this-body">Under FIFO, your <span style="color:var(--acc)">ending inventory</span> always consists of the most recently purchased units at their most recent costs, keeping your balance sheet close to <span style="color:var(--acc)">current replacement cost</span> and making it more economically relevant than historical cost methods.</div>
+  </div>
+
+  <div class="footer">
+    <div class="pulse-dot"></div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('fifoCanvas');
+const ctx = canvas.getContext('2d');
+const slider = document.getElementById('priceSlider');
+const trendTag = document.getElementById('trendTag');
+const canvasOverlay = document.getElementById('canvasOverlay');
+const invValue = document.getElementById('invValue');
+const profitValue = document.getElementById('profitValue');
+const btnRising = document.getElementById('btnRising');
+const btnFalling = document.getElementById('btnFalling');
+const knowdropText = document.getElementById('knowdropText');
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d');
+
+let priceChange = 15;
+let animTime = 0;
+
+const risingText = "When purchase prices rise over time, FIFO allocates your oldest, cheapest costs to Cost of Goods Sold first, leaving your newest, most expensive purchases in ending inventory. This produces the highest ending inventory value on the balance sheet and the highest gross profit on the income statement. Because your ending inventory consists of recent purchases, the balance sheet figure closely approximates current replacement cost, making it economically relevant for decision-making. The physical flow assumption matches real business practices in sectors like grocery retail where older stock must move first to prevent spoilage or obsolescence.";
+
+const fallingText = "When purchase prices fall over time, FIFO allocates your oldest, most expensive costs to Cost of Goods Sold first, leaving your newest, cheapest purchases in ending inventory. This produces the lowest ending inventory value on the balance sheet and the lowest gross profit on the income statement among costing methods. While profit appears reduced, your balance sheet still shows inventory at close to current replacement cost because ending inventory consists of recent lower-priced purchases. This scenario occurs in technology sectors or during economic downturns where input costs decline over the reporting period.";
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  draw();
+}
+
+function updateUI() {
+  const change = priceChange;
+  const absChange = Math.abs(change);
+  
+  if (change > 0) {
+    trendTag.textContent = `RISING +${absChange}%`;
+  } else if (change < 0) {
+    trendTag.textContent = `FALLING −${absChange}%`;
+  } else {
+    trendTag.textContent = 'STABLE 0%';
+  }
+
+  // Calculate values
+  // Base scenario: 100 units sold at $50 each = $5000 revenue
+  // Started with 50 units at $20 = $1000
+  // Purchased 100 units during period
+  // Ending inventory: 50 units (newest)
+  
+  const baseOldCost = 20;
+  const baseNewCost = 25;
+  
+  const oldCost = baseOldCost * (1 - change / 100);
+  const newCost = baseNewCost * (1 + change / 100);
+  
+  // FIFO: oldest go to COGS first
+  // Sold 100 units: 50 old @ oldCost + 50 newer @ midpoint
+  const midCost = (oldCost + newCost) / 2;
+  const cogs = 50 * oldCost + 50 * midCost;
+  
+  // Ending inventory: 50 newest @ newCost
+  const endInv = 50 * newCost;
+  
+  // Revenue: 100 units @ $50
+  const revenue = 5000;
+  const grossProfit = revenue - cogs;
+  
+  invValue.textContent = `$${Math.round(endInv).toLocaleString()}`;
+  profitValue.textContent = `$${Math.round(grossProfit).toLocaleString()}`;
+  
+  // Update slider fill
+  const fillPercent = ((parseFloat(slider.value) - parseFloat(slider.min)) / (parseFloat(slider.max) - parseFloat(slider.min))) * 100;
+  slider.style.setProperty('--fill', fillPercent + '%');
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  animTime += 0.016;
+  
+  const change = priceChange;
+  
+  // Draw inventory flow visualization
+  const boxCount = 10;
+  const boxW = w * 0.08;
+  const boxH = h * 0.14;
+  const spacing = (w - boxW * 2) / (boxCount + 1);
+  
+  // Starting y position
+  const startY = h * 0.25;
+  const endY = h * 0.65;
+  
+  // Draw oldest boxes (left side) - these go to COGS
+  for (let i = 0; i < 5; i++) {
+    const x = spacing * (i + 1);
+    const y = startY;
+    
+    // Animate boxes moving down to COGS
+    const progress = Math.min(1, (animTime % 3) / 1.5);
+    const currentY = y + (endY - y) * progress;
+    const fade = 1 - progress * 0.7;
+    
+    // Box color gets darker (older = cheaper in rising market)
+    const intensity = change > 0 ? 0.3 + (i / 5) * 0.3 : 0.6 - (i / 5) * 0.3;
+    
+    ctx.save();
+    ctx.globalAlpha = fade;
+    
+    // Box
+    ctx.fillStyle = `rgba(206, 68, 128, ${intensity})`;
+    ctx.fillRect(x, currentY, boxW, boxH);
+    
+    // Glow
+    ctx.globalCompositeOperation = 'lighter';
+    const glow = ctx.createRadialGradient(x + boxW/2, currentY + boxH/2, 0, x + boxW/2, currentY + boxH/2, boxW * 0.8);
+    glow.addColorStop(0, `rgba(206, 68, 128, ${intensity * 0.4})`);
+    glow.addColorStop(1, 'rgba(206, 68, 128, 0)');
+    ctx.fillStyle = glow;
+    ctx.fillRect(x - boxW * 0.3, currentY - boxH * 0.3, boxW * 1.6, boxH * 1.6);
+    
+    ctx.restore();
+  }
+  
+  // Draw newest boxes (right side) - these stay in inventory
+  for (let i = 0; i < 5; i++) {
+    const x = w - spacing * (i + 1) - boxW;
+    const y = startY;
+    
+    // These boxes stay put with subtle pulse
+    const pulse = 1 + Math.sin(animTime * 2 + i * 0.5) * 0.05;
+    
+    // Box color gets brighter (newer = more expensive in rising market)
+    const intensity = change > 0 ? 0.6 + (i / 5) * 0.3 : 0.3 + (i / 5) * 0.3;
+    
+    ctx.save();
+    
+    // Box
+    ctx.fillStyle = `rgba(206, 68, 128, ${intensity})`;
+    ctx.fillRect(x, y, boxW * pulse, boxH * pulse);
+    
+    // Glow
+    ctx.globalCompositeOperation = 'lighter';
+    const glow = ctx.createRadialGradient(x + boxW/2, y + boxH/2, 0, x + boxW/2, y + boxH/2, boxW * 0.9);
+    glow.addColorStop(0, `rgba(206, 68, 128, ${intensity * 0.5})`);
+    glow.addColorStop(1, 'rgba(206, 68, 128, 0)');
+    ctx.fillStyle = glow;
+    ctx.fillRect(x - boxW * 0.4, y - boxH * 0.4, boxW * 1.8, boxH * 1.8);
+    
+    ctx.restore();
+  }
+  
+  // Labels
+  ctx.font = '11px JetBrains Mono';
+  ctx.textAlign = 'center';
+  
+  // Oldest label
+  ctx.fillStyle = 'rgba(237, 237, 232, 0.6)';
+  ctx.fillText('OLDEST', spacing * 3, h * 0.18);
+  ctx.fillText('↓ TO COGS', spacing * 3, endY + boxH + 20);
+  
+  // Newest label
+  ctx.fillStyle = 'rgba(206, 68, 128, 0.9)';
+  ctx.fillText('NEWEST', w - spacing * 3, h * 0.18);
+  ctx.fillText('ENDING INV', w - spacing * 3, startY + boxH + 20);
+  
+  // Arrow showing flow
+  const arrowY = h * 0.5;
+  ctx.strokeStyle = 'rgba(237, 237, 232, 0.3)';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(w * 0.15, arrowY);
+  ctx.lineTo(w * 0.4, arrowY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  
+  // Bloom effect
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const vig = ctx.createRadialGradient(w/2, h/2, h * 0.28, w/2, h/2, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+  
+  requestAnimationFrame(draw);
+}
+
+slider.addEventListener('input', (e) => {
+  priceChange = parseFloat(e.target.value);
+  updateUI();
+});
+
+btnRising.addEventListener('click', () => {
+  btnRising.classList.add('active');
+  btnFalling.classList.remove('active');
+  knowdropText.textContent = risingText;
+  slider.value = 15;
+  priceChange = 15;
+  updateUI();
+});
+
+btnFalling.addEventListener('click', () => {
+  btnFalling.classList.add('active');
+  btnRising.classList.remove('active');
+  knowdropText.textContent = fallingText;
+  slider.value = -15;
+  priceChange = -15;
+  updateUI();
+});
+
+window.addEventListener('resize', resize);
+resize();
+updateUI();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'fifo-first-in-first-out'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

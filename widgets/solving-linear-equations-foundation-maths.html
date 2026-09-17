@@ -1,0 +1,587 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Solving Linear Equations — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #7ED97A;
+  --ag: rgba(126, 217, 122, .7);
+  --ag1: rgba(126, 217, 122, .12);
+  --ag2: rgba(126, 217, 122, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+body{
+  background:radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family:'Geist',sans-serif;
+  min-height:100vh;
+  padding:40px 16px 72px;
+  color:var(--ink);
+}
+
+.container{max-width:720px;margin:0 auto}
+
+h1{
+  font-size:clamp(30px,8vw,52px);
+  font-weight:700;
+  letter-spacing:-0.03em;
+  line-height:1.02;
+  margin-bottom:14px;
+}
+
+.intro{
+  font-size:15.5px;
+  color:var(--ink-dim);
+  line-height:1.55;
+  max-width:58ch;
+  margin-bottom:32px;
+}
+
+.card{
+  background:linear-gradient(180deg,#12160F,#0d100b);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:16px;
+  box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);
+  margin-bottom:20px;
+}
+
+.card-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:6px;
+}
+
+.card-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  text-transform:uppercase;
+  color:var(--ink);
+}
+
+.live-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  text-transform:uppercase;
+  color:var(--acc);
+}
+
+.card-hint{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  color:var(--ink-dim);
+  margin-bottom:12px;
+}
+
+.canvas-wrapper{
+  position:relative;
+  width:100%;
+  aspect-ratio:16/9;
+  border-radius:12px;
+  overflow:hidden;
+  background:#000;
+  box-shadow:inset 0 0 0 1px var(--ag1);
+  margin-bottom:16px;
+}
+
+canvas{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  display:block;
+}
+
+.canvas-overlay{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  background:rgba(0,0,0,0.55);
+  backdrop-filter:blur(4px);
+  padding:9px 16px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:14px;
+  text-transform:uppercase;
+  color:var(--acc);
+  text-align:center;
+}
+
+.eq-slider{
+  width:100%;
+  height:4px;
+  -webkit-appearance:none;
+  appearance:none;
+  background:linear-gradient(90deg, var(--acc) var(--fill,0%), #23291f var(--fill,0%));
+  border-radius:3px;
+  outline:none;
+  margin:16px 0 8px;
+}
+
+.eq-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  appearance:none;
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  background:#0B0D0C;
+  border:2px solid var(--acc);
+  box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);
+  cursor:pointer;
+  transition:box-shadow .15s;
+}
+
+.eq-slider::-moz-range-thumb{
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  background:#0B0D0C;
+  border:2px solid var(--acc);
+  box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);
+  cursor:pointer;
+  transition:box-shadow .15s;
+}
+
+.eq-slider:hover::-webkit-slider-thumb{
+  box-shadow:0 0 24px var(--acc),0 0 8px var(--ag);
+}
+
+.eq-slider:hover::-moz-range-thumb{
+  box-shadow:0 0 24px var(--acc),0 0 8px var(--ag);
+}
+
+.tick-labels{
+  display:flex;
+  justify-content:space-between;
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  color:var(--ink-dim);
+  padding:0 10px;
+}
+
+.stat-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+  margin-top:16px;
+  padding-top:16px;
+  border-top:1px solid var(--line);
+}
+
+.stat{
+  text-align:center;
+}
+
+.stat-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;
+  text-transform:uppercase;
+  color:var(--ink-dim);
+  margin-bottom:4px;
+}
+
+.stat-value{
+  font-family:'JetBrains Mono',monospace;
+  font-size:24px;
+  font-weight:500;
+}
+
+.stat-value.acc{color:var(--acc)}
+.stat-value.amb{color:var(--amb)}
+
+.toggle-card{
+  background:linear-gradient(180deg,#12160F,#0d100b);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:16px;
+  box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);
+  margin-bottom:20px;
+}
+
+.toggle-buttons{
+  display:flex;
+  gap:10px;
+  margin-bottom:16px;
+}
+
+.toggle-btn{
+  flex:1;
+  font-family:'JetBrains Mono',monospace;
+  font-size:14.5px;
+  padding:12px;
+  border-radius:11px;
+  border:1px solid var(--line);
+  background:#12160F;
+  color:var(--ink-dim);
+  cursor:pointer;
+  transition:all .2s;
+}
+
+.toggle-btn.active{
+  background:rgba(126, 217, 122,.1);
+  border-color:var(--acc);
+  color:var(--acc);
+  box-shadow:0 0 22px rgba(126, 217, 122,.18);
+}
+
+.knowdrop{
+  padding-top:16px;
+  border-top:1px solid var(--line);
+  font-size:14.5px;
+  line-height:1.65;
+  color:var(--ink);
+}
+
+.know-this{
+  border-left:3px solid var(--acc);
+  padding:16px 18px;
+  background:linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius:0 12px 12px 0;
+  margin-bottom:20px;
+}
+
+.know-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  text-transform:uppercase;
+  letter-spacing:0.15em;
+  color:var(--acc);
+  margin-bottom:8px;
+  display:block;
+}
+
+.know-body{
+  font-size:17.4px;
+  line-height:1.55;
+  color:var(--ink);
+}
+
+.footer{
+  margin-top:34px;
+  padding-top:16px;
+  border-top:1px solid var(--line);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.pulse-dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--acc);
+  box-shadow:0 0 10px var(--acc);
+  animation:eqPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes eqPulse{
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:.35;transform:scale(.6)}
+}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+</style>
+
+<h2 class="sr-only">Interactive linear equation solver showing balance principle and inverse operations</h2>
+
+<div class="container">
+  <h1>Equations aren't puzzles — they're <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">balances</span></h1>
+  
+  <p class="intro">The secret to solving any linear equation isn't memorising steps — it's understanding that both sides must stay equal, and operations must be reversed in the exact opposite order they were applied. Move the slider to adjust the variable and watch how balance is maintained.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Balance View</span>
+      <span class="live-tag" id="balanceTag">BALANCED</span>
+    </div>
+    <div class="card-hint">Adjust x to balance both sides of the equation</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="balanceCanvas"></canvas>
+      <div class="canvas-overlay" id="canvasOverlay">x = 0 → Left: 0 | Right: 6</div>
+    </div>
+
+    <input type="range" class="eq-slider" id="xSlider" min="-5" max="15" step="0.5" value="0">
+    <div class="tick-labels">
+      <span>x = -5</span>
+      <span>x = 0</span>
+      <span>x = 5</span>
+      <span>x = 10</span>
+      <span>x = 15</span>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Current x</div>
+        <div class="stat-value acc" id="xValue">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Balance Status</div>
+        <div class="stat-value amb" id="balanceStatus">Off</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toggle-card">
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" data-mode="order">Order Matters</button>
+      <button class="toggle-btn" data-mode="check">Check Solution</button>
+    </div>
+    
+    <div class="knowdrop" id="knowdropText">
+      When solving 2x + 3 = 9, you must eliminate the addition term (+3) before dealing with the multiplication (×2). This isn't arbitrary — it reverses the order operations were originally applied. To isolate x, subtract 3 from both sides first (giving 2x = 6), then divide both sides by 2 (giving x = 3). If you tried to divide by 2 first, you'd get x + 1.5 = 4.5, which is harder to work with and breaks the systematic approach. Always work backwards through operations: undo addition/subtraction first, then multiplication/division.
+    </div>
+  </div>
+
+  <div class="know-this">
+    <span class="know-tag">Know This</span>
+    <div class="know-body">
+      <span style="color:var(--acc)">Always eliminate addition or subtraction terms first</span> before dealing with multiplication or division, and <span style="color:var(--acc)">check your solution by substituting back</span> into the original equation to verify both sides equal.
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="pulse-dot"></div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('balanceCanvas');
+const ctx = canvas.getContext('2d');
+const slider = document.getElementById('xSlider');
+const xValue = document.getElementById('xValue');
+const balanceStatus = document.getElementById('balanceStatus');
+const balanceTag = document.getElementById('balanceTag');
+const canvasOverlay = document.getElementById('canvasOverlay');
+const knowdropText = document.getElementById('knowdropText');
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d');
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  draw();
+}
+
+let animTime = 0;
+let targetLeftAngle = 0;
+let targetRightAngle = 0;
+let currentLeftAngle = 0;
+let currentRightAngle = 0;
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  const x = parseFloat(slider.value);
+  const leftSide = 2 * x + 3;
+  const rightSide = 9;
+  const diff = leftSide - rightSide;
+  
+  // Smooth animation
+  animTime += 0.08;
+  targetLeftAngle = Math.max(-0.3, Math.min(0.3, diff * 0.05));
+  targetRightAngle = -targetLeftAngle;
+  
+  currentLeftAngle += (targetLeftAngle - currentLeftAngle) * 0.15;
+  currentRightAngle += (targetRightAngle - currentRightAngle) * 0.15;
+  
+  const cx = w / 2;
+  const cy = h * 0.45;
+  const beamWidth = w * 0.6;
+  const beamThickness = 6;
+  
+  // Central pivot glow
+  const pivotGlow = ctx.createRadialGradient(cx, cy, 0, cx, cy, 28);
+  pivotGlow.addColorStop(0, 'rgba(126, 217, 122,0.4)');
+  pivotGlow.addColorStop(0.6, 'rgba(126, 217, 122,0.15)');
+  pivotGlow.addColorStop(1, 'rgba(126, 217, 122,0)');
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.fillStyle = pivotGlow;
+  ctx.beginPath();
+  ctx.arc(cx, cy, 28, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+  
+  // Balance beam
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate((currentLeftAngle + currentRightAngle) / 2);
+  
+  const grad = ctx.createLinearGradient(-beamWidth/2, 0, beamWidth/2, 0);
+  grad.addColorStop(0, 'rgba(126, 217, 122,0.6)');
+  grad.addColorStop(0.5, 'rgba(126, 217, 122,0.95)');
+  grad.addColorStop(1, 'rgba(126, 217, 122,0.6)');
+  
+  ctx.fillStyle = grad;
+  ctx.fillRect(-beamWidth/2, -beamThickness/2, beamWidth, beamThickness);
+  
+  // Beam glow
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.shadowColor = 'rgba(126, 217, 122,0.5)';
+  ctx.shadowBlur = 12;
+  ctx.fillRect(-beamWidth/2, -beamThickness/2, beamWidth, beamThickness);
+  ctx.restore();
+  
+  ctx.restore();
+  
+  // Left pan
+  const leftX = cx - beamWidth * 0.35;
+  const leftY = cy + Math.sin(currentLeftAngle) * beamWidth * 0.35;
+  
+  ctx.save();
+  ctx.translate(leftX, leftY);
+  
+  // Chain
+  ctx.strokeStyle = 'rgba(237,237,232,0.3)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(0, -35);
+  ctx.lineTo(0, 0);
+  ctx.stroke();
+  
+  // Pan
+  ctx.fillStyle = 'rgba(20,25,18,0.9)';
+  ctx.strokeStyle = 'rgba(126, 217, 122,0.4)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(0, 0, 32, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  
+  // Left value
+  ctx.fillStyle = '#7ED97A';
+  ctx.font = '600 16px JetBrains Mono';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(leftSide.toFixed(1), 0, 0);
+  
+  ctx.restore();
+  
+  // Right pan
+  const rightX = cx + beamWidth * 0.35;
+  const rightY = cy + Math.sin(currentRightAngle) * beamWidth * 0.35;
+  
+  ctx.save();
+  ctx.translate(rightX, rightY);
+  
+  // Chain
+  ctx.strokeStyle = 'rgba(237,237,232,0.3)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(0, -35);
+  ctx.lineTo(0, 0);
+  ctx.stroke();
+  
+  // Pan
+  ctx.fillStyle = 'rgba(20,25,18,0.9)';
+  ctx.strokeStyle = 'rgba(250,199,117,0.4)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(0, 0, 32, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  
+  // Right value
+  ctx.fillStyle = '#FAC775';
+  ctx.font = '600 16px JetBrains Mono';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(rightSide.toFixed(1), 0, 0);
+  
+  ctx.restore();
+  
+  // Equation label
+  ctx.fillStyle = 'rgba(237,237,232,0.6)';
+  ctx.font = '400 13px JetBrains Mono';
+  ctx.textAlign = 'center';
+  ctx.fillText('2x + 3 = 9', cx, h * 0.15);
+  
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+  
+  requestAnimationFrame(draw);
+}
+
+function update() {
+  const x = parseFloat(slider.value);
+  const leftSide = 2 * x + 3;
+  const rightSide = 9;
+  const balanced = Math.abs(leftSide - rightSide) < 0.1;
+  
+  xValue.textContent = x.toFixed(1);
+  balanceStatus.textContent = balanced ? 'Balanced' : 'Off';
+  balanceTag.textContent = balanced ? 'BALANCED ✓' : 'UNBALANCED';
+  
+  canvasOverlay.textContent = `x = ${x.toFixed(1)} → Left: ${leftSide.toFixed(1)} | Right: ${rightSide.toFixed(1)}`;
+  
+  const fill = ((x + 5) / 20) * 100;
+  slider.style.setProperty('--fill', fill + '%');
+}
+
+slider.addEventListener('input', update);
+
+// Toggle buttons
+const toggleBtns = document.querySelectorAll('.toggle-btn');
+const knowdropContent = {
+  order: `When solving 2x + 3 = 9, you must eliminate the addition term (+3) before dealing with the multiplication (×2). This isn't arbitrary — it reverses the order operations were originally applied. To isolate x, subtract 3 from both sides first (giving 2x = 6), then divide both sides by 2 (giving x = 3). If you tried to divide by 2 first, you'd get x + 1.5 = 4.5, which is harder to work with and breaks the systematic approach. Always work backwards through operations: undo addition/subtraction first, then multiplication/division.`,
+  check: `After solving 2x + 3 = 9 to get x = 3, substitute that value back into the original equation to verify: 2(3) + 3 = 6 + 3 = 9. Both sides equal 9, confirming the solution is correct. This checking step catches arithmetic errors and ensures you haven't lost or gained solutions during manipulation. For the equation above, any x value other than 3 will create an imbalance — try x = 2: you get 2(2) + 3 = 7, which doesn't equal 9. Substitution back is the ultimate test of whether your solution maintains the equality principle that defines equations.`
+};
+
+toggleBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    toggleBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const mode = btn.dataset.mode;
+    knowdropText.textContent = knowdropContent[mode];
+  });
+});
+
+window.addEventListener('resize', resize);
+resize();
+update();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'solving-linear-equations'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

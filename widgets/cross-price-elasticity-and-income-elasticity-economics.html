@@ -1,0 +1,572 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Cross Price Elasticity and Income Elasticity — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #F187B6;
+  --ag: rgba(241, 135, 182, .7);
+  --ag1: rgba(241, 135, 182, .12);
+  --ag2: rgba(241, 135, 182, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 72px;
+  line-height: 1.5;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.container { max-width: 720px; margin: 0 auto; }
+
+h1 {
+  font-size: clamp(30px, 8vw, 52px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 28px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 12px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 14px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-row {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 10px;
+}
+
+.xed-slider {
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 50%), #23291f var(--fill, 50%));
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+  margin-bottom: 8px;
+}
+
+.xed-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.xed-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.xed-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.xed-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  padding: 0 10px;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.stat:first-child .stat-value { color: var(--acc); }
+.stat:last-child .stat-value { color: var(--amb); }
+
+.toggle-section {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: #12160F;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(241,135,182,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(241,135,182,.18);
+}
+
+.knowdrop {
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-top: 18px;
+}
+
+.know-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.know-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.footer {
+  margin-top: 34px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 10px var(--acc);
+  animation: xedPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes xedPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .35; transform: scale(.6); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Cross Price Elasticity and Income Elasticity Interactive Widget</h2>
+  
+  <h1>Markets are interconnected webs, not isolated <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">islands</span></h1>
+  
+  <p class="intro">A price change in one good ripples through related markets — substitutes pull demand away when their rival's price rises, complements drag demand down when their partner's price climbs. Drag the slider to explore how cross-price elasticity reveals whether two goods are rivals or partners.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Cross-Price Elasticity</span>
+      <span class="live-tag" id="xed-tag">XED = 0.00</span>
+    </div>
+    <div class="card-hint">Negative XED = complements · Positive XED = substitutes</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="xed-canvas"></canvas>
+      <div class="canvas-overlay" id="canvas-status">Unrelated goods</div>
+    </div>
+
+    <div class="slider-row">
+      <div class="slider-label">Cross-Price Elasticity (XED)</div>
+      <input type="range" class="xed-slider" id="xed-input" min="-2" max="2" step="0.01" value="0">
+      <div class="tick-labels">
+        <span>Strong Complements</span>
+        <span>Unrelated</span>
+        <span>Strong Substitutes</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Good A Price</div>
+        <div class="stat-value" id="price-stat">+10%</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Good B Demand</div>
+        <div class="stat-value" id="demand-stat">0%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-section">
+      <button class="toggle-btn active" data-type="substitute">Substitutes</button>
+      <button class="toggle-btn" data-type="luxury">Luxury Goods</button>
+    </div>
+    
+    <div class="knowdrop" id="knowdrop-text">
+      Positive XED identifies substitute goods like Coke and Pepsi where consumers switch between alternatives when relative prices change. When Coke's price rises by 10% and Pepsi demand increases by 8%, the XED of +0.8 confirms they're substitutes — buyers flee the more expensive option for its cheaper rival. The stronger the substitutability, the higher the positive XED value. Perfect substitutes would have infinite XED as any price difference causes complete switching, while weak substitutes have XED values closer to zero reflecting limited consumer willingness to switch between them.
+    </div>
+  </div>
+
+  <div class="know-this">
+    <span class="know-tag">Know This</span>
+    <p class="know-body"><span style="color:var(--acc)">Positive XED</span> means substitute goods like Coke and Pepsi where one price rise increases demand for the other, <span style="color:var(--acc)">negative XED</span> means complementary goods like cars and petrol where one price rise decreases demand for the other, <span style="color:var(--acc)">YED greater than 1</span> identifies luxury goods whose demand grows faster than income like restaurant meals.</p>
+  </div>
+
+  <div class="footer">
+    <div class="pulse-dot"></div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('xed-canvas');
+const ctx = canvas.getContext('2d');
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d');
+
+const slider = document.getElementById('xed-input');
+const xedTag = document.getElementById('xed-tag');
+const canvasStatus = document.getElementById('canvas-status');
+const priceStat = document.getElementById('price-stat');
+const demandStat = document.getElementById('demand-stat');
+
+const toggleBtns = document.querySelectorAll('.toggle-btn');
+const knowdropText = document.getElementById('knowdrop-text');
+
+let xedValue = 0;
+let time = 0;
+let animFrame;
+
+const knowdrops = {
+  substitute: "Positive XED identifies substitute goods like Coke and Pepsi where consumers switch between alternatives when relative prices change. When Coke's price rises by 10% and Pepsi demand increases by 8%, the XED of +0.8 confirms they're substitutes — buyers flee the more expensive option for its cheaper rival. The stronger the substitutability, the higher the positive XED value. Perfect substitutes would have infinite XED as any price difference causes complete switching, while weak substitutes have XED values closer to zero reflecting limited consumer willingness to switch between them.",
+  luxury: "YED greater than 1 identifies luxury goods whose demand grows proportionally faster than income rises. Restaurant meals with YED of 1.5 mean a 10% income increase produces a 15% demand increase — consumers splurge disproportionately on luxuries when they feel wealthier. Normal goods have positive YED between 0 and 1 showing demand rises with income but at a slower rate, while inferior goods like instant noodles have negative YED as rising income causes consumers to trade up to better alternatives. The income elasticity boundary at YED = 1 separates necessities from luxuries in consumer spending patterns."
+};
+
+function resize() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function updateUI() {
+  const xed = parseFloat(slider.value);
+  xedValue = xed;
+  
+  xedTag.textContent = `XED = ${xed.toFixed(2)}`;
+  
+  const demandChange = xed * 10;
+  demandStat.textContent = demandChange > 0 ? `+${demandChange.toFixed(1)}%` : `${demandChange.toFixed(1)}%`;
+  
+  if (xed < -0.3) {
+    canvasStatus.textContent = 'Strong complements';
+  } else if (xed < 0) {
+    canvasStatus.textContent = 'Weak complements';
+  } else if (xed === 0) {
+    canvasStatus.textContent = 'Unrelated goods';
+  } else if (xed < 0.3) {
+    canvasStatus.textContent = 'Weak substitutes';
+  } else {
+    canvasStatus.textContent = 'Strong substitutes';
+  }
+  
+  const fillPercent = ((xed + 2) / 4) * 100;
+  slider.style.setProperty('--fill', `${fillPercent}%`);
+}
+
+function draw() {
+  const w = canvas.width / Math.min(window.devicePixelRatio || 1, 2);
+  const h = canvas.height / Math.min(window.devicePixelRatio || 1, 2);
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  const cx = w / 2;
+  const cy = h / 2;
+  
+  // Draw grid
+  ctx.strokeStyle = 'rgba(241,135,182,0.08)';
+  ctx.lineWidth = 0.8;
+  const gridSpacing = 30;
+  
+  for (let x = gridSpacing; x < w; x += gridSpacing) {
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, h);
+    ctx.stroke();
+  }
+  
+  for (let y = gridSpacing; y < h; y += gridSpacing) {
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(w, y);
+    ctx.stroke();
+  }
+  
+  // Draw axes
+  ctx.strokeStyle = 'rgba(237,237,232,0.3)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(40, 0);
+  ctx.lineTo(40, h);
+  ctx.moveTo(0, h - 40);
+  ctx.lineTo(w, h - 40);
+  ctx.stroke();
+  
+  // Axis labels
+  ctx.fillStyle = 'rgba(237,237,232,0.5)';
+  ctx.font = '10px JetBrains Mono';
+  ctx.fillText('Good B', 6, 16);
+  ctx.fillText('Demand', 6, 28);
+  ctx.fillText('Good A Price', w - 82, h - 24);
+  
+  // Draw relationship line
+  const startX = 50;
+  const endX = w - 20;
+  const baseY = h - 40;
+  const rangeY = h - 80;
+  
+  const startY = baseY - (rangeY / 2) - (xedValue * rangeY / 4);
+  const endY = baseY - (rangeY / 2) + (xedValue * rangeY / 4);
+  
+  ctx.strokeStyle = '#F187B6';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(startX, startY);
+  ctx.lineTo(endX, endY);
+  ctx.stroke();
+  
+  // Moving particles along line
+  const numParticles = 8;
+  for (let i = 0; i < numParticles; i++) {
+    const offset = (time * 0.3 + i / numParticles) % 1;
+    const px = startX + (endX - startX) * offset;
+    const py = startY + (endY - startY) * offset;
+    
+    const glow = ctx.createRadialGradient(px, py, 0, px, py, 12);
+    glow.addColorStop(0, 'rgba(241,135,182,0.8)');
+    glow.addColorStop(1, 'rgba(241,135,182,0)');
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(px, py, 12, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+    
+    ctx.fillStyle = '#F187B6';
+    ctx.beginPath();
+    ctx.arc(px, py, 3, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+  
+  time += 0.016;
+  animFrame = requestAnimationFrame(draw);
+}
+
+slider.addEventListener('input', updateUI);
+
+toggleBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    toggleBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const type = btn.dataset.type;
+    knowdropText.textContent = knowdrops[type];
+  });
+});
+
+window.addEventListener('resize', resize);
+
+resize();
+updateUI();
+draw();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'cross-price-elasticity-and-income-elasticity'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

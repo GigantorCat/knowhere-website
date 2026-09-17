@@ -1,0 +1,615 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Inputs, Processes, and Outputs — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #E85D97;
+  --ag: rgba(232, 93, 151, .7);
+  --ag1: rgba(232, 93, 151, .12);
+  --ag2: rgba(232, 93, 151, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  min-height: 100vh;
+  padding: 40px 16px 72px;
+  color: var(--ink);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(30px,8vw,52px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  margin-bottom: 18px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  line-height: 1.55;
+  max-width: 58ch;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 20px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 16px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-row {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 10px;
+}
+
+.ipo-slider {
+  width: 100%;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 3px;
+  outline: none;
+  background: linear-gradient(90deg, var(--acc) var(--fill,0%), #23291f var(--fill,0%));
+  margin-bottom: 8px;
+}
+
+.ipo-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.ipo-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.ipo-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.ipo-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.stat-value.acc { color: var(--acc); }
+.stat-value.amb { color: var(--amb); }
+
+.toggle-card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 20px;
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(232,93,151,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(232,93,151,.18);
+}
+
+.knowdrop {
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 20px;
+}
+
+.know-this-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 10px;
+}
+
+.know-this-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.footer {
+  margin-top: 34px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 10px var(--acc);
+  animation: ipoPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes ipoPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .35; transform: scale(.6); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse-dot { animation: none; }
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Interactive visualization of inputs, processes, and outputs in operations management</h2>
+  
+  <h1>Your business doesn't make <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">products</span></h1>
+  
+  <p class="intro">It transforms inputs through processes. Most managers focus on the middle step—efficiency, speed, automation—but the breakthrough comes from mapping the entire flow system. Adjust the slider to see how input volume cascades through transformation into finished outputs.</p>
+  
+  <div class="card">
+    <div class="card-header">
+      <div class="card-label">Operations Flow</div>
+      <div class="live-tag" id="liveTag">Input Volume: 35%</div>
+    </div>
+    <div class="card-hint">Drag slider to adjust raw material flow rate</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="flowCanvas"></canvas>
+      <div class="canvas-overlay" id="canvasOverlay">Processing 42 units → 38 outputs</div>
+    </div>
+    
+    <div class="slider-row">
+      <div class="slider-label">Input Volume</div>
+      <input type="range" min="0" max="100" value="35" class="ipo-slider" id="volumeSlider">
+      <div class="tick-labels">
+        <span>Low</span>
+        <span>Medium</span>
+        <span>High</span>
+      </div>
+    </div>
+    
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Throughput Rate</div>
+        <div class="stat-value acc" id="throughput">42</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Process Efficiency</div>
+        <div class="stat-value amb" id="efficiency">91%</div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="toggle-card">
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" data-view="manufacturing">Manufacturing</button>
+      <button class="toggle-btn" data-view="service">Service</button>
+    </div>
+    <div class="knowdrop" id="knowdrop">In manufacturing operations, inputs include raw materials, component parts, machinery, labor hours, and energy. These flow into the transformation process where assembly lines, quality control stations, and packaging systems convert them into finished goods. Each stage adds value: steel sheets become car panels, panels become vehicles, vehicles become customer deliveries. The key insight is that every bottleneck in this flow—a slow supplier, a breakdown-prone machine, an undertrained team—ripples through the entire system, affecting output volume and quality standards.</div>
+  </div>
+  
+  <div class="know-this">
+    <div class="know-this-tag">Know This</div>
+    <div class="know-this-body">Every operation is a <span style="color:var(--acc)">transformation system</span> where <span style="color:var(--acc)">inputs</span> (materials, labor, capital, information) flow through structured <span style="color:var(--acc)">processes</span> to create measurable <span style="color:var(--acc)">outputs</span> (goods or services) for customers.</div>
+  </div>
+  
+  <div class="footer">
+    <div class="pulse-dot"></div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('flowCanvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d', { alpha: false });
+const slider = document.getElementById('volumeSlider');
+const liveTag = document.getElementById('liveTag');
+const canvasOverlay = document.getElementById('canvasOverlay');
+const throughputEl = document.getElementById('throughput');
+const efficiencyEl = document.getElementById('efficiency');
+
+let volume = 35;
+let time = 0;
+let particles = [];
+
+function resize() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+class Particle {
+  constructor() {
+    this.x = 0;
+    this.stage = 0; // 0=input, 1=process, 2=output
+    this.y = Math.random() * 0.5 + 0.25;
+    this.speed = 0.004 + Math.random() * 0.003;
+    this.size = 2 + Math.random() * 2;
+    this.hue = Math.random() * 30 - 15;
+    this.alive = true;
+  }
+  
+  update(dt) {
+    this.x += this.speed * dt * (volume / 35);
+    
+    if (this.x > 1 && this.alive) {
+      this.alive = false;
+    }
+  }
+  
+  draw(w, h) {
+    if (!this.alive) return;
+    
+    let cx, cy, color;
+    
+    if (this.x < 0.28) {
+      // Input zone
+      this.stage = 0;
+      cx = this.x * w * 3.57;
+      cy = this.y * h;
+      color = `hsl(${198 + this.hue}, 70%, 60%)`;
+    } else if (this.x < 0.72) {
+      // Process zone
+      this.stage = 1;
+      const t = (this.x - 0.28) / 0.44;
+      cx = 0.28 * w + t * 0.44 * w;
+      cy = this.y * h + Math.sin(t * Math.PI * 3) * h * 0.08;
+      const hueShift = Math.floor(t * 40);
+      color = `hsl(${330 + hueShift + this.hue}, 75%, 65%)`;
+    } else {
+      // Output zone
+      this.stage = 2;
+      const t = (this.x - 0.72) / 0.28;
+      cx = 0.72 * w + t * 0.28 * w;
+      cy = this.y * h;
+      color = `hsl(${310 + this.hue}, 80%, 70%)`;
+    }
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(cx, cy, this.size, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Glow
+    const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, this.size * 3);
+    glow.addColorStop(0, color.replace('65%', '50%').replace('60%', '45%').replace('70%', '55%'));
+    glow.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(cx, cy, this.size * 3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+function draw() {
+  const w = canvas.width / Math.min(window.devicePixelRatio || 1, 2);
+  const h = canvas.height / Math.min(window.devicePixelRatio || 1, 2);
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  // Zone backgrounds
+  ctx.fillStyle = 'rgba(100, 180, 220, 0.04)';
+  ctx.fillRect(0, 0, w * 0.28, h);
+  
+  ctx.fillStyle = 'rgba(232, 93, 151, 0.06)';
+  ctx.fillRect(w * 0.28, 0, w * 0.44, h);
+  
+  ctx.fillStyle = 'rgba(250, 199, 117, 0.04)';
+  ctx.fillRect(w * 0.72, 0, w * 0.28, h);
+  
+  // Zone dividers
+  ctx.strokeStyle = 'rgba(232, 93, 151, 0.2)';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(w * 0.28, 0);
+  ctx.lineTo(w * 0.28, h);
+  ctx.stroke();
+  
+  ctx.beginPath();
+  ctx.moveTo(w * 0.72, 0);
+  ctx.lineTo(w * 0.72, h);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  
+  // Zone labels
+  ctx.font = '10px "JetBrains Mono"';
+  ctx.textAlign = 'center';
+  ctx.fillStyle = 'rgba(237, 237, 232, 0.3)';
+  ctx.fillText('INPUTS', w * 0.14, h - 12);
+  ctx.fillText('PROCESSES', w * 0.5, h - 12);
+  ctx.fillText('OUTPUTS', w * 0.86, h - 12);
+  
+  // Update and draw particles
+  const dt = 1;
+  particles.forEach(p => {
+    p.update(dt);
+    p.draw(w, h);
+  });
+  
+  particles = particles.filter(p => p.alive);
+  
+  // Spawn new particles
+  const spawnRate = Math.floor(volume / 10) + 1;
+  if (Math.random() < spawnRate * 0.08) {
+    particles.push(new Particle());
+  }
+  
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const cx = w / 2;
+  const cy = h / 2;
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+  
+  time += 0.016;
+  requestAnimationFrame(draw);
+}
+
+function updateStats() {
+  const inputParticles = particles.filter(p => p.stage === 0).length;
+  const processParticles = particles.filter(p => p.stage === 1).length;
+  const outputParticles = particles.filter(p => p.stage === 2).length;
+  
+  const throughput = Math.min(Math.floor(volume * 1.2), 100);
+  const eff = Math.max(85, Math.min(96, 91 + (volume - 35) * 0.1));
+  
+  throughputEl.textContent = throughput;
+  efficiencyEl.textContent = Math.round(eff) + '%';
+  
+  const totalIn = inputParticles + processParticles;
+  const totalOut = Math.floor(totalIn * (eff / 100));
+  
+  canvasOverlay.textContent = `Processing ${totalIn} units → ${totalOut} outputs`;
+}
+
+slider.addEventListener('input', (e) => {
+  volume = parseInt(e.target.value);
+  const fill = volume + '%';
+  slider.style.setProperty('--fill', fill);
+  liveTag.textContent = `Input Volume: ${volume}%`;
+  updateStats();
+});
+
+// Initial fill
+slider.style.setProperty('--fill', '35%');
+
+// Toggle buttons
+const toggleBtns = document.querySelectorAll('.toggle-btn');
+const knowdrop = document.getElementById('knowdrop');
+
+const content = {
+  manufacturing: "In manufacturing operations, inputs include raw materials, component parts, machinery, labor hours, and energy. These flow into the transformation process where assembly lines, quality control stations, and packaging systems convert them into finished goods. Each stage adds value: steel sheets become car panels, panels become vehicles, vehicles become customer deliveries. The key insight is that every bottleneck in this flow—a slow supplier, a breakdown-prone machine, an undertrained team—ripples through the entire system, affecting output volume and quality standards.",
+  
+  service: "Service operations transform different inputs: customer requests, employee expertise, information systems, time, and physical facilities. A hospital converts patient information and medical staff knowledge into healthcare outcomes. A consulting firm transforms client data and analyst skills into strategic recommendations. Unlike manufacturing, service outputs are often intangible and consumed simultaneously with production—you can't stockpile a haircut or store a flight. This simultaneity means service process design must account for customer presence, variability in demand, and quality perception at the moment of delivery."
+};
+
+toggleBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    toggleBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const view = btn.dataset.view;
+    knowdrop.textContent = content[view];
+  });
+});
+
+resize();
+window.addEventListener('resize', resize);
+setInterval(updateStats, 200);
+draw();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'inputs-processes-and-outputs'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

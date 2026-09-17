@@ -1,0 +1,199 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Binomial Probability Formula and Notation — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+@keyframes bnPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.6)}}
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--acc:#2E9C4C;--ag:rgba(46, 156, 76, .7);--ag2:rgba(46, 156, 76, .45);--ag1:rgba(46, 156, 76, .12);--s1:#FAC775}
+.bn-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;outline:none;cursor:pointer;
+  background:linear-gradient(90deg,var(--acc) var(--fill,50%),#23291f var(--fill,50%));}
+.bn-slider::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:#0B0D0C;
+  border:2px solid var(--acc);cursor:pointer;box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;}
+.bn-slider::-webkit-slider-thumb:hover{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag);}
+.bn-slider::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);cursor:pointer;}
+.toggle-btn{font-family:'Geist',sans-serif;font-weight:500;font-size:14px;letter-spacing:0.01em;padding:12px 10px;border-radius:11px;cursor:pointer;transition:all .18s ease;flex:1;border:none;}
+.toggle-btn.off{background:#12160F;border:1px solid #262B26;color:#8C9389;}
+.toggle-btn.on{background:var(--ag1);border:1px solid var(--acc);color:var(--acc);box-shadow:0 0 20px var(--ag1);}
+</style>
+
+<div style="background:radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);color:#EDEDE8;font-family:'Geist',sans-serif;min-height:100vh;padding:32px 16px 64px;box-sizing:border-box">
+  <div style="max-width:720px;margin:0 auto">
+    <h1 style="font-size:clamp(30px,8vw,52px);font-weight:700;line-height:1.04;letter-spacing:-0.03em;margin:0 0 14px">Binomial isn't about<br>probabilities. It's about <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">counting.</span></h1>
+    <p style="color:#8C9389;font-size:15.5px;line-height:1.55;margin:0 0 30px;max-width:58ch">A binomial distribution doesn't predict any single trial. It counts how many successes pile up across <em style="font-style:normal;color:var(--s1)">n</em> independent attempts. Each ball below falls through 12 pegs — at every peg a fresh trial with the same chance <em style="font-style:normal;color:var(--acc)">p</em> of bouncing right.</p>
+
+    <div style="background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid #262B26;border-radius:18px;padding:16px;margin-bottom:18px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1)">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:0.08em;color:#FFFFFF">n = 12 trials · X ~ Bin(12, p)</div>
+        <div id="stateTag" style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--acc);font-weight:500">Sampling</div>
+      </div>
+      <div style="position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1)">
+        <canvas id="bnCanvas" style="position:absolute;inset:0;width:100%;height:100%;display:block"></canvas>
+        <div id="liveTag" style="position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:14px;letter-spacing:0.06em;text-transform:uppercase;color:var(--acc);text-align:center">DROPPING SAMPLES</div>
+      </div>
+      <div style="margin:18px 0 4px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:9px">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:0.12em;text-transform:uppercase;color:#8C9389">Probability of success</span>
+          <span id="pText" style="font-family:'JetBrains Mono',monospace;font-size:15px;color:var(--acc);font-weight:500">p = 0.50</span>
+        </div>
+        <input type="range" class="bn-slider" id="bnSlider" min="5" max="95" value="50" style="--fill:50%">
+        <div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#5a615a;margin-top:7px">
+          <span>0.05 rare</span><span>fair coin</span><span>0.95 near-certain</span>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;margin-top:16px;border-top:1px solid #262B26">
+        <div style="text-align:center;padding:14px 12px 2px;border-right:1px solid #262B26">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:0.06em;text-transform:uppercase;color:#8C9389;margin-bottom:7px">Samples drawn</div>
+          <div id="samplesVal" style="font-family:'JetBrains Mono',monospace;font-size:24px;color:var(--acc)">0</div>
+        </div>
+        <div style="text-align:center;padding:14px 12px 2px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:0.06em;text-transform:uppercase;color:#8C9389;margin-bottom:7px">μ = np</div>
+          <div id="meanVal" style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#FAC775">6.0</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid #262B26;border-radius:14px;margin-bottom:16px;padding:14px">
+      <div style="display:flex;gap:10px;margin-bottom:14px">
+        <button class="toggle-btn on" id="btnSim" type="button">Simulation</button>
+        <button class="toggle-btn off" id="btnTheory" type="button">Exact PMF</button>
+      </div>
+      <div style="border-top:1px solid #262B26;padding-top:16px">
+        <p id="explainerText" style="font-size:14.5px;line-height:1.65;color:#EDEDE8;margin:0">Four things make a setup binomial: a fixed number of trials n fixed up front; each trial has just two outcomes — success or failure; the success probability p is identical every trial; and the trials are independent, so one result can't sway another. Every peg below is a fresh trial with the same p, and no ball remembers the ones before it — which is why the same lawful shape builds every time.</p>
+      </div>
+    </div>
+
+    <div style="border-left:3px solid var(--acc);padding:16px 18px;margin-bottom:22px;background:linear-gradient(90deg,var(--ag1),rgba(46, 156, 76,.02));border-radius:0 12px 12px 0">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:0.15em;text-transform:uppercase;color:var(--acc);margin-bottom:7px">Know This</div>
+      <p style="font-size:17.4px;line-height:1.55;color:#EDEDE8;margin:0">P(X=k) = <span style="color:var(--acc)">C(n,k)</span> · pᵏ · (1−p)ⁿ⁻ᵏ. The C(n,k) is pure <span style="color:var(--acc)">counting</span> — how many distinct paths land exactly k successes. More routes exist to the middle than the edges, which is why the distribution always bulges at μ = np.</p>
+    </div>
+
+    <div style="margin-top:30px;padding-top:16px;border-top:1px solid #262B26;display:flex;justify-content:center">
+      <span style="width:7px;height:7px;border-radius:50%;background:var(--acc);box-shadow:0 0 10px var(--acc);animation:bnPulse 2.4s ease-in-out infinite"></span>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const canvas=document.getElementById('bnCanvas'),ctx=canvas.getContext('2d');
+  const buf=document.createElement('canvas'),bctx=buf.getContext('2d');
+  const slider=document.getElementById('bnSlider');
+  const liveTag=document.getElementById('liveTag'),stateTag=document.getElementById('stateTag');
+  const pText=document.getElementById('pText'),samplesVal=document.getElementById('samplesVal');
+  const meanVal=document.getElementById('meanVal'),explainerText=document.getElementById('explainerText');
+  const btnSim=document.getElementById('btnSim'),btnTheory=document.getElementById('btnTheory');
+  const dpr=Math.min(window.devicePixelRatio||1,2);
+  let W=0,H=0,mode='sim',pVal=50,t0=performance.now(),last=t0;
+  const N=12,ACC=[46, 156, 76],AMB=[250,199,117],INK=[237,237,232];
+  const COMB=[1,12,66,220,495,792,924,792,495,220,66,12,1];
+  let bins=new Array(N+1).fill(0),samples=0,balls=[],pops=[],lastSpawn=0;
+  const texts={
+    sim:"Four things make a setup binomial: a fixed number of trials n fixed up front; each trial has just two outcomes \u2014 success or failure; the success probability p is identical every trial; and the trials are independent, so one result can't sway another. Every peg below is a fresh trial with the same p, and no ball remembers the ones before it \u2014 which is why the same lawful shape builds every time.",
+    theory:"The random variable X counts the total successes across all n trials \u2014 never the result of a single one. Its values run 0 to n, with P(X=k) = C(n,k)\u00B7p\u1d4f\u00B7(1\u2212p)\u207f\u207b\u1d4f. That C(n,k) is pure counting: how many distinct paths land exactly k successes. There are vastly more routes to the middle than to the edges \u2014 which is precisely why the distribution bulges in the centre."
+  };
+  function rgba(c,a){return 'rgba('+c[0]+','+c[1]+','+c[2]+','+a+')';}
+  function pmf(p){const q=1-p,out=[];let mx=0;for(let k=0;k<=N;k++){const v=COMB[k]*Math.pow(p,k)*Math.pow(q,N-k);out.push(v);if(v>mx)mx=v;}return{arr:out,max:mx};}
+  function reset(){bins=new Array(N+1).fill(0);samples=0;balls=[];pops=[];lastSpawn=0;samplesVal.textContent='0';}
+  function spawn(p){const rights=[];let k=0;for(let i=0;i<N;i++){const r=Math.random()<p?1:0;rights.push(r);k+=r;}
+    const cum=[0];for(let i=0;i<N;i++)cum.push(cum[i]+rights[i]);
+    balls.push({cum,k,prog:0,sp:0.45+Math.random()*0.22});}
+  function resize(){const rect=canvas.getBoundingClientRect();if(!rect.width)return;W=rect.width;H=rect.height;canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);buf.width=canvas.width;buf.height=canvas.height;}
+  function draw(now){
+    const rect=canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+    if(rect.width&&(Math.abs(rect.width-(W||0))>0.5||Math.abs(rect.height-(H||0))>0.5)){W=rect.width;H=rect.height;canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);buf.width=canvas.width;buf.height=canvas.height;}
+    if(!W)return;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    const w=W,h=H,dt=Math.min((now-last)/1000,0.05);last=now;
+    const time=(now-t0)/1000,p=pVal/100;
+    const{arr:P,max:Pmax}=pmf(p);
+    ctx.clearRect(0,0,w,h);
+    const bg=ctx.createRadialGradient(w*0.5,h*0.42,0,w*0.5,h*0.42,w*0.8);
+    bg.addColorStop(0,'#11160d');bg.addColorStop(1,'#000');ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);
+    const cx=w/2,sx=(w*0.9)/(N+1.5);
+    const pegTop=h*0.115,pegBottom=h*0.50,rowH=(pegBottom-pegTop)/N;
+    const binTop=h*0.555,binBottom=h*0.905;
+    const binCenter=(k)=>cx+(k-N/2)*sx;
+    const scaleY=(binBottom-binTop)/(Pmax*1.18);
+    // pegs
+    ctx.fillStyle=rgba([120,130,120],0.32);
+    for(let r=0;r<N;r++){const y=pegTop+(r+0.5)*rowH;for(let j=0;j<=r;j++){const x=cx+(j-r/2)*sx;ctx.beginPath();ctx.arc(x,y,1.6,0,Math.PI*2);ctx.fill();}}
+    // baseline
+    ctx.strokeStyle=rgba([120,130,120],0.4);ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(binCenter(0)-sx*0.6,binBottom);ctx.lineTo(binCenter(N)+sx*0.6,binBottom);ctx.stroke();
+    // PMF bars
+    const bw=sx*0.66;
+    for(let k=0;k<=N;k++){const x=binCenter(k),hT=P[k]*scaleY;if(hT<0.4)continue;
+      ctx.save();ctx.globalCompositeOperation='lighter';
+      const g=ctx.createLinearGradient(0,binBottom-hT,0,binBottom);
+      g.addColorStop(0,rgba(ACC,0.30));g.addColorStop(1,rgba(ACC,0.05));
+      ctx.fillStyle=g;ctx.fillRect(x-bw/2,binBottom-hT,bw,hT);ctx.restore();
+      ctx.strokeStyle=rgba(ACC,0.85);ctx.lineWidth=1.6;
+      ctx.beginPath();ctx.moveTo(x-bw/2,binBottom-hT);ctx.lineTo(x+bw/2,binBottom-hT);ctx.stroke();
+      if(mode==='theory'){ctx.fillStyle=rgba(ACC,0.8);ctx.font="500 8.5px 'JetBrains Mono',monospace";ctx.textAlign='center';ctx.textBaseline='alphabetic';ctx.fillText(P[k].toFixed(P[k]<0.1?3:2).replace(/^0/,'.'),x,binBottom-hT-5);}
+    }
+    // empirical bars
+    if(mode==='sim'&&samples>0){const ew=bw*0.78;
+      for(let k=0;k<=N;k++){const pe=bins[k]/samples,hE=pe*scaleY;if(hE<0.3)continue;
+        const x=binCenter(k),g=ctx.createLinearGradient(0,binBottom-hE,0,binBottom);
+        g.addColorStop(0,rgba(INK,0.55));g.addColorStop(1,rgba(INK,0.16));
+        ctx.fillStyle=g;ctx.fillRect(x-ew/2,binBottom-hE,ew,hE);}}
+    // mean line
+    const mx=binCenter(N*p);
+    ctx.save();ctx.strokeStyle=rgba(AMB,0.6);ctx.lineWidth=1.4;ctx.setLineDash([4,4]);
+    ctx.beginPath();ctx.moveTo(mx,binTop-6);ctx.lineTo(mx,binBottom);ctx.stroke();ctx.setLineDash([]);ctx.restore();
+    ctx.fillStyle=rgba(AMB,0.9);ctx.font="500 9px 'JetBrains Mono',monospace";ctx.textAlign='center';ctx.textBaseline='alphabetic';
+    ctx.fillText('\u03BC = '+(N*p).toFixed(1),mx,binTop-9);
+    // x labels
+    ctx.fillStyle=rgba([140,147,137],0.7);ctx.font="400 8px 'JetBrains Mono',monospace";ctx.textAlign='center';ctx.textBaseline='top';
+    for(let k=0;k<=N;k++)ctx.fillText(k,binCenter(k),binBottom+5);
+    ctx.fillStyle=rgba([140,147,137],0.85);ctx.font="500 9px 'JetBrains Mono',monospace";
+    ctx.fillText('X  =  number of successes',cx,binBottom+18);
+    // balls
+    if(mode==='sim'){
+      if(time-lastSpawn>0.15&&balls.length<18){spawn(p);lastSpawn=time;}
+      for(let i=balls.length-1;i>=0;i--){const b=balls[i];b.prog+=dt*b.sp;const f=b.prog*N;let x,y;
+        if(f>=N){bins[b.k]++;samples++;pops.push({x:binCenter(b.k),y:binBottom,t:time});balls.splice(i,1);continue;}
+        else{const r=Math.floor(f),fr=f-r;const xr=cx+(2*b.cum[r]-r)*sx/2,xr1=cx+(2*b.cum[r+1]-(r+1))*sx/2;x=xr+(xr1-xr)*fr;y=pegTop+f*rowH;}
+        ctx.save();ctx.globalCompositeOperation='lighter';
+        const gg=ctx.createRadialGradient(x,y,0,x,y,7);
+        gg.addColorStop(0,rgba([255,255,250],0.95));gg.addColorStop(0.5,rgba(ACC,0.6));gg.addColorStop(1,rgba(ACC,0));
+        ctx.fillStyle=gg;ctx.beginPath();ctx.arc(x,y,7,0,Math.PI*2);ctx.fill();ctx.restore();
+        ctx.fillStyle=rgba(ACC,1);ctx.beginPath();ctx.arc(x,y,2.4,0,Math.PI*2);ctx.fill();}
+      samplesVal.textContent=samples.toLocaleString();
+    }
+    // pops
+    for(let i=pops.length-1;i>=0;i--){const pp=pops[i];const age=time-pp.t;if(age>0.5){pops.splice(i,1);continue;}
+      ctx.save();ctx.globalCompositeOperation='lighter';const rr=4+age*22,al=(1-age/0.5)*0.5;
+      ctx.strokeStyle=rgba(ACC,al);ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(pp.x,pp.y,rr,0,Math.PI*2);ctx.stroke();ctx.restore();}
+    // bloom
+    bctx.setTransform(1,0,0,1,0,0);bctx.clearRect(0,0,buf.width,buf.height);(canvas.width&&canvas.height)&&bctx.drawImage(canvas,0,0);
+    ctx.save();ctx.globalCompositeOperation='lighter';ctx.globalAlpha=0.32;ctx.filter='blur(6px)';(buf.width&&buf.height)&&ctx.drawImage(buf,0,0,w,h);ctx.restore();
+    const vig=ctx.createRadialGradient(w/2,h/2,h*0.32,w/2,h/2,w*0.72);
+    vig.addColorStop(0,'rgba(0,0,0,0)');vig.addColorStop(1,'rgba(0,0,0,0.5)');ctx.fillStyle=vig;ctx.fillRect(0,0,w,h);
+    requestAnimationFrame(draw);
+  }
+  function updateUI(){
+    const p=pVal/100,peak=Math.max(0,Math.min(N,Math.floor((N+1)*p)));
+    slider.value=pVal;slider.style.setProperty('--fill',Math.round((pVal-5)/90*100)+'%');
+    pText.textContent='p = '+p.toFixed(2);
+    meanVal.textContent=(N*p).toFixed(1);
+    stateTag.textContent=mode==='sim'?'Sampling':'Theoretical PMF';
+    liveTag.textContent=mode==='sim'?'DROPPING SAMPLES \u00B7 p='+p.toFixed(2)+' \u00B7 PEAK AT X='+peak:'EXACT PMF \u00B7 X ~ BIN(12, '+p.toFixed(2)+') \u00B7 \u03BC='+(N*p).toFixed(1);
+    explainerText.textContent=texts[mode];
+    btnSim.className='toggle-btn '+(mode==='sim'?'on':'off');
+    btnTheory.className='toggle-btn '+(mode==='theory'?'on':'off');
+  }
+  slider.addEventListener('input',e=>{pVal=parseInt(e.target.value);reset();updateUI();});
+  btnSim.addEventListener('click',()=>{mode='sim';reset();updateUI();});
+  btnTheory.addEventListener('click',()=>{mode='theory';updateUI();});
+  window.addEventListener('resize',()=>{W=0;H=0;});
+  resize();updateUI();t0=performance.now();last=t0;requestAnimationFrame(draw);
+})();
+</script>
+
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'binomial-probability-formula-and-notation'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>
