@@ -1,0 +1,549 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Polymerisation Mechanisms and Monomer Structure — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #3E9AD6;
+  --ag: rgba(62, 154, 214, .7);
+  --ag1: rgba(62, 154, 214, .12);
+  --ag2: rgba(62, 154, 214, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+body{
+  background:radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family:'Geist',sans-serif;
+  color:var(--ink);
+  min-height:100vh;
+  padding:40px 16px 72px;
+}
+
+.container{max-width:720px;margin:0 auto}
+
+h1{
+  font-size:clamp(30px,8vw,52px);
+  font-weight:700;
+  letter-spacing:-0.03em;
+  line-height:1.02;
+  margin-bottom:14px;
+}
+
+.intro{
+  font-size:15.5px;
+  color:var(--ink-dim);
+  max-width:58ch;
+  line-height:1.55;
+  margin-bottom:28px;
+}
+
+.card{
+  background:linear-gradient(180deg,#12160F,#0d100b);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:16px;
+  box-shadow:0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom:18px;
+}
+
+.card-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:6px;
+}
+
+.card-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  text-transform:uppercase;
+  color:#fff;
+}
+
+.live-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  text-transform:uppercase;
+  color:var(--acc);
+}
+
+.card-hint{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  color:var(--ink-dim);
+  margin-bottom:14px;
+}
+
+.canvas-wrapper{
+  position:relative;
+  width:100%;
+  aspect-ratio:16/9;
+  border-radius:12px;
+  overflow:hidden;
+  background:#000;
+  box-shadow:inset 0 0 0 1px var(--ag1);
+  margin-bottom:16px;
+}
+
+canvas{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  display:block;
+}
+
+.canvas-overlay{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  background:rgba(0,0,0,0.55);
+  backdrop-filter:blur(4px);
+  padding:9px 16px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:14px;
+  text-transform:uppercase;
+  color:var(--acc);
+  text-align:center;
+}
+
+.slider-row{
+  margin-bottom:12px;
+}
+
+.slider-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;
+  text-transform:uppercase;
+  color:var(--ink-dim);
+  margin-bottom:8px;
+  display:block;
+}
+
+.pm-slider{
+  width:100%;
+  height:4px;
+  border-radius:3px;
+  background:linear-gradient(90deg, var(--acc) var(--fill,0%), #23291f var(--fill,0%));
+  -webkit-appearance:none;
+  appearance:none;
+  outline:none;
+  cursor:pointer;
+}
+
+.pm-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  appearance:none;
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  background:#0B0D0C;
+  border:2px solid var(--acc);
+  box-shadow:0 0 16px var(--ag), 0 0 4px var(--ag);
+  transition:box-shadow .15s;
+  cursor:grab;
+}
+
+.pm-slider::-webkit-slider-thumb:active{cursor:grabbing}
+.pm-slider::-webkit-slider-thumb:hover{box-shadow:0 0 24px var(--acc), 0 0 8px var(--ag)}
+
+.pm-slider::-moz-range-thumb{
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  background:#0B0D0C;
+  border:2px solid var(--acc);
+  box-shadow:0 0 16px var(--ag), 0 0 4px var(--ag);
+  transition:box-shadow .15s;
+  cursor:grab;
+}
+
+.pm-slider::-moz-range-thumb:active{cursor:grabbing}
+.pm-slider::-moz-range-thumb:hover{box-shadow:0 0 24px var(--acc), 0 0 8px var(--ag)}
+
+.tick-labels{
+  display:flex;
+  justify-content:space-between;
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  color:var(--ink-dim);
+  margin-top:6px;
+}
+
+.stat-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+  padding-top:16px;
+  border-top:1px solid var(--line);
+}
+
+.stat{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+
+.stat-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;
+  text-transform:uppercase;
+  color:var(--ink-dim);
+}
+
+.stat-value{
+  font-family:'JetBrains Mono',monospace;
+  font-size:24px;
+  font-weight:500;
+}
+
+.toggle-section{
+  display:flex;
+  gap:10px;
+  margin-bottom:16px;
+}
+
+.toggle-btn{
+  flex:1;
+  font-family:'JetBrains Mono',monospace;
+  font-size:14.5px;
+  padding:12px;
+  border-radius:11px;
+  background:#12160F;
+  border:1px solid var(--line);
+  color:var(--ink-dim);
+  cursor:pointer;
+  transition:all .2s;
+}
+
+.toggle-btn.active{
+  background:rgba(62,154,214,.1);
+  border:1px solid var(--acc);
+  color:var(--acc);
+  box-shadow:0 0 22px rgba(62,154,214,.18);
+}
+
+.knowdrop{
+  border-top:1px solid var(--line);
+  padding-top:16px;
+  font-size:14.5px;
+  line-height:1.65;
+}
+
+.know-this{
+  border-left:3px solid var(--acc);
+  padding:16px 18px;
+  background:linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius:0 12px 12px 0;
+  margin-bottom:18px;
+}
+
+.know-this-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  text-transform:uppercase;
+  letter-spacing:0.15em;
+  color:var(--acc);
+  margin-bottom:10px;
+  display:block;
+}
+
+.know-this-body{
+  font-size:17.4px;
+  line-height:1.55;
+  color:var(--ink);
+}
+
+.footer{
+  margin-top:34px;
+  padding-top:16px;
+  border-top:1px solid var(--line);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.pulse-dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--acc);
+  box-shadow:0 0 10px var(--acc);
+  animation:pmPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes pmPulse{
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:.35;transform:scale(.6)}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .pulse-dot{animation:none}
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Polymerisation Mechanisms Interactive Widget</h2>
+
+  <h1>A single molecule can grow from <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">hundreds</span></h1>
+  
+  <p class="intro">
+    Polymers aren't just big molecules—they're chains where tiny monomers link up hundreds or thousands of times, each addition step changing the material's strength and melting point. Drag the slider to grow the chain and watch the degree of polymerisation climb.
+  </p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Chain Builder</span>
+      <span class="live-tag" id="chainTag">ADDITION MODE</span>
+    </div>
+    <p class="card-hint">Drag slider to add monomer units to the growing chain</p>
+    
+    <div class="canvas-wrapper">
+      <canvas id="chainCanvas"></canvas>
+      <div class="canvas-overlay" id="canvasOverlay">0 MONOMER UNITS</div>
+    </div>
+
+    <div class="slider-row">
+      <label class="slider-label" for="chainSlider">Degree of Polymerisation</label>
+      <input type="range" id="chainSlider" class="pm-slider" min="0" max="100" value="0" style="--fill:0%">
+      <div class="tick-labels">
+        <span>0</span>
+        <span>25</span>
+        <span>50</span>
+        <span>75</span>
+        <span>100</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <span class="stat-label">Chain Length</span>
+        <span class="stat-value" style="color:var(--acc)" id="chainLength">0</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Rel. Mol. Mass</span>
+        <span class="stat-value" style="color:var(--amb)" id="molMass">0</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-section">
+      <button class="toggle-btn active" data-mode="addition">Addition</button>
+      <button class="toggle-btn" data-mode="condensation">Condensation</button>
+    </div>
+    <div class="knowdrop" id="knowdrop">
+      Addition polymerisation occurs when monomers containing carbon-carbon double bonds (C=C) join together without losing any atoms, with the π-bond breaking to form new σ-bonds between successive monomer units. Classic examples include ethene forming polyethene, styrene forming polystyrene, and vinyl chloride forming PVC—all proceeding via radical or ionic chain mechanisms that propagate rapidly once initiated. The polymer chain grows by sequential addition of identical monomer units, preserving the entire molecular structure of each monomer in the final polymer backbone, which means the empirical formula of the polymer matches the monomer exactly. This mechanism is characterised by three distinct stages: initiation (radical or ion formation), propagation (rapid chain growth), and termination (chain-end coupling or disproportionation).
+    </div>
+  </div>
+
+  <div class="know-this">
+    <span class="know-this-tag">Know This</span>
+    <p class="know-this-body">
+      The <span style="color:var(--acc)">degree of polymerisation</span> is the average number of <span style="color:var(--acc)">monomer units</span> in a polymer chain, directly controlling molecular mass and critical mechanical properties like <span style="color:var(--acc)">tensile strength</span> and <span style="color:var(--acc)">melting temperature</span>.
+    </p>
+  </div>
+
+  <div class="footer">
+    <div class="pulse-dot"></div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('chainCanvas');
+const ctx = canvas.getContext('2d');
+const slider = document.getElementById('chainSlider');
+const chainTag = document.getElementById('chainTag');
+const canvasOverlay = document.getElementById('canvasOverlay');
+const chainLengthEl = document.getElementById('chainLength');
+const molMassEl = document.getElementById('molMass');
+const knowdrop = document.getElementById('knowdrop');
+const toggleBtns = document.querySelectorAll('.toggle-btn');
+
+let currentMode = 'addition';
+let chainValue = 0;
+let targetChain = 0;
+let time = 0;
+let animFrame;
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d');
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+resize();
+window.addEventListener('resize', resize);
+
+function parseAccent() {
+  const style = getComputedStyle(document.documentElement);
+  const acc = style.getPropertyValue('--acc').trim();
+  const match = acc.match(/^#([0-9a-fA-F]{6})$/);
+  if (!match) return { r: 123, g: 234, b: 90 };
+  const hex = match[1];
+  return {
+    r: parseInt(hex.slice(0, 2), 16),
+    g: parseInt(hex.slice(2, 4), 16),
+    b: parseInt(hex.slice(4, 6), 16)
+  };
+}
+
+const accRGB = parseAccent();
+
+slider.addEventListener('input', (e) => {
+  const val = parseInt(e.target.value);
+  targetChain = val;
+  slider.style.setProperty('--fill', val + '%');
+  canvasOverlay.textContent = val + (val === 1 ? ' MONOMER UNIT' : ' MONOMER UNITS');
+});
+
+toggleBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    toggleBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentMode = btn.dataset.mode;
+    
+    if (currentMode === 'addition') {
+      chainTag.textContent = 'ADDITION MODE';
+      knowdrop.innerHTML = `Addition polymerisation occurs when monomers containing carbon-carbon double bonds (C=C) join together without losing any atoms, with the π-bond breaking to form new σ-bonds between successive monomer units. Classic examples include ethene forming polyethene, styrene forming polystyrene, and vinyl chloride forming PVC—all proceeding via radical or ionic chain mechanisms that propagate rapidly once initiated. The polymer chain grows by sequential addition of identical monomer units, preserving the entire molecular structure of each monomer in the final polymer backbone, which means the empirical formula of the polymer matches the monomer exactly. This mechanism is characterised by three distinct stages: initiation (radical or ion formation), propagation (rapid chain growth), and termination (chain-end coupling or disproportionation).`;
+    } else {
+      chainTag.textContent = 'CONDENSATION MODE';
+      knowdrop.innerHTML = `Condensation polymerisation requires monomers with two reactive functional groups—such as dicarboxylic acids reacting with diamines to form polyamides (nylon), or diols reacting with dicarboxylic acids to form polyesters (PET). Each condensation step releases a small molecule, typically water or HCl, as the functional groups combine to form a new covalent linkage between monomer units. This mechanism is fundamentally different from addition polymerisation because atoms are lost during polymerisation, meaning the repeat unit's empirical formula differs from the original monomers. The reaction proceeds stepwise rather than via chain propagation, with polymer chains growing gradually as individual condensation reactions occur between available functional groups throughout the reaction mixture. Common examples include the formation of proteins (amino acids condensing via peptide bonds), nylon-6,6 (hexanediamine + adipic acid), and polyethylene terephthalate (ethylene glycol + terephthalic acid).`;
+    }
+  });
+});
+
+function draw() {
+  time += 0.016;
+  
+  // Smooth chain value animation
+  chainValue += (targetChain - chainValue) * 0.12;
+  
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  const numMonomers = Math.max(1, Math.round(chainValue));
+  const spacing = Math.min(w * 0.85 / numMonomers, 32);
+  const startX = (w - (numMonomers - 1) * spacing) / 2;
+  const cy = h / 2;
+  
+  // Draw bonds first
+  ctx.strokeStyle = `rgba(${accRGB.r},${accRGB.g},${accRGB.b},0.3)`;
+  ctx.lineWidth = 2;
+  for (let i = 0; i < numMonomers - 1; i++) {
+    const x1 = startX + i * spacing;
+    const x2 = startX + (i + 1) * spacing;
+    ctx.beginPath();
+    ctx.moveTo(x1, cy);
+    ctx.lineTo(x2, cy);
+    ctx.stroke();
+  }
+  
+  // Draw monomers
+  for (let i = 0; i < numMonomers; i++) {
+    const x = startX + i * spacing;
+    const phase = time * 1.2 + i * 0.3;
+    const pulse = 0.85 + 0.15 * Math.sin(phase);
+    const radius = 8 * pulse;
+    
+    // Glow
+    const glow = ctx.createRadialGradient(x, cy, 0, x, cy, radius * 3);
+    glow.addColorStop(0, `rgba(${accRGB.r},${accRGB.g},${accRGB.b},0.4)`);
+    glow.addColorStop(0.5, `rgba(${accRGB.r},${accRGB.g},${accRGB.b},0.15)`);
+    glow.addColorStop(1, `rgba(${accRGB.r},${accRGB.g},${accRGB.b},0)`);
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(x, cy, radius * 3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+    
+    // Core
+    ctx.fillStyle = `rgb(${accRGB.r},${accRGB.g},${accRGB.b})`;
+    ctx.beginPath();
+    ctx.arc(x, cy, radius, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Inner highlight
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.beginPath();
+    ctx.arc(x - radius * 0.25, cy - radius * 0.25, radius * 0.3, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // If condensation mode, add water droplets
+    if (currentMode === 'condensation' && i < numMonomers - 1 && chainValue > 5) {
+      const dropX = (startX + i * spacing + startX + (i + 1) * spacing) / 2;
+      const dropY = cy + 20 + 6 * Math.sin(time * 2 + i);
+      
+      ctx.fillStyle = 'rgba(173,216,230,0.6)';
+      ctx.beginPath();
+      ctx.arc(dropX, dropY, 3, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.fillStyle = 'rgba(255,255,255,0.4)';
+      ctx.beginPath();
+      ctx.arc(dropX - 1, dropY - 1, 1, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+  
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const vig = ctx.createRadialGradient(w / 2, cy, h * 0.28, w / 2, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+  
+  // Update stats
+  const displayChain = Math.round(chainValue);
+  chainLengthEl.textContent = displayChain;
+  
+  // Assume monomer mass ~28 (like ethene) for addition, ~100 for condensation
+  const monomerMass = currentMode === 'addition' ? 28 : 100;
+  const totalMass = displayChain * monomerMass;
+  molMassEl.textContent = totalMass.toLocaleString();
+  
+  animFrame = requestAnimationFrame(draw);
+}
+
+draw();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'polymerisation-mechanisms-and-monomer-structure'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

@@ -79,6 +79,7 @@ const PAGE=`<!DOCTYPE html>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="/knowhere-marks.js?v=2"></script>
 <script src="/knowhere-pass.js" defer></script>
+<script src="/knowhere-handoff.js?v=3" defer></script><!-- KW:HANDOFF -->
 <style>
 h1,h2,h3{text-transform:lowercase}
 html,body{margin:0;padding:0;background:#070708}
@@ -102,7 +103,7 @@ html,body{margin:0;padding:0;background:#070708}
 .kw-c .login:hover{transform:translateY(-1px);background:#fff}
 .kw-c .wrap{max-width:1120px;margin:0 auto;padding:0 20px}
 .kw-c .mono{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink-dim)}
-.kw-c .hero{padding:clamp(44px,8vh,90px) 0 26px}
+.kw-c .hero{padding-block:clamp(44px,8vh,90px) 26px}
 .kw-c .eyebrow{display:flex;align-items:center;justify-content:space-between;gap:10px 18px;flex-wrap:wrap;margin-bottom:18px}
 .kw-c .eyebrow .lhs{color:var(--subj)}
 .kw-c .eyebrow .lhs b{color:var(--ink-dim);font-weight:400}
@@ -149,7 +150,11 @@ html,body{margin:0;padding:0;background:#070708}
 .kw-c .pass-line .d{font-family:'JetBrains Mono',monospace;color:var(--neuro);font-weight:500}
 .kw-c .kw-pass[data-closed]{display:none}
 .kw-c [data-pass-fallback]{display:none}
-.kw-c .share{margin-top:22px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap;align-items:center}
+.kw-c .hand{margin-top:26px;padding-top:22px;border-top:1px solid var(--line)}
+.kw-c .hand .fr{margin:0 0 12px;font-size:14.5px;color:var(--ink-dim)}
+.kw-c .kw-hand{font-family:inherit;font-size:15px;font-weight:700;letter-spacing:-.01em;text-transform:lowercase;color:#fff;background:transparent;border:1px solid var(--brat);border-radius:12px;padding:14px 22px;cursor:pointer;transition:background .18s,color .18s,transform .18s}
+.kw-c .kw-hand:hover{background:var(--brat);color:#070708;transform:translateY(-1px)}
+.kw-c .share{margin-top:18px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap;align-items:center}
 .kw-c .share button{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);background:transparent;border:1px solid var(--line);border-radius:9px;padding:9px 14px;cursor:pointer;transition:all .2s}
 .kw-c .share button:hover{border-color:var(--ink-dim);color:var(--ink)}
 .kw-c .share button.did{border-color:var(--brat);color:var(--brat)}
@@ -225,6 +230,10 @@ html,body{margin:0;padding:0;background:#070708}
       </div>
       <p class="pass-line kw-pass">Free for a week, then <b>$49 once</b> — the 2026 exam pass ends itself after the last exam. <span class="d"><span data-pass-days>0</span> days of the pass left.</span></p>
       <p class="pass-line" data-pass-fallback="block">Free for a week, then a plan you can stop any time.</p>
+      <div class="hand">
+        <p class="fr">not your card? send it to whoever's is.</p>
+        <button type="button" class="kw-hand" data-kw-handoff="concept:collision-theory">send this to a parent</button>
+      </div>
       <div class="share">
         <button type="button" id="kwShare">share this concept</button>
         <button type="button" id="kwCopy">copy the link</button>
@@ -284,7 +293,7 @@ if(pxEdits){ fs.writeFileSync(PIX+'.bak-'+stamp,px); fs.writeFileSync(PIX,pxOut)
 /* receipts, from disk */
 const w=fs.readFileSync(path.join('widgets','collision-theory-chemistry.html'),'utf8'), pg=fs.readFileSync(path.join('hsc','chemistry','collision-theory.html'),'utf8'), pf=fs.readFileSync(PIX,'utf8');
 const ok=[ [!/#3AADA0/i.test(w),'widget: no teal'], [w.includes('kwMobFix'),'widget: kwMobFix'], [w.includes('f43'),'widget: f43'], [w.includes('kwH'),'widget: beacon'],
-  [pg.includes('<base href="/">'),'page: base'], [pg.includes(TITLE),'page: title'], [pg.includes('/widgets/collision-theory-chemistry.html'),'page: iframe src'], [pg.includes('for-parents?as=parent'),'page: parent door'], [pg.includes('data-pass-days'),'page: pass line'],
+  [pg.includes('<base href="/">'),'page: base'], [pg.includes(TITLE),'page: title'], [pg.includes('/widgets/collision-theory-chemistry.html'),'page: iframe src'], [pg.includes('for-parents?as=parent'),'page: parent door'], [pg.includes('data-pass-days'),'page: pass line'], [pg.includes('data-kw-handoff'),'page: the handoff'], [pg.includes('knowhere-handoff.js'),'page: handoff component loaded'],
   [pf.split('KW:CONCEPT').length-1===2,'pixel: two KW:CONCEPT marks'], [fs.readFileSync(SRC,'utf8')===raw,'teal source untouched'] ];
 let bad=0; for(const [c,n] of ok){ console.log((c?'  ✓ ':'  ✗ ')+n); if(!c) bad++; }
 if(bad){ console.error(bad+' receipt(s) failed'); process.exit(1); }

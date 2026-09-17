@@ -1,0 +1,652 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>ICE Tables — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #3E9AD6;
+  --ag: rgba(62, 154, 214, .7);
+  --ag1: rgba(62, 154, 214, .12);
+  --ag2: rgba(62, 154, 214, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+body{
+  background:radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family:'Geist',sans-serif;
+  min-height:100vh;
+  padding:40px 16px 0;
+  color:var(--ink);
+}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+
+.container{max-width:720px;margin:0 auto}
+
+h1{
+  font-size:clamp(26px,6.5vw,44px);
+  font-weight:800;
+  letter-spacing:-0.03em;
+  line-height:1.05;
+  margin-bottom:14px;
+}
+
+.intro{
+  font-size:15.5px;
+  font-weight:400;
+  color:var(--ink-dim);
+  max-width:58ch;
+  line-height:1.55;
+  margin-bottom:28px;
+}
+
+.card{
+  background:linear-gradient(180deg,#12160F,#0d100b);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:16px;
+  box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);
+  margin-bottom:18px;
+}
+
+.card-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  margin-bottom:6px;
+}
+
+.card-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  text-transform:uppercase;
+  color:var(--ink);
+  font-weight:400;
+}
+
+.live-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  text-transform:uppercase;
+  color:var(--acc);
+  font-weight:400;
+}
+
+.card-hint{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  color:var(--ink-dim);
+  margin-bottom:14px;
+}
+
+.canvas-wrapper{
+  position:relative;
+  width:100%;
+  aspect-ratio:16/9;
+  border-radius:12px;
+  overflow:hidden;
+  background:#000;
+  box-shadow:inset 0 0 0 1px var(--ag1);
+  margin-bottom:16px;
+}
+
+canvas{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  display:block;
+}
+
+.canvas-overlay{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  background:rgba(0,0,0,0.55);
+  backdrop-filter:blur(4px);
+  padding:9px 16px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:14px;
+  text-transform:uppercase;
+  color:var(--acc);
+  text-align:center;
+}
+
+.slider-section{
+  margin-top:16px;
+}
+
+.slider-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;
+  text-transform:uppercase;
+  color:var(--ink-dim);
+  margin-bottom:8px;
+  display:block;
+}
+
+.ice-slider{
+  width:100%;
+  height:4px;
+  -webkit-appearance:none;
+  appearance:none;
+  border-radius:3px;
+  background:linear-gradient(90deg, var(--acc) var(--fill,0%), #23291f var(--fill,0%));
+  outline:none;
+  margin-bottom:8px;
+}
+
+.ice-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  appearance:none;
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  background:#0B0D0C;
+  border:2px solid var(--acc);
+  box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);
+  cursor:pointer;
+  transition:box-shadow .15s;
+}
+
+.ice-slider::-moz-range-thumb{
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  background:#0B0D0C;
+  border:2px solid var(--acc);
+  box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);
+  cursor:pointer;
+  transition:box-shadow .15s;
+}
+
+.ice-slider::-webkit-slider-thumb:hover{
+  box-shadow:0 0 24px var(--acc),0 0 8px var(--ag);
+}
+
+.ice-slider::-moz-range-thumb:hover{
+  box-shadow:0 0 24px var(--acc),0 0 8px var(--ag);
+}
+
+.tick-labels{
+  display:flex;
+  justify-content:space-between;
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  color:var(--ink-dim);
+}
+
+.stat-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+  border-top:1px solid var(--line);
+  padding-top:16px;
+  margin-top:16px;
+}
+
+.stat{
+  text-align:center;
+}
+
+.stat-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;
+  text-transform:uppercase;
+  color:var(--ink-dim);
+  margin-bottom:6px;
+}
+
+.stat-value{
+  font-family:'JetBrains Mono',monospace;
+  font-size:24px;
+  font-weight:500;
+}
+
+.stat:first-child .stat-value{color:var(--acc)}
+.stat:last-child .stat-value{color:var(--amb)}
+
+.toggle-card{
+  background:linear-gradient(180deg,#12160F,#0d100b);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:16px;
+  box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);
+  margin-bottom:18px;
+}
+
+.toggle-row{
+  display:flex;
+  gap:10px;
+  margin-bottom:16px;
+}
+
+.toggle-btn{
+  flex:1;
+  font-family:'JetBrains Mono',monospace;
+  font-size:14.5px;
+  padding:12px;
+  border-radius:11px;
+  border:1px solid var(--line);
+  background:#12160F;
+  color:var(--ink-dim);
+  cursor:pointer;
+  transition:all .2s;
+}
+
+.toggle-btn.active{
+  background:rgba(62, 154, 214,.1);
+  border:1px solid var(--acc);
+  color:var(--acc);
+  box-shadow:0 0 22px rgba(62, 154, 214,.18);
+}
+
+.toggle-divider{
+  border-top:1px solid var(--line);
+  margin-bottom:16px;
+}
+
+.knowdrop{
+  font-size:14.5px;
+  font-weight:400;
+  line-height:1.65;
+  color:var(--ink);
+}
+
+.know-this{
+  border-left:3px solid var(--acc);
+  padding:16px 18px;
+  background:linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius:0 12px 12px 0;
+  margin-bottom:0;
+}
+
+.know-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  text-transform:uppercase;
+  letter-spacing:0.15em;
+  color:var(--acc);
+  margin-bottom:10px;
+  display:block;
+}
+
+.know-body{
+  font-size:17.4px;
+  font-weight:400;
+  line-height:1.55;
+  color:var(--ink);
+}
+
+.table-container{
+  background:rgba(18,22,15,0.6);
+  border-radius:8px;
+  padding:12px;
+  margin-top:12px;
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+}
+
+th{
+  text-align:left;
+  padding:8px 6px;
+  border-bottom:1px solid var(--line);
+  color:var(--ink-dim);
+  font-weight:400;
+  text-transform:uppercase;
+  font-size:10px;
+}
+
+td{
+  padding:10px 6px;
+  color:var(--ink);
+  border-bottom:1px solid rgba(38,43,38,0.4);
+}
+
+tr:last-child td{border-bottom:none}
+
+.change-val{color:var(--acc)}
+.eq-val{color:var(--amb)}
+</style>
+
+<h2 class="sr-only">ICE Table Interactive Widget — Understanding how stoichiometric ratios govern equilibrium changes</h2>
+
+<div class="container">
+  <h1>One known change unlocks <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">everything</span></h1>
+  
+  <p class="intro">In equilibrium problems, you rarely know all the concentrations at equilibrium — but you don't need to. A single known change, combined with the stoichiometric coefficients, cascades through the entire system. Drag the slider to adjust how much A is consumed, and watch the ICE table auto-fill based on the reaction 2A + B ⇌ 3C.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">ICE Table Builder</span>
+      <span class="live-tag" id="liveTag">Change A: 0.00 M</span>
+    </div>
+    <p class="card-hint">Drag to set the change in [A] — the ratios do the rest</p>
+    
+    <div class="canvas-wrapper">
+      <canvas id="iceCanvas"></canvas>
+      <div class="canvas-overlay" id="canvasOverlay">Row 2 Ratio: 2A : 1B : 3C</div>
+    </div>
+
+    <div class="slider-section">
+      <label class="slider-label" for="changeSlider">Change in [A] consumed</label>
+      <input type="range" id="changeSlider" class="ice-slider" min="0" max="100" value="0" step="1">
+      <div class="tick-labels">
+        <span>0.00 M</span>
+        <span>0.50 M</span>
+        <span>1.00 M</span>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>2A</th>
+            <th>B</th>
+            <th>3C</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color:var(--ink-dim)">I</td>
+            <td>1.00</td>
+            <td>1.00</td>
+            <td>0.00</td>
+          </tr>
+          <tr>
+            <td style="color:var(--ink-dim)">C</td>
+            <td class="change-val" id="changeA">0.00</td>
+            <td class="change-val" id="changeB">0.00</td>
+            <td class="change-val" id="changeC">+0.00</td>
+          </tr>
+          <tr>
+            <td style="color:var(--ink-dim)">E</td>
+            <td class="eq-val" id="eqA">1.00</td>
+            <td class="eq-val" id="eqB">1.00</td>
+            <td class="eq-val" id="eqC">0.00</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Total consumed</div>
+        <div class="stat-value" id="totalConsumed">0.00 M</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Total produced</div>
+        <div class="stat-value" id="totalProduced">0.00 M</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toggle-card">
+    <div class="toggle-row">
+      <button class="toggle-btn active" data-mode="forward">Forward</button>
+      <button class="toggle-btn" data-mode="reverse">Reverse</button>
+    </div>
+    <div class="toggle-divider"></div>
+    <p class="knowdrop" id="knowdropText">When the reaction runs forward, reactants A and B are consumed and product C is formed. The change row shows negative values for A and B (they decrease) and positive for C (it increases). The stoichiometric coefficients — 2:1:3 — determine the exact ratio of these changes. If 0.40 M of A is consumed, then 0.20 M of B must also be consumed (half as much, because B's coefficient is 1 while A's is 2), and 0.60 M of C is produced (1.5 times the A change, because C's coefficient is 3 while A's is 2). This ratio is locked by the balanced equation and never changes, regardless of direction or how far the reaction proceeds.</p>
+  </div>
+
+  <div class="know-this">
+    <span class="know-tag">Know This</span>
+    <p class="know-body">The <span style="color:var(--acc)">change row</span> of an ICE table obeys the <span style="color:var(--acc)">stoichiometric ratio</span> of the balanced equation — one known change determines all others through simple proportion, and <span style="color:var(--acc)">row 3 equals row 1 plus row 2</span> to give equilibrium concentrations you substitute into K.</p>
+  </div>
+</div>
+
+<script>
+const canvas=document.getElementById('iceCanvas');
+const ctx=canvas.getContext('2d',{alpha:false});
+const slider=document.getElementById('changeSlider');
+const liveTag=document.getElementById('liveTag');
+const canvasOverlay=document.getElementById('canvasOverlay');
+
+const changeA=document.getElementById('changeA');
+const changeB=document.getElementById('changeB');
+const changeC=document.getElementById('changeC');
+const eqA=document.getElementById('eqA');
+const eqB=document.getElementById('eqB');
+const eqC=document.getElementById('eqC');
+const totalConsumed=document.getElementById('totalConsumed');
+const totalProduced=document.getElementById('totalProduced');
+
+const toggleBtns=document.querySelectorAll('.toggle-btn');
+const knowdropText=document.getElementById('knowdropText');
+
+let changeVal=0;
+let mode='forward';
+
+const dpr=Math.min(window.devicePixelRatio||1,2);
+const buf=document.createElement('canvas');
+const bctx=buf.getContext('2d',{alpha:false});
+
+const knowdrops={
+  forward:"When the reaction runs forward, reactants A and B are consumed and product C is formed. The change row shows negative values for A and B (they decrease) and positive for C (it increases). The stoichiometric coefficients — 2:1:3 — determine the exact ratio of these changes. If 0.40 M of A is consumed, then 0.20 M of B must also be consumed (half as much, because B's coefficient is 1 while A's is 2), and 0.60 M of C is produced (1.5 times the A change, because C's coefficient is 3 while A's is 2). This ratio is locked by the balanced equation and never changes, regardless of direction or how far the reaction proceeds.",
+  reverse:"When equilibrium shifts in reverse, products become reactants. Now C is consumed (negative change) and A and B are produced (positive changes). The same stoichiometric ratio still governs the change row, just with flipped signs. If 0.60 M of C is consumed, you produce 0.40 M of A (because the ratio 3C:2A means each 3 mol of C yields 2 mol of A) and 0.20 M of B (3C:1B gives one-third as much B as C). The initial row stays the same — it's the starting snapshot before any shift. Only row 2 changes direction, and row 3 recalculates as initial plus (or minus) change."
+};
+
+function resize(){
+  const rect=canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width=Math.round(rect.width*dpr);
+  canvas.height=Math.round(rect.height*dpr);
+  buf.width=canvas.width;
+  buf.height=canvas.height;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  draw();
+}
+
+function updateTable(){
+  const raw=changeVal/100;
+  const A=raw;
+  const B=raw/2;
+  const C=raw*1.5;
+
+  if(mode==='forward'){
+    changeA.textContent=(-A).toFixed(2);
+    changeB.textContent=(-B).toFixed(2);
+    changeC.textContent='+'+(C).toFixed(2);
+    eqA.textContent=(1.00-A).toFixed(2);
+    eqB.textContent=(1.00-B).toFixed(2);
+    eqC.textContent=(0+C).toFixed(2);
+    totalConsumed.textContent=(A+B).toFixed(2)+' M';
+    totalProduced.textContent=C.toFixed(2)+' M';
+  }else{
+    changeA.textContent='+'+(A).toFixed(2);
+    changeB.textContent='+'+(B).toFixed(2);
+    changeC.textContent=(-C).toFixed(2);
+    eqA.textContent=(1.00+A).toFixed(2);
+    eqB.textContent=(1.00+B).toFixed(2);
+    eqC.textContent=Math.max(0,1.50-C).toFixed(2);
+    totalProduced.textContent=(A+B).toFixed(2)+' M';
+    totalConsumed.textContent=C.toFixed(2)+' M';
+  }
+}
+
+slider.addEventListener('input',e=>{
+  changeVal=parseFloat(e.target.value);
+  const fill=(changeVal/100)*100;
+  slider.style.setProperty('--fill',fill+'%');
+  liveTag.textContent='Change A: '+(changeVal/100).toFixed(2)+' M';
+  updateTable();
+  draw();
+});
+
+toggleBtns.forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    toggleBtns.forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    mode=btn.dataset.mode;
+    knowdropText.textContent=knowdrops[mode];
+    if(mode==='reverse'){
+      canvasOverlay.textContent='Reverse: C → A + B (same ratio)';
+    }else{
+      canvasOverlay.textContent='Row 2 Ratio: 2A : 1B : 3C';
+    }
+    updateTable();
+    draw();
+  });
+});
+
+const particles=[];
+for(let i=0;i<60;i++){
+  particles.push({
+    x:Math.random(),
+    y:Math.random(),
+    vx:(Math.random()-0.5)*0.0008,
+    vy:(Math.random()-0.5)*0.0008,
+    r:Math.random()*1.8+0.6,
+    type:i<20?'A':(i<35?'B':'C')
+  });
+}
+
+let time=0;
+
+function draw(){
+  const w=canvas.width/dpr;
+  const h=canvas.height/dpr;
+
+  ctx.fillStyle='#000';
+  ctx.fillRect(0,0,w,h);
+
+  time+=0.016;
+  const raw=changeVal/100;
+
+  // Update particles
+  particles.forEach(p=>{
+    p.x+=p.vx;
+    p.y+=p.vy;
+    if(p.x<0||p.x>1)p.vx*=-1;
+    if(p.y<0||p.y>1)p.vy*=-1;
+    p.x=Math.max(0,Math.min(1,p.x));
+    p.y=Math.max(0,Math.min(1,p.y));
+  });
+
+  // Draw particles with ratio-based glow
+  particles.forEach(p=>{
+    const px=p.x*w;
+    const py=p.y*h;
+    let alpha=0.3;
+    let glowR=4;
+
+    if(mode==='forward'){
+      if(p.type==='A'){
+        alpha=0.9-raw*0.6;
+        glowR=4-raw*2;
+      }else if(p.type==='B'){
+        alpha=0.9-raw*0.6;
+        glowR=4-raw*2;
+      }else{
+        alpha=0.2+raw*0.7;
+        glowR=3+raw*5;
+      }
+    }else{
+      if(p.type==='C'){
+        alpha=0.9-raw*0.6;
+        glowR=5-raw*3;
+      }else{
+        alpha=0.2+raw*0.7;
+        glowR=3+raw*5;
+      }
+    }
+
+    const grad=ctx.createRadialGradient(px,py,0,px,py,glowR);
+    if(p.type==='C'){
+      grad.addColorStop(0,'rgba(250,199,117,'+alpha+')');
+      grad.addColorStop(1,'rgba(250,199,117,0)');
+    }else{
+      grad.addColorStop(0,'rgba(62, 154, 214,'+alpha+')');
+      grad.addColorStop(1,'rgba(62, 154, 214,0)');
+    }
+    ctx.save();
+    ctx.globalCompositeOperation='lighter';
+    ctx.fillStyle=grad;
+    ctx.beginPath();
+    ctx.arc(px,py,glowR,0,Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+
+    ctx.fillStyle=p.type==='C'?'rgba(250,199,117,'+alpha+')':'rgba(62, 154, 214,'+alpha+')';
+    ctx.beginPath();
+    ctx.arc(px,py,p.r,0,Math.PI*2);
+    ctx.fill();
+  });
+
+  // Draw ratio bars
+  const barY=h-30;
+  const barH=6;
+  const barGap=w*0.05;
+  const barW=(w-barGap*4)/3;
+
+  const labels=['2A','B','3C'];
+  const widths=mode==='forward'?[raw*2,raw,raw*3]:[raw*2,raw,raw*3];
+  const colors=['rgba(62, 154, 214,0.8)','rgba(62, 154, 214,0.8)','rgba(250,199,117,0.8)'];
+
+  for(let i=0;i<3;i++){
+    const x=barGap+(barW+barGap)*i;
+    ctx.fillStyle='rgba(38,43,38,0.6)';
+    ctx.fillRect(x,barY,barW,barH);
+    
+    const fill=Math.min(1,widths[i])*barW;
+    ctx.fillStyle=colors[i];
+    ctx.fillRect(x,barY,fill,barH);
+
+    ctx.fillStyle='rgba(237,237,232,0.7)';
+    ctx.font='11px "JetBrains Mono"';
+    ctx.textAlign='center';
+    ctx.fillText(labels[i],x+barW/2,barY-6);
+  }
+
+  // Bloom
+  bctx.setTransform(1,0,0,1,0,0);
+  bctx.clearRect(0,0,buf.width,buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas,0,0);
+  ctx.save();
+  ctx.globalCompositeOperation='lighter';
+  ctx.globalAlpha=0.38;
+  ctx.filter='blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf,0,0,w,h);
+  ctx.restore();
+
+  // Vignette
+  const cx=w/2,cy=h/2;
+  const vig=ctx.createRadialGradient(cx,cy,h*0.28,cx,cy,w*0.72);
+  vig.addColorStop(0,'rgba(0,0,0,0)');
+  vig.addColorStop(1,'rgba(0,0,0,0.52)');
+  ctx.fillStyle=vig;
+  ctx.fillRect(0,0,w,h);
+
+  requestAnimationFrame(draw);
+}
+
+window.addEventListener('resize',resize);
+resize();
+updateTable();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'ice-tables'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

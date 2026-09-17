@@ -1,0 +1,721 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Nuclear Fusion and Stellar Energy — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #3A6FC8;
+  --acc-rgb: 58, 111, 200;
+  --ag: rgba(var(--acc-rgb), 0.7);
+  --ag1: rgba(var(--acc-rgb), 0.12);
+  --ag2: rgba(var(--acc-rgb), 0.45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  min-height: 100vh;
+  padding: 40px 16px 0;
+  color: var(--ink);
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,0.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: white;
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-row {
+  margin-bottom: 10px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.fusion-slider {
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  appearance: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.fusion-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  transition: box-shadow 0.15s;
+  cursor: pointer;
+}
+
+.fusion-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.fusion-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  transition: box-shadow 0.15s;
+  cursor: pointer;
+}
+
+.fusion-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  margin-top: 6px;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.stat-value.accent {
+  color: var(--acc);
+}
+
+.stat-value.amber {
+  color: var(--amb);
+}
+
+.toggle-card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,0.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toggle-btn.active {
+  background: rgba(var(--acc-rgb), 0.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(var(--acc-rgb), 0.18);
+}
+
+.knowdrop {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.knowdrop p {
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-tag-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 10px;
+}
+
+.know-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 8px var(--acc);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+.know-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+}
+
+.know-this p {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+  margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+
+<h2 class="sr-only">Nuclear Fusion Interactive: Understanding stellar energy through binding energy curves</h2>
+
+<div class="container">
+  <h1>The sun is slowly turning into <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">iron</span></h1>
+  
+  <p class="intro">Every fusion reaction in a star's core trades a tiny bit of mass for energy — climbing the binding energy curve toward iron-56, the universe's most stable nucleus. Below that peak, light nuclei release energy by fusing. Above it, heavy nuclei release energy by splitting. Drag the slider to explore where fusion stops being profitable.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Binding Energy Curve</span>
+      <span class="live-tag" id="liveRegion">FUSION ZONE</span>
+    </div>
+    <div class="card-hint">Drag to explore different mass numbers</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="curveCanvas"></canvas>
+      <div class="canvas-overlay" id="canvasOverlay">MASS NUMBER: 4 • HELIUM-4</div>
+    </div>
+
+    <div class="slider-row">
+      <label class="slider-label" for="massSlider">Mass Number (A)</label>
+      <input type="range" id="massSlider" class="fusion-slider" min="1" max="240" value="4" step="1">
+      <div class="tick-labels">
+        <span>H-1</span>
+        <span>He-4</span>
+        <span>Fe-56</span>
+        <span>U-238</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <span class="stat-label">Binding Energy/Nucleon</span>
+        <span class="stat-value accent" id="beValue">7.07 MeV</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Process Type</span>
+        <span class="stat-value amber" id="processType">Fusion</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="toggle-card">
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" data-mode="sun">The Sun's Chain</button>
+      <button class="toggle-btn" data-mode="earth">Earth's Challenge</button>
+    </div>
+    
+    <div class="knowdrop">
+      <p id="knowdropText">The Sun fuses hydrogen into helium via the proton-proton chain: four protons collide over multiple steps to form one helium-4 nucleus, releasing 26.7 MeV per cycle. The core's 15 million Kelvin temperature gives protons enough kinetic energy to overcome electrostatic repulsion, and immense gravitational pressure — 250 billion atmospheres — confines them long enough for the strong nuclear force to bind them. Each second, the Sun converts 600 million tonnes of hydrogen into helium, losing 4 million tonnes as pure energy. It's been doing this for 4.6 billion years and will continue for another 5 billion, slowly climbing the binding energy curve until its core fills with inert iron and fusion stops forever.</p>
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-tag-row">
+      <div class="know-dot"></div>
+      <span class="know-tag">Know This</span>
+    </div>
+    <p>Fusion releases energy only when climbing <span style="color:var(--acc)">toward iron-56</span> on the binding energy curve — beyond that peak, only <span style="color:var(--acc)">fission</span> pays out, which is why stars die when their cores turn to <span style="color:var(--acc)">iron</span>.</p>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('curveCanvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const slider = document.getElementById('massSlider');
+const liveRegion = document.getElementById('liveRegion');
+const canvasOverlay = document.getElementById('canvasOverlay');
+const beValue = document.getElementById('beValue');
+const processType = document.getElementById('processType');
+const toggleBtns = document.querySelectorAll('.toggle-btn');
+const knowdropText = document.getElementById('knowdropText');
+
+const CSS = getComputedStyle(document.documentElement);
+const ACC = CSS.getPropertyValue('--acc').trim();
+const RGB = CSS.getPropertyValue('--acc-rgb').trim();
+const AMB = CSS.getPropertyValue('--amb').trim();
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d', { alpha: false });
+
+// Binding energy curve data (approximate BE/A values)
+function bindingEnergy(A) {
+  if (A === 1) return 0;
+  if (A === 2) return 1.11;
+  if (A === 3) return 2.83;
+  if (A === 4) return 7.07;
+  
+  // Simplified Bethe-Weizsäcker formula approximation
+  const a1 = 15.75, a2 = 17.8, a3 = 0.711, a4 = 23.7;
+  const Z = A / 2; // rough approximation
+  
+  const volumeTerm = a1;
+  const surfaceTerm = -a2 * Math.pow(A, -1/3);
+  const coulombTerm = -a3 * Z * (Z - 1) / Math.pow(A, 1/3);
+  const asymmetryTerm = -a4 * Math.pow((A - 2*Z), 2) / (A * A);
+  
+  let BE = volumeTerm + surfaceTerm + coulombTerm + asymmetryTerm;
+  
+  // Peak at Fe-56
+  if (A >= 50 && A <= 65) {
+    BE = 8.79 - 0.01 * Math.pow(A - 56, 2);
+  }
+  
+  // Decay for heavy elements
+  if (A > 100) {
+    BE = 8.79 - 0.008 * (A - 56);
+  }
+  
+  return Math.max(0, Math.min(8.8, BE));
+}
+
+function getElementName(A) {
+  if (A === 1) return 'H-1';
+  if (A === 2) return 'H-2';
+  if (A === 3) return 'H-3';
+  if (A === 4) return 'He-4';
+  if (A >= 5 && A <= 11) return 'Li-' + A;
+  if (A >= 12 && A <= 16) return 'C-' + A;
+  if (A >= 17 && A <= 24) return 'O-' + A;
+  if (A >= 25 && A <= 40) return 'Si-' + A;
+  if (A >= 41 && A <= 60) return 'Fe-' + A;
+  if (A >= 61 && A <= 120) return 'Ag-' + A;
+  return 'U-' + A;
+}
+
+let currentA = 4;
+let particles = [];
+
+class Particle {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.vx = (Math.random() - 0.5) * 0.5;
+    this.vy = (Math.random() - 0.5) * 0.5;
+    this.r = 1.5;
+    this.opacity = 0.6 + Math.random() * 0.4;
+  }
+  
+  update(w, h) {
+    this.x += this.vx;
+    this.y += this.vy;
+    
+    if (this.x < 0 || this.x > w) this.vx *= -1;
+    if (this.y < 0 || this.y > h) this.vy *= -1;
+    
+    this.x = Math.max(0, Math.min(w, this.x));
+    this.y = Math.max(0, Math.min(h, this.y));
+  }
+}
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  
+  // Initialize particles
+  if (particles.length === 0) {
+    for (let i = 0; i < 80; i++) {
+      particles.push(new Particle(Math.random() * w, Math.random() * h));
+    }
+  }
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  const pad = 50;
+  const graphW = w - 2 * pad;
+  const graphH = h - 2 * pad;
+  const originX = pad;
+  const originY = h - pad;
+  
+  // Update and draw particles
+  particles.forEach(p => {
+    p.update(w, h);
+    ctx.fillStyle = 'rgba(255,255,255,' + (p.opacity * 0.15) + ')';
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  
+  // Grid lines
+  ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+  ctx.lineWidth = 0.5;
+  for (let i = 0; i <= 8; i++) {
+    const y = originY - (i / 8) * graphH;
+    ctx.beginPath();
+    ctx.moveTo(originX, y);
+    ctx.lineTo(originX + graphW, y);
+    ctx.stroke();
+  }
+  
+  // Axes
+  ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(originX, originY);
+  ctx.lineTo(originX + graphW, originY);
+  ctx.moveTo(originX, originY);
+  ctx.lineTo(originX, originY - graphH);
+  ctx.stroke();
+  
+  // Axis labels
+  ctx.fillStyle = 'rgba(255,255,255,0.4)';
+  ctx.font = '9px JetBrains Mono';
+  ctx.textAlign = 'center';
+  ctx.fillText('Mass Number (A)', originX + graphW / 2, h - 12);
+  ctx.save();
+  ctx.translate(18, originY - graphH / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillText('BE/A (MeV)', 0, 0);
+  ctx.restore();
+  
+  // Draw curve
+  ctx.beginPath();
+  ctx.strokeStyle = 'rgba(' + RGB + ',0.6)';
+  ctx.lineWidth = 2.5;
+  
+  for (let A = 1; A <= 240; A++) {
+    const x = originX + (A / 240) * graphW;
+    const BE = bindingEnergy(A);
+    const y = originY - (BE / 9) * graphH;
+    
+    if (A === 1) {
+      ctx.moveTo(x, y);
+    } else {
+      ctx.lineTo(x, y);
+    }
+  }
+  ctx.stroke();
+  
+  // Glow on curve
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.strokeStyle = 'rgba(' + RGB + ',0.25)';
+  ctx.lineWidth = 6;
+  ctx.filter = 'blur(4px)';
+  ctx.beginPath();
+  for (let A = 1; A <= 240; A++) {
+    const x = originX + (A / 240) * graphW;
+    const BE = bindingEnergy(A);
+    const y = originY - (BE / 9) * graphH;
+    if (A === 1) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+  ctx.restore();
+  
+  // Mark Fe-56 peak
+  const fe56X = originX + (56 / 240) * graphW;
+  const fe56Y = originY - (bindingEnergy(56) / 9) * graphH;
+  
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  const peakGlow = ctx.createRadialGradient(fe56X, fe56Y, 0, fe56X, fe56Y, 30);
+  peakGlow.addColorStop(0, 'rgba(' + RGB + ',0.4)');
+  peakGlow.addColorStop(1, 'rgba(' + RGB + ',0)');
+  ctx.fillStyle = peakGlow;
+  ctx.fillRect(fe56X - 30, fe56Y - 30, 60, 60);
+  ctx.restore();
+  
+  ctx.fillStyle = ACC;
+  ctx.beginPath();
+  ctx.arc(fe56X, fe56Y, 4, 0, Math.PI * 2);
+  ctx.fill();
+  
+  ctx.fillStyle = ACC;
+  ctx.font = '10px JetBrains Mono';
+  ctx.textAlign = 'center';
+  ctx.fillText('Fe-56', fe56X, fe56Y - 12);
+  
+  // Mark current position
+  const currX = originX + (currentA / 240) * graphW;
+  const currBE = bindingEnergy(currentA);
+  const currY = originY - (currBE / 9) * graphH;
+  
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  const currGlow = ctx.createRadialGradient(currX, currY, 0, currX, currY, 25);
+  currGlow.addColorStop(0, 'rgba(250,199,117,0.5)');
+  currGlow.addColorStop(1, 'rgba(250,199,117,0)');
+  ctx.fillStyle = currGlow;
+  ctx.fillRect(currX - 25, currY - 25, 50, 50);
+  ctx.restore();
+  
+  ctx.fillStyle = AMB;
+  ctx.beginPath();
+  ctx.arc(currX, currY, 5, 0, Math.PI * 2);
+  ctx.fill();
+  
+  ctx.strokeStyle = AMB;
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([3, 3]);
+  ctx.beginPath();
+  ctx.moveTo(currX, currY);
+  ctx.lineTo(currX, originY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const vig = ctx.createRadialGradient(w / 2, h / 2, h * 0.28, w / 2, h / 2, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+  
+  requestAnimationFrame(draw);
+}
+
+function updateSlider() {
+  currentA = parseInt(slider.value);
+  const BE = bindingEnergy(currentA);
+  const elem = getElementName(currentA);
+  
+  const fillPercent = ((currentA - 1) / 239) * 100;
+  slider.style.setProperty('--fill', fillPercent + '%');
+  
+  beValue.textContent = BE.toFixed(2) + ' MeV';
+  
+  if (currentA < 56) {
+    processType.textContent = 'Fusion';
+    liveRegion.textContent = 'FUSION ZONE';
+  } else if (currentA === 56) {
+    processType.textContent = 'Peak Stability';
+    liveRegion.textContent = 'PEAK STABILITY';
+  } else {
+    processType.textContent = 'Fission';
+    liveRegion.textContent = 'FISSION ZONE';
+  }
+  
+  canvasOverlay.textContent = 'MASS NUMBER: ' + currentA + ' • ' + elem.toUpperCase();
+}
+
+slider.addEventListener('input', updateSlider);
+
+toggleBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    toggleBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    
+    const mode = btn.dataset.mode;
+    
+    if (mode === 'sun') {
+      knowdropText.textContent = "The Sun fuses hydrogen into helium via the proton-proton chain: four protons collide over multiple steps to form one helium-4 nucleus, releasing 26.7 MeV per cycle. The core's 15 million Kelvin temperature gives protons enough kinetic energy to overcome electrostatic repulsion, and immense gravitational pressure — 250 billion atmospheres — confines them long enough for the strong nuclear force to bind them. Each second, the Sun converts 600 million tonnes of hydrogen into helium, losing 4 million tonnes as pure energy. It's been doing this for 4.6 billion years and will continue for another 5 billion, slowly climbing the binding energy curve until its core fills with inert iron and fusion stops forever.";
+    } else {
+      knowdropText.textContent = "Replicating stellar fusion on Earth requires reaching 100 million Kelvin — hot enough to ionise hydrogen into plasma and give nuclei sufficient kinetic energy to overcome the Coulomb barrier. But containing that plasma is the engineering wall: magnetic confinement reactors like tokamaks use twisted magnetic fields to suspend the plasma away from any physical wall, while inertial confinement fires 192 lasers at a frozen pellet to compress it for a nanosecond-long fusion burst. Both approaches require more energy input than they produce in sustained output. ITER, currently under construction, aims to achieve Q > 10 — ten times more energy out than in — by 2035, proving fusion is viable. The promise is limitless clean energy from seawater deuterium; the challenge is holding a star in a bottle.";
+    }
+  });
+});
+
+window.addEventListener('resize', resize);
+
+resize();
+updateSlider();
+draw();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'nuclear-fusion-and-stellar-energy'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

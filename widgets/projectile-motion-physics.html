@@ -1,0 +1,653 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Projectile Motion — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #3A6FC8;
+  --ag: rgba(58, 111, 200, .7);
+  --ag1: rgba(58, 111, 200, .12);
+  --ag2: rgba(58, 111, 200, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+body{
+  background:radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family:'Geist',sans-serif;
+  color:var(--ink);
+  min-height:100vh;
+  padding:40px 16px 0;
+  -webkit-font-smoothing:antialiased
+}
+
+.container{max-width:720px;margin:0 auto}
+
+h1{
+  font-size:clamp(26px,6.5vw,44px);
+  font-weight:800;
+  letter-spacing:-0.03em;
+  line-height:1.05;
+  margin-bottom:14px
+}
+
+.intro{
+  font-size:15.5px;
+  font-weight:400;
+  color:var(--ink-dim);
+  line-height:1.55;
+  max-width:58ch;
+  margin-bottom:28px
+}
+
+.card{
+  background:linear-gradient(180deg,#12160F,#0d100b);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:16px;
+  box-shadow:0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom:20px
+}
+
+.card-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:6px
+}
+
+.card-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  text-transform:uppercase;
+  color:var(--ink);
+  font-weight:500
+}
+
+.live-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  text-transform:uppercase;
+  color:var(--acc);
+  font-weight:500
+}
+
+.card-hint{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  color:var(--ink-dim);
+  margin-bottom:14px
+}
+
+.canvas-wrapper{
+  position:relative;
+  width:100%;
+  aspect-ratio:16/9;
+  border-radius:12px;
+  overflow:hidden;
+  background:#000;
+  box-shadow:inset 0 0 0 1px var(--ag1);
+  margin-bottom:16px
+}
+
+canvas{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  display:block
+}
+
+.canvas-overlay{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  background:rgba(0,0,0,0.55);
+  backdrop-filter:blur(4px);
+  padding:9px 16px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:14px;
+  text-transform:uppercase;
+  color:var(--acc);
+  text-align:center;
+  font-weight:500
+}
+
+.pm-slider{
+  -webkit-appearance:none;
+  appearance:none;
+  width:100%;
+  height:4px;
+  border-radius:3px;
+  background:linear-gradient(90deg, var(--acc) var(--fill,0%), #23291f var(--fill,0%));
+  outline:none;
+  margin:16px 0 10px
+}
+
+.pm-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  appearance:none;
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  background:#0B0D0C;
+  border:2px solid var(--acc);
+  box-shadow:0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor:pointer;
+  transition:box-shadow .15s
+}
+
+.pm-slider::-moz-range-thumb{
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  background:#0B0D0C;
+  border:2px solid var(--acc);
+  box-shadow:0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor:pointer;
+  transition:box-shadow .15s
+}
+
+.pm-slider::-webkit-slider-thumb:hover{
+  box-shadow:0 0 24px var(--acc), 0 0 8px var(--ag)
+}
+
+.pm-slider::-moz-range-thumb:hover{
+  box-shadow:0 0 24px var(--acc), 0 0 8px var(--ag)
+}
+
+.tick-labels{
+  display:flex;
+  justify-content:space-between;
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  color:var(--ink-dim);
+  text-transform:uppercase;
+  letter-spacing:0.05em
+}
+
+.stat-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+  border-top:1px solid var(--line);
+  padding-top:16px;
+  margin-top:16px
+}
+
+.stat-item{
+  display:flex;
+  flex-direction:column;
+  gap:4px
+}
+
+.stat-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;
+  text-transform:uppercase;
+  color:var(--ink-dim);
+  letter-spacing:0.08em
+}
+
+.stat-value{
+  font-family:'JetBrains Mono',monospace;
+  font-size:24px;
+  font-weight:500
+}
+
+.toggle-card{
+  background:linear-gradient(180deg,#12160F,#0d100b);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:16px;
+  box-shadow:0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom:20px
+}
+
+.toggle-buttons{
+  display:flex;
+  gap:10px;
+  margin-bottom:16px
+}
+
+.toggle-btn{
+  flex:1;
+  font-family:'JetBrains Mono',monospace;
+  font-size:14.5px;
+  padding:12px;
+  border-radius:11px;
+  background:#12160F;
+  border:1px solid var(--line);
+  color:var(--ink-dim);
+  cursor:pointer;
+  transition:all .2s;
+  font-weight:500
+}
+
+.toggle-btn.active{
+  background:rgba(58,111,200,.1);
+  border:1px solid var(--acc);
+  color:var(--acc);
+  box-shadow:0 0 22px rgba(58,111,200,.18)
+}
+
+.knowdrop-divider{
+  border-top:1px solid var(--line);
+  margin-bottom:16px
+}
+
+.knowdrop-text{
+  font-family:'Geist',sans-serif;
+  font-size:14.5px;
+  font-weight:400;
+  line-height:1.65;
+  color:var(--ink)
+}
+
+.know-this{
+  border-left:3px solid var(--acc);
+  padding:16px 18px;
+  background:linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius:0 12px 12px 0;
+  margin-bottom:0
+}
+
+.know-this-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  text-transform:uppercase;
+  letter-spacing:0.15em;
+  color:var(--acc);
+  margin-bottom:10px;
+  display:block;
+  font-weight:500
+}
+
+.know-this-text{
+  font-family:'Geist',sans-serif;
+  font-size:17.4px;
+  font-weight:400;
+  line-height:1.55;
+  color:var(--ink)
+}
+
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+</style>
+
+<h2 class="sr-only">Interactive projectile motion widget showing independent horizontal and vertical motion</h2>
+
+<div class="container">
+  <h1>Horizontal velocity stays constant even while the object <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">falls</span></h1>
+  
+  <p class="intro">The single insight that unlocks every projectile question: horizontal and vertical motion are completely independent. Horizontally nothing accelerates the object; vertically gravity does. Drag the slider to change the launch angle and watch how each component behaves separately.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Projectile trajectory</span>
+      <span class="live-tag" id="angleLive">45°</span>
+    </div>
+    <div class="card-hint">Adjust launch angle • Watch the velocity components</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="pmCanvas"></canvas>
+      <div class="canvas-overlay" id="canvasTag">Maximum range at 45°</div>
+    </div>
+
+    <input type="range" min="15" max="75" value="45" class="pm-slider" id="angleSlider" style="--fill:50%">
+    <div class="tick-labels">
+      <span>15°</span>
+      <span>45°</span>
+      <span>75°</span>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-item">
+        <span class="stat-label">Horizontal v</span>
+        <span class="stat-value" style="color:var(--acc)" id="vxStat">7.1 m/s</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Peak height</span>
+        <span class="stat-value" style="color:var(--amb)" id="heightStat">5.0 m</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="toggle-card">
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" id="btnNoAir">No air resistance</button>
+      <button class="toggle-btn" id="btnAir">With air resistance</button>
+    </div>
+    <div class="knowdrop-divider"></div>
+    <p class="knowdrop-text" id="knowdropText">When there's no air resistance, the parabolic trajectory is perfectly symmetric. The horizontal velocity component remains constant throughout the entire flight because no horizontal forces act on the projectile. Vertically, gravity decelerates the object on the way up at exactly the same rate it accelerates it on the way down. Time of flight is determined entirely by the vertical motion—solve v = u + at for the upward journey, double it, and you have total flight time. At the peak, vertical velocity reaches zero while horizontal velocity stays unchanged. Range is maximised at 45° because this angle balances time aloft with horizontal speed.</p>
+  </div>
+
+  <div class="know-this">
+    <span class="know-this-tag">Know This</span>
+    <p class="know-this-text">Horizontal and vertical motion are <span style="color:var(--acc)">completely independent</span>—they share only <span style="color:var(--acc)">time</span>, which lets you solve them as two separate one-dimensional problems.</p>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('pmCanvas');
+const ctx = canvas.getContext('2d');
+const slider = document.getElementById('angleSlider');
+const angleLive = document.getElementById('angleLive');
+const canvasTag = document.getElementById('canvasTag');
+const vxStat = document.getElementById('vxStat');
+const heightStat = document.getElementById('heightStat');
+const btnNoAir = document.getElementById('btnNoAir');
+const btnAir = document.getElementById('btnAir');
+const knowdropText = document.getElementById('knowdropText');
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d');
+
+let angle = 45;
+let airMode = false;
+let time = 0;
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+resize();
+window.addEventListener('resize', resize);
+
+slider.addEventListener('input', e => {
+  angle = parseInt(e.target.value);
+  const pct = ((angle - 15) / (75 - 15)) * 100;
+  slider.style.setProperty('--fill', pct + '%');
+  angleLive.textContent = angle + '°';
+  
+  if (angle === 45) {
+    canvasTag.textContent = 'Maximum range at 45°';
+  } else if (angle < 45) {
+    canvasTag.textContent = 'Lower trajectory • Shorter flight time';
+  } else {
+    canvasTag.textContent = 'Higher trajectory • Longer hang time';
+  }
+  
+  updateStats();
+});
+
+function updateStats() {
+  const rad = angle * Math.PI / 180;
+  const v0 = 10; // initial velocity m/s
+  const vx = v0 * Math.cos(rad);
+  const vy = v0 * Math.sin(rad);
+  const g = 9.8;
+  const h = (vy * vy) / (2 * g);
+  
+  vxStat.textContent = vx.toFixed(1) + ' m/s';
+  heightStat.textContent = h.toFixed(1) + ' m';
+}
+
+updateStats();
+
+btnNoAir.addEventListener('click', () => {
+  airMode = false;
+  btnNoAir.classList.add('active');
+  btnAir.classList.remove('active');
+  knowdropText.textContent = "When there's no air resistance, the parabolic trajectory is perfectly symmetric. The horizontal velocity component remains constant throughout the entire flight because no horizontal forces act on the projectile. Vertically, gravity decelerates the object on the way up at exactly the same rate it accelerates it on the way down. Time of flight is determined entirely by the vertical motion—solve v = u + at for the upward journey, double it, and you have total flight time. At the peak, vertical velocity reaches zero while horizontal velocity stays unchanged. Range is maximised at 45° because this angle balances time aloft with horizontal speed.";
+});
+
+btnAir.addEventListener('click', () => {
+  airMode = true;
+  btnAir.classList.add('active');
+  btnNoAir.classList.remove('active');
+  knowdropText.textContent = "Air resistance changes everything. It acts opposite to the velocity vector, so it reduces both horizontal and vertical components—but not equally. The horizontal velocity is no longer constant; it decays throughout the flight. The trajectory becomes asymmetric: the descent is steeper than the ascent because the projectile is slower on the way down, giving air resistance more time to act vertically. Range is always shortened, and the optimal launch angle drops below 45°. Maximum height is also reduced because upward deceleration combines gravity with drag. Real projectiles—golf balls, footballs, bullets—all experience this asymmetry.";
+});
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  const margin = 40;
+  const launchX = margin;
+  const groundY = h - margin;
+  
+  const rad = angle * Math.PI / 180;
+  const v0 = 10;
+  const g = 9.8;
+  const vx0 = v0 * Math.cos(rad);
+  const vy0 = v0 * Math.sin(rad);
+  const tFlight = (2 * vy0) / g;
+  const range = vx0 * tFlight;
+  
+  const scale = (w - 2 * margin) / (range * 1.1);
+  
+  // Draw grid
+  ctx.strokeStyle = 'rgba(58,111,200,0.08)';
+  ctx.lineWidth = 0.8;
+  for (let i = 0; i <= 10; i++) {
+    const x = margin + (w - 2 * margin) * i / 10;
+    ctx.beginPath();
+    ctx.moveTo(x, margin);
+    ctx.lineTo(x, groundY);
+    ctx.stroke();
+  }
+  for (let i = 0; i <= 5; i++) {
+    const y = margin + (groundY - margin) * i / 5;
+    ctx.beginPath();
+    ctx.moveTo(margin, y);
+    ctx.lineTo(w - margin / 2, y);
+    ctx.stroke();
+  }
+  
+  // Ground line
+  ctx.strokeStyle = 'rgba(237,237,232,0.3)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(0, groundY);
+  ctx.lineTo(w, groundY);
+  ctx.stroke();
+  
+  // Trajectory path
+  ctx.beginPath();
+  ctx.strokeStyle = airMode ? 'rgba(250,199,117,0.6)' : 'rgba(58,111,200,0.6)';
+  ctx.lineWidth = 2.5;
+  
+  let firstPoint = true;
+  const steps = 100;
+  
+  if (!airMode) {
+    for (let i = 0; i <= steps; i++) {
+      const t = (tFlight * i) / steps;
+      const x = vx0 * t;
+      const y = vy0 * t - 0.5 * g * t * t;
+      const px = launchX + x * scale;
+      const py = groundY - y * scale;
+      
+      if (firstPoint) {
+        ctx.moveTo(px, py);
+        firstPoint = false;
+      } else {
+        ctx.lineTo(px, py);
+      }
+    }
+  } else {
+    // Air resistance simulation
+    const k = 0.15; // drag coefficient
+    let x = 0, y = 0, vx = vx0, vy = vy0;
+    const dt = 0.01;
+    
+    ctx.moveTo(launchX, groundY);
+    
+    while (y >= 0 && x < range * 2) {
+      const v = Math.sqrt(vx * vx + vy * vy);
+      const ax = -k * v * vx;
+      const ay = -g - k * v * vy;
+      
+      vx += ax * dt;
+      vy += ay * dt;
+      x += vx * dt;
+      y += vy * dt;
+      
+      const px = launchX + x * scale;
+      const py = groundY - y * scale;
+      
+      if (y >= 0) {
+        ctx.lineTo(px, py);
+      }
+    }
+  }
+  
+  ctx.stroke();
+  
+  // Animated projectile
+  const cycleTime = 3000;
+  const phase = (time % cycleTime) / cycleTime;
+  const tCurrent = phase * tFlight;
+  
+  let projX, projY, projVx, projVy;
+  
+  if (!airMode) {
+    projX = vx0 * tCurrent;
+    projY = vy0 * tCurrent - 0.5 * g * tCurrent * tCurrent;
+    projVx = vx0;
+    projVy = vy0 - g * tCurrent;
+  } else {
+    // Simulate to current time with drag
+    const k = 0.15;
+    let x = 0, y = 0, vx = vx0, vy = vy0;
+    const dt = 0.01;
+    let elapsed = 0;
+    
+    while (elapsed < tCurrent && y >= 0) {
+      const v = Math.sqrt(vx * vx + vy * vy);
+      const ax = -k * v * vx;
+      const ay = -g - k * v * vy;
+      
+      vx += ax * dt;
+      vy += ay * dt;
+      x += vx * dt;
+      y += vy * dt;
+      elapsed += dt;
+    }
+    
+    projX = x;
+    projY = Math.max(0, y);
+    projVx = vx;
+    projVy = vy;
+  }
+  
+  const px = launchX + projX * scale;
+  const py = groundY - projY * scale;
+  
+  // Projectile with glow
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  const glow = ctx.createRadialGradient(px, py, 0, px, py, 16);
+  glow.addColorStop(0, 'rgba(237,237,232,0.9)');
+  glow.addColorStop(0.5, 'rgba(237,237,232,0.3)');
+  glow.addColorStop(1, 'rgba(237,237,232,0)');
+  ctx.fillStyle = glow;
+  ctx.beginPath();
+  ctx.arc(px, py, 16, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+  
+  ctx.fillStyle = '#EDEDE8';
+  ctx.beginPath();
+  ctx.arc(px, py, 5, 0, Math.PI * 2);
+  ctx.fill();
+  
+  // Velocity vectors
+  const vecScale = 8;
+  
+  // Horizontal component (constant in no-air mode)
+  ctx.save();
+  ctx.strokeStyle = 'rgba(58,111,200,0.85)';
+  ctx.lineWidth = 2.5;
+  ctx.setLineDash([]);
+  ctx.beginPath();
+  ctx.moveTo(px, py);
+  ctx.lineTo(px + projVx * vecScale, py);
+  ctx.stroke();
+  
+  // Arrow
+  ctx.fillStyle = 'rgba(58,111,200,0.85)';
+  ctx.beginPath();
+  ctx.moveTo(px + projVx * vecScale, py);
+  ctx.lineTo(px + projVx * vecScale - 8, py - 4);
+  ctx.lineTo(px + projVx * vecScale - 8, py + 4);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+  
+  // Vertical component
+  ctx.save();
+  ctx.strokeStyle = 'rgba(250,199,117,0.85)';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  ctx.moveTo(px, py);
+  ctx.lineTo(px, py - projVy * vecScale);
+  ctx.stroke();
+  
+  if (Math.abs(projVy) > 0.1) {
+    ctx.fillStyle = 'rgba(250,199,117,0.85)';
+    ctx.beginPath();
+    if (projVy > 0) {
+      ctx.moveTo(px, py - projVy * vecScale);
+      ctx.lineTo(px - 4, py - projVy * vecScale + 8);
+      ctx.lineTo(px + 4, py - projVy * vecScale + 8);
+    } else {
+      ctx.moveTo(px, py - projVy * vecScale);
+      ctx.lineTo(px - 4, py - projVy * vecScale - 8);
+      ctx.lineTo(px + 4, py - projVy * vecScale - 8);
+    }
+    ctx.closePath();
+    ctx.fill();
+  }
+  ctx.restore();
+  
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const vig = ctx.createRadialGradient(w / 2, h / 2, h * 0.28, w / 2, h / 2, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+  
+  time += 16;
+  requestAnimationFrame(draw);
+}
+
+draw();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'projectile-motion'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

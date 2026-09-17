@@ -1,0 +1,557 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Green Chemistry in Drug Synthesis — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #3E9AD6;
+  --ag: rgba(62, 154, 214, .7);
+  --ag1: rgba(62, 154, 214, .12);
+  --ag2: rgba(62, 154, 214, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+body{
+  background:radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family:'Geist',sans-serif;
+  min-height:100vh;
+  padding:40px 16px 0;
+  color:var(--ink);
+}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+
+.container{max-width:720px;margin:0 auto}
+
+h1{
+  font-size:clamp(26px,6.5vw,44px);
+  font-weight:800;
+  letter-spacing:-0.03em;
+  line-height:1.05;
+  margin-bottom:14px;
+}
+
+.intro{
+  font-size:15.5px;
+  font-weight:400;
+  color:var(--ink-dim);
+  line-height:1.55;
+  max-width:58ch;
+  margin-bottom:28px;
+}
+
+.card{
+  background:linear-gradient(180deg,#12160F,#0d100b);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:16px;
+  box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);
+  margin-bottom:18px;
+}
+
+.card-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:6px;
+}
+
+.card-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  text-transform:uppercase;
+  color:white;
+}
+
+.live-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  text-transform:uppercase;
+  color:var(--acc);
+}
+
+.card-hint{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  color:var(--ink-dim);
+  margin-bottom:12px;
+}
+
+.canvas-wrapper{
+  position:relative;
+  width:100%;
+  aspect-ratio:16/9;
+  border-radius:12px;
+  overflow:hidden;
+  background:#000;
+  box-shadow:inset 0 0 0 1px var(--ag1);
+  margin-bottom:14px;
+}
+
+canvas{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  display:block;
+}
+
+.canvas-overlay{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  background:rgba(0,0,0,0.55);
+  backdrop-filter:blur(4px);
+  padding:9px 16px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:14px;
+  text-transform:uppercase;
+  color:var(--acc);
+  text-align:center;
+}
+
+.slider-wrapper{margin-bottom:10px}
+
+.slider-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;
+  text-transform:uppercase;
+  color:var(--ink-dim);
+  margin-bottom:8px;
+}
+
+.syn-slider{
+  -webkit-appearance:none;
+  appearance:none;
+  width:100%;
+  height:4px;
+  border-radius:3px;
+  background:linear-gradient(90deg,var(--acc) var(--fill,0%),#23291f var(--fill,0%));
+  outline:none;
+  cursor:pointer;
+}
+
+.syn-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  appearance:none;
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  background:#0B0D0C;
+  border:2px solid var(--acc);
+  box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);
+  cursor:pointer;
+  transition:box-shadow .15s;
+}
+
+.syn-slider::-moz-range-thumb{
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  background:#0B0D0C;
+  border:2px solid var(--acc);
+  box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);
+  cursor:pointer;
+  transition:box-shadow .15s;
+}
+
+.syn-slider::-webkit-slider-thumb:hover{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.syn-slider::-moz-range-thumb:hover{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+
+.tick-labels{
+  display:flex;
+  justify-content:space-between;
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  color:var(--ink-dim);
+  padding:0 2px;
+}
+
+.stat-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+  padding-top:14px;
+  border-top:1px solid var(--line);
+}
+
+.stat{text-align:center}
+
+.stat-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;
+  text-transform:uppercase;
+  color:var(--ink-dim);
+  margin-bottom:6px;
+}
+
+.stat-value{
+  font-family:'JetBrains Mono',monospace;
+  font-size:24px;
+  font-weight:500;
+}
+
+.stat:first-child .stat-value{color:var(--acc)}
+.stat:last-child .stat-value{color:var(--amb)}
+
+.toggle-section{
+  display:flex;
+  gap:10px;
+  margin-bottom:16px;
+}
+
+.toggle-btn{
+  flex:1;
+  font-family:'JetBrains Mono',monospace;
+  font-size:14.5px;
+  padding:12px;
+  border-radius:11px;
+  border:1px solid var(--line);
+  background:#12160F;
+  color:var(--ink-dim);
+  cursor:pointer;
+  transition:all .2s;
+}
+
+.toggle-btn.active{
+  background:rgba(62, 154, 214,.1);
+  border:1px solid var(--acc);
+  color:var(--acc);
+  box-shadow:0 0 22px rgba(62, 154, 214,.18);
+}
+
+.knowdrop-divider{
+  border-top:1px solid var(--line);
+  padding-top:16px;
+}
+
+.knowdrop-text{
+  font-family:'Geist',sans-serif;
+  font-size:14.5px;
+  font-weight:400;
+  line-height:1.65;
+  color:var(--ink);
+}
+
+.know-this{
+  border-left:3px solid var(--acc);
+  padding:16px 18px;
+  background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));
+  border-radius:0 12px 12px 0;
+  margin-bottom:0;
+}
+
+.know-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  text-transform:uppercase;
+  letter-spacing:0.15em;
+  color:var(--acc);
+  margin-bottom:10px;
+  display:block;
+}
+
+.know-text{
+  font-family:'Geist',sans-serif;
+  font-size:17.4px;
+  font-weight:400;
+  line-height:1.55;
+  color:var(--ink);
+}
+
+.know-text .hl{color:var(--acc)}
+</style>
+
+<h2 class="sr-only">Green Chemistry in Drug Synthesis Interactive Widget</h2>
+
+<div class="container">
+  <h1>The best pharma waste plan is to <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">never create it</span></h1>
+  
+  <p class="intro">Pharmaceutical synthesis generates more waste per kilogram of product than almost any other industry. Traditional chemistry cleans up afterwards; green chemistry redesigns the equation itself. Move the slider to compare a four-step traditional synthesis against streamlined catalytic routes.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Synthesis pathway</span>
+      <span class="live-tag" id="stepTag">4 STEPS</span>
+    </div>
+    <div class="card-hint">Drag to reduce synthetic steps</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="synCanvas"></canvas>
+      <div class="canvas-overlay" id="canvasTag">TRADITIONAL ROUTE</div>
+    </div>
+
+    <div class="slider-wrapper">
+      <div class="slider-label">Synthetic steps</div>
+      <input type="range" min="1" max="4" value="4" class="syn-slider" id="stepSlider" step="1">
+      <div class="tick-labels">
+        <span>1</span>
+        <span>2</span>
+        <span>3</span>
+        <span>4</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Atom economy</div>
+        <div class="stat-value" id="atomEcon">38%</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Waste generated</div>
+        <div class="stat-value" id="wasteVal">84 kg</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-section">
+      <button class="toggle-btn active" id="btnAtom">Atom Economy</button>
+      <button class="toggle-btn" id="btnSolvent">Green Solvents</button>
+    </div>
+
+    <div class="knowdrop-divider">
+      <p class="knowdrop-text" id="knowdropText">Atom economy measures what fraction of all reactant atoms end up in your desired product. Traditional synthesis stacks reagents that achieve the transformation but leave molecular debris behind—protecting groups, stoichiometric oxidants, coupling agents that become side-products. Green chemistry asks: can you design a reaction where every atom you add lands in the final molecule? Catalytic routes excel here because the catalyst cycles back, leaving only product atoms. A four-step synthesis with 60% atom economy at each step delivers an overall economy under 13%; a single catalytic step can approach 90% or higher. The equation itself becomes the design constraint.</p>
+    </div>
+  </div>
+
+  <div class="know-this">
+    <span class="know-tag">Know This</span>
+    <p class="know-text">Green chemistry shifts the design question from <span class="hl">"How do we remove the waste?"</span> to <span class="hl">"How do we ensure it never forms?"</span> by maximising atom economy, choosing catalytic over stoichiometric pathways, and minimising synthetic steps.</p>
+  </div>
+</div>
+
+<script>
+const canvas=document.getElementById('synCanvas');
+const ctx=canvas.getContext('2d',{alpha:false});
+const slider=document.getElementById('stepSlider');
+const stepTag=document.getElementById('stepTag');
+const canvasTag=document.getElementById('canvasTag');
+const atomEcon=document.getElementById('atomEcon');
+const wasteVal=document.getElementById('wasteVal');
+const btnAtom=document.getElementById('btnAtom');
+const btnSolvent=document.getElementById('btnSolvent');
+const knowdropText=document.getElementById('knowdropText');
+
+const dpr=Math.min(window.devicePixelRatio||1,2);
+const buf=document.createElement('canvas');
+const bctx=buf.getContext('2d',{alpha:false});
+
+let steps=4;
+let targetSteps=4;
+
+const atomText={
+  atom:"Atom economy measures what fraction of all reactant atoms end up in your desired product. Traditional synthesis stacks reagents that achieve the transformation but leave molecular debris behind—protecting groups, stoichiometric oxidants, coupling agents that become side-products. Green chemistry asks: can you design a reaction where every atom you add lands in the final molecule? Catalytic routes excel here because the catalyst cycles back, leaving only product atoms. A four-step synthesis with 60% atom economy at each step delivers an overall economy under 13%; a single catalytic step can approach 90% or higher. The equation itself becomes the design constraint.",
+  solvent:"Pharmaceutical synthesis traditionally relied on chlorinated solvents, benzene derivatives, and petrochemical feedstocks—effective but toxic, flammable, and environmentally persistent. Green alternatives include water, ethanol, supercritical CO₂, and bio-derived solvents like cyrene or 2-methyltetrahydrofuran. Water is the ultimate green solvent when chemistry permits it; many modern catalysts are now designed specifically to work in aqueous media. Solvent accounts for 80–90% of total mass in a typical pharmaceutical process, so switching from dichloromethane to ethanol in a single step can cut hazardous waste by tens of tonnes per batch. The twelve principles of green chemistry place solvent choice second only to waste prevention itself."
+};
+
+function resize(){
+  const rect=canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width=Math.round(rect.width*dpr);
+  canvas.height=Math.round(rect.height*dpr);
+  buf.width=canvas.width;
+  buf.height=canvas.height;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+
+resize();
+window.addEventListener('resize',resize);
+
+function updateStats(){
+  const econ=[90,72,54,38];
+  const waste=[4,18,42,84];
+  atomEcon.textContent=econ[steps-1]+'%';
+  wasteVal.textContent=waste[steps-1]+' kg';
+  stepTag.textContent=steps+(steps===1?' STEP':' STEPS');
+  if(steps===1){
+    canvasTag.textContent='CATALYTIC ROUTE';
+  }else if(steps===2){
+    canvasTag.textContent='STREAMLINED SYNTHESIS';
+  }else{
+    canvasTag.textContent='TRADITIONAL ROUTE';
+  }
+}
+
+slider.addEventListener('input',e=>{
+  const val=parseInt(e.target.value);
+  targetSteps=5-val;
+  const pct=(val-1)/3*100;
+  slider.style.setProperty('--fill',pct+'%');
+});
+
+btnAtom.addEventListener('click',()=>{
+  btnAtom.classList.add('active');
+  btnSolvent.classList.remove('active');
+  knowdropText.textContent=atomText.atom;
+});
+
+btnSolvent.addEventListener('click',()=>{
+  btnSolvent.classList.add('active');
+  btnAtom.classList.remove('active');
+  knowdropText.textContent=atomText.solvent;
+});
+
+slider.style.setProperty('--fill','100%');
+updateStats();
+
+let time=0;
+const particles=[];
+
+for(let i=0;i<80;i++){
+  particles.push({
+    x:Math.random(),
+    y:Math.random(),
+    vx:(Math.random()-0.5)*0.15,
+    vy:(Math.random()-0.5)*0.15,
+    r:Math.random()*1.8+0.6,
+    phase:Math.random()*Math.PI*2,
+    speed:0.4+Math.random()*0.8
+  });
+}
+
+function draw(){
+  const w=canvas.width/dpr;
+  const h=canvas.height/dpr;
+
+  ctx.fillStyle='#000';
+  ctx.fillRect(0,0,w,h);
+
+  const diff=targetSteps-steps;
+  if(Math.abs(diff)>0.01){
+    steps+=(diff)*0.08;
+  }else{
+    steps=targetSteps;
+  }
+
+  const stageW=w/(steps+1);
+  const marginX=stageW*0.5;
+  const cy=h*0.5;
+
+  const rAccHex='3AADA0';
+  const rAccR=58,rAccG=173,rAccB=160;
+  const rAmb='FAC775';
+
+  for(let i=0;i<=steps;i++){
+    const cx=marginX+i*stageW;
+    const isProduct=(i===steps);
+    const rad=isProduct?h*0.13:h*0.095;
+
+    const grad=ctx.createRadialGradient(cx,cy,0,cx,cy,rad*2.4);
+    if(isProduct){
+      grad.addColorStop(0,'rgba('+rAccR+','+rAccG+','+rAccB+',0.5)');
+      grad.addColorStop(0.35,'rgba('+rAccR+','+rAccG+','+rAccB+',0.18)');
+      grad.addColorStop(1,'rgba('+rAccR+','+rAccG+','+rAccB+',0)');
+    }else{
+      grad.addColorStop(0,'rgba(138,138,138,0.3)');
+      grad.addColorStop(0.4,'rgba(138,138,138,0.1)');
+      grad.addColorStop(1,'rgba(138,138,138,0)');
+    }
+    ctx.save();
+    ctx.globalCompositeOperation='lighter';
+    ctx.fillStyle=grad;
+    ctx.beginPath();
+    ctx.arc(cx,cy,rad*2.4,0,Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+
+    ctx.fillStyle=isProduct?'#'+rAccHex:'#4a4a4a';
+    ctx.beginPath();
+    ctx.arc(cx,cy,rad,0,Math.PI*2);
+    ctx.fill();
+
+    ctx.strokeStyle=isProduct?'rgba('+rAccR+','+rAccG+','+rAccB+',0.6)':'rgba(138,138,138,0.5)';
+    ctx.lineWidth=1.5;
+    ctx.stroke();
+
+    if(i<steps){
+      const nx=marginX+(i+1)*stageW;
+      ctx.strokeStyle='rgba('+rAccR+','+rAccG+','+rAccB+',0.25)';
+      ctx.lineWidth=1.2;
+      ctx.setLineDash([4,4]);
+      ctx.beginPath();
+      ctx.moveTo(cx+rad,cy);
+      ctx.lineTo(nx-rad,cy);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      const arX=nx-rad-8;
+      ctx.fillStyle='rgba('+rAccR+','+rAccG+','+rAccB+',0.35)';
+      ctx.beginPath();
+      ctx.moveTo(arX,cy);
+      ctx.lineTo(arX-6,cy-4);
+      ctx.lineTo(arX-6,cy+4);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    ctx.save();
+    ctx.fillStyle=isProduct?'#000':'#0B0D0C';
+    ctx.font='600 11px JetBrains Mono';
+    ctx.textAlign='center';
+    ctx.textBaseline='middle';
+    ctx.fillText(isProduct?'P':(i+1),cx,cy);
+    ctx.restore();
+  }
+
+  particles.forEach(p=>{
+    p.x+=p.vx*0.015;
+    p.y+=p.vy*0.015;
+    if(p.x<0||p.x>1){p.vx*=-1;p.x=Math.max(0,Math.min(1,p.x))}
+    if(p.y<0||p.y>1){p.vy*=-1;p.y=Math.max(0,Math.min(1,p.y))}
+
+    const px=p.x*w;
+    const py=p.y*h;
+    const life=0.3+0.3*Math.sin(time*p.speed+p.phase);
+
+    ctx.save();
+    ctx.globalCompositeOperation='lighter';
+    ctx.fillStyle='rgba('+rAccR+','+rAccG+','+rAccB+','+life*0.22+')';
+    ctx.beginPath();
+    ctx.arc(px,py,p.r,0,Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+  });
+
+  bctx.setTransform(1,0,0,1,0,0);
+  bctx.clearRect(0,0,buf.width,buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas,0,0);
+  ctx.save();
+  ctx.globalCompositeOperation='lighter';
+  ctx.globalAlpha=0.38;
+  ctx.filter='blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf,0,0,w,h);
+  ctx.restore();
+
+  const cx=w*0.5;
+  const cy2=h*0.5;
+  const vig=ctx.createRadialGradient(cx,cy2,h*0.28,cx,cy2,w*0.72);
+  vig.addColorStop(0,'rgba(0,0,0,0)');
+  vig.addColorStop(1,'rgba(0,0,0,0.52)');
+  ctx.fillStyle=vig;
+  ctx.fillRect(0,0,w,h);
+
+  time+=0.016;
+  requestAnimationFrame(draw);
+}
+
+draw();
+updateStats();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'green-chemistry-in-drug-synthesis'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

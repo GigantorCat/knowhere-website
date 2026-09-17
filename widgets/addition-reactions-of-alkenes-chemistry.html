@@ -1,0 +1,1051 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Addition Reactions of Alkenes — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #3E9AD6;
+  --acc-rgb: 62, 154, 214;
+  --ag: rgba(var(--acc-rgb), 0.7);
+  --ag1: rgba(var(--acc-rgb), 0.12);
+  --ag2: rgba(var(--acc-rgb), 0.45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 0;
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,0.5), inset 0 1px 0 var(--ag1);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-container {
+  margin-bottom: 8px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 10px;
+}
+
+.ar-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  outline: none;
+  cursor: pointer;
+}
+
+.ar-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+
+.ar-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+
+.ar-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.ar-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  padding: 0 10px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  margin-top: 16px;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.stat:first-child .stat-value { color: var(--acc); }
+.stat:last-child .stat-value { color: var(--amb); }
+
+.toggle-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: #12160F;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toggle-btn.active {
+  background: rgba(var(--acc-rgb), 0.1);
+  border-color: var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(var(--acc-rgb), 0.18);
+}
+
+.knowdrop-section {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.knowdrop-text {
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-top: 16px;
+}
+
+.know-this-tag {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 12px;
+}
+
+.know-this-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 8px var(--acc);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+.know-this-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+}
+
+.know-this-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Addition versus Substitution Reactions Interactive</h2>
+  
+  <h1>The double bond is an <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">invitation</span></h1>
+  
+  <p class="intro">
+    Alkenes have a pi bond waiting to break — drag in a reagent and watch both atoms add across the two carbons, one molecule in, one product out. Alkanes do not invite anything: force bromine onto ethane and you need ultraviolet light, a hydrogen gets swapped, and hydrogen bromide leaves. Drag the slider to control the reagent approaching the molecule.
+  </p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Interactive Addition</span>
+      <span class="live-tag" id="liveTag">Ethene • Waiting</span>
+    </div>
+    <div class="card-hint">Select a reagent and drag to watch the reaction unfold</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="reactionCanvas"></canvas>
+      <div class="canvas-overlay" id="canvasOverlay">No reagent selected</div>
+    </div>
+
+    <div class="slider-container">
+      <div class="slider-label">Reagent Approach</div>
+      <input type="range" min="0" max="100" value="0" class="ar-slider" id="approachSlider">
+      <div class="tick-labels">
+        <span>Separated</span>
+        <span>Approaching</span>
+        <span>Reacting</span>
+        <span>Product</span>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-label">Atoms In</div>
+        <div class="stat-value" id="atomsIn">—</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Atoms Out</div>
+        <div class="stat-value" id="atomsOut">—</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-row">
+      <button class="toggle-btn active" id="alkeneBtn">Alkene (Addition)</button>
+      <button class="toggle-btn" id="alkaneBtn">Alkane (Substitution)</button>
+    </div>
+    <div class="toggle-row">
+      <button class="toggle-btn active" id="h2Btn">H₂</button>
+      <button class="toggle-btn" id="br2Btn">Br₂</button>
+      <button class="toggle-btn" id="hbrBtn">HBr</button>
+      <button class="toggle-btn" id="h2oBtn">H₂O</button>
+    </div>
+    <div class="knowdrop-section">
+      <p class="knowdrop-text" id="knowdropText">
+        Hydrogen addition across ethene needs a nickel or platinum catalyst to break the H–H bond. The pi bond opens and each hydrogen forms a new single bond to a carbon — ethene becomes ethane. Every atom that started separate ends up in the product molecule. This is catalytic hydrogenation, the reaction that converts vegetable oils to margarine by saturating the carbon chains.
+      </p>
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-this-tag">
+      <div class="know-this-dot"></div>
+      <div class="know-this-label">Know This</div>
+    </div>
+    <p class="know-this-body">
+      <span style="color:var(--acc)">The double bond</span> is the reactive site: the pi bond breaks and two new single bonds form across it, enabling four classic additions — hydrogen, halogens, hydrogen halides, and <span style="color:var(--acc)">water</span> — each conserving every atom into <span style="color:var(--acc)">one product molecule</span>.
+    </p>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById("reactionCanvas");
+const ctx = canvas.getContext("2d");
+const overlay = document.getElementById("canvasOverlay");
+const liveTag = document.getElementById("liveTag");
+const slider = document.getElementById("approachSlider");
+const atomsInEl = document.getElementById("atomsIn");
+const atomsOutEl = document.getElementById("atomsOut");
+
+const alkeneBtn = document.getElementById("alkeneBtn");
+const alkaneBtn = document.getElementById("alkaneBtn");
+const h2Btn = document.getElementById("h2Btn");
+const br2Btn = document.getElementById("br2Btn");
+const hbrBtn = document.getElementById("hbrBtn");
+const h2oBtn = document.getElementById("h2oBtn");
+const knowdropText = document.getElementById("knowdropText");
+
+const CSS = getComputedStyle(document.documentElement);
+const ACC = CSS.getPropertyValue("--acc").trim();
+const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+const AMB = CSS.getPropertyValue("--amb").trim();
+
+let mode = "alkene";
+let reagent = "h2";
+let progress = 0;
+let uvOn = false;
+let nowT = 0; /* clock for the ambient bond pulse */
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement("canvas");
+const bctx = buf.getContext("2d");
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  draw();
+}
+
+window.addEventListener("resize", resize);
+resize();
+
+slider.addEventListener("input", (e) => {
+  progress = parseFloat(e.target.value) / 100;
+  slider.style.setProperty("--fill", e.target.value + "%");
+  draw();
+});
+
+alkeneBtn.addEventListener("click", () => {
+  mode = "alkene";
+  uvOn = false;
+  alkeneBtn.classList.add("active");
+  alkaneBtn.classList.remove("active");
+  progress = 0;
+  slider.value = 0;
+  slider.style.setProperty("--fill", "0%");
+  draw();
+});
+
+alkaneBtn.addEventListener("click", () => {
+  mode = "alkane";
+  uvOn = false;
+  alkaneBtn.classList.add("active");
+  alkeneBtn.classList.remove("active");
+  progress = 0;
+  slider.value = 0;
+  slider.style.setProperty("--fill", "0%");
+  draw();
+});
+
+function selectReagent(r) {
+  reagent = r;
+  progress = 0;
+  slider.value = 0;
+  slider.style.setProperty("--fill", "0%");
+  h2Btn.classList.toggle("active", r === "h2");
+  br2Btn.classList.toggle("active", r === "br2");
+  hbrBtn.classList.toggle("active", r === "hbr");
+  h2oBtn.classList.toggle("active", r === "h2o");
+  updateKnowdrop();
+  draw();
+}
+
+h2Btn.addEventListener("click", () => selectReagent("h2"));
+br2Btn.addEventListener("click", () => selectReagent("br2"));
+hbrBtn.addEventListener("click", () => selectReagent("hbr"));
+h2oBtn.addEventListener("click", () => selectReagent("h2o"));
+
+function updateKnowdrop() {
+  const drops = {
+    alkene_h2: "Hydrogen addition across ethene needs a nickel or platinum catalyst to break the H–H bond. The pi bond opens and each hydrogen forms a new single bond to a carbon — ethene becomes ethane. Every atom that started separate ends up in the product molecule. This is catalytic hydrogenation, the reaction that converts vegetable oils to margarine by saturating the carbon chains.",
+    alkene_br2: "Bromine adds across the double bond without a catalyst — the pi electrons attack one bromine, breaking the Br–Br bond, and the second bromine adds to the other carbon. The orange bromine water decolourises instantly, which is the bench test for unsaturation. Ethene plus bromine gives 1,2-dibromoethane: one product, every atom accounted for, no side waste.",
+    alkene_hbr: "Hydrogen bromide adds across the double bond with the hydrogen attaching to one carbon and the bromine to the other. For symmetrical alkenes like ethene it does not matter which way round, but for asymmetrical alkenes like propene, Markovnikov\u2019s rule predicts the major product: the hydrogen goes to the carbon that already has more hydrogens. The mechanism is electrophilic addition through a carbocation intermediate.",
+    alkene_h2o: "Water addition — hydration — needs an acid catalyst (usually sulfuric or phosphoric acid) to protonate the double bond and form a carbocation. Water then attacks the cation to give an alcohol. Ethene plus water makes ethanol, the reaction that produces industrial alcohol from ethylene feedstock. Addition is reversible: heat an alcohol with acid and you dehydrate it back to the alkene.",
+    alkane_h2: "Alkanes do not react with hydrogen under normal conditions — they are already saturated, every carbon bonded to the maximum number of hydrogens. There is no electron-rich site for hydrogen to attack and no thermodynamic driving force. If you try to force it, nothing happens: the mixture stays inert. Addition is the privilege of the double bond.",
+    alkane_br2: "Ethane and bromine do not react in the dark. But switch on ultraviolet light and a free-radical substitution starts: light breaks the Br–Br bond into bromine radicals, a radical pulls a hydrogen off ethane to make HBr, and the ethyl radical left behind reacts with another bromine molecule to make bromoethane and another bromine radical. The chain reaction continues until radicals combine or reactants run out. One hydrogen is swapped for one bromine; the displaced hydrogen leaves as hydrogen bromide. Substitution always has a leaving group.",
+    alkane_hbr: "Hydrogen bromide does not react with ethane under normal conditions. Alkanes have no reactive site for HBr to attack — the C–H and C–C bonds are strong and non-polar. You would need extreme conditions (very high temperature, radical initiators) to force any reaction, and even then it would be a substitution via radicals, not an addition. HBr is wasted on an alkane; it needs a double bond to add across.",
+    alkane_h2o: "Water does not react with ethane. Alkanes are completely non-polar and hydrophobic; water molecules have no way to attack the inert C–H or C–C bonds. Even with an acid catalyst — which works for alkenes — nothing happens because there is no pi bond to protonate. If you want to put water into an alkane chain you need to go through an alkene first, hydrate it to an alcohol, then reduce the alcohol if needed."
+  };
+  const key = mode + "_" + reagent;
+  knowdropText.textContent = drops[key] || "";
+}
+
+updateKnowdrop();
+
+function ease(t) {
+  return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+}
+
+function drawAtom(x, y, label, color, radius) {
+  ctx.save();
+  const grad = ctx.createRadialGradient(x, y, 0, x, y, radius * 1.6);
+  grad.addColorStop(0, color);
+  grad.addColorStop(0.5, color);
+  grad.addColorStop(1, "rgba(0,0,0,0)");
+  ctx.globalCompositeOperation = "lighter";
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.arc(x, y, radius * 1.6, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.arc(x, y, radius, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = "#000";
+  ctx.font = "bold 11px Geist";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(label, x, y);
+}
+
+function drawBond(x1, y1, x2, y2, color, width) {
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width;
+  ctx.lineCap = "round";
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.stroke();
+}
+
+function drawDoubleBond(x1, y1, x2, y2, color, glow) {
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const len = Math.hypot(dx, dy);
+  const nx = -dy / len;
+  const ny = dx / len;
+  const offset = 3;
+
+  if (glow) {
+    /* glow is a strength 0..1 — pulses with time so the bond visibly hums */
+    const g = typeof glow === "number" ? glow : 0.6;
+    const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    // halo pool around the whole bond
+    const halo = ctx.createRadialGradient(mx, my, 0, mx, my, len * 1.1);
+    halo.addColorStop(0, "rgba(" + RGB + "," + (0.32 * g) + ")");
+    halo.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = halo;
+    ctx.beginPath();
+    ctx.arc(mx, my, len * 1.1, 0, Math.PI * 2);
+    ctx.fill();
+    // hot lines
+    ctx.strokeStyle = "rgba(" + RGB + "," + (0.85 * g) + ")";
+    ctx.lineWidth = 7;
+    ctx.filter = "blur(4px)";
+    ctx.beginPath();
+    ctx.moveTo(x1 + nx * offset, y1 + ny * offset);
+    ctx.lineTo(x2 + nx * offset, y2 + ny * offset);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x1 - nx * offset, y1 - ny * offset);
+    ctx.lineTo(x2 - nx * offset, y2 - ny * offset);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2;
+  ctx.lineCap = "round";
+  ctx.beginPath();
+  ctx.moveTo(x1 + nx * offset, y1 + ny * offset);
+  ctx.lineTo(x2 + nx * offset, y2 + ny * offset);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x1 - nx * offset, y1 - ny * offset);
+  ctx.lineTo(x2 - nx * offset, y2 - ny * offset);
+  ctx.stroke();
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  const cx = w / 2;
+  const cy = h / 2;
+
+  ctx.fillStyle = "#000";
+  ctx.fillRect(0, 0, w, h);
+
+  const eased = ease(progress);
+
+  /* f12 hand-tune: the molecule scene scales UP with the canvas —
+     everything drawn in molecule coordinates gets enlarged about centre */
+  const S = Math.max(1.4, Math.min(2.2, Math.min(w / 420, h / 235)));
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.scale(S, S);
+  ctx.translate(-cx, -cy);
+
+  if (mode === "alkene") {
+    drawAlkeneAddition(cx, cy, w, h, eased);
+  } else {
+    drawAlkaneSubstitution(cx, cy, w, h, eased);
+  }
+  ctx.restore();
+
+  /* captions + UV wash live OUTSIDE the scale transform */
+  if (mode === "alkane" && reagent !== "br2") {
+    ctx.fillStyle = "#8C9389";
+    ctx.font = "13px JetBrains Mono";
+    ctx.textAlign = "center";
+    ctx.fillText("(No reaction — alkanes are saturated: no π bond to open)", cx, h - 16);
+  }
+  if (mode === "alkane" && reagent === "br2" && progress > 0.1 && progress < 0.5) {
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    ctx.fillStyle = "rgba(250, 199, 117, 0.13)";
+    ctx.fillRect(0, 0, w, h);
+    ctx.restore();
+    ctx.fillStyle = AMB;
+    ctx.font = "11px JetBrains Mono";
+    ctx.textAlign = "left";
+    ctx.fillText("UV ON — radicals loose", 12, h - 16);
+  }
+
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = "lighter";
+  ctx.globalAlpha = 0.38;
+  ctx.filter = "blur(7px)";
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, "rgba(0,0,0,0)");
+  vig.addColorStop(1, "rgba(0,0,0,0.52)");
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+
+  updateUI();
+}
+
+function drawAlkeneAddition(cx, cy, w, h, t) {
+  const bondLen = 42;
+  const c1x = cx - bondLen / 2;
+  const c1y = cy;
+  const c2x = cx + bondLen / 2;
+  const c2y = cy;
+
+  if (t < 0.33) {
+    /* the double bond HUMS — pulsing glow, stronger as the reagent closes in */
+    const pulse = 0.72 + 0.28 * Math.sin(nowT / 260);
+    drawDoubleBond(c1x, c1y, c2x, c2y, "#8C9389", pulse * (0.7 + (t / 0.33) * 0.5));
+    drawAtom(c1x - 18, c1y - 18, "H", "#ddd", 9);
+    drawAtom(c1x - 18, c1y + 18, "H", "#ddd", 9);
+    drawAtom(c2x + 18, c2y - 18, "H", "#ddd", 9);
+    drawAtom(c2x + 18, c2y + 18, "H", "#ddd", 9);
+    drawBond(c1x, c1y, c1x - 18, c1y - 18, "#8C9389", 2);
+    drawBond(c1x, c1y, c1x - 18, c1y + 18, "#8C9389", 2);
+    drawBond(c2x, c2y, c2x + 18, c2y - 18, "#8C9389", 2);
+    drawBond(c2x, c2y, c2x + 18, c2y + 18, "#8C9389", 2);
+    drawAtom(c1x, c1y, "C", ACC, 12);
+    drawAtom(c2x, c2y, "C", ACC, 12);
+
+    const dist = 80;
+    const approach = t / 0.33;
+    const rx = cx;
+    const ry = cy - dist + approach * (dist * 0.4);
+    /* attraction field between reagent and bond as they close */
+    if (approach > 0.15) {
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      const att = ctx.createLinearGradient(rx, ry, cx, cy);
+      att.addColorStop(0, "rgba(" + RGB + ",0)");
+      att.addColorStop(1, "rgba(" + RGB + "," + (0.25 * approach) + ")");
+      ctx.strokeStyle = att;
+      ctx.lineWidth = 10;
+      ctx.filter = "blur(6px)";
+      ctx.beginPath();
+      ctx.moveTo(rx, ry);
+      ctx.lineTo(cx, cy - 6);
+      ctx.stroke();
+      ctx.restore();
+    }
+    drawReagentMolecule(rx, ry, reagent, 1 - approach * 0.3);
+  } else if (t < 0.66) {
+    const opening = (t - 0.33) / 0.33;
+    const fade = 1 - opening;
+    if (fade > 0.05) {
+      ctx.save();
+      ctx.globalAlpha = fade;
+      drawDoubleBond(c1x, c1y, c2x, c2y, "#8C9389", false);
+      ctx.restore();
+    }
+
+    drawAtom(c1x - 18, c1y - 18, "H", "#ddd", 9);
+    drawAtom(c1x - 18, c1y + 18, "H", "#ddd", 9);
+    drawAtom(c2x + 18, c2y - 18, "H", "#ddd", 9);
+    drawAtom(c2x + 18, c2y + 18, "H", "#ddd", 9);
+    drawBond(c1x, c1y, c1x - 18, c1y - 18, "#8C9389", 2);
+    drawBond(c1x, c1y, c1x - 18, c1y + 18, "#8C9389", 2);
+    drawBond(c2x, c2y, c2x + 18, c2y - 18, "#8C9389", 2);
+    drawBond(c2x, c2y, c2x + 18, c2y + 18, "#8C9389", 2);
+
+    /* THE REACTION — energy burst as the π bond snaps open */
+    const burst = Math.sin(opening * Math.PI); // peaks mid-reaction
+    if (burst > 0.02) {
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      // expanding shockwave ring
+      const ringR = 14 + opening * 52;
+      ctx.strokeStyle = "rgba(" + RGB + "," + (0.55 * burst) + ")";
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.arc(cx, cy, ringR, 0, Math.PI * 2);
+      ctx.stroke();
+      // hot core flash
+      const flash = ctx.createRadialGradient(cx, cy, 0, cx, cy, 34);
+      flash.addColorStop(0, "rgba(255,255,240," + (0.5 * burst) + ")");
+      flash.addColorStop(0.4, "rgba(" + RGB + "," + (0.4 * burst) + ")");
+      flash.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = flash;
+      ctx.beginPath();
+      ctx.arc(cx, cy, 34, 0, Math.PI * 2);
+      ctx.fill();
+      // sparks flying off the breaking π bond
+      for (let i = 0; i < 10; i++) {
+        const ang = (i / 10) * Math.PI * 2 + 0.4;
+        const d = 8 + opening * 46;
+        const sx = cx + Math.cos(ang) * d;
+        const sy = cy + Math.sin(ang) * d * 0.7;
+        ctx.fillStyle = "rgba(" + RGB + "," + (0.8 * burst) + ")";
+        ctx.beginPath();
+        ctx.arc(sx, sy, 1.6 + burst, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    const split = opening * 28;
+    const a1x = c1x;
+    const a1y = c1y - 10 - split;
+    const a2x = c2x;
+    const a2y = c2y - 10 - split;
+    drawReagentAtoms(a1x, a1y, a2x, a2y, reagent, opening);
+
+    drawAtom(c1x, c1y, "C", ACC, 12);
+    drawAtom(c2x, c2y, "C", ACC, 12);
+  } else {
+    drawAtom(c1x - 18, c1y - 18, "H", "#ddd", 9);
+    drawAtom(c1x - 18, c1y + 18, "H", "#ddd", 9);
+    drawAtom(c2x + 18, c2y - 18, "H", "#ddd", 9);
+    drawAtom(c2x + 18, c2y + 18, "H", "#ddd", 9);
+    drawBond(c1x, c1y, c1x - 18, c1y - 18, "#8C9389", 2);
+    drawBond(c1x, c1y, c1x - 18, c1y + 18, "#8C9389", 2);
+    drawBond(c2x, c2y, c2x + 18, c2y - 18, "#8C9389", 2);
+    drawBond(c2x, c2y, c2x + 18, c2y + 18, "#8C9389", 2);
+
+    drawBond(c1x, c1y, c2x, c2y, "#8C9389", 2);
+
+    const settle = (t - 0.66) / 0.34;
+    const finalY = cy - 38;
+    const a1x = c1x;
+    const a1y = finalY;
+    const a2x = c2x;
+    const a2y = finalY;
+
+    /* afterglow on the freshly-made bonds, cooling as it settles */
+    const cool = Math.max(0, 1 - settle * 1.6);
+    if (cool > 0.03) {
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      ctx.strokeStyle = "rgba(" + RGB + "," + (0.7 * cool) + ")";
+      ctx.lineWidth = 6;
+      ctx.filter = "blur(4px)";
+      ctx.beginPath(); ctx.moveTo(c1x, c1y); ctx.lineTo(a1x, a1y); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(c2x, c2y); ctx.lineTo(a2x, a2y); ctx.stroke();
+      ctx.restore();
+    }
+
+    const { label1, color1, label2, color2 } = getReagentLabels(reagent);
+    drawBond(c1x, c1y, a1x, a1y, ACC, 2);
+    drawBond(c2x, c2y, a2x, a2y, ACC, 2);
+    drawAtom(a1x, a1y, label1, color1, 9);
+    drawAtom(a2x, a2y, label2, color2, 9);
+
+    drawAtom(c1x, c1y, "C", ACC, 12);
+    drawAtom(c2x, c2y, "C", ACC, 12);
+  }
+}
+
+function drawAlkaneSubstitution(cx, cy, w, h, t) {
+  const bondLen = 42;
+  const c1x = cx - bondLen / 2;
+  const c1y = cy;
+  const c2x = cx + bondLen / 2;
+  const c2y = cy;
+
+  if (reagent !== "br2") {
+    drawBond(c1x, c1y, c2x, c2y, "#8C9389", 2);
+    drawAtom(c1x - 18, c1y - 18, "H", "#ddd", 9);
+    drawAtom(c1x - 18, c1y + 18, "H", "#ddd", 9);
+    drawAtom(c1x, c1y - 26, "H", "#ddd", 9);
+    drawAtom(c2x + 18, c2y - 18, "H", "#ddd", 9);
+    drawAtom(c2x + 18, c2y + 18, "H", "#ddd", 9);
+    drawAtom(c2x, c2y + 26, "H", "#ddd", 9);
+    drawBond(c1x, c1y, c1x - 18, c1y - 18, "#8C9389", 2);
+    drawBond(c1x, c1y, c1x - 18, c1y + 18, "#8C9389", 2);
+    drawBond(c1x, c1y, c1x, c1y - 26, "#8C9389", 2);
+    drawBond(c2x, c2y, c2x + 18, c2y - 18, "#8C9389", 2);
+    drawBond(c2x, c2y, c2x + 18, c2y + 18, "#8C9389", 2);
+    drawBond(c2x, c2y, c2x, c2y + 26, "#8C9389", 2);
+    drawAtom(c1x, c1y, "C", "#8C9389", 12);
+    drawAtom(c2x, c2y, "C", "#8C9389", 12);
+
+    const rx = cx;
+    const ry = cy - 60;
+    drawReagentMolecule(rx, ry, reagent, 1);
+    return;
+  }
+
+  if (t < 0.2) {
+    if (!uvOn && t > 0.1) uvOn = true;
+
+    drawBond(c1x, c1y, c2x, c2y, "#8C9389", 2);
+    drawAtom(c1x - 18, c1y - 18, "H", "#ddd", 9);
+    drawAtom(c1x - 18, c1y + 18, "H", "#ddd", 9);
+    drawAtom(c1x, c1y - 26, "H", "#ddd", 9);
+    drawAtom(c2x + 18, c2y - 18, "H", "#ddd", 9);
+    drawAtom(c2x + 18, c2y + 18, "H", "#ddd", 9);
+    drawAtom(c2x, c2y + 26, "H", "#ddd", 9);
+    drawBond(c1x, c1y, c1x - 18, c1y - 18, "#8C9389", 2);
+    drawBond(c1x, c1y, c1x - 18, c1y + 18, "#8C9389", 2);
+    drawBond(c1x, c1y, c1x, c1y - 26, "#8C9389", 2);
+    drawBond(c2x, c2y, c2x + 18, c2y - 18, "#8C9389", 2);
+    drawBond(c2x, c2y, c2x + 18, c2y + 18, "#8C9389", 2);
+    drawBond(c2x, c2y, c2x, c2y + 26, "#8C9389", 2);
+    drawAtom(c1x, c1y, "C", "#8C9389", 12);
+    drawAtom(c2x, c2y, "C", "#8C9389", 12);
+
+    const dist = 70;
+    const rx = cx - 10;
+    const ry = cy - dist;
+    const br1x = rx - 8;
+    const br1y = ry;
+    const br2x = rx + 8;
+    const br2y = ry;
+    drawBond(br1x, br1y, br2x, br2y, AMB, 2);
+    drawAtom(br1x, br1y, "Br", AMB, 11);
+    drawAtom(br2x, br2y, "Br", AMB, 11);
+
+  } else if (t < 0.5) {
+    const swap = (t - 0.2) / 0.3;
+
+    drawBond(c1x, c1y, c2x, c2y, "#8C9389", 2);
+    drawAtom(c1x - 18, c1y - 18, "H", "#ddd", 9);
+    drawAtom(c1x - 18, c1y + 18, "H", "#ddd", 9);
+    drawAtom(c2x + 18, c2y - 18, "H", "#ddd", 9);
+    drawAtom(c2x + 18, c2y + 18, "H", "#ddd", 9);
+    drawAtom(c2x, c2y + 26, "H", "#ddd", 9);
+    drawBond(c1x, c1y, c1x - 18, c1y - 18, "#8C9389", 2);
+    drawBond(c1x, c1y, c1x - 18, c1y + 18, "#8C9389", 2);
+    drawBond(c2x, c2y, c2x + 18, c2y - 18, "#8C9389", 2);
+    drawBond(c2x, c2y, c2x + 18, c2y + 18, "#8C9389", 2);
+    drawBond(c2x, c2y, c2x, c2y + 26, "#8C9389", 2);
+
+    const hStartY = c1y - 26;
+    const hEndY = cy + 48;
+    const hx = c1x;
+    const hy = hStartY + swap * (hEndY - hStartY);
+    ctx.save();
+    ctx.globalAlpha = 1 - swap * 0.5;
+    if (swap < 0.5) {
+      drawBond(c1x, c1y, hx, hy, "#8C9389", 2);
+    }
+    drawAtom(hx, hy, "H", "#ddd", 9);
+    ctx.restore();
+
+    const brStartY = cy - 60;
+    const brEndY = c1y - 26;
+    const brx = c1x;
+    const bry = brStartY + swap * (brEndY - brStartY);
+    drawBond(c1x, c1y, brx, bry, AMB, 2);
+    drawAtom(brx, bry, "Br", AMB, 11);
+
+    drawAtom(c1x, c1y, "C", AMB, 12);
+    drawAtom(c2x, c2y, "C", "#8C9389", 12);
+  } else {
+    drawBond(c1x, c1y, c2x, c2y, "#8C9389", 2);
+    drawAtom(c1x - 18, c1y - 18, "H", "#ddd", 9);
+    drawAtom(c1x - 18, c1y + 18, "H", "#ddd", 9);
+    drawAtom(c2x + 18, c2y - 18, "H", "#ddd", 9);
+    drawAtom(c2x + 18, c2y + 18, "H", "#ddd", 9);
+    drawAtom(c2x, c2y + 26, "H", "#ddd", 9);
+    drawBond(c1x, c1y, c1x - 18, c1y - 18, "#8C9389", 2);
+    drawBond(c1x, c1y, c1x - 18, c1y + 18, "#8C9389", 2);
+    drawBond(c2x, c2y, c2x + 18, c2y - 18, "#8C9389", 2);
+    drawBond(c2x, c2y, c2x + 18, c2y + 18, "#8C9389", 2);
+    drawBond(c2x, c2y, c2x, c2y + 26, "#8C9389", 2);
+
+    const brx = c1x;
+    const bry = c1y - 26;
+    drawBond(c1x, c1y, brx, bry, AMB, 2);
+    drawAtom(brx, bry, "Br", AMB, 11);
+
+    drawAtom(c1x, c1y, "C", AMB, 12);
+    drawAtom(c2x, c2y, "C", "#8C9389", 12);
+
+    const hbrX = cx + 40;
+    const hbrY = cy + 48;
+    drawAtom(hbrX - 8, hbrY, "H", "#ddd", 8);
+    drawAtom(hbrX + 8, hbrY, "Br", AMB, 10);
+    drawBond(hbrX - 8, hbrY, hbrX + 8, hbrY, "#8C9389", 1.5);
+
+    ctx.fillStyle = "#8C9389";
+    ctx.font = "11px JetBrains Mono";
+    ctx.textAlign = "center";
+    ctx.fillText("+ HBr (expelled)", hbrX, hbrY + 20);
+  }
+}
+
+function drawReagentMolecule(x, y, r, alpha) {
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  if (r === "h2") {
+    const h1x = x - 8;
+    const h2x = x + 8;
+    drawBond(h1x, y, h2x, y, "#ddd", 2);
+    drawAtom(h1x, y, "H", "#ddd", 9);
+    drawAtom(h2x, y, "H", "#ddd", 9);
+  } else if (r === "br2") {
+    const br1x = x - 10;
+    const br2x = x + 10;
+    drawBond(br1x, y, br2x, y, AMB, 2);
+    drawAtom(br1x, y, "Br", AMB, 11);
+    drawAtom(br2x, y, "Br", AMB, 11);
+  } else if (r === "hbr") {
+    const hx = x - 9;
+    const brx = x + 9;
+    drawBond(hx, y, brx, y, "#ddd", 2);
+    drawAtom(hx, y, "H", "#ddd", 9);
+    drawAtom(brx, y, "Br", AMB, 11);
+  } else if (r === "h2o") {
+    drawAtom(x, y, "O", "#E06C75", 10);
+    drawAtom(x - 12, y - 8, "H", "#ddd", 7);
+    drawAtom(x + 12, y - 8, "H", "#ddd", 7);
+    drawBond(x, y, x - 12, y - 8, "#ddd", 1.5);
+    drawBond(x, y, x + 12, y - 8, "#ddd", 1.5);
+  }
+  ctx.restore();
+}
+
+function drawReagentAtoms(x1, y1, x2, y2, r, t) {
+  const { label1, color1, label2, color2, r1, r2 } = getReagentLabels(r);
+  drawAtom(x1, y1, label1, color1, r1);
+  drawAtom(x2, y2, label2, color2, r2);
+}
+
+function getReagentLabels(r) {
+  if (r === "h2") return { label1: "H", color1: "#ddd", label2: "H", color2: "#ddd", r1: 9, r2: 9 };
+  if (r === "br2") return { label1: "Br", color1: AMB, label2: "Br", color2: AMB, r1: 11, r2: 11 };
+  if (r === "hbr") return { label1: "H", color1: "#ddd", label2: "Br", color2: AMB, r1: 9, r2: 11 };
+  if (r === "h2o") return { label1: "H", color1: "#ddd", label2: "OH", color2: "#E06C75", r1: 9, r2: 10 };
+  return { label1: "?", color1: "#888", label2: "?", color2: "#888", r1: 9, r2: 9 };
+}
+
+function updateUI() {
+  const t = progress;
+  const molecule = mode === "alkene" ? "Ethene" : "Ethane";
+  const rname = { h2: "H₂", br2: "Br₂", hbr: "HBr", h2o: "H₂O" }[reagent];
+
+  if (mode === "alkane" && reagent !== "br2") {
+    liveTag.textContent = molecule + " • No Reaction";
+    overlay.textContent = "Inert — no reactive site";
+    atomsInEl.textContent = "—";
+    atomsOutEl.textContent = "—";
+    return;
+  }
+
+  if (mode === "alkane" && reagent === "br2") {
+    if (t < 0.2) {
+      liveTag.textContent = molecule + " • " + rname + " approaching";
+      overlay.textContent = t > 0.1 ? "UV light initiating radicals" : "Dark — no reaction yet";
+      atomsInEl.textContent = "—";
+      atomsOutEl.textContent = "—";
+    } else if (t < 0.5) {
+      liveTag.textContent = molecule + " • Substitution";
+      overlay.textContent = "H displaced, Br swaps in";
+      atomsInEl.textContent = "8";
+      atomsOutEl.textContent = "7+1";
+    } else {
+      liveTag.textContent = "C₂H₅Br formed + HBr";
+      overlay.textContent = "One product + expelled HBr";
+      atomsInEl.textContent = "8";
+      atomsOutEl.textContent = "7+1";
+    }
+    return;
+  }
+
+  if (t < 0.33) {
+    liveTag.textContent = molecule + " • " + rname + " approaching";
+    overlay.textContent = "Double bond glowing, ready";
+    atomsInEl.textContent = "—";
+    atomsOutEl.textContent = "—";
+  } else if (t < 0.66) {
+    liveTag.textContent = molecule + " • Pi bond opening";
+    overlay.textContent = rname + " adding across carbons";
+    const counts = { h2: "6", br2: "6", hbr: "6", h2o: "9" }[reagent];
+    atomsInEl.textContent = counts;
+    atomsOutEl.textContent = counts;
+  } else {
+    const products = { h2: "C₂H₆", br2: "C₂H₄Br₂", hbr: "C₂H₅Br", h2o: "C₂H₅OH" }[reagent];
+    liveTag.textContent = products + " formed";
+    overlay.textContent = "Addition complete — all atoms in";
+    const counts = { h2: "6", br2: "6", hbr: "6", h2o: "9" }[reagent];
+    atomsInEl.textContent = counts;
+    atomsOutEl.textContent = counts;
+  }
+}
+
+/* ambient loop: keeps the double-bond glow pulsing while it's on screen.
+   Respects reduced motion (single static draw instead). */
+const motionOK = !(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+if (motionOK) {
+  (function ambient(ts) {
+    nowT = ts || 0;
+    draw();
+    requestAnimationFrame(ambient);
+  })(0);
+} else {
+  draw();
+}
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'addition-reactions-of-alkenes'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

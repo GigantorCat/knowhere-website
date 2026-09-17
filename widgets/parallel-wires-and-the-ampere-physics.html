@@ -1,0 +1,783 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Parallel Wires and the Ampere — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #3A6FC8;
+  --acc-rgb: 58, 111, 200;
+  --ag: rgba(var(--acc-rgb), .7);
+  --ag1: rgba(var(--acc-rgb), .12);
+  --ag2: rgba(var(--acc-rgb), .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  min-height: 100vh;
+  padding: 40px 16px 0;
+  color: var(--ink);
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: white;
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.control-group {
+  margin-bottom: 16px;
+}
+
+.control-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.control-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+}
+
+.wire-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 3px;
+  outline: none;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+}
+
+.wire-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.wire-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.wire-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.wire-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.dir-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  padding: 8px 14px;
+  border-radius: 9px;
+  border: 1px solid var(--line);
+  background: #12160F;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+  white-space: nowrap;
+}
+
+.dir-btn.active {
+  background: rgba(var(--acc-rgb), .1);
+  border-color: var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(var(--acc-rgb), .18);
+}
+
+.sep-control {
+  margin-bottom: 16px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.stat:first-child .stat-value {
+  color: var(--acc);
+}
+
+.stat:last-child .stat-value {
+  color: var(--amb);
+}
+
+.toggle-card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+}
+
+.toggle-btns {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: #12160F;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(var(--acc-rgb), .1);
+  border-color: var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(var(--acc-rgb), .18);
+}
+
+.knowdrop {
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-tag {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 12px;
+}
+
+.know-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 8px var(--acc);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+.know-tag span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+}
+
+.know-this p {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.know-this p span {
+  color: var(--acc);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+
+<h2 class="sr-only">Interactive demonstration of magnetic force between parallel current-carrying wires</h2>
+
+<div class="container">
+  <h1>Two wires push each other without <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">touching</span></h1>
+  
+  <p class="intro">Each wire creates a magnetic field; the other wire is a current-carrying conductor sitting inside it—the motor effect applied twice. Same-direction currents attract, opposite currents repel. Adjust each current and direction, then drag the separation slider to watch F/l = (μ₀/2π) I₁I₂/r respond live.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-label">Parallel Wire Forces</div>
+      <div class="live-tag" id="liveTag">Attract • 2.00×10⁻⁵ N/m</div>
+    </div>
+    <div class="card-hint">Adjust currents & directions — drag separation to see force change</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="canvas"></canvas>
+      <div class="canvas-overlay" id="overlayTag">Attract • F/l = 2.00×10⁻⁵ N/m</div>
+    </div>
+
+    <div class="control-group">
+      <div class="control-label">Wire 1 Current: <span id="i1-val">5.0</span> A</div>
+      <div class="control-row">
+        <input type="range" class="wire-slider" id="i1-slider" min="0" max="100" value="50" step="1">
+        <button class="dir-btn active" id="i1-up" data-dir="up">↑ Up</button>
+        <button class="dir-btn" id="i1-down" data-dir="down">↓ Down</button>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <div class="control-label">Wire 2 Current: <span id="i2-val">5.0</span> A</div>
+      <div class="control-row">
+        <input type="range" class="wire-slider" id="i2-slider" min="0" max="100" value="50" step="1">
+        <button class="dir-btn active" id="i2-up" data-dir="up">↑ Up</button>
+        <button class="dir-btn" id="i2-down" data-dir="down">↓ Down</button>
+      </div>
+    </div>
+
+    <div class="sep-control">
+      <div class="control-label">Separation: <span id="sep-val">0.50</span> m</div>
+      <input type="range" class="wire-slider" id="sep-slider" min="10" max="200" value="50" step="1">
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-label">Force per Metre</div>
+        <div class="stat-value" id="force-stat">2.00×10⁻⁵</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Field Strength</div>
+        <div class="stat-value" id="field-stat">10.0 μT</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toggle-card">
+    <div class="toggle-btns">
+      <button class="toggle-btn active" data-mode="variable">Variable Mode</button>
+      <button class="toggle-btn" data-mode="ampere">Ampere Definition</button>
+    </div>
+    <div class="knowdrop" id="knowdrop">
+      The force per metre between parallel wires is F/l = (μ₀/2π) × I₁I₂/r, where μ₀ = 4π×10⁻⁷ T·m/A. Double either current and the force doubles—the relationship is perfectly linear. Double the separation and the force halves—inverse first power, not inverse square, because each wire creates a field that falls off as 1/r. Newton's third law guarantees the forces are equal and opposite: wire 1 pushes wire 2 exactly as hard as wire 2 pushes wire 1. This mutual force was once measured so precisely that from 1948 to 2019, it defined the ampere: one ampere was the current that produced exactly 2×10⁻⁷ newtons per metre between two infinitely long parallel wires one metre apart in vacuum.
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-tag">
+      <div class="know-dot"></div>
+      <span>Know This</span>
+    </div>
+    <p><span>Parallel wires</span> carrying current in the same direction attract; opposite directions repel—because each wire sits in the <span>circular field</span> made by the other, experiencing the <span>motor effect</span> force F/l = (μ₀/2π) I₁I₂/r.</p>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+const CSS = getComputedStyle(document.documentElement);
+const ACC = CSS.getPropertyValue("--acc").trim();
+const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+const AMB = CSS.getPropertyValue("--amb").trim();
+
+const i1Slider = document.getElementById("i1-slider");
+const i2Slider = document.getElementById("i2-slider");
+const sepSlider = document.getElementById("sep-slider");
+const i1Val = document.getElementById("i1-val");
+const i2Val = document.getElementById("i2-val");
+const sepVal = document.getElementById("sep-val");
+const i1Up = document.getElementById("i1-up");
+const i1Down = document.getElementById("i1-down");
+const i2Up = document.getElementById("i2-up");
+const i2Down = document.getElementById("i2-down");
+const liveTag = document.getElementById("liveTag");
+const overlayTag = document.getElementById("overlayTag");
+const forceStat = document.getElementById("force-stat");
+const fieldStat = document.getElementById("field-stat");
+const toggleBtns = document.querySelectorAll(".toggle-btn");
+const knowdrop = document.getElementById("knowdrop");
+
+let I1 = 5.0;
+let I2 = 5.0;
+let sep = 0.5;
+let dir1 = 1;
+let dir2 = 1;
+let mode = "variable";
+
+const MU0 = 4 * Math.PI * 1e-7;
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement("canvas");
+const bctx = buf.getContext("2d");
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  draw();
+}
+
+window.addEventListener("resize", resize);
+resize();
+
+function updateSliderFill(slider, value, max) {
+  const percent = (value / max) * 100;
+  slider.style.setProperty("--fill", percent + "%");
+}
+
+function calculate() {
+  const F_per_L = (MU0 / (2 * Math.PI)) * (I1 * I2) / sep;
+  const attract = (dir1 === dir2);
+  const B1 = (MU0 * I1) / (2 * Math.PI * sep);
+  return { F_per_L, attract, B1 };
+}
+
+function formatSci(val) {
+  if (val === 0) return "0";
+  const exp = Math.floor(Math.log10(Math.abs(val)));
+  const mantissa = val / Math.pow(10, exp);
+  return mantissa.toFixed(2) + "×10" + (exp >= 0 ? "⁺" : "") + exp.toString().replace(/-/g, "⁻").replace(/0/g, "⁰").replace(/1/g, "¹").replace(/2/g, "²").replace(/3/g, "³").replace(/4/g, "⁴").replace(/5/g, "⁵").replace(/6/g, "⁶").replace(/7/g, "⁷").replace(/8/g, "⁸").replace(/9/g, "⁹");
+}
+
+function update() {
+  if (mode === "ampere") {
+    I1 = 1.0;
+    I2 = 1.0;
+    sep = 1.0;
+    dir1 = 1;
+    dir2 = 1;
+    i1Slider.disabled = true;
+    i2Slider.disabled = true;
+    sepSlider.disabled = true;
+    i1Up.disabled = true;
+    i1Down.disabled = true;
+    i2Up.disabled = true;
+    i2Down.disabled = true;
+  } else {
+    i1Slider.disabled = false;
+    i2Slider.disabled = false;
+    sepSlider.disabled = false;
+    i1Up.disabled = false;
+    i1Down.disabled = false;
+    i2Up.disabled = false;
+    i2Down.disabled = false;
+    I1 = parseFloat(i1Slider.value) / 10;
+    I2 = parseFloat(i2Slider.value) / 10;
+    sep = parseFloat(sepSlider.value) / 100;
+  }
+
+  i1Val.textContent = I1.toFixed(1);
+  i2Val.textContent = I2.toFixed(1);
+  sepVal.textContent = sep.toFixed(2);
+
+  updateSliderFill(i1Slider, i1Slider.value, 100);
+  updateSliderFill(i2Slider, i2Slider.value, 100);
+  updateSliderFill(sepSlider, sepSlider.value, 200);
+
+  const { F_per_L, attract, B1 } = calculate();
+  const forceStr = formatSci(F_per_L);
+  const typeStr = attract ? "Attract" : "Repel";
+
+  liveTag.textContent = typeStr + " • " + forceStr + " N/m";
+  overlayTag.textContent = typeStr + " • F/l = " + forceStr + " N/m";
+  forceStat.textContent = forceStr;
+  fieldStat.textContent = (B1 * 1e6).toFixed(1) + " μT";
+
+  draw();
+}
+
+i1Slider.addEventListener("input", update);
+i2Slider.addEventListener("input", update);
+sepSlider.addEventListener("input", update);
+
+i1Up.addEventListener("click", () => {
+  dir1 = 1;
+  i1Up.classList.add("active");
+  i1Down.classList.remove("active");
+  update();
+});
+
+i1Down.addEventListener("click", () => {
+  dir1 = -1;
+  i1Down.classList.add("active");
+  i1Up.classList.remove("active");
+  update();
+});
+
+i2Up.addEventListener("click", () => {
+  dir2 = 1;
+  i2Up.classList.add("active");
+  i2Down.classList.remove("active");
+  update();
+});
+
+i2Down.addEventListener("click", () => {
+  dir2 = -1;
+  i2Down.classList.add("active");
+  i2Up.classList.remove("active");
+  update();
+});
+
+toggleBtns.forEach(btn => {
+  btn.addEventListener("click", () => {
+    toggleBtns.forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    mode = btn.dataset.mode;
+
+    if (mode === "ampere") {
+      knowdrop.innerHTML = "The SI definition of the ampere, from 1948 to 2019, was based on this exact force. One ampere was defined as the constant current that, when maintained in two straight parallel conductors of infinite length and negligible circular cross-section, placed one metre apart in vacuum, would produce a force equal to exactly 2×10⁻⁷ newtons per metre of length between them. This locked μ₀ to exactly 4π×10⁻⁷ T·m/A by definition. In 2019 the SI redefined the ampere by fixing the elementary charge e instead, making μ₀ a measured quantity—but the parallel-wire force remains one of the cleanest demonstrations of how magnetism emerges from moving charge, and how the motor effect applies universally to any current in any external field.";
+    } else {
+      knowdrop.innerHTML = "The force per metre between parallel wires is F/l = (μ₀/2π) × I₁I₂/r, where μ₀ = 4π×10⁻⁷ T·m/A. Double either current and the force doubles—the relationship is perfectly linear. Double the separation and the force halves—inverse first power, not inverse square, because each wire creates a field that falls off as 1/r. Newton's third law guarantees the forces are equal and opposite: wire 1 pushes wire 2 exactly as hard as wire 2 pushes wire 1. This mutual force was once measured so precisely that from 1948 to 2019, it defined the ampere: one ampere was the current that produced exactly 2×10⁻⁷ newtons per metre between two infinitely long parallel wires one metre apart in vacuum.";
+    }
+
+    update();
+  });
+});
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  const t = Date.now() / 1000;
+
+  ctx.fillStyle = "#000";
+  ctx.fillRect(0, 0, w, h);
+
+  const { F_per_L, attract } = calculate();
+
+  const wire1X = w * 0.35;
+  const wire2X = w * 0.65;
+  const wireY = h * 0.5;
+  const wireRadius = 8;
+
+  const sepPx = (wire2X - wire1X);
+  const maxForce = 1e-4;
+  const forceScale = Math.min(F_per_L / maxForce, 1);
+  const arrowLen = 30 + forceScale * 40;
+
+  // Field rings from wire 1 — dashes circulate with the field's handedness
+  // (out of page = anticlockwise, into page = clockwise), speed ∝ current
+  const numRings = 5;
+  for (let i = 1; i <= numRings; i++) {
+    const r = wireRadius + i * 18;
+    const alpha = Math.max(0, 0.25 - i * 0.04);
+    ctx.strokeStyle = "rgba(" + RGB + "," + (alpha + 0.06) + ")";
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([6, 10]);
+    ctx.lineDashOffset = -dir1 * t * (14 + I1 * 2.2);
+    ctx.beginPath();
+    ctx.arc(wire1X, wireY, r, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+  ctx.setLineDash([]);
+
+  // Field rings from wire 2
+  for (let i = 1; i <= numRings; i++) {
+    const r = wireRadius + i * 18;
+    const alpha = Math.max(0, 0.25 - i * 0.04);
+    ctx.strokeStyle = "rgba(" + RGB + "," + (alpha + 0.06) + ")";
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([6, 10]);
+    ctx.lineDashOffset = -dir2 * t * (14 + I2 * 2.2);
+    ctx.beginPath();
+    ctx.arc(wire2X, wireY, r, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+  ctx.setLineDash([]);
+
+  // Wire 1
+  const grad1 = ctx.createLinearGradient(wire1X - wireRadius, 0, wire1X + wireRadius, 0);
+  grad1.addColorStop(0, "#555");
+  grad1.addColorStop(0.5, "#888");
+  grad1.addColorStop(1, "#555");
+  ctx.fillStyle = grad1;
+  ctx.beginPath();
+  ctx.arc(wire1X, wireY, wireRadius, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Wire 2
+  const grad2 = ctx.createLinearGradient(wire2X - wireRadius, 0, wire2X + wireRadius, 0);
+  grad2.addColorStop(0, "#555");
+  grad2.addColorStop(0.5, "#888");
+  grad2.addColorStop(1, "#555");
+  ctx.fillStyle = grad2;
+  ctx.beginPath();
+  ctx.arc(wire2X, wireY, wireRadius, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Live-wire pulse — glow breathes with current magnitude
+  const pulse = 0.55 + 0.45 * Math.sin(t * 5);
+  [[wire1X, I1], [wire2X, I2]].forEach(([wx, amps]) => {
+    const gr = ctx.createRadialGradient(wx, wireY, wireRadius * 0.4, wx, wireY, wireRadius * (2.2 + amps * 0.12));
+    gr.addColorStop(0, "rgba(" + RGB + "," + (0.28 + 0.18 * pulse * (amps / 10)) + ")");
+    gr.addColorStop(1, "rgba(" + RGB + ",0)");
+    ctx.fillStyle = gr;
+    ctx.beginPath();
+    ctx.arc(wx, wireY, wireRadius * (2.2 + amps * 0.12), 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  // Current direction indicators
+  ctx.fillStyle = ACC;
+  ctx.font = "bold 14px JetBrains Mono";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(dir1 === 1 ? "⊙" : "⊗", wire1X, wireY);
+  ctx.fillText(dir2 === 1 ? "⊙" : "⊗", wire2X, wireY);
+
+  // Force arrows
+  const arrowY1 = wireY - wireRadius - 24;
+  const arrowY2 = wireY - wireRadius - 24;
+
+  ctx.strokeStyle = attract ? ACC : AMB;
+  ctx.fillStyle = attract ? ACC : AMB;
+  ctx.lineWidth = 2.5;
+
+  // Arrow on wire 1
+  if (attract) {
+    // Point right toward wire 2
+    drawArrow(ctx, wire1X + wireRadius + 6, arrowY1, wire1X + wireRadius + 6 + arrowLen, arrowY1);
+  } else {
+    // Point left away from wire 2
+    drawArrow(ctx, wire1X - wireRadius - 6, arrowY1, wire1X - wireRadius - 6 - arrowLen, arrowY1);
+  }
+
+  // Arrow on wire 2
+  if (attract) {
+    // Point left toward wire 1
+    drawArrow(ctx, wire2X - wireRadius - 6, arrowY2, wire2X - wireRadius - 6 - arrowLen, arrowY2);
+  } else {
+    // Point right away from wire 1
+    drawArrow(ctx, wire2X + wireRadius + 6, arrowY2, wire2X + wireRadius + 6 + arrowLen, arrowY2);
+  }
+
+  // Force labels
+  ctx.font = "11px JetBrains Mono";
+  ctx.fillStyle = attract ? ACC : AMB;
+  ctx.textAlign = "center";
+  ctx.fillText("F", wire1X, arrowY1 - 16);
+  ctx.fillText("F", wire2X, arrowY2 - 16);
+
+  // Separation dimension line
+  const dimY = h * 0.78;
+  ctx.strokeStyle = "rgba(" + RGB + ", 0.4)";
+  ctx.lineWidth = 1;
+  ctx.setLineDash([3, 3]);
+  ctx.beginPath();
+  ctx.moveTo(wire1X, dimY);
+  ctx.lineTo(wire2X, dimY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.fillStyle = "rgba(" + RGB + ", 0.6)";
+  ctx.font = "10px JetBrains Mono";
+  ctx.textAlign = "center";
+  ctx.fillText("r = " + sep.toFixed(2) + " m", (wire1X + wire2X) / 2, dimY + 12);
+
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = "lighter";
+  ctx.globalAlpha = 0.38;
+  ctx.filter = "blur(7px)";
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+
+  // Vignette
+  const cx = w / 2;
+  const cy = h / 2;
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, "rgba(0,0,0,0)");
+  vig.addColorStop(1, "rgba(0,0,0,0.52)");
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+}
+
+function drawArrow(ctx, x1, y1, x2, y2) {
+  const headLen = 8;
+  const angle = Math.atan2(y2 - y1, x2 - x1);
+
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(x2, y2);
+  ctx.lineTo(x2 - headLen * Math.cos(angle - Math.PI / 6), y2 - headLen * Math.sin(angle - Math.PI / 6));
+  ctx.lineTo(x2 - headLen * Math.cos(angle + Math.PI / 6), y2 - headLen * Math.sin(angle + Math.PI / 6));
+  ctx.closePath();
+  ctx.fill();
+}
+
+update();
+/* f11d-current-loop */
+(function kwTick(){ draw(); requestAnimationFrame(kwTick); })();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'parallel-wires-and-the-ampere'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

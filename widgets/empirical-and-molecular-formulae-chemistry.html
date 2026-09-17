@@ -1,0 +1,629 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Empirical &amp; Molecular Formulae — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #3E9AD6;
+  --acc-rgb: 62, 154, 214;
+  --ag: rgba(var(--acc-rgb), .7);
+  --ag1: rgba(var(--acc-rgb), .12);
+  --ag2: rgba(var(--acc-rgb), .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  min-height: 100vh;
+  padding: 40px 16px 0;
+  color: var(--ink);
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 28px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-row {
+  margin-bottom: 10px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+}
+
+.ef-slider {
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  appearance: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.ef-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  transition: box-shadow .15s;
+  cursor: pointer;
+}
+
+.ef-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  transition: box-shadow .15s;
+  cursor: pointer;
+}
+
+.ef-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.ef-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  margin-top: 6px;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  margin-top: 16px;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.stat-value.acc {
+  color: var(--acc);
+}
+
+.stat-value.amb {
+  color: var(--amb);
+}
+
+.toggle-section {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(var(--acc-rgb), .1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(var(--acc-rgb), .18);
+}
+
+.knowdrop {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-this-tag {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 11px;
+}
+
+.pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 8px var(--acc);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.6); }
+}
+
+.tag-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+}
+
+.know-this-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Empirical and Molecular Formula Interactive Widget</h2>
+  
+  <h1>Two completely different molecules can share the exact same <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">empirical formula</span></h1>
+  
+  <p class="intro">CH₂O is the empirical formula for glucose, formaldehyde, and acetic acid — wildly different compounds with nothing in common except a 1:2:1 atom ratio. Understanding the gap between empirical and molecular formulae is how you decode real exam combustion data. Drag the slider to scale up from empirical to molecular formula.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Formula Scaler</span>
+      <span class="live-tag" id="liveTag">n = 1 (empirical)</span>
+    </div>
+    <div class="card-hint">Scale factor × empirical = molecular</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="canvas"></canvas>
+      <div class="canvas-overlay" id="canvasTag">CH₂O × 1 = CH₂O</div>
+    </div>
+
+    <div class="slider-row">
+      <div class="slider-label">Scale factor (n)</div>
+      <input type="range" class="ef-slider" id="slider" min="1" max="6" value="1" step="1">
+      <div class="tick-labels">
+        <span>1</span>
+        <span>2</span>
+        <span>3</span>
+        <span>4</span>
+        <span>5</span>
+        <span>6</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Empirical mass</div>
+        <div class="stat-value acc" id="empMass">30</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Molecular mass</div>
+        <div class="stat-value amb" id="molMass">30</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-section">
+      <button class="toggle-btn active" id="btn1">Glucose example</button>
+      <button class="toggle-btn" id="btn2">From % data</button>
+    </div>
+    <div class="knowdrop" id="knowdrop">
+      Glucose (C₆H₁₂O₆, molar mass 180) and formaldehyde (CH₂O, molar mass 30) both reduce to the same empirical formula: CH₂O. The empirical mass is 30 g/mol (12 + 2 + 16), so glucose's molecular formula is exactly 6 empirical units stacked together — 180 ÷ 30 = 6, so multiply every subscript by 6. This is why you need both percentage composition and molar mass to find the real formula: percentage gets you the ratio (empirical), molar mass tells you the scaling factor. The worked method: from %C, %H, %O → divide by atomic mass → divide all by smallest → whole-number ratio = empirical → then molar mass ÷ empirical mass = n, the multiplier that gets you from empirical to molecular.
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-this-tag">
+      <div class="pulse-dot"></div>
+      <span class="tag-text">Know This</span>
+    </div>
+    <div class="know-this-body">
+      The <span style="color:var(--acc)">empirical formula</span> is the simplest ratio; the <span style="color:var(--acc)">molecular formula</span> is the real count, always an integer multiple of the empirical.
+    </div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const slider = document.getElementById('slider');
+const liveTag = document.getElementById('liveTag');
+const canvasTag = document.getElementById('canvasTag');
+const empMass = document.getElementById('empMass');
+const molMass = document.getElementById('molMass');
+const btn1 = document.getElementById('btn1');
+const btn2 = document.getElementById('btn2');
+const knowdrop = document.getElementById('knowdrop');
+
+const CSS = getComputedStyle(document.documentElement);
+const ACC = CSS.getPropertyValue('--acc').trim();
+const RGB = CSS.getPropertyValue('--acc-rgb').trim();
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d');
+
+let n = 1;
+let time = 0;
+let animFrame;
+
+const empirical = {C: 1, H: 2, O: 1};
+const empMassValue = 12 + 2 + 16; // 30
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+window.addEventListener('resize', resize);
+resize();
+
+function updateUI() {
+  const percent = ((n - 1) / 5) * 100;
+  slider.style.setProperty('--fill', percent + '%');
+  
+  liveTag.textContent = n === 1 ? 'n = 1 (empirical)' : `n = ${n}`;
+  
+  const mol = {
+    C: empirical.C * n,
+    H: empirical.H * n,
+    O: empirical.O * n
+  };
+  
+  canvasTag.textContent = `CH₂O × ${n} = C${mol.C}H${mol.H}O${mol.O}`;
+  empMass.textContent = empMassValue;
+  molMass.textContent = empMassValue * n;
+}
+
+slider.addEventListener('input', (e) => {
+  n = parseInt(e.target.value);
+  updateUI();
+});
+
+btn1.addEventListener('click', () => {
+  btn1.classList.add('active');
+  btn2.classList.remove('active');
+  knowdrop.textContent = "Glucose (C₆H₁₂O₆, molar mass 180) and formaldehyde (CH₂O, molar mass 30) both reduce to the same empirical formula: CH₂O. The empirical mass is 30 g/mol (12 + 2 + 16), so glucose's molecular formula is exactly 6 empirical units stacked together — 180 ÷ 30 = 6, so multiply every subscript by 6. This is why you need both percentage composition and molar mass to find the real formula: percentage gets you the ratio (empirical), molar mass tells you the scaling factor. The worked method: from %C, %H, %O → divide by atomic mass → divide all by smallest → whole-number ratio = empirical → then molar mass ÷ empirical mass = n, the multiplier that gets you from empirical to molecular.";
+});
+
+btn2.addEventListener('click', () => {
+  btn2.classList.add('active');
+  btn1.classList.remove('active');
+  knowdrop.textContent = "Say combustion analysis gives you a hydrocarbon that's 85.7% C and 14.3% H by mass. Divide each by atomic mass: C → 85.7/12 = 7.14, H → 14.3/1 = 14.3. Divide both by the smallest (7.14): C = 1, H = 2. Empirical formula is CH₂, empirical mass is 14 g/mol. Now you're told the compound's molar mass is 42 g/mol. That's 42 ÷ 14 = 3 empirical units, so the molecular formula is C₃H₆ (propene). This is the two-step method every stoichiometry exam question uses: percentage composition → empirical formula via divide-by-smallest, then molar mass → scaling factor → molecular formula. The key insight: you can't get the molecular formula from percentage alone because infinite compounds share the same ratio.";
+});
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  const spacing = w / 8;
+  const centerY = h / 2;
+  
+  // Draw empirical unit
+  const empX = spacing * 1.5;
+  drawMolecule(empX, centerY, 1, 'Empirical');
+  
+  // Draw arrow
+  const arrowX = spacing * 3.5;
+  ctx.save();
+  ctx.strokeStyle = 'rgba(' + RGB + ', 0.4)';
+  ctx.fillStyle = 'rgba(' + RGB + ', 0.4)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(arrowX - 20, centerY);
+  ctx.lineTo(arrowX + 20, centerY);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(arrowX + 20, centerY);
+  ctx.lineTo(arrowX + 12, centerY - 6);
+  ctx.lineTo(arrowX + 12, centerY + 6);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+  
+  // Draw "×n" label
+  ctx.save();
+  ctx.font = '500 16px JetBrains Mono';
+  ctx.fillStyle = ACC;
+  ctx.textAlign = 'center';
+  ctx.fillText('×' + n, arrowX, centerY - 20);
+  ctx.restore();
+  
+  // Draw molecular units
+  const molX = spacing * 5.5;
+  drawMolecule(molX, centerY, n, 'Molecular');
+  
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const cx = w / 2;
+  const cy = h / 2;
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+  
+  time += 0.016;
+  animFrame = requestAnimationFrame(draw);
+}
+
+function drawMolecule(x, y, count, label) {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  const baseR = 8;
+  const spacing = 28;
+  
+  // Calculate grid layout for multiple units
+  const cols = Math.min(count, 3);
+  const rows = Math.ceil(count / cols);
+  const startX = x - ((cols - 1) * spacing) / 2;
+  const startY = y - ((rows - 1) * spacing) / 2;
+  
+  for (let i = 0; i < count; i++) {
+    const col = i % cols;
+    const row = Math.floor(i / cols);
+    const ux = startX + col * spacing;
+    const uy = startY + row * spacing;
+    
+    // Pulsing effect
+    const pulse = 1 + Math.sin(time * 2 + i * 0.5) * 0.1;
+    
+    // C atom (center)
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    const cglow = ctx.createRadialGradient(ux, uy, 0, ux, uy, baseR * 2.5);
+    cglow.addColorStop(0, 'rgba(' + RGB + ', 0.6)');
+    cglow.addColorStop(1, 'rgba(' + RGB + ', 0)');
+    ctx.fillStyle = cglow;
+    ctx.beginPath();
+    ctx.arc(ux, uy, baseR * 2.5 * pulse, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+    
+    ctx.fillStyle = ACC;
+    ctx.beginPath();
+    ctx.arc(ux, uy, baseR * pulse, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // H atoms (left and right)
+    const hOffset = 18;
+    for (let hi = 0; hi < 2; hi++) {
+      const hx = ux + (hi === 0 ? -hOffset : hOffset);
+      const hy = uy;
+      
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      const hglow = ctx.createRadialGradient(hx, hy, 0, hx, hy, baseR * 1.8);
+      hglow.addColorStop(0, 'rgba(255,255,255,0.4)');
+      hglow.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = hglow;
+      ctx.beginPath();
+      ctx.arc(hx, hy, baseR * 1.8 * pulse, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+      
+      ctx.fillStyle = '#EDEDE8';
+      ctx.beginPath();
+      ctx.arc(hx, hy, baseR * 0.65 * pulse, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    
+    // O atom (top)
+    const ox = ux;
+    const oy = uy - 18;
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    const oglow = ctx.createRadialGradient(ox, oy, 0, ox, oy, baseR * 2);
+    oglow.addColorStop(0, 'rgba(250, 199, 117, 0.5)');
+    oglow.addColorStop(1, 'rgba(250, 199, 117, 0)');
+    ctx.fillStyle = oglow;
+    ctx.beginPath();
+    ctx.arc(ox, oy, baseR * 2 * pulse, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+    
+    ctx.fillStyle = '#FAC775';
+    ctx.beginPath();
+    ctx.arc(ox, oy, baseR * 0.8 * pulse, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  
+  // Label
+  ctx.save();
+  ctx.font = '400 11px JetBrains Mono';
+  ctx.fillStyle = 'rgba(237, 237, 232, 0.5)';
+  ctx.textAlign = 'center';
+  ctx.fillText(label, x, y + (count > 3 ? spacing * 1.8 : spacing * 1.2));
+  ctx.restore();
+}
+
+updateUI();
+draw();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'empirical-and-molecular-formulae'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

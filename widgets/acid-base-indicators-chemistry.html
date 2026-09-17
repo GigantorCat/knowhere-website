@@ -1,0 +1,616 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Acid-Base Indicators — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #3E9AD6;
+  --acc-rgb: 62, 154, 214;
+  --ag: rgba(var(--acc-rgb), .7);
+  --ag1: rgba(var(--acc-rgb), .12);
+  --ag2: rgba(var(--acc-rgb), .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 0;
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 16px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 20px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: white;
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-container {
+  margin-top: 16px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.ph-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 50%), #23291f var(--fill, 50%));
+  outline: none;
+  margin-bottom: 8px;
+}
+
+.ph-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.ph-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.ph-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.ph-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ph-slider::-webkit-slider-thumb,
+  .ph-slider::-moz-range-thumb {
+    transition: none;
+  }
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  padding: 0 2px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 4px;
+  display: block;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.stat-value.acc { color: var(--acc); }
+.stat-value.amb { color: var(--amb); }
+
+.toggle-card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 20px;
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: #12160F;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toggle-btn.active {
+  background: rgba(var(--acc-rgb), .1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(var(--acc-rgb), .18);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toggle-btn { transition: none; }
+}
+
+.knowdrop-section {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.knowdrop-text {
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-this-tag {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 12px;
+}
+
+.pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 8px var(--acc);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse-dot { animation: none; }
+}
+
+.know-this-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+}
+
+.know-this-text {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+</style>
+
+<h2 class="sr-only">Acid-Base Indicators Interactive Widget</h2>
+
+<div class="container">
+  <h1>The indicator doesn't measure pH—it <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">becomes</span> it</h1>
+  
+  <p class="intro">Indicators are weak acids caught in their own equilibrium. The molecule itself shifts between two forms with wildly different colours, and the ratio between them is set entirely by the pH around it. Drag the slider to watch phenolphthalein transform as pH crosses its transition range.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Phenolphthalein Equilibrium</span>
+      <span class="live-tag" id="state-tag">ACID FORM</span>
+    </div>
+    <p class="card-hint">pH 0–14 range showing indicator colour shift</p>
+    
+    <div class="canvas-wrapper">
+      <canvas id="indicator-canvas"></canvas>
+      <div class="canvas-overlay" id="colour-label">COLOURLESS — ACID FORM DOMINATES</div>
+    </div>
+
+    <div class="slider-container">
+      <label class="slider-label" for="ph-slider">pH Level</label>
+      <input type="range" id="ph-slider" class="ph-slider" min="0" max="14" step="0.1" value="7" style="--fill: 50%">
+      <div class="tick-labels">
+        <span>0</span>
+        <span>7</span>
+        <span>14</span>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <span class="stat-label">pH Value</span>
+        <div class="stat-value acc" id="ph-display">7.0</div>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Colour Ratio</span>
+        <div class="stat-value amb" id="ratio-display">50:50</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toggle-card">
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" data-indicator="phenol">Phenolphthalein</button>
+      <button class="toggle-btn" data-indicator="methyl">Methyl Orange</button>
+    </div>
+    
+    <div class="knowdrop-section">
+      <p class="knowdrop-text" id="knowdrop-text">Phenolphthalein has a pKa around 9.3, meaning its transition range sits between pH 8.2 and 10.0. In acid form (below pH 8.2), it's completely colourless—the conjugate base hasn't formed yet. As pH rises past 8.2, the equilibrium shifts and the base form (bright pink) starts appearing. By pH 10, almost all molecules have donated their proton and the solution glows deep magenta. This makes it perfect for strong acid–strong base titrations, where the equivalence point lands around pH 7–9, but completely useless for weak acid titrations where the endpoint might only reach pH 5. The indicator's own pKa determines where it changes, not the strength of the acids you're titrating.</p>
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-this-tag">
+      <div class="pulse-dot"></div>
+      <span class="know-this-label">Know This</span>
+    </div>
+    <p class="know-this-text">An indicator's <span style="color:var(--acc)">pKa</span> sets its <span style="color:var(--acc)">transition range</span>, which must overlap the titration's <span style="color:var(--acc)">equivalence point</span> or you'll miss the endpoint entirely.</p>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('indicator-canvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const slider = document.getElementById('ph-slider');
+const phDisplay = document.getElementById('ph-display');
+const ratioDisplay = document.getElementById('ratio-display');
+const stateTag = document.getElementById('state-tag');
+const colourLabel = document.getElementById('colour-label');
+const knowdropText = document.getElementById('knowdrop-text');
+const toggleButtons = document.querySelectorAll('.toggle-btn');
+
+const CSS = getComputedStyle(document.documentElement);
+const ACC = CSS.getPropertyValue('--acc').trim();
+const RGB = CSS.getPropertyValue('--acc-rgb').trim();
+const AMB = CSS.getPropertyValue('--amb').trim();
+
+let currentIndicator = 'phenol';
+
+const indicators = {
+  phenol: {
+    pKa: 9.3,
+    acidColour: [230, 230, 230],
+    baseColour: [255, 20, 147],
+    text: "Phenolphthalein has a pKa around 9.3, meaning its transition range sits between pH 8.2 and 10.0. In acid form (below pH 8.2), it's completely colourless—the conjugate base hasn't formed yet. As pH rises past 8.2, the equilibrium shifts and the base form (bright pink) starts appearing. By pH 10, almost all molecules have donated their proton and the solution glows deep magenta. This makes it perfect for strong acid–strong base titrations, where the equivalence point lands around pH 7–9, but completely useless for weak acid titrations where the endpoint might only reach pH 5. The indicator's own pKa determines where it changes, not the strength of the acids you're titrating."
+  },
+  methyl: {
+    pKa: 3.7,
+    acidColour: [255, 80, 80],
+    baseColour: [255, 200, 100],
+    text: "Methyl orange sits at the opposite end with a pKa of 3.7, giving it a transition range from pH 3.1 to 4.4. The acid form is red (you're seeing the protonated version with a positive charge), and as pH rises past 3.1, it loses that proton and shifts to yellow-orange. This low transition range makes it ideal for titrating weak bases with strong acids, where the equivalence point typically lands around pH 3–6. If you tried using methyl orange for a strong acid–strong base titration (equivalence at pH 7), the colour would have already changed ages before you hit the endpoint. The indicator would lie to you—not because it's faulty, but because you matched the wrong pKa to the wrong titration type."
+  }
+};
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d');
+
+let particles = [];
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  
+  particles = [];
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  for (let i = 0; i < 80; i++) {
+    particles.push({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3,
+      r: Math.random() * 2.5 + 1.5
+    });
+  }
+}
+
+function lerp(a, b, t) {
+  return a + (b - a) * t;
+}
+
+function lerpColour(c1, c2, t) {
+  return [
+    Math.round(lerp(c1[0], c2[0], t)),
+    Math.round(lerp(c1[1], c2[1], t)),
+    Math.round(lerp(c1[2], c2[2], t))
+  ];
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  const pH = parseFloat(slider.value);
+  const ind = indicators[currentIndicator];
+  
+  // Henderson-Hasselbalch: pH = pKa + log([A-]/[HA])
+  // Rearrange: [A-]/[HA] = 10^(pH - pKa)
+  const ratio = Math.pow(10, pH - ind.pKa);
+  const baseFraction = ratio / (1 + ratio);
+  
+  const mixedColour = lerpColour(ind.acidColour, ind.baseColour, baseFraction);
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  // Draw particles with mixed colour
+  particles.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    if (p.x < 0) p.x = w;
+    if (p.x > w) p.x = 0;
+    if (p.y < 0) p.y = h;
+    if (p.y > h) p.y = 0;
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 3);
+    grad.addColorStop(0, `rgba(${mixedColour[0]},${mixedColour[1]},${mixedColour[2]},0.6)`);
+    grad.addColorStop(0.5, `rgba(${mixedColour[0]},${mixedColour[1]},${mixedColour[2]},0.2)`);
+    grad.addColorStop(1, `rgba(${mixedColour[0]},${mixedColour[1]},${mixedColour[2]},0)`);
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r * 3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  });
+  
+  // Draw beaker outline
+  const beakerW = w * 0.5;
+  const beakerH = h * 0.65;
+  const beakerX = (w - beakerW) / 2;
+  const beakerY = h * 0.25;
+  
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.strokeStyle = `rgba(${RGB}, 0.4)`;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(beakerX, beakerY);
+  ctx.lineTo(beakerX, beakerY + beakerH);
+  ctx.lineTo(beakerX + beakerW, beakerY + beakerH);
+  ctx.lineTo(beakerX + beakerW, beakerY);
+  ctx.stroke();
+  
+  // Fill with gradient showing solution colour
+  const fillGrad = ctx.createLinearGradient(0, beakerY, 0, beakerY + beakerH);
+  fillGrad.addColorStop(0, `rgba(${mixedColour[0]},${mixedColour[1]},${mixedColour[2]},0.15)`);
+  fillGrad.addColorStop(1, `rgba(${mixedColour[0]},${mixedColour[1]},${mixedColour[2]},0.35)`);
+  ctx.fillStyle = fillGrad;
+  ctx.fillRect(beakerX, beakerY, beakerW, beakerH);
+  ctx.restore();
+  
+  // BLOOM
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // VIGNETTE
+  const cx = w / 2;
+  const cy = h / 2;
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+  
+  requestAnimationFrame(draw);
+}
+
+function updateUI() {
+  const pH = parseFloat(slider.value);
+  const fillPercent = (pH / 14) * 100;
+  slider.style.setProperty('--fill', fillPercent + '%');
+  
+  phDisplay.textContent = pH.toFixed(1);
+  
+  const ind = indicators[currentIndicator];
+  const ratio = Math.pow(10, pH - ind.pKa);
+  const baseFraction = ratio / (1 + ratio);
+  const acidPercent = Math.round((1 - baseFraction) * 100);
+  const basePercent = Math.round(baseFraction * 100);
+  
+  ratioDisplay.textContent = `${acidPercent}:${basePercent}`;
+  
+  if (baseFraction < 0.1) {
+    stateTag.textContent = 'ACID FORM';
+    colourLabel.textContent = currentIndicator === 'phenol' 
+      ? 'COLOURLESS — ACID FORM DOMINATES'
+      : 'RED — ACID FORM DOMINATES';
+  } else if (baseFraction > 0.9) {
+    stateTag.textContent = 'BASE FORM';
+    colourLabel.textContent = currentIndicator === 'phenol'
+      ? 'MAGENTA — BASE FORM DOMINATES'
+      : 'YELLOW — BASE FORM DOMINATES';
+  } else {
+    stateTag.textContent = 'TRANSITION';
+    colourLabel.textContent = 'TRANSITION RANGE — BOTH FORMS PRESENT';
+  }
+}
+
+slider.addEventListener('input', updateUI);
+
+toggleButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    toggleButtons.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentIndicator = btn.dataset.indicator;
+    knowdropText.textContent = indicators[currentIndicator].text;
+    updateUI();
+  });
+});
+
+window.addEventListener('resize', resize);
+resize();
+updateUI();
+draw();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'acid-base-indicators'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

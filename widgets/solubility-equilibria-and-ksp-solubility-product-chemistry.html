@@ -1,0 +1,609 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Solubility Equilibria and Ksp (Solubility Product) — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #3E9AD6;
+  --acc-rgb: 62, 154, 214;
+  --ag: rgba(var(--acc-rgb), 0.7);
+  --ag1: rgba(var(--acc-rgb), 0.12);
+  --ag2: rgba(var(--acc-rgb), 0.45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,0.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-wrapper {
+  margin-bottom: 10px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+}
+
+.ksp-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  outline: none;
+  margin-bottom: 8px;
+}
+
+.ksp-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+
+.ksp-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+
+.ksp-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.ksp-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.toggle-card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,0.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: #12160F;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toggle-btn.active {
+  background: rgba(var(--acc-rgb), 0.1);
+  border-color: var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(var(--acc-rgb), 0.18);
+}
+
+.knowdrop-divider {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.knowdrop {
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-this-tag {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 12px;
+}
+
+.know-this-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 8px var(--acc);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+.know-this-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+}
+
+.know-this-text {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+
+<h2 class="sr-only">Solubility equilibria interactive: exploring Ksp and precipitation thresholds</h2>
+
+<div class="container">
+  <h1>Even "insoluble" salts dissolve—just not very <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">much</span></h1>
+  
+  <p class="intro">Every salt has a solubility equilibrium with its own constant, K<sub>sp</sub>. The smaller K<sub>sp</sub> is, the less dissolves before equilibrium shuts it down. Drag the slider to change K<sub>sp</sub> and watch when precipitation starts.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-label">Dissolution Equilibrium</div>
+      <div class="live-tag" id="status-tag">Unsaturated</div>
+    </div>
+    <div class="card-hint">Drag to change K<sub>sp</sub> — precipitation occurs when Q > K<sub>sp</sub></div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="mainCanvas"></canvas>
+      <div class="canvas-overlay" id="canvas-tag">Q < Ksp · UNSATURATED</div>
+    </div>
+
+    <div class="slider-wrapper">
+      <div class="slider-label">Ksp value (×10⁻⁹)</div>
+      <input type="range" min="1" max="50" value="25" class="ksp-slider" id="kspSlider">
+      <div class="tick-labels">
+        <span>1</span>
+        <span>25</span>
+        <span>50</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Q (reaction quotient)</div>
+        <div class="stat-value" style="color:var(--acc)" id="q-stat">3.0×10⁻⁸</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Precipitate</div>
+        <div class="stat-value" style="color:var(--amb)" id="precip-stat">None</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toggle-card">
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" id="btn-pure">Pure water</button>
+      <button class="toggle-btn" id="btn-common">Common ion</button>
+    </div>
+    
+    <div class="knowdrop-divider">
+      <p class="knowdrop" id="knowdrop-text">In pure water, AgCl dissolves until [Ag⁺][Cl⁻] = K<sub>sp</sub>. Both ions come from the same source, so their concentrations rise together and equilibrium is reached symmetrically. The molar solubility s gives K<sub>sp</sub> = s². Once Q reaches K<sub>sp</sub>, no more solid dissolves—the solution is saturated. If you tried to add more AgCl, it would just sit at the bottom undissolved, because the equilibrium position has been reached.</p>
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-this-tag">
+      <div class="know-this-dot"></div>
+      <div class="know-this-label">Know This</div>
+    </div>
+    <p class="know-this-text">Precipitation happens the instant <span style="color:var(--acc)">Q exceeds K<sub>sp</sub></span>, and a <span style="color:var(--acc)">common ion</span> suppresses solubility by driving <span style="color:var(--acc)">equilibrium left</span>.</p>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('mainCanvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d', { alpha: false });
+
+const CSS = getComputedStyle(document.documentElement);
+const ACC = CSS.getPropertyValue('--acc').trim();
+const RGB = CSS.getPropertyValue('--acc-rgb').trim();
+const AMB = CSS.getPropertyValue('--amb').trim();
+
+const slider = document.getElementById('kspSlider');
+const statusTag = document.getElementById('status-tag');
+const canvasTag = document.getElementById('canvas-tag');
+const qStat = document.getElementById('q-stat');
+const precipStat = document.getElementById('precip-stat');
+
+const btnPure = document.getElementById('btn-pure');
+const btnCommon = document.getElementById('btn-common');
+const knowdropText = document.getElementById('knowdrop-text');
+
+let ksp = 25; // ×10⁻⁹
+let commonIonMode = false;
+const Q_FIXED = 30; // ×10⁻⁹ for visualization
+
+// Particles
+let ions = [];
+let precipitate = [];
+
+function resize() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function initParticles() {
+  ions = [];
+  precipitate = [];
+  
+  const baseCount = 40;
+  for (let i = 0; i < baseCount; i++) {
+    ions.push({
+      x: Math.random(),
+      y: Math.random(),
+      vx: (Math.random() - 0.5) * 0.003,
+      vy: (Math.random() - 0.5) * 0.003,
+      positive: i % 2 === 0,
+      r: 3.5
+    });
+  }
+}
+
+function updateSlider() {
+  const val = parseFloat(slider.value);
+  const percent = ((val - 1) / 49) * 100;
+  slider.style.setProperty('--fill', percent + '%');
+  ksp = val;
+}
+
+function draw() {
+  const w = canvas.width / Math.min(window.devicePixelRatio || 1, 2);
+  const h = canvas.height / Math.min(window.devicePixelRatio || 1, 2);
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+
+  // Update particle positions
+  const isPrecipitating = Q_FIXED > ksp;
+  
+  ions.forEach(ion => {
+    ion.x += ion.vx;
+    ion.y += ion.vy;
+    
+    if (ion.x < 0 || ion.x > 1) ion.vx *= -1;
+    if (ion.y < 0 || ion.y > 1) ion.vy *= -1;
+    
+    ion.x = Math.max(0, Math.min(1, ion.x));
+    ion.y = Math.max(0, Math.min(1, ion.y));
+  });
+
+  // Precipitate forms at bottom
+  if (isPrecipitating && precipitate.length < 80) {
+    if (Math.random() < 0.15) {
+      precipitate.push({
+        x: 0.2 + Math.random() * 0.6,
+        y: 0.85 + Math.random() * 0.12,
+        r: 2 + Math.random() * 1.5,
+        cluster: Math.random() < 0.5
+      });
+    }
+  }
+  
+  if (!isPrecipitating && precipitate.length > 0) {
+    precipitate = precipitate.slice(0, Math.max(0, precipitate.length - 3));
+  }
+
+  // Draw ions
+  ions.forEach(ion => {
+    const px = ion.x * w;
+    const py = ion.y * h;
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    
+    // Glow
+    const glow = ctx.createRadialGradient(px, py, 0, px, py, ion.r * 3.5);
+    glow.addColorStop(0, ion.positive ? 'rgba(' + RGB + ',0.35)' : 'rgba(250,199,117,0.35)');
+    glow.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(px, py, ion.r * 3.5, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Core
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.fillStyle = ion.positive ? ACC : AMB;
+    ctx.beginPath();
+    ctx.arc(px, py, ion.r, 0, Math.PI * 2);
+    ctx.fill();
+    
+    ctx.restore();
+  });
+
+  // Draw precipitate
+  precipitate.forEach(p => {
+    const px = p.x * w;
+    const py = p.y * h;
+    
+    ctx.save();
+    ctx.fillStyle = 'rgba(237,237,232,0.7)';
+    ctx.beginPath();
+    ctx.arc(px, py, p.r, 0, Math.PI * 2);
+    ctx.fill();
+    
+    if (p.cluster) {
+      ctx.fillStyle = 'rgba(237,237,232,0.4)';
+      ctx.beginPath();
+      ctx.arc(px + 2, py + 1, p.r * 0.6, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    
+    ctx.restore();
+  });
+
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  ctx.filter = 'none';
+
+  // Vignette
+  const cx = w * 0.5;
+  const cy = h * 0.5;
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+
+  requestAnimationFrame(draw);
+}
+
+function updateUI() {
+  const isPrecipitating = Q_FIXED > ksp;
+  
+  if (isPrecipitating) {
+    statusTag.textContent = 'Precipitating';
+    canvasTag.textContent = 'Q > Ksp · PRECIPITATE FORMING';
+    precipStat.textContent = 'Forming';
+  } else {
+    statusTag.textContent = 'Unsaturated';
+    canvasTag.textContent = 'Q < Ksp · UNSATURATED';
+    precipStat.textContent = 'None';
+  }
+  
+  qStat.textContent = (Q_FIXED / 10).toFixed(1) + '×10⁻⁹';
+}
+
+slider.addEventListener('input', () => {
+  updateSlider();
+  updateUI();
+});
+
+btnPure.addEventListener('click', () => {
+  btnPure.classList.add('active');
+  btnCommon.classList.remove('active');
+  commonIonMode = false;
+  knowdropText.innerHTML = 'In pure water, AgCl dissolves until [Ag⁺][Cl⁻] = K<sub>sp</sub>. Both ions come from the same source, so their concentrations rise together and equilibrium is reached symmetrically. The molar solubility s gives K<sub>sp</sub> = s². Once Q reaches K<sub>sp</sub>, no more solid dissolves—the solution is saturated. If you tried to add more AgCl, it would just sit at the bottom undissolved, because the equilibrium position has been reached.';
+});
+
+btnCommon.addEventListener('click', () => {
+  btnCommon.classList.add('active');
+  btnPure.classList.remove('active');
+  commonIonMode = true;
+  knowdropText.innerHTML = 'Add NaCl to the solution and you flood the system with Cl⁻. Le Chatelier: equilibrium shifts left to consume the excess. AgCl(s) ⇌ Ag⁺ + Cl⁻ is driven backwards—less solid dissolves. The common ion effect suppresses solubility dramatically. If K<sub>sp</sub> = 1.8×10⁻¹⁰ for AgCl and you add 0.1 M NaCl, solubility drops from 1.3×10⁻⁵ M to just 1.8×10⁻⁹ M. This is how selective precipitation separates ions in qualitative analysis.';
+});
+
+window.addEventListener('resize', resize);
+resize();
+initParticles();
+updateSlider();
+updateUI();
+draw();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'solubility-equilibria-and-ksp-solubility-product'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

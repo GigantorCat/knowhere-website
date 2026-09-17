@@ -1,0 +1,706 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Fossil Fuels and Biofuels Compared — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #3E9AD6;
+  --ag: rgba(62, 154, 214, .7);
+  --ag1: rgba(62, 154, 214, .12);
+  --ag2: rgba(62, 154, 214, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  min-height: 100vh;
+  padding: 40px 16px 0;
+  color: var(--ink);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  line-height: 1.55;
+  max-width: 58ch;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 20px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+  pointer-events: none;
+}
+
+.slider-wrapper {
+  margin-bottom: 10px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.fuel-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 50%), #23291f var(--fill, 50%));
+  outline: none;
+  cursor: pointer;
+}
+
+.fuel-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.fuel-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.fuel-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.fuel-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fuel-slider::-webkit-slider-thumb,
+  .fuel-slider::-moz-range-thumb {
+    transition: none;
+  }
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.stat:first-child .stat-value {
+  color: var(--acc);
+}
+
+.stat:last-child .stat-value {
+  color: var(--amb);
+}
+
+.toggle-section {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: #12160F;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(62, 154, 214,.1);
+  border-color: var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(62, 154, 214,.18);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toggle-btn {
+    transition: none;
+  }
+}
+
+.knowdrop-divider {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.knowdrop-text {
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.know-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.know-body strong {
+  color: var(--acc);
+  font-weight: 500;
+}
+</style>
+
+<h2 class="sr-only">Interactive comparison of fossil fuels and biofuels showing carbon cycle timing and renewability</h2>
+
+<div class="container">
+  <h1>The carbon was released either way — the <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">timing</span> is everything</h1>
+  
+  <p class="intro">Both fossil fuels and biofuels combust to release CO₂, but one closed its carbon loop millions of years ago and the other last season. The difference isn't the chemistry of combustion — it's when the carbon was captured and whether it can be captured again. Drag the slider to see how the carbon cycle timing changes between the two fuel sources.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-label">Carbon Cycle Comparison</div>
+      <div class="live-tag" id="fuel-type">Fossil Fuel</div>
+    </div>
+    <div class="card-hint">Drag slider to transition between fuel types</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="fuel-canvas"></canvas>
+      <div class="canvas-overlay" id="cycle-tag">300 MILLION YEAR LOOP — CARBON LOCKED</div>
+    </div>
+
+    <div class="slider-wrapper">
+      <label class="slider-label" for="fuel-slider">Fuel Type Transition</label>
+      <input type="range" min="0" max="100" value="0" class="fuel-slider" id="fuel-slider" style="--fill: 0%">
+    </div>
+    <div class="tick-labels">
+      <span>Fossil (Coal/Oil)</span>
+      <span>Biofuel (Ethanol)</span>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Carbon Age</div>
+        <div class="stat-value" id="age-stat">300 My</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Renewability</div>
+        <div class="stat-value" id="renew-stat">0%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-section">
+      <button class="toggle-btn active" id="toggle-energy">Energy Density</button>
+      <button class="toggle-btn" id="toggle-tradeoff">Trade-offs</button>
+    </div>
+    <div class="knowdrop-divider">
+      <p class="knowdrop-text" id="knowdrop-content">Fossil fuels pack roughly 2–3 times the energy per kilogram compared to first-generation biofuels like ethanol, which is why aviation and heavy transport still rely on petroleum derivatives. The chemical bonds in long-chain hydrocarbons from ancient organic matter store significantly more energy than the shorter alcohols produced from recent plant sugars. This energy density advantage means fossil fuels require less volume and mass to deliver the same work output, a critical factor for applications where weight and space are constrained. However, that concentrated energy came from carbon captured hundreds of millions of years ago — burning it now adds a net pulse of CO₂ to the current atmosphere that wasn't cycling through ecosystems on human timescales.</p>
+    </div>
+  </div>
+
+  <div class="know-this">
+    <span class="know-tag">Know This</span>
+    <p class="know-body">The CO₂ released from <strong>biofuel combustion</strong> was absorbed by the source plant within the past few years, creating a <strong>closed loop on human timescales</strong> — in contrast, fossil fuel combustion releases carbon that was sequestered millions of years ago, creating a <strong>net addition</strong> to the active carbon cycle.</p>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('fuel-canvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const slider = document.getElementById('fuel-slider');
+const fuelTypeTag = document.getElementById('fuel-type');
+const cycleTag = document.getElementById('cycle-tag');
+const ageStat = document.getElementById('age-stat');
+const renewStat = document.getElementById('renew-stat');
+const toggleEnergy = document.getElementById('toggle-energy');
+const toggleTradeoff = document.getElementById('toggle-tradeoff');
+const knowdropContent = document.getElementById('knowdrop-content');
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d', { alpha: false });
+
+let time = 0;
+let animFrame;
+let particles = [];
+
+const energyText = "Fossil fuels pack roughly 2–3 times the energy per kilogram compared to first-generation biofuels like ethanol, which is why aviation and heavy transport still rely on petroleum derivatives. The chemical bonds in long-chain hydrocarbons from ancient organic matter store significantly more energy than the shorter alcohols produced from recent plant sugars. This energy density advantage means fossil fuels require less volume and mass to deliver the same work output, a critical factor for applications where weight and space are constrained. However, that concentrated energy came from carbon captured hundreds of millions of years ago — burning it now adds a net pulse of CO₂ to the current atmosphere that wasn't cycling through ecosystems on human timescales.";
+
+const tradeoffText = "The food-versus-fuel debate highlights a genuine tension: cropland used to grow corn or sugarcane for ethanol is land not producing food, which can drive up food prices and impact food security in vulnerable regions. First-generation biofuels also require significant water, fertiliser, and energy inputs during cultivation and processing, and if those inputs come from fossil sources, the net carbon benefit shrinks considerably. Second-generation biofuels from agricultural waste or algae aim to sidestep the food competition issue, but scaling those technologies remains economically and technically challenging. Land use change is another hidden cost — if forests are cleared to plant biofuel crops, the carbon released from that clearing can exceed decades of biofuel carbon savings, turning a nominally renewable fuel into a net emissions source in the short to medium term.";
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function initParticles() {
+  particles = [];
+  for (let i = 0; i < 80; i++) {
+    particles.push({
+      x: Math.random(),
+      y: Math.random(),
+      vx: (Math.random() - 0.5) * 0.0008,
+      vy: (Math.random() - 0.5) * 0.0008,
+      r: Math.random() * 2.2 + 0.8,
+      phase: Math.random() * Math.PI * 2,
+      speed: 0.4 + Math.random() * 1.2
+    });
+  }
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  const cx = w / 2;
+  const cy = h / 2;
+  
+  const t = slider.value / 100;
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+
+  // Update particles
+  particles.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    if (p.x < 0) p.x = 1;
+    if (p.x > 1) p.x = 0;
+    if (p.y < 0) p.y = 1;
+    if (p.y > 1) p.y = 0;
+  });
+
+  // Draw cycle visualization
+  // Fossil: deep underground storage (bottom) → surface burn (top) → atmosphere
+  // Biofuel: surface plant (middle) → burn → atmosphere → plant (closed loop)
+
+  const fossilAlpha = 1 - t;
+  const bioAlpha = t;
+
+  // Fossil fuel visualization
+  if (fossilAlpha > 0.05) {
+    ctx.save();
+    ctx.globalAlpha = fossilAlpha;
+    
+    // Ancient deposits (bottom)
+    const depositY = h * 0.75;
+    const depositGrad = ctx.createRadialGradient(cx, depositY, 0, cx, depositY, 60);
+    depositGrad.addColorStop(0, 'rgba(139,69,19,0.8)');
+    depositGrad.addColorStop(0.6, 'rgba(101,67,33,0.4)');
+    depositGrad.addColorStop(1, 'rgba(101,67,33,0)');
+    ctx.fillStyle = depositGrad;
+    ctx.beginPath();
+    ctx.arc(cx, depositY, 60, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Extraction arrows upward
+    for (let i = 0; i < 3; i++) {
+      const offset = (i - 1) * 35;
+      const arrowY = depositY - 20 - (time * 0.5 % 40);
+      ctx.strokeStyle = 'rgba(250,199,117,0.6)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(cx + offset, depositY - 10);
+      ctx.lineTo(cx + offset, arrowY);
+      ctx.stroke();
+      
+      // Arrow head
+      ctx.fillStyle = 'rgba(250,199,117,0.6)';
+      ctx.beginPath();
+      ctx.moveTo(cx + offset, arrowY);
+      ctx.lineTo(cx + offset - 4, arrowY + 8);
+      ctx.lineTo(cx + offset + 4, arrowY + 8);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    // Combustion at surface
+    const flameY = h * 0.35;
+    const flameGrad = ctx.createRadialGradient(cx, flameY, 0, cx, flameY, 45);
+    flameGrad.addColorStop(0, 'rgba(255,140,0,0.9)');
+    flameGrad.addColorStop(0.5, 'rgba(255,69,0,0.5)');
+    flameGrad.addColorStop(1, 'rgba(255,69,0,0)');
+    ctx.fillStyle = flameGrad;
+    ctx.beginPath();
+    ctx.arc(cx, flameY, 45, 0, Math.PI * 2);
+    ctx.fill();
+
+    // CO2 rising to atmosphere (one-way)
+    for (let i = 0; i < 25; i++) {
+      const angle = (i / 25) * Math.PI * 2 + time * 0.3;
+      const riseProgress = (time * 0.8 + i * 0.3) % 100;
+      const riseY = flameY - riseProgress * 1.8;
+      if (riseY > h * 0.05) {
+        const alpha = 1 - (riseProgress / 100);
+        ctx.fillStyle = `rgba(200,200,200,${alpha * 0.6})`;
+        ctx.beginPath();
+        ctx.arc(cx + Math.cos(angle) * 25, riseY, 2.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // Ancient time label
+    ctx.fillStyle = 'rgba(250,199,117,0.7)';
+    ctx.font = '11px JetBrains Mono';
+    ctx.textAlign = 'center';
+    ctx.fillText('300 million years ago', cx, depositY + 85);
+    
+    ctx.restore();
+  }
+
+  // Biofuel visualization
+  if (bioAlpha > 0.05) {
+    ctx.save();
+    ctx.globalAlpha = bioAlpha;
+    
+    // Plant on surface (left side of cycle)
+    const plantX = cx - 90;
+    const plantY = cy;
+    
+    // Plant stem and leaves
+    ctx.strokeStyle = 'rgba(62,154,214,0.9)';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(plantX, plantY + 30);
+    ctx.lineTo(plantX, plantY - 35);
+    ctx.stroke();
+    
+    // Leaves
+    for (let i = 0; i < 3; i++) {
+      const leafY = plantY - 10 - i * 12;
+      const swing = Math.sin(time * 0.5 + i) * 3;
+      ctx.fillStyle = 'rgba(62,154,214,0.8)';
+      ctx.beginPath();
+      ctx.ellipse(plantX - 12 + swing, leafY, 10, 6, -0.3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.ellipse(plantX + 12 - swing, leafY, 10, 6, 0.3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // CO2 absorption arrows (downward into plant)
+    for (let i = 0; i < 2; i++) {
+      const offset = (i - 0.5) * 30;
+      const absorbY = plantY - 50 + (time * 0.4 % 25);
+      ctx.strokeStyle = 'rgba(62, 154, 214,0.6)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(plantX + offset, plantY - 70);
+      ctx.lineTo(plantX + offset, absorbY);
+      ctx.stroke();
+      
+      // Arrow head
+      ctx.fillStyle = 'rgba(62, 154, 214,0.6)';
+      ctx.beginPath();
+      ctx.moveTo(plantX + offset, absorbY);
+      ctx.lineTo(plantX + offset - 4, absorbY - 8);
+      ctx.lineTo(plantX + offset + 4, absorbY - 8);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    // Harvest/combustion (right side)
+    const burnX = cx + 90;
+    const burnY = cy;
+    
+    const burnGrad = ctx.createRadialGradient(burnX, burnY, 0, burnX, burnY, 35);
+    burnGrad.addColorStop(0, 'rgba(255,140,0,0.85)');
+    burnGrad.addColorStop(0.5, 'rgba(255,69,0,0.45)');
+    burnGrad.addColorStop(1, 'rgba(255,69,0,0)');
+    ctx.fillStyle = burnGrad;
+    ctx.beginPath();
+    ctx.arc(burnX, burnY, 35, 0, Math.PI * 2);
+    ctx.fill();
+
+    // CO2 release and recycle (arc back to plant)
+    const numCO2 = 15;
+    for (let i = 0; i < numCO2; i++) {
+      const progress = ((time * 0.6 + i * 6) % 100) / 100;
+      const angle = Math.PI * progress;
+      const arcX = cx + Math.cos(angle) * 90;
+      const arcY = cy - Math.abs(Math.sin(angle)) * 60;
+      const alpha = 1 - Math.abs(progress - 0.5) * 1.2;
+      if (alpha > 0) {
+        ctx.fillStyle = `rgba(62, 154, 214,${alpha * 0.7})`;
+        ctx.globalCompositeOperation = 'lighter';
+        ctx.beginPath();
+        ctx.arc(arcX, arcY, 2.8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalCompositeOperation = 'source-over';
+      }
+    }
+
+    // Cycle labels
+    ctx.fillStyle = 'rgba(62, 154, 214,0.8)';
+    ctx.font = '10px JetBrains Mono';
+    ctx.textAlign = 'center';
+    ctx.fillText('Absorb CO₂', plantX, plantY - 80);
+    ctx.fillText('Combust', burnX, burnY + 55);
+    ctx.fillText('Release CO₂', cx, cy - 75);
+    ctx.fillText('1-5 year cycle', cx, cy + 90);
+
+    ctx.restore();
+  }
+
+  // Particle field (background)
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  particles.forEach(p => {
+    const px = p.x * w;
+    const py = p.y * h;
+    const twinkle = 0.3 + 0.7 * (0.5 + 0.5 * Math.sin(time * p.speed + p.phase));
+    const isFossil = p.y > 0.6;
+    const color = isFossil ? 
+      `rgba(250,199,117,${twinkle * 0.25 * fossilAlpha})` :
+      `rgba(62, 154, 214,${twinkle * 0.3 * bioAlpha})`;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(px, py, p.r, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  ctx.restore();
+
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+
+  time += 0.016;
+  animFrame = requestAnimationFrame(draw);
+}
+
+function updateUI() {
+  const val = parseFloat(slider.value);
+  slider.style.setProperty('--fill', val + '%');
+  
+  if (val < 50) {
+    fuelTypeTag.textContent = 'Fossil Fuel';
+    cycleTag.textContent = '300 MILLION YEAR LOOP — CARBON LOCKED';
+    const age = Math.round(300 - val * 3);
+    ageStat.textContent = age + ' My';
+    renewStat.textContent = '0%';
+  } else {
+    fuelTypeTag.textContent = 'Biofuel';
+    cycleTag.textContent = '1–5 YEAR CYCLE — CARBON NEUTRAL';
+    const years = Math.round((100 - val) / 10);
+    ageStat.textContent = years < 10 ? years + ' y' : '1–5 y';
+    const renew = Math.round((val - 50) * 2);
+    renewStat.textContent = renew + '%';
+  }
+}
+
+slider.addEventListener('input', updateUI);
+
+toggleEnergy.addEventListener('click', () => {
+  toggleEnergy.classList.add('active');
+  toggleTradeoff.classList.remove('active');
+  knowdropContent.textContent = energyText;
+});
+
+toggleTradeoff.addEventListener('click', () => {
+  toggleTradeoff.classList.add('active');
+  toggleEnergy.classList.remove('active');
+  knowdropContent.textContent = tradeoffText;
+});
+
+window.addEventListener('resize', () => {
+  resize();
+});
+
+resize();
+initParticles();
+updateUI();
+draw();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'fossil-fuels-and-biofuels-compared'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

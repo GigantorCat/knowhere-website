@@ -1,0 +1,577 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Polymer Structure and Physical Properties Relationship — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #3E9AD6;
+  --ag: rgba(62, 154, 214, .7);
+  --ag1: rgba(62, 154, 214, .12);
+  --ag2: rgba(62, 154, 214, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  min-height: 100vh;
+  padding: 40px 16px 72px;
+  color: var(--ink);
+}
+
+.container { max-width: 720px; margin: 0 auto; }
+
+h1 {
+  font-size: clamp(30px, 8vw, 52px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  margin-bottom: 18px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  line-height: 1.55;
+  max-width: 58ch;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 18px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: white;
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-wrapper {
+  margin-bottom: 10px;
+}
+
+.ps-slider {
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  appearance: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.ps-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  transition: box-shadow .15s;
+  cursor: pointer;
+}
+
+.ps-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.ps-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  transition: box-shadow .15s;
+  cursor: pointer;
+}
+
+.ps-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  padding: 0 4px;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.stat-value.acc { color: var(--acc); }
+.stat-value.amb { color: var(--amb); }
+
+.toggle-card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 18px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: #12160F;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(62,154,214,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(62,154,214,.18);
+}
+
+.knowdrop {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.knowdrop-text {
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 18px;
+}
+
+.know-this-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 10px;
+}
+
+.know-this-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.footer {
+  margin-top: 34px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 10px var(--acc);
+  animation: psPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes psPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .35; transform: scale(.6); }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Polymer Structure Interactive: Understand how chain arrangement determines material properties</h2>
+
+  <h1>Why Your Plastic Bottle Melts But Your Countertop <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">Doesn't</span></h1>
+
+  <p class="intro">The difference between a reusable thermoplastic and a permanent thermosetting polymer isn't about strength—it's about bonds. One has chains that slide apart under heat, the other has covalent networks that burn before they flow. Drag the slider to see how cross-linking transforms polymer behaviour.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-label">Polymer Chain Structure</div>
+      <div class="live-tag" id="liveTag">Linear • 0% Crosslinked</div>
+    </div>
+    <div class="card-hint">Drag to add cross-links between chains</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="polyCanvas"></canvas>
+      <div class="canvas-overlay" id="canvasOverlay">Thermoplastic • Melts on Heating</div>
+    </div>
+
+    <div class="slider-wrapper">
+      <input type="range" min="0" max="100" value="0" class="ps-slider" id="crossSlider">
+    </div>
+    <div class="tick-labels">
+      <span>No cross-links</span>
+      <span>Partial</span>
+      <span>Full network</span>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Cross-link density</div>
+        <div class="stat-value acc" id="densityVal">0%</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Rigidity Index</div>
+        <div class="stat-value amb" id="rigidVal">12</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toggle-card">
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" data-mode="thermo">Thermoplastics</button>
+      <button class="toggle-btn" data-mode="thermosetting">Thermosetting</button>
+    </div>
+    
+    <div class="knowdrop">
+      <p class="knowdrop-text" id="kdText">Thermoplastics like polyethene, polystyrene, and polyvinyl chloride contain linear or branched chains held together only by weak van der Waals forces or hydrogen bonds between molecules. When you heat these materials, the intermolecular forces weaken and the chains slide past each other, allowing the plastic to melt and flow into new shapes. Once cooled, the forces re-establish and the plastic solidifies again in its new form. This reversible process means thermoplastics can be melted and remoulded repeatedly without chemical change—why plastic bottles can be recycled. High-density polyethene has unbranched chains that pack efficiently into crystalline regions with stronger intermolecular attractions, making it rigid and dense, while low-density polyethene has branched chains that prevent tight packing, creating a more flexible, less crystalline material.</p>
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-this-tag">Know This</div>
+    <div class="know-this-body"><span style="color:var(--acc)">Thermosetting polymers</span> like Bakelite undergo irreversible <span style="color:var(--acc)">cross-linking during formation</span>, creating covalent bonds between chains that form a rigid three-dimensional network that decomposes rather than melts when heated.</div>
+  </div>
+
+  <div class="footer">
+    <div class="pulse-dot"></div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('polyCanvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const slider = document.getElementById('crossSlider');
+const liveTag = document.getElementById('liveTag');
+const canvasOverlay = document.getElementById('canvasOverlay');
+const densityVal = document.getElementById('densityVal');
+const rigidVal = document.getElementById('rigidVal');
+const kdText = document.getElementById('kdText');
+const toggleBtns = document.querySelectorAll('.toggle-btn');
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d');
+
+let crossAmount = 0;
+let chains = [];
+let crossLinks = [];
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  initChains();
+  draw();
+}
+
+function initChains() {
+  chains = [];
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  const numChains = 6;
+  
+  for (let i = 0; i < numChains; i++) {
+    const y = (h / (numChains + 1)) * (i + 1);
+    const segments = 18;
+    const nodes = [];
+    for (let j = 0; j <= segments; j++) {
+      const x = (w * 0.1) + (w * 0.8) * (j / segments);
+      const offsetY = Math.sin(j * 0.5 + i) * 8;
+      nodes.push({ x, y: y + offsetY, vx: 0, vy: 0 });
+    }
+    chains.push({ nodes, color: i });
+  }
+}
+
+function updateCrossLinks() {
+  crossLinks = [];
+  const targetLinks = Math.floor((crossAmount / 100) * 45);
+  
+  for (let i = 0; i < targetLinks; i++) {
+    const c1 = Math.floor(Math.random() * chains.length);
+    let c2 = Math.floor(Math.random() * chains.length);
+    while (c2 === c1) c2 = Math.floor(Math.random() * chains.length);
+    
+    const n1 = Math.floor(Math.random() * chains[c1].nodes.length);
+    const n2 = Math.floor(Math.random() * chains[c2].nodes.length);
+    
+    crossLinks.push({ c1, n1, c2, n2 });
+  }
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  // Draw chains
+  chains.forEach((chain, idx) => {
+    const hue = (idx * 60) % 360;
+    ctx.strokeStyle = `hsl(${hue}, 45%, 55%)`;
+    ctx.lineWidth = 2.5;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    
+    ctx.beginPath();
+    chain.nodes.forEach((node, i) => {
+      if (i === 0) ctx.moveTo(node.x, node.y);
+      else ctx.lineTo(node.x, node.y);
+    });
+    ctx.stroke();
+    
+    // Draw monomers as circles
+    ctx.fillStyle = `hsl(${hue}, 60%, 65%)`;
+    chain.nodes.forEach(node => {
+      ctx.beginPath();
+      ctx.arc(node.x, node.y, 3.5, 0, Math.PI * 2);
+      ctx.fill();
+    });
+  });
+  
+  // Draw cross-links
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  crossLinks.forEach(link => {
+    const n1 = chains[link.c1].nodes[link.n1];
+    const n2 = chains[link.c2].nodes[link.n2];
+    
+    const grad = ctx.createLinearGradient(n1.x, n1.y, n2.x, n2.y);
+    grad.addColorStop(0, 'rgba(62,154,214,0.8)');
+    grad.addColorStop(0.5, 'rgba(62,154,214,1)');
+    grad.addColorStop(1, 'rgba(62,154,214,0.8)');
+    
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(n1.x, n1.y);
+    ctx.lineTo(n2.x, n2.y);
+    ctx.stroke();
+    
+    // Cross-link nodes glow
+    const nodeGrad = ctx.createRadialGradient(n1.x, n1.y, 0, n1.x, n1.y, 8);
+    nodeGrad.addColorStop(0, 'rgba(62,154,214,0.9)');
+    nodeGrad.addColorStop(1, 'rgba(62,154,214,0)');
+    ctx.fillStyle = nodeGrad;
+    ctx.beginPath();
+    ctx.arc(n1.x, n1.y, 8, 0, Math.PI * 2);
+    ctx.fill();
+    
+    const nodeGrad2 = ctx.createRadialGradient(n2.x, n2.y, 0, n2.x, n2.y, 8);
+    nodeGrad2.addColorStop(0, 'rgba(62,154,214,0.9)');
+    nodeGrad2.addColorStop(1, 'rgba(62,154,214,0)');
+    ctx.fillStyle = nodeGrad2;
+    ctx.beginPath();
+    ctx.arc(n2.x, n2.y, 8, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  ctx.restore();
+  
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const cx = w / 2;
+  const cy = h / 2;
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+}
+
+function updateUI() {
+  crossAmount = parseInt(slider.value);
+  slider.style.setProperty('--fill', crossAmount + '%');
+  
+  densityVal.textContent = crossAmount + '%';
+  const rigidity = Math.round(12 + (crossAmount / 100) * 78);
+  rigidVal.textContent = rigidity;
+  
+  if (crossAmount < 30) {
+    liveTag.textContent = 'Linear • ' + crossAmount + '% Crosslinked';
+    canvasOverlay.textContent = 'Thermoplastic • Melts on Heating';
+  } else if (crossAmount < 70) {
+    liveTag.textContent = 'Branched • ' + crossAmount + '% Crosslinked';
+    canvasOverlay.textContent = 'Partial Network • Softens';
+  } else {
+    liveTag.textContent = 'Network • ' + crossAmount + '% Crosslinked';
+    canvasOverlay.textContent = 'Thermosetting • Decomposes';
+  }
+  
+  updateCrossLinks();
+  draw();
+}
+
+slider.addEventListener('input', updateUI);
+
+toggleBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    toggleBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    
+    const mode = btn.dataset.mode;
+    if (mode === 'thermo') {
+      kdText.textContent = 'Thermoplastics like polyethene, polystyrene, and polyvinyl chloride contain linear or branched chains held together only by weak van der Waals forces or hydrogen bonds between molecules. When you heat these materials, the intermolecular forces weaken and the chains slide past each other, allowing the plastic to melt and flow into new shapes. Once cooled, the forces re-establish and the plastic solidifies again in its new form. This reversible process means thermoplastics can be melted and remoulded repeatedly without chemical change—why plastic bottles can be recycled. High-density polyethene has unbranched chains that pack efficiently into crystalline regions with stronger intermolecular attractions, making it rigid and dense, while low-density polyethene has branched chains that prevent tight packing, creating a more flexible, less crystalline material.';
+    } else {
+      kdText.textContent = 'Thermosetting polymers like Bakelite and melamine-formaldehyde resins undergo irreversible cross-linking during their formation, creating covalent bonds between polymer chains that lock them into a rigid three-dimensional network structure. Unlike the weak intermolecular forces in thermoplastics, these covalent cross-links are strong chemical bonds that cannot be broken by heating without destroying the molecule itself. When you try to heat a thermosetting polymer, the material doesn\'t soften or melt—instead it chars and decomposes because breaking the cross-links requires breaking covalent bonds, which happens at temperatures far above where the material burns. This is why Bakelite electrical components and melamine kitchen countertops maintain their shape under heat but will eventually burn or crack rather than flow. Once formed, the cross-linked network is permanent and cannot be remoulded or recycled like thermoplastics.';
+    }
+  });
+});
+
+window.addEventListener('resize', resize);
+resize();
+updateUI();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'polymer-structure-and-physical-properties-relationship'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

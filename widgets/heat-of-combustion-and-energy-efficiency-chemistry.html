@@ -1,0 +1,608 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Heat of Combustion and Energy Efficiency — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #3E9AD6;
+  --ag: rgba(62, 154, 214, .7);
+  --ag1: rgba(62, 154, 214, .12);
+  --ag2: rgba(62, 154, 214, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  line-height: 1.55;
+  max-width: 58ch;
+  margin-bottom: 28px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: white;
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-container {
+  margin-bottom: 10px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.eff-slider {
+  width: 100%;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+}
+
+.eff-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.eff-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.eff-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.eff-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  padding: 0 2px;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.toggle-section {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+  margin-top: 16px;
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: #12160F;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(62, 154, 214,.1);
+  border-color: var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(62, 154, 214,.18);
+}
+
+.knowdrop {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.knowdrop p {
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-this-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.know-this p {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (max-width: 360px) {
+  body { padding: 32px 12px 0; }
+  .card { padding: 14px; }
+  h1 { font-size: 26px; }
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Interactive demonstration of heat of combustion efficiency and energy losses in fuel experiments</h2>
+
+  <h1>Your experiment always <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">loses</span></h1>
+  
+  <p class="intro">Every fuel-burning experiment you run will give a value lower than the textbook. It's not technique—it's thermodynamics. Heat escapes to the air, warms the apparatus, and some fuel burns incompletely. Drag the slider to see how efficiency changes the energy picture.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Combustion Calorimeter</span>
+      <span class="live-tag" id="effTag">70% efficiency</span>
+    </div>
+    <p class="card-hint">Move slider to adjust experimental efficiency</p>
+    
+    <div class="canvas-wrapper">
+      <canvas id="combustCanvas"></canvas>
+      <div class="canvas-overlay" id="canvasOverlay">Energy partitioning in real calorimeter</div>
+    </div>
+
+    <div class="slider-container">
+      <label class="slider-label" for="effSlider">Experimental efficiency</label>
+      <input type="range" id="effSlider" class="eff-slider" min="40" max="95" value="70" step="1">
+      <div class="tick-labels">
+        <span>40%</span>
+        <span>95%</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <span class="stat-label">Useful energy</span>
+        <span class="stat-value" id="usefulStat" style="color:var(--acc)">2800 kJ</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Lost energy</span>
+        <span class="stat-value" id="lostStat" style="color:var(--amb)">1200 kJ</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" data-mode="sources">Loss sources</button>
+      <button class="toggle-btn" data-mode="calculation">Calculation</button>
+    </div>
+    
+    <div class="knowdrop">
+      <p id="knowdropText">Heat escapes to the surroundings because air is a poor insulator—convection currents carry energy away faster than you can measure it. The apparatus itself (beaker, stirrer, thermometer) absorbs energy, warming up instead of just the water. Evaporation from the water surface carries latent heat away. Incomplete combustion produces CO instead of CO₂, releasing less energy per mole of fuel. All four factors stack, so even careful technique gives you 60–80% of the published value. The exam wants you to list these specific mechanisms, not just say "heat loss."</p>
+    </div>
+  </div>
+
+  <div class="know-this">
+    <span class="know-this-tag">Know This</span>
+    <p><span style="color:var(--acc)">Heat of combustion</span> measures energy per gram or per mole of fuel, while <span style="color:var(--acc)">efficiency</span> is useful energy out divided by total energy in—experimental values are always lower because <span style="color:var(--acc)">losses</span> to surroundings, apparatus heating, evaporation, and <span style="color:var(--acc)">incomplete combustion</span> are unavoidable.</p>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('combustCanvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const effSlider = document.getElementById('effSlider');
+const effTag = document.getElementById('effTag');
+const canvasOverlay = document.getElementById('canvasOverlay');
+const usefulStat = document.getElementById('usefulStat');
+const lostStat = document.getElementById('lostStat');
+const toggleBtns = document.querySelectorAll('.toggle-btn');
+const knowdropText = document.getElementById('knowdropText');
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d', { alpha: false });
+
+let w, h, cx, cy;
+let efficiency = 70;
+const totalEnergy = 4000;
+
+const knowdrops = {
+  sources: "Heat escapes to the surroundings because air is a poor insulator—convection currents carry energy away faster than you can measure it. The apparatus itself (beaker, stirrer, thermometer) absorbs energy, warming up instead of just the water. Evaporation from the water surface carries latent heat away. Incomplete combustion produces CO instead of CO₂, releasing less energy per mole of fuel. All four factors stack, so even careful technique gives you 60–80% of the published value. The exam wants you to list these specific mechanisms, not just say \"heat loss.\"",
+  calculation: "Start with the theoretical value from data tables (e.g., ethanol = –1367 kJ/mol). Measure your temperature rise, calculate energy absorbed by water using Q = mcΔT. Divide your measured energy by the theoretical energy, multiply by 100 to get efficiency percentage. If you burned 0.5 g ethanol (0.0109 mol), theory says 14.9 kJ. If you measured 10.4 kJ, efficiency = (10.4/14.9) × 100 = 70%. The difference (4.5 kJ) went to surroundings, apparatus, evaporation, and incomplete combustion. Always show this calculation step-by-step in exams—they mark the method, not just the final %."
+};
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  w = canvas.width / dpr;
+  h = canvas.height / dpr;
+  cx = w / 2;
+  cy = h / 2;
+  draw();
+}
+
+// Particles for heat escape
+const escapeParticles = [];
+for (let i = 0; i < 40; i++) {
+  escapeParticles.push({
+    angle: Math.random() * Math.PI * 2,
+    speed: 0.3 + Math.random() * 0.5,
+    radius: 0,
+    maxRadius: 80 + Math.random() * 60,
+    life: Math.random()
+  });
+}
+
+// Flame flicker particles
+const flameParticles = [];
+for (let i = 0; i < 12; i++) {
+  flameParticles.push({
+    x: -8 + Math.random() * 16,
+    y: Math.random() * 30,
+    size: 2 + Math.random() * 4,
+    speed: 0.4 + Math.random() * 0.6,
+    phase: Math.random() * Math.PI * 2
+  });
+}
+
+function draw() {
+  const time = performance.now() * 0.001;
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+
+  const useful = efficiency / 100;
+  const lost = 1 - useful;
+
+  // Draw beaker outline (central apparatus)
+  const beakerW = 80;
+  const beakerH = 100;
+  const beakerX = cx - beakerW / 2;
+  const beakerY = cy - 20;
+
+  ctx.strokeStyle = 'rgba(237,237,232,0.3)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.rect(beakerX, beakerY, beakerW, beakerH);
+  ctx.stroke();
+
+  // Water inside beaker (useful energy - teal)
+  const waterHeight = beakerH * useful;
+  const waterGrad = ctx.createLinearGradient(beakerX, beakerY + beakerH, beakerX, beakerY + beakerH - waterHeight);
+  waterGrad.addColorStop(0, 'rgba(62, 154, 214,0.25)');
+  waterGrad.addColorStop(1, 'rgba(62, 154, 214,0.5)');
+  ctx.fillStyle = waterGrad;
+  ctx.fillRect(beakerX + 2, beakerY + beakerH - waterHeight, beakerW - 4, waterHeight);
+
+  // Water glow
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.fillStyle = 'rgba(62, 154, 214,0.15)';
+  ctx.fillRect(beakerX, beakerY + beakerH - waterHeight - 5, beakerW, waterHeight + 5);
+  ctx.restore();
+
+  // Flame below beaker
+  const flameY = beakerY + beakerH + 15;
+  
+  // Flame core
+  flameParticles.forEach(p => {
+    p.y -= p.speed;
+    if (p.y < 0) p.y = 30;
+    const flicker = Math.sin(time * 3 + p.phase) * 0.3 + 0.7;
+    const alpha = (1 - p.y / 30) * 0.6 * flicker;
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.fillStyle = `rgba(250,199,117,${alpha})`;
+    ctx.beginPath();
+    ctx.arc(cx + p.x, flameY + p.y, p.size * flicker, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  });
+
+  // Flame glow
+  const flameGlow = ctx.createRadialGradient(cx, flameY + 15, 0, cx, flameY + 15, 35);
+  flameGlow.addColorStop(0, 'rgba(250,199,117,0.4)');
+  flameGlow.addColorStop(0.5, 'rgba(250,199,117,0.15)');
+  flameGlow.addColorStop(1, 'rgba(250,199,117,0)');
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.fillStyle = flameGlow;
+  ctx.beginPath();
+  ctx.arc(cx, flameY + 15, 35, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+  // Escaping heat particles (amber - lost energy)
+  escapeParticles.forEach(p => {
+    p.radius += p.speed;
+    if (p.radius > p.maxRadius) {
+      p.radius = 0;
+      p.life = Math.random();
+    }
+
+    const progress = p.radius / p.maxRadius;
+    const alpha = (1 - progress) * 0.5 * lost * p.life;
+    
+    if (alpha > 0.01) {
+      const px = cx + Math.cos(p.angle) * p.radius;
+      const py = cy + Math.sin(p.angle) * p.radius;
+      
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.fillStyle = `rgba(250,199,117,${alpha})`;
+      ctx.beginPath();
+      ctx.arc(px, py, 2.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+  });
+
+  // Energy flow arrows from flame to water
+  const arrowCount = Math.floor(useful * 8) + 2;
+  for (let i = 0; i < arrowCount; i++) {
+    const offset = (time * 0.5 + i * 0.3) % 1;
+    const ay = flameY - offset * 30;
+    const alpha = Math.sin(offset * Math.PI) * 0.4;
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.strokeStyle = `rgba(62, 154, 214,${alpha})`;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(cx, ay);
+    ctx.lineTo(cx, ay - 8);
+    ctx.stroke();
+    
+    // Arrowhead
+    ctx.beginPath();
+    ctx.moveTo(cx, ay - 8);
+    ctx.lineTo(cx - 3, ay - 5);
+    ctx.lineTo(cx + 3, ay - 5);
+    ctx.closePath();
+    ctx.fillStyle = `rgba(62, 154, 214,${alpha})`;
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // Bloom pass
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+}
+
+function updateStats() {
+  const useful = Math.round(totalEnergy * (efficiency / 100));
+  const lost = totalEnergy - useful;
+  
+  usefulStat.textContent = useful.toLocaleString() + ' kJ';
+  lostStat.textContent = lost.toLocaleString() + ' kJ';
+  effTag.textContent = efficiency + '% efficiency';
+  canvasOverlay.textContent = `${efficiency}% to water · ${100 - efficiency}% lost to surroundings`;
+}
+
+effSlider.addEventListener('input', (e) => {
+  efficiency = parseInt(e.target.value);
+  const fill = ((efficiency - 40) / (95 - 40)) * 100;
+  effSlider.style.setProperty('--fill', fill + '%');
+  updateStats();
+  draw();
+});
+
+toggleBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    toggleBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const mode = btn.dataset.mode;
+    knowdropText.textContent = knowdrops[mode];
+  });
+});
+
+window.addEventListener('resize', resize);
+resize();
+
+// Initial slider fill
+const initialFill = ((efficiency - 40) / (95 - 40)) * 100;
+effSlider.style.setProperty('--fill', initialFill + '%');
+updateStats();
+
+// Animation loop
+function animate() {
+  draw();
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'heat-of-combustion-and-energy-efficiency'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

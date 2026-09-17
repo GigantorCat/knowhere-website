@@ -1,0 +1,614 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Complementarity and Measurement — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #3A6FC8;
+  --ag: rgba(58, 111, 200, .7);
+  --ag1: rgba(58, 111, 200, .12);
+  --ag2: rgba(58, 111, 200, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 72px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(30px, 8vw, 52px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  margin-bottom: 16px;
+}
+
+.intro {
+  font-size: 15.5px;
+  color: var(--ink-dim);
+  line-height: 1.55;
+  max-width: 58ch;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 20px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-wrapper {
+  margin-bottom: 10px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+}
+
+.dse-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  outline: none;
+  cursor: pointer;
+}
+
+.dse-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.dse-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.dse-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.dse-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  padding: 0 4px;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.toggle-section {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: #12160F;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(58,111,200,.1);
+  border-color: var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(58,111,200,.18);
+}
+
+.knowdrop {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 34px;
+}
+
+.know-this-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 10px;
+}
+
+.know-this-body {
+  font-size: 17.4px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.footer {
+  margin-top: 34px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 10px var(--acc);
+  animation: dsePulse 2.4s ease-in-out infinite;
+}
+
+@keyframes dsePulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .35; transform: scale(.6); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Wave-particle duality and quantum measurement interactive</h2>
+  
+  <h1>Looking at an electron <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">changes</span> it</h1>
+  
+  <p class="intro">The double-slit experiment reveals that measurement isn't passive observation—it's an interaction that fundamentally alters quantum behaviour. When you detect which slit an electron passes through, the wave interference pattern vanishes and particles appear. Turn off the detector and the pattern returns, showing each electron somehow passes through both slits. Drag the slider to control detection strength.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-label">Double-slit detector</div>
+      <div class="live-tag" id="liveTag">Wave behaviour intact</div>
+    </div>
+    <div class="card-hint">Detection strength determines which quantum behaviour emerges</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="dseCanvas"></canvas>
+      <div class="canvas-overlay" id="overlayTag">Both slits — interference visible</div>
+    </div>
+
+    <div class="slider-wrapper">
+      <div class="slider-label">Detection strength</div>
+      <input type="range" min="0" max="100" value="0" class="dse-slider" id="detectorSlider">
+      <div class="tick-labels">
+        <span>Off</span>
+        <span>Partial</span>
+        <span>Full</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Visibility</div>
+        <div class="stat-value" style="color:var(--acc)" id="visibilityStat">100%</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Path info</div>
+        <div class="stat-value" style="color:var(--amb)" id="pathInfoStat">0%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-section">
+      <button class="toggle-btn active" data-mode="wave">Wave view</button>
+      <button class="toggle-btn" data-mode="particle">Particle view</button>
+    </div>
+    <div class="knowdrop" id="knowdropText">
+      When no detector is active, each electron exists in a superposition state—it genuinely passes through both slits simultaneously as a probability wave. The two paths interfere with each other, creating the characteristic bands of light and dark on the screen. This isn't about ignorance of which slit it "really" went through; the electron doesn't have a definite path until measurement forces it to choose one. Quantum mechanics predicts that even if you send electrons one at a time, hours apart, the pattern still builds up—each individual electron interferes with itself.
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-this-tag">Know This</div>
+    <div class="know-this-body">The act of <span style="color:var(--acc)">measurement</span> fundamentally changes quantum behaviour—not because of clumsy equipment, but because <span style="color:var(--acc)">observing particle properties</span> like position destroys <span style="color:var(--acc)">wave properties</span> like interference.</div>
+  </div>
+
+  <div class="footer">
+    <div class="pulse-dot"></div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('dseCanvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const slider = document.getElementById('detectorSlider');
+const liveTag = document.getElementById('liveTag');
+const overlayTag = document.getElementById('overlayTag');
+const visibilityStat = document.getElementById('visibilityStat');
+const pathInfoStat = document.getElementById('pathInfoStat');
+const toggleBtns = document.querySelectorAll('.toggle-btn');
+const knowdropText = document.getElementById('knowdropText');
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d', { alpha: false });
+
+let detection = 0;
+let time = 0;
+let viewMode = 'wave';
+
+const knowdropContent = {
+  wave: "When no detector is active, each electron exists in a superposition state—it genuinely passes through both slits simultaneously as a probability wave. The two paths interfere with each other, creating the characteristic bands of light and dark on the screen. This isn't about ignorance of which slit it \"really\" went through; the electron doesn't have a definite path until measurement forces it to choose one. Quantum mechanics predicts that even if you send electrons one at a time, hours apart, the pattern still builds up—each individual electron interferes with itself.",
+  particle: "When you turn on the detector to measure which slit the electron passes through, you're forcing it to behave as a localized particle with a definite trajectory. The interference pattern immediately vanishes and you see two bright bands—one behind each slit—exactly what you'd expect from classical particles. The measurement doesn't just reveal a pre-existing path; it actively collapses the superposition and creates the path. This complementarity is fundamental: you can observe wave behaviour or particle behaviour, but attempting to observe both simultaneously destroys what you're trying to see. The universe won't let you have complete information about incompatible properties."
+};
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function updateUI() {
+  const vis = Math.round(100 * (1 - detection));
+  const path = Math.round(100 * detection);
+  
+  visibilityStat.textContent = vis + '%';
+  pathInfoStat.textContent = path + '%';
+
+  if (detection < 0.15) {
+    liveTag.textContent = 'Wave behaviour intact';
+    overlayTag.textContent = 'Both slits — interference visible';
+  } else if (detection < 0.5) {
+    liveTag.textContent = 'Partial collapse';
+    overlayTag.textContent = 'Pattern fading';
+  } else if (detection < 0.85) {
+    liveTag.textContent = 'Particle emerging';
+    overlayTag.textContent = 'Path becoming definite';
+  } else {
+    liveTag.textContent = 'Full measurement';
+    overlayTag.textContent = 'Two bands — no interference';
+  }
+
+  const fillPercent = (detection * 100).toFixed(1);
+  slider.style.setProperty('--fill', fillPercent + '%');
+}
+
+slider.addEventListener('input', (e) => {
+  detection = parseFloat(e.target.value) / 100;
+  updateUI();
+});
+
+toggleBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    toggleBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    viewMode = btn.dataset.mode;
+    knowdropText.textContent = knowdropContent[viewMode];
+  });
+});
+
+function draw() {
+  time += 0.016;
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+
+  const slitY = h * 0.5;
+  const slitGap = h * 0.16;
+  const slitWidth = 2;
+  const screenX = w * 0.8;
+
+  // Draw slits
+  ctx.fillStyle = 'rgba(237,237,232,0.15)';
+  ctx.fillRect(w * 0.2 - 1, 0, 2, slitY - slitGap / 2 - slitWidth / 2);
+  ctx.fillRect(w * 0.2 - 1, slitY + slitGap / 2 + slitWidth / 2, 2, h - (slitY + slitGap / 2 + slitWidth / 2));
+
+  // Draw screen
+  ctx.fillStyle = 'rgba(237,237,232,0.08)';
+  ctx.fillRect(screenX - 1, 0, 2, h);
+
+  // Interference pattern on screen
+  if (detection < 0.99) {
+    const visibility = 1 - detection;
+    const bands = 11;
+    
+    for (let i = 0; i < 150; i++) {
+      const screenY = (i / 149) * h;
+      const dy = screenY - slitY;
+      
+      // Path difference for interference
+      const pathDiff = Math.abs(dy);
+      const phase = (pathDiff / (h * 0.08)) * Math.PI * 2;
+      
+      const intensity = 0.5 + 0.5 * Math.cos(phase) * visibility;
+      const alpha = Math.pow(intensity, 1.5) * 0.6;
+      
+      ctx.fillStyle = `rgba(58,111,200,${alpha})`;
+      ctx.fillRect(screenX - 3, screenY, 6, h / 150 + 1);
+    }
+  }
+
+  // Particle bands (when detection is high)
+  if (detection > 0.01) {
+    const particleAlpha = detection * 0.5;
+    
+    // Upper slit band
+    const grad1 = ctx.createRadialGradient(screenX, slitY - slitGap / 2, 0, screenX, slitY - slitGap / 2, h * 0.15);
+    grad1.addColorStop(0, `rgba(250,199,117,${particleAlpha})`);
+    grad1.addColorStop(1, 'rgba(250,199,117,0)');
+    ctx.fillStyle = grad1;
+    ctx.fillRect(screenX - 20, slitY - slitGap / 2 - h * 0.15, 40, h * 0.3);
+    
+    // Lower slit band
+    const grad2 = ctx.createRadialGradient(screenX, slitY + slitGap / 2, 0, screenX, slitY + slitGap / 2, h * 0.15);
+    grad2.addColorStop(0, `rgba(250,199,117,${particleAlpha})`);
+    grad2.addColorStop(1, 'rgba(250,199,117,0)');
+    ctx.fillStyle = grad2;
+    ctx.fillRect(screenX - 20, slitY + slitGap / 2 - h * 0.15, 40, h * 0.3);
+  }
+
+  // Animated electrons traveling
+  const electronCount = 5;
+  for (let i = 0; i < electronCount; i++) {
+    const phaseOffset = (i / electronCount) * Math.PI * 2;
+    const progress = ((time * 0.4 + phaseOffset) % (Math.PI * 2)) / (Math.PI * 2);
+    
+    if (progress < 0.7) {
+      const x = w * 0.05 + progress * (w * 0.75 / 0.7);
+      let y;
+      
+      if (x < w * 0.2) {
+        // Before slits
+        y = slitY;
+      } else if (x < w * 0.22) {
+        // At slits - split or choose
+        const splitBlend = 1 - detection;
+        const randomChoice = (Math.sin(phaseOffset * 37.5) > 0) ? -1 : 1;
+        const splitY = slitY + (Math.sin((x - w * 0.2) * 20) * slitGap * 0.5) * splitBlend;
+        const chosenY = slitY + randomChoice * slitGap / 2;
+        y = splitY * (1 - detection) + chosenY * detection;
+      } else {
+        // After slits
+        const postProgress = (x - w * 0.22) / (w * 0.78 - w * 0.22);
+        const waveSpread = Math.sin(postProgress * Math.PI * 1.5) * h * 0.2 * (1 - detection);
+        const randomChoice = (Math.sin(phaseOffset * 37.5) > 0) ? -1 : 1;
+        const particlePath = slitY + randomChoice * slitGap / 2;
+        y = slitY + waveSpread * (1 - detection) + (particlePath - slitY) * detection;
+      }
+      
+      const size = 2.5 + Math.sin(time * 3 + phaseOffset) * 0.5;
+      const glow = ctx.createRadialGradient(x, y, 0, x, y, size * 4);
+      glow.addColorStop(0, 'rgba(58,111,200,0.9)');
+      glow.addColorStop(0.5, 'rgba(58,111,200,0.3)');
+      glow.addColorStop(1, 'rgba(58,111,200,0)');
+      
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(x, y, size * 4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+      
+      ctx.fillStyle = 'rgba(58,111,200,1)';
+      ctx.beginPath();
+      ctx.arc(x, y, size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  // Detector visualization at slits
+  if (detection > 0.05) {
+    const detAlpha = Math.min(detection * 1.2, 0.6);
+    
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    
+    // Upper detector
+    const detGrad1 = ctx.createRadialGradient(w * 0.2, slitY - slitGap / 2, 0, w * 0.2, slitY - slitGap / 2, h * 0.08);
+    detGrad1.addColorStop(0, `rgba(250,199,117,${detAlpha})`);
+    detGrad1.addColorStop(1, 'rgba(250,199,117,0)');
+    ctx.fillStyle = detGrad1;
+    ctx.fillRect(w * 0.18, slitY - slitGap / 2 - h * 0.08, w * 0.04, h * 0.16);
+    
+    // Lower detector
+    const detGrad2 = ctx.createRadialGradient(w * 0.2, slitY + slitGap / 2, 0, w * 0.2, slitY + slitGap / 2, h * 0.08);
+    detGrad2.addColorStop(0, `rgba(250,199,117,${detAlpha})`);
+    detGrad2.addColorStop(1, 'rgba(250,199,117,0)');
+    ctx.fillStyle = detGrad2;
+    ctx.fillRect(w * 0.18, slitY + slitGap / 2 - h * 0.08, w * 0.04, h * 0.16);
+    
+    ctx.restore();
+  }
+
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+
+  // Vignette
+  const cx = w / 2;
+  const cy = h / 2;
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+
+  requestAnimationFrame(draw);
+}
+
+window.addEventListener('resize', resize);
+resize();
+updateUI();
+draw();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'complementarity-and-measurement'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

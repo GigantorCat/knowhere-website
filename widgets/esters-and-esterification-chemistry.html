@@ -1,0 +1,573 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Esters and Esterification — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #3E9AD6;
+  --acc-rgb: 62, 154, 214;
+  --ag: rgba(var(--acc-rgb), 0.7);
+  --ag1: rgba(var(--acc-rgb), 0.12);
+  --ag2: rgba(var(--acc-rgb), 0.45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 0;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 28px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,0.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: white;
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay-tag {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-row {
+  margin-bottom: 12px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+}
+
+.ester-slider {
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.ester-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+
+.ester-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+
+.ester-slider:hover::-webkit-slider-thumb {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.ester-slider:hover::-moz-range-thumb {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  margin-top: 6px;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toggle-btn.active {
+  background: rgba(var(--acc-rgb), 0.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(var(--acc-rgb), 0.18);
+}
+
+.knowdrop {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-tag {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 11px;
+}
+
+.know-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 8px var(--acc);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+.know-tag-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+}
+
+.know-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+
+<h2 class="sr-only">Interactive esterification reaction simulator showing equilibrium and reflux conditions</h2>
+
+<div class="container">
+  <h1>Fruit smells aren't gifts from nature—they're <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">equilibrium traps</span></h1>
+  
+  <p class="intro">Esters give bananas, pineapples, and strawberries their signature scents, but the reaction that makes them sits stubbornly in the middle, never fully finishing. Esterification is a reversible condensation: acid meets alcohol, sulfuric acid kicks it off, heat keeps it going, and a reflux apparatus stops the product evaporating before you've made enough. Drag the slider to add heat and watch the equilibrium shift toward ester formation.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Esterification Reactor</span>
+      <span class="live-tag" id="temp-tag">25°C</span>
+    </div>
+    <div class="card-hint">Temperature controls both forward and reverse rates</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="ester-canvas"></canvas>
+      <div class="canvas-overlay-tag" id="yield-tag">Equilibrium Yield: 0%</div>
+    </div>
+
+    <div class="slider-row">
+      <div class="slider-label">Reaction Temperature</div>
+      <input type="range" min="0" max="100" value="0" class="ester-slider" id="temp-slider" style="--fill:0%">
+      <div class="tick-labels">
+        <span>25°C</span>
+        <span>50°C</span>
+        <span>75°C</span>
+        <span>100°C</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Ester Molecules</div>
+        <div class="stat-value" style="color:var(--acc)" id="ester-count">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Water Molecules</div>
+        <div class="stat-value" style="color:var(--amb)" id="water-count">0</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" id="btn-reflux">Reflux</button>
+      <button class="toggle-btn" id="btn-excess">Excess Alcohol</button>
+    </div>
+    <div class="knowdrop" id="knowdrop-text">
+      Reflux is the esterification lifeline: the condenser above the flask captures evaporating alcohol and ester vapour, cooling them back to liquid before they escape. Without it, you'd lose reactants and products to the air before equilibrium could even establish. The technique lets you heat the mixture vigorously for hours without losing mass, giving the slow reversible reaction time to creep toward a useful yield. Le Chatelier's principle kicks in when you run reflux continuously—adding heat shifts the equilibrium position toward products, but the reverse reaction still operates, so you never get 100% conversion.
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-tag">
+      <div class="know-dot"></div>
+      <div class="know-tag-text">Know This</div>
+    </div>
+    <div class="know-body">
+      Esterification is a <span style="color:var(--acc)">reversible condensation</span> that reaches <span style="color:var(--acc)">equilibrium</span> midway, so reflux heating and <span style="color:var(--acc)">excess reactant</span> are essential to push the yield beyond 50%.
+    </div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('ester-canvas');
+const ctx = canvas.getContext('2d');
+const slider = document.getElementById('temp-slider');
+const tempTag = document.getElementById('temp-tag');
+const yieldTag = document.getElementById('yield-tag');
+const esterCount = document.getElementById('ester-count');
+const waterCount = document.getElementById('water-count');
+const btnReflux = document.getElementById('btn-reflux');
+const btnExcess = document.getElementById('btn-excess');
+const knowdropText = document.getElementById('knowdrop-text');
+
+const CSS = getComputedStyle(document.documentElement);
+const ACC = CSS.getPropertyValue('--acc').trim();
+const AMB = CSS.getPropertyValue('--amb').trim();
+
+const dpr = window.devicePixelRatio || 1;
+
+let w, h;
+let molecules = [];
+let time = 0;
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  w = rect.width;
+  h = rect.height;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  ctx.scale(dpr, dpr);
+  initMolecules();
+}
+
+class Molecule {
+  constructor(type, x, y) {
+    this.type = type;
+    this.x = x;
+    this.y = y;
+    this.vx = (Math.random() - 0.5) * 1.2;
+    this.vy = (Math.random() - 0.5) * 1.2;
+    this.r = 6;
+    this.phase = Math.random() * Math.PI * 2;
+  }
+
+  update(temp) {
+    const speed = 0.4 + temp * 0.02;
+    this.x += this.vx * speed;
+    this.y += this.vy * speed;
+    
+    if (this.x < this.r) { this.x = this.r; this.vx *= -1; }
+    if (this.x > w - this.r) { this.x = w - this.r; this.vx *= -1; }
+    if (this.y < this.r) { this.y = this.r; this.vy *= -1; }
+    if (this.y > h - this.r) { this.y = h - this.r; this.vy *= -1; }
+  }
+
+  draw(t) {
+    const glow = 0.5 + 0.5 * Math.sin(t * 3 + this.phase);
+    let color, glowColor;
+    
+    if (this.type === 'acid' || this.type === 'alcohol') {
+      color = '#8C9389';
+      glowColor = 'rgba(140,147,137,';
+    } else if (this.type === 'ester') {
+      color = ACC;
+      glowColor = 'rgba(62,154,214,';
+    } else {
+      color = AMB;
+      glowColor = 'rgba(250,199,117,';
+    }
+
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    const grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.r * 3);
+    grad.addColorStop(0, glowColor + (glow * 0.6) + ')');
+    grad.addColorStop(0.5, glowColor + (glow * 0.3) + ')');
+    grad.addColorStop(1, glowColor + '0)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.r * 3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+    ctx.fill();
+    
+    ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+}
+
+function initMolecules() {
+  molecules = [];
+  const count = 50;
+  for (let i = 0; i < count / 2; i++) {
+    molecules.push(new Molecule('acid', Math.random() * w, Math.random() * h));
+    molecules.push(new Molecule('alcohol', Math.random() * w, Math.random() * h));
+  }
+}
+
+function updateReaction(temp) {
+  const reactionProb = temp / 8000;
+  const reverseProb = temp / 12000;
+
+  for (let i = 0; i < molecules.length; i++) {
+    for (let j = i + 1; j < molecules.length; j++) {
+      const m1 = molecules[i];
+      const m2 = molecules[j];
+      const dist = Math.hypot(m1.x - m2.x, m1.y - m2.y);
+
+      if (dist < 25) {
+        if ((m1.type === 'acid' && m2.type === 'alcohol') || (m1.type === 'alcohol' && m2.type === 'acid')) {
+          if (Math.random() < reactionProb) {
+            m1.type = 'ester';
+            m2.type = 'water';
+          }
+        } else if ((m1.type === 'ester' && m2.type === 'water') || (m1.type === 'water' && m2.type === 'ester')) {
+          if (Math.random() < reverseProb) {
+            m1.type = 'acid';
+            m2.type = 'alcohol';
+          }
+        }
+      }
+    }
+  }
+}
+
+function draw() {
+  time += 0.016;
+  const temp = parseFloat(slider.value);
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+
+  updateReaction(temp);
+  molecules.forEach(m => m.update(temp));
+  molecules.forEach(m => m.draw(time));
+
+  const cx = w / 2;
+  const cy = h / 2;
+  const vig = ctx.createRadialGradient(cx, cy, Math.min(w, h) * 0.2, cx, cy, Math.max(w, h) * 0.7);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.6)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+
+  requestAnimationFrame(draw);
+}
+
+function updateUI() {
+  const val = parseFloat(slider.value);
+  const temp = 25 + val * 0.75;
+  const fillPercent = val;
+  
+  slider.style.setProperty('--fill', fillPercent + '%');
+  tempTag.textContent = Math.round(temp) + '°C';
+
+  const esterMols = molecules.filter(m => m.type === 'ester').length;
+  const waterMols = molecules.filter(m => m.type === 'water').length;
+  const totalPossible = molecules.length / 2;
+  const yieldPercent = Math.round((esterMols / totalPossible) * 100);
+
+  esterCount.textContent = esterMols;
+  waterCount.textContent = waterMols;
+  yieldTag.textContent = 'Equilibrium Yield: ' + yieldPercent + '%';
+}
+
+slider.addEventListener('input', updateUI);
+setInterval(updateUI, 200);
+
+btnReflux.addEventListener('click', () => {
+  btnReflux.classList.add('active');
+  btnExcess.classList.remove('active');
+  knowdropText.textContent = "Reflux is the esterification lifeline: the condenser above the flask captures evaporating alcohol and ester vapour, cooling them back to liquid before they escape. Without it, you'd lose reactants and products to the air before equilibrium could even establish. The technique lets you heat the mixture vigorously for hours without losing mass, giving the slow reversible reaction time to creep toward a useful yield. Le Chatelier's principle kicks in when you run reflux continuously—adding heat shifts the equilibrium position toward products, but the reverse reaction still operates, so you never get 100% conversion.";
+});
+
+btnExcess.addEventListener('click', () => {
+  btnExcess.classList.add('active');
+  btnReflux.classList.remove('active');
+  knowdropText.textContent = "Adding excess alcohol is the other yield trick: if you flood the equilibrium with one reactant, Le Chatelier's principle drives the position toward products to consume the surplus. A 3:1 or 5:1 alcohol-to-acid ratio is common in lab esterifications, pushing yield from around 65% to 85% or higher without changing the equilibrium constant itself. You're not making the reaction more favourable thermodynamically—you're just forcing more of the limiting reagent (the acid) to convert before equilibrium locks in. The downside is separation: you have to distil off all that extra alcohol at the end, but the yield gain is worth the extra step in industrial fragrance and flavour synthesis.";
+});
+
+window.addEventListener('resize', resize);
+resize();
+draw();
+updateUI();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'esters-and-esterification'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

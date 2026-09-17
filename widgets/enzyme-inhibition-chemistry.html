@@ -1,0 +1,702 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Enzyme Inhibition — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #3E9AD6;
+  --ag: rgba(62, 154, 214, .7);
+  --ag1: rgba(62, 154, 214, .12);
+  --ag2: rgba(62, 154, 214, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 0;
+}
+
+.container { max-width: 720px; margin: 0 auto; }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 16px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  line-height: 1.55;
+  max-width: 58ch;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: white;
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-container {
+  margin-bottom: 10px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+}
+
+.enzyme-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  outline: none;
+  cursor: pointer;
+}
+
+.enzyme-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.enzyme-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.enzyme-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.enzyme-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  margin-top: 16px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.toggle-section {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: #12160F;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(62, 154, 214,.1);
+  border-color: var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(62, 154, 214,.18);
+}
+
+.knowdrop-divider {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.knowdrop-text {
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-this-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.know-this-text {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (max-width: 360px) {
+  body { padding: 32px 12px 0; }
+  .card { padding: 14px; }
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Interactive enzyme inhibition comparison showing how competitive inhibitors can be outcompeted by substrate while non-competitive cannot</h2>
+
+  <h1>More Substrate Won't Save You From The <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">Wrong</span> Blocker</h1>
+
+  <p class="intro">Not all enzyme inhibitors play by the same rules. Competitive inhibitors fight for the active site and lose when substrate floods in. Non-competitive inhibitors bind somewhere else, warp the enzyme's shape, and can't be outcompeted no matter how much substrate you add. Tap the buttons to switch between inhibitor types and watch what happens.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Enzyme Kinetics</span>
+      <span class="live-tag" id="modeTag">Competitive</span>
+    </div>
+    <div class="card-hint">Inhibitor binds active site</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="enzymeCanvas"></canvas>
+      <div class="canvas-overlay" id="canvasStatus">Substrate can compete for binding</div>
+    </div>
+
+    <div class="slider-container">
+      <div class="slider-label">Substrate concentration</div>
+      <input 
+        type="range" 
+        min="0" 
+        max="100" 
+        value="30" 
+        class="enzyme-slider" 
+        id="substrateSlider"
+        style="--fill: 30%"
+      />
+      <div class="tick-labels">
+        <span>Low</span>
+        <span>Medium</span>
+        <span>High</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Active sites occupied</div>
+        <div class="stat-value" style="color: var(--acc);" id="occupiedStat">42%</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Inhibitor success</div>
+        <div class="stat-value" style="color: var(--amb);" id="inhibStat">58%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-section">
+      <button class="toggle-btn active" id="compBtn">Competitive</button>
+      <button class="toggle-btn" id="noncompBtn">Non-competitive</button>
+    </div>
+    
+    <div class="knowdrop-divider">
+      <p class="knowdrop-text" id="knowdropText">Competitive inhibitors are structurally similar to the natural substrate. They dock into the active site and physically block it. When substrate concentration increases, substrate molecules start winning the competition for binding sites through sheer numbers — it's a statistical game. At very high substrate levels, the inhibitor can be almost completely displaced. This is why competitive inhibition is reversible and concentration-dependent. The inhibitor hasn't changed the enzyme; it's just occupying space that substrate wants.</p>
+    </div>
+  </div>
+
+  <div class="know-this">
+    <span class="know-this-tag">Know This</span>
+    <p class="know-this-text"><span style="color:var(--acc)">Competitive inhibitors</span> bind the active site and can be outcompeted by raising substrate concentration, while <span style="color:var(--acc)">non-competitive inhibitors</span> bind an allosteric site, deform the enzyme, and cannot be overcome with more substrate.</p>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('enzymeCanvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d', { alpha: false });
+
+const slider = document.getElementById('substrateSlider');
+const modeTag = document.getElementById('modeTag');
+const canvasStatus = document.getElementById('canvasStatus');
+const occupiedStat = document.getElementById('occupiedStat');
+const inhibStat = document.getElementById('inhibStat');
+const compBtn = document.getElementById('compBtn');
+const noncompBtn = document.getElementById('noncompBtn');
+const knowdropText = document.getElementById('knowdropText');
+
+let mode = 'competitive'; // competitive | noncompetitive
+let substrateLevel = 30; // 0-100
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+resize();
+window.addEventListener('resize', resize);
+
+// Particles
+const enzymes = [];
+const substrates = [];
+const inhibitors = [];
+
+class Enzyme {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.r = 18;
+    this.bound = null; // 'substrate' | 'inhibitor' | null
+    this.deformed = false;
+    this.deformAmt = 0; // for smooth transition
+  }
+}
+
+class Substrate {
+  constructor() {
+    this.x = Math.random();
+    this.y = Math.random();
+    this.vx = (Math.random() - 0.5) * 0.004;
+    this.vy = (Math.random() - 0.5) * 0.004;
+    this.r = 6;
+  }
+  update(w, h) {
+    this.x += this.vx;
+    this.y += this.vy;
+    if (this.x < 0 || this.x > 1) this.vx *= -1;
+    if (this.y < 0 || this.y > 1) this.vy *= -1;
+    this.x = Math.max(0, Math.min(1, this.x));
+    this.y = Math.max(0, Math.min(1, this.y));
+  }
+}
+
+class Inhibitor {
+  constructor() {
+    this.x = Math.random();
+    this.y = Math.random();
+    this.vx = (Math.random() - 0.5) * 0.003;
+    this.vy = (Math.random() - 0.5) * 0.003;
+    this.r = 6;
+  }
+  update(w, h) {
+    this.x += this.vx;
+    this.y += this.vy;
+    if (this.x < 0 || this.x > 1) this.vx *= -1;
+    if (this.y < 0 || this.y > 1) this.vy *= -1;
+    this.x = Math.max(0, Math.min(1, this.x));
+    this.y = Math.max(0, Math.min(1, this.y));
+  }
+}
+
+// Initialize enzymes in grid
+for (let row = 0; row < 2; row++) {
+  for (let col = 0; col < 4; col++) {
+    enzymes.push(new Enzyme(0.15 + col * 0.23, 0.3 + row * 0.4));
+  }
+}
+
+// Initialize inhibitors (constant count)
+for (let i = 0; i < 6; i++) {
+  inhibitors.push(new Inhibitor());
+}
+
+function updateParticleCounts() {
+  const targetSubs = Math.floor(substrateLevel / 100 * 25);
+  while (substrates.length < targetSubs) {
+    substrates.push(new Substrate());
+  }
+  while (substrates.length > targetSubs) {
+    substrates.pop();
+  }
+}
+
+updateParticleCounts();
+
+let time = 0;
+
+function draw() {
+  time += 0.016;
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+
+  // Update particles
+  substrates.forEach(s => s.update(w, h));
+  inhibitors.forEach(i => i.update(w, h));
+
+  // Binding logic
+  enzymes.forEach(e => {
+    e.bound = null;
+    if (mode === 'noncompetitive') {
+      e.deformed = true;
+      e.deformAmt = Math.min(1, e.deformAmt + 0.05);
+    } else {
+      e.deformed = false;
+      e.deformAmt = Math.max(0, e.deformAmt - 0.05);
+    }
+  });
+
+  // Check substrate binding first
+  substrates.forEach(s => {
+    const sx = s.x * w;
+    const sy = s.y * h;
+    enzymes.forEach(e => {
+      const ex = e.x * w;
+      const ey = e.y * h;
+      const dist = Math.hypot(sx - ex, sy - ey);
+      if (dist < e.r + s.r && !e.bound) {
+        if (mode === 'competitive') {
+          e.bound = 'substrate';
+        } else {
+          // Non-competitive: fewer substrate bindings due to shape change
+          if (Math.random() > 0.6) {
+            e.bound = 'substrate';
+          }
+        }
+      }
+    });
+  });
+
+  // Check inhibitor binding
+  inhibitors.forEach(i => {
+    const ix = i.x * w;
+    const iy = i.y * h;
+    enzymes.forEach(e => {
+      const ex = e.x * w;
+      const ey = e.y * h;
+      const dist = Math.hypot(ix - ex, iy - ey);
+      if (mode === 'competitive') {
+        if (dist < e.r + i.r && !e.bound) {
+          e.bound = 'inhibitor';
+        }
+      } else {
+        // Non-competitive: always deforms, substrate can't displace
+        // Inhibitor doesn't occupy active site visually
+      }
+    });
+  });
+
+  // Draw enzymes
+  enzymes.forEach(e => {
+    const ex = e.x * w;
+    const ey = e.y * h;
+    
+    ctx.save();
+    ctx.translate(ex, ey);
+    
+    // Deformation for non-competitive
+    if (e.deformed) {
+      ctx.scale(1, 1 - e.deformAmt * 0.3);
+    }
+
+    // Enzyme body
+    ctx.fillStyle = '#1a2420';
+    ctx.strokeStyle = e.bound ? (e.bound === 'substrate' ? '#3E9AD6' : '#FAC775') : '#2a3a30';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(0, 0, e.r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    // Active site notch
+    if (!e.deformed || e.deformAmt < 0.5) {
+      ctx.fillStyle = '#0a0c0a';
+      ctx.beginPath();
+      ctx.arc(0, -e.r * 0.5, e.r * 0.4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.restore();
+
+    // Glow if bound
+    if (e.bound) {
+      const col = e.bound === 'substrate' ? '62, 154, 214' : '250,199,117';
+      const grad = ctx.createRadialGradient(ex, ey, 0, ex, ey, e.r * 2);
+      grad.addColorStop(0, `rgba(${col},0.3)`);
+      grad.addColorStop(1, `rgba(${col},0)`);
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(ex, ey, e.r * 2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // Allosteric site indicator for non-competitive mode
+    if (mode === 'noncompetitive') {
+      ctx.fillStyle = '#FAC775';
+      ctx.beginPath();
+      ctx.arc(ex + e.r * 0.7, ey + e.r * 0.7, 4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  });
+
+  // Draw substrates
+  substrates.forEach(s => {
+    const sx = s.x * w;
+    const sy = s.y * h;
+    ctx.fillStyle = '#3E9AD6';
+    ctx.beginPath();
+    ctx.arc(sx, sy, s.r, 0, Math.PI * 2);
+    ctx.fill();
+    
+    const grad = ctx.createRadialGradient(sx, sy, 0, sx, sy, s.r * 2);
+    grad.addColorStop(0, 'rgba(62, 154, 214,0.4)');
+    grad.addColorStop(1, 'rgba(62, 154, 214,0)');
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(sx, sy, s.r * 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  });
+
+  // Draw inhibitors
+  inhibitors.forEach(i => {
+    const ix = i.x * w;
+    const iy = i.y * h;
+    ctx.fillStyle = '#FAC775';
+    ctx.beginPath();
+    ctx.arc(ix, iy, i.r, 0, Math.PI * 2);
+    ctx.fill();
+    
+    const grad = ctx.createRadialGradient(ix, iy, 0, ix, iy, i.r * 2);
+    grad.addColorStop(0, 'rgba(250,199,117,0.4)');
+    grad.addColorStop(1, 'rgba(250,199,117,0)');
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(ix, iy, i.r * 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  });
+
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+
+  // Vignette
+  const cx = w / 2;
+  const cy = h / 2;
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+
+  // Stats
+  const boundCount = enzymes.filter(e => e.bound === 'substrate').length;
+  const inhibCount = enzymes.filter(e => e.bound === 'inhibitor').length;
+  const totalBound = boundCount + inhibCount;
+  const occupiedPct = Math.round((boundCount / enzymes.length) * 100);
+  const inhibPct = mode === 'competitive' ? Math.round((inhibCount / totalBound) * 100) || 0 : 100;
+
+  occupiedStat.textContent = occupiedPct + '%';
+  inhibStat.textContent = inhibPct + '%';
+
+  requestAnimationFrame(draw);
+}
+
+slider.addEventListener('input', (e) => {
+  substrateLevel = parseInt(e.target.value);
+  slider.style.setProperty('--fill', substrateLevel + '%');
+  updateParticleCounts();
+});
+
+compBtn.addEventListener('click', () => {
+  mode = 'competitive';
+  compBtn.classList.add('active');
+  noncompBtn.classList.remove('active');
+  modeTag.textContent = 'Competitive';
+  canvasStatus.textContent = 'Substrate can compete for binding';
+  knowdropText.textContent = "Competitive inhibitors are structurally similar to the natural substrate. They dock into the active site and physically block it. When substrate concentration increases, substrate molecules start winning the competition for binding sites through sheer numbers — it's a statistical game. At very high substrate levels, the inhibitor can be almost completely displaced. This is why competitive inhibition is reversible and concentration-dependent. The inhibitor hasn't changed the enzyme; it's just occupying space that substrate wants.";
+});
+
+noncompBtn.addEventListener('click', () => {
+  mode = 'noncompetitive';
+  noncompBtn.classList.add('active');
+  compBtn.classList.remove('active');
+  modeTag.textContent = 'Non-competitive';
+  canvasStatus.textContent = 'Enzyme shape warped • substrate cannot restore function';
+  knowdropText.textContent = "Non-competitive inhibitors bind to an allosteric site — a location away from the active site. This binding causes a conformational change that distorts the active site's shape. Even if substrate is present in huge excess, it cannot bind effectively because the geometry is wrong. The key difference: you're not fighting for the same spot anymore. The inhibitor has sabotaged the enzyme's structure itself. No amount of substrate can undo that shape change, which is why non-competitive inhibition cannot be overcome by raising substrate concentration. The enzyme is physically compromised.";
+});
+
+draw();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'enzyme-inhibition'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>
