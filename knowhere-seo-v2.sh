@@ -48,7 +48,7 @@ PAGES = {
    name="How it works"),
  "experience-it.html": dict(path="/experience-it", kind="page",
    title="Try knowhere — real HSC & VCE concepts, reframed for you",
-   desc="No trailer. Real HSC and VCE concepts from the app, a lens switcher that reframes them for different brains, and a quiz that rebuilds itself to fit yours.",
+   desc="No trailer. Real HSC and VCE concepts from knowhere, a lens switcher that reframes them for different brains, and a quiz that rebuilds itself to fit yours.",
    name="Experience it"),
  "pricing.html": dict(path="/pricing", kind="pricing",
    title="knowhere pricing — HSC & VCE study plans from A$23/month",
