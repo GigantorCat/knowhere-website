@@ -387,6 +387,8 @@ const bctx = buf.getContext('2d', { alpha: false });
 let particles = [];
 let successfulCollisions = 0;
 let totalCollisionCount = 0;
+/* f44: collisions that COULD react (an unlike pair). The success rate is out of these. */
+let candidateCount = 0;
 let energyFactor = 0.3;
 /* f43: the displayed rate is over the last WINDOW collisions, not all of them.
    A cumulative average can never climb once a few thousand low-energy
@@ -439,7 +441,7 @@ function updateStats() {
   let hit = 0;
   for (let i = 0; i < recent.length; i++) hit += recent[i];
   const rate = recent.length >= 40 ? Math.round((hit / recent.length) * 100)
-             : (totalCollisionCount > 0 ? Math.round((successfulCollisions / totalCollisionCount) * 100) : 0);
+             : (candidateCount > 0 ? Math.round((successfulCollisions / candidateCount) * 100) : 0);
   liveTag.textContent = `${rate}% successful`;
   successRate.textContent = `${rate}%`;
   totalCollisions.textContent = totalCollisionCount;
@@ -496,7 +498,12 @@ function draw() {
         const _closing = (p1.vx - p2.vx) * _nx0 + (p1.vy - p2.vy) * _ny0;
         if (_closing <= 0) continue;
         totalCollisionCount++;
-        recent.push(0);
+        /* f44: only an A+B pair can react at all. Counting A+A and B+B in the denominator
+           held the ceiling near 19% however hard the slider was dragged — the caption
+           promises the rate climbs, and it could not. Total collisions still counts
+           everything; the success rate is now out of the collisions that could react. */
+        const _candidate = p1.color !== p2.color;
+        if (_candidate) { candidateCount++; recent.push(0); }
         
         const speed1 = Math.hypot(p1.vx, p1.vy);
         const speed2 = Math.hypot(p2.vx, p2.vy);
@@ -507,7 +514,7 @@ function draw() {
         const relativeAngle = Math.abs(Math.atan2(p1.vy, p1.vx) - angle);
         const orientationGood = Math.abs(relativeAngle % Math.PI - Math.PI / 2) < 0.6;
         
-        if (collisionEnergy >= 1.0 && orientationGood && p1.color !== p2.color) {
+        if (_candidate && collisionEnergy >= 1.0 && orientationGood) {
           successfulCollisions++;
           recent[recent.length - 1] = 1;
           p1.successful = true;
