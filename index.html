@@ -252,6 +252,18 @@
     </div>
   </section>
 
+  <!-- 2b · POKE IT — moved up from beat 7, 18 Sep 2026 (claim -> proof, no gap) -->
+  <section data-screen-label="Poke it" data-shape="" style="position:relative;z-index:2;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:80px 34px;scroll-snap-align:start">
+    <div data-fade="" style="position:fixed;inset:0;z-index:2;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;text-align:left;padding:0 max(34px,calc((100% - 1112px)/2));opacity:0;pointer-events:none"><!-- KW:R7 copy right, atom left -->
+      <div style="max-width:42ch">
+      <span style="font-size:10.5px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#8C8B87">Live — actual product</span>
+      <h2 style="font-size:clamp(34px,4.6vw,54px);line-height:1.03;letter-spacing:-0.045em;font-weight:700;margin:16px 0 0;text-wrap:balance">Don't take our word for it. <span style="color:#7BEA5A">Poke it.</span></h2>
+      <p style="font-size:16px;line-height:1.58;color:#9b9a96;margin:20px 0 0;max-width:46ch;text-wrap:pretty">Real concepts from the app, a lens switcher that reframes them for different brains, and a quiz that rebuilds itself to fit yours. No mockups. No trailer.</p>
+      </div>
+      <div style="margin-top:32px;width:42ch;max-width:100%"><a href="/experience-it" class="kp-cta" style="font-size:17px;padding:18px 34px">Experience it →</a></div>
+    </div>
+  </section>
+
   <!-- 3 · CONSTELLATION — the real library, rendered as itself -->
   <section data-screen-label="Constellation" data-shape="" id="kwConst" style="position:relative;z-index:2;min-height:200vh;scroll-snap-align:start">
     <div class="snapmark" style="top:50%"></div>
@@ -331,18 +343,6 @@
           <a href="/how-it-works" class="kp-cta" style="font-size:16px;padding:16px 30px">How the models work →</a>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- 7 · POKE IT -->
-  <section data-screen-label="Poke it" data-shape="" style="position:relative;z-index:2;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:80px 34px;scroll-snap-align:start">
-    <div data-fade="" style="position:fixed;inset:0;z-index:2;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;text-align:left;padding:0 max(34px,calc((100% - 1112px)/2));opacity:0;pointer-events:none"><!-- KW:R7 copy right, atom left -->
-      <div style="max-width:42ch">
-      <span style="font-size:10.5px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#8C8B87">Live — actual product</span>
-      <h2 style="font-size:clamp(34px,4.6vw,54px);line-height:1.03;letter-spacing:-0.045em;font-weight:700;margin:16px 0 0;text-wrap:balance">Don't take our word for it. <span style="color:#7BEA5A">Poke it.</span></h2>
-      <p style="font-size:16px;line-height:1.58;color:#9b9a96;margin:20px 0 0;max-width:46ch;text-wrap:pretty">Real concepts from the app, a lens switcher that reframes them for different brains, and a quiz that rebuilds itself to fit yours. No mockups. No trailer.</p>
-      </div>
-      <div style="margin-top:32px;width:42ch;max-width:100%"><a href="/experience-it" class="kp-cta" style="font-size:17px;padding:18px 34px">Experience it →</a></div>
     </div>
   </section>
 
@@ -615,6 +615,8 @@ class Component extends DCLogic {
     const blob=this.shpBrain(R*1.15);
     const outPair=this.shpKnowhere(vw,vh);
     this.outNowhere=outPair[0]; this.outFull=outPair[1];
+    /* NB: this array is indexed by SHAPE, not by beat. The 18 Sep 2026 move re-wired
+       beats 2-5 in frame(); the entries below keep their original slots. */
     this.targets=[
       blob,                       // 0 banner (hidden behind it)
       blob,                       // 1 merged problem beat — brain shifts right, fires
@@ -1300,8 +1302,8 @@ class Component extends DCLogic {
 
     /* fingerprint sub-beat */
     let sub=-1;
-    if(want===4){
-      const fp=this.sections[4];
+    if(want===5){
+      const fp=this.sections[5];
       const fFrac=(window.scrollY+vh/2-fp.offsetTop)/fp.offsetHeight;
       const T=this.sub6T; sub=0;
       for(let k2=T.length-1;k2>=0;k2--){ if(fFrac>=T[k2]){ sub=k2; break; } }
@@ -1320,24 +1322,24 @@ class Component extends DCLogic {
     const def=(()=>{
       if(want===0) return {form:this.bannerShape||this.targets[0],acc:g,off:0,rot:0,mode:'warm',pulse:this._vidReady?0:0.35}; /* KW:R8 twinkle while loading */
       if(want===1) return {form:this.targets[1],acc:g,off:vw*0.20,rot:1,mode:'spec',pulse:0.9};
-      if(want===2) return {form:this.targets[2],acc:g,off:0,rot:1,mode:'plain',pulse:0,konst:1,edges:1};
-      if(want===3) return {form:this.targets[3],acc:g,off:0,rot:1,mode:'plain',pulse:0,konst:1,eq:1};
-      if(want===4){ const j=Math.max(0,sub);
+      if(want===3) return {form:this.targets[2],acc:g,off:0,rot:1,mode:'plain',pulse:0,konst:1,edges:1};
+      if(want===4) return {form:this.targets[3],acc:g,off:0,rot:1,mode:'plain',pulse:0,konst:1,eq:1};
+      if(want===5){ const j=Math.max(0,sub);
         return {form:this.sub6[j],acc:this.sub6Acc[j],off:this.sub6Off[j],rot:this.sub6Rot[j],mode:'plain',pulse:0,gears:(j===2?1:0)}; }
-      if(want===5) return {form:this.targets[5],acc:g,off:-vw*0.22,rot:1,mode:'plain',pulse:0}; /* KW:R7 atom left of the copy (phones force off=0) */
+      if(want===2) return {form:this.targets[5],acc:g,off:-vw*0.22,rot:1,mode:'plain',pulse:0}; /* KW:R7 atom left of the copy (phones force off=0) */
       if(want===6) return {form:this.targets[6],acc:g,off:0,rot:1,mode:'plain',pulse:0,net:1};
       if(want===8) return {form:this.brainBig||this.targets[1],acc:g,off:vw*0.22,rot:1,mode:'spec',pulse:0.22};
       const stage=ost>=1?1:0; /* whorl stage removed — word holds, then footer brain */
       const form=stage===1?this.outFull:this.outNowhere;
       return {form,acc:g,off:0,rot:0,mode:'plain',pulse:0,outK:stage>=1?1:0};
     })();
-    def.ra=(want===2)?1.6:1; /* KW:POLISH — the library swings wider so the hoop reads in 3D */
+    def.ra=(want===3)?1.6:1; /* KW:POLISH — the library swings wider so the hoop reads in 3D */
     /* KW:HOME-MOBILE: on a phone the copy owns the top of the screen, so every formation drops into the
        lower half (oy, a screen-space y offset like off) and never slides sideways. */
     if(mob){ def.off=0;
-      var ring=(want===4&&sub===4);
-      def.oy=ring?0:(({1:0.17,2:0.23,3:0.27,4:0.22,5:0.08,6:0.13,7:-0.10})[want]||0)*vh; /* KW:R6 atom up: the CTA now owns the bottom */
-      def.ms=ring?0.82:(({2:0.56,3:0.72,4:0.75})[want]||0.82);
+      var ring=(want===5&&sub===4);
+      def.oy=ring?0:(({1:0.17,2:0.08,3:0.23,4:0.27,5:0.22,6:0.13,7:-0.10})[want]||0)*vh; /* KW:R6 atom up: the CTA now owns the bottom */
+      def.ms=ring?0.82:(({3:0.56,4:0.72,5:0.75})[want]||0.82);
     } else { def.oy=0; def.ms=1; }
     const key=want+'/'+sub+'/'+(want===7?(ost>=1?1:0):0);
     if(key!==this._beatKey){
@@ -1545,13 +1547,13 @@ class Component extends DCLogic {
     for(const [el,si] of this._fadeMap) show(el,si===this.beat&&!(si===1&&this._p<0.8));
     /* fingerprint internals */
     const ttl=this._fpTitle||(this._fpTitle=document.querySelector('[data-fp-title]'));
-    if(ttl) show(ttl,this.beat===4&&this._sub===0);
+    if(ttl) show(ttl,this.beat===5&&this._sub===0);
     const col2=this._fpCol||(this._fpCol=document.querySelector('[data-fp-col]'));
-    if(col2){ col2.style.opacity=(this.beat===4&&this._sub===4)?'0':'1'; }
+    if(col2){ col2.style.opacity=(this.beat===5&&this._sub===4)?'0':'1'; }
     if(!this._fpCards){ this._fpCards=[...document.querySelectorAll('[data-cin]')]
       .map(el=>[el,[0.34,0.50,0.66].indexOf(parseFloat(el.dataset.cin))+1]); }
-    for(const [el,ci] of this._fpCards) show(el,this.beat===4&&this._sub===ci,46);
-    for(const el of this.steps) show(el,this.beat===4&&this._sub===4,56);
+    for(const [el,ci] of this._fpCards) show(el,this.beat===5&&this._sub===ci,46);
+    for(const el of this.steps) show(el,this.beat===5&&this._sub===4,56);
     /* outro beats */
     if(!this._osteps){ this._osteps=[...document.querySelectorAll('[data-ostep]')]
       .map(el=>{ const thr=parseFloat(el.dataset.ostep);
