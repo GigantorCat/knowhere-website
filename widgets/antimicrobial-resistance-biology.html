@@ -398,6 +398,8 @@ const buf = document.createElement('canvas');
 const bctx = buf.getContext('2d');
 
 let pressure = 0;
+/* the share of the population carrying resistance, read back each frame */
+let resFrac = 0.08;
 let cells = [];
 let time = 0;
 
@@ -455,6 +457,18 @@ function draw() {
       }
     }
 
+    // Resistance is not free. The machinery that shrugs off the drug costs
+    // the cell something to carry, so once the antibiotic is gone it is the
+    // resistant lineages that get outgrown - back down to the level that
+    // stands in the population anyway. This is why easing off the pressure
+    // works at all, and why it works slowly.
+    if (c.alive && c.resistant && pressure < 30 && resFrac > 0.08) {
+      if (Math.random() < (30 - pressure) * 0.00018) {
+        c.alive = false;
+        c.deathTime = time;
+      }
+    }
+
     if (c.alive) {
       // Move cells
       c.x += c.vx;
@@ -469,19 +483,22 @@ function draw() {
     }
   });
 
-  // Respawn dead cells as resistant under high pressure
-  if (pressure > 50) {
-    cells.forEach(c => {
-      if (!c.alive && time - c.deathTime > 1.5) {
-        c.alive = true;
-        c.resistant = true;
-        c.x = Math.random() * w;
-        c.y = Math.random() * h;
-      }
-    });
-  }
+  // Empty space gets filled by whoever can divide into it. Under antibiotic
+  // that is only the resistant; with the antibiotic gone the susceptible
+  // strains are the faster growers and take the space back.
+  cells.forEach(c => {
+    if (c.alive || time - c.deathTime <= 1.5) return;
+    // 8% is the standing variation the population starts with: resistance
+    // exists in nature without any antibiotic at all. It is the floor, not zero.
+    const pResistant = pressure > 50 ? 1 : Math.max(0.08, pressure / 50);
+    c.alive = true;
+    c.resistant = Math.random() < pResistant;
+    c.x = Math.random() * w;
+    c.y = Math.random() * h;
+  });
 
   const total = aliveResistant + aliveSusceptible;
+  resFrac = total > 0 ? aliveResistant / total : 0;
   const resPct = total > 0 ? Math.round((aliveResistant / total) * 100) : 0;
   const susPct = 100 - resPct;
 

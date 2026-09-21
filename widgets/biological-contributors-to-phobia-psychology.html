@@ -142,6 +142,7 @@ let activationCount = 0;
 let pulses = [];
 let time = 0;
 let lastPulse = 0;
+let lastQuiet = 0;
 
 const knowdropContent = {
   gaba: "GABA (gamma-aminobutyric acid) is the brain's primary inhibitory neurotransmitter — it puts the brakes on neural activity. In phobias, GABA dysfunction means the amygdala's fear response can't be shut down properly. When the usual threat signal arrives, there's insufficient inhibition to dampen it. The fear cascade activates unchecked: cortisol floods the system, the sympathetic nervous system fires up, heart rate spikes, and the person experiences full-blown panic even when the threat is minor or imagined. Without GABA's brake, the fear response becomes a runaway train.",
@@ -228,9 +229,19 @@ function draw() {
     pulses.push({ x: amyX, born: time, speed: 0.15 + dysfunction * 0.25 });
     lastPulse = time;
     activationCount++;
-    activationStat.textContent = activationCount;
-    strengthStat.textContent = pathwayStrength.toFixed(1) + '×';
   }
+
+  // With inhibition restored the amygdala is not firing, and a fear pathway
+  // that is not being reinforced weakens. Without this the two figures stuck
+  // at their peak while the live tag beside them read GABA NORMAL - the card
+  // contradicting itself. Both belong to the state of the circuit now, so
+  // they are written every frame, not only on the frames a pulse fires.
+  if (dysfunction <= 0.1 && activationCount > 0 && time - lastQuiet > 700) {
+    activationCount--;
+    lastQuiet = time;
+  }
+  activationStat.textContent = activationCount;
+  strengthStat.textContent = (1 + activationCount * 0.15).toFixed(1) + '×';
 
   pulses = pulses.filter(p => {
     const age = time - p.born;
