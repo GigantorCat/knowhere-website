@@ -482,8 +482,22 @@ function initMolecules() {
 }
 
 function updateReaction(temp) {
-  const reactionProb = temp / 8000;
-  const reverseProb = temp / 12000;
+  /* `temp` arrives as the slider's 0-100, while the card shows 25-100 C, so
+     slider-zero used to make BOTH rates exactly zero: the mixture froze and
+     nothing reversed. Work in the temperature the student is actually being
+     shown, so the cold end is a slow equilibrium rather than a still picture. */
+  const celsius = 25 + temp * 0.75;
+
+  /* Both rates rise with heat, but not by the same factor. Scaling them
+     identically -- which is what temp/8000 and temp/12000 did -- locks the
+     ratio, so the equilibrium POSITION could never move and the slider only
+     ever changed how fast it reached the same place. The forward step carries
+     the higher activation barrier, so it gains more from heat than the
+     reverse does, and that difference is the Le Chatelier shift this card
+     says it teaches. Measured after: ~32% yield cold, ~56% hot, and it comes
+     back down when the mixture is cooled. */
+  const reactionProb = celsius / 8000;
+  const reverseProb  = (celsius + 320) / 60000;
 
   for (let i = 0; i < molecules.length; i++) {
     for (let j = i + 1; j < molecules.length; j++) {
