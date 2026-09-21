@@ -34,6 +34,33 @@ var KW_PIXEL_ID = '1829181431399314';
     } catch (e) {}
   })();
 
+  /* ---- KW:VISGATE — nothing counts until the page has been seen -------
+     Meta prefetches ad landing pages in a hidden webview while the ad is on
+     screen. The page runs, so the tracker would log a pageview and a 0-second
+     scroll_exit for someone who never tapped. The Umami tag carries
+     data-auto-track="false"; this is the ONLY place the pageview is sent, and
+     it waits for the document to actually be visible. A prefetched webview
+     never is. Found 22 Sep 2026: facebook.com referrer, 79 visits, 26 s total. */
+  var kwSeen = document.visibilityState === 'visible';
+  function kwOnSeen(fn) {
+    if (kwSeen) { fn(); return; }
+    document.addEventListener('visibilitychange', function h() {
+      if (document.visibilityState !== 'visible') return;
+      document.removeEventListener('visibilitychange', h);
+      kwSeen = true;
+      fn();
+    });
+  }
+  function kwUmamiPageview() {
+    /* the tracker is deferred like this file; it may land a tick later */
+    var tries = 0;
+    (function send() {
+      if (window.umami && window.umami.track) { try { window.umami.track(); } catch (e) {} return; }
+      if (++tries < 60) setTimeout(send, 100);
+    })();
+  }
+  kwOnSeen(kwUmamiPageview);
+
   /* The ONLY way anything fires. Defined whether or not the pixel is on, so
      no call site anywhere needs to guard. */
   window.kwPixel = function (ev, params) {
@@ -128,7 +155,7 @@ var KW_PIXEL_ID = '1829181431399314';
     /* Fires once, on the way out. visibilitychange is the only handler a
        phone reliably still runs on a back-tap. */
     function bail() {
-      if (sent) return;
+      if (sent || !kwSeen) return;   /* KW:VISGATE — never report a page nobody saw */
       sent = true;
       measure();
       var payload = {
@@ -154,8 +181,10 @@ var KW_PIXEL_ID = '1829181431399314';
         window.requestAnimationFrame(measure);
       });
     }
-    if (document.readyState === 'complete') startMeasuring();
-    else window.addEventListener('load', startMeasuring, { once: true });
+    kwOnSeen(function () {           /* KW:VISGATE */
+      if (document.readyState === 'complete') startMeasuring();
+      else window.addEventListener('load', startMeasuring, { once: true });
+    });
   })();
 
   if (!ID) return;

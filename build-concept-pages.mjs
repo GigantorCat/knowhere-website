@@ -478,8 +478,8 @@ ${beacon(p.slug)}</body></html>`;
 <meta name="twitter:description" content="${esc(DESC)}">
 <meta name="twitter:image" content="https://knowhere.me/og-image.png">
 <script type="application/ld+json">${JSON.stringify(LD)}</script>
-<script defer src="https://cloud.umami.is/script.js" data-website-id="ee8e1d64-1100-4281-8ca5-179736bcc3e0"></script>
-<script defer src="/knowhere-pixel.js?v=2"></script>
+<script defer src="https://cloud.umami.is/script.js" data-website-id="ee8e1d64-1100-4281-8ca5-179736bcc3e0" data-auto-track="false"></script>
+<script defer src="/knowhere-pixel.js?v=3"></script>
 <meta name="facebook-domain-verification" content="6rirzrujmmkavl0wh2oqnpaw8hikf5" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
