@@ -107,6 +107,18 @@
      Supersedes HERO-V3 (16 Sep: pass inside the fold, proof after) on the evidence of 18–20 Sep: 88% never past 10%, 0 CTA clicks. */
   .kw-par .hero .answer{position:relative;font-size:19px;line-height:1.4;font-weight:500;color:var(--ink);margin:14px auto 0;max-width:34ch;text-wrap:balance}
   .kw-par .hero .proof-card{position:relative;margin:26px auto 0}   /* KW:HERO-V4 */
+  /* KW:HERO-V4b — the live proof */
+  .kw-par .proof-card.live-proof{cursor:default}
+  .kw-par .proof-card.live-proof:hover{transform:none;border-color:rgba(255,255,255,.1)}
+  .kw-par .proof-frame{position:relative;background:#0c0d0f;aspect-ratio:560/588;overflow:hidden}
+  .kw-par .proof-frame .poster-link{display:block;position:absolute;inset:0}
+  .kw-par .proof-frame img.poster{display:block;width:100%;height:100%;object-fit:cover;object-position:top}
+  .kw-par .proof-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block;background:transparent;opacity:0;pointer-events:none;transition:opacity .35s}
+  .kw-par .proof-frame.on{aspect-ratio:auto}
+  .kw-par .proof-frame.on iframe{opacity:1;pointer-events:auto}
+  .kw-par .proof-frame.on .poster-link{visibility:hidden}
+  .kw-par .proof-card a.cap{text-decoration:none;color:inherit}
+  .kw-par .proof-card a.cap:hover i{background:rgba(123,234,90,.12)}
   .kw-par .proof .wrap{display:flex;flex-direction:column;align-items:center;text-align:center}
   .kw-par .proof-card{display:block;width:100%;max-width:560px;margin-top:16px;border-radius:16px;border:1px solid rgba(255,255,255,.1);background:#0c0d0f;overflow:hidden;color:var(--ink);text-align:left;transition:border-color .2s,transform .18s}
   .kw-par .proof-card:hover{border-color:rgba(123,234,90,.6);transform:translateY(-1px)}
@@ -122,6 +134,7 @@
     .kw-par .hero{padding-bottom:40px}
     .kw-par .hero .kw-pass-wrap{margin-top:20px}
     .kw-par .hero .proof-card{margin-top:20px}   /* KW:HERO-V4 */
+    .kw-par .proof-frame{aspect-ratio:366/492}   /* KW:HERO-V4b: the cropped card is taller when the stats stack */
     .kw-par .hero .kw-pass p{display:none}
     .kw-par .hero .kw-pass .kw-pass-title{font-size:26px;margin-bottom:8px}
     .kw-par .hero .kw-pass .kw-pass-tick{margin-bottom:10px}
@@ -304,10 +317,18 @@
            being read for 4 seconds and left; the page asked parents to care ($49, a counter, a card) before they had
            understood anything — against its own line below. Order now: headline + answer → the thing they can poke →
            the pass with its CTA → assure. No data-reveal on the card: nothing in the first screen may ever hide. -->
-      <a class="proof-card" id="par-proof-card" href="/hsc/chemistry/collision-theory">
-        <img src="/for-parents-proof.jpg?v=1" width="780" height="535" alt="One real knowhere concept, live: collision theory for HSC chemistry. Drag the energy up and watch the successful collisions climb." loading="eager">
-        <span class="cap"><span class="t">Every concept is a model you can poke. This is one.</span><i aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"></path></svg></i></span>
-      </a>
+      <!-- KW:HERO-V4b (21 Sep 2026): the proof is LIVE. The real nuclear-fission knowscape (/widgets/nuclear-fission-physics.html,
+           the file the public concept page embeds) in an iframe; the page script crops it to its interactive card, gives the
+           reactor its first neutrons so the grid is alive before anyone touches it, and sizes the frame from the widget's own
+           kwH message. The JPG underneath is a still of that exact state: it is what paints before any JS, and what stays if
+           the frame never reports in. The widget file itself is untouched — the build may regenerate it freely. -->
+      <div class="proof-card live-proof" id="par-proof-card">
+        <div class="proof-frame" id="parProofFrame">
+          <a class="poster-link" href="/hsc/physics/nuclear-fission" aria-label="Open nuclear fission, a live knowhere concept"><img class="poster" src="/for-parents-proof-fission.jpg?v=1" width="1120" height="1174" alt="One real knowhere concept, live: a nuclear fission chain reaction for HSC physics. Push the control rods in and watch it settle; pull them out and watch it run away." loading="eager" fetchpriority="high"></a>
+          <iframe id="parProofWidget" src="/widgets/nuclear-fission-physics.html" title="Nuclear fission — a live knowhere concept. Drag the control rods and watch the chain reaction respond." loading="eager" scrolling="no" tabindex="-1"></iframe>
+        </div>
+        <a class="cap" href="/hsc/physics/nuclear-fission"><span class="t">Every concept is a model you can poke. This is one.</span><i aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"></path></svg></i></a>
+      </div>
       <div class="kw-pass-wrap" data-reveal style="position:relative;margin:28px auto 0;max-width:960px;width:100%">
     <section class="kw-pass" id="exam-pass" aria-labelledby="pass-h"><!-- KW:PASS3 -->
       <div class="kw-pass-l">
@@ -495,6 +516,47 @@ class Component extends DCLogic {
       window.KnowherePage.injectLogo(root);
       this._io=window.KnowherePage.reveal(root);
       this._stopBanner=window.KnowhereParticleBanner(root,'For parents','heart');
+      /* KW:HERO-V4b: the live proof. Same-origin iframe, so the page can reach in: hide everything in the widget
+         except the card that holds its slider, zero the widget's own page padding, drop the card's own border so the
+         hero card is the only frame, and give the reactor its first neutrons (rods 40% in: gently supercritical, the
+         grid is alive, "push the rods in" is the obvious move). The widget's ResizeObserver then posts its new height
+         (kwH) and the frame goes live at that size. If any of it fails the poster simply stays. */
+      var pfBox=root.querySelector('#parProofFrame'), pf=root.querySelector('#parProofWidget');
+      if(pfBox&&pf){
+        var cropped=false, cropEl=null;
+        var crop=function(){
+          if(cropped) return true;
+          try{
+            var d=pf.contentDocument; if(!d||!d.body) return false;
+            var r=d.querySelector('input[type=range]'); if(!r) return false;
+            var el=r; while(el.parentElement&&el.parentElement!==d.body&&el.parentElement.parentElement!==d.body) el=el.parentElement;
+            var cont=el.parentElement;
+            Array.prototype.forEach.call(cont.children,function(c){ if(c!==el&&c.tagName!=='STYLE'&&c.tagName!=='SCRIPT') c.style.setProperty('display','none','important'); });
+            ['padding','margin'].forEach(function(k){ d.body.style.setProperty(k,'0','important'); cont.style.setProperty(k,'0','important'); });
+            d.body.style.setProperty('min-height','0','important'); d.body.style.setProperty('overflow','hidden','important');
+            cont.style.setProperty('max-width','none','important');
+            ['margin','border'].forEach(function(k){ el.style.setProperty(k,'0','important'); });
+            el.style.setProperty('border-radius','0','important'); el.style.setProperty('box-shadow','none','important');
+            cropped=true; cropEl=el;
+            try{ r.value=40; r.dispatchEvent(new pf.contentWindow.Event('input',{bubbles:true})); }catch(e){}
+            return true;
+          }catch(e){ return false; }
+        };
+        /* The height is measured HERE, off the cropped card, never taken from the widget's kwH message: the widget
+           measures documentElement.scrollHeight, which inside a fixed-height iframe just echoes the frame back. */
+        var fit=function(){
+          if(!crop()||!cropEl) return;   /* never show the uncropped lesson in the hero */
+          var h=Math.round(cropEl.getBoundingClientRect().height); if(!(h>120)) return;
+          h=Math.max(240,Math.min(760,h));
+          if(Math.abs(parseInt(pfBox.style.height||0,10)-h)>4) pfBox.style.height=h+'px';
+          pfBox.classList.add('on');
+        };
+        var onH=function(e){ var m=e&&e.data; if(!m||!m.kwH||e.source!==pf.contentWindow) return; fit(); };
+        window.addEventListener('message',onH); this._onProofH=onH;
+        window.addEventListener('resize',fit); this._onProofFit=fit;
+        pf.addEventListener('load',function(){ fit(); setTimeout(fit,300); setTimeout(fit,1200); setTimeout(fit,3000); });
+        fit();
+      }
       /* KW:PARENT-R3 subjects modal */
       var dlg=document.getElementById("kwSubjects");
       if(dlg&&typeof dlg.showModal==="function"){
@@ -513,7 +575,7 @@ class Component extends DCLogic {
     };
     boot();
   }
-  componentWillUnmount(){ if(this._stopBanner) this._stopBanner(); if(this._io) this._io.disconnect(); if(this._ioBar) this._ioBar.disconnect(); }
+  componentWillUnmount(){ if(this._stopBanner) this._stopBanner(); if(this._io) this._io.disconnect(); if(this._ioBar) this._ioBar.disconnect(); if(this._onProofH) window.removeEventListener('message',this._onProofH); if(this._onProofFit) window.removeEventListener('resize',this._onProofFit); }
 }
 </script>
 
