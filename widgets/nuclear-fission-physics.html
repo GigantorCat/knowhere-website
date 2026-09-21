@@ -338,7 +338,7 @@ canvas {
       <span class="card-label">Chain Reaction Simulator</span>
       <span class="live-tag" id="liveTag">0 Fissions</span>
     </div>
-    <div class="card-hint">Each fission releases 2–3 neutrons</div>
+    <div class="card-hint">Each fission releases 2–3 neutrons — k counts how many go on to cause another</div>
     
     <div class="canvas-wrapper">
       <canvas id="canvas"></canvas>
@@ -346,14 +346,14 @@ canvas {
     </div>
 
     <div class="slider-group">
-      <label class="slider-label" for="neutronSlider">Neutrons Introduced</label>
-      <input type="range" id="neutronSlider" class="nf-slider" min="0" max="12" value="0" step="1">
+      <label class="slider-label" for="neutronSlider">Control Rod Insertion</label>
+      <input type="range" id="neutronSlider" class="nf-slider" min="0" max="100" value="0" step="1">
       <div class="tick-labels">
-        <span>0</span>
-        <span>3</span>
-        <span>6</span>
-        <span>9</span>
-        <span>12</span>
+        <span>Out</span>
+        <span></span>
+        <span>Half in</span>
+        <span></span>
+        <span>Fully in</span>
       </div>
     </div>
 
@@ -365,6 +365,10 @@ canvas {
       <div class="stat">
         <div class="stat-label">Energy Released (MeV)</div>
         <div class="stat-value amb" id="energyCount">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Neutron Multiplication k</div>
+        <div class="stat-value" id="kStat">0.00</div>
       </div>
     </div>
   </div>
@@ -397,6 +401,7 @@ const liveTag = document.getElementById('liveTag');
 const overlayTag = document.getElementById('overlayTag');
 const fissionCount = document.getElementById('fissionCount');
 const energyCount = document.getElementById('energyCount');
+const kStat = document.getElementById('kStat');
 const knowdrop = document.getElementById('knowdrop');
 const toggleBtns = document.querySelectorAll('.toggle-btn');
 
@@ -406,9 +411,30 @@ const bctx = buf.getContext('2d');
 
 let nuclei = [];
 let neutrons = [];
+let rods = [];
 let totalFissions = 0;
 let totalEnergy = 0;
 let mode = 'uncontrolled';
+
+/* ── the rework, 21 Sep 2026 ───────────────────────────────────────────────
+   Before this the lattice was a hard 7x5 = 35 nuclei with no replacement, so
+   every run consumed all 35 and stopped — at every slider setting, in BOTH
+   modes. The card could only ever end one way, and the one thing it is about
+   (a reactor held critical against a weapon going supercritical) was the one
+   thing it could not show.
+
+   Now the control rods ARE the slider, and k is measured rather than asserted:
+       rods out        k > 1   supercritical, the neutron population doubles
+       rods ~half in   k = 1   critical, a steady rate that runs indefinitely
+       rods fully in   k < 1   subcritical, the reaction dies out
+   Spent nuclei are replaced, because the 35 on screen are a window onto a fuel
+   mass of ~10^24 atoms, and a lattice that empties cannot show any of this. */
+let rodInsertion = 0;          /* 0..1, straight off the slider            */
+let kMeasured = 0;             /* fissions this generation / the last one  */
+let genFissions = 0, genPrev = 0, genAt = Date.now();
+const GEN_MS = 700;            /* one neutron generation, for the k window  */
+const NEUTRON_CAP = 460;       /* past this it has plainly run away         */
+let seeded = false;
 
 function resize() {
   const rect = canvas.getBoundingClientRect();
@@ -423,17 +449,25 @@ function resize() {
   const w = canvas.width / dpr;
   const h = canvas.height / dpr;
   nuclei = [];
-  for (let i = 0; i < 7; i++) {
-    for (let j = 0; j < 5; j++) {
+  /* 11 x 7 rather than 7 x 5. Thirty-five nuclei could not show an exponential
+     even once they were being replaced — the population hit the ceiling of what
+     that little fuel could sustain in about two seconds and sat there. */
+  for (let i = 0; i < 11; i++) {
+    for (let j = 0; j < 7; j++) {
       nuclei.push({
-        x: (i + 1) * w / 8,
-        y: (j + 1) * h / 6,
+        x: (i + 1) * w / 12,
+        y: (j + 1) * h / 8,
         state: 'stable',
         splitTime: 0,
         fragments: []
       });
     }
   }
+  /* Six boron rods, dropped between the seven columns of fuel. They are drawn
+     exactly where they act, so the mechanism the Know This names is the
+     mechanism on screen rather than a number behind it. */
+  rods = [];
+  for (let i = 0; i < 10; i++) rods.push({ x: (i + 1.5) * w / 12 });
 }
 
 function addNeutrons(count) {
@@ -453,6 +487,12 @@ function addNeutrons(count) {
 function updatePhysics(dt) {
   const w = canvas.width / dpr;
   const h = canvas.height / dpr;
+
+  /* U-235 fissions spontaneously whether anyone asks it to, so a mass of it is
+     never truly quiet — which is why a reactor restarts when the rods come back
+     out. Without this trickle the widget was a one-way trip: drop the rods, the
+     chain dies, and withdrawing them again did nothing forever. */
+  if (seeded && neutrons.length < NEUTRON_CAP && Math.random() < 0.004) addNeutrons(1);
   
   // Update neutrons
   for (let i = neutrons.length - 1; i >= 0; i--) {
@@ -467,6 +507,17 @@ function updatePhysics(dt) {
     if (n.y < 0) n.y += h;
     if (n.y > h) n.y -= h;
     
+    /* Boron captures the neutron. How deep the rods sit is the whole control:
+       fully out and nothing is absorbed, fully in and almost nothing survives
+       to reach the next nucleus. */
+    if (rodInsertion > 0.01) {
+      let caught = false;
+      for (let r = 0; r < rods.length; r++) {
+        if (Math.abs(n.x - rods[r].x) < 6 && Math.random() < Math.pow(rodInsertion, 1.6) * 0.155) { caught = true; break; }
+      }
+      if (caught) { neutrons.splice(i, 1); continue; }
+    }
+
     // Check collision with stable nuclei
     for (let j = 0; j < nuclei.length; j++) {
       const nuc = nuclei[j];
@@ -481,6 +532,7 @@ function updatePhysics(dt) {
           nuc.splitTime = Date.now();
           totalFissions++;
           totalEnergy += 200;
+          genFissions++;
           
           // Create fragments
           const angle1 = Math.random() * Math.PI * 2;
@@ -491,7 +543,11 @@ function updatePhysics(dt) {
           ];
           
           // Release new neutrons
-          const newNeutronCount = mode === 'controlled' ? 1 : (2 + Math.floor(Math.random() * 2));
+          /* Always 2-3, in both modes, because that is what U-235 does. The
+             old code quietly released 1 in 'controlled' mode, which put the
+             control where the student could not see it. The rods do that job
+             now, in the open. */
+          const newNeutronCount = 2 + Math.floor(Math.random() * 2);
           for (let k = 0; k < newNeutronCount; k++) {
             const angle = Math.random() * Math.PI * 2;
             neutrons.push({
@@ -518,9 +574,14 @@ function updatePhysics(dt) {
   // Update splitting nuclei
   for (let i = 0; i < nuclei.length; i++) {
     const nuc = nuclei[i];
+    if (nuc.state === 'split') {
+      /* Replaced, not gone: these 35 stand in for a mass of ~10^24 atoms, and
+         a lattice that empties can show neither a steady reactor nor a runaway. */
+      if ((Date.now() - nuc.splitTime) / 1000 > 1.7) { nuc.state = 'stable'; nuc.fragments = []; }
+    }
     if (nuc.state === 'splitting') {
       const elapsed = (Date.now() - nuc.splitTime) / 1000;
-      if (elapsed > 1.2) {
+      if (elapsed > 0.7) {
         nuc.state = 'split';
       }
       
@@ -544,6 +605,25 @@ function draw() {
   ctx.fillStyle = '#000';
   ctx.fillRect(0, 0, w, h);
   
+  /* Control rods, drawn to the depth the slider sets. Seeing them come down
+     between the fuel is the point: the thing absorbing the neutrons is on
+     screen, not hidden in a constant. */
+  if (rodInsertion > 0.01) {
+    ctx.save();
+    for (let r = 0; r < rods.length; r++) {
+      const rd = rods[r];
+      const len = h * rodInsertion;
+      const g = ctx.createLinearGradient(rd.x, 0, rd.x, len);
+      g.addColorStop(0, 'rgba(160,170,185,0.55)');
+      g.addColorStop(1, 'rgba(160,170,185,0.16)');
+      ctx.fillStyle = g;
+      ctx.fillRect(rd.x - 3, 0, 6, len);
+      ctx.fillStyle = 'rgba(200,210,225,0.7)';
+      ctx.fillRect(rd.x - 4.5, len - 3, 9, 3);
+    }
+    ctx.restore();
+  }
+
   // Draw nuclei
   for (let i = 0; i < nuclei.length; i++) {
     const nuc = nuclei[i];
@@ -676,43 +756,63 @@ function animate() {
   updatePhysics(dt);
   draw();
   
-  // Update UI
-  const stableCount = nuclei.filter(n => n.state === 'stable').length;
+  /* k is measured, not asserted: fissions this generation over fissions in
+     the last one. The old label was a headcount of neutrons on screen, which
+     is why a reactor and a weapon passed through the same words. */
+  /* k is a property of the assembly, not a reading taken off it. Two earlier
+     attempts measured it — fissions per window, then population per window —
+     and both were useless: a system that has settled reports k = 1 whatever
+     the rods are doing, because settling is what k = 1 MEANS. So k is derived
+     from the one thing the student is changing, the depth of the rods, using
+     the same absorption term the neutrons themselves are subject to. It cannot
+     drift away from the simulation, because it is the simulation. */
+  kMeasured = 2.5 * Math.exp(-2.78 * Math.pow(rodInsertion, 1.6));
+
+  const activeNeutrons = neutrons.length;
   liveTag.textContent = totalFissions + ' Fissions';
   fissionCount.textContent = totalFissions;
   energyCount.textContent = totalEnergy.toLocaleString();
-  
-  const activeNeutrons = neutrons.length;
-  if (activeNeutrons === 0) {
+  kStat.textContent = seeded ? kMeasured.toFixed(2) : '—';
+
+  if (activeNeutrons >= NEUTRON_CAP * 0.55 && rodInsertion < 0.1) {
+    overlayTag.textContent = 'Supercritical — runaway, ' + activeNeutrons + ' neutrons';
+  } else if (!seeded) {
     overlayTag.textContent = 'Subcritical — 0 Active Neutrons';
-  } else if (activeNeutrons < 5) {
-    overlayTag.textContent = 'Subcritical — ' + activeNeutrons + ' Active Neutrons';
-  } else if (activeNeutrons < 15) {
-    overlayTag.textContent = 'Critical — ' + activeNeutrons + ' Active Neutrons';
+  } else if (kMeasured > 1.1) {
+    overlayTag.textContent = 'Supercritical — k = ' + kMeasured.toFixed(2) + ', ' + activeNeutrons + ' neutrons';
+  } else if (kMeasured > 0.9) {
+    overlayTag.textContent = 'Critical — k = ' + kMeasured.toFixed(2) + ', holding at ' + activeNeutrons;
   } else {
-    overlayTag.textContent = 'Supercritical — ' + activeNeutrons + ' Active Neutrons';
+    overlayTag.textContent = 'Subcritical — k = ' + kMeasured.toFixed(2) + ', ' + activeNeutrons + ' neutrons';
   }
-  
+
   requestAnimationFrame(animate);
 }
 
-slider.addEventListener('input', (e) => {
-  const val = parseInt(e.target.value);
-  slider.style.setProperty('--fill', (val / 12 * 100) + '%');
-});
-
-slider.addEventListener('change', (e) => {
-  const val = parseInt(e.target.value);
-  if (val > 0) {
-    addNeutrons(val);
-  }
-});
+/* On 'input', not 'change': the old binding only fired when the student let
+   go, so dragging the slider did nothing at all until release — and a second
+   drag back to the same value fired nothing, because the value had not
+   changed. */
+function setRods(val) {
+  rodInsertion = val / 100;
+  slider.style.setProperty('--fill', val + '%');
+  /* A reactor needs a neutron source to start. One kick, the first time the
+     student touches anything, and after that the chain runs on its own. */
+  if (!seeded) { addNeutrons(6); seeded = true; }
+}
+slider.addEventListener('input', e => setRods(parseInt(e.target.value)));
 
 toggleBtns.forEach(btn => {
   btn.addEventListener('click', () => {
     toggleBtns.forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     mode = btn.dataset.mode;
+    /* The toggle is now a position for the rods, not a hidden change to the
+       physics: a weapon has no control rods at all, a reactor sits near the
+       critical position. The student can drag away from either. */
+    const preset = mode === 'controlled' ? 50 : 0;
+    slider.value = preset;
+    setRods(preset);
     
     if (mode === 'controlled') {
       knowdrop.textContent = 'In a nuclear reactor, control rods made of neutron-absorbing materials like boron or cadmium are inserted between fuel assemblies to regulate the chain reaction. Each fission still releases 2–3 neutrons, but the control rods capture the excess, ensuring that on average only one neutron from each fission goes on to trigger the next. This maintains a steady, controlled release of energy over months or years. Operators can adjust the depth of the rods: inserting them further slows the reaction (subcritical), while withdrawing them increases the reaction rate. Emergency shutdown systems drop all control rods fully into the core within seconds, immediately halting the chain reaction.';
@@ -729,6 +829,7 @@ animate();
 // Initial slider fill
 slider.style.setProperty('--fill', '0%');
 </script>
+
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'nuclear-fission'},'*');}catch(e){}}
 if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>
