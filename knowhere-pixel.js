@@ -6,6 +6,8 @@
    analytics event still works. The app carries the same block inline;
    if you change one, change both. */
 var KW_PIXEL_ID = '1829181431399314';
+/* KW:TT — TikTok pixel id (Events Manager → Web → knowhere). Empty = inert. Never Advanced Matching. */
+var KW_TT_PIXEL_ID = 'DAQ4L7JC77UFPT802VM0';
 
 (function () {
   'use strict';
@@ -63,8 +65,15 @@ var KW_PIXEL_ID = '1829181431399314';
 
   /* The ONLY way anything fires. Defined whether or not the pixel is on, so
      no call site anywhere needs to guard. */
+  /* KW:TT — TikTok rides the same door. Only the funnel events cross over; ViewContent is TikTok's
+     "engaged" signal (below), never a page load. */
+  var TT = (typeof KW_TT_PIXEL_ID === 'string' ? KW_TT_PIXEL_ID : '').trim();
+  var TT_FUNNEL = { CompleteRegistration: 1, InitiateCheckout: 1, StartTrial: 1 };
+  function ttTrack(ev, params) { try { if (TT && window.ttq) window.ttq.track(ev, params || {}); } catch (e) {} }
+  window.kwTT = ttTrack;
   window.kwPixel = function (ev, params) {
     try { if (ID && window.fbq) window.fbq('track', ev, params || {}); } catch (e) {}
+    if (TT_FUNNEL[ev]) ttTrack(ev, params);
   };
 
   /* Umami CTA event — independent of Meta, fires either way. One delegated
@@ -97,6 +106,7 @@ var KW_PIXEL_ID = '1829181431399314';
         from: a.getAttribute('data-kw-from') || ''   /* KW:HERO-INTERACT (24 Sep 2026): which CTA on the page */
       });
     } catch (err) {}
+    ttTrack('ClickButton', { content_name: location.pathname });   /* KW:TT */
   }, true);
 
   /* ---- scroll depth ---------------------------------------------------
@@ -114,6 +124,9 @@ var KW_PIXEL_ID = '1829181431399314';
     if (path.indexOf('for-parents') === -1 && path.indexOf('experience-it') === -1 && path.indexOf('/hsc/') !== 0 && path.indexOf('/vce/') !== 0) return;
 
     var MARKS = [25, 50, 75, 90];
+    /* KW:TT — engaged = 50% scroll OR 20 s with the page visible. Once. TikTok's ViewContent. */
+    var engagedSent = false;
+    function engaged() { if (engagedSent) return; engagedSent = true; ttTrack('ViewContent', { content_name: path.replace(/^\//, '').replace(/\/$/, '') || 'home' }); }
     var hit = {}, maxPct = 0, started = Date.now(), ticking = false, sent = false, measured = false;
 
     function track(name, data) {
@@ -143,6 +156,7 @@ var KW_PIXEL_ID = '1829181431399314';
         if (d >= MARKS[i] && !hit[MARKS[i]]) {
           hit[MARKS[i]] = 1;
           track('scroll_depth', { page: path, depth: MARKS[i] });
+          if (MARKS[i] === 50) engaged();   /* KW:TT */
         }
       }
     }
@@ -183,10 +197,30 @@ var KW_PIXEL_ID = '1829181431399314';
       });
     }
     kwOnSeen(function () {           /* KW:VISGATE */
+      setTimeout(function () { if (document.visibilityState === 'visible') engaged(); }, 20000);   /* KW:TT */
       if (document.readyState === 'complete') startMeasuring();
       else window.addEventListener('load', startMeasuring, { once: true });
     });
   })();
+
+  /* KW:TT — TikTok base code, the standard snippet, loaded only once the page is seen. No identify(). */
+  if (TT) kwOnSeen(function () {
+    !function (w, d, t) {
+      w.TiktokAnalyticsObject = t; var ttq = w[t] = w[t] || [];
+      ttq.methods = ['page', 'track', 'identify', 'instances', 'debug', 'on', 'off', 'once', 'ready', 'alias', 'group', 'enableCookie', 'disableCookie', 'holdConsent', 'revokeConsent', 'grantConsent'];
+      ttq.setAndDefer = function (t, e) { t[e] = function () { t.push([e].concat(Array.prototype.slice.call(arguments, 0))); }; };
+      for (var i = 0; i < ttq.methods.length; i++) ttq.setAndDefer(ttq, ttq.methods[i]);
+      ttq.instance = function (t) { for (var e = ttq._i[t] || [], n = 0; n < ttq.methods.length; n++) ttq.setAndDefer(e, ttq.methods[n]); return e; };
+      ttq.load = function (e, n) {
+        var r = 'https://analytics.tiktok.com/i18n/pixel/events.js';
+        ttq._i = ttq._i || {}; ttq._i[e] = []; ttq._i[e]._u = r; ttq._t = ttq._t || {}; ttq._t[e] = +new Date; ttq._o = ttq._o || {}; ttq._o[e] = n || {};
+        n = d.createElement('script'); n.type = 'text/javascript'; n.async = !0; n.src = r + '?sdkid=' + e + '&lib=' + t;
+        e = d.getElementsByTagName('script')[0]; e.parentNode.insertBefore(n, e);
+      };
+      ttq.load(TT);
+      ttq.page();
+    }(window, document, 'ttq');
+  });
 
   if (!ID) return;
 
