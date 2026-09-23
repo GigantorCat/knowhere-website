@@ -1,0 +1,800 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>How Animal Hosts Fight Back — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#0B0D0C;
+  --bg2:#12160F;
+  --acc:#5AADD4;
+  --acc-rgb:90, 173, 212;
+  --ag:rgba(var(--acc-rgb),.7);
+  --ag1:rgba(var(--acc-rgb),.12);
+  --ag2:rgba(var(--acc-rgb),.45);
+  --amb:#FAC775;
+  --ink:#EDEDE8;
+  --ink-dim:#8C9389;
+  --line:#262B26;
+}
+
+body{
+  background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C 55%);
+  font-family:'Geist',sans-serif;
+  color:var(--ink);
+  min-height:100vh;
+  padding:40px 16px 0;
+}
+
+.container{max-width:720px;margin:0 auto}
+
+h1{
+  font-size:clamp(26px,6.5vw,44px);
+  font-weight:800;
+  letter-spacing:-0.03em;
+  line-height:1.05;
+  margin-bottom:14px;
+}
+
+.intro{
+  font-size:15.5px;
+  color:var(--ink-dim);
+  max-width:58ch;
+  line-height:1.55;
+  margin-bottom:32px;
+}
+
+.card{
+  background:linear-gradient(180deg,#12160F,#0d100b);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:16px;
+  box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);
+  margin-bottom:20px;
+}
+
+.card-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:6px;
+}
+
+.card-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  text-transform:uppercase;
+  color:var(--ink);
+}
+
+.card-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  text-transform:uppercase;
+  color:var(--acc);
+}
+
+.card-hint{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  color:var(--ink-dim);
+  margin-bottom:14px;
+}
+
+.canvas-wrapper{
+  position:relative;
+  width:100%;
+  aspect-ratio:16/9;
+  border-radius:12px;
+  overflow:hidden;
+  background:#000;
+  box-shadow:inset 0 0 0 1px var(--ag1);
+  margin-bottom:16px;
+}
+
+canvas{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  display:block;
+}
+
+.canvas-overlay{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  background:rgba(0,0,0,0.55);
+  backdrop-filter:blur(4px);
+  padding:9px 16px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:14px;
+  text-transform:uppercase;
+  color:var(--acc);
+  text-align:center;
+}
+
+.controls{
+  display:flex;
+  gap:10px;
+  margin-bottom:16px;
+  flex-wrap:wrap;
+}
+
+.def-btn{
+  flex:1;
+  min-width:calc(50% - 5px);
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  padding:13px 12px;
+  border-radius:11px;
+  border:1px solid var(--line);
+  background:#12160F;
+  color:var(--ink-dim);
+  cursor:pointer;
+  transition:all .2s;
+  text-transform:uppercase;
+  letter-spacing:0.02em;
+}
+
+.def-btn.active{
+  background:rgba(var(--acc-rgb),.1);
+  border-color:var(--acc);
+  color:var(--acc);
+  box-shadow:0 0 22px rgba(var(--acc-rgb),.18);
+}
+
+.def-btn:hover:not(.active){
+  border-color:var(--acc);
+  color:var(--ink);
+}
+
+.stat-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+  padding-top:16px;
+  border-top:1px solid var(--line);
+}
+
+.stat{text-align:center}
+
+.stat-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;
+  text-transform:uppercase;
+  color:var(--ink-dim);
+  margin-bottom:6px;
+}
+
+.stat-value{
+  font-family:'JetBrains Mono',monospace;
+  font-size:24px;
+  font-weight:500;
+}
+
+.stat:first-child .stat-value{color:var(--acc)}
+.stat:last-child .stat-value{color:var(--amb)}
+
+.knowdrop-section{
+  border-top:1px solid var(--line);
+  padding-top:16px;
+}
+
+.knowdrop-text{
+  font-size:14.5px;
+  line-height:1.65;
+  color:var(--ink);
+}
+
+.know-this{
+  border-left:3px solid var(--acc);
+  padding:16px 18px;
+  background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));
+  border-radius:0 12px 12px 0;
+  margin-bottom:0;
+}
+
+.know-tag-row{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  margin-bottom:11px;
+}
+
+.know-dot{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:var(--acc);
+  box-shadow:0 0 8px var(--acc);
+  animation:pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes pulse{
+  0%,100%{opacity:1}
+  50%{opacity:.45}
+}
+
+.know-tag-text{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  text-transform:uppercase;
+  letter-spacing:0.15em;
+  color:var(--acc);
+}
+
+.know-this p{
+  font-size:17.4px;
+  line-height:1.55;
+  color:var(--ink);
+  margin:0;
+}
+
+.sr-only{
+  position:absolute;
+  width:1px;
+  height:1px;
+  padding:0;
+  margin:-1px;
+  overflow:hidden;
+  clip:rect(0,0,0,0);
+  white-space:nowrap;
+  border:0;
+}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:0.01ms!important;
+    animation-iteration-count:1!important;
+    transition-duration:0.01ms!important;
+  }
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Interactive tissue defence response visualization showing how animal bodies fight pathogens before immunity kicks in</h2>
+  
+  <h1>Your Body's First Line Is Actually a <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">Warzone</span></h1>
+  
+  <p class="intro">Inflammation is not damage — it is recruitment. Fever is not malfunction — it is advantage. Long before any antibody arrives, your tissue is already fighting smart. Tap each defence layer to watch the tissue physically respond to invasion.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-label">Tissue Cross-Section</div>
+      <div class="card-tag" id="live-tag">Barriers Intact</div>
+    </div>
+    <div class="card-hint">Activate defences in sequence from barriers through to phagocytes</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="tissue-canvas"></canvas>
+      <div class="canvas-overlay" id="overlay-tag">Barriers maintaining entry cost</div>
+    </div>
+
+    <div class="controls">
+      <button class="def-btn active" data-defence="barriers">Barriers</button>
+      <button class="def-btn" data-defence="inflammation">Inflammation</button>
+      <button class="def-btn" data-defence="fever">Fever</button>
+      <button class="def-btn" data-defence="phagocytes">Phagocytes</button>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Defence Stage</div>
+        <div class="stat-value" id="stage-num">1</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Tissue Temp °C</div>
+        <div class="stat-value" id="temp-val">37.0</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="controls">
+      <button class="def-btn active" data-toggle="sequence">Sequential Defence</button>
+      <button class="def-btn" data-toggle="bridge">Bridge to Immunity</button>
+    </div>
+    
+    <div class="knowdrop-section">
+      <div class="knowdrop-text" id="knowdrop-content">
+        These four layers operate in sequence but overlap in time. Barriers slow entry immediately — skin as a dry desert, mucus as a sticky trap, cilia sweeping upward, stomach acid at pH 2 dissolving proteins. The moment a pathogen breaches, inflammation redirects blood flow to the site: vessels dilate, plasma leaks, the tissue swells and reddens as reinforcements flood in. Fever follows as the hypothalamus resets the body's thermostat higher, speeding immune reactions while slowing pathogen replication. Phagocytes — neutrophils and macrophages — arrive and engulf invaders whole, digesting them in acidic vacuoles. Each defence is a physical or chemical change in host tissue, not a failure but a coordinated escalation.
+      </div>
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-tag-row">
+      <div class="know-dot"></div>
+      <div class="know-tag-text">Know This</div>
+    </div>
+    <p><span style="color:var(--acc)">Inflammation</span> and <span style="color:var(--acc)">fever</span> are not symptoms of damage but deliberate physical changes that create <span style="color:var(--acc)">battlefield advantage</span> before specialised immunity ever arrives.</p>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById("tissue-canvas");
+const ctx = canvas.getContext("2d");
+const liveTag = document.getElementById("live-tag");
+const overlayTag = document.getElementById("overlay-tag");
+const stageNum = document.getElementById("stage-num");
+const tempVal = document.getElementById("temp-val");
+const knowdropContent = document.getElementById("knowdrop-content");
+
+const CSS = getComputedStyle(document.documentElement);
+const ACC = CSS.getPropertyValue("--acc").trim();
+const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement("canvas");
+const bctx = buf.getContext("2d");
+
+let state = {
+  defence: "barriers",
+  transition: 0,
+  pathogens: [],
+  phagocytes: [],
+  vessels: [],
+  heatParticles: []
+};
+
+const defenceData = {
+  barriers: {
+    stage: 1,
+    temp: 37.0,
+    liveTag: "Barriers Intact",
+    overlayTag: "Barriers maintaining entry cost"
+  },
+  inflammation: {
+    stage: 2,
+    temp: 37.8,
+    liveTag: "Inflammation Active",
+    overlayTag: "Vessels dilating • Plasma leaking • Recruitment underway"
+  },
+  fever: {
+    stage: 3,
+    temp: 39.2,
+    liveTag: "Fever Engaged",
+    overlayTag: "Thermostat reset • Host advantage increasing"
+  },
+  phagocytes: {
+    stage: 4,
+    temp: 39.2,
+    liveTag: "Phagocytes Deployed",
+    overlayTag: "Eat-first-ask-later response • Invaders engulfed"
+  }
+};
+
+const knowdropText = {
+  sequence: "These four layers operate in sequence but overlap in time. Barriers slow entry immediately — skin as a dry desert, mucus as a sticky trap, cilia sweeping upward, stomach acid at pH 2 dissolving proteins. The moment a pathogen breaches, inflammation redirects blood flow to the site: vessels dilate, plasma leaks, the tissue swells and reddens as reinforcements flood in. Fever follows as the hypothalamus resets the body's thermostat higher, speeding immune reactions while slowing pathogen replication. Phagocytes — neutrophils and macrophages — arrive and engulf invaders whole, digesting them in acidic vacuoles. Each defence is a physical or chemical change in host tissue, not a failure but a coordinated escalation.",
+  bridge: "This innate response buys time for adaptive immunity to spin up. While phagocytes eat invaders, some digest pathogen fragments and display them on their surface as antigens — molecular mugshots. These activated phagocytes migrate to lymph nodes where they present antigens to T cells and B cells, kickstarting the weeks-long process of producing specific antibodies. The physical changes you see here — heat, swelling, cell movement — are not just defence but also communication, preparing the adaptive system with the intelligence it needs. The syllabus verb 'analyse' wants you to explain how these tissue-level changes in temperature, blood flow, and cell behaviour create the conditions for immune memory to form."
+};
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  
+  initPathogens();
+  initVessels();
+}
+
+function initPathogens() {
+  state.pathogens = [];
+  for (let i = 0; i < 8; i++) {
+    state.pathogens.push({
+      x: Math.random(),
+      y: 0.15 + Math.random() * 0.15,
+      r: 3 + Math.random() * 2,
+      phase: Math.random() * Math.PI * 2,
+      speed: 0.3 + Math.random() * 0.4,
+      blocked: false,
+      eaten: false,
+      eatenProgress: 0
+    });
+  }
+}
+
+function initVessels() {
+  state.vessels = [];
+  for (let i = 0; i < 5; i++) {
+    state.vessels.push({
+      y: 0.4 + i * 0.12,
+      width: 0,
+      targetWidth: 0,
+      flow: []
+    });
+  }
+}
+
+function initPhagocytes() {
+  if (state.phagocytes.length === 0) {
+    for (let i = 0; i < 6; i++) {
+      state.phagocytes.push({
+        x: 0.1 + Math.random() * 0.8,
+        y: 0.85 + Math.random() * 0.1,
+        targetX: 0.2 + Math.random() * 0.6,
+        targetY: 0.25 + Math.random() * 0.15,
+        r: 6 + Math.random() * 3,
+        arrived: false
+      });
+    }
+  }
+}
+
+function initHeatParticles() {
+  if (state.heatParticles.length === 0) {
+    for (let i = 0; i < 40; i++) {
+      state.heatParticles.push({
+        x: Math.random(),
+        y: 0.3 + Math.random() * 0.6,
+        vy: -0.003 - Math.random() * 0.003,
+        life: Math.random(),
+        maxLife: 0.8 + Math.random() * 0.4
+      });
+    }
+  }
+}
+
+function easeOutCubic(t) {
+  return 1 - Math.pow(1 - t, 3);
+}
+
+function draw(time) {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  
+  ctx.fillStyle = "#000";
+  ctx.fillRect(0, 0, w, h);
+  
+  // Tissue layers
+  const skinY = h * 0.12;
+  const epidermisH = h * 0.08;
+  const dermisH = h * 0.15;
+  const tissueH = h * 0.5;
+  
+  // Skin barrier
+  const barrierAlpha = state.defence === "barriers" ? 1 : 0.3;
+  ctx.fillStyle = "rgba(139,115,85," + (barrierAlpha * 0.4) + ")";
+  ctx.fillRect(0, skinY, w, epidermisH);
+  
+  ctx.strokeStyle = "rgba(139,115,85," + barrierAlpha + ")";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(0, skinY);
+  for (let x = 0; x <= w; x += 8) {
+    ctx.lineTo(x, skinY + Math.sin(x * 0.1) * 2);
+  }
+  ctx.stroke();
+  
+  // Mucus layer
+  if (state.defence === "barriers") {
+    ctx.fillStyle = "rgba(" + RGB + ",0.15)";
+    ctx.beginPath();
+    ctx.moveTo(0, skinY + epidermisH);
+    for (let x = 0; x <= w; x += 12) {
+      const y = skinY + epidermisH + Math.sin(x * 0.15 + time * 0.002) * 3;
+      ctx.lineTo(x, y);
+    }
+    ctx.lineTo(w, skinY + epidermisH + 6);
+    ctx.lineTo(0, skinY + epidermisH + 6);
+    ctx.fill();
+  }
+  
+  // Dermis
+  ctx.fillStyle = "rgba(120,80,70,0.2)";
+  ctx.fillRect(0, skinY + epidermisH, w, dermisH);
+  
+  // Tissue below
+  ctx.fillStyle = "rgba(80,60,60,0.15)";
+  ctx.fillRect(0, skinY + epidermisH + dermisH, w, tissueH);
+  
+  // Blood vessels
+  if (state.defence === "inflammation" || state.defence === "fever" || state.defence === "phagocytes") {
+    const t = Math.min(state.transition, 1);
+    const ease = easeOutCubic(t);
+    
+    state.vessels.forEach((vessel, i) => {
+      vessel.targetWidth = 8 + ease * 12;
+      vessel.width += (vessel.targetWidth - vessel.width) * 0.08;
+      
+      const vy = h * vessel.y;
+      
+      ctx.strokeStyle = "rgba(180,60,60," + (0.3 + ease * 0.4) + ")";
+      ctx.lineWidth = vessel.width;
+      ctx.beginPath();
+      ctx.moveTo(0, vy);
+      ctx.lineTo(w, vy);
+      ctx.stroke();
+      
+      // Flow particles
+      if (Math.random() < 0.15 && vessel.flow.length < 8) {
+        vessel.flow.push({ x: 0, speed: 0.008 + Math.random() * 0.006 });
+      }
+      
+      vessel.flow = vessel.flow.filter(p => {
+        p.x += p.speed;
+        if (p.x > 1) return false;
+        
+        ctx.fillStyle = "rgba(" + RGB + "," + (0.5 + ease * 0.3) + ")";
+        ctx.save();
+        ctx.globalCompositeOperation = "lighter";
+        ctx.beginPath();
+        ctx.arc(p.x * w, vy, 2 + ease * 1.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+        
+        return true;
+      });
+    });
+    
+    // Plasma leak glow
+    if (ease > 0.3) {
+      const leakGrad = ctx.createRadialGradient(w * 0.5, h * 0.5, 0, w * 0.5, h * 0.5, h * 0.4);
+      leakGrad.addColorStop(0, "rgba(180,60,60," + ((ease - 0.3) * 0.15) + ")");
+      leakGrad.addColorStop(1, "rgba(180,60,60,0)");
+      ctx.fillStyle = leakGrad;
+      ctx.fillRect(0, 0, w, h);
+    }
+  }
+  
+  // Heat particles for fever
+  if (state.defence === "fever" || state.defence === "phagocytes") {
+    initHeatParticles();
+    
+    state.heatParticles.forEach(p => {
+      p.y += p.vy;
+      p.life += 0.012;
+      
+      if (p.life > p.maxLife || p.y < 0.1) {
+        p.y = 0.9;
+        p.x = Math.random();
+        p.life = 0;
+      }
+      
+      const alpha = Math.sin((p.life / p.maxLife) * Math.PI) * 0.4;
+      ctx.fillStyle = "rgba(255,180,100," + alpha + ")";
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      ctx.beginPath();
+      ctx.arc(p.x * w, p.y * h, 1.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    });
+  }
+  
+  // Pathogens
+  state.pathogens.forEach((path, idx) => {
+    if (state.defence === "barriers") {
+      path.blocked = true;
+      path.y = Math.min(path.y, 0.18);
+    } else {
+      path.blocked = false;
+      if (!path.eaten) {
+        path.y += path.speed * 0.002;
+      }
+    }
+    
+    if (path.eaten) {
+      path.eatenProgress += 0.03;
+      if (path.eatenProgress > 1) return;
+    }
+    
+    const wobble = Math.sin(time * 0.003 + path.phase) * 2;
+    const px = (0.15 + idx * 0.1) * w + wobble;
+    const py = path.y * h;
+    
+    const pathAlpha = path.eaten ? (1 - path.eatenProgress) * 0.6 : 0.6;
+    const pathR = path.eaten ? path.r * (1 - path.eatenProgress * 0.7) : path.r;
+    
+    ctx.fillStyle = "rgba(200,80,80," + pathAlpha + ")";
+    ctx.beginPath();
+    ctx.arc(px, py, pathR, 0, Math.PI * 2);
+    ctx.fill();
+    
+    ctx.strokeStyle = "rgba(255,100,100," + (pathAlpha * 0.8) + ")";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    
+    // Spikes
+    if (!path.eaten || path.eatenProgress < 0.5) {
+      for (let a = 0; a < Math.PI * 2; a += Math.PI / 4) {
+        const spikeLen = pathR * 0.6;
+        const sx = px + Math.cos(a) * pathR;
+        const sy = py + Math.sin(a) * pathR;
+        const ex = sx + Math.cos(a) * spikeLen;
+        const ey = sy + Math.sin(a) * spikeLen;
+        
+        ctx.strokeStyle = "rgba(255,100,100," + (pathAlpha * 0.5) + ")";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(sx, sy);
+        ctx.lineTo(ex, ey);
+        ctx.stroke();
+      }
+    }
+  });
+  
+  // Phagocytes
+  if (state.defence === "phagocytes") {
+    initPhagocytes();
+    
+    state.phagocytes.forEach((phago, idx) => {
+      if (!phago.arrived) {
+        const dx = phago.targetX - phago.x;
+        const dy = phago.targetY - phago.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        
+        if (dist > 0.01) {
+          phago.x += dx * 0.04;
+          phago.y += dy * 0.04;
+        } else {
+          phago.arrived = true;
+          
+          // Mark nearest pathogen as eaten
+          let nearest = null;
+          let minDist = Infinity;
+          state.pathogens.forEach((path, pidx) => {
+            if (!path.eaten) {
+              const pdx = path.y * h / h - phago.targetY;
+              const d = Math.abs(pdx);
+              if (d < minDist) {
+                minDist = d;
+                nearest = pidx;
+              }
+            }
+          });
+          if (nearest !== null && state.pathogens[nearest]) {
+            state.pathogens[nearest].eaten = true;
+          }
+        }
+      }
+      
+      const phagoX = phago.x * w;
+      const phagoY = phago.y * h;
+      
+      // Cell body
+      ctx.fillStyle = "rgba(" + RGB + ",0.5)";
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      ctx.beginPath();
+      ctx.arc(phagoX, phagoY, phago.r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+      
+      ctx.strokeStyle = "rgba(" + RGB + ",0.9)";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(phagoX, phagoY, phago.r, 0, Math.PI * 2);
+      ctx.stroke();
+      
+      // Pseudopods
+      if (!phago.arrived) {
+        for (let a = 0; a < Math.PI * 2; a += Math.PI / 3) {
+          const podLen = phago.r * 1.2;
+          const angle = a + Math.sin(time * 0.005 + idx) * 0.3;
+          const ex = phagoX + Math.cos(angle) * (phago.r + podLen);
+          const ey = phagoY + Math.sin(angle) * (phago.r + podLen);
+          
+          ctx.strokeStyle = "rgba(" + RGB + ",0.4)";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(phagoX, phagoY);
+          ctx.lineTo(ex, ey);
+          ctx.stroke();
+        }
+      }
+      
+      // Nucleus
+      ctx.fillStyle = "rgba(" + RGB + ",0.8)";
+      ctx.beginPath();
+      ctx.arc(phagoX, phagoY, phago.r * 0.35, 0, Math.PI * 2);
+      ctx.fill();
+    });
+  }
+  
+  // Barrier labels
+  if (state.defence === "barriers") {
+    ctx.font = "11px 'JetBrains Mono', monospace";
+    ctx.fillStyle = "rgba(" + RGB + ",0.8)";
+    ctx.fillText("SKIN", 12, skinY - 6);
+    ctx.fillText("MUCUS", 12, skinY + epidermisH + 14);
+    ctx.fillText("ACID pH 2", w - 80, h * 0.85);
+  }
+  
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = "lighter";
+  ctx.globalAlpha = 0.38;
+  ctx.filter = "blur(7px)";
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const vig = ctx.createRadialGradient(w * 0.5, h * 0.5, h * 0.28, w * 0.5, h * 0.5, w * 0.72);
+  vig.addColorStop(0, "rgba(0,0,0,0)");
+  vig.addColorStop(1, "rgba(0,0,0,0.52)");
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+}
+
+let animFrame = null;
+let lastTime = 0;
+
+function animate(time) {
+  draw(time);
+  
+  if (state.transition < 2) {
+    state.transition += 0.015;
+    animFrame = requestAnimationFrame(animate);
+  } else {
+    animFrame = null;
+  }
+}
+
+function startAnimation() {
+  if (animFrame) cancelAnimationFrame(animFrame);
+  state.transition = 0;
+  lastTime = performance.now();
+  animFrame = requestAnimationFrame(animate);
+}
+
+document.querySelectorAll(".def-btn[data-defence]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const defence = btn.dataset.defence;
+    
+    document.querySelectorAll(".def-btn[data-defence]").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    
+    state.defence = defence;
+    const data = defenceData[defence];
+    
+    liveTag.textContent = data.liveTag;
+    overlayTag.textContent = data.overlayTag;
+    stageNum.textContent = data.stage;
+    tempVal.textContent = data.temp.toFixed(1);
+    
+    if (defence === "phagocytes") {
+      initPhagocytes();
+    }
+    if (defence === "fever" || defence === "phagocytes") {
+      initHeatParticles();
+    }
+    
+    startAnimation();
+  });
+});
+
+document.querySelectorAll(".def-btn[data-toggle]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const toggle = btn.dataset.toggle;
+    
+    document.querySelectorAll(".def-btn[data-toggle]").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    
+    knowdropContent.textContent = knowdropText[toggle];
+  });
+});
+
+window.addEventListener("resize", () => {
+  resize();
+  startAnimation();
+});
+
+resize();
+startAnimation();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'how-animal-hosts-fight-back'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>
