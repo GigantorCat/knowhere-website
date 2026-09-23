@@ -31,7 +31,7 @@
 </script>
 <!-- /KNOWHERE:SEO-HEAD -->
 <script defer src="https://cloud.umami.is/script.js" data-website-id="ee8e1d64-1100-4281-8ca5-179736bcc3e0" data-auto-track="false"></script>
-<script defer src="./knowhere-pixel.js?v=3"></script>
+<script defer src="./knowhere-pixel.js?v=4"></script>
 <meta name="facebook-domain-verification" content="6rirzrujmmkavl0wh2oqnpaw8hikf5" />
 <script src="./vendor-resources.js"></script>
 <script src="./support.js"></script>
@@ -127,6 +127,10 @@
   .kw-par .proof-card .cap .t{font-size:15px;font-weight:600;letter-spacing:-0.01em;line-height:1.3;color:var(--ink)}
   .kw-par .proof-card .cap i{flex-shrink:0;width:34px;height:34px;border-radius:10px;border:1px solid rgba(123,234,90,.5);display:grid;place-items:center;color:var(--brat)}
   .kw-par .proof-card .cap i svg{display:block}
+  /* KW:HERO-INTERACT (24 Sep 2026): the second cap is the action — brat text, filled arrow */
+  .kw-par .proof-card .cap-go .t{color:var(--brat)}
+  .kw-par .proof-card .cap-go i{background:var(--brat);border-color:var(--brat);color:#070708}
+  .kw-par .proof-card a.cap-go:hover i{background:var(--brat);filter:brightness(1.07)}
   .kw-par .proof .sub{font-size:17px;line-height:1.62;color:#9b9a96;margin:30px auto 0;max-width:54ch}
   .kw-par .proof .sub em{font-style:normal;color:var(--ink);font-weight:500}
   @media (max-width:700px){
@@ -331,6 +335,10 @@
           <iframe id="parProofWidget" src="/widgets/nuclear-fission-physics.html" title="Nuclear fission — a live knowhere concept. Drag the control rods and watch the chain reaction respond." loading="eager" scrolling="no" tabindex="-1"></iframe>
         </div>
         <a class="cap" href="/hsc/physics/nuclear-fission"><span class="t">Every concept is a model you can poke. This is one.</span><i aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"></path></svg></i></a>
+        <!-- KW:HERO-INTERACT (24 Sep 2026): the action inside the first screen. An addition, not a reorder: the pass
+             card with its CTA stays where HERO-V4 put it. Same .cap pattern as the line above; data-kw-from names it
+             in the cta_click event so it can be read apart from the pass CTA. -->
+        <a class="cap cap-go" data-kw-from="hero-cap" href="https://app.knowhere.me/signup?as=parent"><span class="t">start their free week</span><i aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"></path></svg></i></a>
       </div>
       <div class="kw-pass-wrap" data-reveal style="position:relative;margin:28px auto 0;max-width:960px;width:100%">
     <section class="kw-pass" id="exam-pass" aria-labelledby="pass-h"><!-- KW:PASS3 -->
@@ -541,6 +549,20 @@ class Component extends DCLogic {
             ['margin','border'].forEach(function(k){ el.style.setProperty(k,'0','important'); });
             el.style.setProperty('border-radius','0','important'); el.style.setProperty('box-shadow','none','important');
             cropped=true; cropEl=el;
+            /* KW:HERO-INTERACT (24 Sep 2026): the page cannot see a scroll or a tap that happens INSIDE the iframe, so
+               two minutes on the rods reads in Umami as no scroll, no click. Same origin, so listen in the widget's own
+               document for a real pointer/touch/key and name it once per pageview. The synthetic input the crop
+               dispatches below is not a pointer and cannot fire this. after_s = seconds since navigation start. */
+            try{
+              var hiSent=false;
+              var hiFire=function(kind){
+                if(hiSent) return; hiSent=true;
+                try{ if(window.umami) window.umami.track('hero_interact',{page:location.pathname,widget:'nuclear-fission',via:kind,after_s:Math.round((window.performance&&performance.now?performance.now():0)/1000)}); }catch(e){}
+              };
+              d.addEventListener('pointerdown',function(){ hiFire('pointer'); },{passive:true,capture:true});
+              d.addEventListener('touchstart',function(){ hiFire('touch'); },{passive:true,capture:true});
+              d.addEventListener('keydown',function(){ hiFire('key'); },true);
+            }catch(e){}
             try{ r.value=40; r.dispatchEvent(new pf.contentWindow.Event('input',{bubbles:true})); }catch(e){}
             return true;
           }catch(e){ return false; }

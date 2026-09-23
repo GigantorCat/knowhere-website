@@ -93,7 +93,8 @@ var KW_PIXEL_ID = '1829181431399314';
     try {
       if (window.umami) window.umami.track('cta_click', {
         page: location.pathname,
-        to: href.indexOf('/login') > -1 ? 'login' : 'signup'
+        to: href.indexOf('/login') > -1 ? 'login' : 'signup',
+        from: a.getAttribute('data-kw-from') || ''   /* KW:HERO-INTERACT (24 Sep 2026): which CTA on the page */
       });
     } catch (err) {}
   }, true);
