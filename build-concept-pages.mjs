@@ -479,13 +479,14 @@ ${beacon(p.slug)}</body></html>`;
 <meta name="twitter:image" content="https://knowhere.me/og-image.png">
 <script type="application/ld+json">${JSON.stringify(LD)}</script>
 <script defer src="https://cloud.umami.is/script.js" data-website-id="ee8e1d64-1100-4281-8ca5-179736bcc3e0" data-auto-track="false"></script>
-<script defer src="/knowhere-pixel.js?v=3"></script>
+<script defer src="/knowhere-pixel.js?v=4"></script>
 <meta name="facebook-domain-verification" content="6rirzrujmmkavl0wh2oqnpaw8hikf5" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="/knowhere-marks.js?v=2"></script>
 <script src="/knowhere-pass.js" defer></script>
 <script src="/knowhere-handoff.js?v=3" defer></script><!-- KW:HANDOFF -->
+<script src="/knowhere-passbar.js?v=1" defer data-where="concept:${p.slug}" data-away=".cta-box"></script><!-- KW:PASSBAR -->
 <style>${CSS.replace('__ACCENT__', accent)}</style>
 </head>
 <body>
@@ -526,7 +527,7 @@ ${wild}${points}${under}${rest}
     <div class="cta-box">
       <div class="mono" style="margin-bottom:12px">this is one of 865</div>
       <h2>they don't read it. <span class="g">they run it.</span></h2>
-      <p class="lead">Every HSC and VCE concept in knowhere is built like this one — mapped to your curriculum, never capped by it. Free for a week. No card tricks, no lecture.</p>
+      <p class="lead">Every HSC and VCE concept in knowhere is built like this one — mapped to your curriculum, never capped by it. Free for a week. No lock-in, cancel inside the week and pay nothing.</p>
       <div class="doors">
         <a class="door pri" data-kw-cta href="https://app.knowhere.me/signup">start your free week →</a>
         <a class="door sec" href="/for-parents?as=parent">parent? start their free week →</a>
@@ -690,7 +691,7 @@ for (const b of built) {
   const pg = fs.readFileSync(b.p.file, 'utf8');
   const wd = fs.readFileSync(path.join('widgets', b.widgetName), 'utf8');
   const ok = pg.includes('<base href="/">') && pg.includes(esc(b.TITLE)) && pg.includes(`/widgets/${b.widgetName}`)
-    && pg.includes('for-parents?as=parent') && pg.includes('data-pass-days') && pg.includes('data-kw-handoff')
+    && pg.includes('for-parents?as=parent') && pg.includes('data-pass-days') && pg.includes('data-kw-handoff') && pg.includes('knowhere-passbar.js')
     && pg.includes(`<link rel="canonical" href="${b.p.url}">`)
     && !/#3AADA0/i.test(wd) && wd.includes('kwMobFix') && wd.includes('kwH') && wd.includes(b.accent);
   if (!ok) { console.log(`  ✗ ${b.p.file}`); bad++; }
