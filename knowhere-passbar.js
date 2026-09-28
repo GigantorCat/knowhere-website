@@ -1,8 +1,8 @@
-/* knowhere-passbar.js v1 — the 2026 exam pass, pinned to the bottom of the screen (KW:PASSBAR, 28 Sep 2026).
+/* knowhere-passbar.js v2 — the 2026 exam pass, pinned to the bottom of the screen (KW:PASSBAR, 28 Sep 2026).
    One file for every page that carries it: /for-parents and every public concept page. Change it here, it changes
    everywhere ("consistency is my friend and master").
 
-   <script src="/knowhere-passbar.js?v=1" defer data-audience="student" data-where="concept:<slug>" data-away=".cta-box"></script>
+   <script src="/knowhere-passbar.js?v=2" defer data-audience="student" data-where="concept:<slug>" data-away=".cta-box"></script>
 
    data-audience  "student" (default): signup, "start your free week", plus "send this to a parent" (knowhere-handoff.js
                   picks the button up by delegation — students don't have the card, ruled 16 Sep).
@@ -19,8 +19,13 @@
   if (window.__kwPassbar) return; window.__kwPassbar = true;
   var me = document.currentScript || document.querySelector('script[src*="knowhere-passbar.js"]');
   var ds = (me && me.dataset) || {};
-  var PARENT = ds.audience === "parent";
-  var SIGNUP = "https://app.knowhere.me/signup" + (PARENT ? "?as=parent" : "");
+  /* v2 (28 Sep): the signup tab is always explicit. The app keeps the last ?as= in sessionStorage, so a bare /signup
+     after a /for-parents visit opened on the PARENT tab. Now: a page that says audience=parent is parent, and leaves a
+     note (site sessionStorage) so a parent who clicks through to a concept page stays a parent; everyone else -> student. */
+  function ss(k, v) { try { if (v === undefined) return sessionStorage.getItem(k); sessionStorage.setItem(k, v); } catch (e) { return null; } }
+  if (ds.audience === "parent") ss("kw_aud", "parent");
+  var PARENT = ds.audience === "parent" || (!ds.audience && ss("kw_aud") === "parent");
+  var SIGNUP = "https://app.knowhere.me/signup?as=" + (PARENT ? "parent" : "student");
   var CTA = PARENT ? "start their free week" : "start your free week";
   var WHERE = ds.where || location.pathname;
   var CLOSE = Date.UTC(2026, 9, 26, 12, 59), now = Date.now(), closed = now > CLOSE;
