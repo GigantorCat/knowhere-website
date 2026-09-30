@@ -79,6 +79,8 @@ const injectAccent = new Function(srv.slice(ai, ei) + '; return injectAccent;')(
 /* ── the data ── */
 const scapes = JSON.parse(fs.readFileSync('SCAPES-PROPOSED.json', 'utf8'));
 const manifest = JSON.parse(fs.readFileSync(path.join(APP, 'generated-concepts.json'), 'utf8'));
+/* s7-y11-fence: cohorts with no live release (pipeline/cohorts.json) — their mappings do not exist to the public site yet */
+const darkCohorts = new Set(Object.entries(JSON.parse(fs.readFileSync(path.join(APP, 'pipeline', 'cohorts.json'), 'utf8'))).filter(([k, v]) => !k.startsWith('_') && v && v.releases && !Object.values(v.releases).some(r => r && r.live === true)).map(([k]) => k));
 const bigIdeas = new Map(Object.entries(JSON.parse(fs.readFileSync(path.join(APP, 'big-ideas.json'), 'utf8')).entries || {}));
 const byId = new Map(manifest.concepts.map(c => [c.id, c]));
 const bySlug = new Map(manifest.concepts.map(c => [c.slug, c]));
@@ -128,7 +130,13 @@ const targets = scapes.pages.filter(p => !ONLY || p.slug === ONLY);
    concept's discipline. Discipline alone is not enough — 'history' covers both HSC Modern History and
    VCE History: Revolutions, and would split one subject across two folders. */
 function homeOf(concept) {
-  const ms = (concept.curriculumMappings || []).filter(m => m.subject);
+  /* s7-y11-fence (30 Sep 2026): a Year 11 absorb must never move a live URL. Mappings from a cohort with no
+     live release are ignored, and a Year 12 mapping wins the home whenever the concept has one — 4 live
+     pages (antimicrobial resistance, redox, calorimetry, empirical formulae) would otherwise have jumped
+     from /vce/ to /hsc/ on the next run once HSC Year 11 absorbed them. Verified: 0 of 177 homes change. */
+  const all = (concept.curriculumMappings || []).filter(m => m.subject && !darkCohorts.has(String(m.origin || '').split('/')[0]));
+  const y12 = all.filter(m => (m.level || 'Year 12') === 'Year 12');
+  const ms = y12.length ? y12 : all;
   if (!ms.length) return null;
   /* CERT FIRST: if a concept is on an HSC syllabus at all, the page is an HSC page. NSW is the larger
      market and its exams run first, so "HSC Mathematics Advanced" must not end up living under VCE Maths
