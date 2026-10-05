@@ -349,7 +349,7 @@ canvas {
     </div>
 
     <div class="slider-wrapper">
-      <input type="range" class="et-slider" id="transition-slider" min="1" max="6" value="1" step="1">
+      <input aria-label="Electron transition" type="range" class="et-slider" id="transition-slider" min="1" max="6" value="1" step="1">
     </div>
     <div class="tick-labels">
       <span>n=1→2</span>
@@ -404,7 +404,7 @@ const btnEmission = document.getElementById('btn-emission');
 const knowdropText = document.getElementById('knowdrop-text');
 
 let mode = 'absorption';
-let currentTransition = 1;
+let currentTransition = 0;
 let photonPos = 0;
 let electronPos = 0;
 let animTime = 0;
@@ -452,6 +452,7 @@ btnAbsorption.addEventListener('click', () => {
   animTime = 0;
   photonPos = 0;
   electronPos = 0;
+  updateStats();
   knowdropText.textContent = "When a photon with exactly the right energy strikes an atom, an electron absorbs it and jumps to a higher energy level instantaneously. The photon energy must precisely match the gap—even slightly wrong and nothing happens. This is how cool gas clouds absorb specific wavelengths from starlight, creating dark absorption lines in stellar spectra. Each element removes its unique set of wavelengths, acting as a cosmic barcode. The Lyman series corresponds to transitions starting from the ground state (n=1), producing ultraviolet photons invisible to our eyes but detectable by space telescopes.";
 });
 
@@ -462,12 +463,14 @@ btnEmission.addEventListener('click', () => {
   animTime = 0;
   photonPos = 0;
   electronPos = 0;
+  updateStats();
   knowdropText.textContent = "Excited electrons are unstable and spontaneously drop to lower energy levels, releasing the exact energy difference as a photon. The timing is probabilistic—you can't predict when a specific electron will emit, but large populations show predictable decay rates. This creates emission spectra when hot gas emits light, producing bright lines at characteristic wavelengths. Neon signs glow because electric current excites electrons, which then cascade down through various transitions, each emitting photons of specific colours. The Balmer series produces visible red and blue lines, which is why hydrogen gas lamps appear pink-purple.";
 });
 
 function updateStats() {
   const t = transitions[currentTransition];
-  transitionLabel.textContent = t.label + ' Transition';
+  const label = mode === 'emission' ? 'n=' + t.to + '→' + t.from : t.label;
+  transitionLabel.textContent = label + ' Transition';
   photonEnergy.textContent = `Photon: ${t.energy.toFixed(1)} eV`;
   wavelength.textContent = t.wavelength + ' nm';
   seriesLabel.textContent = t.series;
@@ -487,12 +490,14 @@ function draw() {
   const cx = w * 0.5;
   
   // Energy levels
+  // y is proportional to energy: n=1 (-13.6 eV) at the bottom, n=5 (-0.54 eV) at the top
+  const yOf = e => h * (0.12 + 0.70 * (-0.54 - e) / (13.6 - 0.54));
   const levels = [
-    {n: 1, y: h * 0.82, energy: -13.6},
-    {n: 2, y: h * 0.65, energy: -3.4},
-    {n: 3, y: h * 0.50, energy: -1.51},
-    {n: 4, y: h * 0.38, energy: -0.85},
-    {n: 5, y: h * 0.28, energy: -0.54}
+    {n: 1, y: yOf(-13.6), energy: -13.6},
+    {n: 2, y: yOf(-3.4), energy: -3.4},
+    {n: 3, y: yOf(-1.51), energy: -1.51},
+    {n: 4, y: yOf(-0.85), energy: -0.85},
+    {n: 5, y: yOf(-0.54), energy: -0.54}
   ];
 
   // Draw all energy levels faintly

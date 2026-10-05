@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>The Framework of Ideas — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>The framework of ideas — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -128,6 +128,43 @@ h1 {
 
 .passage span.dimmed {
   opacity: 0.2;
+}
+
+.chain {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  margin-bottom: 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+}
+
+.chain-step {
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 6px 9px;
+  color: var(--ink-dim);
+  transition: all 0.3s ease;
+}
+
+.chain-step.idea {
+  color: var(--acc);
+  border-color: var(--acc);
+}
+
+.chain.on .chain-step {
+  color: var(--ink);
+}
+
+.chain.on .chain-step.choice {
+  color: var(--acc);
+  border-color: var(--acc);
+  background: var(--ag1);
+}
+
+.chain-arrow {
+  color: var(--acc);
 }
 
 .lens-selector {
@@ -305,14 +342,14 @@ h1 {
 <div class="container">
   <h1>Your best writing doesn't start with a <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">topic</span></h1>
   
-  <p class="intro">It starts with a conceptual framework that's broad enough to make room for your thinking. Great creating-and-transforming work borrows craft patterns from mentor texts, then filters every choice through purpose, context, and audience. Select a lens below to see how the same passage uses different devices to achieve its effect.</p>
+  <p class="intro">It starts with a conceptual framework that's broad enough to make room for your thinking. Strong writing borrows craft patterns from mentor texts, then filters every choice through purpose, context and audience. In this passage the big idea is time: slow change that outlasts force. Select a lens to follow that one idea into the images, the sentence patterns and the voice.</p>
 
   <div class="card">
     <div class="card-header">
       <span class="card-label">Framework Applied</span>
       <span class="live-tag" id="liveTag">No lens active</span>
     </div>
-    <p class="card-hint">Tap a lens to highlight the device at work in this passage</p>
+    <p class="card-hint">Tap a lens: see the question the idea raises, the choice it produced, and where that choice sits in the passage</p>
     
     <div class="lens-selector">
       <button class="lens-btn" data-lens="imagery">Imagery</button>
@@ -320,9 +357,17 @@ h1 {
       <button class="lens-btn" data-lens="voice">Voice</button>
     </div>
 
+    <div class="chain" id="chain" aria-live="polite">
+      <span class="chain-step idea">Big idea: time</span>
+      <span class="chain-arrow" aria-hidden="true">→</span>
+      <span class="chain-step" id="chainQ">Pick a lens</span>
+      <span class="chain-arrow" aria-hidden="true">→</span>
+      <span class="chain-step choice" id="chainChoice">See the choice</span>
+    </div>
+
     <div class="passage-container">
       <div class="passage" id="passage">
-        <span data-device="imagery">The river carves its own indifference into stone</span>, moving not with intent but with <span data-device="syntax">the slow, geological certainty of water finding its lowest path</span>. <span data-device="voice">I watch it from the bridge</span> — not to understand it, but to <span data-device="voice">let its ancient patience</span> remind me that <span data-device="syntax">some truths arrive not through argument but through erosion</span>, <span data-device="imagery">wearing away at resistance until only the essential shape remains</span>.
+        <span data-device="imagery">The river carves its own indifference into stone</span>, moving <span data-device="syntax">not with intent but with</span> the slow, geological certainty of water finding its lowest path. <span data-device="voice">I watch it from the bridge</span> — <span data-device="syntax">not to understand it, but to</span> <span data-device="voice">let its ancient patience</span> remind me that some truths arrive <span data-device="syntax">not through argument but through erosion</span>, <span data-device="imagery">wearing away at resistance until only the essential shape remains</span>.
       </div>
     </div>
 
@@ -366,20 +411,23 @@ const lenses = {
   imagery: {
     name: 'Imagery',
     tag: 'Sensory & Figurative',
-    annotation: 'Concrete visual language creates physical anchors for abstract ideas. The passage uses personification ("carves its own indifference") and metaphor ("erosion" as method of understanding) to make philosophical claims visceral and immediate. Mentor texts teach you to ground big concepts in observable detail.',
-    count: 2
+    question: `What does slow time look like?`,
+    choice: `A river carving stone; erosion wearing resistance away`,
+    annotation: `The idea of slow time needs something you can see, so the writer picks a river and stone. Concrete visual language creates physical anchors for abstract ideas: personification ("carves its own indifference") and metaphor ("erosion" as a way of understanding) make a philosophical claim visceral and immediate. Mentor texts teach you to ground big concepts in observable detail.`
   },
   syntax: {
     name: 'Syntax',
     tag: 'Sentence Structure',
-    annotation: 'Sentence rhythm controls pacing and emphasis. The passage uses interrupted clauses ("not with intent but with...") to mirror hesitation, then deploys a long parallel structure ("some truths arrive not through... but through...") to build rhetorical weight. Borrowing these patterns from mentor texts lets you choreograph how readers move through your ideas.',
-    count: 2
+    question: `How can a sentence feel like slow, repeated pressure?`,
+    choice: `One contrast pattern, "not X but Y", used three times`,
+    annotation: `The lit phrases are all the same move: contrast (antithesis). "Not with intent but with...", "not to understand it, but to..." and "not through argument but through erosion" each set up an expectation and replace it. Repeating one pattern three times works like erosion itself: the same slow pressure, again and again. Borrowing patterns like this from mentor texts lets you choreograph how readers move through your ideas.`
   },
   voice: {
     name: 'Voice',
     tag: 'Personal Positioning',
-    annotation: 'First-person positioning establishes authority and intimacy simultaneously. "I watch" signals subjective experience, while "let its ancient patience remind me" positions the speaker as receptive rather than declarative. This is your voice applied to the framework — mentor texts show you the move, but your context determines when and how to use it.',
-    count: 2
+    question: `Who can notice change this slow?`,
+    choice: `A patient "I", watching rather than arguing`,
+    annotation: `Slow time needs a patient witness, so the voice is a first-person observer. "I watch" signals subjective experience, while "let its ancient patience remind me" positions the speaker as receptive rather than declarative. This is your voice applied to the idea: mentor texts show you the move, but your context determines when and how to use it.`
   }
 };
 
@@ -391,6 +439,9 @@ const lensName = document.getElementById('lensName');
 const instanceCount = document.getElementById('instanceCount');
 const lensBtns = document.querySelectorAll('.lens-btn');
 const spans = passage.querySelectorAll('span[data-device]');
+const chain = document.getElementById('chain');
+const chainQ = document.getElementById('chainQ');
+const chainChoice = document.getElementById('chainChoice');
 
 lensBtns.forEach(btn => {
   btn.addEventListener('click', () => {
@@ -406,7 +457,10 @@ lensBtns.forEach(btn => {
       liveTag.textContent = 'No lens active';
       lensName.textContent = '—';
       instanceCount.textContent = '0';
-      annotation.textContent = 'Select a lens to see how craft patterns shape meaning and purpose in this passage.';
+      annotation.textContent = "Select a lens to see how craft patterns shape meaning and purpose in this passage.";
+      chainQ.textContent = "Pick a lens";
+      chainChoice.textContent = "See the choice";
+      chain.classList.remove('on');
     } else {
       activeLens = lens;
       btn.classList.add('active');
@@ -424,7 +478,10 @@ lensBtns.forEach(btn => {
       const data = lenses[lens];
       liveTag.textContent = data.tag;
       lensName.textContent = data.name;
-      instanceCount.textContent = data.count;
+      instanceCount.textContent = Array.from(spans).filter(sp => sp.dataset.device === lens).length;
+      chainQ.textContent = data.question;
+      chainChoice.textContent = data.choice;
+      chain.classList.add('on');
       annotation.textContent = data.annotation;
     }
   });
@@ -434,9 +491,9 @@ const toggleBtns = document.querySelectorAll('.toggle-btn');
 const knowdropText = document.getElementById('knowdropText');
 
 const knowdrops = {
-  framework: 'Starting from a broad conceptual framework — time, identity, systems, power, transformation — gives you room to think originally within the task constraints. The framework becomes the lens through which you filter every decision: word choice, structure, form, tone. This isn\'t writing to a formula; it\'s writing <em>from</em> an idea that\'s large enough to let your voice emerge. Purpose and context determine which mentor text patterns you borrow, but the conceptual starting point ensures you\'re producing something genuinely yours, not just rearranging existing arguments.',
+  framework: `Starting from a broad conceptual framework — time, identity, systems, power, transformation — gives you room to think originally within the task constraints. The framework becomes the lens through which you filter every decision: word choice, structure, form, tone. This isn't writing to a formula; it's writing <em>from</em> an idea that's large enough to let your voice emerge. Purpose and context determine which mentor text patterns you borrow, but the conceptual starting point ensures you're producing something genuinely yours, not just rearranging existing arguments.`,
   
-  mentor: 'Mentor texts aren\'t models to copy — they\'re craft libraries to study and borrow from strategically. You analyse how a writer builds tension through withheld information, or uses polysyndeton to create accumulation, or shifts register to signal authority. Then you take those specific moves and apply them to your own conceptual framework and task context. The craft pattern is transferable; the thinking it carries is yours. This is why reading widely in your form matters: every text you study expands your repertoire of available techniques.'
+  mentor: `Mentor texts aren't models to copy — they're craft libraries to study and borrow from strategically. You analyse how a writer builds tension through withheld information, or uses polysyndeton to create accumulation, or shifts register to signal authority. Then you take those specific moves and apply them to your own conceptual framework and task context. The craft pattern is transferable; the thinking it carries is yours. This is why reading widely in your form matters: every text you study expands your repertoire of available techniques.`
 };
 
 toggleBtns.forEach(btn => {

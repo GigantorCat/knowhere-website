@@ -1,644 +1,454 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Blood Glucose Regulation — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Blood glucose regulation — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
-
-:root {
-  --bg: #0B0D0C;
-  --bg2: #12160F;
-  --acc: #5AADD4;
-  --ag: rgba(90, 173, 212, .7);
-  --ag1: rgba(90, 173, 212, .12);
-  --ag2: rgba(90, 173, 212, .45);
-  --amb: #FAC775;
-  --ink: #EDEDE8;
-  --ink-dim: #8C9389;
-  --line: #262B26;
+:root{
+  --bg:#0B0D0C;--bg2:#12160F;--acc:#5AADD4;--acc-rgb:90, 173, 212;
+  --ag:rgba(var(--acc-rgb),.7);--ag1:rgba(var(--acc-rgb),.12);--ag2:rgba(var(--acc-rgb),.45);
+  --amb:#FAC775;--ink:#EDEDE8;--ink-dim:#8C9389;--line:#262B26;
 }
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
-}
-
-body {
-  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
-  font-family: 'Geist', sans-serif;
-  color: var(--ink);
-  min-height: 100vh;
-  padding: 40px 16px 72px;
-}
-
-.container { max-width: 720px; margin: 0 auto; }
-
-h1 {
-  font-size: clamp(30px, 8vw, 52px);
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1.02;
-  margin-bottom: 18px;
-}
-
-.intro {
-  font-size: 15.5px;
-  font-weight: 400;
-  color: var(--ink-dim);
-  line-height: 1.55;
-  max-width: 58ch;
-  margin-bottom: 32px;
-}
-
-.card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 18px;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: 6px;
-}
-
-.card-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  color: white;
-}
-
-.live-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--acc);
-}
-
-.card-hint {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--ink-dim);
-  margin-bottom: 14px;
-}
-
-.canvas-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16/9;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
-  box-shadow: inset 0 0 0 1px var(--ag1);
-  margin-bottom: 16px;
-}
-
-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.canvas-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(4px);
-  padding: 9px 16px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  text-transform: uppercase;
-  color: var(--acc);
-  text-align: center;
-}
-
-.slider-group { margin-bottom: 12px; }
-
-.slider-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 10px;
-  display: block;
-}
-
-.bg-slider {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  height: 4px;
-  border-radius: 3px;
-  background: linear-gradient(90deg, var(--acc) var(--fill, 50%), #23291f var(--fill, 50%));
-  outline: none;
-  margin-bottom: 8px;
-}
-
-.bg-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow .15s;
-}
-
-.bg-slider::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.bg-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow .15s;
-}
-
-.bg-slider::-moz-range-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.tick-labels {
-  display: flex;
-  justify-content: space-between;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--ink-dim);
-}
-
-.stat-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-}
-
-.stat-item {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.stat-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-}
-
-.stat-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 24px;
-  font-weight: 500;
-}
-
-.stat-value.accent { color: var(--acc); }
-.stat-value.amber { color: var(--amb); }
-
-.toggle-section {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.toggle-btn {
-  flex: 1;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14.5px;
-  padding: 12px;
-  border-radius: 11px;
-  background: #12160F;
-  border: 1px solid var(--line);
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: all .2s;
-}
-
-.toggle-btn.active {
-  background: rgba(90,173,212,.1);
-  border: 1px solid var(--acc);
-  color: var(--acc);
-  box-shadow: 0 0 22px rgba(90,173,212,.18);
-}
-
-.knowdrop {
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-  font-size: 14.5px;
-  font-weight: 400;
-  line-height: 1.65;
-  color: var(--ink);
-}
-
-.know-this {
-  border-left: 3px solid var(--acc);
-  padding: 16px 18px;
-  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
-  border-radius: 0 12px 12px 0;
-  margin-bottom: 34px;
-}
-
-.know-this-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--acc);
-  margin-bottom: 10px;
-  display: block;
-}
-
-.know-this-body {
-  font-size: 17.4px;
-  font-weight: 400;
-  line-height: 1.55;
-  color: var(--ink);
-}
-
-.footer {
-  margin-top: 34px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.pulse-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--acc);
-  box-shadow: 0 0 10px var(--acc);
-  animation: bgPulse 2.4s ease-in-out infinite;
-}
-
-@keyframes bgPulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: .35; transform: scale(.6); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
-}
+*{box-sizing:border-box;margin:0;padding:0}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+body{background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C 55%);font-family:'Geist',sans-serif;color:var(--ink);min-height:100vh;padding:40px 16px 0;box-sizing:border-box}
+.container{max-width:720px;margin:0 auto}
+h1{font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin-bottom:16px}
+.intro{font-size:15.5px;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin-bottom:28px}
+.card{background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:18px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1)}
+.card-header{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+.card-label{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;color:#fff}
+.live-tag{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--acc);text-align:right}
+.card-hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin-bottom:14px}
+.bg-q{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:8px}
+.bg-pick{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.bg-pick3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+@media (max-width:560px){.bg-pick{grid-template-columns:1fr 1fr}}
+.tg{font-family:'JetBrains Mono',monospace;font-size:12px;padding:10px 6px;border-radius:999px;background:#12160F;border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:all .2s}
+.tg[aria-pressed="true"]{background:rgba(var(--acc-rgb),.1);border:1px solid var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.canvas-wrapper{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1);margin-bottom:16px}
+.canvas-wrapper canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.canvas-overlay{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:14px;text-transform:uppercase;color:var(--acc);text-align:center}
+.bg-row{display:flex;justify-content:space-between;align-items:baseline;font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin:14px 0 10px}
+.bg-row b{font-weight:500;color:var(--acc);font-size:12px;text-transform:none}
+.bg-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;outline:none;cursor:pointer;background:linear-gradient(90deg,var(--acc) var(--fill,0%),#23291f var(--fill,0%))}
+.bg-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s}
+.bg-slider::-webkit-slider-thumb:hover{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.bg-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag)}
+.bg-ticks{position:relative;height:16px;margin:8px 10px 0;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink-dim)}
+.bg-ticks span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}
+.bg-loop{margin-top:16px;border-top:1px solid var(--line);padding-top:14px}
+.bg-loop ol{list-style:none;display:grid;gap:6px}
+.bg-loop li{display:grid;grid-template-columns:92px 1fr;gap:10px;align-items:baseline;font-size:13.5px;line-height:1.45;color:var(--ink)}
+.bg-loop li span{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim)}
+.bg-loop li.broken b{color:var(--amb)}
+.bg-loop b{font-weight:500}
+.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;border-top:1px solid var(--line);margin-top:16px;padding-top:14px}
+.stat-label{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:6px}
+.stat-value{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500}
+.stat-value small{font-size:12px;color:var(--ink-dim);margin-left:4px}
+.stat-value.acc{color:var(--acc)}.stat-value.amb{color:var(--amb)}
+.bg-drops{display:flex;flex-wrap:wrap;gap:8px}
+.bg-drops .tg{flex:1 1 30%;padding:11px 8px}
+.knowdrop{border-top:1px solid var(--line);padding-top:16px;margin-top:16px}
+.knowdrop p{font-size:14.5px;line-height:1.65;color:var(--ink)}
+.know-this{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));border-radius:0 12px 12px 0;margin-bottom:0;padding-bottom:16px}
+.know-this-tag{display:flex;align-items:center;gap:9px;margin-bottom:12px}
+.know-this-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:ktp 2.4s ease-in-out infinite}
+@keyframes ktp{0%,100%{opacity:1}50%{opacity:.45}}
+.know-this-label{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.15em;color:var(--acc)}
+.know-this-body{font-size:17.4px;line-height:1.55;color:var(--ink)}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
 
+<h2 class="sr-only">Blood glucose regulation: a model body over five hours, showing the pancreas, the blood, muscle and the liver beside a graph of blood glucose, for a healthy body, type 1 diabetes, type 1 diabetes treated with insulin and type 2 diabetes</h2>
+
 <div class="container">
-  <h2 class="sr-only">Blood Glucose Regulation Interactive Widget</h2>
-  
-  <h1>Your body fights glucose spikes with <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">opposite</span> hormones</h1>
-  
-  <p class="intro">Insulin and glucagon work antagonistically — when one rises, the other falls. This push-pull control maintains blood glucose within a narrow 4-6 mmol/L range despite constant fluctuations from eating and fasting. Drag the slider to simulate changing blood glucose levels and watch how hormone secretion responds.</p>
+  <h1>Between meals, your blood sugar comes from your <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">liver</span></h1>
+  <p class="intro">Two hormones from the pancreas tell the liver whether to store glucose or release it, and that tug of war holds blood glucose between about 4 and 7.8 mmol/L. Break one side of the loop and the level drifts out of range. Pick a body and an event, then move the clock forward and watch blood glucose, insulin and glucagon.</p>
 
   <div class="card">
     <div class="card-header">
-      <span class="card-label">Antagonistic Control</span>
-      <span class="live-tag" id="liveTag">Normal Range</span>
+      <span class="card-label">Five hours in one body</span>
+      <span class="live-tag" id="bgTag">In range</span>
     </div>
-    <div class="card-hint">Drag to simulate glucose change after eating or fasting</div>
-    
-    <div class="canvas-wrapper">
-      <canvas id="canvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">Blood Glucose: 5.0 mmol/L</div>
+    <div class="card-hint">Pick a body and an event. Move the clock. Watch the loop.</div>
+
+    <div class="bg-q">Whose body?</div>
+    <div class="bg-pick" role="group" aria-label="Choose the body">
+      <button class="tg" data-b="healthy" aria-pressed="true">Healthy</button>
+      <button class="tg" data-b="t1" aria-pressed="false">Type 1</button>
+      <button class="tg" data-b="t1ins" aria-pressed="false">Type 1 + insulin</button>
+      <button class="tg" data-b="t2" aria-pressed="false">Type 2</button>
     </div>
 
-    <div class="slider-group">
-      <label class="slider-label" for="bgSlider">Blood Glucose Level</label>
-      <input type="range" id="bgSlider" class="bg-slider" min="3" max="10" step="0.1" value="5" style="--fill:28.6%">
-      <div class="tick-labels">
-        <span>3 mmol/L</span>
-        <span>5 mmol/L</span>
-        <span>10 mmol/L</span>
-      </div>
+    <div class="bg-q">What happens?</div>
+    <div class="bg-pick3" role="group" aria-label="Choose the event">
+      <button class="tg" data-e="meal" aria-pressed="true">A meal</button>
+      <button class="tg" data-e="exercise" aria-pressed="false">Exercise</button>
+      <button class="tg" data-e="stress" aria-pressed="false">Stress</button>
     </div>
+
+    <div class="canvas-wrapper">
+      <canvas id="bgCanvas" role="img" aria-label="The blood carries glucose past the pancreas, muscle and liver. The pancreas releases insulin or glucagon, the liver stores glucose as glycogen or releases it, and a graph shows blood glucose over five hours with the healthy range shaded and the current time marked"></canvas>
+      <div class="canvas-overlay" id="bgOverlay">1.0 h · 7.8 mmol/L</div>
+    </div>
+
+    <div class="bg-row"><span>Time since start</span><b id="bgTV">1.0 h</b></div>
+    <input type="range" class="bg-slider" id="bgT" aria-label="Time since start in hours" min="0" max="5" step="0.1" value="1">
+    <div class="bg-ticks" id="bgTT"></div>
 
     <div class="stat-row">
-      <div class="stat-item">
-        <span class="stat-label">Insulin Level</span>
-        <span class="stat-value accent" id="insulinStat">Medium</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-label">Glucagon Level</span>
-        <span class="stat-value amber" id="glucagonStat">Medium</span>
-      </div>
+      <div class="stat"><div class="stat-label">Blood glucose</div><div class="stat-value acc" id="bgG">7.8<small>mmol/L</small></div></div>
+      <div class="stat"><div class="stat-label">Liver glycogen</div><div class="stat-value amb" id="bgGly">60%</div></div>
+    </div>
+
+    <div class="bg-loop">
+      <div class="bg-q">The feedback loop right now</div>
+      <ol id="bgLoop"></ol>
     </div>
   </div>
 
   <div class="card">
-    <div class="toggle-section">
-      <button class="toggle-btn active" id="insulinBtn">Insulin</button>
-      <button class="toggle-btn" id="glucagonBtn">Glucagon</button>
+    <div class="bg-q">Take it further</div>
+    <div class="bg-drops" role="group" aria-label="Choose what the paragraph explains">
+      <button class="tg" data-d="loop" aria-pressed="true">Feedback loop</button>
+      <button class="tg" data-d="stress" aria-pressed="false">Stress hormones</button>
+      <button class="tg" data-d="diab" aria-pressed="false">Diabetes</button>
+      <button class="tg" data-d="hypo" aria-pressed="false">Hypoglycaemia</button>
+      <button class="tg" data-d="thy" aria-pressed="false">Hyperthyroidism</button>
     </div>
-    
-    <div class="knowdrop" id="knowdropText">
-      Insulin is released by beta cells in the pancreas after eating and binds to receptors on liver and muscle cells. This binding triggers three key effects: it increases the number of glucose transport proteins in cell membranes allowing more glucose uptake, activates enzymes for glycogenesis to convert glucose into glycogen for storage, and increases glucose use in cellular respiration. The result is a rapid decrease in blood glucose levels back toward the normal range of 4-6 mmol/L.
-    </div>
+    <div class="knowdrop"><p id="bgDrop"></p></div>
   </div>
 
-  <div class="know-this">
-    <span class="know-this-tag">Know This</span>
-    <p class="know-this-body">When blood glucose rises, <span style="color:var(--acc)">insulin</span> increases while <span style="color:var(--amb)">glucagon</span> decreases — they work as antagonistic hormones to maintain homeostasis in the narrow 4-6 mmol/L range.</p>
-  </div>
-
-  <div class="footer">
-    <div class="pulse-dot"></div>
+  <div class="card know-this">
+    <div class="know-this-tag"><div class="know-this-dot"></div><div class="know-this-label">Know This</div></div>
+    <p class="know-this-body">Blood glucose stays near its set point by <span style="color:var(--acc)">negative feedback</span>: <span style="color:var(--acc)">insulin</span> lowers it and <span style="color:var(--acc)">glucagon</span> raises it, so when either signal fails the level drifts out of range.</p>
   </div>
 </div>
 
 <script>
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-const slider = document.getElementById('bgSlider');
-const liveTag = document.getElementById('liveTag');
-const canvasOverlay = document.getElementById('canvasOverlay');
-const insulinStat = document.getElementById('insulinStat');
-const glucagonStat = document.getElementById('glucagonStat');
-const insulinBtn = document.getElementById('insulinBtn');
-const glucagonBtn = document.getElementById('glucagonBtn');
-const knowdropText = document.getElementById('knowdropText');
+(function(){
+/* ---------- the model: one minute per step for five hours; every readout and every drawing reads from it ---------- */
+const LOW = 4.0, HIGH = 7.8, SET_LO = 4.6, SET_HI = 5.4;
+const MEAL_AT = 20, EX_FROM = 30, EX_TO = 120, STRESS_AT = 30;
+function sim(body, ev){
+  const S = body === "t2" ? 0.3 : 1;                          /* how strongly cells respond to insulin */
+  let G = body === "t1" ? 7.5 : (body === "t2" ? 6.2 : 4.9);  /* blood glucose, mmol/L */
+  let I = body === "t1" ? 0 : (body === "t2" ? 0.5 : 0.2);    /* insulin, relative */
+  let Gc = 0.3, Gly = 60;                                      /* glucagon, relative; liver glycogen, % full */
+  const out = [];
+  for (let t = 0; t <= 300; t++){
+    const u = t - MEAL_AT;
+    const Ra = ev === "meal" && u > 0 ? 8 * u / 484 * Math.exp(-u / 22) : 0;           /* glucose absorbed from the gut */
+    const ex = ev === "exercise" && t >= EX_FROM && t < EX_TO ? 1 : 0;
+    const adr = ev === "stress" && t >= STRESS_AT ? Math.exp(-(t - STRESS_AT) / 45) : 0;  /* adrenaline: fast, short */
+    const cort = ev === "stress" && t >= STRESS_AT ? Math.min(1, (t - STRESS_AT) / 60) * Math.exp(-Math.max(0, t - 150) / 120) : 0; /* cortisol: slow, long */
+    let sec;
+    if (body === "healthy") sec = 0.12 + 0.4 * Math.max(0, G - 4.6);
+    else if (body === "t2") sec = 0.3 + 0.35 * Math.max(0, G - 4.6);
+    else if (body === "t1") sec = 0;
+    else { sec = 0.2; if (ev === "meal" && t >= 10){ const v = t - 10; sec += 1.6 * v / 3600 * Math.exp(-v / 60) * 60; } }  /* injected: set by the dose, not by glucose */
+    if (body !== "t1ins") sec *= (1 - 0.6 * adr) * (1 - 0.5 * ex);
+    I += (sec - I) / (body === "t1ins" ? 1 : 12);
+    const gcT = Math.max(0.05, 0.25 + (body === "t1" || body === "t1ins" ? 0.4 : 1.6) * Math.max(0, 4.9 - G) - 0.25 * Math.min(1, I * S)) + 0.25 * ex;
+    Gc += (gcT - Gc) / 10;
+    const store = 0.02 * S * I * G / 5;                                                  /* liver takes glucose in and makes glycogen */
+    const release = (0.012 + 0.03 * Gc + 0.08 * adr + 0.012 * cort) / (1 + 1.5 * I * S) * (Gly > 2 ? 1 : 0.2); /* liver releases glucose */
+    const muscle = 0.018 * S * I * G / 5 + ex * 0.045 * G / (G + 2);
+    const brain = 0.018 * G / (G + 1.5);
+    const kidney = G > 10 ? 0.004 * (G - 10) : 0;
+    G = Math.max(1.8, G + Ra + release - store - muscle - brain - kidney);
+    Gly = Math.max(0, Math.min(100, Gly + (store - release) * 2.5));
+    out.push({ t, G, I, Gc, Gly, store, release, muscle, adr, cort, ex, Ra });
+  }
+  return out;
+}
 
+const DROPS = {
+  loop: `A negative feedback loop turns a change around. Stimulus: blood glucose rises after a meal. Receptor and control centre: beta cells in the islets of the pancreas detect the rise and release insulin. Effectors: liver, muscle and fat cells take glucose in, and the liver stores it as glycogen. Response: glucose falls back toward its set point, the stimulus shrinks and insulin release slows. When glucose falls, alpha cells release glucagon and the liver breaks glycogen down: the same loop, run the other way.`,
+  stress: `The stress response adds two hormones that raise blood glucose. Adrenaline, from the adrenal medulla, acts within seconds: it makes the liver break glycogen down and holds back insulin release, so muscles have fuel for fight or flight. Cortisol, from the adrenal cortex, acts over hours: it drives gluconeogenesis, making new glucose in the liver from amino acids and glycerol. Choose stress and watch glucose climb with nothing eaten. In a healthy body insulin rises to pull it back; without insulin, nothing does.`,
+  diab: `In type 1 diabetes the immune system destroys the beta cells, so no insulin is made. Glucose cannot get into most cells, the liver keeps releasing it, and blood glucose stays high (hyperglycaemia). Above about 10 mmol/L the kidneys spill glucose into urine, taking water with it, so a person is thirsty and urinates often, and cells short of glucose break down fat instead. Injected insulin replaces the missing signal, but the dose is set by the person, not by feedback. In type 2 diabetes insulin is made but cells respond weakly (insulin resistance), so glucose stays high for longer after each meal.`,
+  hypo: `Hypoglycaemia is a blood glucose level below 4 mmol/L. It is most common in people who inject insulin, because an injected dose cannot be switched off when glucose starts to fall: exercise, a missed meal or too large a dose can all push the level down. The brain depends on a steady supply of glucose, so early signs are shaking, sweating, hunger and confusion. It is treated straight away with fast-acting glucose, such as jelly beans or juice, then a longer-lasting carbohydrate. Choose type 1 with insulin, then exercise, to watch it happen.`,
+  thy: `Hyperthyroidism is a malfunction in a different loop. The hypothalamus releases TRH, the pituitary releases TSH, and TSH makes the thyroid release thyroxine, which raises the metabolic rate of nearly every cell. Normally a high thyroxine level feeds back to switch TRH and TSH off. In hyperthyroidism the thyroid makes too much thyroxine, most often in Graves disease, where antibodies act like TSH and keep the gland switched on whatever the feedback says. The result is a fast heart rate, weight loss, heat intolerance and anxiety, as cells burn through fuel faster.`
+};
+const BODY_NAME = { healthy: "Healthy", t1: "Type 1", t1ins: "Type 1 + insulin", t2: "Type 2" };
+
+const cv = document.getElementById("bgCanvas"), ctx = cv.getContext("2d");
+const sT = document.getElementById("bgT"), vT = document.getElementById("bgTV");
+const tag = document.getElementById("bgTag"), ovl = document.getElementById("bgOverlay");
+const outG = document.getElementById("bgG"), outGly = document.getElementById("bgGly");
+const loopEl = document.getElementById("bgLoop"), drop = document.getElementById("bgDrop");
+const CSS = getComputedStyle(document.documentElement);
+const ACC = CSS.getPropertyValue("--acc").trim();
+const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+const AMB = CSS.getPropertyValue("--amb").trim();
+const INK = CSS.getPropertyValue("--ink").trim();
+const DIM = CSS.getPropertyValue("--ink-dim").trim();
+const LINE = CSS.getPropertyValue("--line").trim();
+const MONO = `"JetBrains Mono", monospace`;
 const dpr = Math.min(window.devicePixelRatio || 1, 2);
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d');
+const buf = document.createElement("canvas"), bctx = buf.getContext("2d");
+function acc(a){ return "rgba(" + RGB + "," + a + ")"; }
+const AMB_RGB = (function(hx){ const m = hx.replace("#", ""); return [0, 2, 4].map(i => parseInt(m.substr(i, 2), 16)).join(","); })(AMB);
+function amb(a){ return "rgba(" + AMB_RGB + "," + a + ")"; }
 
-let glucose = 5.0;
-let time = 0;
+let body = "healthy", ev = "meal", dropKey = "loop", run = sim(body, ev), tMin = 60;
 
-const insulinText = "Insulin is released by beta cells in the pancreas after eating and binds to receptors on liver and muscle cells. This binding triggers three key effects: it increases the number of glucose transport proteins in cell membranes allowing more glucose uptake, activates enzymes for glycogenesis to convert glucose into glycogen for storage, and increases glucose use in cellular respiration. The result is a rapid decrease in blood glucose levels back toward the normal range of 4-6 mmol/L.";
+let seed = 11; function rnd(){ seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }
+const spots = Array.from({ length: 70 }, () => ({ x: rnd(), y: rnd(), r: 0.7 + rnd() * 0.6 }));
+const hSpots = Array.from({ length: 16 }, () => ({ x: rnd(), y: rnd() }));
 
-const glucagonText = "Glucagon is released by alpha cells in the pancreas during fasting and binds to receptors on liver cells. This binding activates enzymes for glycogenolysis that hydrolyses glycogen back into glucose releasing it into the bloodstream, promotes gluconeogenesis which converts amino acids and glycerol into new glucose molecules, and reduces cellular glucose uptake to preserve blood glucose. These combined effects raise blood glucose levels back toward the normal homeostatic range.";
+(function ticks(){
+  const el = document.getElementById("bgTT");
+  for (const v of [0, 1, 2, 3, 4, 5]){ const s = document.createElement("span"); s.style.left = (v / 5 * 100) + "%"; s.textContent = v + " h"; el.appendChild(s); }
+})();
+function fill(el){ el.style.setProperty("--fill", ((parseFloat(el.value) - parseFloat(el.min)) / (parseFloat(el.max) - parseFloat(el.min)) * 100) + "%"); }
 
-function resize() {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+function level(x){ return x < 0.08 ? "none" : x < 0.35 ? "low" : x < 0.8 ? "medium" : "high"; }
+function statusOf(G){ return G < LOW ? "Hypoglycaemia" : G > HIGH ? "Hyperglycaemia" : "In range"; }
+
+/* the loop, read from the model at this minute */
+function loopNow(){
+  const r = run[tMin], prev = run[Math.max(0, tMin - 5)], next = run[Math.min(300, tMin + 5)];
+  const trend = next.G - prev.G;
+  const tr = trend > 0.08 ? "rising" : trend < -0.08 ? "falling" : "steady";
+  const stress = r.adr > 0.15 || r.cort > 0.3;
+  const rows = [];
+  const hi = r.G > SET_HI, lo = r.G < SET_LO;
+  rows.push(["Stimulus", "Glucose " + r.G.toFixed(1) + " mmol/L, " + tr + (hi ? ", above set point" : lo ? ", below set point" : ", near set point"), false]);
+  let rec, msg, eff, broken = false;
+  if (hi){
+    if (body === "t1"){ rec = "Beta cells destroyed: the rise goes undetected"; msg = "No insulin"; eff = "Cells cannot take glucose up; the liver keeps releasing it"; broken = true; }
+    else if (body === "t1ins"){ rec = "Beta cells destroyed: no sensor"; msg = "Injected insulin (" + level(r.I) + "), set by the dose"; eff = "Liver and muscle take up glucose while the dose lasts"; }
+    else { rec = "Beta cells in the pancreas detect the rise"; msg = "Insulin " + level(r.I) + (body === "t2" ? ", but cells resist it" : ""); eff = body === "t2" ? "Liver and muscle respond weakly: insulin resistance" : "Liver and muscle take glucose up; liver stores glycogen"; if (body === "t2") broken = true; }
+  } else if (lo){
+    rec = "Alpha cells in the pancreas detect the fall";
+    msg = "Glucagon " + level(r.Gc) + (body === "t1ins" ? ", injected insulin still on" : "");
+    eff = "Liver breaks glycogen down and releases glucose";
+    if (body === "t1ins") broken = true;
+  } else {
+    rec = body === "t1" || body === "t1ins" ? "Alpha cells only: beta cells destroyed" : "Alpha and beta cells: small adjustments";
+    msg = "Insulin " + level(r.I) + ", glucagon " + level(r.Gc);
+    eff = r.store > r.release ? "Liver stores a little glycogen" : "Liver releases a little glucose";
+  }
+  if (stress) msg += "; adrenaline " + (r.adr > 0.15 ? "on" : "fading") + ", cortisol " + (r.cort > 0.3 ? "on" : "low");
+  if (r.ex) eff += "; working muscle takes glucose up without insulin";
+  let resp;
+  if (r.G < LOW && tr !== "rising") { resp = "Glucose keeps falling: hypoglycaemia"; broken = true; }
+  else if (r.G > HIGH && tr !== "falling") { resp = "Glucose keeps rising: hyperglycaemia"; broken = true; }
+  else if (hi && tr === "falling") resp = "Glucose falls back toward the set point: negative feedback";
+  else if (lo && tr === "rising") resp = "Glucose rises back toward the set point: negative feedback";
+  else if (hi || lo) resp = "Glucose " + tr + ", not yet corrected";
+  else resp = "Glucose held near the set point";
+  rows.push(["Receptor", rec, broken && hi && body === "t1"], ["Messenger", msg, false], ["Effector", eff, broken && (body === "t2" || (lo && body === "t1ins"))], ["Response", resp, broken]);
+  return { rows, tr, broken };
 }
 
-function updateUI() {
-  glucose = parseFloat(slider.value);
-  const fill = ((glucose - 3) / 7) * 100;
-  slider.style.setProperty('--fill', fill + '%');
-  
-  canvasOverlay.textContent = `Blood Glucose: ${glucose.toFixed(1)} mmol/L`;
-  
-  if (glucose < 4) {
-    liveTag.textContent = 'Hypoglycemia';
-  } else if (glucose <= 6) {
-    liveTag.textContent = 'Normal Range';
-  } else if (glucose <= 8) {
-    liveTag.textContent = 'Elevated';
-  } else {
-    liveTag.textContent = 'Hyperglycemia';
+function update(){
+  tMin = Math.round(parseFloat(sT.value) * 60);
+  const r = run[tMin];
+  vT.textContent = (tMin / 60).toFixed(1) + " h";
+  fill(sT);
+  outG.innerHTML = r.G.toFixed(1) + "<small>mmol/L</small>";
+  outGly.textContent = Math.round(r.Gly) + "%";
+  const st = statusOf(r.G);
+  tag.textContent = st;
+  const L = loopNow();
+  loopEl.innerHTML = "";
+  for (const row of L.rows){
+    const li = document.createElement("li"); if (row[2]) li.className = "broken";
+    const a = document.createElement("span"); a.textContent = row[0];
+    const b = document.createElement("b"); b.textContent = row[1];
+    li.appendChild(a); li.appendChild(b); loopEl.appendChild(li);
   }
-  
-  // Insulin increases with glucose
-  if (glucose < 4) {
-    insulinStat.textContent = 'Very Low';
-  } else if (glucose < 5) {
-    insulinStat.textContent = 'Low';
-  } else if (glucose <= 6) {
-    insulinStat.textContent = 'Medium';
-  } else if (glucose <= 8) {
-    insulinStat.textContent = 'High';
-  } else {
-    insulinStat.textContent = 'Very High';
-  }
-  
-  // Glucagon decreases with glucose (antagonistic)
-  if (glucose < 4) {
-    glucagonStat.textContent = 'Very High';
-  } else if (glucose < 5) {
-    glucagonStat.textContent = 'High';
-  } else if (glucose <= 6) {
-    glucagonStat.textContent = 'Medium';
-  } else if (glucose <= 8) {
-    glucagonStat.textContent = 'Low';
-  } else {
-    glucagonStat.textContent = 'Very Low';
-  }
-}
-
-function draw() {
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  const cx = w / 2;
-  const cy = h / 2;
-  
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, w, h);
-  
-  // Draw coordinate system
-  ctx.strokeStyle = 'rgba(90,173,212,0.08)';
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(40, cy);
-  ctx.lineTo(w - 20, cy);
-  ctx.stroke();
-  
-  ctx.beginPath();
-  ctx.moveTo(40, 20);
-  ctx.lineTo(40, h - 20);
-  ctx.stroke();
-  
-  // Reference range box (4-6 mmol/L)
-  const refMin = cy - 30;
-  const refMax = cy + 30;
-  ctx.fillStyle = 'rgba(90,173,212,0.05)';
-  ctx.fillRect(40, refMin, w - 60, refMax - refMin);
-  
-  ctx.strokeStyle = 'rgba(90,173,212,0.15)';
-  ctx.lineWidth = 1;
-  ctx.setLineDash([4, 4]);
-  ctx.beginPath();
-  ctx.moveTo(40, refMin);
-  ctx.lineTo(w - 20, refMin);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(40, refMax);
-  ctx.lineTo(w - 20, refMax);
-  ctx.stroke();
-  ctx.setLineDash([]);
-  
-  // Map glucose (3-10) to y position
-  const glucoseY = h - 20 - ((glucose - 3) / 7) * (h - 40);
-  
-  // Insulin curve (rises with glucose) - accent green
-  ctx.strokeStyle = 'rgba(90,173,212,0.6)';
-  ctx.lineWidth = 2.5;
-  ctx.beginPath();
-  for (let i = 0; i <= 100; i++) {
-    const x = 40 + (w - 60) * (i / 100);
-    const g = 3 + 7 * (i / 100);
-    const insulinLevel = Math.max(0, Math.min(1, (g - 3) / 7));
-    const y = h - 20 - insulinLevel * (h - 40) * 0.8;
-    if (i === 0) ctx.moveTo(x, y);
-    else ctx.lineTo(x, y);
-  }
-  ctx.stroke();
-  
-  // Glucagon curve (falls with glucose) - amber
-  ctx.strokeStyle = 'rgba(250,199,117,0.6)';
-  ctx.lineWidth = 2.5;
-  ctx.beginPath();
-  for (let i = 0; i <= 100; i++) {
-    const x = 40 + (w - 60) * (i / 100);
-    const g = 3 + 7 * (i / 100);
-    const glucagonLevel = Math.max(0, Math.min(1, 1 - (g - 3) / 7));
-    const y = h - 20 - glucagonLevel * (h - 40) * 0.8;
-    if (i === 0) ctx.moveTo(x, y);
-    else ctx.lineTo(x, y);
-  }
-  ctx.stroke();
-  
-  // Current glucose indicator
-  const currentX = 40 + (w - 60) * ((glucose - 3) / 7);
-  
-  // Vertical indicator line
-  ctx.strokeStyle = 'rgba(237,237,232,0.3)';
-  ctx.lineWidth = 1.5;
-  ctx.setLineDash([3, 3]);
-  ctx.beginPath();
-  ctx.moveTo(currentX, 20);
-  ctx.lineTo(currentX, h - 20);
-  ctx.stroke();
-  ctx.setLineDash([]);
-  
-  // Insulin level marker (green)
-  const insulinLevel = Math.max(0, Math.min(1, (glucose - 3) / 7));
-  const insulinY = h - 20 - insulinLevel * (h - 40) * 0.8;
-  
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  const insulinGlow = ctx.createRadialGradient(currentX, insulinY, 0, currentX, insulinY, 16);
-  insulinGlow.addColorStop(0, 'rgba(90,173,212,0.8)');
-  insulinGlow.addColorStop(1, 'rgba(90,173,212,0)');
-  ctx.fillStyle = insulinGlow;
-  ctx.beginPath();
-  ctx.arc(currentX, insulinY, 16, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
-  
-  ctx.fillStyle = 'rgba(90,173,212,1)';
-  ctx.beginPath();
-  ctx.arc(currentX, insulinY, 5, 0, Math.PI * 2);
-  ctx.fill();
-  
-  // Glucagon level marker (amber)
-  const glucagonLevel = Math.max(0, Math.min(1, 1 - (glucose - 3) / 7));
-  const glucagonY = h - 20 - glucagonLevel * (h - 40) * 0.8;
-  
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  const glucagonGlow = ctx.createRadialGradient(currentX, glucagonY, 0, currentX, glucagonY, 16);
-  glucagonGlow.addColorStop(0, 'rgba(250,199,117,0.8)');
-  glucagonGlow.addColorStop(1, 'rgba(250,199,117,0)');
-  ctx.fillStyle = glucagonGlow;
-  ctx.beginPath();
-  ctx.arc(currentX, glucagonY, 16, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
-  
-  ctx.fillStyle = 'rgba(250,199,117,1)';
-  ctx.beginPath();
-  ctx.arc(currentX, glucagonY, 5, 0, Math.PI * 2);
-  ctx.fill();
-  
-  // Animated particles along curves
-  const numParticles = 8;
-  for (let i = 0; i < numParticles; i++) {
-    const offset = (time * 0.3 + i * (1 / numParticles)) % 1;
-    const px = 40 + (w - 60) * offset;
-    const pg = 3 + 7 * offset;
-    
-    // Insulin particle
-    const pInsY = h - 20 - Math.max(0, Math.min(1, (pg - 3) / 7)) * (h - 40) * 0.8;
-    ctx.fillStyle = `rgba(90,173,212,${0.3 + 0.3 * Math.sin(time * 2 + i)})`;
-    ctx.beginPath();
-    ctx.arc(px, pInsY, 2, 0, Math.PI * 2);
-    ctx.fill();
-    
-    // Glucagon particle
-    const pGlucY = h - 20 - Math.max(0, Math.min(1, 1 - (pg - 3) / 7)) * (h - 40) * 0.8;
-    ctx.fillStyle = `rgba(250,199,117,${0.3 + 0.3 * Math.sin(time * 2 + i + Math.PI)})`;
-    ctx.beginPath();
-    ctx.arc(px, pGlucY, 2, 0, Math.PI * 2);
-    ctx.fill();
-  }
-  
-  // Bloom
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
-  
-  // Vignette
-  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-}
-
-function animate() {
-  time += 0.016;
+  const liver = r.store > r.release * 1.05 ? "liver storing" : r.release > r.store * 1.05 ? "liver releasing" : "liver balanced";
+  ovl.textContent = (tMin / 60).toFixed(1) + " h · " + r.G.toFixed(1) + " mmol/L · " + liver;
   draw();
-  requestAnimationFrame(animate);
 }
 
-slider.addEventListener('input', updateUI);
+/* ---------- geometry ---------- */
+function layout(w, h){
+  const ovH = 40, top = h * 0.06, bot = h - ovH - h * 0.03;
+  if (w >= 560){
+    const sw = w * 0.5;
+    return { scene: { x: w * 0.03, y: top, w: sw - w * 0.04, h: bot - top }, graph: { x: sw + w * 0.02, y: top, w: w * 0.46, h: bot - top } };
+  }
+  const split = top + (bot - top) * 0.6;
+  return { scene: { x: w * 0.04, y: top, w: w * 0.92, h: split - top }, graph: { x: w * 0.04, y: split + h * 0.02, w: w * 0.92, h: bot - split - h * 0.02 } };
+}
 
-insulinBtn.addEventListener('click', () => {
-  insulinBtn.classList.add('active');
-  glucagonBtn.classList.remove('active');
-  knowdropText.textContent = insulinText;
-});
+function arrow(x1, y1, x2, y2, col, wd){
+  const a = Math.atan2(y2 - y1, x2 - x1), hd = 6 + wd * 1.5;
+  ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = wd;
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2 - Math.cos(a) * hd * 0.6, y2 - Math.sin(a) * hd * 0.6); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x2, y2); ctx.lineTo(x2 - Math.cos(a - 0.45) * hd, y2 - Math.sin(a - 0.45) * hd); ctx.lineTo(x2 - Math.cos(a + 0.45) * hd, y2 - Math.sin(a + 0.45) * hd); ctx.closePath(); ctx.fill();
+}
 
-glucagonBtn.addEventListener('click', () => {
-  glucagonBtn.classList.add('active');
-  insulinBtn.classList.remove('active');
-  knowdropText.textContent = glucagonText;
-});
+function drawScene(b){
+  const r = run[tMin];
+  const fs = Math.max(11, Math.min(13, b.w / 30));
+  ctx.save(); ctx.font = fs + "px " + MONO; ctx.textBaseline = "middle";
 
-window.addEventListener('resize', resize);
-resize();
-updateUI();
-animate();
+  /* blood vessel across the top, glucose dots in proportion to the level */
+  const vy = b.y + b.h * 0.03, vh = b.h * 0.24;
+  ctx.fillStyle = "rgba(160,40,40,0.22)"; ctx.strokeStyle = "rgba(200,70,70,0.6)"; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.roundRect ? ctx.roundRect(b.x, vy, b.w, vh, vh / 2) : ctx.rect(b.x, vy, b.w, vh); ctx.fill(); ctx.stroke();
+  const nG = Math.min(spots.length, Math.round(r.G * 4.4));
+  ctx.fillStyle = INK;
+  for (let i = 0; i < nG; i++){ const s = spots[i]; ctx.beginPath(); ctx.arc(b.x + vh * 0.4 + s.x * (b.w - vh * 0.8), vy + vh * 0.18 + s.y * vh * 0.64, 2.2 * s.r, 0, Math.PI * 2); ctx.fill(); }
+  ctx.fillStyle = DIM; ctx.textAlign = "left";
+  ctx.fillText("BLOOD · " + r.G.toFixed(1) + " mmol/L", b.x + 8, vy + vh + fs * 0.9);
+
+  const rowY = b.y + b.h * 0.58, rad = Math.min(b.w * 0.15, b.h * 0.19);
+  /* pancreas, with an islet of beta (insulin) and alpha (glucagon) cells */
+  const px = b.x + b.w * 0.18, py = rowY;
+  ctx.fillStyle = "rgba(255,255,255,0.05)"; ctx.strokeStyle = DIM; ctx.lineWidth = 1.2;
+  ctx.beginPath(); ctx.ellipse(px, py, rad * 1.05, rad * 0.8, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  const dead = body === "t1" || body === "t1ins";
+  for (let i = 0; i < 6; i++){
+    const a = i / 6 * Math.PI * 2, cx = px + Math.cos(a) * rad * 0.42, cy = py + Math.sin(a) * rad * 0.34;
+    const beta = i % 2 === 0;
+    ctx.beginPath(); ctx.arc(cx, cy, rad * 0.16, 0, Math.PI * 2);
+    if (beta){
+      if (dead){ ctx.strokeStyle = DIM; ctx.lineWidth = 1; ctx.setLineDash([2, 2]); ctx.stroke(); ctx.setLineDash([]); ctx.beginPath(); ctx.moveTo(cx - rad * 0.1, cy - rad * 0.1); ctx.lineTo(cx + rad * 0.1, cy + rad * 0.1); ctx.moveTo(cx + rad * 0.1, cy - rad * 0.1); ctx.lineTo(cx - rad * 0.1, cy + rad * 0.1); ctx.stroke(); }
+      else { ctx.fillStyle = acc(0.35 + 0.5 * Math.min(1, r.I)); ctx.fill(); ctx.strokeStyle = ACC; ctx.lineWidth = 1; ctx.stroke(); }
+    } else { ctx.fillStyle = amb(0.3 + 0.5 * Math.min(1, r.Gc)); ctx.fill(); ctx.strokeStyle = AMB; ctx.lineWidth = 1; ctx.stroke(); }
+  }
+  ctx.fillStyle = INK; ctx.textAlign = "center";
+  ctx.fillText("PANCREAS", px, py + rad * 0.8 + fs * 0.9);
+
+  /* hormones rising into the blood: insulin dots (green) and glucagon dots (amber) */
+  const hy0 = py - rad * 0.85, hy1 = vy + vh + fs * 2.6;
+  const nI = Math.min(14, Math.round(r.I * 8)), nC = Math.min(14, Math.round(r.Gc * 8));
+  for (let i = 0; i < nI; i++){ const s = hSpots[i]; ctx.fillStyle = ACC; ctx.beginPath(); ctx.arc(px - rad * 0.55 + s.x * rad * 0.5, hy1 + s.y * (hy0 - hy1), 2.6, 0, Math.PI * 2); ctx.fill(); }
+  for (let i = 0; i < nC; i++){ const s = hSpots[15 - i]; ctx.fillStyle = AMB; ctx.beginPath(); ctx.rect(px + rad * 0.1 + s.x * rad * 0.5 - 2.4, hy1 + s.y * (hy0 - hy1) - 2.4, 4.8, 4.8); ctx.fill(); }
+
+  /* muscle: takes glucose in with insulin, or without it while exercising */
+  const mx = b.x + b.w * 0.5, mw = rad * 1.1, mh = rad * 1.2;
+  ctx.fillStyle = "rgba(255,255,255,0.04)"; ctx.strokeStyle = DIM; ctx.lineWidth = 1.2;
+  ctx.beginPath(); ctx.rect(mx - mw / 2, py - mh / 2, mw, mh); ctx.fill(); ctx.stroke();
+  for (let k = 1; k < 4; k++){ ctx.beginPath(); ctx.moveTo(mx - mw / 2 + 4, py - mh / 2 + k * mh / 4); ctx.lineTo(mx + mw / 2 - 4, py - mh / 2 + k * mh / 4); ctx.strokeStyle = LINE; ctx.stroke(); }
+  const mU = Math.min(1, r.muscle / 0.05);
+  if (mU > 0.08) arrow(mx, Math.min(vy + vh + fs * 2.7, py - mh / 2 - 14), mx, py - mh / 2 - 3, INK, 1 + 3 * mU);
+  ctx.fillStyle = INK; ctx.textAlign = "center";
+  ctx.fillText("MUSCLE", mx, py + mh / 2 + fs * 0.9);
+  if (r.ex){ ctx.fillStyle = DIM; ctx.fillText("working", mx, py + mh / 2 + fs * 2.2); }
+
+  /* liver: glycogen store and the direction glucose moves */
+  const lx = b.x + b.w * 0.82, lw = rad * 1.9, lh = rad * 1.35;
+  ctx.fillStyle = "rgba(255,255,255,0.05)"; ctx.strokeStyle = DIM; ctx.lineWidth = 1.2;
+  ctx.beginPath(); ctx.ellipse(lx, py, lw / 2, lh / 2, -0.15, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  const gbW = lw * 0.5, gbH = lh * 0.55, gbx = lx - gbW / 2, gby = py - gbH / 2;
+  ctx.strokeStyle = AMB; ctx.lineWidth = 1; ctx.strokeRect(gbx, gby, gbW, gbH);
+  ctx.fillStyle = amb(0.55); ctx.fillRect(gbx, gby + gbH * (1 - r.Gly / 100), gbW, gbH * r.Gly / 100);
+  ctx.fillStyle = INK; ctx.textAlign = "center";
+  ctx.fillText("LIVER", lx, py + lh / 2 + fs * 0.9);
+  ctx.fillStyle = AMB; ctx.fillText("glycogen " + Math.round(r.Gly) + "%", lx, py + lh / 2 + fs * 2.2);
+  const net = r.store - r.release, mag = Math.min(1, Math.abs(net) / 0.04);
+  const ax = lx + lw * 0.42;
+  if (mag > 0.05){
+    if (net > 0) arrow(ax, vy + vh + 2, ax, py - lh * 0.3, ACC, 1 + 3.5 * mag);
+    else arrow(ax, py - lh * 0.3, ax, vy + vh + 2, AMB, 1 + 3.5 * mag);
+  }
+
+  /* legend along the foot of the scene */
+  const ly = b.y + b.h - fs * 0.5; let lxp = b.x + 4;
+  ctx.textAlign = "left";
+  ctx.fillStyle = INK; ctx.beginPath(); ctx.arc(lxp + 3, ly, 2.6, 0, Math.PI * 2); ctx.fill(); lxp += 10;
+  ctx.fillStyle = DIM; ctx.fillText("glucose", lxp, ly); lxp += ctx.measureText("glucose").width + 12;
+  ctx.fillStyle = ACC; ctx.beginPath(); ctx.arc(lxp + 3, ly, 2.6, 0, Math.PI * 2); ctx.fill(); lxp += 10;
+  const iTxt = body === "t1" ? "β cells destroyed" : body === "t1ins" ? "insulin (injected)" : "insulin (β)";
+  ctx.fillStyle = dead ? DIM : ACC; ctx.fillText(iTxt, lxp, ly); lxp += ctx.measureText(iTxt).width + 12;
+  ctx.fillStyle = AMB; ctx.fillRect(lxp, ly - 2.4, 4.8, 4.8); lxp += 10;
+  ctx.fillText("glucagon (α)", lxp, ly);
+
+  /* stress hormones from the adrenal glands */
+  if (r.adr > 0.15 || r.cort > 0.3){
+    ctx.textAlign = "left"; ctx.fillStyle = AMB;
+    const parts = []; if (r.adr > 0.15) parts.push("adrenaline"); if (r.cort > 0.3) parts.push("cortisol");
+    ctx.fillText(parts.join(" + "), b.x + 8, vy + vh + fs * 2.1);
+  }
+  ctx.restore();
+}
+
+function drawGraph(b){
+  const m = { l: 34, r: 8, t: 18, bt: 30 };
+  const x0 = b.x + m.l, x1 = b.x + b.w - m.r, y0 = b.y + m.t, y1 = b.y + b.h - m.bt;
+  const GMAX = 16;
+  const X = t => x0 + t / 300 * (x1 - x0), Y = g => y1 - Math.min(g, GMAX) / GMAX * (y1 - y0);
+  ctx.save();
+  ctx.font = "11px " + MONO;
+  /* healthy range band */
+  ctx.fillStyle = acc(0.08); ctx.fillRect(x0, Y(HIGH), x1 - x0, Y(LOW) - Y(HIGH));
+  ctx.strokeStyle = LINE; ctx.lineWidth = 1; ctx.fillStyle = DIM;
+  for (const g of [0, 4, 8, 12, 16]){ ctx.beginPath(); ctx.moveTo(x0, Y(g)); ctx.lineTo(x1, Y(g)); ctx.stroke(); ctx.textAlign = "right"; ctx.textBaseline = "middle"; ctx.fillText(String(g), x0 - 4, Y(g)); }
+  ctx.textAlign = "center"; ctx.textBaseline = "top";
+  for (let hh = 0; hh <= 5; hh++) ctx.fillText(hh + " h", X(hh * 60), y1 + 4);
+  ctx.textAlign = "left"; ctx.textBaseline = "bottom"; ctx.fillText("BLOOD GLUCOSE (mmol/L)", x0, y0 - 3);
+  ctx.setLineDash([4, 4]); ctx.strokeStyle = AMB; ctx.globalAlpha = 0.8;
+  ctx.beginPath(); ctx.moveTo(x0, Y(LOW)); ctx.lineTo(x1, Y(LOW)); ctx.stroke();
+  ctx.globalAlpha = 1; ctx.setLineDash([]);
+  ctx.fillStyle = AMB; ctx.textAlign = "right"; ctx.textBaseline = "top"; ctx.fillText("hypo below 4", x1, Y(LOW) + 2);
+  ctx.fillStyle = acc(0.8); ctx.textBaseline = "bottom"; ctx.fillText("healthy range", x1, Y(HIGH) - 2);
+  /* event marker */
+  const evAt = ev === "meal" ? MEAL_AT : ev === "exercise" ? EX_FROM : STRESS_AT;
+  if (ev === "exercise"){ ctx.fillStyle = "rgba(255,255,255,0.05)"; ctx.fillRect(X(EX_FROM), y0, X(EX_TO) - X(EX_FROM), y1 - y0); }
+  ctx.strokeStyle = DIM; ctx.setLineDash([2, 3]); ctx.beginPath(); ctx.moveTo(X(evAt), y0); ctx.lineTo(X(evAt), y1); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = DIM; ctx.textAlign = "left"; ctx.textBaseline = "top";
+  ctx.fillText(ev === "meal" ? "meal" : ev === "exercise" ? "exercise" : "stress", X(evAt) + 3, y0 + 2);
+  /* the glucose curve: bright up to now, faint after */
+  ctx.lineWidth = 2.4;
+  ctx.beginPath(); for (let t = 0; t <= tMin; t++){ const x = X(t), y = Y(run[t].G); if (t) ctx.lineTo(x, y); else ctx.moveTo(x, y); }
+  ctx.strokeStyle = ACC; ctx.shadowColor = ACC; ctx.shadowBlur = 10; ctx.stroke(); ctx.shadowBlur = 0;
+  ctx.beginPath(); for (let t = tMin; t <= 300; t++){ const x = X(t), y = Y(run[t].G); if (t > tMin) ctx.lineTo(x, y); else ctx.moveTo(x, y); }
+  ctx.strokeStyle = acc(0.28); ctx.lineWidth = 1.6; ctx.stroke();
+  const r = run[tMin], cx = X(tMin), cy = Y(r.G);
+  ctx.strokeStyle = acc(0.45); ctx.setLineDash([2, 3]); ctx.beginPath(); ctx.moveTo(cx, y1); ctx.lineTo(cx, cy); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = r.G < LOW || r.G > HIGH ? AMB : INK; ctx.beginPath(); ctx.arc(cx, cy, 5.5, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = ACC; ctx.lineWidth = 2; ctx.stroke();
+  ctx.restore();
+}
+
+function draw(){
+  const w = cv.width / dpr, h = cv.height / dpr;
+  if (!w || !h) return;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = "rgba(0,0,0,1)"; ctx.fillRect(0, 0, w, h);
+  const L = layout(w, h);
+  drawScene(L.scene);
+  drawGraph(L.graph);
+  bctx.setTransform(1, 0, 0, 1, 0, 0); bctx.clearRect(0, 0, buf.width, buf.height);
+  if (cv.width && cv.height) bctx.drawImage(cv, 0, 0);
+  ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
+  (buf.width&&buf.height)&&ctx.drawImage(buf, 0, 0, w, h); ctx.restore();
+  const cx = w / 2, cy = h / 2;
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+  ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
+}
+
+function resize(){
+  const rect = cv.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f27c: refuse a zero measurement, keep the last good size */
+  cv.width = Math.round(rect.width * dpr); cv.height = Math.round(rect.height * dpr);
+  buf.width = cv.width; buf.height = cv.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  draw();
+}
+
+function press(group, btn){ group.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === btn ? "true" : "false")); }
+const gBody = document.querySelector(".bg-pick"), gEv = document.querySelector(".bg-pick3"), gDrop = document.querySelector(".bg-drops");
+gBody.querySelectorAll("button").forEach(b => b.addEventListener("click", () => { body = b.dataset.b; press(gBody, b); run = sim(body, ev); update(); }));
+gEv.querySelectorAll("button").forEach(b => b.addEventListener("click", () => { ev = b.dataset.e; press(gEv, b); run = sim(body, ev); update(); }));
+gDrop.querySelectorAll("button").forEach(b => b.addEventListener("click", () => { dropKey = b.dataset.d; press(gDrop, b); drop.textContent = DROPS[dropKey]; }));
+sT.addEventListener("input", update);
+window.addEventListener("resize", resize);
+if (window.ResizeObserver) new ResizeObserver(() => resize()).observe(cv.parentElement);
+drop.textContent = DROPS[dropKey];
+update(); resize();
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'blood-glucose-regulation'},'*');}catch(e){}}

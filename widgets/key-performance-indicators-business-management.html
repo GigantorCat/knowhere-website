@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Key Performance Indicators — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Key performance indicators — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -294,7 +294,7 @@ canvas {
 </style>
 
 <div class="container">
-  <h2 class="sr-only">Key Performance Indicators Interactive Widget</h2>
+  <h2 class="sr-only">Key performance indicators interactive widget</h2>
   
   <h1>The invisible becomes <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">measurable</span></h1>
   
@@ -305,11 +305,11 @@ canvas {
       <span class="card-label">Performance Dashboard</span>
       <span class="live-tag" id="liveTag">3 KPIs tracked</span>
     </div>
-    <div class="card-hint">Watch how visible metrics change with slider position</div>
+    <div class="card-hint">Higher on the chart means a better result for that KPI</div>
     
     <div class="canvas-wrapper">
       <canvas id="canvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">Tracking 3 indicators</div>
+      <div class="canvas-overlay" id="canvasOverlay">Productivity growth 1.7% a year</div>
     </div>
 
     <div class="slider-row">
@@ -337,11 +337,11 @@ canvas {
   <div class="card">
     <div class="toggle-section">
       <button class="toggle-btn active" id="btnFinancial">Financial</button>
-      <button class="toggle-btn" id="btnOperational">Operational</button>
+      <button class="toggle-btn" id="btnOperational">Non-financial</button>
     </div>
 
     <div class="knowdrop" id="knowdropText">
-      Financial KPIs like <strong>market share</strong> and <strong>net profit</strong> tell you the outcome — whether you're making money and winning customers. These are the numbers investors and boards care about because they directly measure commercial success. But they're lagging indicators: by the time net profit drops, the damage is already done. You can track them monthly or quarterly, but they show you where you've been, not where you're going. Smart businesses pair financial KPIs with operational ones to get the full picture.
+      Financial KPIs like <strong>net profit</strong> and sales revenue are measured in dollars and tell you the outcome — whether you're making money. These are the numbers investors and boards care about because they directly measure commercial success. But they're lagging indicators: by the time net profit drops, the damage is already done. You can track them monthly or quarterly, but they show you where you've been, not where you're going. Smart businesses pair financial KPIs with non-financial ones to get the full picture.
     </div>
   </div>
 
@@ -372,10 +372,12 @@ const bctx = buf.getContext('2d');
 let animFrame;
 let time = 0;
 
+/* Each line is plotted at its readout's place on its own scale: 0 = bottom of the chart, 1 = top.
+   Market share on 0 to 50%, net profit on $0k to $300k, productivity growth on 0 to 5% a year. */
 const kpis = [
-  { name: 'Market Share', y: 0.25, color: 'rgba(232,93,151,', targetY: 0.25, data: [] },
-  { name: 'Net Profit', y: 0.5, color: 'rgba(250,199,117,', targetY: 0.5, data: [] },
-  { name: 'Productivity', y: 0.75, color: 'rgba(237,237,232,', targetY: 0.75, data: [] }
+  { name: "Market share", y: 0.5, color: "rgba(232,93,151,", targetY: 0.5, data: [] },
+  { name: "Net profit", y: 0.53, color: "rgba(250,199,117,", targetY: 0.53, data: [] },
+  { name: "Productivity", y: 0.34, color: "rgba(237,237,232,", targetY: 0.34, data: [] }
 ];
 
 function resize() {
@@ -390,18 +392,16 @@ function resize() {
 
 function updateKPIs(value) {
   const normalized = value / 100;
-  kpis[0].targetY = 0.25 + normalized * 0.15;
-  kpis[1].targetY = 0.5 + normalized * 0.2;
-  kpis[2].targetY = 0.75 - normalized * 0.25;
-  
   const marketVal = Math.round(15 + normalized * 25);
   const profitVal = Math.round(80 + normalized * 200);
-  marketShare.textContent = marketVal + '%';
-  netProfit.textContent = '$' + profitVal + 'k';
-  
-  const count = Math.min(3, Math.floor(normalized * 4) + 1);
-  liveTag.textContent = count + ' KPI' + (count === 1 ? '' : 's') + ' tracked';
-  canvasOverlay.textContent = 'Tracking ' + count + ' indicator' + (count === 1 ? '' : 's');
+  const prodVal = 0.5 + normalized * 3;
+  /* the plotted height comes from the same numbers as the readouts */
+  kpis[0].targetY = marketVal / 50;
+  kpis[1].targetY = profitVal / 300;
+  kpis[2].targetY = prodVal / 5;
+  marketShare.textContent = marketVal + "%";
+  netProfit.textContent = "$" + profitVal + "k";
+  canvasOverlay.textContent = "Productivity growth " + prodVal.toFixed(1) + "% a year";
 }
 
 function draw() {
@@ -429,7 +429,7 @@ function draw() {
   
   kpis.forEach((kpi, idx) => {
     kpi.y += (kpi.targetY - kpi.y) * 0.08;
-    const val = 1 - ((kpi.y - 0.15) / 0.7);
+    const val = kpi.y;
     kpi.data.push({ x: time, y: val });
     if (kpi.data.length > 80) kpi.data.shift();
     
@@ -502,6 +502,23 @@ function draw() {
   vig.addColorStop(1, 'rgba(0,0,0,0.52)');
   ctx.fillStyle = vig;
   ctx.fillRect(0, 0, w, h);
+
+  /* name each line at its live end so colour is not the only key */
+  ctx.save();
+  ctx.font = "500 11px 'JetBrains Mono', monospace";
+  ctx.textAlign = "right";
+  ctx.textBaseline = "bottom";
+  const tagYs = [];
+  kpis.forEach((kpi) => {
+    if (!kpi.data.length) return;
+    let ty = chartY + chartH - kpi.data[kpi.data.length - 1].y * chartH - 7;
+    for (const o of tagYs) { if (Math.abs(ty - o) < 13) ty = o - 13; }
+    ty = Math.max(14, ty);
+    tagYs.push(ty);
+    ctx.fillStyle = kpi.color + "1)";
+    ctx.fillText(kpi.name, chartX + chartW - 8, ty);
+  });
+  ctx.restore();
   
   time++;
   animFrame = requestAnimationFrame(draw);
@@ -516,13 +533,13 @@ slider.addEventListener('input', (e) => {
 btnFinancial.addEventListener('click', () => {
   btnFinancial.classList.add('active');
   btnOperational.classList.remove('active');
-  knowdropText.innerHTML = "Financial KPIs like <strong>market share</strong> and <strong>net profit</strong> tell you the outcome — whether you're making money and winning customers. These are the numbers investors and boards care about because they directly measure commercial success. But they're lagging indicators: by the time net profit drops, the damage is already done. You can track them monthly or quarterly, but they show you where you've been, not where you're going. Smart businesses pair financial KPIs with operational ones to get the full picture.";
+  knowdropText.innerHTML = "Financial KPIs like <strong>net profit</strong> and sales revenue are measured in dollars and tell you the outcome — whether you're making money. These are the numbers investors and boards care about because they directly measure commercial success. But they're lagging indicators: by the time net profit drops, the damage is already done. You can track them monthly or quarterly, but they show you where you've been, not where you're going. Smart businesses pair financial KPIs with non-financial ones to get the full picture.";
 });
 
 btnOperational.addEventListener('click', () => {
   btnOperational.classList.add('active');
   btnFinancial.classList.remove('active');
-  knowdropText.innerHTML = "Operational KPIs like <strong>staff turnover</strong>, <strong>absenteeism</strong>, <strong>wastage</strong>, and <strong>complaints</strong> are leading indicators — they predict what's coming. High absenteeism this month means lower productivity next month. Rising complaints signal customer loss before it shows up in revenue. These metrics tell you what's happening inside the business day-to-day, giving you time to intervene before financial KPIs turn red. They're harder to track because they require internal systems, but they give you control over the future instead of just reporting the past.";
+  knowdropText.innerHTML = "Non-financial KPIs like <strong>market share</strong>, <strong>staff turnover</strong>, <strong>absenteeism</strong>, <strong>wastage</strong>, and <strong>complaints</strong> are not measured in dollars. Many are leading indicators — they predict what's coming. High absenteeism this month means lower productivity next month. Rising complaints signal customer loss before it shows up in revenue. These metrics tell you what's happening inside the business day-to-day, giving you time to intervene before financial KPIs like net profit turn red. They're harder to track because they require internal systems, but they give you control over the future instead of just reporting the past.";
 });
 
 window.addEventListener('resize', resize);

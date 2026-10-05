@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Sexual and Asexual Reproduction — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Sexual and asexual reproduction — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -319,42 +319,42 @@ canvas {
 </style>
 
 <div class="container">
-  <h2 class="sr-only">Sexual and Asexual Reproduction Interactive</h2>
+  <h2 class="sr-only">Sexual and asexual reproduction: an illustration of the trade-off</h2>
   
   <h1>Sex is slower and riskier — yet <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">wins</span></h1>
   
-  <p class="intro">Cloning yourself is faster, cheaper, and guarantees your genes survive intact. So why does nearly every complex organism bother with the messy, energy-draining process of mixing genes with a partner? Drag the slider to shift environmental stability and watch which strategy dominates.</p>
+  <p class="intro">Cloning yourself is faster, cheaper, and guarantees your genes survive intact. So why does nearly every complex organism bother with the messy, energy-draining process of mixing genes with a partner? Drag the slider to shift how fast the environment changes and watch which strategy is favoured.</p>
 
   <div class="card">
     <div class="card-header">
-      <div class="card-label">Strategy Simulation</div>
-      <div class="live-tag" id="strategyTag">Stable • Asexual 78%</div>
+      <div class="card-label">Trade-off illustration</div>
+      <div class="live-tag" id="strategyTag">Stable • clones favoured</div>
     </div>
-    <div class="card-hint">Environmental change rate controls reproductive strategy dominance</div>
+    <div class="card-hint">An illustration, not real data. Blue dots are identical clones, amber dots are varied offspring</div>
     
     <div class="canvas-wrapper">
-      <canvas id="reproCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">Stable Environment • Low Pathogen Pressure</div>
+      <canvas id="reproCanvas" role="img" aria-label="Blue identical clone dots and amber varied dots; more amber dots appear as the environment changes faster"></canvas>
+      <div class="canvas-overlay" id="canvasOverlay">Stable environment • asexual copying favoured</div>
     </div>
 
     <div class="slider-wrapper">
-      <div class="slider-label">Environmental Change Rate</div>
-      <input type="range" min="0" max="100" value="22" class="repro-slider" id="envSlider">
+      <div class="slider-label">Rate of environmental change</div>
+      <input type="range" min="0" max="100" value="22" class="repro-slider" id="envSlider" aria-label="Rate of environmental change, stable to rapidly changing">
       <div class="tick-labels">
         <span>Stable</span>
         <span>Fluctuating</span>
-        <span>Chaotic</span>
+        <span>Rapid</span>
       </div>
     </div>
 
     <div class="stat-row">
       <div class="stat">
-        <div class="stat-label">Asexual Dominance</div>
-        <div class="stat-value" style="color:var(--acc)" id="asexStat">78%</div>
+        <div class="stat-label">Clone dots (asexual)</div>
+        <div class="stat-value" style="color:var(--acc)" id="asexStat">51</div>
       </div>
       <div class="stat">
-        <div class="stat-label">Sexual Dominance</div>
-        <div class="stat-value" style="color:var(--amb)" id="sexStat">22%</div>
+        <div class="stat-label">Varied dots (sexual)</div>
+        <div class="stat-value" style="color:var(--amb)" id="sexStat">29</div>
       </div>
     </div>
   </div>
@@ -365,7 +365,7 @@ canvas {
       <button class="toggle-btn" id="btnSex">Sexual</button>
     </div>
     <div class="knowdrop" id="knowdropText">
-      Asexual reproduction creates genetic clones through mechanisms like binary fission (bacteria split in two), budding (hydra grow miniature copies), vegetative propagation (strawberry runners generate new plants), and parthenogenesis (some lizards and insects develop embryos without fertilisation). It's energetically cheap, requires no mate-finding, and guarantees every offspring carries 100% of your genes. In stable environments where conditions rarely shift, this strategy dominates — a perfectly adapted clone is perfectly adapted forever. But when pathogens evolve to crack your genetic defences, every clone in the population becomes equally vulnerable, and a single disease can wipe out the entire lineage in one sweep.
+      Asexual reproduction creates genetic clones through mechanisms like binary fission (bacteria split in two), budding (hydra grow miniature copies), vegetative propagation (strawberry runners generate new plants), and parthenogenesis (some lizards and insects develop embryos without fertilisation). It's energetically cheap, requires no mate-finding, and guarantees every offspring carries 100% of your genes. In stable environments where conditions rarely shift, this strategy is favoured — a well-adapted clone stays well adapted while conditions hold. But when pathogens evolve to crack your genetic defences, every clone in the population becomes equally vulnerable, and a single disease can wipe out the entire lineage in one sweep.
     </div>
   </div>
 
@@ -406,6 +406,10 @@ let time = 0;
 let asexPop = [];
 let sexPop = [];
 
+/* dot counts for the illustration: neither strategy ever vanishes, the balance just tilts */
+function targetAsex() { return 20 + Math.round(40 * (1 - envChange)); }
+function targetSex() { return 20 + Math.round(40 * envChange); }
+
 function resize() {
   const rect = canvas.getBoundingClientRect();
   if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
@@ -425,8 +429,8 @@ function initPops() {
   asexPop = [];
   sexPop = [];
   
-  const asexCount = Math.round(80 * (1 - envChange));
-  const sexCount = Math.round(80 * envChange);
+  const asexCount = targetAsex();
+  const sexCount = targetSex();
   
   for (let i = 0; i < asexCount; i++) {
     asexPop.push({
@@ -456,10 +460,7 @@ function updatePops() {
   const w = canvas.width / dpr;
   const h = canvas.height / dpr;
   
-  const targetAsex = Math.round(80 * (1 - envChange));
-  const targetSex = Math.round(80 * envChange);
-  
-  while (asexPop.length < targetAsex) {
+  while (asexPop.length < targetAsex()) {
     asexPop.push({
       x: Math.random() * w * 0.8 + w * 0.1,
       y: Math.random() * h * 0.8 + h * 0.1,
@@ -469,9 +470,9 @@ function updatePops() {
       phase: Math.random() * Math.PI * 2
     });
   }
-  while (asexPop.length > targetAsex) asexPop.pop();
+  while (asexPop.length > targetAsex()) asexPop.pop();
   
-  while (sexPop.length < targetSex) {
+  while (sexPop.length < targetSex()) {
     sexPop.push({
       x: Math.random() * w * 0.8 + w * 0.1,
       y: Math.random() * h * 0.8 + h * 0.1,
@@ -482,7 +483,7 @@ function updatePops() {
       hue: Math.random() * 60 - 30
     });
   }
-  while (sexPop.length > targetSex) sexPop.pop();
+  while (sexPop.length > targetSex()) sexPop.pop();
 }
 
 function draw() {
@@ -577,30 +578,27 @@ function draw() {
 }
 
 function updateUI() {
-  const asexPct = Math.round((1 - envChange) * 100);
-  const sexPct = Math.round(envChange * 100);
+  /* readouts are the dot counts actually drawn */
+  asexStat.textContent = asexPop.length;
+  sexStat.textContent = sexPop.length;
   
-  asexStat.textContent = asexPct + '%';
-  sexStat.textContent = sexPct + '%';
+  slider.style.setProperty("--fill", envChange * 100 + "%");
   
-  slider.style.setProperty('--fill', envChange * 100 + '%');
-  
-  let envLabel = 'Stable';
-  let pathLabel = 'Low Pathogen Pressure';
-  
+  let envLabel = "Stable";
+  let favoured = "asexual copying favoured";
+  let tag = "clones favoured";
   if (envChange > 0.33 && envChange <= 0.66) {
-    envLabel = 'Fluctuating';
-    pathLabel = 'Moderate Pathogen Pressure';
+    envLabel = "Fluctuating";
+    favoured = "both strategies hold on";
+    tag = "mixed";
   } else if (envChange > 0.66) {
-    envLabel = 'Chaotic';
-    pathLabel = 'High Pathogen Pressure';
+    envLabel = "Rapidly changing";
+    favoured = "variation favoured";
+    tag = "variation favoured";
   }
   
-  const domStrat = asexPct > sexPct ? 'Asexual' : 'Sexual';
-  const domPct = Math.max(asexPct, sexPct);
-  
-  strategyTag.textContent = envLabel + ' • ' + domStrat + ' ' + domPct + '%';
-  canvasOverlay.textContent = envLabel + ' Environment • ' + pathLabel;
+  strategyTag.textContent = envLabel + " • " + tag;
+  canvasOverlay.textContent = envLabel + " environment • " + favoured;
 }
 
 slider.addEventListener('input', e => {
@@ -612,17 +610,18 @@ slider.addEventListener('input', e => {
 btnAsex.addEventListener('click', () => {
   btnAsex.classList.add('active');
   btnSex.classList.remove('active');
-  knowdropText.textContent = 'Asexual reproduction creates genetic clones through mechanisms like binary fission (bacteria split in two), budding (hydra grow miniature copies), vegetative propagation (strawberry runners generate new plants), and parthenogenesis (some lizards and insects develop embryos without fertilisation). It\'s energetically cheap, requires no mate-finding, and guarantees every offspring carries 100% of your genes. In stable environments where conditions rarely shift, this strategy dominates — a perfectly adapted clone is perfectly adapted forever. But when pathogens evolve to crack your genetic defences, every clone in the population becomes equally vulnerable, and a single disease can wipe out the entire lineage in one sweep.';
+  knowdropText.textContent = "Asexual reproduction creates genetic clones through mechanisms like binary fission (bacteria split in two), budding (hydra grow miniature copies), vegetative propagation (strawberry runners generate new plants), and parthenogenesis (some lizards and insects develop embryos without fertilisation). It's energetically cheap, requires no mate-finding, and guarantees every offspring carries 100% of your genes. In stable environments where conditions rarely shift, this strategy is favoured — a well-adapted clone stays well adapted while conditions hold. But when pathogens evolve to crack your genetic defences, every clone in the population becomes equally vulnerable, and a single disease can wipe out the entire lineage in one sweep.";
 });
 
 btnSex.addEventListener('click', () => {
   btnSex.classList.add('active');
   btnAsex.classList.remove('active');
-  knowdropText.textContent = 'Sexual reproduction mixes genetic material from two gametes through fertilisation, generating unique offspring every time. External fertilisation (fish, amphibians release gametes into water) produces massive egg numbers but offers no parental care; internal fertilisation (most land animals) requires mate attraction, copulation, and often extended parental investment. The energetic cost is enormous — finding a mate, producing specialised gametes, provisioning offspring — and you only pass on 50% of your genes per child. Yet sexual populations thrive in changing environments because genetic shuffling produces variation: when a new pathogen emerges, some offspring carry resistance alleles their parents never expressed, breaking the evolutionary arms race that would otherwise doom asexual clones.';
+  knowdropText.textContent = "Sexual reproduction mixes genetic material from two gametes through fertilisation, generating unique offspring every time. External fertilisation (fish, amphibians release gametes into water) produces massive egg numbers but offers no parental care; internal fertilisation (most land animals) requires mate attraction, copulation, and often extended parental investment. The energetic cost is enormous — finding a mate, producing specialised gametes, provisioning offspring — and you only pass on 50% of your genes per child. Yet sexual populations thrive in changing environments because genetic shuffling produces variation: when a new pathogen emerges, some offspring carry resistance alleles their parents never expressed, breaking the evolutionary arms race that would otherwise doom asexual clones. Pathogens are a separate pressure from physical change: even where the climate is steady, fast-evolving parasites keep shifting, which also favours variation.";
 });
 
 resize();
-window.addEventListener('resize', resize);
+window.addEventListener("resize", resize);
+updatePops();
 updateUI();
 draw();
 </script>

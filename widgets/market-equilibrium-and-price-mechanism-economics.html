@@ -1,675 +1,389 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Market Equilibrium and Price Mechanism — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Market equilibrium and price mechanism — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
-
-:root {
-  --bg: #0B0D0C;
-  --bg2: #12160F;
-  --acc: #F187B6;
-  --ag: rgba(241, 135, 182, .7);
-  --ag1: rgba(241, 135, 182, .12);
-  --ag2: rgba(241, 135, 182, .45);
-  --amb: #FAC775;
-  --ink: #EDEDE8;
-  --ink-dim: #8C9389;
-  --line: #262B26;
+:root{
+  --bg:#0B0D0C;--bg2:#12160F;--acc:#F187B6;--acc-rgb:241, 135, 182;
+  --ag:rgba(var(--acc-rgb),.7);--ag1:rgba(var(--acc-rgb),.12);--ag2:rgba(var(--acc-rgb),.45);
+  --amb:#FAC775;--ink:#EDEDE8;--ink-dim:#8C9389;--line:#262B26;
 }
-
-* { margin:0; padding:0; box-sizing:border-box; }
-
-body {
-  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
-  font-family: 'Geist', sans-serif;
-  color: var(--ink);
-  min-height: 100vh;
-  padding: 40px 16px 72px;
-}
-
-.container { max-width: 720px; margin: 0 auto; }
-
-h1 {
-  font-size: clamp(30px,8vw,52px);
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1.02;
-  margin-bottom: 16px;
-}
-
-.intro {
-  font-size: 15.5px;
-  color: var(--ink-dim);
-  line-height: 1.55;
-  max-width: 58ch;
-  margin-bottom: 32px;
-}
-
-.card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  margin-bottom: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: 4px;
-}
-
-.card-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  color: white;
-}
-
-.live-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--acc);
-}
-
-.card-hint {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--ink-dim);
-  margin-bottom: 14px;
-}
-
-.canvas-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16/9;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
-  box-shadow: inset 0 0 0 1px var(--ag1);
-  margin-bottom: 16px;
-}
-
-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.canvas-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(4px);
-  padding: 9px 16px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  text-transform: uppercase;
-  color: var(--acc);
-  text-align: center;
-}
-
-.slider-container {
-  margin-bottom: 10px;
-}
-
-.slider-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 8px;
-}
-
-.eq-slider {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  height: 4px;
-  border-radius: 3px;
-  outline: none;
-  background: linear-gradient(90deg, var(--acc) var(--fill, 50%), #23291f var(--fill, 50%));
-}
-
-.eq-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow .15s;
-}
-
-.eq-slider::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.eq-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow .15s;
-}
-
-.eq-slider::-moz-range-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.tick-labels {
-  display: flex;
-  justify-content: space-between;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--ink-dim);
-  margin-top: 6px;
-}
-
-.stat-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-}
-
-.stat {
-  text-align: center;
-}
-
-.stat-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 6px;
-}
-
-.stat-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 24px;
-  font-weight: 500;
-}
-
-.stat:first-child .stat-value { color: var(--acc); }
-.stat:last-child .stat-value { color: var(--amb); }
-
-.toggle-section {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.toggle-btn {
-  flex: 1;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14.5px;
-  padding: 12px;
-  border-radius: 11px;
-  border: 1px solid var(--line);
-  background: #12160F;
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: all .2s;
-}
-
-.toggle-btn.active {
-  background: rgba(241,135,182,.1);
-  border-color: var(--acc);
-  color: var(--acc);
-  box-shadow: 0 0 22px rgba(241,135,182,.18);
-}
-
-.knowdrop {
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-  font-size: 14.5px;
-  line-height: 1.65;
-  color: var(--ink);
-}
-
-.know-this {
-  border-left: 3px solid var(--acc);
-  padding: 16px 18px;
-  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
-  border-radius: 0 12px 12px 0;
-  margin-bottom: 34px;
-}
-
-.know-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--acc);
-  margin-bottom: 10px;
-  display: block;
-}
-
-.know-body {
-  font-size: 17.4px;
-  line-height: 1.55;
-  color: var(--ink);
-}
-
-.footer {
-  margin-top: 34px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.pulse-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--acc);
-  box-shadow: 0 0 10px var(--acc);
-  animation: eqPulse 2.4s ease-in-out infinite;
-}
-
-@keyframes eqPulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: .35; transform: scale(.6); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
-}
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
-}
+*{box-sizing:border-box;margin:0;padding:0}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+body{background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C 55%);font-family:'Geist',sans-serif;color:var(--ink);min-height:100vh;padding:40px 16px 0;box-sizing:border-box}
+.container{max-width:720px;margin:0 auto}
+h1{font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin-bottom:16px}
+.intro{font-size:15.5px;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin-bottom:28px}
+.card{background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:18px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1)}
+.card-header{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+.card-label{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;color:#fff}
+.live-tag{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:none;color:var(--acc);text-align:right}
+.card-hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin-bottom:14px}
+.me-q{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:8px}
+.me-stories{display:flex;gap:8px;margin-bottom:14px}
+.tg{flex:1;font-family:'JetBrains Mono',monospace;font-size:12px;padding:10px 8px;border-radius:999px;background:#12160F;border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:all .2s}
+.tg[aria-pressed="true"]{background:rgba(var(--acc-rgb),.1);border:1px solid var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.canvas-wrapper{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1);margin-bottom:16px}
+.canvas-wrapper canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.canvas-overlay{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:14px;text-transform:none;color:var(--acc);text-align:center}
+.me-row{display:flex;justify-content:space-between;align-items:baseline;font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:10px}
+.me-row b{font-weight:500;color:var(--acc);font-size:12px;text-transform:none}
+.me-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;outline:none;cursor:pointer;background:linear-gradient(90deg,var(--acc) var(--fill,0%),#23291f var(--fill,0%))}
+.me-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s}
+.me-slider::-webkit-slider-thumb:hover{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.me-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag)}
+.me-ticks{position:relative;height:16px;margin-top:8px;margin-bottom:14px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink-dim)}
+.me-ticks span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}
+.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;border-top:1px solid var(--line);margin-top:4px;padding-top:14px}
+.stat-label{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:6px}
+.stat-value{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500}
+.stat-value.acc{color:var(--acc)}.stat-value.amb{color:var(--amb)}
+.stat-sub{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin-top:4px}
+.me-drops{display:flex;gap:10px}
+.me-drops .tg{font-size:12px;padding:12px 8px}
+.knowdrop{border-top:1px solid var(--line);padding-top:16px;margin-top:16px}
+.knowdrop p{font-size:14.5px;line-height:1.65;color:var(--ink)}
+.know-this{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));border-radius:0 12px 12px 0;margin-bottom:0;padding-bottom:16px}
+.know-this-tag{display:flex;align-items:center;gap:9px;margin-bottom:12px}
+.know-this-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:ktp 2.4s ease-in-out infinite}
+@keyframes ktp{0%,100%{opacity:1}50%{opacity:.45}}
+.know-this-label{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.15em;color:var(--acc)}
+.know-this-body{font-size:17.4px;line-height:1.55;color:var(--ink)}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
 
+<h2 class="sr-only">Market equilibrium and price mechanism: shift demand or supply in an example avocado market, see the shortage or surplus at the old price, and follow the price to the new equilibrium</h2>
+
 <div class="container">
-  <h2 class="sr-only">Market Equilibrium Interactive Widget</h2>
-  
-  <h1>Prices find their own level without anyone <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">deciding</span></h1>
-  
-  <p class="intro">When price sits away from equilibrium, markets self-correct through millions of individual decisions—surpluses force sellers to cut prices, shortages drive buyers to bid up. Drag the slider to set a price and watch the invisible hand push back.</p>
+  <h1>No one sets the price, yet it tells everyone what to <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">do</span></h1>
+  <p class="intro">In a market economy, nobody decides how many avocados get grown or who gets to eat them. When demand or supply shifts, the old price no longer clears the market, and the price itself moves until it does. Raise demand or cut supply and watch the gap at the old price push the price to a new equilibrium.</p>
 
   <div class="card">
     <div class="card-header">
-      <div class="card-label">Market Dynamics</div>
-      <div class="live-tag" id="liveTag">Equilibrium</div>
+      <span class="card-label">Market equilibrium</span>
+      <span class="live-tag" id="meTag">Shortage 20 t at $6</span>
     </div>
-    <div class="card-hint">Price adjusts quantity demanded and supplied</div>
-    
-    <div class="canvas-wrapper">
-      <canvas id="canvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">EQUILIBRIUM — Market Clears</div>
+    <div class="card-hint">Pick a story or shift each curve. Read the new price and quantity off the axes.</div>
+
+    <div class="me-q">Try a story</div>
+    <div class="me-stories" role="group" aria-label="Choose a market story">
+      <button class="tg" data-d="0" data-s="-30" aria-pressed="false">Cyclone</button>
+      <button class="tg" data-d="20" data-s="0" aria-pressed="true">Health trend</button>
+      <button class="tg" data-d="0" data-s="30" aria-pressed="false">Bumper crop</button>
     </div>
 
-    <div class="slider-container">
-      <div class="slider-label">Market Price</div>
-      <input type="range" class="eq-slider" id="priceSlider" min="0" max="100" value="50" step="1">
-      <div class="tick-labels">
-        <span>Low</span>
-        <span>Equilibrium</span>
-        <span>High</span>
-      </div>
+    <div class="canvas-wrapper">
+      <canvas id="meCanvas" role="img" aria-label="Demand and supply graph for an example avocado market, with price on the vertical axis and quantity on the horizontal axis"></canvas>
+      <div class="canvas-overlay" id="meOverlay">Price $6.00 → $7.00 · quantity 40 → 50 t</div>
     </div>
+
+    <div class="me-row"><span>Demand shift</span><b id="meDV">+20 t</b></div>
+    <input type="range" class="me-slider" id="meD" aria-label="Demand shift in tonnes a week" min="-30" max="30" step="2" value="20">
+    <div class="me-ticks" id="meDT"></div>
+
+    <div class="me-row"><span>Supply shift</span><b id="meSV">0 t</b></div>
+    <input type="range" class="me-slider" id="meS" aria-label="Supply shift in tonnes a week" min="-30" max="30" step="2" value="0">
+    <div class="me-ticks" id="meST"></div>
 
     <div class="stat-row">
-      <div class="stat">
-        <div class="stat-label">Market State</div>
-        <div class="stat-value" id="stateValue">Balanced</div>
-      </div>
-      <div class="stat">
-        <div class="stat-label">Pressure</div>
-        <div class="stat-value" id="pressureValue">None</div>
-      </div>
+      <div class="stat"><div class="stat-label">Equilibrium price</div><div class="stat-value acc" id="meP">$7.00</div><div class="stat-sub" id="mePs">was $6.00</div></div>
+      <div class="stat"><div class="stat-label">Quantity traded</div><div class="stat-value amb" id="meQ">50 t</div><div class="stat-sub" id="meQs">was 40 t a week</div></div>
     </div>
   </div>
 
   <div class="card">
-    <div class="toggle-section">
-      <button class="toggle-btn active" id="surplusBtn">Surplus</button>
-      <button class="toggle-btn" id="shortageBtn">Shortage</button>
+    <div class="me-q">Three jobs the price does</div>
+    <div class="me-drops" role="group" aria-label="Choose a job of the price mechanism">
+      <button class="tg" data-f="signal" aria-pressed="true">Signal</button>
+      <button class="tg" data-f="incentive" aria-pressed="false">Incentive</button>
+      <button class="tg" data-f="ration" aria-pressed="false">Rationing</button>
     </div>
-    <div class="knowdrop" id="knowdrop">
-      When price exceeds equilibrium, quantity supplied outstrips quantity demanded—shelves fill with unsold inventory. Sellers face storage costs and capital tied up in stock, creating fierce competition to move product. Each seller cuts price independently to attract buyers, creating downward momentum. This cascade continues until price falls enough that quantity demanded rises to meet quantity supplied, clearing the surplus. No central planner orchestrates this—self-interest alone drives convergence back to equilibrium.
-    </div>
+    <div class="knowdrop"><p id="meDrop"></p></div>
   </div>
 
-  <div class="know-this">
-    <span class="know-tag">Know This</span>
-    <div class="know-body">
-      <span style="color:var(--acc)">Equilibrium price</span> clears the market so quantity demanded equals quantity supplied with no <span style="color:var(--acc)">surplus</span> or <span style="color:var(--acc)">shortage</span>.
-    </div>
-  </div>
-
-  <div class="footer">
-    <div class="pulse-dot"></div>
+  <div class="card know-this">
+    <div class="know-this-tag"><div class="know-this-dot"></div><div class="know-this-label">Know This</div></div>
+    <p class="know-this-body">When demand or supply shifts, the shortage or surplus at the old price moves the price, and that change in relative price acts as a <span style="color:var(--acc)">signal</span>, an <span style="color:var(--acc)">incentive</span> and a <span style="color:var(--acc)">rationing device</span> until quantity demanded equals quantity supplied again.</p>
   </div>
 </div>
 
 <script>
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d');
+(function(){
+/* example market: Qd = 100 - 10P + D, Qs = -20 + 10P + S (tonnes a week, $ per kg) */
+const P0 = 6, Q0 = 40, PMAX = 12, QMAX = 100;
+function qd(p, D){ return 100 - 10 * p + D; }
+function qs(p, S){ return -20 + 10 * p + S; }
+function eqP(D, S){ return (120 + D - S) / 20; }
+function eqQ(D, S){ return qd(eqP(D, S), D); }
+
+const cv = document.getElementById("meCanvas"), ctx = cv.getContext("2d");
+const sD = document.getElementById("meD"), sS = document.getElementById("meS");
+const dV = document.getElementById("meDV"), sV = document.getElementById("meSV");
+const tag = document.getElementById("meTag"), ovl = document.getElementById("meOverlay");
+const outP = document.getElementById("meP"), outPs = document.getElementById("mePs");
+const outQ = document.getElementById("meQ"), outQs = document.getElementById("meQs");
+const drop = document.getElementById("meDrop");
+const CSS = getComputedStyle(document.documentElement);
+const ACC = CSS.getPropertyValue("--acc").trim();
+const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+const AMB = CSS.getPropertyValue("--amb").trim();
+const INK = CSS.getPropertyValue("--ink").trim();
+const DIM = CSS.getPropertyValue("--ink-dim").trim();
+const LINE = CSS.getPropertyValue("--line").trim();
+const MONO = `"JetBrains Mono", monospace`;
 const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement("canvas"), bctx = buf.getContext("2d");
+const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-const slider = document.getElementById('priceSlider');
-const liveTag = document.getElementById('liveTag');
-const canvasOverlay = document.getElementById('canvasOverlay');
-const stateValue = document.getElementById('stateValue');
-const pressureValue = document.getElementById('pressureValue');
+let fn = "signal", shown = { D: 20, S: 0 }, raf = 0;
 
-const surplusBtn = document.getElementById('surplusBtn');
-const shortageBtn = document.getElementById('shortageBtn');
-const knowdrop = document.getElementById('knowdrop');
+function money(p){ return "$" + p.toFixed(2); }
+function signed(v){ return (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v) + " t"; }
 
-let price = 50;
-let time = 0;
-let particles = [];
-
-const surplusText = "When price exceeds equilibrium, quantity supplied outstrips quantity demanded—shelves fill with unsold inventory. Sellers face storage costs and capital tied up in stock, creating fierce competition to move product. Each seller cuts price independently to attract buyers, creating downward momentum. This cascade continues until price falls enough that quantity demanded rises to meet quantity supplied, clearing the surplus. No central planner orchestrates this—self-interest alone drives convergence back to equilibrium.";
-
-const shortageText = "When price sits below equilibrium, quantity demanded exceeds quantity supplied—buyers scramble for scarce goods. Frustrated consumers unable to purchase at the posted price signal willingness to pay more, bidding up the effective price. Sellers recognize excess demand and raise prices to ration limited supply to those valuing it most. Black markets and queues emerge as symptoms of sustained shortage. Upward price pressure persists until quantity demanded contracts enough to match quantity supplied, restoring balance without any coordination beyond individual transactions.";
-
-surplusBtn.addEventListener('click', () => {
-  surplusBtn.classList.add('active');
-  shortageBtn.classList.remove('active');
-  knowdrop.textContent = surplusText;
-});
-
-shortageBtn.addEventListener('click', () => {
-  shortageBtn.classList.add('active');
-  surplusBtn.classList.remove('active');
-  knowdrop.textContent = shortageText;
-});
-
-function resize() {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
-
-resize();
-window.addEventListener('resize', resize);
-
-slider.addEventListener('input', (e) => {
-  price = parseInt(e.target.value);
-  const fill = price;
-  slider.style.setProperty('--fill', fill + '%');
-  updateLabels();
-});
-
-function updateLabels() {
-  const diff = Math.abs(price - 50);
-  
-  if (price === 50) {
-    liveTag.textContent = 'Equilibrium';
-    canvasOverlay.textContent = 'EQUILIBRIUM — Market Clears';
-    stateValue.textContent = 'Balanced';
-    pressureValue.textContent = 'None';
-  } else if (price > 50) {
-    liveTag.textContent = 'Above Equilibrium';
-    const surplus = Math.round((price - 50) * 1.8);
-    canvasOverlay.textContent = `SURPLUS — ${surplus} Units Unsold`;
-    stateValue.textContent = 'Surplus';
-    pressureValue.textContent = '↓ Down';
-  } else {
-    liveTag.textContent = 'Below Equilibrium';
-    const shortage = Math.round((50 - price) * 1.8);
-    canvasOverlay.textContent = `SHORTAGE — ${shortage} Units Unmet`;
-    stateValue.textContent = 'Shortage';
-    pressureValue.textContent = '↑ Up';
-  }
-}
-
-updateLabels();
-slider.style.setProperty('--fill', '50%');
-
-class Particle {
-  constructor(type) {
-    this.type = type; // 'demand' or 'supply'
-    this.reset();
-  }
-  
-  reset() {
-    this.x = Math.random();
-    this.y = Math.random();
-    this.speed = 0.0008 + Math.random() * 0.0012;
-    this.phase = Math.random() * Math.PI * 2;
-    this.size = 2 + Math.random() * 2;
-  }
-  
-  update(dt, w, h) {
-    const eqPoint = 0.5;
-    const priceNorm = price / 100;
-    
-    if (this.type === 'demand') {
-      // Demand particles move toward low prices
-      const target = priceNorm < eqPoint ? 0.3 : 0.7;
-      this.x += (target - this.x) * this.speed * dt;
-    } else {
-      // Supply particles move toward high prices
-      const target = priceNorm > eqPoint ? 0.7 : 0.3;
-      this.x += (target - this.x) * this.speed * dt;
-    }
-    
-    this.y += Math.sin(time * 0.001 + this.phase) * 0.0002 * dt;
-    
-    if (this.y < 0) this.y = 1;
-    if (this.y > 1) this.y = 0;
-  }
-  
-  draw(ctx, w, h) {
-    const px = this.x * w;
-    const py = this.y * h;
-    const priceNorm = price / 100;
-    const eqPoint = 0.5;
-    const diff = Math.abs(priceNorm - eqPoint);
-    
-    let alpha = 0.3;
-    if (this.type === 'demand' && priceNorm < eqPoint) alpha = 0.6 + diff * 0.8;
-    if (this.type === 'supply' && priceNorm > eqPoint) alpha = 0.6 + diff * 0.8;
-    
-    const color = this.type === 'demand' ? '241,135,182' : '250,199,117';
-    
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.fillStyle = `rgba(${color},${alpha})`;
-    ctx.beginPath();
-    ctx.arc(px, py, this.size, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-  }
-}
-
-for (let i = 0; i < 40; i++) {
-  particles.push(new Particle('demand'));
-  particles.push(new Particle('supply'));
-}
-
-function draw() {
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, w, h);
-  
-  const cx = w / 2;
-  const cy = h / 2;
-  const priceNorm = price / 100;
-  const eqPoint = 0.5;
-  const diff = Math.abs(priceNorm - eqPoint);
-  
-  // Grid
-  ctx.strokeStyle = 'rgba(38,43,38,0.5)';
-  ctx.lineWidth = 0.5;
-  for (let i = 0; i <= 5; i++) {
-    const x = (i / 5) * w;
-    const y = (i / 5) * h;
-    ctx.beginPath();
-    ctx.moveTo(x, 0);
-    ctx.lineTo(x, h);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(0, y);
-    ctx.lineTo(w, y);
-    ctx.stroke();
-  }
-  
-  // Equilibrium line
-  ctx.strokeStyle = 'rgba(241,135,182,0.3)';
-  ctx.lineWidth = 2;
-  ctx.setLineDash([4, 4]);
-  ctx.beginPath();
-  ctx.moveTo(cx, 0);
-  ctx.lineTo(cx, h);
-  ctx.stroke();
-  ctx.setLineDash([]);
-  
-  // Price line
-  const px = priceNorm * w;
-  ctx.strokeStyle = price === 50 ? 'rgba(241,135,182,0.6)' : 'rgba(250,199,117,0.6)';
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-  ctx.moveTo(px, 0);
-  ctx.lineTo(px, h);
-  ctx.stroke();
-  
-  // Demand curve
-  ctx.strokeStyle = 'rgba(241,135,182,0.5)';
-  ctx.lineWidth = 2.5;
-  ctx.beginPath();
-  for (let i = 0; i <= 50; i++) {
-    const t = i / 50;
-    const qx = t * w;
-    const qy = h * (0.15 + 0.7 * t);
-    if (i === 0) ctx.moveTo(qx, qy);
-    else ctx.lineTo(qx, qy);
-  }
-  ctx.stroke();
-  
-  // Supply curve
-  ctx.strokeStyle = 'rgba(250,199,117,0.5)';
-  ctx.lineWidth = 2.5;
-  ctx.beginPath();
-  for (let i = 0; i <= 50; i++) {
-    const t = i / 50;
-    const qx = t * w;
-    const qy = h * (0.85 - 0.7 * t);
-    if (i === 0) ctx.moveTo(qx, qy);
-    else ctx.lineTo(qx, qy);
-  }
-  ctx.stroke();
-  
-  // Particles
-  const dt = 16;
-  particles.forEach(p => {
-    p.update(dt, w, h);
-    p.draw(ctx, w, h);
+/* tick labels sit at their true value: the thumb centre travels from 10px to (width - 10px) */
+function ticks(id, el){
+  const box = document.getElementById(id), mn = +el.min, mx = +el.max;
+  [-30, -20, -10, 0, 10, 20, 30].forEach(v => {
+    const f = (v - mn) / (mx - mn), s = document.createElement("span");
+    s.style.left = `calc(10px + (100% - 20px) * ${f})`;
+    s.textContent = v > 0 ? "+" + v : v < 0 ? "−" + Math.abs(v) : "0";
+    box.appendChild(s);
   });
-  
-  // Equilibrium glow
-  if (price === 50) {
-    const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, 80);
-    glow.addColorStop(0, 'rgba(241,135,182,0.25)');
-    glow.addColorStop(1, 'rgba(241,135,182,0)');
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.fillStyle = glow;
-    ctx.fillRect(cx - 80, cy - 80, 160, 160);
-    ctx.restore();
-  } else {
-    // Pressure arrows
-    const arrowY = cy;
-    const arrowLen = 40 + diff * 60;
-    ctx.strokeStyle = 'rgba(250,199,117,0.6)';
-    ctx.fillStyle = 'rgba(250,199,117,0.6)';
-    ctx.lineWidth = 3;
-    
-    if (price > 50) {
-      // Down arrows
-      for (let i = 0; i < 3; i++) {
-        const ay = h * (0.2 + i * 0.25) + Math.sin(time * 0.002 + i) * 10;
-        ctx.beginPath();
-        ctx.moveTo(px, ay);
-        ctx.lineTo(px, ay + arrowLen);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(px, ay + arrowLen);
-        ctx.lineTo(px - 5, ay + arrowLen - 8);
-        ctx.lineTo(px + 5, ay + arrowLen - 8);
-        ctx.closePath();
-        ctx.fill();
-      }
-    } else {
-      // Up arrows
-      for (let i = 0; i < 3; i++) {
-        const ay = h * (0.3 + i * 0.25) + Math.sin(time * 0.002 + i) * 10;
-        ctx.beginPath();
-        ctx.moveTo(px, ay + arrowLen);
-        ctx.lineTo(px, ay);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(px, ay);
-        ctx.lineTo(px - 5, ay + 8);
-        ctx.lineTo(px + 5, ay + 8);
-        ctx.closePath();
-        ctx.fill();
-      }
-    }
+}
+ticks("meDT", sD); ticks("meST", sS);
+
+function model(D, S){
+  const P1 = eqP(D, S), Q1 = eqQ(D, S);
+  const qdOld = qd(P0, D), qsOld = qs(P0, S);
+  return { D, S, P1, Q1, qdOld, qsOld, gap: qdOld - qsOld };
+}
+
+function resize(){
+  const r = cv.getBoundingClientRect(); if (!r.width || !r.height) return;
+  cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr);
+  buf.width = cv.width; buf.height = cv.height; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); draw();
+}
+
+function arrow(x1, y1, x2, y2, col, lw){
+  const a = Math.atan2(y2 - y1, x2 - x1), hl = Math.max(9, lw * 3.4);
+  const pass = (c, extra) => {
+    ctx.strokeStyle = c; ctx.fillStyle = c; ctx.lineWidth = lw + extra; ctx.lineCap = "round"; ctx.lineJoin = "round";
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2 - Math.cos(a) * hl * 0.6, y2 - Math.sin(a) * hl * 0.6); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - Math.cos(a - 0.45) * hl, y2 - Math.sin(a - 0.45) * hl);
+    ctx.lineTo(x2 - Math.cos(a + 0.45) * hl, y2 - Math.sin(a + 0.45) * hl);
+    ctx.closePath(); ctx.fill(); if (extra) ctx.stroke();
+  };
+  pass("rgba(0,0,0,0.9)", 4); pass(col, 0);
+}
+
+function pill(text, x, y, col, fs, align){
+  ctx.font = `500 ${fs}px ${MONO}`;
+  const tw = ctx.measureText(text).width, padX = 5, bh = fs + 8;
+  let bx = align === "right" ? x - tw - padX * 2 : align === "center" ? x - tw / 2 - padX : x;
+  ctx.fillStyle = "rgba(0,0,0,0.78)"; ctx.fillRect(bx, y - bh / 2, tw + padX * 2, bh);
+  ctx.fillStyle = col; ctx.textAlign = "left"; ctx.textBaseline = "middle";
+  ctx.fillText(text, bx + padX, y + 1);
+  return { x: bx, w: tw + padX * 2 };
+}
+
+function draw(){
+  const w = cv.width / dpr, h = cv.height / dpr; if (!w || !h) return;
+  const m = model(shown.D, shown.S);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.globalCompositeOperation = "source-over"; ctx.globalAlpha = 1; ctx.filter = "none";
+  ctx.fillStyle = "#000"; ctx.fillRect(0, 0, w, h);
+  const fs = Math.max(11, Math.min(13, w / 52));
+  /* the overlay sits inside the picture on a wide screen; on a phone the app moves it below, so reserve no room */
+  const ovEl = document.getElementById("meOverlay");
+  const ovH = (ovEl && ovEl.parentElement === cv.parentElement) ? Math.max(36, ovEl.offsetHeight) : 4;
+  const L = Math.max(46, w * 0.09), R = w - Math.max(18, w * 0.05);
+  const T = h * 0.08 + fs * 1.6, B = h - ovH - fs * 3.2;
+  const X = q => L + q / QMAX * (R - L);
+  const Y = p => B - p / PMAX * (B - T);
+
+  /* grid + axes */
+  ctx.lineWidth = 1; ctx.strokeStyle = "rgba(255,255,255,0.06)";
+  for (let p = 2; p <= PMAX; p += 2){ ctx.beginPath(); ctx.moveTo(L, Y(p)); ctx.lineTo(R, Y(p)); ctx.stroke(); }
+  for (let q = 20; q <= QMAX; q += 20){ ctx.beginPath(); ctx.moveTo(X(q), T); ctx.lineTo(X(q), B); ctx.stroke(); }
+  ctx.strokeStyle = DIM; ctx.lineWidth = 1.4;
+  ctx.beginPath(); ctx.moveTo(L, T - fs * 0.6); ctx.lineTo(L, B); ctx.lineTo(R, B); ctx.stroke();
+  ctx.font = `400 ${fs}px ${MONO}`; ctx.fillStyle = DIM;
+  ctx.textAlign = "right"; ctx.textBaseline = "middle";
+  const yEq = Y(m.P1);
+  for (let p = 0; p <= PMAX; p += 2) if (Math.abs(Y(p) - yEq) > fs * 1.1) ctx.fillText("$" + p, L - 6, Y(p));
+  ctx.textAlign = "center"; ctx.textBaseline = "top";
+  const xEq = X(m.Q1);
+  for (let q = 0; q <= QMAX; q += 20) if (Math.abs(X(q) - xEq) > fs * 2.6) ctx.fillText(String(q), X(q), B + 5);
+  /* axis titles: price up the side, quantity along the bottom */
+  ctx.fillStyle = INK; ctx.textAlign = "left"; ctx.textBaseline = "bottom";
+  ctx.fillText("Price ($ per kg)", Math.max(4, L - 40), T - fs * 0.8);
+  ctx.textAlign = "right"; ctx.textBaseline = "top";
+  ctx.fillText("Quantity (t a week)", R, B + fs * 1.6 + 2);
+
+  /* curves, clipped to the plot */
+  ctx.save(); ctx.beginPath(); ctx.rect(L, T, R - L, B - T); ctx.clip();
+  const line = (f, sh, col, lw, dash) => {
+    ctx.beginPath(); ctx.setLineDash(dash || []);
+    ctx.moveTo(X(f(0, sh)), Y(0)); ctx.lineTo(X(f(PMAX, sh)), Y(PMAX));
+    ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.stroke(); ctx.setLineDash([]);
+  };
+  const dMoved = Math.abs(m.D) > 0.05, sMoved = Math.abs(m.S) > 0.05;
+  if (dMoved) line(qd, 0, `rgba(${RGB},0.38)`, 1.5, [6, 5]);
+  if (sMoved) line(qs, 0, "rgba(250,199,117,0.38)", 1.5, [6, 5]);
+  line(qd, m.D, ACC, 3);
+  line(qs, m.S, AMB, 3);
+  ctx.restore();
+
+  /* curve labels near the ends of each line */
+  const lab = (txt, q, p, col, align) => {
+    const x = Math.min(R - 4, Math.max(L + 4, X(q))), y = Math.min(B - fs, Math.max(T + fs, Y(p)));
+    ctx.font = `600 ${fs + 1}px ${MONO}`; ctx.fillStyle = col; ctx.textAlign = align; ctx.textBaseline = "middle";
+    ctx.fillText(txt, x, y);
+  };
+  const pD = 1.4, pS = 10.6;
+  if (dMoved) lab("D", qd(pD, 0) + 2, pD, `rgba(${RGB},0.6)`, "left");
+  if (sMoved) lab("S", qs(pS, 0) + 2, pS, "rgba(250,199,117,0.6)", "left");
+  lab(dMoved ? "D₁" : "D", qd(pD, m.D) + 2, pD, ACC, "left");
+  lab(sMoved ? "S₁" : "S", qs(pS, m.S) + 2, pS, AMB, "left");
+
+  /* the old price, and the gap that opens at it */
+  const yOld = Y(P0);
+  const moved = dMoved || sMoved;
+  if (moved){
+    ctx.setLineDash([3, 4]); ctx.strokeStyle = "rgba(237,237,232,0.35)"; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(L, yOld); ctx.lineTo(X(Math.max(Q0, m.qdOld, m.qsOld)), yOld); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = "rgba(237,237,232,0.45)"; ctx.beginPath(); ctx.arc(X(Q0), yOld, 4, 0, Math.PI * 2); ctx.fill();
   }
-  
-  // Bloom
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
+  const g = Math.round(m.gap);
+  if (Math.abs(m.gap) > 0.5){
+    const xa = X(Math.min(m.qdOld, m.qsOld)), xb = X(Math.max(m.qdOld, m.qsOld));
+    ctx.strokeStyle = INK; ctx.lineWidth = 2.4;
+    ctx.beginPath(); ctx.moveTo(xa, yOld); ctx.lineTo(xb, yOld); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(xa, yOld - 7); ctx.lineTo(xa, yOld + 7); ctx.moveTo(xb, yOld - 7); ctx.lineTo(xb, yOld + 7); ctx.stroke();
+    const word = m.gap > 0 ? "shortage" : "surplus";
+    /* label the gap on the side away from where the price is heading */
+    const ly = m.gap > 0 ? yOld + fs * 1.3 : yOld - fs * 1.3;
+    pill(`${word} ${Math.abs(g)} t at $6`, Math.min(R - 4, Math.max(L + 70, (xa + xb) / 2)), ly, INK, fs, "center");
+  }
+
+  /* the selected job of the price, drawn on the graph */
+  const y1 = Y(m.P1), x1 = X(m.Q1);
+  const dp = m.P1 - P0;
+  if (Math.abs(dp) > 0.02){
+    if (fn === "signal"){
+      arrow(L + 12, yOld, L + 12, y1, ACC, 3.2);
+      pill(`price ${dp > 0 ? "+" : "−"}$${Math.abs(dp).toFixed(2)}`, L + 22, (yOld + y1) / 2, ACC, fs, "left");
+    } else {
+      /* a movement along the curve, from the old price to the new equilibrium, drawn in white so it stands off the curve */
+      const sellers = fn === "incentive", q0 = sellers ? m.qsOld : m.qdOld, dq = Math.round(m.Q1 - q0);
+      arrow(X(q0), yOld, x1, y1, INK, 3.2);
+      ctx.fillStyle = INK; ctx.beginPath(); ctx.arc(X(q0), yOld, 4.5, 0, Math.PI * 2); ctx.fill();
+      const py = dp > 0 ? y1 - fs * 1.9 : y1 + fs * 1.9;
+      const txt = `${sellers ? "quantity supplied" : "quantity demanded"} ${dq >= 0 ? "+" : "−"}${Math.abs(dq)} t`;
+      ctx.font = `500 ${fs}px ${MONO}`; const tw = ctx.measureText(txt).width + 10;
+      const px = Math.min(R - tw / 2, Math.max(L + tw / 2 + 2, (X(q0) + x1) / 2));
+      pill(txt, px, py, sellers ? AMB : ACC, fs, "center");
+    }
+  } else {
+    const msg = fn === "signal" ? "no gap: no price signal" : fn === "incentive" ? "no gap: no new incentive" : "no gap: nothing to ration";
+    pill(msg, Math.min(R - 4, x1 + 12), y1 - fs * 1.5, DIM, fs, x1 > (L + R) / 2 ? "right" : "left");
+  }
+
+  /* new equilibrium, read off both axes */
+  ctx.setLineDash([4, 4]); ctx.strokeStyle = `rgba(${RGB},0.55)`; ctx.lineWidth = 1.2;
+  ctx.beginPath(); ctx.moveTo(L, y1); ctx.lineTo(x1, y1); ctx.lineTo(x1, B); ctx.stroke(); ctx.setLineDash([]);
+  ctx.save(); ctx.globalCompositeOperation = "lighter";
+  const halo = ctx.createRadialGradient(x1, y1, 0, x1, y1, 22);
+  halo.addColorStop(0, `rgba(${RGB},0.6)`); halo.addColorStop(1, `rgba(${RGB},0)`);
+  ctx.fillStyle = halo; ctx.beginPath(); ctx.arc(x1, y1, 22, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+  ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(x1, y1, 5, 0, Math.PI * 2); ctx.fill();
+  ctx.font = `600 ${fs}px ${MONO}`; ctx.fillStyle = INK; ctx.textAlign = "left"; ctx.textBaseline = "bottom";
+  ctx.fillText(moved ? "E₁" : "E", x1 + 7, y1 - 5);
+  pill(money(m.P1), L - 2, y1, ACC, fs, "right");
+  pill(Math.round(m.Q1) + " t", x1, B + fs * 0.5 + 5, AMB, fs, "center");
+
+  /* bloom */
+  bctx.setTransform(1, 0, 0, 1, 0, 0); bctx.clearRect(0, 0, buf.width, buf.height);
+  if (cv.width && cv.height) bctx.drawImage(cv, 0, 0);
+  ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
   if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
   ctx.restore();
-  
-  // Vignette
+  /* vignette */
+  const cx = w / 2, cy = h / 2;
   const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-  
-  time += 16;
-  requestAnimationFrame(draw);
+  vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+  ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
 }
 
-draw();
+function animateTo(D, S){
+  cancelAnimationFrame(raf);
+  if (reduce) { shown = { D, S }; draw(); return; }
+  const from = { D: shown.D, S: shown.S }, t0 = performance.now(), dur = 420;
+  const step = now => {
+    const t = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - t, 3);
+    shown = { D: from.D + (D - from.D) * e, S: from.S + (S - from.S) * e }; draw();
+    if (t < 1) raf = requestAnimationFrame(step); else { shown = { D, S }; draw(); raf = 0; }
+  };
+  raf = requestAnimationFrame(step);
+}
+
+function dropText(m){
+  const p1 = money(m.P1), q1 = Math.round(m.Q1), qdo = Math.round(m.qdOld), qso = Math.round(m.qsOld);
+  const gap = Math.abs(Math.round(m.gap)), pct = Math.abs((m.P1 - P0) / P0 * 100).toFixed(1);
+  if (Math.abs(m.gap) < 0.5){
+    const lead = fn === "signal" ? "No signal this time." : fn === "incentive" ? "No new incentive this time." : "Nothing new to ration this time.";
+    const why = (m.D === 0 && m.S === 0) ? "Neither curve has shifted, so at $6.00 buyers want exactly the 40 t a week that sellers offer." : `Demand and supply shifted by the same amount, so at $6.00 quantity demanded still equals quantity supplied, at ${qdo} t a week.`;
+    return `${lead} ${why} With no shortage and no surplus there is nothing pushing the price, so it stays at $6.00 and only the quantity traded changes. Shift one curve further than the other and a gap opens at the old price: that gap is what sets the price mechanism moving.`;
+  }
+  const up = m.gap > 0;
+  if (fn === "signal"){
+    return up
+      ? `At the old price of $6.00, buyers now want ${qdo} t a week but sellers offer only ${qso} t: a shortage of ${gap} t. Empty shelves and waiting lists let sellers ask more, and the price climbs to ${p1}, ${pct}% higher. Other goods have not changed price, so avocados are now relatively dearer, and that relative price is the signal. It tells growers this good is wanted more and tells buyers it has become scarcer, without anyone having to send the message.`
+      : `At the old price of $6.00, sellers now offer ${qso} t a week but buyers want only ${qdo} t: a surplus of ${gap} t. Unsold stock piles up, so sellers cut the price to ${p1}, ${pct}% lower. Other goods have not changed price, so avocados are now relatively cheaper, and that relative price is the signal. It tells growers the market wants less of this good and tells buyers it has become plentiful.`;
+  }
+  if (fn === "incentive"){
+    return up
+      ? `The higher price raises the reward for selling avocados, so growers pick more, waste less and some shift land and labour away from crops whose relative price did not rise. On the graph that is a movement along the supply curve, not a shift: quantity supplied rises from ${qso} t at $6.00 to ${q1} t at ${p1}. Nobody orders growers to expand; the chance of higher profit does it. Buyers get an incentive too, to look for cheaper substitutes.`
+      : `The lower price cuts the reward for selling avocados, so growers supply less and some move land and labour to crops that now pay relatively better. On the graph that is a movement along the supply curve, not a shift: quantity supplied falls from ${qso} t at $6.00 to ${q1} t at ${p1}. Nobody orders growers to cut back; lower profit does it. Buyers get an incentive too, to buy more of a good that is now a bargain.`;
+  }
+  return up
+    ? `When there is not enough to go around at $6.00, something has to decide who gets the avocados. The rising price does it: buyers who value them at less than ${p1} buy fewer or drop out, so quantity demanded falls from ${qdo} t to ${q1} t, a movement along the demand curve. The good goes to those willing and able to pay, which clears the market but is not always fair, since what you can pay depends on your income. Rationing stops when quantity demanded equals quantity supplied at ${q1} t.`
+    : `With more avocados than buyers want at $6.00, the falling price rations in the other direction: at ${p1}, people who would not pay $6.00 now buy, and regular buyers buy more. Quantity demanded rises from ${qdo} t to ${q1} t, a movement along the demand curve, until the surplus is gone. The price decides who gets the good without queues, permits or a planner. Rationing stops when quantity demanded equals quantity supplied at ${q1} t.`;
+}
+
+function update(animate){
+  const D = +sD.value, S = +sS.value, m = model(D, S);
+  [sD, sS].forEach(el => el.style.setProperty("--fill", ((+el.value - +el.min) / (+el.max - +el.min) * 100) + "%"));
+  dV.textContent = signed(D); sV.textContent = signed(S);
+  const g = Math.round(m.gap);
+  tag.textContent = g > 0 ? `Shortage ${g} t at $6` : g < 0 ? `Surplus ${-g} t at $6` : "No gap at $6";
+  const q1 = Math.round(m.Q1);
+  ovl.textContent = (D === 0 && S === 0) ? `Equilibrium $6.00 · 40 t a week` : `Price $6.00 → ${money(m.P1)} · quantity 40 → ${q1} t`;
+  outP.textContent = money(m.P1); outPs.textContent = "was $6.00";
+  outQ.textContent = q1 + " t"; outQs.textContent = "was 40 t a week";
+  drop.textContent = dropText(m);
+  cv.setAttribute("aria-label", `Demand and supply graph, price on the vertical axis and quantity on the horizontal axis. Demand shift ${signed(D)}, supply shift ${signed(S)}. ${g > 0 ? "Shortage of " + g + " t" : g < 0 ? "Surplus of " + (-g) + " t" : "No gap"} at the old price of $6.00. New equilibrium ${money(m.P1)} and ${q1} t a week.`);
+  if (animate) animateTo(D, S); else { cancelAnimationFrame(raf); raf = 0; shown = { D, S }; draw(); }
+}
+
+const stories = document.querySelectorAll(".me-stories .tg");
+function markStory(){ stories.forEach(b => b.setAttribute("aria-pressed", (+b.dataset.d === +sD.value && +b.dataset.s === +sS.value) ? "true" : "false")); }
+stories.forEach(b => b.addEventListener("click", () => {
+  sD.value = b.dataset.d; sS.value = b.dataset.s; markStory(); update(true);
+}));
+document.querySelectorAll(".me-drops .tg").forEach(b => b.addEventListener("click", () => {
+  fn = b.dataset.f;
+  document.querySelectorAll(".me-drops .tg").forEach(x => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
+  update(false);
+}));
+[sD, sS].forEach(el => el.addEventListener("input", () => { markStory(); update(true); }));
+window.addEventListener("resize", resize);
+if (window.ResizeObserver) new ResizeObserver(() => resize()).observe(cv.parentElement);
+update(false); resize();
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => draw());
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'market-equilibrium-and-price-mechanism'},'*');}catch(e){}}

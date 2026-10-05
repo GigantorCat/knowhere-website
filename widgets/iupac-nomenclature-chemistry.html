@@ -385,7 +385,7 @@ let animFrame;
 
 const texts = {
   simple: "For a simple unbranched alkane, the name is straightforward: count the carbons in the chain, apply the prefix (meth-, eth-, prop-, but-, pent-, hex-), and add \"-ane\" as the suffix. But this simplicity is deceptive — the real power of IUPAC naming only becomes clear when molecules get complex. A six-carbon chain is hexane. A seven-carbon chain is heptane. The suffix \"-ane\" tells you it's a saturated hydrocarbon with only single bonds. The system is designed so that every molecule has exactly one correct name, and every name describes exactly one molecule.",
-  complex: "When substituents appear, you must first identify the longest continuous chain containing the functional group — this becomes your parent name. Then number the chain from the end that gives the functional group (or first substituent if no functional group) the lowest number. Name each substituent with its position: \"2-methyl\" means a methyl group on carbon 2. If multiple identical substituents exist, use di-, tri-, tetra- prefixes and list all positions: \"2,3-dimethyl\". Finally, arrange substituents alphabetically in the name, ignoring the multiplier prefixes. So \"2-ethyl-3-methylhexane\" not \"3-methyl-2-ethylhexane\". This algorithmic approach ensures that 3-methylhexane and 2-methylhexane are understood as distinct molecules, and that everyone reading the name reconstructs the identical structure."
+  complex: "When substituents appear, you must first identify the longest continuous chain containing the functional group — this becomes your parent name. Then number the chain from the end that gives the functional group (or first substituent if no functional group) the lowest number. Name each substituent with its position: \"2-methyl\" means a methyl group on carbon 2. If multiple identical substituents exist, use di-, tri-, tetra- prefixes and list all positions: \"2,3-dimethyl\". Finally, arrange substituents alphabetically in the name, ignoring the multiplier prefixes. So \"3-ethyl-2-methylhexane\" not \"2-methyl-3-ethylhexane\". This algorithmic approach ensures that 3-methylhexane and 2-methylhexane are understood as distinct molecules, and that everyone reading the name reconstructs the identical structure."
 };
 
 function resize() {
@@ -474,6 +474,21 @@ function draw() {
   const t2 = Math.min(Math.max((val - 25) / 25, 0), 1);
   const t3 = Math.min(Math.max((val - 50) / 25, 0), 1);
   const t4 = Math.min(Math.max((val - 75) / 25, 0), 1);
+
+  // Faint skeleton of the whole molecule, always there, so the naming steps light up something you can already see
+  ctx.save();
+  ctx.strokeStyle = "rgba(237,237,232,0.26)";
+  ctx.fillStyle = "rgba(237,237,232,0.34)";
+  ctx.lineWidth = 2;
+  ctx.lineCap = "round";
+  ctx.beginPath();
+  ctx.moveTo(mainChain[0].x * w, mainChain[0].y * h);
+  for (let i = 1; i < mainChain.length; i++) ctx.lineTo(mainChain[i].x * w, mainChain[i].y * h);
+  ctx.moveTo(mainChain[methyl.parent].x * w, mainChain[methyl.parent].y * h);
+  ctx.lineTo(methyl.x * w, methyl.y * h);
+  ctx.stroke();
+  mainChain.concat([methyl]).forEach(function (c) { ctx.beginPath(); ctx.arc(c.x * w, c.y * h, 3, 0, Math.PI * 2); ctx.fill(); });
+  ctx.restore();
 
   // Step 1: Draw main chain bonds
   if (t1 > 0) {

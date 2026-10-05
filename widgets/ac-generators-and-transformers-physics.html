@@ -237,6 +237,15 @@ canvas {
   box-shadow: 0 0 22px rgba(58,111,200,.18);
 }
 
+.xf-figure {
+  width: 100%;
+  margin-bottom: 14px;
+}
+
+.xf-figure svg { display: block; width: 100%; height: auto; max-height: 170px; }
+
+.stats-row.xf-stats { padding-top: 14px; margin-bottom: 16px; }
+
 .knowdrop {
   padding-top: 16px;
   border-top: 1px solid var(--line);
@@ -322,9 +331,9 @@ canvas {
   <div class="card">
     <div class="card-header">
       <div class="card-label">AC Generator</div>
-      <div class="live-tag" id="liveTag">0 RPM • 0.0 V</div>
+      <div class="live-tag" id="liveTag">38 RPM • 4.0 V</div>
     </div>
-    <div class="card-hint">Coil rotates in magnetic field, flux changes, EMF induced</div>
+    <div class="card-hint">Change the angular velocity ω. Watch the coil, the ε trace and the readouts.</div>
     
     <div class="canvas-wrapper">
       <canvas id="genCanvas"></canvas>
@@ -344,7 +353,7 @@ canvas {
     <div class="stats-row">
       <div class="stat">
         <div class="stat-label">Peak EMF</div>
-        <div class="stat-value acc" id="peakEmf">96 V</div>
+        <div class="stat-value acc" id="peakEmf">4.0 V</div>
       </div>
       <div class="stat">
         <div class="stat-label">Frequency</div>
@@ -354,6 +363,22 @@ canvas {
   </div>
   
   <div class="card">
+    <div class="card-header">
+      <div class="card-label">Ideal Transformer</div>
+      <div class="live-tag" id="xfTag">Np : Ns = 1 : 5</div>
+    </div>
+    <div class="card-hint">Switch between Step-Up and Step-Down. Watch the coils and Vs.</div>
+    <div class="xf-figure" id="xfFigure" aria-hidden="true"></div>
+    <div class="stats-row xf-stats">
+      <div class="stat">
+        <div class="stat-label">Primary Vp (peak)</div>
+        <div class="stat-value acc" id="xfVp">4.0 V</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Secondary Vs (peak)</div>
+        <div class="stat-value amb" id="xfVs">20.0 V</div>
+      </div>
+    </div>
     <div class="toggle-section">
       <button class="toggle-btn active" id="btnStepUp">Step-Up</button>
       <button class="toggle-btn" id="btnStepDown">Step-Down</button>
@@ -385,6 +410,10 @@ const freq = document.getElementById('freq');
 const btnStepUp = document.getElementById('btnStepUp');
 const btnStepDown = document.getElementById('btnStepDown');
 const knowdropText = document.getElementById('knowdropText');
+const xfTag = document.getElementById('xfTag');
+const xfFigure = document.getElementById('xfFigure');
+const xfVp = document.getElementById('xfVp');
+const xfVs = document.getElementById('xfVs');
 
 const dpr = Math.min(window.devicePixelRatio || 1, 2);
 const buf = document.createElement('canvas');
@@ -397,6 +426,16 @@ let time = 0;
 const B = 0.5; // Tesla
 const A = 0.04; // m²
 const N = 50; // turns
+const OMEGA_MAX = 10; // rad/s, top of the slider
+const V_AXIS = B * A * N * OMEGA_MAX; // fixed trace axis: 10 V
+const T_WINDOW = 2; // seconds of emf shown on the trace
+
+// Ideal transformer fed by the generator: Vs = Vp x Ns/Np. Drawn loops keep the same ratio.
+const XF = {
+  up:   { np: 100, ns: 500, loopsP: 3,  loopsS: 15, label: "1 : 5" },
+  down: { np: 500, ns: 100, loopsP: 15, loopsS: 3,  label: "5 : 1" }
+};
+let xfMode = "up";
 
 const stepUpText = "Step-up transformers at power stations increase voltage to 275 kV or higher while decreasing current proportionally. Since power loss in transmission cables is I²R, reducing current by a factor of 100 cuts losses by a factor of 10,000. The transformer equation Vs/Vp = Ns/Np means if the secondary coil has 1000 times more turns than the primary, voltage multiplies by 1000. This only works with AC because the changing flux in the primary coil induces EMF in the secondary through mutual induction. DC would produce constant flux, zero induced voltage, and the transformer would be a useless lump of copper.";
 
@@ -423,28 +462,75 @@ slider.addEventListener('input', (e) => {
   updateStats();
 });
 
+function fmtV(v) {
+  return v < 10 ? v.toFixed(2) : v.toFixed(1);
+}
+
+function drawTransformer() {
+  const m = XF[xfMode];
+  const coreX = 70, coreY = 22, coreW = 180, coreH = 108, limb = 16;
+  const top = coreY + limb + 4, bot = coreY + coreH - limb - 4;
+  function loops(n, x, colour) {
+    let out = "";
+    const step = (bot - top) / n;
+    for (let i = 0; i < n; i++) {
+      const y = top + step * (i + 0.5);
+      out += `<ellipse cx="${x}" cy="${y.toFixed(1)}" rx="15" ry="${Math.max(1.6, step * 0.42).toFixed(1)}" fill="none" stroke="${colour}" stroke-width="1.8"/>`;
+    }
+    return out;
+  }
+  const xL = coreX + limb / 2, xR = coreX + coreW - limb / 2;
+  xfFigure.innerHTML = `<svg viewBox="0 0 320 150" role="img">
+    <rect x="${coreX}" y="${coreY}" width="${coreW}" height="${coreH}" rx="4" fill="none" stroke="#3a4036" stroke-width="${limb}"/>
+    ${loops(m.loopsP, xL, "#3A6FC8")}
+    ${loops(m.loopsS, xR, "#FAC775")}
+    <line x1="10" y1="${top + 6}" x2="${xL - 15}" y2="${top + 6}" stroke="#3A6FC8" stroke-width="1.5"/>
+    <line x1="10" y1="${bot - 6}" x2="${xL - 15}" y2="${bot - 6}" stroke="#3A6FC8" stroke-width="1.5"/>
+    <line x1="${xR + 15}" y1="${top + 6}" x2="310" y2="${top + 6}" stroke="#FAC775" stroke-width="1.5"/>
+    <line x1="${xR + 15}" y1="${bot - 6}" x2="310" y2="${bot - 6}" stroke="#FAC775" stroke-width="1.5"/>
+    <text x="10" y="${top - 4}" fill="#8C9389" font-family="JetBrains Mono, monospace" font-size="10">Vp in</text>
+    <text x="310" y="${top - 4}" fill="#8C9389" font-family="JetBrains Mono, monospace" font-size="10" text-anchor="end">Vs out</text>
+    <text x="${xL}" y="146" fill="#3A6FC8" font-family="JetBrains Mono, monospace" font-size="11" text-anchor="middle">Np = ${m.np}</text>
+    <text x="${xR}" y="146" fill="#FAC775" font-family="JetBrains Mono, monospace" font-size="11" text-anchor="middle">Ns = ${m.ns}</text>
+    <text x="160" y="${coreY + coreH / 2 + 4}" fill="#8C9389" font-family="JetBrains Mono, monospace" font-size="11" text-anchor="middle">${m.label}</text>
+  </svg>`;
+}
+
 function updateStats() {
   const rpm = (omega * 60 / (2 * Math.PI)).toFixed(0);
-  const emfPeak = (B * A * N * omega).toFixed(1);
+  const vp = B * A * N * omega;
+  const emfPeak = vp.toFixed(1);
   const frequency = (omega / (2 * Math.PI)).toFixed(2);
+  const m = XF[xfMode];
+  const vs = vp * m.ns / m.np;
   
   liveTag.textContent = `${rpm} RPM • ${emfPeak} V`;
   peakEmf.textContent = `${emfPeak} V`;
   freq.textContent = `${frequency} Hz`;
+  xfTag.textContent = `Np : Ns = ${m.label}`;
+  xfVp.textContent = `${emfPeak} V`;
+  xfVs.textContent = `${fmtV(vs)} V`;
 }
 
 btnStepUp.addEventListener('click', () => {
   btnStepUp.classList.add('active');
   btnStepDown.classList.remove('active');
   knowdropText.textContent = stepUpText;
+  xfMode = "up";
+  drawTransformer();
+  updateStats();
 });
 
 btnStepDown.addEventListener('click', () => {
   btnStepDown.classList.add('active');
   btnStepUp.classList.remove('active');
   knowdropText.textContent = stepDownText;
+  xfMode = "down";
+  drawTransformer();
+  updateStats();
 });
 
+drawTransformer();
 updateStats();
 slider.style.setProperty('--fill', '40%');
 
@@ -453,6 +539,8 @@ function draw() {
   const h = canvas.height / dpr;
   const cx = w / 2;
   const cy = h / 2;
+  const gx = w * 0.27; // generator centre (left half)
+  const gy = h * 0.44; // sits above the ε overlay strip
   
   ctx.fillStyle = '#000';
   ctx.fillRect(0, 0, w, h);
@@ -460,20 +548,38 @@ function draw() {
   // Magnetic field lines (vertical, subtle)
   ctx.strokeStyle = 'rgba(58,111,200,0.08)';
   ctx.lineWidth = 1;
-  for (let x = w * 0.15; x < w * 0.85; x += 18) {
+  for (let x = w * 0.06; x < w * 0.49; x += 18) {
     ctx.beginPath();
-    ctx.moveTo(x, h * 0.15);
-    ctx.lineTo(x, h * 0.85);
+    ctx.moveTo(x, h * 0.12);
+    ctx.lineTo(x, h * 0.88);
     ctx.stroke();
   }
+  ctx.fillStyle = 'rgba(140,147,137,0.7)';
+  ctx.font = '10px "JetBrains Mono", monospace';
+  ctx.textAlign = 'left';
+  ctx.fillText("B", w * 0.06, h * 0.1);
   
-  // Draw coil (rectangle, rotating)
-  const coilW = w * 0.12;
-  const coilH = h * 0.28;
+  // Coil turning about a horizontal axle: flat (edge-on) when flux is greatest,
+  // face-on when flux is zero and emf is greatest.
+  const coilW = w * 0.2;
+  const coilH = h * 0.4;
+  const proj = Math.sin(angle);
+  const ph = coilH * proj;
+  
+  // Axle
+  ctx.strokeStyle = 'rgba(237,237,232,0.35)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(gx - coilW * 0.75, gy);
+  ctx.lineTo(gx + coilW * 0.75, gy);
+  ctx.stroke();
   
   ctx.save();
-  ctx.translate(cx, cy);
-  ctx.rotate(angle);
+  ctx.translate(gx, gy);
+  
+  // Face tint (which side faces you)
+  ctx.fillStyle = proj >= 0 ? 'rgba(58,111,200,0.10)' : 'rgba(58,111,200,0.04)';
+  ctx.fillRect(-coilW / 2, -ph / 2, coilW, ph);
   
   // Coil shadow glow
   ctx.save();
@@ -482,19 +588,19 @@ function draw() {
   ctx.shadowBlur = 16;
   ctx.strokeStyle = 'rgba(58,111,200,0.6)';
   ctx.lineWidth = 3;
-  ctx.strokeRect(-coilW / 2, -coilH / 2, coilW, coilH);
+  ctx.strokeRect(-coilW / 2, -ph / 2, coilW, ph);
   ctx.restore();
   
   // Coil main
   ctx.strokeStyle = 'rgba(58,111,200,0.9)';
   ctx.lineWidth = 2.5;
-  ctx.strokeRect(-coilW / 2, -coilH / 2, coilW, coilH);
+  ctx.strokeRect(-coilW / 2, -ph / 2, coilW, ph);
   
-  // Coil winding lines
+  // Coil winding lines (parallel to the axle)
   ctx.strokeStyle = 'rgba(58,111,200,0.3)';
   ctx.lineWidth = 1;
   for (let i = 0; i < 5; i++) {
-    const y = -coilH / 2 + (i + 1) * (coilH / 6);
+    const y = -ph / 2 + (i + 1) * (ph / 6);
     ctx.beginPath();
     ctx.moveTo(-coilW / 2, y);
     ctx.lineTo(coilW / 2, y);
@@ -503,19 +609,23 @@ function draw() {
   
   ctx.restore();
   
-  // Rotation axis dot
+  // Axle ends
   ctx.fillStyle = 'rgba(237,237,232,0.5)';
   ctx.beginPath();
-  ctx.arc(cx, cy, 3, 0, Math.PI * 2);
+  ctx.arc(gx - coilW * 0.75, gy, 3, 0, Math.PI * 2);
+  ctx.arc(gx + coilW * 0.75, gy, 3, 0, Math.PI * 2);
   ctx.fill();
   
-  // EMF waveform trace (right side)
-  const traceX = w * 0.72;
-  const traceY = cy;
-  const traceW = w * 0.22;
-  const traceH = h * 0.3;
+  // EMF trace (right side): fixed time window, fixed voltage axis.
+  // Height = peak emf NBAw; cycles on screen = f x T_WINDOW.
+  const traceX = w * 0.56;
+  const traceY = gy;
+  const traceW = w * 0.38;
+  const traceH = h * 0.56;
+  const yScale = (traceH / 2) / V_AXIS; // px per volt, set so 10 V fits
+  const emfPeakNow = B * A * N * omega;
   
-  const emfNow = B * A * N * omega * Math.sin(angle);
+  const emfNow = emfPeakNow * Math.sin(angle);
   
   ctx.strokeStyle = 'rgba(250,199,117,0.15)';
   ctx.lineWidth = 1;
@@ -527,16 +637,36 @@ function draw() {
   ctx.moveTo(traceX, traceY);
   ctx.lineTo(traceX + traceW, traceY);
   ctx.stroke();
+  // Axis ticks at +/-5 V and +/-10 V
+  ctx.strokeStyle = 'rgba(250,199,117,0.08)';
+  [-10, -5, 5, 10].forEach(v => {
+    const y = traceY - v * yScale;
+    ctx.beginPath();
+    ctx.moveTo(traceX, y);
+    ctx.lineTo(traceX + traceW, y);
+    ctx.stroke();
+  });
+  ctx.fillStyle = 'rgba(140,147,137,0.85)';
+  ctx.font = "10px \"JetBrains Mono\", monospace";
+  ctx.textAlign = 'right';
+  ctx.fillText("+10 V", traceX - 4, traceY - traceH / 2 + 3);
+  ctx.fillText("0", traceX - 4, traceY + 3);
+  ctx.fillText("-10 V", traceX - 4, traceY + traceH / 2 + 3);
+  ctx.textAlign = 'left';
+  ctx.fillText("now", traceX, traceY + traceH / 2 + 13);
+  ctx.textAlign = 'right';
+  ctx.fillText(`${T_WINDOW} s ago`, traceX + traceW, traceY + traceH / 2 + 13);
   
-  // Draw sine wave
+  // Draw sine wave: left edge is now, right edge is T_WINDOW seconds ago
   ctx.strokeStyle = 'rgba(250,199,117,0.8)';
   ctx.lineWidth = 2;
   ctx.beginPath();
-  for (let i = 0; i <= 100; i++) {
-    const t = (i / 100) * Math.PI * 4;
-    const emfVal = Math.sin(angle - t);
-    const x = traceX + (i / 100) * traceW;
-    const y = traceY - emfVal * (traceH / 2) * 0.8;
+  const SAMPLES = 240;
+  for (let i = 0; i <= SAMPLES; i++) {
+    const tau = (i / SAMPLES) * T_WINDOW;
+    const emfVal = emfPeakNow * Math.sin(angle - omega * tau);
+    const x = traceX + (i / SAMPLES) * traceW;
+    const y = traceY - emfVal * yScale;
     if (i === 0) ctx.moveTo(x, y);
     else ctx.lineTo(x, y);
   }
@@ -548,17 +678,17 @@ function draw() {
   ctx.fillStyle = 'rgba(250,199,117,0.9)';
   ctx.shadowColor = 'rgba(250,199,117,0.6)';
   ctx.shadowBlur = 12;
-  const markerY = traceY - Math.sin(angle) * (traceH / 2) * 0.8;
+  const markerY = traceY - emfNow * yScale;
   ctx.beginPath();
   ctx.arc(traceX, markerY, 4, 0, Math.PI * 2);
   ctx.fill();
   ctx.restore();
   
-  // Flux arrow (indicates flux direction through coil)
+  // Flux arrow (flux through coil = BA cos angle)
   const fluxMag = Math.cos(angle);
   if (Math.abs(fluxMag) > 0.1) {
-    const arrowX = cx + coilW * 0.7;
-    const arrowY = cy;
+    const arrowX = gx + coilW * 0.95;
+    const arrowY = gy;
     const arrowLen = Math.abs(fluxMag) * 30;
     const arrowDir = fluxMag > 0 ? 1 : -1;
     
@@ -582,6 +712,10 @@ function draw() {
     ctx.fill();
     ctx.restore();
   }
+  ctx.fillStyle = 'rgba(140,147,137,0.85)';
+  ctx.font = '10px "JetBrains Mono", monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText("Φ", gx + coilW * 0.95, gy - 22);
   
   // Bloom
   bctx.setTransform(1, 0, 0, 1, 0, 0);

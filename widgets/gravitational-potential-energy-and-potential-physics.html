@@ -339,7 +339,7 @@ canvas {
     </div>
 
     <div class="slider-control">
-      <input type="range" class="gpe-slider" id="radiusSlider" min="1" max="10" step="0.1" value="1">
+      <input aria-label="Distance from centre (R⊕)" type="range" class="gpe-slider" id="radiusSlider" min="1" max="10" step="0.1" value="1">
       <div class="tick-labels">
         <span>Surface</span>
         <span>5 R⊕</span>
@@ -461,7 +461,7 @@ function draw() {
   const D = h * 0.55;
   const core = w * 0.18;
   const basePinch = 0.42;
-  const massInfluence = 1 / currentRadius;
+  const massInfluence = 1;
   const pinchAmt = basePinch * massInfluence;
   const tilt = 0.6;
   const xR = w * 0.52;
@@ -512,7 +512,7 @@ function draw() {
   }
 
   // Central mass (Earth)
-  const massR = 16 / currentRadius + 8;
+  const massR = 24;
   
   // Corona glow
   const corona = ctx.createRadialGradient(cx, cy, 0, cx, cy, massR * 5.5);
@@ -541,7 +541,7 @@ function draw() {
   ctx.stroke();
 
   // Test mass orbit
-  const orbitR = massR + 32 * currentRadius;
+  const orbitR = Math.min(massR + 32 * currentRadius, cx - 14, (cy - 14) / tilt);
   const angle = time * 0.4;
   const mx = cx + Math.cos(angle) * orbitR;
   const my = cy + Math.sin(angle) * orbitR * tilt;
@@ -657,7 +657,7 @@ slider.addEventListener('input', (e) => {
 
 const knowdrops = {
   btn1: "The universal formula E = –GMm/r works everywhere in a gravitational field, not just near Earth's surface. The negative sign is crucial: it means you're in an energy deficit relative to infinity. At infinity, r approaches ∞ and E approaches zero — that's the reference point. Closer to the mass, r is smaller, so E becomes more negative. To escape completely requires adding exactly |E| joules of energy to climb from your current negative value up to zero. This is why orbital mechanics uses negative energies: bound orbits have E < 0, and only objects with E ≥ 0 can escape.",
-  btn2: "Near Earth's surface where Δr ≪ R⊕, we can approximate the change in GPE with the familiar ΔE = mgΔh formula. This works because over small height changes, g is roughly constant at 9.8 m/s². But this is just a linear approximation of the true 1/r relationship. If you lift a 1 kg mass from sea level to 100 km altitude using mgh, you get 980 kJ. The exact formula –GM/r gives 984 kJ — only 0.4% different. But try using mgh to calculate the energy to reach geostationary orbit (36,000 km up) and you'll be off by 40%. The universal formula is always correct; mgh is a convenient surface shortcut."
+  btn2: "Near Earth's surface where Δr ≪ R⊕, we can approximate the change in GPE with the familiar ΔE = mgΔh formula. This works because over small height changes, g is roughly constant at 9.8 m/s². But this is just a linear approximation of the true 1/r relationship. If you lift a 1 kg mass from sea level to 100 km altitude using mgh, you get 980 kJ. The exact formula –GM/r gives 967 kJ — only about 1.3% different. But try using mgh to calculate the energy to reach geostationary orbit (36,000 km up) and you'll be off by about 560% (mgh gives 353 MJ; the exact answer is 53 MJ). The universal formula is always correct; mgh is a convenient surface shortcut."
 };
 
 btn1.addEventListener('click', () => {

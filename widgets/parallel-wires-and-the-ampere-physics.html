@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Parallel Wires and the Ampere — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Parallel wires and the ampere — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -539,7 +539,7 @@ function update() {
 
   const { F_per_L, attract, B1 } = calculate();
   const forceStr = formatSci(F_per_L);
-  const typeStr = attract ? "Attract" : "Repel";
+  const typeStr = F_per_L > 0 ? (attract ? "Attract" : "Repel") : "No force";
 
   liveTag.textContent = typeStr + " • " + forceStr + " N/m";
   overlayTag.textContent = typeStr + " • F/l = " + forceStr + " N/m";
@@ -597,6 +597,15 @@ toggleBtns.forEach(btn => {
   });
 });
 
+/* kw-fix 24 Sep 2026: the picture now does the physics. Wires slide apart with the separation slider (one eased
+   move, then rest), field rings brighten and multiply with current, force arrows scale on a log so 2e-7 N/m (the
+   ampere) and 2e-4 N/m both read. The old draw had the wires pinned at 35%/65%, arrows scaled against 1e-4, and
+   rings at ~10% alpha under a 52% vignette. */
+var wirePos = null;            /* var, not let: resize() calls draw() above this line at boot (TDZ). eased current positions of the two wires (px), null until first draw */
+function forceScaleOf(F) {     /* log map: 1e-8 -> 0, 2e-4 -> 1 */
+  if (!(F > 0)) return 0;
+  return Math.max(0.06, Math.min(1, (Math.log10(F) + 8) / 4.3));
+}
 function draw() {
   const w = canvas.width / dpr;
   const h = canvas.height / dpr;
@@ -606,135 +615,119 @@ function draw() {
   ctx.fillRect(0, 0, w, h);
 
   const { F_per_L, attract } = calculate();
+  const fs = forceScaleOf(F_per_L);
 
-  const wire1X = w * 0.35;
-  const wire2X = w * 0.65;
+  // Target geometry: separation 0.10 m -> 18% of width, 2.00 m -> 72% of width, centred
+  const sepFrac = 0.18 + 0.54 * Math.min(1, Math.max(0, (sep - 0.1) / 1.9));
+  const target1 = w * (0.5 - sepFrac / 2);
+  const target2 = w * (0.5 + sepFrac / 2);
+  if (!wirePos) wirePos = [target1, target2];
+  wirePos[0] += (target1 - wirePos[0]) * 0.18;
+  wirePos[1] += (target2 - wirePos[1]) * 0.18;
+  if (Math.abs(target1 - wirePos[0]) < 0.3) wirePos[0] = target1;
+  if (Math.abs(target2 - wirePos[1]) < 0.3) wirePos[1] = target2;
+  const wire1X = wirePos[0];
+  const wire2X = wirePos[1];
   const wireY = h * 0.5;
-  const wireRadius = 8;
+  const wireRadius = Math.max(9, h * 0.055);
 
-  const sepPx = (wire2X - wire1X);
-  const maxForce = 1e-4;
-  const forceScale = Math.min(F_per_L / maxForce, 1);
-  const arrowLen = 30 + forceScale * 40;
-
-  // Field rings from wire 1 — dashes circulate with the field's handedness
-  // (out of page = anticlockwise, into page = clockwise), speed ∝ current
-  const numRings = 5;
-  for (let i = 1; i <= numRings; i++) {
-    const r = wireRadius + i * 18;
-    const alpha = Math.max(0, 0.25 - i * 0.04);
-    ctx.strokeStyle = "rgba(" + RGB + "," + (alpha + 0.06) + ")";
-    ctx.lineWidth = 1.5;
-    ctx.setLineDash([6, 10]);
-    ctx.lineDashOffset = -dir1 * t * (14 + I1 * 2.2);
-    ctx.beginPath();
-    ctx.arc(wire1X, wireY, r, 0, Math.PI * 2);
-    ctx.stroke();
-  }
+  // Field rings — count and brightness follow the current; dashes circulate with the field's handedness
+  const ringGap = Math.max(14, h * 0.085);
+  [[wire1X, I1, dir1], [wire2X, I2, dir2]].forEach(([wx, amps, dir]) => {
+    const n = amps > 0 ? 3 + Math.round(amps * 0.5) : 0;   // no current, no field rings; 8 at 10 A
+    for (let i = 1; i <= n; i++) {
+      const r = wireRadius + i * ringGap;
+      const a = Math.max(0.10, 0.55 - i * 0.06) * (0.55 + 0.45 * Math.min(1, amps / 6));
+      ctx.strokeStyle = "rgba(" + RGB + "," + a.toFixed(3) + ")";
+      ctx.lineWidth = i === 1 ? 2 : 1.5;
+      ctx.setLineDash([7, 9]);
+      /* offset bounded to one dash period: a Date-scaled offset (the old code) is ~1e10 px, and a POSITIVE one
+         (reversed current) walks WebKit's dash iterator for ~30 s — the freeze Cat saw on Up/Down */
+      ctx.lineDashOffset = dir * ((t * (16 + amps * 3)) % 16);
+      ctx.beginPath();
+      ctx.arc(wx, wireY, r, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+  });
   ctx.setLineDash([]);
+  ctx.lineDashOffset = 0;
 
-  // Field rings from wire 2
-  for (let i = 1; i <= numRings; i++) {
-    const r = wireRadius + i * 18;
-    const alpha = Math.max(0, 0.25 - i * 0.04);
-    ctx.strokeStyle = "rgba(" + RGB + "," + (alpha + 0.06) + ")";
-    ctx.lineWidth = 1.5;
-    ctx.setLineDash([6, 10]);
-    ctx.lineDashOffset = -dir2 * t * (14 + I2 * 2.2);
-    ctx.beginPath();
-    ctx.arc(wire2X, wireY, r, 0, Math.PI * 2);
-    ctx.stroke();
-  }
-  ctx.setLineDash([]);
-
-  // Wire 1
-  const grad1 = ctx.createLinearGradient(wire1X - wireRadius, 0, wire1X + wireRadius, 0);
-  grad1.addColorStop(0, "#555");
-  grad1.addColorStop(0.5, "#888");
-  grad1.addColorStop(1, "#555");
-  ctx.fillStyle = grad1;
-  ctx.beginPath();
-  ctx.arc(wire1X, wireY, wireRadius, 0, Math.PI * 2);
-  ctx.fill();
-
-  // Wire 2
-  const grad2 = ctx.createLinearGradient(wire2X - wireRadius, 0, wire2X + wireRadius, 0);
-  grad2.addColorStop(0, "#555");
-  grad2.addColorStop(0.5, "#888");
-  grad2.addColorStop(1, "#555");
-  ctx.fillStyle = grad2;
-  ctx.beginPath();
-  ctx.arc(wire2X, wireY, wireRadius, 0, Math.PI * 2);
-  ctx.fill();
-
-  // Live-wire pulse — glow breathes with current magnitude
-  const pulse = 0.55 + 0.45 * Math.sin(t * 5);
+  // Glow behind each wire, breathing with the current
+  const pulse = 0.55 + 0.45 * Math.sin(t * 4);
   [[wire1X, I1], [wire2X, I2]].forEach(([wx, amps]) => {
-    const gr = ctx.createRadialGradient(wx, wireY, wireRadius * 0.4, wx, wireY, wireRadius * (2.2 + amps * 0.12));
-    gr.addColorStop(0, "rgba(" + RGB + "," + (0.28 + 0.18 * pulse * (amps / 10)) + ")");
+    const R = wireRadius * (2.4 + amps * 0.14);
+    const gr = ctx.createRadialGradient(wx, wireY, wireRadius * 0.4, wx, wireY, R);
+    gr.addColorStop(0, "rgba(" + RGB + "," + (0.30 + 0.25 * pulse * Math.min(1, amps / 6)).toFixed(3) + ")");
     gr.addColorStop(1, "rgba(" + RGB + ",0)");
     ctx.fillStyle = gr;
     ctx.beginPath();
-    ctx.arc(wx, wireY, wireRadius * (2.2 + amps * 0.12), 0, Math.PI * 2);
+    ctx.arc(wx, wireY, R, 0, Math.PI * 2);
     ctx.fill();
   });
 
-  // Current direction indicators
-  ctx.fillStyle = ACC;
-  ctx.font = "bold 14px JetBrains Mono";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText(dir1 === 1 ? "⊙" : "⊗", wire1X, wireY);
-  ctx.fillText(dir2 === 1 ? "⊙" : "⊗", wire2X, wireY);
+  // The wires (end-on), with the current symbol inside
+  [[wire1X, dir1], [wire2X, dir2]].forEach(([wx, dir]) => {
+    const grad = ctx.createLinearGradient(wx - wireRadius, 0, wx + wireRadius, 0);
+    grad.addColorStop(0, "#5a5f5a");
+    grad.addColorStop(0.5, "#a8ada8");
+    grad.addColorStop(1, "#5a5f5a");
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(wx, wireY, wireRadius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(" + RGB + ",0.9)";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    // current symbol drawn, not a font glyph: out of page = dot, into page = cross
+    ctx.strokeStyle = "#0B0D0C"; ctx.fillStyle = "#0B0D0C"; ctx.lineWidth = 2;
+    const sr = wireRadius * 0.42;
+    if (dir === 1) { ctx.beginPath(); ctx.arc(wx, wireY, sr * 0.55, 0, Math.PI * 2); ctx.fill(); }
+    else { ctx.beginPath(); ctx.moveTo(wx - sr, wireY - sr); ctx.lineTo(wx + sr, wireY + sr); ctx.moveTo(wx + sr, wireY - sr); ctx.lineTo(wx - sr, wireY + sr); ctx.stroke(); }
+  });
 
-  // Force arrows
-  const arrowY1 = wireY - wireRadius - 24;
-  const arrowY2 = wireY - wireRadius - 24;
-
-  ctx.strokeStyle = attract ? ACC : AMB;
-  ctx.fillStyle = attract ? ACC : AMB;
-  ctx.lineWidth = 2.5;
-
-  // Arrow on wire 1
-  if (attract) {
-    // Point right toward wire 2
-    drawArrow(ctx, wire1X + wireRadius + 6, arrowY1, wire1X + wireRadius + 6 + arrowLen, arrowY1);
-  } else {
-    // Point left away from wire 2
-    drawArrow(ctx, wire1X - wireRadius - 6, arrowY1, wire1X - wireRadius - 6 - arrowLen, arrowY1);
+  // Force arrows — from each wire, toward (attract) or away from (repel) the other; length on the log scale
+  // (no arrows at all when either current is 0 A: there is no force to show)
+  if (F_per_L > 0) {
+    const gap = wire2X - wire1X;
+    const arrowLen = attract
+      ? Math.min(gap / 2 - wireRadius - 10, (0.06 + 0.24 * fs) * w)
+      : Math.min(wire1X - wireRadius - 12, (0.06 + 0.24 * fs) * w);
+    const arrowY = wireY - wireRadius - Math.max(18, h * 0.12);
+    const col = attract ? ACC : AMB;
+    ctx.strokeStyle = col; ctx.fillStyle = col;
+    ctx.lineWidth = 2 + fs * 2;
+    if (attract) {
+      drawArrow(ctx, wire1X, arrowY, wire1X + arrowLen, arrowY);
+      drawArrow(ctx, wire2X, arrowY, wire2X - arrowLen, arrowY);
+    } else {
+      drawArrow(ctx, wire1X, arrowY, wire1X - arrowLen, arrowY);
+      drawArrow(ctx, wire2X, arrowY, wire2X + arrowLen, arrowY);
+    }
+    // arrow tails: a faint stem down to the wire so the force reads as acting ON the wire
+    ctx.strokeStyle = "rgba(" + RGB + ",0.35)"; ctx.lineWidth = 1; ctx.setLineDash([2, 4]); ctx.lineDashOffset = 0;
+    [wire1X, wire2X].forEach(wx => { ctx.beginPath(); ctx.moveTo(wx, arrowY + 4); ctx.lineTo(wx, wireY - wireRadius - 2); ctx.stroke(); });
+    ctx.setLineDash([]);
+    ctx.fillStyle = col;
+    ctx.font = "bold 12px JetBrains Mono";
+    ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
+    const lab = attract ? "F" : "F";
+    ctx.fillText(lab, attract ? wire1X + arrowLen / 2 : wire1X - arrowLen / 2, arrowY - 8);
+    ctx.fillText(lab, attract ? wire2X - arrowLen / 2 : wire2X + arrowLen / 2, arrowY - 8);
   }
 
-  // Arrow on wire 2
-  if (attract) {
-    // Point left toward wire 1
-    drawArrow(ctx, wire2X - wireRadius - 6, arrowY2, wire2X - wireRadius - 6 - arrowLen, arrowY2);
-  } else {
-    // Point right away from wire 1
-    drawArrow(ctx, wire2X + wireRadius + 6, arrowY2, wire2X + wireRadius + 6 + arrowLen, arrowY2);
-  }
-
-  // Force labels
-  ctx.font = "11px JetBrains Mono";
-  ctx.fillStyle = attract ? ACC : AMB;
-  ctx.textAlign = "center";
-  ctx.fillText("F", wire1X, arrowY1 - 16);
-  ctx.fillText("F", wire2X, arrowY2 - 16);
-
-  // Separation dimension line
-  const dimY = h * 0.78;
-  ctx.strokeStyle = "rgba(" + RGB + ", 0.4)";
+  // Separation dimension line, with end ticks
+  const dimY = wireY + wireRadius + Math.max(22, h * 0.16);
+  ctx.strokeStyle = "rgba(" + RGB + ",0.55)";
   ctx.lineWidth = 1;
-  ctx.setLineDash([3, 3]);
-  ctx.beginPath();
-  ctx.moveTo(wire1X, dimY);
-  ctx.lineTo(wire2X, dimY);
-  ctx.stroke();
+  ctx.setLineDash([3, 3]); ctx.lineDashOffset = 0;
+  ctx.beginPath(); ctx.moveTo(wire1X, dimY); ctx.lineTo(wire2X, dimY); ctx.stroke();
   ctx.setLineDash([]);
-
-  ctx.fillStyle = "rgba(" + RGB + ", 0.6)";
-  ctx.font = "10px JetBrains Mono";
-  ctx.textAlign = "center";
-  ctx.fillText("r = " + sep.toFixed(2) + " m", (wire1X + wire2X) / 2, dimY + 12);
+  ctx.beginPath(); ctx.moveTo(wire1X, dimY - 5); ctx.lineTo(wire1X, dimY + 5); ctx.moveTo(wire2X, dimY - 5); ctx.lineTo(wire2X, dimY + 5); ctx.stroke();
+  ctx.fillStyle = "rgba(" + RGB + ",0.85)";
+  ctx.font = "11px JetBrains Mono";
+  ctx.textAlign = "center"; ctx.textBaseline = "top";
+  ctx.fillText("r = " + sep.toFixed(2) + " m", (wire1X + wire2X) / 2, dimY + 6);
+  ctx.textBaseline = "alphabetic";
 
   // Bloom
   bctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -742,17 +735,15 @@ function draw() {
   if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
   ctx.save();
   ctx.globalCompositeOperation = "lighter";
-  ctx.globalAlpha = 0.38;
+  ctx.globalAlpha = 0.34;
   ctx.filter = "blur(7px)";
   if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
   ctx.restore();
 
-  // Vignette
-  const cx = w / 2;
-  const cy = h / 2;
-  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  // Vignette — soft, so the rings survive it
+  const vig = ctx.createRadialGradient(w / 2, h / 2, h * 0.35, w / 2, h / 2, w * 0.75);
   vig.addColorStop(0, "rgba(0,0,0,0)");
-  vig.addColorStop(1, "rgba(0,0,0,0.52)");
+  vig.addColorStop(1, "rgba(0,0,0,0.34)");
   ctx.fillStyle = vig;
   ctx.fillRect(0, 0, w, h);
 }

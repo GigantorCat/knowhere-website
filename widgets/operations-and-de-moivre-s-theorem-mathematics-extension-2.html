@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Operations and De Moivre's Theorem — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Operations and De Moivre's theorem — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -352,11 +352,11 @@ canvas {
       <div class="card-label">De Moivre Visualisation</div>
       <div class="live-tag" id="powerTag">n = 3</div>
     </div>
-    <div class="card-hint">Watch how z^n rotates and scales as you change n</div>
+    <div class="card-hint">z = 1.2cis(40°). Watch how zⁿ rotates and scales as you change n</div>
     
     <div class="canvas-wrapper">
       <canvas id="dmCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">z³ = 8cis(270°)</div>
+      <div class="canvas-overlay" id="canvasOverlay">z³ = 1.73cis(120°)</div>
     </div>
 
     <div class="slider-wrapper">
@@ -468,33 +468,43 @@ toggleBtns.forEach(btn => {
   });
 });
 
+const R0 = 1.2;              /* z = 1.2 cis(40°): every power up to z⁸ stays on screen */
+const TH0 = 40 * Math.PI / 180;
+let viewMax = Math.pow(R0, 3);  /* eased so the zoom glides as n changes */
+const SUP = ['', '', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸'];
+
 function draw() {
   const w = canvas.width / dpr;
   const h = canvas.height / dpr;
   const cx = w / 2;
   const cy = h / 2;
-  const scale = Math.min(w, h) * 0.28;
+  const rN = Math.pow(R0, n);
+  const angleN = TH0 * n;
+  const target = Math.max(R0, rN, 1);
+  viewMax += (target - viewMax) * 0.12;
+  const scale = (Math.min(w, h) * 0.42) / viewMax; /* pixels per unit of modulus */
+  const P = (r, a) => [cx + r * scale * Math.cos(a), cy - r * scale * Math.sin(a)];
 
   ctx.fillStyle = '#000';
   ctx.fillRect(0, 0, w, h);
 
-  // Grid
-  ctx.strokeStyle = 'rgba(35, 131, 63,0.06)';
-  ctx.lineWidth = 0.8;
-  for (let i = -2; i <= 2; i++) {
-    if (i === 0) continue;
+  // Modulus rings, labelled (true scale)
+  ctx.font = '10px "JetBrains Mono", monospace';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'bottom';
+  const ringStep = viewMax > 3 ? 1 : 0.5;
+  for (let r = ringStep; r <= viewMax * 1.05; r += ringStep) {
+    ctx.strokeStyle = Math.abs(r - 1) < 1e-9 ? 'rgba(35, 131, 63,0.32)' : 'rgba(35, 131, 63,0.10)';
+    ctx.lineWidth = Math.abs(r - 1) < 1e-9 ? 1.2 : 0.8;
     ctx.beginPath();
-    ctx.moveTo(cx + i * scale, 0);
-    ctx.lineTo(cx + i * scale, h);
+    ctx.arc(cx, cy, r * scale, 0, Math.PI * 2);
     ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(0, cy + i * scale);
-    ctx.lineTo(w, cy + i * scale);
-    ctx.stroke();
+    ctx.fillStyle = 'rgba(140,147,137,0.75)';
+    ctx.fillText(String(r), cx + r * scale + 3, cy - 2);
   }
 
   // Axes
-  ctx.strokeStyle = 'rgba(35, 131, 63,0.18)';
+  ctx.strokeStyle = 'rgba(35, 131, 63,0.30)';
   ctx.lineWidth = 1.2;
   ctx.beginPath();
   ctx.moveTo(0, cy);
@@ -504,42 +514,44 @@ function draw() {
   ctx.moveTo(cx, 0);
   ctx.lineTo(cx, h);
   ctx.stroke();
+  ctx.fillStyle = 'rgba(140,147,137,0.9)';
+  ctx.textAlign = 'right';
+  ctx.fillText('Re', w - 6, cy - 4);
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'top';
+  ctx.fillText('Im', cx + 5, 6);
 
-  // Original z
-  const angle0 = Math.PI / 2; // 90 degrees
-  const r0 = 2;
-  const zx = cx + r0 * scale * Math.cos(angle0);
-  const zy = cy - r0 * scale * Math.sin(angle0);
+  const [zx, zy] = P(R0, TH0);
+  const [znx, zny] = P(rN, angleN);
 
-  // z^n
-  const angleN = angle0 * n;
-  const rN = Math.pow(r0, n);
-  const znx = cx + rN * scale * Math.cos(angleN) / (n > 4 ? Math.pow(1.15, n - 4) : 1);
-  const zny = cy - rN * scale * Math.sin(angleN) / (n > 4 ? Math.pow(1.15, n - 4) : 1);
-
-  // Arc from z to z^n (spiral)
+  // True path of z to the power t, for t from 1 to n
   ctx.save();
   ctx.globalCompositeOperation = 'lighter';
-  ctx.strokeStyle = 'rgba(35, 131, 63,0.3)';
+  ctx.strokeStyle = 'rgba(35, 131, 63,0.45)';
   ctx.lineWidth = 1.5;
   ctx.beginPath();
-  const steps = 60;
+  const steps = 80;
   for (let i = 0; i <= steps; i++) {
-    const t = i / steps;
-    const a = angle0 + t * (angleN - angle0);
-    const r = r0 + t * (rN - r0);
-    const scaleFactor = 1 / (n > 4 ? Math.pow(1.15, (n - 4) * t) : 1);
-    const px = cx + r * scale * Math.cos(a) * scaleFactor;
-    const py = cy - r * scale * Math.sin(a) * scaleFactor;
+    const t = 1 + (n - 1) * i / steps;
+    const [px, py] = P(Math.pow(R0, t), TH0 * t);
     if (i === 0) ctx.moveTo(px, py);
     else ctx.lineTo(px, py);
   }
   ctx.stroke();
   ctx.restore();
 
+  // Each whole power along the way
+  for (let k = 2; k < n; k++) {
+    const [kx, ky] = P(Math.pow(R0, k), TH0 * k);
+    ctx.fillStyle = 'rgba(35, 131, 63,0.6)';
+    ctx.beginPath();
+    ctx.arc(kx, ky, 2.5, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
   // Line from origin to z
   ctx.save();
-  ctx.strokeStyle = 'rgba(140,147,137,0.4)';
+  ctx.strokeStyle = 'rgba(140,147,137,0.5)';
   ctx.lineWidth = 1;
   ctx.setLineDash([3, 3]);
   ctx.beginPath();
@@ -550,7 +562,7 @@ function draw() {
 
   // Line from origin to z^n
   ctx.save();
-  ctx.strokeStyle = 'rgba(35, 131, 63,0.5)';
+  ctx.strokeStyle = 'rgba(35, 131, 63,0.6)';
   ctx.lineWidth = 1.5;
   ctx.setLineDash([4, 4]);
   ctx.beginPath();
@@ -596,6 +608,18 @@ function draw() {
   ctx.arc(znx, zny, 5, 0, Math.PI * 2);
   ctx.fill();
 
+  // Point labels
+  ctx.font = '12px "JetBrains Mono", monospace';
+  ctx.textBaseline = 'middle';
+  ctx.textAlign = 'left';
+  ctx.fillStyle = '#B9C0B5';
+  ctx.fillText('z', zx + 8, zy - 10);
+  if (n > 1) {
+    ctx.fillStyle = '#23833F';
+    const lx = znx + 9 + 40 > w ? znx - 40 : znx + 9;
+    ctx.fillText('z' + SUP[n], lx, zny + 12);
+  }
+
   // Bloom
   bctx.setTransform(1, 0, 0, 1, 0, 0);
   bctx.clearRect(0, 0, buf.width, buf.height);
@@ -616,8 +640,8 @@ function draw() {
 
   // Update overlay
   const angleDeg = Math.round((angleN * 180 / Math.PI) % 360);
-  const rNRounded = rN.toFixed(1);
-  canvasOverlay.textContent = `z${n === 1 ? '' : (n === 2 ? '²' : n === 3 ? '³' : '⁴⁵⁶⁷⁸'[n-4])} = ${rNRounded}cis(${angleDeg}°)`;
+  const rNRounded = (Math.round(rN * 100) / 100).toString();
+  canvasOverlay.textContent = n === 1 ? `z = ${rNRounded}cis(${angleDeg}°)` : `z${SUP[n]} = ${rNRounded}cis(${angleDeg}°)`;
 
   time += 0.016;
   animFrame = requestAnimationFrame(draw);

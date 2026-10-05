@@ -1,651 +1,483 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Meiosis and Genetic Variation — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Meiosis and genetic variation — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
-
-:root {
-  --bg: #0B0D0C;
-  --bg2: #12160F;
-  --acc: #5AADD4;
-  --acc-rgb: 90, 173, 212;
-  --ag: rgba(var(--acc-rgb), .7);
-  --ag1: rgba(var(--acc-rgb), .12);
-  --ag2: rgba(var(--acc-rgb), .45);
-  --amb: #FAC775;
-  --ink: #EDEDE8;
-  --ink-dim: #8C9389;
-  --line: #262B26;
+:root{
+  --bg:#0B0D0C;--bg2:#12160F;--acc:#5AADD4;--acc-rgb:90, 173, 212;
+  --ag:rgba(var(--acc-rgb),.7);--ag1:rgba(var(--acc-rgb),.12);--ag2:rgba(var(--acc-rgb),.45);
+  --amb:#FAC775;--ink:#EDEDE8;--ink-dim:#8C9389;--line:#262B26;
 }
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
-}
-
-body {
-  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
-  font-family: 'Geist', sans-serif;
-  color: var(--ink);
-  min-height: 100vh;
-  padding: 40px 16px 0;
-}
-
-.container {
-  max-width: 720px;
-  margin: 0 auto;
-}
-
-h1 {
-  font-size: clamp(26px, 6.5vw, 44px);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
-  margin-bottom: 14px;
-}
-
-.intro {
-  font-size: 15.5px;
-  font-weight: 400;
-  color: var(--ink-dim);
-  max-width: 58ch;
-  line-height: 1.55;
-  margin-bottom: 28px;
-}
-
-.card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 18px;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
-}
-
-.card-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  color: var(--ink);
-}
-
-.live-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--acc);
-}
-
-.card-hint {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--ink-dim);
-  margin-bottom: 14px;
-}
-
-.canvas-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16/9;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
-  box-shadow: inset 0 0 0 1px var(--ag1);
-  margin-bottom: 16px;
-}
-
-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.canvas-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(4px);
-  padding: 9px 16px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  text-transform: uppercase;
-  color: var(--acc);
-  text-align: center;
-}
-
-.slider-container {
-  margin-bottom: 10px;
-}
-
-.slider-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 8px;
-}
-
-.meiosis-slider {
-  width: 100%;
-  height: 4px;
-  border-radius: 3px;
-  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
-  appearance: none;
-  outline: none;
-  cursor: pointer;
-}
-
-.meiosis-slider::-webkit-slider-thumb {
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  transition: box-shadow .15s;
-  cursor: pointer;
-}
-
-.meiosis-slider::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.meiosis-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  transition: box-shadow .15s;
-  cursor: pointer;
-}
-
-.meiosis-slider::-moz-range-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.tick-labels {
-  display: flex;
-  justify-content: space-between;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--ink-dim);
-  padding: 0 2px;
-}
-
-.stat-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-}
-
-.stat {
-  text-align: center;
-}
-
-.stat-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 6px;
-}
-
-.stat-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 24px;
-  font-weight: 500;
-}
-
-.stat-value.acc { color: var(--acc); }
-.stat-value.amb { color: var(--amb); }
-
-.toggle-card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 18px;
-}
-
-.toggle-buttons {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.toggle-btn {
-  flex: 1;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14.5px;
-  padding: 12px;
-  border-radius: 11px;
-  background: #12160F;
-  border: 1px solid var(--line);
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: all .2s;
-}
-
-.toggle-btn.active {
-  background: rgba(var(--acc-rgb), .1);
-  border: 1px solid var(--acc);
-  color: var(--acc);
-  box-shadow: 0 0 22px rgba(var(--acc-rgb), .18);
-}
-
-.knowdrop-divider {
-  border-top: 1px solid var(--line);
-  padding-top: 16px;
-}
-
-.knowdrop-text {
-  font-family: 'Geist', sans-serif;
-  font-size: 14.5px;
-  font-weight: 400;
-  line-height: 1.65;
-  color: var(--ink);
-}
-
-.know-this {
-  border-left: 3px solid var(--acc);
-  padding: 16px 18px;
-  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
-  border-radius: 0 12px 12px 0;
-  margin-bottom: 0;
-}
-
-.know-this-tag {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  margin-bottom: 12px;
-}
-
-.know-this-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--acc);
-  box-shadow: 0 0 8px var(--acc);
-  animation: pulse 2.4s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.45; }
-}
-
-.know-this-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--acc);
-}
-
-.know-this-body {
-  font-family: 'Geist', sans-serif;
-  font-size: 17.4px;
-  font-weight: 400;
-  line-height: 1.55;
-  color: var(--ink);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
+*{box-sizing:border-box;margin:0;padding:0}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+body{background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C 55%);font-family:'Geist',sans-serif;color:var(--ink);min-height:100vh;padding:40px 16px 0;box-sizing:border-box}
+.container{max-width:720px;margin:0 auto}
+h1{font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin-bottom:16px}
+.intro{font-size:15.5px;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin-bottom:28px}
+.card{background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:18px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1)}
+.card-header{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+.card-label{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;color:#fff}
+.live-tag{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--acc);text-align:right}
+.card-hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin-bottom:14px}
+.mg-q{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:8px}
+.mg-sets{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.mg-pair{display:flex;gap:8px}
+.mg-pair .tg{flex:1}
+.tg{font-family:'JetBrains Mono',monospace;font-size:12px;padding:10px 6px;border-radius:999px;background:#12160F;border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:all .2s}
+.tg[aria-pressed="true"]{background:rgba(var(--acc-rgb),.1);border:1px solid var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.mg-legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin-bottom:10px}
+.mg-legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{display:inline-block;width:10px;height:10px;border-radius:3px}
+.sw.m{background:var(--acc)}.sw.p{background:var(--amb)}
+.canvas-wrapper{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1);margin-bottom:12px}
+.canvas-wrapper canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.canvas-overlay{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:14px;text-transform:uppercase;color:var(--acc);text-align:center}
+.mg-tally{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin-bottom:14px;line-height:1.55}
+.mg-tally b{font-weight:500;color:var(--ink)}
+.mg-row{display:flex;justify-content:space-between;align-items:baseline;font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:10px}
+.mg-row b{font-weight:500;color:var(--acc);font-size:12px}
+.mg-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;outline:none;cursor:pointer;background:linear-gradient(90deg,var(--acc) var(--fill,0%),#23291f var(--fill,0%))}
+.mg-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s}
+.mg-slider::-webkit-slider-thumb:hover{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.mg-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag)}
+.mg-ticks{position:relative;height:16px;margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink-dim)}
+.mg-ticks span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}
+.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;border-top:1px solid var(--line);margin-top:14px;padding-top:14px}
+.stat-label{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:6px}
+.stat-value{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500}
+.stat-value.acc{color:var(--acc)}.stat-value.amb{color:var(--amb)}
+.mg-drops{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mg-drops .tg{padding:12px 8px}
+.knowdrop{border-top:1px solid var(--line);padding-top:16px;margin-top:16px}
+.knowdrop p{font-size:14.5px;line-height:1.65;color:var(--ink)}
+.know-this{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));border-radius:0 12px 12px 0;margin-bottom:0;padding-bottom:16px}
+.know-this-tag{display:flex;align-items:center;gap:9px;margin-bottom:12px}
+.know-this-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:ktp 2.4s ease-in-out infinite}
+@keyframes ktp{0%,100%{opacity:1}50%{opacity:.45}}
+.know-this-label{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.15em;color:var(--acc)}
+.know-this-body{font-size:17.4px;line-height:1.55;color:var(--ink)}
+@media (max-width:420px){.mg-sets{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
 
-<h2 class="sr-only">Meiosis and Genetic Variation Interactive Widget</h2>
+<h2 class="sr-only">Meiosis and genetic variation: step one cell with two pairs of chromosomes through the nine named phases of meiosis, switch crossing over and the metaphase I line-up, and count the different gametes it makes</h2>
 
 <div class="container">
-  <h1>Your genome isn't your parents' <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">average</span></h1>
-  
-  <p class="intro">Meiosis doesn't just halve chromosome count — it shuffles the deck twice before dealing. Independent assortment alone creates over 8 million possible combinations from one parent's chromosomes, and that's before crossing over or fertilisation. Drag the slider to watch chromosomes independently assort into gametes.</p>
+  <h1>One cell, two divisions, four different <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">gametes</span></h1>
+  <p class="intro">Meiosis copies the DNA once, then divides twice, so one diploid cell becomes four haploid gametes. On the way it shuffles the alleles: partner chromosomes swap pieces, and the pairs line up by chance. Step through the phases and count how many different gametes come out.</p>
 
   <div class="card">
     <div class="card-header">
-      <div class="card-label">Independent Assortment</div>
-      <div class="live-tag" id="live-tag">23 PAIRS → RANDOM MIX</div>
+      <span class="card-label">Meiosis, phase by phase</span>
+      <span class="live-tag" id="mgTag">Step 1 of 9</span>
     </div>
-    <div class="card-hint">Each pair has two choices — one from mum, one from dad</div>
-    
-    <div class="canvas-wrapper">
-      <canvas id="meiosis-canvas"></canvas>
-      <div class="canvas-overlay" id="canvas-overlay">8,388,608 POSSIBLE COMBINATIONS</div>
-    </div>
+    <div class="card-hint">Step through the phases. Then switch crossing over and the line-up.</div>
 
-    <div class="slider-container">
-      <div class="slider-label">Chromosome pairs</div>
-      <input 
-        type="range" 
-        min="1" 
-        max="23" 
-        value="5" 
-        class="meiosis-slider" 
-        id="pair-slider"
-        style="--fill: 17.4%"
-      >
-      <div class="tick-labels">
-        <span>1 pair</span>
-        <span>23 pairs</span>
+    <div class="mg-sets">
+      <div>
+        <div class="mg-q">Crossing over</div>
+        <div class="mg-pair" role="group" aria-label="Switch crossing over on or off">
+          <button class="tg" data-x="on" aria-pressed="true">On</button>
+          <button class="tg" data-x="off" aria-pressed="false">Off</button>
+        </div>
+      </div>
+      <div>
+        <div class="mg-q">Short pair at metaphase I</div>
+        <div class="mg-pair" role="group" aria-label="Choose how the short pair lines up at metaphase I">
+          <button class="tg" data-o="same" aria-pressed="true">Same side</button>
+          <button class="tg" data-o="flip" aria-pressed="false">Flipped</button>
+        </div>
       </div>
     </div>
+
+    <div class="mg-legend" aria-hidden="true">
+      <span><i class="sw m"></i>From mother</span>
+      <span><i class="sw p"></i>From father</span>
+      <span>Long pair: genes A and B · short pair: gene D</span>
+    </div>
+
+    <div class="canvas-wrapper">
+      <canvas id="mgCanvas" role="img" aria-label="A cell with two pairs of homologous chromosomes, maternal in blue and paternal in amber, drawn at the chosen phase of meiosis"></canvas>
+      <div class="canvas-overlay" id="mgOverlay">Interphase · DNA copied</div>
+    </div>
+    <div class="mg-tally" id="mgTally"></div>
+
+    <div class="mg-row"><span>Phase</span><b id="mgV">Interphase</b></div>
+    <input type="range" class="mg-slider" id="mgStage" aria-label="Phase of meiosis" min="0" max="8" step="1" value="0">
+    <div class="mg-ticks" id="mgTicks"></div>
 
     <div class="stat-row">
-      <div class="stat">
-        <div class="stat-label">Possible gametes</div>
-        <div class="stat-value acc" id="combinations">32</div>
-      </div>
-      <div class="stat">
-        <div class="stat-label">After fertilisation</div>
-        <div class="stat-value amb" id="offspring">1,024</div>
-      </div>
+      <div class="stat"><div class="stat-label">Cells</div><div class="stat-value acc" id="mgCells">1</div></div>
+      <div class="stat"><div class="stat-label">Each cell</div><div class="stat-value amb" id="mgPloidy">2n = 4</div></div>
     </div>
   </div>
 
-  <div class="toggle-card">
-    <div class="toggle-buttons">
-      <button class="toggle-btn active" id="btn-crossing">Crossing over</button>
-      <button class="toggle-btn" id="btn-errors">Non-disjunction</button>
+  <div class="card">
+    <div class="mg-q">Take it further</div>
+    <div class="mg-drops" role="group" aria-label="Choose which idea to read about">
+      <button class="tg" data-d="cross" aria-pressed="true">Crossing over</button>
+      <button class="tg" data-d="assort" aria-pressed="false">Assortment</button>
+      <button class="tg" data-d="seg" aria-pressed="false">Segregation</button>
+      <button class="tg" data-d="why" aria-pressed="false">Why it matters</button>
     </div>
-    
-    <div class="knowdrop-divider">
-      <p class="knowdrop-text" id="knowdrop-text">During prophase I, homologous chromosomes pair up and physically swap DNA segments at chiasmata — the crossover points. A single chromosome might contain your dad's eye-colour gene but your mum's blood-type gene, even though both came from the same original chromosome. This recombination happens before the chromosomes even line up for independent assortment, so every chromosome entering a gamete is already a unique mosaic. Crossing over typically occurs multiple times per chromosome pair, which is why the variation from this mechanism alone is effectively infinite — siblings inheriting the "same" chromosome from a parent are actually getting different recombinant versions every time.</p>
-    </div>
+    <div class="knowdrop"><p id="mgDrop"></p></div>
   </div>
 
-  <div class="know-this">
-    <div class="know-this-tag">
-      <div class="know-this-dot"></div>
-      <div class="know-this-label">Know This</div>
-    </div>
-    <p class="know-this-body">Meiosis generates variation through <span style="color:var(--acc)">independent assortment</span> (2<sup>23</sup> combinations from random chromosome sorting), <span style="color:var(--acc)">crossing over</span> (segment swaps during prophase I), and <span style="color:var(--acc)">random fertilisation</span> (any sperm meeting any egg).</p>
+  <div class="card know-this">
+    <div class="know-this-tag"><div class="know-this-dot"></div><div class="know-this-label">Know This</div></div>
+    <p class="know-this-body">Meiosis makes <span style="color:var(--acc)">four haploid gametes</span> that differ because of <span style="color:var(--acc)">crossing over</span> in prophase I and <span style="color:var(--acc)">independent assortment</span> in metaphase I.</p>
   </div>
 </div>
 
 <script>
-const canvas = document.getElementById('meiosis-canvas');
-const ctx = canvas.getContext('2d', { alpha: false });
-const slider = document.getElementById('pair-slider');
-const liveTag = document.getElementById('live-tag');
-const canvasOverlay = document.getElementById('canvas-overlay');
-const combinationsEl = document.getElementById('combinations');
-const offspringEl = document.getElementById('offspring');
-const btnCrossing = document.getElementById('btn-crossing');
-const btnErrors = document.getElementById('btn-errors');
-const knowdropText = document.getElementById('knowdrop-text');
-
+(function(){
+const cv = document.getElementById("mgCanvas"), ctx = cv.getContext("2d");
+const slider = document.getElementById("mgStage"), vV = document.getElementById("mgV");
+const tag = document.getElementById("mgTag"), ovl = document.getElementById("mgOverlay"), tally = document.getElementById("mgTally");
+const outCells = document.getElementById("mgCells"), outPloidy = document.getElementById("mgPloidy"), drop = document.getElementById("mgDrop");
 const CSS = getComputedStyle(document.documentElement);
-const ACC = CSS.getPropertyValue('--acc').trim();
-const RGB = CSS.getPropertyValue('--acc-rgb').trim();
-const AMB = CSS.getPropertyValue('--amb').trim();
-
+const ACC = CSS.getPropertyValue("--acc").trim();
+const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+const AMB = CSS.getPropertyValue("--amb").trim();
+const INK = CSS.getPropertyValue("--ink").trim();
+const DIM = CSS.getPropertyValue("--ink-dim").trim();
+const BG = CSS.getPropertyValue("--bg").trim();
+const MONO = `"JetBrains Mono", monospace`;
 const dpr = Math.min(window.devicePixelRatio || 1, 2);
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d');
+const buf = document.createElement("canvas"), bctx = buf.getContext("2d");
+const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-let pairs = 5;
-let chromosomes = [];
-let time = 0;
+const NAMES = ["Interphase", "Prophase I", "Metaphase I", "Anaphase I", "Telophase I", "Prophase II", "Metaphase II", "Anaphase II", "Telophase II"];
+const TICKS = ["Int", "P I", "M I", "A I", "T I", "P II", "M II", "A II", "T II"];
+let cross = true, orient = "same", dropKey = "cross";
 
-class Chromosome {
-  constructor(pairIndex, isMum) {
-    this.pairIndex = pairIndex;
-    this.isMum = isMum;
-    this.x = 0;
-    this.y = 0;
-    this.targetX = 0;
-    this.targetY = 0;
-    this.wobble = Math.random() * Math.PI * 2;
-    this.speed = 0.6 + Math.random() * 0.4;
+/* ---------- the model: 2 homologous pairs (2n = 4), each chromosome two sister chromatids ---------- */
+const CH = [];
+[1, 2].forEach(pair => ["M", "P"].forEach(origin => ["a", "b"].forEach(sis => {
+  CH.push({ key: origin + pair + sis, pair, origin, sis, x: 0, y: 0, fx: 0, fy: 0, tx: 0, ty: 0 });
+})));
+const byKey = k => CH.find(c => c.key === k);
+const CROSS_AT = 0.62, CENT = { 1: 0.35, 2: 0.4 }, LOCI = { 1: [["A", 0.14], ["B", 0.88]], 2: [["D", 0.72]] };
+
+/* which parent each part of a chromatid came from, after any crossing over (prophase I onward) */
+function segs(c, stage){
+  let top = c.origin, bot = c.origin;
+  if (cross && stage >= 1 && c.pair === 1){ if (c.key === "M1b") bot = "P"; if (c.key === "P1a") bot = "M"; }
+  return { top, bot };
+}
+function alleles(c, stage){
+  const s = segs(c, stage);
+  if (c.pair === 1) return [{ t: s.top === "M" ? "A" : "a", o: s.top }, { t: s.bot === "M" ? "B" : "b", o: s.bot }];
+  return [{ t: c.origin === "M" ? "D" : "d", o: c.origin }];
+}
+/* metaphase I: long pair has mother on the left; short pair follows the line-up switch */
+function leftOrigin(pair){ return pair === 1 ? "M" : (orient === "same" ? "M" : "P"); }
+/* gametes: left cell of meiosis I gets the left-hand chromosomes; meiosis II sends sister a left, sister b right */
+function gameteKeys(){
+  const L1 = "M", L2 = leftOrigin(2), R1 = "P", R2 = L2 === "M" ? "P" : "M";
+  return [[L1 + "1a", L2 + "2a"], [L1 + "1b", L2 + "2b"], [R1 + "1a", R2 + "2a"], [R1 + "1b", R2 + "2b"]];
+}
+function gametes(){
+  return gameteKeys().map(ks => ks.map(k => alleles(byKey(k), 8)).flat());
+}
+function gameteTypes(){ return new Set(gametes().map(g => g.map(a => a.t).join(""))).size; }
+
+/* ---------- geometry ---------- */
+let W = 0, Hh = 0;
+function geo(){
+  const H = Hh - 44, cy = H / 2 + 4;
+  const cw = Math.max(7, Math.min(14, W * 0.022, H * 0.045));
+  return { w: W, H, cy, cw, g: cw * 0.35, hg: cw * 0.5, LL: H * 0.34, LS: H * 0.19, X: W / 2 };
+}
+function layout(stage){
+  const G = geo(), w = G.w, H = G.H, cy = G.cy, X = G.X, s = G.cw + G.g;
+  const pos = {}, cells = [], spindles = [], equators = [];
+  let nucleus = null, labelsAt = null;
+  const put = (k, x, y, cell) => { pos[k] = { x, y, cell }; };
+  const chrom = (pair, origin, x, y, cell) => { put(origin + pair + "a", x - s / 2, y, cell); put(origin + pair + "b", x + s / 2, y, cell); };
+  const off = G.cw + G.g / 2 + G.hg / 2;
+  const biv = (pair, x, y, cell) => { const lo = leftOrigin(pair), ro = lo === "M" ? "P" : "M"; chrom(pair, lo, x - off, y, cell); chrom(pair, ro, x + off, y, cell); };
+  const y1 = cy - H * 0.14, y2 = cy + H * 0.2;
+  if (stage === 0){
+    cells.push({ x: X, y: cy, rx: Math.min(w * 0.36, H * 0.9), ry: H * 0.46 });
+    nucleus = { x: X, y: cy, rx: Math.min(w * 0.29, H * 0.75), ry: H * 0.4 };
+    chrom(1, "M", X - w * 0.16, cy - H * 0.05, 0); chrom(1, "P", X - w * 0.04, cy + H * 0.05, 0);
+    chrom(2, "M", X + w * 0.08, cy - H * 0.12, 0); chrom(2, "P", X + w * 0.18, cy + H * 0.12, 0);
+  } else if (stage === 1){
+    cells.push({ x: X, y: cy, rx: Math.min(w * 0.36, H * 0.9), ry: H * 0.46 });
+    biv(1, X - w * 0.11, cy - H * 0.03, 0); biv(2, X + w * 0.11, cy + H * 0.08, 0);
+    labelsAt = { p1: X - w * 0.11, y1: cy - H * 0.03, p2: X + w * 0.11, y2: cy + H * 0.08 };
+  } else if (stage === 2 || stage === 3){
+    const c = { x: X, y: cy, rx: Math.min(w * (stage === 2 ? 0.4 : 0.44), H * 1.1), ry: H * 0.46 };
+    cells.push(c);
+    if (stage === 2){
+      biv(1, X, y1, 0); biv(2, X, y2, 0); equators.push({ x: X, y0: cy - H * 0.42, y1: cy + H * 0.42 });
+      labelsAt = { p1: X, y1: y1, p2: X, y2: y2 };
+    } else {
+      const d = w * 0.19;
+      [1, 2].forEach(pair => { const lo = leftOrigin(pair), ro = lo === "M" ? "P" : "M", yy = pair === 1 ? y1 : y2;
+        chrom(pair, lo, X - d, yy, 0); chrom(pair, ro, X + d, yy, 0); });
+    }
+    spindles.push({ px: c.x - c.rx * 0.92, py: cy, side: -1, cell: 0, mode: "chrom", cx: X });
+    spindles.push({ px: c.x + c.rx * 0.92, py: cy, side: 1, cell: 0, mode: "chrom", cx: X });
+  } else if (stage >= 4 && stage <= 7){
+    const rx = Math.min(w * (stage === 7 ? 0.22 : 0.2), H * 0.6);
+    const cl = { x: w * 0.27, y: cy, rx, ry: H * 0.44 }, cr = { x: w * 0.73, y: cy, rx, ry: H * 0.44 };
+    cells.push(cl, cr);
+    const sets = [[["M", 1], [leftOrigin(2), 2]], [["P", 1], [leftOrigin(2) === "M" ? "P" : "M", 2]]];
+    sets.forEach((set, ci) => {
+      const c = cells[ci];
+      set.forEach(([o, pair]) => {
+        if (stage === 4) chrom(pair, o, c.x + (pair === 1 ? -w * 0.045 : w * 0.05), cy + (pair === 1 ? -H * 0.03 : H * 0.08), ci);
+        else if (stage === 5) chrom(pair, o, c.x + (pair === 1 ? -w * 0.06 : w * 0.04), cy + (pair === 1 ? -H * 0.09 : H * 0.14), ci);
+        else if (stage === 6) chrom(pair, o, c.x, pair === 1 ? y1 : y2, ci);
+        else { const yy = pair === 1 ? y1 : y2; put(o + pair + "a", c.x - w * 0.09, yy, ci); put(o + pair + "b", c.x + w * 0.09, yy, ci); }
+      });
+      if (stage >= 6){
+        if (stage === 6) equators.push({ x: c.x, y0: cy - H * 0.38, y1: cy + H * 0.38 });
+        spindles.push({ px: c.x - c.rx * 0.9, py: cy, side: -1, cell: ci, mode: "sis", cx: c.x });
+        spindles.push({ px: c.x + c.rx * 0.9, py: cy, side: 1, cell: ci, mode: "sis", cx: c.x });
+      }
+    });
+  } else {
+    gameteKeys().forEach((ks, k) => {
+      const x = w * (0.125 + 0.25 * k);
+      cells.push({ x, y: cy, rx: Math.min(w * 0.11, H * 0.4), ry: H * 0.42 });
+      put(ks[0], x - w * 0.035, cy - H * 0.07, k); put(ks[1], x + w * 0.035, cy - H * 0.02, k);
+    });
   }
-  
-  update(dt) {
-    this.x += (this.targetX - this.x) * 0.08;
-    this.y += (this.targetY - this.y) * 0.08;
+  return { stage, pos, cells, spindles, equators, nucleus, labelsAt, G };
+}
+
+/* ---------- drawing ---------- */
+const colOf = o => o === "M" ? ACC : AMB;
+function capsule(x, y0, wd, len){
+  const r = wd / 2;
+  ctx.beginPath();
+  ctx.moveTo(x - r, y0 + r); ctx.arc(x, y0 + r, r, Math.PI, 0); ctx.lineTo(x + r, y0 + len - r);
+  ctx.arc(x, y0 + len - r, r, 0, Math.PI); ctx.closePath();
+}
+function drawChromatid(c, x, y, G, stage){
+  const L = c.pair === 1 ? G.LL : G.LS, y0 = y - L / 2, sg = segs(c, stage);
+  ctx.save(); capsule(x, y0, G.cw, L); ctx.clip();
+  if (c.pair === 1){
+    ctx.fillStyle = colOf(sg.top); ctx.fillRect(x - G.cw, y0, G.cw * 2, L * CROSS_AT);
+    ctx.fillStyle = colOf(sg.bot); ctx.fillRect(x - G.cw, y0 + L * CROSS_AT, G.cw * 2, L * (1 - CROSS_AT) + 1);
+  } else { ctx.fillStyle = colOf(c.origin); ctx.fillRect(x - G.cw, y0, G.cw * 2, L); }
+  ctx.globalAlpha = 0.55; ctx.fillStyle = BG;
+  LOCI[c.pair].forEach(([, f]) => ctx.fillRect(x - G.cw, y0 + L * f - 1, G.cw * 2, 2));
+  ctx.globalAlpha = 0.7;
+  const yc = y0 + L * CENT[c.pair];
+  ctx.fillRect(x - G.cw, yc - 1.5, G.cw * 0.28, 3); ctx.fillRect(x + G.cw * 0.22, yc - 1.5, G.cw, 3);
+  ctx.restore();
+}
+function centromereY(c, y, G){ const L = c.pair === 1 ? G.LL : G.LS; return y - L / 2 + L * CENT[c.pair]; }
+function drawDecor(L, alpha){
+  if (alpha <= 0.01) return;
+  const G = L.G;
+  ctx.save(); ctx.globalAlpha = alpha;
+  L.cells.forEach(c => {
+    ctx.beginPath(); ctx.ellipse(c.x, c.y, c.rx, c.ry, 0, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(" + RGB + ",0.05)"; ctx.fill();
+    ctx.strokeStyle = "rgba(" + RGB + ",0.45)"; ctx.lineWidth = 1.5; ctx.stroke();
+  });
+  if (L.nucleus){
+    const n = L.nucleus; ctx.setLineDash([5, 5]); ctx.beginPath(); ctx.ellipse(n.x, n.y, n.rx, n.ry, 0, 0, Math.PI * 2);
+    ctx.strokeStyle = DIM; ctx.lineWidth = 1; ctx.stroke(); ctx.setLineDash([]);
   }
-  
-  draw(ctx, w, h, t) {
-    const wobbleX = Math.sin(t * this.speed + this.wobble) * 1.5;
-    const wobbleY = Math.cos(t * this.speed * 0.7 + this.wobble) * 1.2;
-    
-    ctx.save();
-    ctx.translate(this.x + wobbleX, this.y + wobbleY);
-    
-    // Chromosome shape
-    const length = 28;
-    const width = 7;
-    
-    // Glow
-    ctx.shadowBlur = 12;
-    ctx.shadowColor = this.isMum ? ACC : AMB;
-    
-    // Body
-    ctx.fillStyle = this.isMum ? ACC : AMB;
-    ctx.beginPath();
-    ctx.moveTo(-width/2, -length/2);
-    ctx.lineTo(width/2, -length/2);
-    ctx.arc(width/2, 0, length/2, -Math.PI/2, Math.PI/2);
-    ctx.lineTo(-width/2, length/2);
-    ctx.arc(-width/2, 0, length/2, Math.PI/2, -Math.PI/2);
-    ctx.closePath();
-    ctx.fill();
-    
-    // Centromere
-    ctx.fillStyle = '#000';
-    ctx.fillRect(-width/2 - 1, -2, width + 2, 4);
-    
+  L.equators.forEach(e => { ctx.setLineDash([4, 6]); ctx.strokeStyle = DIM; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(e.x, e.y0); ctx.lineTo(e.x, e.y1); ctx.stroke(); ctx.setLineDash([]); });
+  ctx.restore();
+}
+function drawSpindles(L, alpha){
+  if (alpha <= 0.01 || !L.spindles.length) return;
+  const G = L.G;
+  ctx.save(); ctx.globalAlpha = alpha * 0.5; ctx.strokeStyle = DIM; ctx.lineWidth = 1;
+  L.spindles.forEach(sp => {
+    CH.forEach(c => {
+      const p = L.pos[c.key]; if (!p || p.cell !== sp.cell) return;
+      if (sp.mode === "chrom"){ if (c.sis !== "a") return; const pb = L.pos[c.origin + c.pair + "b"]; const mx = (c.x + byKey(c.origin + c.pair + "b").x) / 2;
+        if ((p.x + pb.x) / 2 < sp.cx === (sp.side < 0)){ ctx.beginPath(); ctx.moveTo(sp.px, sp.py); ctx.lineTo(mx, centromereY(c, c.y, G)); ctx.stroke(); } }
+      else { if ((c.sis === "a") !== (sp.side < 0)) return; ctx.beginPath(); ctx.moveTo(sp.px, sp.py); ctx.lineTo(c.x, centromereY(c, c.y, G)); ctx.stroke(); }
+    });
+    ctx.globalAlpha = alpha; ctx.fillStyle = DIM; ctx.beginPath(); ctx.arc(sp.px, sp.py, 3, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = alpha * 0.5;
+  });
+  ctx.restore();
+}
+function drawLabels(L, alpha){
+  if (alpha <= 0.01) return;
+  const G = L.G, stage = L.stage;
+  ctx.save(); ctx.globalAlpha = alpha; ctx.font = "500 12px " + MONO; ctx.textBaseline = "middle";
+  if (L.labelsAt){
+    const a = L.labelsAt, bw = 2 * G.cw + G.g + G.hg / 2 + G.cw + 8;
+    ctx.textAlign = "right"; ctx.fillStyle = INK;
+    LOCI[1].forEach(([n, f]) => ctx.fillText(n + "/" + n.toLowerCase(), a.p1 - bw, a.y1 - G.LL / 2 + G.LL * f));
+    ctx.textAlign = "left";
+    LOCI[2].forEach(([n, f]) => ctx.fillText(n + "/" + n.toLowerCase(), a.p2 + bw, a.y2 - G.LS / 2 + G.LS * f));
+    if (cross){
+      const m = byKey("M1b"), p = byKey("P1a"), xm = (m.x + p.x) / 2, yx = m.y - G.LL / 2 + G.LL * CROSS_AT, d = G.cw * 0.9;
+      ctx.strokeStyle = INK; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(xm - d, yx - d); ctx.lineTo(xm + d, yx + d); ctx.moveTo(xm + d, yx - d); ctx.lineTo(xm - d, yx + d); ctx.stroke();
+      ctx.textAlign = "right"; ctx.fillStyle = INK; ctx.fillText("chiasma", a.p1 - bw, yx);
+    }
+  }
+  if (stage === 8){
+    ctx.textAlign = "center"; ctx.font = "500 13px " + MONO;
+    const gs = gametes();
+    L.cells.forEach((c, k) => {
+      const g = gs[k], txt = g.map(a => a.t).join(""), tw = ctx.measureText(txt).width; let x = c.x - tw / 2;
+      ctx.textAlign = "left";
+      g.forEach(a => { ctx.fillStyle = colOf(a.o); ctx.fillText(a.t, x, G.cy + G.H * 0.28); x += ctx.measureText(a.t).width; });
+    });
+  }
+  ctx.restore();
+}
+
+let curL = null, prevL = null, animT = 1, animStart = 0, raf = 0;
+const DUR = 650;
+function resize(){
+  if (raf){ cancelAnimationFrame(raf); raf = 0; }
+  const r = cv.getBoundingClientRect();
+  if (!r.width || !r.height) return; /* f27c: refuse a zero measurement, keep the last good size */
+  cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr);
+  buf.width = cv.width; buf.height = cv.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  W = cv.width / dpr; Hh = cv.height / dpr;
+  curL = layout(+slider.value); prevL = null; animT = 1;
+  CH.forEach(c => { const p = curL.pos[c.key]; c.x = p.x; c.y = p.y; });
+  draw();
+}
+function draw(){
+  const w = cv.width / dpr, h = cv.height / dpr;
+  if (!w || !h || !curL) return;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, w, h); ctx.fillStyle = BG; ctx.fillRect(0, 0, w, h);
+  const e = animT;
+  if (prevL && e < 1){ drawDecor(prevL, 1 - e); drawSpindles(prevL, 1 - e); }
+  drawDecor(curL, prevL ? e : 1); drawSpindles(curL, prevL ? e : 1);
+  const st = curL.stage;
+  CH.forEach(c => drawChromatid(c, c.x, c.y, curL.G, st));
+  /* sister chromatids joined at the centromere until anaphase II */
+  if (st <= 6){
+    ctx.save(); ctx.fillStyle = INK;
+    CH.filter(c => c.sis === "a").forEach(c => { const b = byKey(c.origin + c.pair + "b"); ctx.beginPath(); ctx.arc((c.x + b.x) / 2, centromereY(c, c.y, curL.G), Math.max(2.5, curL.G.cw * 0.28), 0, Math.PI * 2); ctx.fill(); });
     ctx.restore();
   }
+  drawLabels(curL, prevL ? e : 1);
+  /* bloom */
+  bctx.setTransform(1, 0, 0, 1, 0, 0); bctx.clearRect(0, 0, buf.width, buf.height); (cv.width&&cv.height)&&bctx.drawImage(cv, 0, 0);
+  ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)"; (buf.width&&buf.height)&&ctx.drawImage(buf, 0, 0, w, h); ctx.restore();
+  /* vignette */
+  const vig = ctx.createRadialGradient(w / 2, h / 2, h * 0.28, w / 2, h / 2, w * 0.72);
+  vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+  ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
+}
+function ease(t){ return 1 - Math.pow(1 - t, 3); }
+function frame(now){
+  const t = Math.min(1, (now - animStart) / DUR); animT = ease(t);
+  CH.forEach(c => { c.x = c.fx + (c.tx - c.fx) * animT; c.y = c.fy + (c.ty - c.fy) * animT; });
+  draw();
+  if (t < 1) raf = requestAnimationFrame(frame); else { raf = 0; prevL = null; animT = 1; draw(); }
+}
+function go(){
+  if (raf) cancelAnimationFrame(raf);
+  const next = layout(+slider.value);
+  prevL = curL; curL = next;
+  CH.forEach(c => { const p = next.pos[c.key]; c.fx = c.x; c.fy = c.y; c.tx = p.x; c.ty = p.y; });
+  if (reduce || !prevL){ CH.forEach(c => { c.x = c.tx; c.y = c.ty; }); prevL = null; animT = 1; draw(); return; }
+  animT = 0; animStart = performance.now(); raf = requestAnimationFrame(frame);
 }
 
-function initChromosomes() {
-  chromosomes = [];
-  for (let i = 0; i < pairs; i++) {
-    chromosomes.push(new Chromosome(i, true));
-    chromosomes.push(new Chromosome(i, false));
+/* ---------- readouts, all from the model ---------- */
+function ploidyOf(L){
+  const ids = new Set(), byPair = {};
+  CH.forEach(c => { const p = L.pos[c.key]; if (p.cell !== 0) return; ids.add(c.pair + c.origin); (byPair[c.pair] = byPair[c.pair] || new Set()).add(c.origin); });
+  const diploid = Object.values(byPair).some(s => s.size > 1);
+  return (diploid ? "2n = " : "n = ") + ids.size;
+}
+function note(stage){
+  const n = gameteTypes();
+  return [
+    "Interphase · DNA copied",
+    cross ? "Prophase I · crossing over" : "Prophase I · no crossing over",
+    "Metaphase I · pairs on the equator",
+    "Anaphase I · homologues split",
+    "Telophase I · two haploid cells",
+    "Prophase II · no new copy",
+    "Metaphase II · single file",
+    "Anaphase II · chromatids split",
+    "Telophase II · " + n + " gamete type" + (n === 1 ? "" : "s")
+  ][stage];
+}
+function story(stage){
+  const side = leftOrigin(2) === "M" ? "same side as" : "opposite side to";
+  return [
+    "The DNA was copied before meiosis began: each chromosome is now two identical sister chromatids joined at a centromere. (Drawn condensed so you can follow them.)",
+    cross ? "Homologous chromosomes pair up. At the chiasma, non-sister chromatids swap the segment carrying B and b." : "Homologous chromosomes pair up. With crossing over off, every chromatid keeps the alleles of one parent.",
+    "The pairs line up on the equator. The maternal chromosome of the short pair sits on the " + side + " that of the long pair, and that is pure chance.",
+    "Homologous chromosomes are pulled to opposite poles. Sister chromatids stay joined.",
+    "Cytokinesis makes two cells. Each has one chromosome from each pair, so each is haploid.",
+    "There is no DNA copying between the two divisions. The chromosomes condense again.",
+    "In each cell the chromosomes line up one by one on a new equator.",
+    "The centromeres split and sister chromatids move to opposite poles.",
+    "Cytokinesis gives four haploid cells. Each carries one allele of every gene."
+  ][stage];
+}
+function update(){
+  const st = +slider.value, f = st / 8 * 100;
+  slider.style.setProperty("--fill", f + "%");
+  vV.textContent = NAMES[st];
+  tag.textContent = "Step " + (st + 1) + " of 9";
+  ovl.textContent = note(st);
+  const L = layout(st);
+  outCells.textContent = String(L.cells.length);
+  outPloidy.textContent = ploidyOf(L);
+  let line;
+  if (st === 8){
+    const gs = gametes().map(g => g.map(a => a.t).join(""));
+    line = "Gametes: <b>" + gs.join(" · ") + "</b> = <b>" + new Set(gs).size + "</b> different";
+  } else {
+    const longs = ["M1a", "M1b", "P1a", "P1b"].map(k => alleles(byKey(k), st).map(a => a.t).join(""));
+    const shorts = ["M2a", "M2b", "P2a", "P2b"].map(k => alleles(byKey(k), st)[0].t);
+    line = "Long chromatids carry <b>" + longs.join(", ") + "</b> · short ones <b>" + shorts.join(", ") + "</b>";
   }
+  tally.innerHTML = line + "<br>" + story(st);
+}
+function updateDrop(){
+  const pairs = 2, here = Math.pow(2, pairs), human = Math.pow(2, 23), zyg = human * human;
+  const fmt = n => n.toLocaleString("en-AU");
+  const trillion = Math.round(zyg / 1e12);
+  const T = {
+    cross: "In prophase I each chromosome pairs up with its homologue, the matching chromosome from the other parent. Non-sister chromatids touch at points called chiasmata and swap matching segments. Here the swap lands between gene A and gene B, which sit on the same chromosome, so chromatids leave carrying Ab and aB as well as AB and ab. Genes far apart on a chromosome are more likely to be split up by a crossover than genes close together. The result is chromosomes that neither parent had.",
+    assort: "In metaphase I the homologous pairs line up on the equator, and the way one pair faces does not affect any other pair. With " + pairs + " pairs, as in this cell, a gamete can get " + here + " different combinations of whole chromosomes. Humans have 23 pairs, so one person can make 2 to the power 23 = " + fmt(human) + " combinations before crossing over adds any more. Switch the short pair to flipped and watch D swap partners. This is independent assortment.",
+    seg: "In anaphase I the homologues of each pair are pulled to opposite poles, so each new cell gets one of each pair and becomes haploid. In anaphase II the sister chromatids separate, and after crossing over those sisters are no longer identical. Which homologue, and later which chromatid, ends up in which cell is down to chance. So every gamete carries exactly one allele of each gene, and each allele has an even chance of being the one it gets. In males all four cells become sperm; in females only one becomes an egg.",
+    why: "At fertilisation any one of " + fmt(human) + " possible sperm can join any one of " + fmt(human) + " possible eggs: about " + trillion + " trillion combinations before crossing over is even counted. That is why siblings share parents but not genotypes, unless they are identical twins. A genetically diverse population is more likely to include some individuals that survive a new disease or a changed climate, which is the big advantage of sexual reproduction over asexual reproduction. When homologues or chromatids fail to separate (non-disjunction), a gamete ends up with an extra or a missing chromosome, a chromosomal mutation."
+  };
+  drop.textContent = T[dropKey];
 }
 
-function resize() {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+(function ticks(){
+  const box = document.getElementById("mgTicks"), mn = +slider.min, mx = +slider.max;
+  TICKS.forEach((t, v) => { const f = (v - mn) / (mx - mn); const s = document.createElement("span");
+    s.style.left = `calc(10px + (100% - 20px) * ${f})`; s.textContent = t; box.appendChild(s); });
+})();
+
+function bindGroup(sel, attr, set){
+  const btns = document.querySelectorAll(sel);
+  btns.forEach(b => b.addEventListener("click", () => {
+    btns.forEach(x => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
+    set(b.getAttribute(attr));
+  }));
 }
+bindGroup("[data-x]", "data-x", v => { cross = v === "on"; update(); go(); updateDrop(); });
+bindGroup("[data-o]", "data-o", v => { orient = v; update(); go(); updateDrop(); });
+bindGroup("[data-d]", "data-d", v => { dropKey = v; updateDrop(); });
+slider.addEventListener("input", () => { update(); go(); });
+slider.addEventListener("change", () => { update(); go(); });
 
-function positionChromosomes(w, h) {
-  const centerX = w / 2;
-  const topY = h * 0.3;
-  const bottomY = h * 0.7;
-  const spacing = Math.min(50, w / (pairs + 1));
-  const startX = centerX - (pairs - 1) * spacing / 2;
-  
-  chromosomes.forEach((chr, idx) => {
-    const pairIdx = chr.pairIndex;
-    const x = startX + pairIdx * spacing;
-    
-    // Alternate positioning for mum/dad
-    if (chr.isMum) {
-      chr.targetY = topY - 18;
-    } else {
-      chr.targetY = topY + 18;
-    }
-    chr.targetX = x;
-  });
-  
-  // Create gametes (bottom)
-  const gameteCount = 4;
-  const gameteSpacing = w / (gameteCount + 1);
-  
-  // For each gamete, randomly select one from each pair
-  for (let g = 0; g < gameteCount; g++) {
-    const gameteX = gameteSpacing * (g + 1);
-    const selections = [];
-    
-    for (let p = 0; p < pairs; p++) {
-      const choice = Math.random() < 0.5 ? 'mum' : 'dad';
-      selections.push(choice);
-    }
-    
-    // Position selected chromosomes
-    let offset = 0;
-    for (let p = 0; p < pairs; p++) {
-      const chr = chromosomes.find(c => c.pairIndex === p && (
-        (selections[p] === 'mum' && c.isMum) || 
-        (selections[p] === 'dad' && !c.isMum)
-      ));
-      if (chr && g === 0) { // Only affect first gamete for visual clarity
-        chr.targetY = bottomY;
-        chr.targetX = gameteX + offset;
-        offset += 12;
-      }
-    }
-  }
-}
-
-function draw() {
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  
-  time += 0.016;
-  
-  // Clear
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, w, h);
-  
-  // Update and draw chromosomes
-  chromosomes.forEach(chr => {
-    chr.update(0.016);
-    chr.draw(ctx, w, h, time);
-  });
-  
-  // Division line
-  ctx.strokeStyle = 'rgba(' + RGB + ', 0.2)';
-  ctx.lineWidth = 1;
-  ctx.setLineDash([4, 4]);
-  ctx.beginPath();
-  ctx.moveTo(0, h * 0.5);
-  ctx.lineTo(w, h * 0.5);
-  ctx.stroke();
-  ctx.setLineDash([]);
-  
-  // Labels
-  ctx.font = '10px "JetBrains Mono"';
-  ctx.fillStyle = 'rgba(' + RGB + ', 0.5)';
-  ctx.fillText('MEIOSIS I', 12, h * 0.3 - 40);
-  ctx.fillText('MEIOSIS II', 12, h * 0.7 - 40);
-  
-  // Bloom
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
-  
-  // Vignette
-  const vig = ctx.createRadialGradient(w/2, h/2, h * 0.28, w/2, h/2, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-  
-  requestAnimationFrame(draw);
-}
-
-function updateStats() {
-  const combinations = Math.pow(2, pairs);
-  const offspring = combinations * combinations;
-  
-  combinationsEl.textContent = combinations.toLocaleString();
-  offspringEl.textContent = offspring.toLocaleString();
-  
-  canvasOverlay.textContent = combinations.toLocaleString() + ' POSSIBLE COMBINATIONS';
-  liveTag.textContent = pairs + ' PAIRS → ' + combinations.toLocaleString() + ' GAMETES';
-}
-
-slider.addEventListener('input', (e) => {
-  pairs = parseInt(e.target.value);
-  const fillPercent = ((pairs - 1) / 22) * 100;
-  slider.style.setProperty('--fill', fillPercent + '%');
-  
-  initChromosomes();
-  const rect = canvas.getBoundingClientRect();
-  const w = rect.width;
-  const h = rect.height;
-  positionChromosomes(w, h);
-  updateStats();
-});
-
-btnCrossing.addEventListener('click', () => {
-  btnCrossing.classList.add('active');
-  btnErrors.classList.remove('active');
-  knowdropText.textContent = "During prophase I, homologous chromosomes pair up and physically swap DNA segments at chiasmata — the crossover points. A single chromosome might contain your dad's eye-colour gene but your mum's blood-type gene, even though both came from the same original chromosome. This recombination happens before the chromosomes even line up for independent assortment, so every chromosome entering a gamete is already a unique mosaic. Crossing over typically occurs multiple times per chromosome pair, which is why the variation from this mechanism alone is effectively infinite — siblings inheriting the \"same\" chromosome from a parent are actually getting different recombinant versions every time.";
-});
-
-btnErrors.addEventListener('click', () => {
-  btnErrors.classList.add('active');
-  btnCrossing.classList.remove('active');
-  knowdropText.textContent = "Non-disjunction is when homologous chromosomes (in meiosis I) or sister chromatids (in meiosis II) fail to separate properly, leaving one gamete with an extra chromosome and another missing one entirely. If that gamete is fertilised, the zygote ends up with three copies of a chromosome (trisomy) or only one (monosomy) instead of the normal pair. Down syndrome results from trisomy 21 — three copies of chromosome 21 — usually caused by non-disjunction during egg formation, with risk increasing sharply after maternal age 35. Most autosomal trisomies are lethal, but trisomy 21, 18, and 13 can result in live births with developmental effects. Turner syndrome (45,X) and Klinefelter syndrome (47,XXY) are sex chromosome aneuploidies that demonstrate non-disjunction can affect any chromosome pair.";
-});
-
-window.addEventListener('resize', () => {
-  resize();
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  positionChromosomes(w, h);
-});
-
-resize();
-initChromosomes();
-const w = canvas.width / dpr;
-const h = canvas.height / dpr;
-positionChromosomes(w, h);
-updateStats();
-requestAnimationFrame(draw);
+window.addEventListener("resize", resize);
+if (window.ResizeObserver) new ResizeObserver(() => resize()).observe(cv.parentElement);
+update(); updateDrop(); resize();
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'meiosis-and-genetic-variation'},'*');}catch(e){}}

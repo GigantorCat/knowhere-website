@@ -333,14 +333,14 @@ canvas {
 <div class="container">
   <h1>Even "insoluble" salts dissolve—just not very <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">much</span></h1>
   
-  <p class="intro">Every salt has a solubility equilibrium with its own constant, K<sub>sp</sub>. The smaller K<sub>sp</sub> is, the less dissolves before equilibrium shuts it down. Drag the slider to change K<sub>sp</sub> and watch when precipitation starts.</p>
+  <p class="intro">Every salt has a solubility equilibrium with its own constant, K<sub>sp</sub>. The smaller K<sub>sp</sub> is, the less dissolves before equilibrium shuts it down. Change K<sub>sp</sub> and watch when precipitation starts.</p>
 
   <div class="card">
     <div class="card-header">
       <div class="card-label">Dissolution Equilibrium</div>
       <div class="live-tag" id="status-tag">Unsaturated</div>
     </div>
-    <div class="card-hint">Drag to change K<sub>sp</sub> — precipitation occurs when Q > K<sub>sp</sub></div>
+    <div class="card-hint">Change K<sub>sp</sub> or add a common ion. Watch Q and the beaker floor.</div>
     
     <div class="canvas-wrapper">
       <canvas id="mainCanvas"></canvas>
@@ -360,7 +360,7 @@ canvas {
     <div class="stat-row">
       <div class="stat">
         <div class="stat-label">Q (reaction quotient)</div>
-        <div class="stat-value" style="color:var(--acc)" id="q-stat">3.0×10⁻⁸</div>
+        <div class="stat-value" style="color:var(--acc)" id="q-stat">20×10⁻⁹</div>
       </div>
       <div class="stat">
         <div class="stat-label">Precipitate</div>
@@ -412,7 +412,16 @@ const knowdropText = document.getElementById('knowdrop-text');
 
 let ksp = 25; // ×10⁻⁹
 let commonIonMode = false;
-const Q_FIXED = 30; // ×10⁻⁹ for visualization
+/* Q = [Ag+][Cl-], in the same ×10⁻⁹ units as the Ksp slider.
+   Pure water: equal Ag+ and Cl- counts give Q = 20. A common ion doubles Cl- (Ag+ unchanged), so Q doubles to 40. */
+const Q_PURE = 20;
+const ION_PAIRS = 20;
+const EXTRA_CL = 20;
+function currentQ() {
+  const nAg = ions.filter(i => i.positive).length;
+  const nCl = ions.filter(i => !i.positive).length;
+  return nAg ? Math.round(Q_PURE * nCl / nAg) : 0;
+}
 
 // Particles
 let ions = [];
@@ -433,17 +442,33 @@ function initParticles() {
   ions = [];
   precipitate = [];
   
-  const baseCount = 40;
+  const baseCount = ION_PAIRS * 2;
   for (let i = 0; i < baseCount; i++) {
-    ions.push({
+    ions.push(makeIon(i % 2 === 0));
+  }
+}
+
+function makeIon(positive) {
+  return {
       x: Math.random(),
       y: Math.random(),
       vx: (Math.random() - 0.5) * 0.003,
       vy: (Math.random() - 0.5) * 0.003,
-      positive: i % 2 === 0,
+      positive: positive,
       r: 3.5
-    });
+    };
+}
+
+function setCommonIon(on) {
+  ions = ions.filter(i => !i.extra);
+  if (on) {
+    for (let k = 0; k < EXTRA_CL; k++) {
+      const ion = makeIon(false);
+      ion.extra = true;
+      ions.push(ion);
+    }
   }
+  updateUI();
 }
 
 function updateSlider() {
@@ -461,7 +486,7 @@ function draw() {
   ctx.fillRect(0, 0, w, h);
 
   // Update particle positions
-  const isPrecipitating = Q_FIXED > ksp;
+  const isPrecipitating = currentQ() > ksp;
   
   ions.forEach(ion => {
     ion.x += ion.vx;
@@ -563,19 +588,24 @@ function draw() {
 }
 
 function updateUI() {
-  const isPrecipitating = Q_FIXED > ksp;
+  const Q = currentQ();
+  const isPrecipitating = Q > ksp;
   
   if (isPrecipitating) {
     statusTag.textContent = 'Precipitating';
     canvasTag.textContent = 'Q > Ksp · PRECIPITATE FORMING';
     precipStat.textContent = 'Forming';
+  } else if (Q === ksp) {
+    statusTag.textContent = 'Saturated';
+    canvasTag.textContent = 'Q = Ksp · SATURATED';
+    precipStat.textContent = 'None';
   } else {
     statusTag.textContent = 'Unsaturated';
     canvasTag.textContent = 'Q < Ksp · UNSATURATED';
     precipStat.textContent = 'None';
   }
   
-  qStat.textContent = (Q_FIXED / 10).toFixed(1) + '×10⁻⁹';
+  qStat.textContent = Q + '×10⁻⁹';
 }
 
 slider.addEventListener('input', () => {
@@ -587,6 +617,7 @@ btnPure.addEventListener('click', () => {
   btnPure.classList.add('active');
   btnCommon.classList.remove('active');
   commonIonMode = false;
+  setCommonIon(false);
   knowdropText.innerHTML = 'In pure water, AgCl dissolves until [Ag⁺][Cl⁻] = K<sub>sp</sub>. Both ions come from the same source, so their concentrations rise together and equilibrium is reached symmetrically. The molar solubility s gives K<sub>sp</sub> = s². Once Q reaches K<sub>sp</sub>, no more solid dissolves—the solution is saturated. If you tried to add more AgCl, it would just sit at the bottom undissolved, because the equilibrium position has been reached.';
 });
 
@@ -594,6 +625,7 @@ btnCommon.addEventListener('click', () => {
   btnCommon.classList.add('active');
   btnPure.classList.remove('active');
   commonIonMode = true;
+  setCommonIon(true);
   knowdropText.innerHTML = 'Add NaCl to the solution and you flood the system with Cl⁻. Le Chatelier: equilibrium shifts left to consume the excess. AgCl(s) ⇌ Ag⁺ + Cl⁻ is driven backwards—less solid dissolves. The common ion effect suppresses solubility dramatically. If K<sub>sp</sub> = 1.8×10⁻¹⁰ for AgCl and you add 0.1 M NaCl, solubility drops from 1.3×10⁻⁵ M to just 1.8×10⁻⁹ M. This is how selective precipitation separates ions in qualitative analysis.';
 });
 

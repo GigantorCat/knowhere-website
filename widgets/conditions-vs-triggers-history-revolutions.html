@@ -231,6 +231,20 @@ canvas {
   color: var(--amb);
 }
 
+.fire-btn {
+  display: block;
+  width: 100%;
+  margin: 4px 0 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  padding: 12px;
+  border-radius: 11px;
+  background: rgba(154, 95, 210,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  cursor: pointer;
+}
+
 .toggle-section {
   display: flex;
   gap: 10px;
@@ -321,14 +335,14 @@ canvas {
 
   <h1>Famine Alone Has Never Started a <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">Revolution</span></h1>
   
-  <p class="intro">Long-term suffering creates pressure, but revolutions ignite from specific moments — a bread riot, a tax decree, a single arrest. Understanding the difference between conditions and triggers is the foundation of every strong historical argument. Drag the slider to see how pressure builds until a trigger sets it off.</p>
+  <p class="intro">Long-term suffering creates pressure, but revolutions ignite from specific moments — a bread riot, a tax decree, a single arrest. Understanding the difference between conditions and triggers is the foundation of every strong historical argument. Drag the slider to build up the conditions, then fire a trigger and see whether it sets anything off.</p>
 
   <div class="card">
     <div class="card-header">
       <span class="card-label">Pressure System</span>
       <span class="live-tag" id="header-tag">Building</span>
     </div>
-    <div class="card-hint">Watch how conditions accumulate before the trigger event</div>
+    <div class="card-hint">The slider builds conditions. Only the trigger button sets them off.</div>
     
     <div class="canvas-wrapper">
       <canvas id="canvas"></canvas>
@@ -336,15 +350,15 @@ canvas {
     </div>
 
     <div class="slider-section">
-      <div class="slider-label">Pressure Level</div>
+      <div class="slider-label">Conditions building</div>
       <input type="range" min="0" max="100" value="0" class="pressure-slider" id="pressure" style="--fill: 0%">
       <div class="tick-labels">
         <span>Stable</span>
         <span>Tension</span>
         <span>Critical</span>
-        <span>Eruption</span>
       </div>
     </div>
+    <button class="fire-btn" id="btn-fire" type="button">Fire a trigger (a bread riot, a decree, an arrest)</button>
 
     <div class="stat-row">
       <div class="stat">
@@ -455,34 +469,46 @@ function updateSlider() {
     overlayTag.textContent = 'Tension increasing';
     triggered = false;
     explosionParticles = [];
-  } else if (pressure < 95) {
-    headerTag.textContent = 'Critical Threshold';
-    overlayTag.textContent = 'Critical pressure — awaiting trigger';
+  } else {
+    /* conditions alone never erupt: even at full pressure the system waits for a trigger */
+    headerTag.textContent = "Critical Threshold";
+    overlayTag.textContent = "Critical pressure — awaiting trigger";
     triggered = false;
     explosionParticles = [];
-  } else {
-    headerTag.textContent = 'Eruption';
-    overlayTag.textContent = 'Trigger event — revolution ignites';
-    if (!triggered) {
-      triggered = true;
-      createExplosion();
-    }
-    triggerStatus.textContent = 'FIRED';
-    return;
   }
   
-  triggerStatus.textContent = '—';
+  triggerStatus.textContent = "—";
 }
 
-function createExplosion() {
+/* a trigger is a separate, dateable event: it only ignites a revolution if the conditions are already critical */
+function fireTrigger() {
+  const activeCount = nodes.filter(n => n.active).length;
+  explosionParticles = [];
+  triggered = true;
+  if (pressure >= 75) {
+    headerTag.textContent = "Eruption";
+    overlayTag.textContent = "Trigger + critical conditions — revolution ignites";
+    triggerStatus.textContent = "FIRED";
+    createExplosion(60, 1.2, 2.5);
+  } else {
+    headerTag.textContent = activeCount ? "Fizzled" : "Nothing to ignite";
+    overlayTag.textContent = activeCount
+      ? "Trigger without enough conditions — protest fizzles out"
+      : "Trigger with no conditions — nothing happens";
+    triggerStatus.textContent = "FIZZLED";
+    createExplosion(4 + activeCount * 3, 0.4, 0.8);
+  }
+}
+
+function createExplosion(n, s0, s1) {
   const w = canvas.width / dpr;
   const h = canvas.height / dpr;
   const cx = w / 2;
   const cy = h / 2;
   
-  for (let i = 0; i < 60; i++) {
+  for (let i = 0; i < n; i++) {
     const angle = Math.random() * Math.PI * 2;
-    const speed = 1.2 + Math.random() * 2.5;
+    const speed = s0 + Math.random() * s1;
     explosionParticles.push({
       x: cx,
       y: cy,
@@ -604,6 +630,7 @@ function draw() {
 }
 
 slider.addEventListener('input', updateSlider);
+document.getElementById("btn-fire").addEventListener("click", fireTrigger);
 
 btnConditions.addEventListener('click', () => {
   btnConditions.classList.add('active');

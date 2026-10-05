@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Blind Procedures and Bias — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Blind procedures and bias — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -329,16 +329,16 @@ canvas {
 <h2 class="sr-only">Interactive demonstration of blind procedures and bias in psychological research</h2>
 
 <div class="container">
-  <h1>Just knowing the hypothesis corrupts <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">reality</span></h1>
+  <h1>Knowing who got what can bend the <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">results</span></h1>
   
-  <p class="intro">Even trained researchers unconsciously nudge results toward their expectations. Blind procedures hide critical information — from participants, from experimenters, or both — so beliefs can't contaminate measurement. Watch how awareness distorts what should be objective data.</p>
+  <p class="intro">Even trained researchers unconsciously nudge results toward their expectations. Blind procedures hide critical information — from participants, from experimenters, or both — so beliefs can't contaminate measurement. Watch what happens to the data when the person measuring knows which condition each participant is in.</p>
 
   <div class="card">
     <div class="card-header">
       <span class="card-label">Bias Contamination</span>
-      <span class="live-tag" id="liveTag">AWARENESS: 0%</span>
+      <span class="live-tag" id="liveTag">CONDITION KNOWN: 0%</span>
     </div>
-    <p class="card-hint">Drag to increase experimenter awareness of hypothesis</p>
+    <p class="card-hint">Drag to let the experimenter know which condition each participant is in. The hypothesis is known the whole time.</p>
     
     <div class="canvas-wrapper">
       <canvas id="canvas"></canvas>
@@ -346,11 +346,11 @@ canvas {
     </div>
 
     <div class="slider-row">
-      <label class="slider-label" for="biasSlider">Experimenter knows hypothesis</label>
+      <label class="slider-label" for="biasSlider">Experimenter knows each participant's condition</label>
       <input type="range" id="biasSlider" class="bias-slider" min="0" max="100" value="0" style="--fill:0%">
       <div class="tick-labels">
         <span>Blind</span>
-        <span>Partially aware</span>
+        <span>Partly aware</span>
         <span>Fully aware</span>
       </div>
     </div>
@@ -361,7 +361,7 @@ canvas {
         <span class="stat-value" style="color:var(--acc)" id="distortion">0%</span>
       </div>
       <div class="stat">
-        <span class="stat-label">Result reliability</span>
+        <span class="stat-label">Result validity</span>
         <span class="stat-value" style="color:var(--amb)" id="reliability">100%</span>
       </div>
     </div>
@@ -392,7 +392,8 @@ const slider = document.getElementById('biasSlider');
 const liveTag = document.getElementById('liveTag');
 const canvasOverlay = document.getElementById('canvasOverlay');
 const distortionStat = document.getElementById('distortion');
-const reliabilityStat = document.getElementById('reliability');
+const validityStat = document.getElementById('reliability');
+let shownDistortion = -1;
 const toggleButtons = document.querySelectorAll('.toggle-btn');
 const knowdropText = document.getElementById('knowdropText');
 
@@ -497,6 +498,24 @@ function draw() {
   }
   ctx.stroke();
 
+  // Readouts from the curve on screen: average gap between the measured line and the true value,
+  // as a share of the gap at full knowledge (systematic error, so it threatens validity)
+  let gapSum = 0, n = 0;
+  for (let x = 0; x <= w; x += 4) {
+    const progress = x / w;
+    const wave = Math.sin(progress * Math.PI * 3 + time * 0.8) * biasStrength * h * 0.15;
+    const drift = (progress - 0.5) * awareness * h * 0.25;
+    gapSum += Math.abs(wave + drift);
+    n++;
+  }
+  const maxGap = h * (0.25 / 4 + 0.35 * 0.15 * 0.75);
+  const distortion = Math.min(100, Math.round((gapSum / n) / maxGap * 100));
+  if (distortion !== shownDistortion) {
+    shownDistortion = distortion;
+    distortionStat.textContent = `${distortion}%`;
+    validityStat.textContent = `${100 - distortion}%`;
+  }
+
   // Glow on biased curve
   if (awareness > 0.1) {
     ctx.save();
@@ -585,12 +604,10 @@ slider.addEventListener('input', (e) => {
   awareness = val / 100;
   slider.style.setProperty('--fill', val + '%');
   
-  liveTag.textContent = `AWARENESS: ${val}%`;
-  distortionStat.textContent = `${val}%`;
-  reliabilityStat.textContent = `${100 - Math.round(val * 0.7)}%`;
+  liveTag.textContent = `CONDITION KNOWN: ${val}%`;
   
   if (val === 0) {
-    canvasOverlay.textContent = 'UNBIASED MEASUREMENT';
+    canvasOverlay.textContent = "UNBIASED MEASUREMENT";
   } else if (val < 30) {
     canvasOverlay.textContent = 'MINOR DRIFT DETECTED';
   } else if (val < 60) {

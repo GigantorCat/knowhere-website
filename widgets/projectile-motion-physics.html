@@ -179,8 +179,8 @@ canvas{
 
 .stat-row{
   display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:16px;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:12px;
   border-top:1px solid var(--line);
   padding-top:16px;
   margin-top:16px
@@ -202,7 +202,8 @@ canvas{
 
 .stat-value{
   font-family:'JetBrains Mono',monospace;
-  font-size:24px;
+  font-size:clamp(17px,5vw,24px);
+  white-space:nowrap;
   font-weight:500
 }
 
@@ -292,7 +293,7 @@ canvas{
 <div class="container">
   <h1>Horizontal velocity stays constant even while the object <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">falls</span></h1>
   
-  <p class="intro">The single insight that unlocks every projectile question: horizontal and vertical motion are completely independent. Horizontally nothing accelerates the object; vertically gravity does. Drag the slider to change the launch angle and watch how each component behaves separately.</p>
+  <p class="intro">The single insight that unlocks every projectile question: horizontal and vertical motion are completely independent. Horizontally nothing accelerates the object; vertically gravity does. Change the launch angle and watch how each component behaves separately.</p>
 
   <div class="card">
     <div class="card-header">
@@ -306,7 +307,7 @@ canvas{
       <div class="canvas-overlay" id="canvasTag">Maximum range at 45°</div>
     </div>
 
-    <input type="range" min="15" max="75" value="45" class="pm-slider" id="angleSlider" style="--fill:50%">
+    <input aria-label="Launch angle (°)" type="range" min="15" max="75" value="45" class="pm-slider" id="angleSlider" style="--fill:50%">
     <div class="tick-labels">
       <span>15°</span>
       <span>45°</span>
@@ -320,7 +321,11 @@ canvas{
       </div>
       <div class="stat-item">
         <span class="stat-label">Peak height</span>
-        <span class="stat-value" style="color:var(--amb)" id="heightStat">5.0 m</span>
+        <span class="stat-value" style="color:var(--amb)" id="heightStat">2.6 m</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Range</span>
+        <span class="stat-value" style="color:var(--ink)" id="rangeStat">10.2 m</span>
       </div>
     </div>
   </div>
@@ -348,6 +353,7 @@ const angleLive = document.getElementById('angleLive');
 const canvasTag = document.getElementById('canvasTag');
 const vxStat = document.getElementById('vxStat');
 const heightStat = document.getElementById('heightStat');
+const rangeStat = document.getElementById("rangeStat");
 const btnNoAir = document.getElementById('btnNoAir');
 const btnAir = document.getElementById('btnAir');
 const knowdropText = document.getElementById('knowdropText');
@@ -357,6 +363,34 @@ const buf = document.createElement('canvas');
 const bctx = buf.getContext('2d');
 
 let angle = 45;
+/* One fixed world: launch speed V0 and g never change, so the scale is fitted once to the
+   longest range (45 deg) and the tallest arc (75 deg) the slider can reach. Landing spots move with angle. */
+const V0 = 10;
+const G = 9.8;
+const DRAG_K = 0.15;
+const WORLD_RANGE = V0 * V0 / G;
+const WORLD_HEIGHT = Math.pow(V0 * Math.sin(75 * Math.PI / 180), 2) / (2 * G);
+function flight(deg, drag) {
+  const rad = deg * Math.PI / 180;
+  const vx0 = V0 * Math.cos(rad);
+  const vy0 = V0 * Math.sin(rad);
+  if (!drag) {
+    return { range: vx0 * 2 * vy0 / G, peak: vy0 * vy0 / (2 * G) };
+  }
+  let x = 0, y = 0, vx = vx0, vy = vy0, peak = 0, px = 0, py = 0;
+  const dt = 0.001;
+  while (y >= 0) {
+    const v = Math.sqrt(vx * vx + vy * vy);
+    px = x; py = y;
+    vx += -DRAG_K * v * vx * dt;
+    vy += (-G - DRAG_K * v * vy) * dt;
+    x += vx * dt;
+    y += vy * dt;
+    if (y > peak) peak = y;
+  }
+  const f = py / (py - y);
+  return { range: px + (x - px) * f, peak: peak };
+}
 let airMode = false;
 let time = 0;
 
@@ -379,16 +413,20 @@ slider.addEventListener('input', e => {
   slider.style.setProperty('--fill', pct + '%');
   angleLive.textContent = angle + '°';
   
-  if (angle === 45) {
-    canvasTag.textContent = 'Maximum range at 45°';
-  } else if (angle < 45) {
-    canvasTag.textContent = 'Lower trajectory • Shorter flight time';
-  } else {
-    canvasTag.textContent = 'Higher trajectory • Longer hang time';
-  }
-  
   updateStats();
 });
+
+function setTag() {
+  if (angle === 45 && !airMode) {
+    canvasTag.textContent = "Maximum range at 45°";
+  } else if (angle === 45) {
+    canvasTag.textContent = "Drag shortens the range";
+  } else if (angle < 45) {
+    canvasTag.textContent = "Lower trajectory • Shorter flight time";
+  } else {
+    canvasTag.textContent = "Higher trajectory • Longer hang time";
+  }
+}
 
 function updateStats() {
   const rad = angle * Math.PI / 180;
@@ -396,10 +434,12 @@ function updateStats() {
   const vx = v0 * Math.cos(rad);
   const vy = v0 * Math.sin(rad);
   const g = 9.8;
-  const h = (vy * vy) / (2 * g);
+  const f = flight(angle, airMode);
   
   vxStat.textContent = vx.toFixed(1) + ' m/s';
-  heightStat.textContent = h.toFixed(1) + ' m';
+  heightStat.textContent = f.peak.toFixed(1) + ' m';
+  rangeStat.textContent = f.range.toFixed(1) + " m";
+  setTag();
 }
 
 updateStats();
@@ -408,6 +448,7 @@ btnNoAir.addEventListener('click', () => {
   airMode = false;
   btnNoAir.classList.add('active');
   btnAir.classList.remove('active');
+  updateStats();
   knowdropText.textContent = "When there's no air resistance, the parabolic trajectory is perfectly symmetric. The horizontal velocity component remains constant throughout the entire flight because no horizontal forces act on the projectile. Vertically, gravity decelerates the object on the way up at exactly the same rate it accelerates it on the way down. Time of flight is determined entirely by the vertical motion—solve v = u + at for the upward journey, double it, and you have total flight time. At the peak, vertical velocity reaches zero while horizontal velocity stays unchanged. Range is maximised at 45° because this angle balances time aloft with horizontal speed.";
 });
 
@@ -415,6 +456,7 @@ btnAir.addEventListener('click', () => {
   airMode = true;
   btnAir.classList.add('active');
   btnNoAir.classList.remove('active');
+  updateStats();
   knowdropText.textContent = "Air resistance changes everything. It acts opposite to the velocity vector, so it reduces both horizontal and vertical components—but not equally. The horizontal velocity is no longer constant; it decays throughout the flight. The trajectory becomes asymmetric: the descent is steeper than the ascent because the projectile is slower on the way down, giving air resistance more time to act vertically. Range is always shortened, and the optimal launch angle drops below 45°. Maximum height is also reduced because upward deceleration combines gravity with drag. Real projectiles—golf balls, footballs, bullets—all experience this asymmetry.";
 });
 
@@ -437,25 +479,28 @@ function draw() {
   const tFlight = (2 * vy0) / g;
   const range = vx0 * tFlight;
   
-  const scale = (w - 2 * margin) / (range * 1.1);
+  // Fixed world scale (same for every angle), fitted to the longest range and tallest arc
+  const topPad = 14;
+  const scale = Math.min((w - 2 * margin) / (WORLD_RANGE * 1.08), (groundY - topPad) / (WORLD_HEIGHT * 1.12));
   
-  // Draw grid
+  // Draw grid: one line per metre, fixed to the world
   ctx.strokeStyle = 'rgba(58,111,200,0.08)';
   ctx.lineWidth = 0.8;
-  for (let i = 0; i <= 10; i++) {
-    const x = margin + (w - 2 * margin) * i / 10;
+  for (let m = 0; launchX + m * scale <= w - margin / 2; m++) {
+    const x = launchX + m * scale;
     ctx.beginPath();
-    ctx.moveTo(x, margin);
+    ctx.moveTo(x, topPad);
     ctx.lineTo(x, groundY);
     ctx.stroke();
   }
-  for (let i = 0; i <= 5; i++) {
-    const y = margin + (groundY - margin) * i / 5;
+  for (let m = 0; groundY - m * scale >= topPad; m++) {
+    const y = groundY - m * scale;
     ctx.beginPath();
     ctx.moveTo(margin, y);
     ctx.lineTo(w - margin / 2, y);
     ctx.stroke();
   }
+
   
   // Ground line
   ctx.strokeStyle = 'rgba(237,237,232,0.3)';
@@ -517,6 +562,20 @@ function draw() {
   
   ctx.stroke();
   
+  // Landing marker, from the same flight model as the Range readout
+  const land = flight(angle, airMode).range;
+  const lxp = launchX + land * scale;
+  ctx.strokeStyle = '#EDEDE8';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(lxp, groundY - 7);
+  ctx.lineTo(lxp, groundY + 3);
+  ctx.stroke();
+  ctx.fillStyle = '#EDEDE8';
+  ctx.font = '10px "JetBrains Mono"';
+  ctx.textAlign = 'center';
+  ctx.fillText(land.toFixed(1) + " m", lxp, groundY - 11);
+  
   // Animated projectile
   const cycleTime = 3000;
   const phase = (time % cycleTime) / cycleTime;
@@ -554,6 +613,10 @@ function draw() {
     projVy = vy;
   }
   
+  /* Horizontal v readout is the live horizontal velocity of the moving ball (decays with drag) */
+  const vxText = projVx.toFixed(1) + " m/s";
+  if (vxStat.textContent !== vxText) vxStat.textContent = vxText;
+
   const px = launchX + projX * scale;
   const py = groundY - projY * scale;
   
@@ -578,7 +641,7 @@ function draw() {
   // Velocity vectors
   const vecScale = 8;
   
-  // Horizontal component (constant in no-air mode)
+  // Horizontal component (constant in no-air mode, shrinking with drag)
   ctx.save();
   ctx.strokeStyle = 'rgba(58,111,200,0.85)';
   ctx.lineWidth = 2.5;

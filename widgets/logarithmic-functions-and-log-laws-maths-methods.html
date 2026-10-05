@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Logarithmic Functions and Log Laws — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Logarithmic functions and log laws — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -189,12 +189,40 @@ canvas {
 }
 
 .tick-labels {
-  display: flex;
-  justify-content: space-between;
+  position: relative;
+  height: 14px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 9px;
   color: var(--ink-dim);
   margin-top: 6px;
+}
+
+.tick-labels span {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.e-btn {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  padding: 10px 12px;
+  border-radius: 11px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.e-btn.active {
+  background: rgba(47, 169, 78,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
 }
 
 .stats {
@@ -334,10 +362,11 @@ canvas {
       <div class="slider-label">Base Value</div>
       <input type="range" class="base-slider" id="baseSlider" min="1.1" max="5" step="0.1" value="2">
       <div class="tick-labels">
-        <span>1.1</span>
-        <span>3.0</span>
-        <span>5.0</span>
+        <span style="left: calc(10px + (100% - 20px) * 0)">1.1</span>
+        <span style="left: calc(10px + (100% - 20px) * 0.48718)">3.0</span>
+        <span style="left: calc(10px + (100% - 20px) * 1)">5.0</span>
       </div>
+      <button type="button" class="e-btn" id="eBtn" aria-pressed="false">Base e ≈ 2.718: the natural log, ln x</button>
     </div>
 
     <div class="stats">
@@ -435,13 +464,14 @@ function draw() {
   ctx.lineTo(cx, h);
   ctx.stroke();
 
-  // Mirror line y = x
+  // Mirror line y = x: 45 degrees through the origin, on the same equal-scale axes as the curves
+  const reach = Math.max(w, h);
   ctx.strokeStyle = 'rgba(141,147,137,0.4)';
   ctx.lineWidth = 1;
   ctx.setLineDash([4, 4]);
   ctx.beginPath();
-  ctx.moveTo(0, h);
-  ctx.lineTo(w, 0);
+  ctx.moveTo(cx - reach, cy + reach);
+  ctx.lineTo(cx + reach, cy - reach);
   ctx.stroke();
   ctx.setLineDash([]);
 
@@ -539,18 +569,37 @@ function draw() {
   ctx.fillRect(0, 0, w, h);
 }
 
-slider.addEventListener('input', (e) => {
-  base = parseFloat(e.target.value);
+const eBtn = document.getElementById('eBtn');
+
+function setBase(b, isE) {
+  base = b;
   const fill = ((base - 1.1) / (5 - 1.1)) * 100;
   slider.style.setProperty('--fill', fill + '%');
-  
-  liveBase.textContent = `Base = ${base.toFixed(1)}`;
-  canvasOverlay.textContent = `y = ${base.toFixed(1)}ˣ ⟷ y = log₍${base.toFixed(1)}₎(x)`;
-  expPoint.textContent = `(1, ${base.toFixed(1)})`;
-  logPoint.textContent = `(${base.toFixed(1)}, 1)`;
-  
+  eBtn.classList.toggle('active', isE);
+  eBtn.setAttribute('aria-pressed', isE ? 'true' : 'false');
+  if (isE) {
+    liveBase.textContent = `Base = e ≈ ${base.toFixed(3)}`;
+    canvasOverlay.textContent = `y = eˣ ⟷ y = ln(x) = logₑ(x)`;
+    expPoint.textContent = `(1, ${base.toFixed(2)})`;
+    logPoint.textContent = `(${base.toFixed(2)}, 1)`;
+  } else {
+    liveBase.textContent = `Base = ${base.toFixed(1)}`;
+    canvasOverlay.textContent = `y = ${base.toFixed(1)}ˣ ⟷ y = log₍${base.toFixed(1)}₎(x)`;
+    expPoint.textContent = `(1, ${base.toFixed(1)})`;
+    logPoint.textContent = `(${base.toFixed(1)}, 1)`;
+  }
   if (animFrame) cancelAnimationFrame(animFrame);
   animFrame = requestAnimationFrame(draw);
+}
+
+slider.addEventListener('input', (e) => {
+  setBase(parseFloat(e.target.value), false);
+});
+
+/* the natural logarithm: base e, which the slider (tenths) cannot land on */
+eBtn.addEventListener('click', () => {
+  slider.value = String(Math.E);
+  setBase(Math.E, true);
 });
 
 // Initialize slider fill

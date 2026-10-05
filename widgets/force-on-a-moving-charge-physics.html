@@ -309,18 +309,18 @@ canvas {
   
   <h1>A sideways push that never slows you <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">down</span></h1>
   
-  <p class="intro">Magnetic fields don't push things forward or backward — they push perpendicular to motion. That's why a charged particle in a uniform field curves into a perfect circle, changing direction constantly but never changing speed. Drag the slider to adjust the particle's mass and watch how the radius of its path changes.</p>
+  <p class="intro">Magnetic fields don't push things forward or backward — they push perpendicular to motion. That's why a charged particle in a uniform field curves into a perfect circle, changing direction constantly but never changing speed. Change the particle's mass and watch how the radius of its path changes.</p>
 
   <div class="card">
     <div class="card-header">
       <span class="card-label">Charged Particle</span>
       <span class="live-tag" id="liveTag">Mass: 1.0×</span>
     </div>
-    <p class="card-hint">Heavier particles curve less in the same field</p>
+    <p class="card-hint">Raise the particle mass. Watch the radius.</p>
     
     <div class="canvas-wrapper">
       <canvas id="fieldCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">Radius: 80 px · F always ⟂ to v</div>
+      <div class="canvas-overlay" id="canvasOverlay">Radius: 1.0× <span style="text-transform:none">r₀</span> · F always ⟂ to v</div>
     </div>
 
     <div class="slider-wrapper">
@@ -339,11 +339,11 @@ canvas {
     <div class="stat-row">
       <div class="stat">
         <span class="stat-label">Radius</span>
-        <span class="stat-value" id="radiusStat">80 px</span>
+        <span class="stat-value" id="radiusStat">1.0× r₀</span>
       </div>
       <div class="stat">
         <span class="stat-label">Speed</span>
-        <span class="stat-value">constant</span>
+        <span class="stat-value" id="speedStat">constant</span>
       </div>
     </div>
   </div>
@@ -374,13 +374,14 @@ const canvasOverlay = document.getElementById('canvasOverlay');
 const radiusStat = document.getElementById('radiusStat');
 const knowdropText = document.getElementById('knowdropText');
 const toggleBtns = document.querySelectorAll('.toggle-btn');
+const speedStat = document.getElementById('speedStat');
 
 const dpr = Math.min(window.devicePixelRatio || 1, 2);
 const buf = document.createElement('canvas');
 const bctx = buf.getContext('2d');
 
 let mass = 1.0;
-let radius = 80;
+let radius = 50; /* r = mv/(qB): radius grows in step with mass (50 px per 1.0x) */
 let angle = 0;
 let time = 0;
 let mode = 'moving';
@@ -403,6 +404,32 @@ function resize() {
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 
+/* Drawing scale: the physics radius is 50 px per 1.0x mass (150 px at 3.0x). On a canvas too small to hold
+   the biggest circle, the whole drawing shrinks by one factor, so every mass keeps the same proportions. */
+const MAX_RADIUS = 150;
+function drawScale() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  if (!w || !h) return 1;
+  const room = Math.min(w / 2, (h - canvasOverlay.offsetHeight) / 2) - 18;
+  return Math.max(0.1, Math.min(1, room / MAX_RADIUS));
+}
+
+function updateReadouts() {
+  liveTag.textContent = `Mass: ${mass.toFixed(1)}×`;
+  if (mode === 'moving') {
+    /* r = mv/(qB): shown relative to r0, the radius at 1.0x mass, so it reads the same on every screen size */
+    const rel = (radius / 50).toFixed(1);
+    canvasOverlay.innerHTML = `Radius: ${rel}× <span style="text-transform:none">r₀</span> · F always ⟂ to v`;
+    radiusStat.textContent = `${rel}× r₀`;
+    speedStat.textContent = "constant";
+  } else {
+    canvasOverlay.textContent = "v = 0 → F = 0 · no force";
+    radiusStat.textContent = "—";
+    speedStat.textContent = "0";
+  }
+}
+
 function updateFill() {
   const pct = ((mass - 0.5) / 2.5) * 100;
   slider.style.setProperty('--fill', pct + '%');
@@ -412,7 +439,9 @@ function draw() {
   const w = canvas.width / dpr;
   const h = canvas.height / dpr;
   const cx = w / 2;
-  const cy = h / 2;
+  const cy = (h - canvasOverlay.offsetHeight) / 2; /* centre the orbit in the part of the picture above the overlay */
+  const k = drawScale();
+  const rDraw = radius * k;
 
   ctx.fillStyle = '#000';
   ctx.fillRect(0, 0, w, h);
@@ -444,21 +473,21 @@ function draw() {
     ctx.lineWidth = 1.5;
     ctx.setLineDash([4, 4]);
     ctx.beginPath();
-    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+    ctx.arc(cx, cy, rDraw, 0, Math.PI * 2);
     ctx.stroke();
     ctx.restore();
 
     // Trail
     const trailSteps = 28;
     for (let i = trailSteps; i >= 1; i--) {
-      const ta = angle - i * 0.08;
+      const ta = angle - i * 0.08 / mass; /* same time span for every mass, so trail length shows the (constant) speed */
       const alpha = (1 - i / trailSteps) * 0.4;
       ctx.fillStyle = `rgba(58, 111, 200, ${alpha})`;
       ctx.globalCompositeOperation = 'lighter';
       ctx.beginPath();
       ctx.arc(
-        cx + Math.cos(ta) * radius,
-        cy + Math.sin(ta) * radius,
+        cx + Math.cos(ta) * rDraw,
+        cy + Math.sin(ta) * rDraw,
         6 * (1 - i / trailSteps) + 1.5,
         0,
         Math.PI * 2
@@ -468,8 +497,8 @@ function draw() {
     }
 
     // Particle
-    const px = cx + Math.cos(angle) * radius;
-    const py = cy + Math.sin(angle) * radius;
+    const px = cx + Math.cos(angle) * rDraw;
+    const py = cy + Math.sin(angle) * rDraw;
 
     const glow = ctx.createRadialGradient(px, py, 0, px, py, 16);
     glow.addColorStop(0, 'rgba(58, 111, 200, 0.7)');
@@ -495,7 +524,7 @@ function draw() {
     // Velocity vector (tangent)
     const vx = -Math.sin(angle);
     const vy = Math.cos(angle);
-    const vLen = 32;
+    const vLen = 32 * k; /* speed and force are the same at every mass, so these arrows never change length */
     ctx.save();
     ctx.strokeStyle = '#FAC775';
     ctx.lineWidth = 2;
@@ -523,7 +552,7 @@ function draw() {
     // Force vector (radial inward)
     const fx = -Math.cos(angle);
     const fy = -Math.sin(angle);
-    const fLen = 28;
+    const fLen = 28 * k;
     ctx.save();
     ctx.strokeStyle = '#3A6FC8';
     ctx.lineWidth = 2;
@@ -604,10 +633,8 @@ function draw() {
 
 slider.addEventListener('input', (e) => {
   mass = parseFloat(e.target.value);
-  radius = 80 / Math.sqrt(mass);
-  liveTag.textContent = `Mass: ${mass.toFixed(1)}×`;
-  canvasOverlay.textContent = `Radius: ${Math.round(radius)} px · F always ⟂ to v`;
-  radiusStat.textContent = `${Math.round(radius)} px`;
+  radius = 50 * mass;
+  updateReadouts();
   updateFill();
 });
 
@@ -619,18 +646,16 @@ toggleBtns.forEach(btn => {
     
     if (mode === 'moving') {
       knowdropText.textContent = "A moving charged particle in a magnetic field experiences a force F = qvB when its velocity is perpendicular to the field. Because this magnetic force is always perpendicular to the particle's velocity, it does no work on the particle — it can't speed it up or slow it down. Instead, it constantly changes the particle's direction, bending its path into a circle. The radius of this circular path is r = mv/(qB), which means heavier or faster particles curve less sharply than lighter or slower ones. This is why particle accelerators use powerful magnets to steer beams: the magnetic force provides the centripetal acceleration needed for circular motion without ever changing the particles' kinetic energy.";
-      canvasOverlay.textContent = `Radius: ${Math.round(radius)} px · F always ⟂ to v`;
-      radiusStat.textContent = `${Math.round(radius)} px`;
     } else {
       knowdropText.textContent = "A stationary charged particle in a magnetic field experiences no magnetic force at all. The magnetic force depends on the particle's velocity: F = qvB. If v = 0, then F = 0, no matter how strong the field is. This is fundamentally different from electric fields, which exert forces on charges whether they're moving or not. A magnetic field only affects moving charges — and even then, only if they're moving across the field lines, not along them. This is why you can sit safely in Earth's magnetic field: the field doesn't push on stationary charges in your body, and even the moving electrons in your nerves are far too slow and carry too little charge to experience any meaningful deflection.";
-      canvasOverlay.textContent = 'v = 0 → F = 0 · no force';
-      radiusStat.textContent = '—';
     }
+    updateReadouts();
   });
 });
 
-window.addEventListener('resize', resize);
+window.addEventListener('resize', () => { resize(); updateReadouts(); });
 resize();
+updateReadouts();
 updateFill();
 draw();
 </script>

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Inverses and Solving Equations — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Inverses and solving equations — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -195,12 +195,17 @@ canvas {
 }
 
 .tick-labels {
-  display: flex;
-  justify-content: space-between;
   font-family: 'JetBrains Mono', monospace;
   font-size: 9px;
   color: var(--ink-dim);
-  padding: 0 2px;
+  position: relative;
+  height: 14px;
+}
+.tick-labels > span {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  white-space: nowrap;
 }
 
 .stats {
@@ -322,28 +327,28 @@ canvas {
       <div class="card-label">Matrix Transform</div>
       <div class="live-tag" id="statusTag">Invertible</div>
     </div>
-    <div class="card-hint">Drag to change matrix value d</div>
+    <div class="card-hint">Drag to change d in A = [[2, 1], [1, d]]</div>
     
     <div class="canvas-wrapper">
       <canvas id="matrixCanvas"></canvas>
-      <div class="canvas-overlay" id="overlayTag">det(A) = 5.00</div>
+      <div class="canvas-overlay" id="overlayTag">A = [[2, 1], [1, 4.0]] · det(A) = 7.00</div>
     </div>
 
     <div class="slider-group">
       <label class="slider-label" for="dSlider">Matrix element d</label>
       <input type="range" id="dSlider" class="matrix-slider" min="-3" max="8" step="0.1" value="4" style="--fill: 63.6%">
       <div class="tick-labels">
-        <span>−3</span>
-        <span>0</span>
-        <span>3</span>
-        <span>8</span>
+        <span style="left: calc(10px + (100% - 20px) * 0.0)">−3</span>
+        <span style="left: calc(10px + (100% - 20px) * 0.2727)">0</span>
+        <span style="left: calc(10px + (100% - 20px) * 0.5455)">3</span>
+        <span style="left: calc(10px + (100% - 20px) * 1.0)">8</span>
       </div>
     </div>
 
     <div class="stats">
       <div class="stat">
         <div class="stat-label">Determinant</div>
-        <div class="stat-value" style="color: var(--acc)" id="detValue">5.00</div>
+        <div class="stat-value" style="color: var(--acc)" id="detValue">7.00</div>
       </div>
       <div class="stat">
         <div class="stat-label">Status</div>
@@ -393,7 +398,7 @@ let d = 4;
 
 const knowdropContent = {
   formula: "For a 2×2 matrix A = [[a,b],[c,d]], the inverse is A⁻¹ = (1/det(A))·[[d,−b],[−c,a]]. Notice the determinant sits in the denominator — when det(A) = ad − bc = 0, division by zero makes the inverse undefined. The formula swaps the diagonal elements, negates the off-diagonal ones, then scales by 1/det(A). Only square matrices can have inverses, and only when their determinant is non-zero. A 3×3 or larger matrix uses a more complex formula, but the principle is identical: det(A) ≠ 0 is the gate.",
-  solving: "To solve the system Ax = b, multiply both sides by A⁻¹ on the left: A⁻¹·A·x = A⁻¹·b. Since A⁻¹·A = I and I·x = x, this collapses to x = A⁻¹·b in one step. No elimination, no substitution. For example, if A = [[2,1],[1,4]] and b = [[5],[6]], then det(A) = 7, so A⁻¹ = (1/7)·[[4,−1],[−1,2]]. Multiply A⁻¹·b to get x = [[14/7],[8/7]] = [[2],[8/7]]. This method works for any square invertible system — it's the matrix equivalent of dividing both sides by a coefficient."
+  solving: "To solve the system Ax = b, multiply both sides by A⁻¹ on the left: A⁻¹·A·x = A⁻¹·b. Since A⁻¹·A = I and I·x = x, this collapses to x = A⁻¹·b in one step. No elimination, no substitution. For example, if A = [[2,1],[1,4]] and b = [[5],[6]], then det(A) = 7, so A⁻¹ = (1/7)·[[4,−1],[−1,2]]. Multiply A⁻¹·b to get x = [[14/7],[7/7]] = [[2],[1]]. This method works for any square invertible system — it's the matrix equivalent of dividing both sides by a coefficient."
 };
 
 function resize() {
@@ -411,7 +416,7 @@ function updateSlider() {
   const det = 2 * d - 1;
   
   detValue.textContent = det.toFixed(2);
-  overlayTag.textContent = `det(A) = ${det.toFixed(2)}`;
+  overlayTag.textContent = `A = [[2, 1], [1, ${d.toFixed(1)}]] · det(A) = ${det.toFixed(2)}`;
   
   if (Math.abs(det) < 0.01) {
     statusTag.textContent = 'Singular';

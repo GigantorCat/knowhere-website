@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Free Trade and Protection — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Free trade and protection — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -391,7 +391,7 @@ let time = 0;
 
 const tariffText = `A tariff is a tax on imported goods that raises their price in the domestic market. When Australia imposes a tariff on steel imports, foreign steel becomes more expensive, making local steel producers more competitive. This protects jobs in the Australian steel industry. However, every industry that uses steel — construction, manufacturing, car assembly — now pays higher prices for their raw materials. Those costs flow through to consumers as higher prices for buildings, machines, and cars. The protected steel workers benefit, but millions of consumers pay the cost through reduced purchasing power.`;
 
-const subsidyText = `A subsidy is a government payment to local producers that lowers their costs and lets them compete with cheaper imports. When Australia subsidizes farmers, it keeps food production in local hands and preserves agricultural jobs. But those subsidies come from taxpayer funds — money that could have been spent on healthcare, education, or infrastructure. Consumers pay twice: once through their taxes to fund the subsidy, and again through higher prices because protected local producers face less competitive pressure to cut costs. Quotas work similarly, limiting the quantity of imports allowed, which artificially raises prices by restricting supply. All three tools — tariffs, subsidies, quotas — trade economic efficiency for targeted job preservation.`;
+const subsidyText = `A subsidy is a government payment to local producers that lowers their costs and lets them compete with cheaper imports. When Australia subsidises farmers, it keeps food production in local hands and preserves agricultural jobs. But those subsidies come from taxpayer funds — money that could have been spent on healthcare, education, or infrastructure. Unlike a tariff, a subsidy does not raise the price consumers pay: imports still come in at the world price, so the consumer price stays put while taxpayers carry the cost. Quotas work more like tariffs, limiting the quantity of imports allowed, which raises prices by restricting supply. All three tools — tariffs, subsidies, quotas — trade economic efficiency for targeted job preservation.`;
 
 function resize() {
   const rect = canvas.getBoundingClientRect();
@@ -430,7 +430,8 @@ function updateSlider() {
   slider.style.setProperty('--fill', fillPct + '%');
   
   const basePrice = 100;
-  const price = Math.round(basePrice + (protection * 0.85));
+  /* subsidies leave the consumer price at the world price; tariffs raise it */
+  const price = mode === "subsidy" ? basePrice : Math.round(basePrice + (protection * 0.85));
   priceValue.textContent = price;
   
   const jobs = Math.round(protection * 0.42);
@@ -448,6 +449,7 @@ function updateSlider() {
   }
 }
 
+let mode = "tariff";
 slider.addEventListener('input', updateSlider);
 updateSlider();
 
@@ -455,12 +457,14 @@ btnTariff.addEventListener('click', () => {
   btnTariff.classList.add('active');
   btnSubsidy.classList.remove('active');
   knowdropText.textContent = tariffText;
+  mode = "tariff"; updateSlider();
 });
 
 btnSubsidy.addEventListener('click', () => {
   btnSubsidy.classList.add('active');
   btnTariff.classList.remove('active');
   knowdropText.textContent = subsidyText;
+  mode = "subsidy"; updateSlider();
 });
 
 function draw() {

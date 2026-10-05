@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Financial Institutions and Regulation — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Financial institutions and regulation — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -194,13 +194,18 @@ canvas {
 }
 
 .tick-labels {
-  display: flex;
-  justify-content: space-between;
+  position: relative;
+  height: 12px;
+  line-height: 12px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 9px;
   color: var(--ink-dim);
-  padding: 0 2px;
+  margin-top: 4px;
 }
+.tick-labels .tk { position: absolute; top: 0; white-space: nowrap; transform: translateX(-50%); }
+.tick-labels .tk-min { left: 0; transform: none; }
+.tick-labels .tk-max { right: 0; transform: none; }
+
 
 .stat-row {
   display: grid;
@@ -240,6 +245,8 @@ canvas {
   margin-bottom: 18px;
 }
 
+.switch-row { display: flex; margin: 4px 0 12px; }
+.switch-row .toggle-btn { flex: 1; }
 .toggle-buttons {
   display: flex;
   gap: 10px;
@@ -334,56 +341,57 @@ canvas {
 </style>
 
 <div class="container">
-  <h2 class="sr-only">Financial Institutions and Regulation Interactive Widget</h2>
+  <h2 class="sr-only">Financial institutions and regulation interactive</h2>
   
   <h1>Regulation doesn't slow down capital — it makes <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">trust</span></h1>
   
-  <p class="intro">Every business finance decision happens inside a supervised network: banks, super funds, the ASX, investment banks supply capital; ASIC and company law enforce the rules. Without regulation, investors won't play—and the whole system stalls. Move the slider to see how institutional layers connect investors to businesses.</p>
+  <p class="intro">Every business finance decision happens inside a supervised network. Banks, finance companies, super funds and insurers supply funds; the ASX is the marketplace where investors buy shares so companies can raise equity; ASIC and company law enforce the rules. Add institutions with the slider, then switch ASIC off to see what is left unpoliced.</p>
 
   <div class="card">
     <div class="card-header">
-      <div class="card-label">Institutional Network</div>
-      <div class="live-tag" id="networkTag">5 layers active</div>
+      <div class="card-label">Institutional network</div>
+      <div class="live-tag" id="networkTag">5 institution types</div>
     </div>
-    <div class="card-hint">Drag to activate each institution layer</div>
+    <div class="card-hint">Drag to add each type of institution; switch ASIC on and off on its own</div>
     
     <div class="canvas-wrapper">
       <canvas id="networkCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">Full network: All institutions connected</div>
+      <div class="canvas-overlay" id="canvasOverlay">All five types · ASIC on</div>
     </div>
 
     <div class="slider-container">
-      <div class="slider-label">Institution layers</div>
-      <input type="range" min="0" max="5" value="5" class="fin-slider" id="layerSlider" style="--fill:100%">
+      <div class="switch-row"><button class="toggle-btn active" id="btnAsicSwitch" aria-pressed="true">ASIC oversight: on</button></div>
+      <div class="slider-label">Institution types</div>
+      <input type="range" min="0" max="5" value="5" step="1" class="fin-slider" id="layerSlider" style="--fill:100%" aria-label="Institution types">
       <div class="tick-labels">
-        <span>None</span>
-        <span>Banks</span>
-        <span>+Finance co.</span>
-        <span>+Super</span>
-        <span>+ASX</span>
-        <span>+ASIC</span>
+        <span class="tk tk-min">None</span>
+        <span class="tk" style="left: calc(10px + (100% - 20px) * 0.2000)">Banks</span>
+        <span class="tk" style="left: calc(10px + (100% - 20px) * 0.4000)">+Finance</span>
+        <span class="tk" style="left: calc(10px + (100% - 20px) * 0.6000)">+Super</span>
+        <span class="tk" style="left: calc(10px + (100% - 20px) * 0.8000)">+Insurers</span>
+        <span class="tk tk-max">+ASX</span>
       </div>
     </div>
 
     <div class="stat-row">
       <div class="stat">
-        <div class="stat-label">Active channels</div>
-        <div class="stat-value acc" id="channelStat">15</div>
+        <div class="stat-label">Routes for funds</div>
+        <div class="stat-value acc" id="channelStat">11</div>
       </div>
       <div class="stat">
-        <div class="stat-label">Trust signal</div>
-        <div class="stat-value amb" id="trustStat">100%</div>
+        <div class="stat-label">ASIC oversight</div>
+        <div class="stat-value amb" id="trustStat">On</div>
       </div>
     </div>
   </div>
 
   <div class="toggle-card">
     <div class="toggle-buttons">
-      <button class="toggle-btn active" id="btnASX">ASX Role</button>
-      <button class="toggle-btn" id="btnASIC">ASIC Role</button>
+      <button class="toggle-btn active" id="btnASX">ASX role</button>
+      <button class="toggle-btn" id="btnASIC">ASIC role</button>
     </div>
     <div class="knowdrop-divider">
-      <p class="knowdrop-text" id="knowdropText">The ASX is a public marketplace where established businesses list shares to raise equity capital from retail and institutional investors. When a company does an Initial Public Offering (IPO) or secondary raise, it's tapping into pooled savings from superannuation funds, managed funds, and individual portfolios. The ASX provides price transparency, liquidity, and standardised reporting so investors can enter and exit positions. This public market lowers the cost of capital compared to private deals because risk is distributed across thousands of shareholders, and continuous trading sets fair market prices.</p>
+      <p class="knowdrop-text" id="knowdropText">The ASX is a marketplace, not a lender: it is where investors buy and sell shares, so a company can raise equity by selling new shares to them. When a company does an initial public offering (IPO) or a later share issue, the money comes from investors: superannuation funds, managed funds and individuals. The ASX provides price transparency, liquidity and standard reporting rules so investors can buy in and sell out. Because risk is spread across thousands of shareholders and continuous trading sets market prices, raising money this way can cost less than a private deal.</p>
     </div>
   </div>
 
@@ -421,13 +429,17 @@ let layerCount = 5;
 let time = 0;
 let particles = [];
 
+let asicOn = true;
+const btnAsicSwitch = document.getElementById('btnAsicSwitch');
 const layers = [
-  { name: 'Banks', y: 0.2, color: ACC, nodes: 3 },
-  { name: 'Finance Co.', y: 0.35, color: ACC, nodes: 3 },
-  { name: 'Super Funds', y: 0.5, color: ACC, nodes: 4 },
-  { name: 'ASX', y: 0.65, color: AMB, nodes: 1 },
-  { name: 'ASIC', y: 0.8, color: ACC, nodes: 1 }
+  { name: 'Banks', color: ACC, nodes: 3 },
+  { name: 'Finance co.', color: ACC, nodes: 2 },
+  { name: 'Super funds', color: ACC, nodes: 3 },
+  { name: 'Insurers', color: ACC, nodes: 2 },
+  { name: 'ASX market', color: AMB, nodes: 1 }
 ];
+const LAYER_Y = [0.13, 0.28, 0.43, 0.58, 0.73];
+function countRoutes() { let n = 0; for (let i = 0; i < layerCount; i++) n += layers[i].nodes; return n; }
 
 function resize() {
   const rect = canvas.getBoundingClientRect();
@@ -469,157 +481,70 @@ function draw() {
     p.y = Math.max(0, Math.min(1, p.y));
   });
   
-  // Draw investor node (top left)
-  const investorX = w * 0.15;
-  const investorY = h * 0.12;
-  const investorGrad = ctx.createRadialGradient(investorX, investorY, 0, investorX, investorY, 18);
-  investorGrad.addColorStop(0, 'rgba(' + RGB + ', 0.7)');
-  investorGrad.addColorStop(1, 'rgba(' + RGB + ', 0)');
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.fillStyle = investorGrad;
-  ctx.beginPath();
-  ctx.arc(investorX, investorY, 18, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
-  ctx.fillStyle = ACC;
-  ctx.beginPath();
-  ctx.arc(investorX, investorY, 5, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.fillStyle = '#fff';
-  ctx.font = '9px JetBrains Mono';
-  ctx.textAlign = 'center';
-  ctx.fillText('INVESTOR', investorX, investorY - 24);
-  
-  // Draw business node (bottom right)
-  const businessX = w * 0.85;
-  const businessY = h * 0.88;
-  const businessGrad = ctx.createRadialGradient(businessX, businessY, 0, businessX, businessY, 18);
-  businessGrad.addColorStop(0, 'rgba(' + RGB + ', 0.7)');
-  businessGrad.addColorStop(1, 'rgba(' + RGB + ', 0)');
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.fillStyle = businessGrad;
-  ctx.beginPath();
-  ctx.arc(businessX, businessY, 18, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
-  ctx.fillStyle = ACC;
-  ctx.beginPath();
-  ctx.arc(businessX, businessY, 5, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.fillStyle = '#fff';
-  ctx.font = '9px JetBrains Mono';
-  ctx.textAlign = 'center';
-  ctx.fillText('BUSINESS', businessX, businessY + 18);
-  
-  // Draw active layers
-  let allNodes = [];
+  const investorX = w * 0.07, investorY = h * 0.43;
+  const businessX = w * 0.93, businessY = h * 0.43;
+  // ASIC oversight frame around the institutions (only when ASIC is on)
+  if (asicOn && layerCount > 0) {
+    ctx.save();
+    ctx.strokeStyle = 'rgba(' + RGB + ', 0.55)';
+    ctx.lineWidth = 1.2;
+    ctx.setLineDash([]);
+    ctx.strokeRect(w * 0.2, h * 0.03, w * 0.6, h * 0.78);
+    ctx.fillStyle = ACC;
+    ctx.font = '8px JetBrains Mono';
+    ctx.textAlign = 'right';
+    ctx.fillText('ASIC OVERSIGHT', w * 0.8 - 4, h * 0.03 + 10);
+    ctx.restore();
+  }
+  // routes: savers -> institution -> business, one per node drawn
   for (let i = 0; i < layerCount; i++) {
     const layer = layers[i];
-    const ly = h * layer.y;
-    const spacing = w / (layer.nodes + 1);
-    
+    const ly = h * LAYER_Y[i];
+    const x0 = w * 0.36, x1 = w * 0.64;
     for (let j = 0; j < layer.nodes; j++) {
-      const nx = spacing * (j + 1);
-      allNodes.push({ x: nx, y: ly, color: layer.color, layer: i });
-      
-      // Node glow
+      const nx = layer.nodes === 1 ? w * 0.5 : x0 + (x1 - x0) * j / (layer.nodes - 1);
+      const col = layer.color === ACC ? RGB : '250, 199, 117';
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.strokeStyle = 'rgba(' + col + ', ' + (asicOn ? 0.28 : 0.12) + ')';
+      ctx.lineWidth = 1;
+      ctx.setLineDash(asicOn ? [] : [3, 5]);
+      ctx.beginPath(); ctx.moveTo(investorX, investorY); ctx.lineTo(nx, ly); ctx.lineTo(businessX, businessY); ctx.stroke();
+      ctx.restore();
+      // a unit of funds travelling the route
+      const t = (time * 0.25 + j * 0.37 + i * 0.21) % 1;
+      const px = t < 0.5 ? investorX + (nx - investorX) * t * 2 : nx + (businessX - nx) * (t - 0.5) * 2;
+      const py = t < 0.5 ? investorY + (ly - investorY) * t * 2 : ly + (businessY - ly) * (t - 0.5) * 2;
+      ctx.fillStyle = 'rgba(' + col + ', 0.8)';
+      ctx.beginPath(); ctx.arc(px, py, 1.6, 0, Math.PI * 2); ctx.fill();
       const nodeGrad = ctx.createRadialGradient(nx, ly, 0, nx, ly, 14);
-      if (layer.color === ACC) {
-        nodeGrad.addColorStop(0, 'rgba(' + RGB + ', 0.5)');
-        nodeGrad.addColorStop(1, 'rgba(' + RGB + ', 0)');
-      } else {
-        nodeGrad.addColorStop(0, 'rgba(250, 199, 117, 0.5)');
-        nodeGrad.addColorStop(1, 'rgba(250, 199, 117, 0)');
-      }
+      nodeGrad.addColorStop(0, 'rgba(' + col + ', 0.5)');
+      nodeGrad.addColorStop(1, 'rgba(' + col + ', 0)');
       ctx.save();
       ctx.globalCompositeOperation = 'lighter';
       ctx.fillStyle = nodeGrad;
-      ctx.beginPath();
-      ctx.arc(nx, ly, 14, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.beginPath(); ctx.arc(nx, ly, 14, 0, Math.PI * 2); ctx.fill();
       ctx.restore();
-      
-      // Node core
       ctx.fillStyle = layer.color;
-      ctx.beginPath();
-      ctx.arc(nx, ly, 4, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.beginPath(); ctx.arc(nx, ly, 4, 0, Math.PI * 2); ctx.fill();
     }
-    
-    // Layer label
     ctx.fillStyle = layer.color;
     ctx.font = '8px JetBrains Mono';
-    ctx.textAlign = 'left';
-    ctx.fillText(layer.name.toUpperCase(), 8, ly + 3);
+    ctx.textAlign = 'right';
+    ctx.fillText(layer.name.toUpperCase(), w * 0.33, ly + 3);
   }
-  
-  // Draw connections from investor to first layer
-  if (layerCount > 0) {
-    const firstLayer = layers[0];
-    const ly = h * firstLayer.y;
-    const spacing = w / (firstLayer.nodes + 1);
-    for (let j = 0; j < firstLayer.nodes; j++) {
-      const nx = spacing * (j + 1);
-      ctx.save();
-      ctx.globalCompositeOperation = 'lighter';
-      ctx.strokeStyle = 'rgba(' + RGB + ', 0.2)';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(investorX, investorY);
-      ctx.lineTo(nx, ly);
-      ctx.stroke();
-      ctx.restore();
-    }
-  }
-  
-  // Draw connections between layers
-  for (let i = 0; i < layerCount - 1; i++) {
-    const layerA = layers[i];
-    const layerB = layers[i + 1];
-    const lyA = h * layerA.y;
-    const lyB = h * layerB.y;
-    const spacingA = w / (layerA.nodes + 1);
-    const spacingB = w / (layerB.nodes + 1);
-    
-    for (let ja = 0; ja < layerA.nodes; ja++) {
-      const nxA = spacingA * (ja + 1);
-      for (let jb = 0; jb < layerB.nodes; jb++) {
-        const nxB = spacingB * (jb + 1);
-        ctx.save();
-        ctx.globalCompositeOperation = 'lighter';
-        ctx.strokeStyle = 'rgba(' + RGB + ', 0.15)';
-        ctx.lineWidth = 0.8;
-        ctx.beginPath();
-        ctx.moveTo(nxA, lyA);
-        ctx.lineTo(nxB, lyB);
-        ctx.stroke();
-        ctx.restore();
-      }
-    }
-  }
-  
-  // Draw connections from last layer to business
-  if (layerCount > 0) {
-    const lastLayer = layers[layerCount - 1];
-    const ly = h * lastLayer.y;
-    const spacing = w / (lastLayer.nodes + 1);
-    for (let j = 0; j < lastLayer.nodes; j++) {
-      const nx = spacing * (j + 1);
-      ctx.save();
-      ctx.globalCompositeOperation = 'lighter';
-      const col = lastLayer.color === ACC ? RGB : '250, 199, 117';
-      ctx.strokeStyle = 'rgba(' + col + ', 0.2)';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(nx, ly);
-      ctx.lineTo(businessX, businessY);
-      ctx.stroke();
-      ctx.restore();
-    }
-  }
-  
+  // end points
+  [[investorX, investorY, 'SAVERS'], [businessX, businessY, 'BUSINESS']].forEach(function (e) {
+    const g = ctx.createRadialGradient(e[0], e[1], 0, e[0], e[1], 18);
+    g.addColorStop(0, 'rgba(' + RGB + ', 0.7)');
+    g.addColorStop(1, 'rgba(' + RGB + ', 0)');
+    ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(e[0], e[1], 18, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+    ctx.fillStyle = ACC; ctx.beginPath(); ctx.arc(e[0], e[1], 5, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#fff'; ctx.font = '9px JetBrains Mono'; ctx.textAlign = 'center';
+    ctx.fillText(e[2], e[0], e[1] - 24);
+  });
+
   // Draw ambient particles
   particles.forEach(p => {
     ctx.fillStyle = 'rgba(' + RGB + ', 0.15)';
@@ -651,32 +576,20 @@ function draw() {
 }
 
 function updateUI() {
-  const channels = layerCount === 0 ? 0 : 
-                   layerCount === 1 ? 3 : 
-                   layerCount === 2 ? 6 : 
-                   layerCount === 3 ? 10 : 
-                   layerCount === 4 ? 14 : 15;
-  
-  const trust = layerCount === 0 ? 0 : 
-                layerCount === 1 ? 22 : 
-                layerCount === 2 ? 41 : 
-                layerCount === 3 ? 65 : 
-                layerCount === 4 ? 84 : 100;
-  
-  const labels = [
-    'No network active',
-    '1 layer: Banks only',
-    '2 layers: Banks + Finance co.',
-    '3 layers: +Super funds',
-    '4 layers: +ASX marketplace',
-    'Full network: All institutions connected'
-  ];
-  
-  networkTag.textContent = layerCount === 0 ? '0 layers' : layerCount === 1 ? '1 layer active' : layerCount + ' layers active';
-  canvasOverlay.textContent = labels[layerCount];
-  channelStat.textContent = channels;
-  trustStat.textContent = trust + '%';
+  const routes = countRoutes();
+  const names = ["No institutions", "Banks only", "Banks, finance co.", "+ super funds", "+ insurers", "All five types"];
+  networkTag.textContent = layerCount === 1 ? "1 institution type" : layerCount + " institution types";
+  let cap = names[layerCount];
+  if (layerCount > 0) cap += asicOn ? " · ASIC on" : " · ASIC off: unpoliced";
+  canvasOverlay.textContent = cap;
+  channelStat.textContent = routes;
+  trustStat.textContent = asicOn ? 'On' : 'Off';
+  btnAsicSwitch.textContent = "ASIC oversight: " + (asicOn ? "on" : "off");
+  btnAsicSwitch.classList.toggle('active', asicOn);
+  btnAsicSwitch.setAttribute('aria-pressed', asicOn ? 'true' : 'false');
 }
+
+btnAsicSwitch.addEventListener('click', () => { asicOn = !asicOn; updateUI(); });
 
 slider.addEventListener('input', (e) => {
   layerCount = parseInt(e.target.value);
@@ -688,13 +601,13 @@ slider.addEventListener('input', (e) => {
 btnASX.addEventListener('click', () => {
   btnASX.classList.add('active');
   btnASIC.classList.remove('active');
-  knowdropText.textContent = "The ASX is a public marketplace where established businesses list shares to raise equity capital from retail and institutional investors. When a company does an Initial Public Offering (IPO) or secondary raise, it's tapping into pooled savings from superannuation funds, managed funds, and individual portfolios. The ASX provides price transparency, liquidity, and standardised reporting so investors can enter and exit positions. This public market lowers the cost of capital compared to private deals because risk is distributed across thousands of shareholders, and continuous trading sets fair market prices.";
+  knowdropText.textContent = "The ASX is a marketplace, not a lender: it is where investors buy and sell shares, so a company can raise equity by selling new shares to them. When a company does an initial public offering (IPO) or a later share issue, the money comes from investors: superannuation funds, managed funds and individuals. The ASX provides price transparency, liquidity and standard reporting rules so investors can buy in and sell out. Because risk is spread across thousands of shareholders and continuous trading sets market prices, raising money this way can cost less than a private deal.";
 });
 
 btnASIC.addEventListener('click', () => {
   btnASIC.classList.add('active');
   btnASX.classList.remove('active');
-  knowdropText.textContent = "ASIC (Australian Securities and Investments Commission) enforces corporate conduct, disclosure rules, and investor protection laws across the entire financial system. It monitors ASX-listed companies, investigates insider trading, polices misleading advertising, and prosecutes directors who breach their duties. Without ASIC's enforcement power, sophisticated insiders could exploit retail investors through hidden conflicts, false forecasts, and rigged markets. The threat of public prosecution and civil penalties keeps executives honest at scale—markets function only when participants believe the rules apply to everyone, and ASIC is the mechanism that makes that belief credible. Tax law also shapes finance decisions: the 30% company tax rate and franking credit system influence dividend policy, debt-equity mix, and reinvestment versus distribution choices.";
+  knowdropText.textContent = "ASIC (Australian Securities and Investments Commission) enforces corporate conduct, disclosure rules and investor protection laws across the financial system. It monitors ASX-listed companies, investigates insider trading, polices misleading advertising and prosecutes directors who breach their duties. Without that enforcement, insiders could exploit ordinary investors through hidden conflicts, false forecasts and rigged markets. Markets work only when participants believe the rules apply to everyone, and ASIC is the mechanism that makes that belief credible. Alongside ASIC, APRA supervises banks, insurers and super funds, and the Reserve Bank of Australia sets the cash rate that shapes what banks charge to lend. Tax law also shapes finance decisions: the company tax rate (30% for most large companies, 25% for smaller companies with turnover under $50 million) and the franking credit system influence dividend policy, the debt-equity mix and reinvestment versus distribution choices.";
 });
 
 resize();

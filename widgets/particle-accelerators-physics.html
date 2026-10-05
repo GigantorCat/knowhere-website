@@ -194,8 +194,8 @@ h1 {
 }
 
 .tick-labels {
-  display: flex;
-  justify-content: space-between;
+  position: relative;
+  height: 14px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 9px;
   color: var(--ink-dim);
@@ -327,7 +327,7 @@ h1 {
 </style>
 
 <div class="container">
-  <h2 class="sr-only">Particle Accelerator Interactive Widget</h2>
+  <h2 class="sr-only">Particle accelerator: beam speed and the particles a collision can make</h2>
   
   <h1>After 99.9% the speed of light, you stop getting <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">faster</span></h1>
   
@@ -336,33 +336,34 @@ h1 {
   <div class="card">
     <div class="card-header">
       <div class="card-label">Accelerator Ring</div>
-      <div class="live-tag" id="ringStatus">Lap 0 • 0 GeV</div>
+      <div class="live-tag" id="ringStatus">Lap 0 • 10 GeV</div>
     </div>
-    <div class="sub-hint">Watch energy climb while speed plateaus near c</div>
+    <div class="sub-hint">Log energy scale. Speed is for a proton beam carrying half the collision energy; the ladder lights each particle once the collision can pay its mass-energy (E = mc²).</div>
     
     <div class="canvas-wrapper">
       <canvas id="ringCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">Beam circulating</div>
+      <div class="canvas-overlay" id="canvasOverlay">bottom threshold reached</div>
     </div>
 
     <div class="slider-group">
       <div class="slider-label">Collision Energy</div>
-      <input type="range" min="0" max="100" value="30" class="acc-slider" id="energySlider" style="--fill: 30%">
+      <input type="range" min="0" max="100" value="38.9" step="0.1" class="acc-slider" id="energySlider" style="--fill: 38.9%">
       <div class="tick-labels">
-        <span>0 GeV</span>
-        <span>7 TeV</span>
-        <span>14 TeV</span>
+        <span style="position:absolute;left:calc(10px + 0.0000 * (100% - 20px));transform:translateX(0);white-space:nowrap">0.1 GeV</span>
+        <span style="position:absolute;left:calc(10px + 0.3886 * (100% - 20px));transform:translateX(-50%);white-space:nowrap">10 GeV</span>
+        <span style="position:absolute;left:calc(10px + 0.7773 * (100% - 20px));transform:translateX(-50%);white-space:nowrap">1 TeV</span>
+        <span style="position:absolute;left:calc(10px + 1.0000 * (100% - 20px));transform:translateX(-100%);white-space:nowrap">14 TeV</span>
       </div>
     </div>
 
     <div class="stat-row">
       <div class="stat">
         <div class="stat-label">Beam Speed</div>
-        <div class="stat-value" id="speedStat" style="color:var(--acc)">0.000c</div>
+        <div class="stat-value" id="speedStat" style="color:var(--acc);font-size:clamp(15px,4.6vw,24px)">0.988c</div>
       </div>
       <div class="stat">
         <div class="stat-label">Heaviest Particle</div>
-        <div class="stat-value" id="particleStat" style="color:var(--amb)">—</div>
+        <div class="stat-value" id="particleStat" style="color:var(--amb)">bottom</div>
       </div>
     </div>
   </div>
@@ -419,49 +420,65 @@ function resize() {
 resize();
 window.addEventListener("resize", resize);
 
-let energy = 30;
+let energy = 38.9;
 let laps = 0;
 let beamAngle = 0;
 let rfPhase = 0;
 let animFrame = null;
 let lastTime = Date.now();
 
+/* Slider 0-100 is a LOG scale of collision energy, 0.1 GeV to 14 TeV. threshold = the minimum collision energy
+   (GeV) that pays the mass-energy: one particle (pi0, W or Z, Higgs) or a particle-antiparticle pair (2m). PDG masses. */
+const E_MIN = 0.1, E_MAX = 14000;
+function collisionGeV(v) { return E_MIN * Math.pow(E_MAX / E_MIN, v / 100); }
+function fmtGeV(g) {
+  if (g >= 1000) return (g / 1000).toFixed(g >= 10000 ? 1 : 2) + " TeV";
+  if (g >= 10) return Math.round(g) + " GeV";
+  if (g >= 1) return g.toFixed(1) + " GeV";
+  return g.toFixed(2) + " GeV";
+}
 const particles = [
-  { name: "e⁺e⁻", threshold: 0 },
-  { name: "μ⁺μ⁻", threshold: 10 },
-  { name: "π⁰", threshold: 15 },
-  { name: "τ⁺τ⁻", threshold: 25 },
-  { name: "charm", threshold: 40 },
-  { name: "bottom", threshold: 60 },
-  { name: "W/Z", threshold: 75 },
-  { name: "top", threshold: 90 },
-  { name: "Higgs", threshold: 98 }
+  { name: "e⁺e⁻", threshold: 0.001 },
+  { name: "π⁰", threshold: 0.135 },
+  { name: "μ⁺μ⁻", threshold: 0.211 },
+  { name: "charm", threshold: 2.54 },
+  { name: "τ⁺τ⁻", threshold: 3.55 },
+  { name: "bottom", threshold: 8.36 },
+  { name: "W/Z", threshold: 80.4 },
+  { name: "Higgs", threshold: 125.2 },
+  { name: "top", threshold: 345 }
 ];
 
 const detectorTracks = [];
 
-function getSpeed(e) {
-  const eNorm = e / 100;
-  if (eNorm < 0.3) return eNorm * 0.9;
-  if (eNorm < 0.6) return 0.27 + (eNorm - 0.3) * 0.5;
-  return 0.42 + (eNorm - 0.6) * 0.08;
+/* Relativistic speed of a proton whose kinetic energy is half the collision energy:
+   gamma = 1 + K / (m c^2), v = c * sqrt(1 - 1 / gamma^2). Returned as 1 - v/c to keep the digits. */
+const M_P = 0.938; // proton rest energy, GeV
+function getShortfall(e) {
+  const K = collisionGeV(e) / 2;
+  const g = 1 + K / M_P;
+  const inv = 1 / (g * g);
+  return inv / (1 + Math.sqrt(1 - inv)); // = 1 - sqrt(1 - inv), without rounding loss
+}
+function fmtSpeed(e) {
+  const d = getShortfall(e);
+  const digits = Math.min(10, Math.max(3, Math.ceil(-Math.log10(d)) + 1));
+  return (1 - d).toFixed(digits) + "c";
 }
 
 function getHeaviestParticle(e) {
   let heaviest = "—";
   for (let p of particles) {
-    if (e >= p.threshold) heaviest = p.name;
+    if (collisionGeV(e) >= p.threshold) heaviest = p.name;
   }
   return heaviest;
 }
 
 function updateStats() {
-  const speed = getSpeed(energy);
-  document.getElementById("speedStat").textContent = speed.toFixed(3) + "c";
+  document.getElementById("speedStat").textContent = fmtSpeed(energy);
   document.getElementById("particleStat").textContent = getHeaviestParticle(energy);
   
-  const energyTeV = (energy / 100 * 14).toFixed(1);
-  document.getElementById("ringStatus").textContent = "Lap " + laps + " • " + energyTeV + " TeV";
+  document.getElementById("ringStatus").textContent = "Lap " + laps + " • " + fmtGeV(collisionGeV(energy));
 }
 
 function draw() {
@@ -471,7 +488,8 @@ function draw() {
   
   beamAngle += dt * 1.2;
   rfPhase += dt * 3;
-  laps = Math.floor(beamAngle / (Math.PI * 2));
+  const lapNow = Math.floor(beamAngle / (Math.PI * 2));
+  if (lapNow !== laps) { laps = lapNow; updateStats(); }
   
   ctx.fillStyle = "#000";
   ctx.fillRect(0, 0, w, h);
@@ -555,7 +573,7 @@ function draw() {
   for (let i = 0; i < particles.length; i++) {
     const p = particles[i];
     const py = ladderTop + i * step;
-    const lit = energy >= p.threshold;
+    const lit = collisionGeV(energy) >= p.threshold;
     
     ctx.strokeStyle = lit ? "rgba(" + RGB + ",0.5)" : "rgba(" + RGB + ",0.08)";
     ctx.lineWidth = lit ? 2 : 1;
@@ -645,7 +663,7 @@ slider.addEventListener("input", function() {
   this.style.setProperty("--fill", energy + "%");
   updateStats();
   
-  if (energy > 70 && detectorTracks.length < 8) {
+  if (collisionGeV(energy) >= 80.4 && detectorTracks.length < 8) {
     for (let i = 0; i < 4; i++) {
       detectorTracks.push({
         angle: Math.random() * Math.PI * 2,
@@ -655,12 +673,12 @@ slider.addEventListener("input", function() {
   }
   
   const heaviest = getHeaviestParticle(energy);
-  if (heaviest === "Higgs") {
-    document.getElementById("canvasOverlay").textContent = "Higgs boson detected";
-  } else if (heaviest === "top") {
-    document.getElementById("canvasOverlay").textContent = "Top quark pair created";
+  if (heaviest === "top") {
+    document.getElementById("canvasOverlay").textContent = "Enough energy for top quark pairs";
+  } else if (heaviest === "Higgs") {
+    document.getElementById("canvasOverlay").textContent = "Enough energy for a Higgs boson";
   } else if (heaviest === "W/Z") {
-    document.getElementById("canvasOverlay").textContent = "Weak bosons created";
+    document.getElementById("canvasOverlay").textContent = "Enough energy for W and Z bosons";
   } else if (heaviest !== "—") {
     document.getElementById("canvasOverlay").textContent = heaviest + " threshold reached";
   } else {

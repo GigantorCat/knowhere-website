@@ -332,7 +332,7 @@ canvas {
     </div>
     
     <div class="slider-wrapper">
-      <input type="range" class="lr-slider" id="mSlider" min="-3" max="3" step="0.1" value="1" style="--fill: 66.67%">
+      <input aria-label="Gradient m" type="range" class="lr-slider" id="mSlider" min="-3" max="3" step="0.1" value="1" style="--fill: 66.67%">
       <div class="tick-labels">
         <span>m = -3</span>
         <span>Gradient</span>
@@ -341,7 +341,7 @@ canvas {
     </div>
     
     <div class="slider-wrapper">
-      <input type="range" class="lr-slider" id="cSlider" min="-4" max="4" step="0.5" value="0" style="--fill: 50%">
+      <input aria-label="Y-intercept c" type="range" class="lr-slider" id="cSlider" min="-4" max="4" step="0.5" value="0" style="--fill: 50%">
       <div class="tick-labels">
         <span>c = -4</span>
         <span>Y-Intercept</span>
@@ -368,7 +368,7 @@ canvas {
     </div>
     <div class="knowdrop-divider"></div>
     <div class="knowdrop-text" id="knowdropText">
-      Parallel lines are mathematical clones: they share identical gradients but live at different heights. If one line has m = 2, every parallel line also has m = 2, regardless of their y-intercepts. They'll never intersect because they're climbing at exactly the same rate. In real-world terms, this models scenarios where processes grow at the same rate but start from different baselines — think two investment accounts with identical interest rates but different initial deposits.
+      Parallel lines are mathematical clones: they share identical gradients but live at different heights. If one line has m = 2, every parallel line also has m = 2, regardless of their y-intercepts. They'll never intersect because they're climbing at exactly the same rate. In real-world terms, this models scenarios where processes grow at the same rate but start from different baselines — think two taxi fares with the same charge per kilometre but different flagfalls, or two savings jars that each get the same $20 a week but start with different amounts. The dashed line shows a parallel partner: same m, different c.
     </div>
   </div>
   
@@ -403,10 +403,11 @@ const bctx = buf.getContext('2d');
 
 let m = parseFloat(mSlider.value);
 let c = parseFloat(cSlider.value);
+let mode = 'parallel';
 
-const parallelText = "Parallel lines are mathematical clones: they share identical gradients but live at different heights. If one line has m = 2, every parallel line also has m = 2, regardless of their y-intercepts. They'll never intersect because they're climbing at exactly the same rate. In real-world terms, this models scenarios where processes grow at the same rate but start from different baselines — think two investment accounts with identical interest rates but different initial deposits.";
+const parallelText = "Parallel lines are mathematical clones: they share identical gradients but live at different heights. If one line has m = 2, every parallel line also has m = 2, regardless of their y-intercepts. They'll never intersect because they're climbing at exactly the same rate. In real-world terms, this models scenarios where processes grow at the same rate but start from different baselines — think two taxi fares with the same charge per kilometre but different flagfalls, or two savings jars that each get the same $20 a week but start with different amounts. The dashed line shows a parallel partner: same m, different c.";
 
-const perpText = "Perpendicular lines meet at perfect right angles, and their gradients multiply to exactly -1. If one line has gradient m, the perpendicular line has gradient -1/m. A line with m = 2 is perpendicular to a line with m = -0.5 because 2 × (-0.5) = -1. This relationship is fundamental in geometry and physics: velocity and perpendicular force, river flow and bank erosion, architectural supports and load distribution all rely on this -1 product rule.";
+const perpText = "Perpendicular lines meet at perfect right angles, and their gradients multiply to exactly -1. If one line has gradient m, the perpendicular line has gradient -1/m. A line with m = 2 is perpendicular to a line with m = -0.5 because 2 × (-0.5) = -1. This relationship is fundamental in geometry and physics: velocity and perpendicular force, river flow and bank erosion, architectural supports and load distribution all rely on this -1 product rule. The dashed line is the perpendicular partner through the same y-intercept.";
 
 function resize() {
   const rect = canvas.getBoundingClientRect();
@@ -428,10 +429,11 @@ function draw() {
   
   const cx = w / 2;
   const cy = h / 2;
-  const xRange = 6;
   const yRange = 6;
-  const xScale = w / (2 * xRange);
+  /* Equal scales on both axes, so the drawn slope matches the readout */
   const yScale = h / (2 * yRange);
+  const xScale = yScale;
+  const xRange = Math.ceil(w / (2 * xScale));
   
   // Grid
   ctx.strokeStyle = 'rgba(255,255,255,0.08)';
@@ -463,6 +465,48 @@ function draw() {
   ctx.lineTo(cx, h);
   ctx.stroke();
   
+  // Axis numbers (every 2 units)
+  ctx.fillStyle = 'rgba(237,237,232,0.45)';
+  ctx.font = '10px JetBrains Mono, monospace';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  for (let x = -xRange; x <= xRange; x++) {
+    if (x === 0 || x % 2 !== 0) continue;
+    const sx = cx + x * xScale;
+    if (sx < 8 || sx > w - 8) continue;
+    ctx.fillText(String(x), sx, cy + 4);
+  }
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'middle';
+  for (let y = -yRange; y <= yRange; y++) {
+    if (y === 0 || y % 2 !== 0) continue;
+    const sy = cy - y * yScale;
+    if (sy < 8 || sy > h - 8) continue;
+    ctx.fillText(String(y), cx - 5, sy);
+  }
+
+  // Partner line: parallel (same m, c shifted by 2) or perpendicular (gradient -1/m, same c)
+  ctx.save();
+  ctx.strokeStyle = 'rgba(250,199,117,0.75)';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([6, 5]);
+  ctx.beginPath();
+  if (mode === 'parallel') {
+    const c2 = c <= 2 ? c + 2 : c - 2;
+    ctx.moveTo(cx + (-xRange - 1) * xScale, cy - (m * (-xRange - 1) + c2) * yScale);
+    ctx.lineTo(cx + (xRange + 1) * xScale, cy - (m * (xRange + 1) + c2) * yScale);
+  } else if (Math.abs(m) < 1e-9) {
+    ctx.moveTo(cx, 0);
+    ctx.lineTo(cx, h);
+  } else {
+    const mp = -1 / m;
+    const xr = Math.max(xRange + 1, (yRange + Math.abs(c) + 1) * Math.abs(m) + 1);
+    ctx.moveTo(cx - xr * xScale, cy - (mp * -xr + c) * yScale);
+    ctx.lineTo(cx + xr * xScale, cy - (mp * xr + c) * yScale);
+  }
+  ctx.stroke();
+  ctx.restore();
+
   // Main line
   ctx.save();
   ctx.strokeStyle = 'rgba(126, 217, 122,0.9)';
@@ -571,12 +615,14 @@ btnParallel.addEventListener('click', () => {
   btnParallel.classList.add('active');
   btnPerp.classList.remove('active');
   knowdropText.textContent = parallelText;
+  mode = 'parallel';
 });
 
 btnPerp.addEventListener('click', () => {
   btnPerp.classList.add('active');
   btnParallel.classList.remove('active');
   knowdropText.textContent = perpText;
+  mode = 'perp';
 });
 
 window.addEventListener('resize', resize);

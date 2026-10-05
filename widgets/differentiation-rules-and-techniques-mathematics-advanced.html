@@ -1,761 +1,348 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Differentiation Rules and Techniques — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Differentiation rules and techniques — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
-
-:root {
-  --bg: #0B0D0C;
-  --bg2: #12160F;
-  --acc: #3EB556;
-  --ag: rgba(62, 181, 86, .7);
-  --ag1: rgba(62, 181, 86, .12);
-  --ag2: rgba(62, 181, 86, .45);
-  --amb: #FAC775;
-  --ink: #EDEDE8;
-  --ink-dim: #8C9389;
-  --line: #262B26;
+:root{
+  --bg:#0B0D0C;--bg2:#12160F;--acc:#3EB556;--acc-rgb:62, 181, 86;
+  --ag:rgba(var(--acc-rgb),.7);--ag1:rgba(var(--acc-rgb),.12);--ag2:rgba(var(--acc-rgb),.45);
+  --amb:#FAC775;--ink:#EDEDE8;--ink-dim:#8C9389;--line:#262B26;
 }
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
-}
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
-  font-family: 'Geist', sans-serif;
-  min-height: 100vh;
-  padding: 40px 16px 72px;
-  color: var(--ink);
-}
-
-.container {
-  max-width: 720px;
-  margin: 0 auto;
-}
-
-h1 {
-  font-size: clamp(30px, 8vw, 52px);
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1.02;
-  margin-bottom: 16px;
-}
-
-.intro {
-  font-size: 15.5px;
-  font-weight: 400;
-  color: var(--ink-dim);
-  max-width: 58ch;
-  line-height: 1.55;
-  margin-bottom: 32px;
-}
-
-.card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 16px;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
-}
-
-.card-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  color: var(--ink);
-}
-
-.live-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--acc);
-}
-
-.card-hint {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--ink-dim);
-  margin-bottom: 14px;
-}
-
-.canvas-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16/9;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
-  box-shadow: inset 0 0 0 1px var(--ag1);
-  margin-bottom: 16px;
-}
-
-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.canvas-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(4px);
-  padding: 9px 16px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  text-transform: uppercase;
-  color: var(--acc);
-  text-align: center;
-}
-
-.slider-container {
-  margin-bottom: 12px;
-}
-
-.slider-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 8px;
-}
-
-.dr-slider {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  height: 4px;
-  border-radius: 3px;
-  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
-  outline: none;
-  cursor: pointer;
-}
-
-.dr-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow .15s;
-}
-
-.dr-slider::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.dr-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow .15s;
-}
-
-.dr-slider::-moz-range-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.tick-labels {
-  display: flex;
-  justify-content: space-between;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--ink-dim);
-  padding: 0 4px;
-}
-
-.stat-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-}
-
-.stat {
-  text-align: center;
-}
-
-.stat-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 6px;
-}
-
-.stat-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 24px;
-  font-weight: 500;
-}
-
-.toggle-card {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.toggle-buttons {
-  display: flex;
-  gap: 10px;
-}
-
-.toggle-btn {
-  flex: 1;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14.5px;
-  padding: 12px;
-  border-radius: 11px;
-  background: #12160F;
-  border: 1px solid var(--line);
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: all .2s;
-}
-
-.toggle-btn.active {
-  background: rgba(62, 181, 86,.1);
-  border: 1px solid var(--acc);
-  color: var(--acc);
-  box-shadow: 0 0 22px rgba(62, 181, 86,.18);
-}
-
-.knowdrop-section {
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-}
-
-.knowdrop-body {
-  font-family: 'Geist', sans-serif;
-  font-size: 14.5px;
-  font-weight: 400;
-  line-height: 1.65;
-  color: var(--ink);
-}
-
-.know-this {
-  border-left: 3px solid var(--acc);
-  padding: 16px 18px;
-  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
-  border-radius: 0 12px 12px 0;
-  margin-top: 16px;
-}
-
-.know-this-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--acc);
-  margin-bottom: 8px;
-}
-
-.know-this-body {
-  font-family: 'Geist', sans-serif;
-  font-size: 17.4px;
-  font-weight: 400;
-  line-height: 1.55;
-  color: var(--ink);
-}
-
-.footer {
-  margin-top: 34px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.pulse-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--acc);
-  box-shadow: 0 0 10px var(--acc);
-  animation: drPulse 2.4s ease-in-out infinite;
-}
-
-@keyframes drPulse {
-  0%, 100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.35;
-    transform: scale(0.6);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .pulse-dot {
-    animation: none;
-  }
-}
+.dr *{box-sizing:border-box}
+body{margin:0;background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C 55%);font-family:'Geist',sans-serif;min-height:100vh;padding:40px 16px 0;box-sizing:border-box;color:var(--ink)}
+.dr{max-width:720px;margin:0 auto;color:var(--ink)}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.dr h1{font-family:'Geist',sans-serif;font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin:0 0 14px}
+.dr .intro{font-size:15.5px;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin:0 0 24px}
+.dr .card{background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);margin-bottom:20px}
+.dr .card.sec{border-radius:14px}
+.dr .hdr{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.dr .hdr-l{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;color:#fff}
+.dr .live{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--acc)}
+.dr .hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin:6px 0 12px}
+.dr .qlab{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin:0 0 6px}
+.dr .tg{display:flex;gap:10px;margin:0 0 12px;flex-wrap:wrap}
+.dr .tg button{flex:1 1 0;min-width:0;font-family:'JetBrains Mono',monospace;font-size:12px;padding:10px 8px;border-radius:999px;background:#12160F;border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:all .2s;white-space:nowrap}
+.dr .tg button[aria-pressed="true"]{background:rgba(var(--acc-rgb),.1);border:1px solid var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.dr .tg.two{display:grid;grid-template-columns:1fr 1fr;gap:8px 10px}
+.dr .fb{font-size:14px;line-height:1.5;color:var(--ink);min-height:42px;margin:0 0 14px;padding:10px 12px;border:1px dashed var(--line);border-radius:10px}
+.dr .fb b{font-family:'JetBrains Mono',monospace;font-weight:500;color:var(--acc)}
+.dr .fb b.no{color:var(--amb)}
+.dr .eq{font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.6;color:var(--ink);margin:0 0 12px;padding:10px 12px;background:rgba(0,0,0,.35);border-radius:10px;overflow-wrap:anywhere}
+.dr .eq .k{color:var(--ink-dim)}
+.dr .eq .u{color:var(--amb)}
+.dr .eq .h{color:var(--acc)}
+.dr .wrap{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1)}
+.dr .wrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.dr .ovl{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:14px;text-transform:none;color:var(--acc);text-align:center}
+.dr .sl{margin-top:16px}
+.dr .dr-row{display:flex;justify-content:space-between;align-items:baseline;font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:8px}
+.dr .dr-row b{font-weight:500;color:var(--acc);font-size:12px;text-transform:none}
+.dr .dr-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;background:linear-gradient(90deg,var(--acc) var(--fill,0%),#23291f var(--fill,0%));outline:none;margin:6px 0}
+.dr .dr-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.dr .dr-slider::-webkit-slider-thumb:hover{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.dr .dr-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag)}
+.dr .ticks{position:relative;height:14px;margin:2px 10px 0}
+.dr .ticks span{position:absolute;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink-dim);white-space:nowrap}
+.dr .stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;border-top:1px solid var(--line);margin-top:16px;padding-top:14px}
+.dr .st-l{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim)}
+.dr .st-v{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500;margin-top:4px}
+.dr .st-v.a{color:var(--acc)}.dr .st-v.b{color:var(--amb)}
+.dr .st-s{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-dim);margin-top:3px}
+.dr .kd{border-top:1px solid var(--line);padding-top:16px;font-size:14.5px;line-height:1.65;color:var(--ink);margin:0}
+.dr .kt{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));border-radius:0 12px 12px 0;margin:0}
+.dr .kt-tag{display:flex;align-items:center;gap:9px;font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:0.15em;color:var(--acc);margin-bottom:10px}
+.dr .kt-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:drpulse 2.4s ease-in-out infinite}
+.dr .kt p{font-size:17.4px;line-height:1.55;color:var(--ink);margin:0}
+@keyframes drpulse{0%,100%{opacity:1}50%{opacity:.45}}
+@media (prefers-reduced-motion:reduce){.dr .kt-dot{animation:none}.dr .tg button{transition:none}}
 </style>
 
-<h2 class="sr-only">Differentiation Rules Interactive Widget</h2>
-
-<div class="container">
-  <h1>Every complex derivative is just <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">multiplication</span></h1>
-  
-  <p class="intro">The chain rule, product rule, and quotient rule all reduce differentiation to multiplication—they just tell you which pieces to multiply and in what order. Drag the slider to see each rule build its derivative step by step.</p>
+<div class="dr" id="drRoot">
+  <h2 class="sr-only">Differentiation rules and techniques: pick a function, identify whether it needs the product, quotient or chain rule, then move a point along the curve and see the rule build the gradient of the tangent</h2>
+  <h1>The slope of a product is not the product of the <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">slopes</span></h1>
+  <p class="intro">Multiply two functions and the gradient is two pieces added, not two slopes multiplied. Divide them and a minus sign appears; put one inside another and the slopes really do multiply. Pick a function, name the rule it needs, then move the point along the curve and watch each piece of the gradient change.</p>
 
   <div class="card">
-    <div class="card-header">
-      <div class="card-label">Rule Visualisation</div>
-      <div class="live-tag" id="liveTag">Chain Rule</div>
-    </div>
-    <div class="card-hint">Watch each rule construct its derivative</div>
-    
-    <div class="canvas-wrapper">
-      <canvas id="canvas"></canvas>
-      <div class="canvas-overlay" id="overlayTag">f'(g(x)) × g'(x)</div>
+    <div class="hdr"><span class="hdr-l">Build the gradient</span><span class="live" id="live">gradient 3.25</span></div>
+    <div class="hint">Pick a function. Name its rule. Then move the point.</div>
+
+    <div class="qlab" id="qEx">The function h(x)</div>
+    <div class="tg two" role="group" aria-label="Choose the function to differentiate" aria-describedby="qEx" id="exGroup">
+      <button type="button" data-ex="prod" aria-pressed="true">x²(3x + 1)</button>
+      <button type="button" data-ex="quot" aria-pressed="false">(2x + 1)/(x² + 1)</button>
+      <button type="button" data-ex="chain" aria-pressed="false">(x² − 1)³</button>
+      <button type="button" data-ex="combo" aria-pressed="false">x(x² − 1)²</button>
     </div>
 
-    <div class="slider-container">
-      <div class="slider-label">Differentiation Rule</div>
-      <input type="range" class="dr-slider" id="ruleSlider" min="0" max="2" value="0" step="1">
+    <div class="qlab" id="qRule">Which rule does it need?</div>
+    <div class="tg two" role="group" aria-label="Choose the rule you think it needs" aria-describedby="qRule" id="ruleGroup">
+      <button type="button" data-rule="prod" aria-pressed="false">Product</button>
+      <button type="button" data-rule="quot" aria-pressed="false">Quotient</button>
+      <button type="button" data-rule="chain" aria-pressed="false">Chain</button>
+      <button type="button" data-rule="combo" aria-pressed="false">Product + chain</button>
     </div>
-    <div class="tick-labels">
-      <span>Chain</span>
-      <span>Product</span>
-      <span>Quotient</span>
+    <p class="fb" id="fb" aria-live="polite"></p>
+
+    <div class="eq" id="eq"></div>
+
+    <div class="wrap"><canvas id="cv" aria-label="Graph of h(x) with its parts and the tangent at the chosen point, beside bars showing each piece of the gradient"></canvas><div class="ovl" id="ovl"></div></div>
+
+    <div class="sl">
+      <div class="dr-row"><span>Point on the curve</span><b id="xVal">x = 0.5</b></div>
+      <input type="range" class="dr-slider" id="xs" aria-label="Point on the curve, x value" min="-1" max="1" step="0.05" value="0.5">
+      <div class="ticks" data-min="-1" data-max="1" data-vals="-1,-0.5,0,0.5,1"></div>
     </div>
 
-    <div class="stat-row">
-      <div class="stat">
-        <div class="stat-label">Rule Type</div>
-        <div class="stat-value" id="ruleType" style="color:var(--acc);font-size:18px;">Composite</div>
-      </div>
-      <div class="stat">
-        <div class="stat-label">Operations</div>
-        <div class="stat-value" id="opCount" style="color:var(--amb);">2</div>
-      </div>
+    <div class="stats">
+      <div><div class="st-l">Gradient by the rule</div><div class="st-v a" id="sRule">3.25</div><div class="st-s" id="sRuleS">h′(x) from the pieces</div></div>
+      <div><div class="st-l">Tiny chord check</div><div class="st-v b" id="sChord">3.25</div><div class="st-s">slope from x − 0.001 to x + 0.001</div></div>
     </div>
   </div>
 
-  <div class="card toggle-card">
-    <div class="toggle-buttons">
-      <button class="toggle-btn active" id="btn1">Chain Rule</button>
-      <button class="toggle-btn" id="btn2">Product Rule</button>
-      <button class="toggle-btn" id="btn3">Quotient Rule</button>
+  <div class="card sec">
+    <div class="qlab" id="qKd">Read about</div>
+    <div class="tg" role="group" aria-label="Choose which rule to read about" aria-describedby="qKd" id="kdGroup">
+      <button type="button" data-kd="prod" aria-pressed="true">Product</button>
+      <button type="button" data-kd="quot" aria-pressed="false">Quotient</button>
+      <button type="button" data-kd="chain" aria-pressed="false">Chain</button>
+      <button type="button" data-kd="combo" aria-pressed="false">Both</button>
     </div>
-    <div class="knowdrop-section">
-      <p class="knowdrop-body" id="knowdropText">The chain rule differentiates composite functions where one function is nested inside another. For y = f(g(x)), the derivative dy/dx = f'(g(x)) × g'(x) multiplies the outer function's derivative (evaluated at the inner function) by the inner function's derivative. This appears in functions like (3x² + 1)⁵, where the outer function is ( )⁵ and the inner is 3x² + 1. The chain rule tells us to take 5(3x² + 1)⁴ and multiply by 6x, giving 30x(3x² + 1)⁴. Without the chain rule, differentiating nested exponentials, trigonometric compositions, and logarithms would be impossible. Every time you see a function inside another function, the chain rule is the only tool that works.</p>
-    </div>
+    <p class="kd" id="kdText"></p>
   </div>
 
-  <div class="know-this">
-    <div class="know-this-tag">Know This</div>
-    <div class="know-this-body">The <span style="color:var(--acc)">chain rule</span> handles composites (f'(g(x)) × g'(x)), the <span style="color:var(--acc)">product rule</span> handles products (u'v + uv'), and the <span style="color:var(--acc)">quotient rule</span> handles quotients ((u'v − uv')/v²)—each reduces differentiation to multiplication of known derivatives.</div>
-  </div>
-
-  <div class="footer">
-    <div class="pulse-dot"></div>
+  <div class="kt">
+    <div class="kt-tag"><span class="kt-dot"></span><span>Know this</span></div>
+    <p>A product needs <span style="color:var(--acc)">u′v + uv′</span>, a quotient needs <span style="color:var(--acc)">(vu′ − uv′)/v²</span>, and a function inside a function needs the <span style="color:var(--acc)">chain rule</span>, so read the outermost operation first and work inwards.</p>
   </div>
 </div>
 
 <script>
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-const slider = document.getElementById('ruleSlider');
-const liveTag = document.getElementById('liveTag');
-const overlayTag = document.getElementById('overlayTag');
-const ruleType = document.getElementById('ruleType');
-const opCount = document.getElementById('opCount');
-const btn1 = document.getElementById('btn1');
-const btn2 = document.getElementById('btn2');
-const btn3 = document.getElementById('btn3');
-const knowdropText = document.getElementById('knowdropText');
+(function(){
+  const root = document.getElementById("drRoot");
+  const CSS = getComputedStyle(document.documentElement);
+  const ACC = CSS.getPropertyValue("--acc").trim();
+  const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+  const AMB = CSS.getPropertyValue("--amb").trim();
+  const INK = CSS.getPropertyValue("--ink").trim();
+  const DIM = CSS.getPropertyValue("--ink-dim").trim();
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const MINUS = "−";
 
-const dpr = Math.min(window.devicePixelRatio || 1, 2);
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d');
+  function fmt(v){
+    if (!isFinite(v)) return "—";
+    if (Math.abs(v) < 0.005) return "0";
+    const s = (Math.round(v * 100) / 100).toFixed(2).replace(/\.?0+$/, "");
+    return s.replace("-", MINUS);
+  }
+  /* a + b written the way you would on paper: 2.5 − 0.75, never 2.5 + −0.75 */
+  function plus(a, b){ return fmt(a) + (b < 0 && fmt(b) !== "0" ? " " + MINUS + " " + fmt(-b) : " + " + fmt(b)); }
+  function par(v){ return v < 0 && fmt(v) !== "0" ? "(" + fmt(v) + ")" : fmt(v); }
 
-const ruleNames = ['Chain Rule', 'Product Rule', 'Quotient Rule'];
-const overlayLabels = ["f'(g(x)) × g'(x)", "u'v + uv'", "(u'v − uv')/v²"];
-const typeLabels = ['Composite', 'Product', 'Quotient'];
-const opLabels = ['2', '4', '5'];
+  /* ---------- the model: every function, its parts and their derivatives ---------- */
+  const EX = {
+    prod: {
+      rule: "prod", h: x => x * x * (3 * x + 1),
+      parts: [ { name: "u = x²", f: x => x * x, col: "amb" }, { name: "v = 3x + 1", f: x => 3 * x + 1, col: "dim" } ],
+      eq: "<span class=\"k\">h(x) =</span> <span class=\"u\">x²</span> × (3x + 1)<br><span class=\"k\">u = x², u′ = 2x · v = 3x + 1, v′ = 3</span><br><span class=\"h\">h′(x) = 2x(3x + 1) + 3x² = 9x² + 2x</span>",
+      pieces: x => { const u = x * x, du = 2 * x, v = 3 * x + 1, dv = 3; return { rows: [ { lab: "u′v", val: du * v }, { lab: "uv′", val: u * dv } ], op: "+", total: du * v + u * dv,
+        say: "u′v + uv′ = " + plus(du * v, u * dv) + " = " + fmt(du * v + u * dv) }; },
+      why: "x² is multiplied by (3x + 1). Two factors multiplied means the product rule, u′v + uv′."
+    },
+    quot: {
+      rule: "quot", h: x => (2 * x + 1) / (x * x + 1),
+      parts: [ { name: "u = 2x + 1", f: x => 2 * x + 1, col: "amb" }, { name: "v = x² + 1", f: x => x * x + 1, col: "dim" } ],
+      eq: "<span class=\"k\">h(x) =</span> <span class=\"u\">(2x + 1)</span> ÷ (x² + 1)<br><span class=\"k\">u = 2x + 1, u′ = 2 · v = x² + 1, v′ = 2x</span><br><span class=\"h\">h′(x) = (2(x² + 1) − 2x(2x + 1))/(x² + 1)² = (2 − 2x − 2x²)/(x² + 1)²</span>",
+      pieces: x => { const u = 2 * x + 1, du = 2, v = x * x + 1, dv = 2 * x; const top = v * du - u * dv; return { rows: [ { lab: "vu′", val: v * du }, { lab: "−uv′", val: -u * dv }, { lab: "÷ v²", val: v * v } ], op: "q", total: top / (v * v),
+        say: "(vu′ − uv′) ÷ v² = (" + plus(v * du, -u * dv) + ") ÷ " + fmt(v * v) + " = " + fmt(top / (v * v)) }; },
+      why: "(2x + 1) is divided by (x² + 1), so the quotient rule, (vu′ − uv′)/v²."
+    },
+    chain: {
+      rule: "chain", h: x => Math.pow(x * x - 1, 3),
+      parts: [ { name: "inside g = x² − 1", f: x => x * x - 1, col: "amb" } ],
+      eq: "<span class=\"k\">h(x) = f(g(x)) with</span> <span class=\"u\">g(x) = x² − 1</span> <span class=\"k\">inside f(w) = w³</span><br><span class=\"k\">f′(w) = 3w² · g′(x) = 2x</span><br><span class=\"h\">h′(x) = 3(x² − 1)² × 2x = 6x(x² − 1)²</span>",
+      pieces: x => { const g = x * x - 1, dg = 2 * x, fo = 3 * g * g; return { rows: [ { lab: "f′(g(x))", val: fo }, { lab: "g′(x)", val: dg } ], op: "×", total: fo * dg,
+        say: "f′(g(x)) × g′(x) = " + fmt(fo) + " × " + par(dg) + " = " + fmt(fo * dg) }; },
+      why: "x² − 1 sits inside the cube, so the chain rule: the outside slope times the inside slope."
+    },
+    combo: {
+      rule: "combo", h: x => x * Math.pow(x * x - 1, 2),
+      parts: [ { name: "u = x", f: x => x, col: "amb" }, { name: "v = (x² − 1)²", f: x => Math.pow(x * x - 1, 2), col: "dim" } ],
+      eq: "<span class=\"k\">h(x) =</span> <span class=\"u\">x</span> × (x² − 1)²<br><span class=\"k\">u = x, u′ = 1 · v = (x² − 1)², v′ = 2(x² − 1) × 2x by the chain rule</span><br><span class=\"h\">h′(x) = (x² − 1)² + 4x²(x² − 1) = (x² − 1)(5x² − 1)</span>",
+      pieces: x => { const u = x, du = 1, v = Math.pow(x * x - 1, 2), dv = 2 * (x * x - 1) * 2 * x; return { rows: [ { lab: "u′v", val: du * v }, { lab: "uv′", val: u * dv } ], op: "+", total: du * v + u * dv,
+        say: "u′v + uv′ = " + plus(du * v, u * dv) + " = " + fmt(du * v + u * dv) }; },
+      why: "x is multiplied by (x² − 1)², so the product rule, and finding v′ needs the chain rule because x² − 1 sits inside the square."
+    }
+  };
+  const RULE_NAME = { prod: "product rule", quot: "quotient rule", chain: "chain rule", combo: "product and chain rules" };
+  const S = { ex: "prod", x: 0.5, guess: null };
+  const XR = [-1.25, 1.25];
+  const chord = x => { const e = EX[S.ex]; return (e.h(x + 0.001) - e.h(x - 0.001)) / 0.002; };
 
-const knowdropTexts = [
-  "The chain rule differentiates composite functions where one function is nested inside another. For y = f(g(x)), the derivative dy/dx = f'(g(x)) × g'(x) multiplies the outer function's derivative (evaluated at the inner function) by the inner function's derivative. This appears in functions like (3x² + 1)⁵, where the outer function is ( )⁵ and the inner is 3x² + 1. The chain rule tells us to take 5(3x² + 1)⁴ and multiply by 6x, giving 30x(3x² + 1)⁴. Without the chain rule, differentiating nested exponentials, trigonometric compositions, and logarithms would be impossible. Every time you see a function inside another function, the chain rule is the only tool that works.",
-  "The product rule differentiates functions that are multiplied together. For y = u(x)v(x), the derivative is dy/dx = u'v + uv', which means we differentiate the first function and multiply by the second (keeping it unchanged), then add the first function (unchanged) multiplied by the derivative of the second. For x²sin(x), we get 2x·sin(x) + x²·cos(x). The product rule is essential because the derivative of a product is not the product of the derivatives—that common mistake would give 2x·cos(x), which is completely wrong. The product rule ensures both functions contribute their rate of change to the overall derivative. This rule appears everywhere in physics and economics where quantities multiply together.",
-  "The quotient rule differentiates fractions where both numerator and denominator are functions. For y = u(x)/v(x), the derivative is dy/dx = (u'v − uv')/v², often remembered as 'low d-high minus high d-low over low squared'. For (2x + 1)/(x² − 3), we compute (2·(x² − 3) − (2x + 1)·2x)/(x² − 3)², which simplifies to (−2x² − 2x − 6)/(x² − 3)². The quotient rule is necessary because the derivative of a quotient is not the quotient of derivatives. The denominator squared in the final answer reflects how changes in the bottom of a fraction have amplified effects. Rational functions dominate calculus applications, making this rule indispensable for rates of change in physics, chemistry, and engineering."
-];
-
-let currentRule = 0;
-let particles = [];
-let time = 0;
-
-function resize() {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
-
-function updateSlider() {
-  const val = slider.value;
-  const percent = (val / 2) * 100;
-  slider.style.setProperty('--fill', percent + '%');
-}
-
-function updateUI() {
-  currentRule = parseInt(slider.value);
-  liveTag.textContent = ruleNames[currentRule];
-  overlayTag.textContent = overlayLabels[currentRule];
-  ruleType.textContent = typeLabels[currentRule];
-  opCount.textContent = opLabels[currentRule];
-  
-  // Update toggle buttons
-  [btn1, btn2, btn3].forEach((btn, i) => {
-    if (i === currentRule) {
-      btn.classList.add('active');
+  /* ---------- canvas ---------- */
+  const cv = document.getElementById("cv"), ctx = cv.getContext("2d");
+  const buf = document.createElement("canvas"), bctx = buf.getContext("2d");
+  let W = 0, H = 0;
+  function size(){
+    const r = cv.getBoundingClientRect();
+    if (!r.width || !r.height) return; /* f27c: refuse a zero measurement, keep the last good size */
+    cv.width = Math.max(1, Math.round(r.width * dpr)); cv.height = Math.max(1, Math.round(r.height * dpr));
+    buf.width = cv.width; buf.height = cv.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    W = cv.width / dpr; H = cv.height / dpr;
+  }
+  function niceStep(span){ const raw = span / 5; const p = Math.pow(10, Math.floor(Math.log10(raw))); const m = raw / p; return (m < 1.5 ? 1 : m < 3.5 ? 2 : m < 7.5 ? 5 : 10) * p; }
+  function draw(){
+    if (!W || !H) return;
+    const e = EX[S.ex], pc = e.pieces(S.x);
+    ctx.fillStyle = "#000"; ctx.fillRect(0, 0, W, H);
+    const stacked = W < 560;
+    const ovH = Math.max(H * 0.08, 42);
+    /* graph box and bar box: side by side when wide, stacked when narrow */
+    let G, Bx;
+    if (stacked){
+      const split = (H - ovH) * 0.58;
+      G = { L: W * 0.1, R: W * 0.96, T: H * 0.06, B: split - 6 };
+      Bx = { L: W * 0.04, R: W * 0.96, T: split + 8, B: H - ovH - 6 };
     } else {
-      btn.classList.remove('active');
+      G = { L: W * 0.06, R: W * 0.6, T: H * 0.08, B: H - ovH - 8 };
+      Bx = { L: W * 0.64, R: W * 0.97, T: H * 0.08, B: H - ovH - 8 };
     }
+    /* y range from everything drawn */
+    let lo = 0, hi = 0; const N = 241, xs = [];
+    for (let i = 0; i < N; i++) xs.push(XR[0] + (XR[1] - XR[0]) * i / (N - 1));
+    const series = [e.h].concat(e.parts.map(p => p.f));
+    series.forEach(f => xs.forEach(x => { const y = f(x); if (y < lo) lo = y; if (y > hi) hi = y; }));
+    const pad = (hi - lo) * 0.1 || 1; lo -= pad; hi += pad;
+    const X = x => G.L + (x - XR[0]) / (XR[1] - XR[0]) * (G.R - G.L);
+    const Y = y => G.B - (y - lo) / (hi - lo) * (G.B - G.T);
+    /* grid */
+    ctx.lineWidth = 1; ctx.strokeStyle = "rgba(255,255,255,0.06)";
+    const ys = niceStep(hi - lo);
+    for (let y = Math.ceil(lo / ys) * ys; y <= hi; y += ys){ ctx.beginPath(); ctx.moveTo(G.L, Y(y)); ctx.lineTo(G.R, Y(y)); ctx.stroke(); }
+    for (let x = -1; x <= 1.001; x += 0.5){ ctx.beginPath(); ctx.moveTo(X(x), G.T); ctx.lineTo(X(x), G.B); ctx.stroke(); }
+    ctx.strokeStyle = "rgba(255,255,255,0.35)"; ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.moveTo(G.L, Y(0)); ctx.lineTo(G.R, Y(0)); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(X(0), G.T); ctx.lineTo(X(0), G.B); ctx.stroke();
+    ctx.font = "11px 'JetBrains Mono', monospace"; ctx.fillStyle = DIM;
+    ctx.textAlign = "center"; ctx.textBaseline = "top";
+    [-1, -0.5, 0.5, 1].forEach(x => ctx.fillText(fmt(x), X(x), Math.min(G.B - 12, Y(0) + 4)));
+    ctx.textAlign = "right"; ctx.textBaseline = "middle";
+    for (let y = Math.ceil(lo / ys) * ys; y <= hi; y += ys){ if (Math.abs(y) < ys / 2) continue; ctx.fillText(fmt(y), X(0) - 4, Y(y)); }
+    /* clip to graph box */
+    ctx.save(); ctx.beginPath(); ctx.rect(G.L, G.T, G.R - G.L, G.B - G.T); ctx.clip();
+    function curve(f, style, width, dash){
+      ctx.strokeStyle = style; ctx.lineWidth = width; ctx.setLineDash(dash || []); ctx.beginPath();
+      xs.forEach((x, i) => { const px = X(x), py = Y(f(x)); if (i) ctx.lineTo(px, py); else ctx.moveTo(px, py); });
+      ctx.stroke(); ctx.setLineDash([]);
+    }
+    e.parts.forEach(p => curve(p.f, p.col === "amb" ? "rgba(250,199,117,0.8)" : "rgba(237,237,232,0.45)", 1.6, [6, 5]));
+    curve(e.h, "rgba(" + RGB + ",0.3)", 9);
+    curve(e.h, ACC, 3);
+    /* tangent with the gradient the rule gives */
+    const x0 = S.x, y0 = e.h(x0), m = pc.total, half = (XR[1] - XR[0]) * 0.28;
+    ctx.strokeStyle = INK; ctx.lineWidth = 1.6;
+    ctx.beginPath(); ctx.moveTo(X(x0 - half), Y(y0 - m * half)); ctx.lineTo(X(x0 + half), Y(y0 + m * half)); ctx.stroke();
+    ctx.restore();
+    ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.fillStyle = "rgba(" + RGB + ",0.3)";
+    ctx.beginPath(); ctx.arc(X(x0), Y(y0), 11, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+    ctx.fillStyle = INK; ctx.beginPath(); ctx.arc(X(x0), Y(y0), 5, 0, Math.PI * 2); ctx.fill();
+    /* legend */
+    ctx.font = "11px 'JetBrains Mono', monospace"; ctx.textAlign = "left"; ctx.textBaseline = "top";
+    let ly = G.T + 2;
+    ctx.fillStyle = ACC; ctx.fillText("h(x)", G.L + 4, ly); ly += 15;
+    e.parts.forEach(p => { ctx.fillStyle = p.col === "amb" ? AMB : DIM; ctx.fillText("dashed " + p.name, G.L + 4, ly); ly += 15; });
+    ctx.fillStyle = INK; ctx.fillText("tangent, gradient " + fmt(m), G.L + 4, ly);
+
+    /* bars: each piece of the gradient, then the total */
+    const rows = pc.rows.slice();
+    rows.push({ lab: "h′(x)", val: pc.total, tot: true });
+    ctx.fillStyle = DIM; ctx.font = "11px 'JetBrains Mono', monospace"; ctx.textAlign = "left"; ctx.textBaseline = "top";
+    ctx.fillText(pc.op === "×" ? "pieces multiply" : pc.op === "q" ? "top pieces add, then ÷ v²" : "pieces add", Bx.L, Bx.T);
+    const top = Bx.T + 18, rowH = Math.min(40, (Bx.B - top) / rows.length);
+    const labW = 70, valW = 52;
+    const bL = Bx.L + labW, bR = Bx.R - valW;
+    let mx = 0.5; rows.forEach(r => { mx = Math.max(mx, Math.abs(r.val)); });
+    const anyNeg = rows.some(r => r.val < 0);
+    const z = anyNeg ? (bL + bR) / 2 : bL + 4;
+    const sc = (anyNeg ? (bR - bL) / 2 : (bR - bL - 4)) / mx;
+    ctx.strokeStyle = "rgba(255,255,255,0.3)"; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(z, top); ctx.lineTo(z, top + rowH * rows.length); ctx.stroke();
+    rows.forEach((r, i) => {
+      const cy = top + rowH * i + rowH / 2, bh = Math.max(6, rowH * 0.42);
+      if (r.tot){ ctx.strokeStyle = "rgba(255,255,255,0.15)"; ctx.beginPath(); ctx.moveTo(Bx.L, top + rowH * i); ctx.lineTo(Bx.R, top + rowH * i); ctx.stroke(); }
+      const x1 = z, x2 = z + r.val * sc;
+      ctx.fillStyle = r.tot ? ACC : (r.lab === "÷ v²" ? "rgba(237,237,232,0.55)" : "rgba(250,199,117,0.85)");
+      ctx.fillRect(Math.min(x1, x2), cy - bh / 2, Math.max(1.5, Math.abs(x2 - x1)), bh);
+      ctx.fillStyle = r.tot ? ACC : INK; ctx.textBaseline = "middle"; ctx.textAlign = "left";
+      ctx.fillText(r.lab, Bx.L, cy);
+      ctx.textAlign = "right"; ctx.fillText(fmt(r.val), Bx.R, cy);
+    });
+    /* bloom + vignette */
+    bctx.setTransform(1, 0, 0, 1, 0, 0); bctx.clearRect(0, 0, buf.width, buf.height); (cv.width&&cv.height)&&bctx.drawImage(cv, 0, 0);
+    ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)"; (buf.width&&buf.height)&&ctx.drawImage(buf, 0, 0, W, H); ctx.restore();
+    const vig = ctx.createRadialGradient(W / 2, H / 2, H * 0.28, W / 2, H / 2, W * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig; ctx.fillRect(0, 0, W, H);
+  }
+
+  /* ---------- readouts, all from the same pieces the picture draws ---------- */
+  function readout(){
+    const e = EX[S.ex], pc = e.pieces(S.x);
+    document.getElementById("xVal").textContent = "x = " + fmt(S.x);
+    document.getElementById("live").textContent = "gradient " + fmt(pc.total);
+    document.getElementById("ovl").textContent = "x = " + fmt(S.x) + " · " + pc.say;
+    document.getElementById("sRule").textContent = fmt(pc.total);
+    document.getElementById("sRuleS").textContent = pc.total > 0.005 ? "positive: h is increasing here" : pc.total < -0.005 ? "negative: h is decreasing here" : "zero: the tangent is flat here";
+    document.getElementById("sChord").textContent = fmt(chord(S.x));
+  }
+  function feedback(){
+    const e = EX[S.ex], fb = document.getElementById("fb");
+    if (!S.guess){ fb.innerHTML = "Look at the outermost operation, then pick a rule."; return; }
+    let msg;
+    if (S.guess === e.rule) msg = "<b>Yes.</b> " + e.why;
+    else if (S.ex === "quot" && S.guess === "combo") msg = "<b class=\"no\">That route works</b> if you rewrite it as (2x + 1)(x² + 1)⁻¹, but the quotient rule is the direct one. " + e.why;
+    else if (S.ex === "combo" && S.guess === "prod") msg = "<b class=\"no\">Half of it.</b> The product rule starts it, but v = (x² − 1)² has an inside, so you need the chain rule as well.";
+    else if (S.ex === "combo" && S.guess === "chain") msg = "<b class=\"no\">Half of it.</b> The chain rule handles (x² − 1)², but the whole thing is x times that, so start with the product rule.";
+    else msg = "<b class=\"no\">Not this one.</b> " + e.why;
+    fb.innerHTML = msg;
+  }
+  function render(){ document.getElementById("eq").innerHTML = EX[S.ex].eq; readout(); feedback(); draw(); }
+
+  /* ---------- controls ---------- */
+  function press(group, btn){ group.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b === btn ? "true" : "false")); }
+  const exGroup = document.getElementById("exGroup"), ruleGroup = document.getElementById("ruleGroup"), kdGroup = document.getElementById("kdGroup");
+  exGroup.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+    press(exGroup, b); S.ex = b.dataset.ex; S.guess = null;
+    ruleGroup.querySelectorAll("button").forEach(r => r.setAttribute("aria-pressed", "false"));
+    render();
+  }));
+  ruleGroup.querySelectorAll("button").forEach(b => b.addEventListener("click", () => { press(ruleGroup, b); S.guess = b.dataset.rule; feedback(); }));
+  const xs = document.getElementById("xs");
+  function setFill(el){ el.style.setProperty("--fill", ((+el.value - +el.min) / (+el.max - +el.min) * 100) + "%"); }
+  xs.addEventListener("input", () => { S.x = Math.round(+xs.value * 100) / 100; setFill(xs); readout(); draw(); });
+  root.querySelectorAll(".ticks").forEach(t => {
+    const mn = +t.dataset.min, mx = +t.dataset.max;
+    t.dataset.vals.split(",").forEach(v => { const s = document.createElement("span"); s.textContent = fmt(+v); s.style.left = ((+v - mn) / (mx - mn) * 100) + "%"; t.appendChild(s); });
   });
-  
-  knowdropText.textContent = knowdropTexts[currentRule];
-}
 
-slider.addEventListener('input', () => {
-  updateSlider();
-  updateUI();
-  particles = [];
-});
+  const KD = {
+    prod: "Use the product rule when the function is one expression multiplied by another, like y = x²(3x + 1). Name the factors u = x² and v = 3x + 1, then find u′ = 2x and v′ = 3. The rule is dy/dx = u′v + uv′: each factor takes a turn being differentiated while the other stays as it is. That gives 2x(3x + 1) + 3x² = 9x² + 2x, which matches expanding to 3x³ + x² first. Multiplying u′ by v′ would give 6x, which is wrong, and the bars show why: the two pieces are added, not multiplied.",
+    quot: "Use the quotient rule when one expression is divided by another, like y = (2x + 1)/(x² + 1). With u = 2x + 1 on top and v = x² + 1 underneath, u′ = 2 and v′ = 2x. The rule is dy/dx = (vu′ − uv′)/v², and the order matters because of the minus sign: bottom times the derivative of the top comes first. That gives (2(x² + 1) − 2x(2x + 1))/(x² + 1)², which simplifies to (2 − 2x − 2x²)/(x² + 1)². The rule needs v to be non-zero, and x² + 1 is never zero, so here it works for every x.",
+    chain: "Use the chain rule when one function sits inside another, like y = (3x² + 1)⁵. Call the inside u = 3x² + 1, so y = u⁵. Then dy/dx = dy/du × du/dx = 5u⁴ × 6x = 30x(3x² + 1)⁴. The common slip is stopping at 5(3x² + 1)⁴: that is only the outside derivative, and it ignores how fast the inside is changing. In the picture the outside slope and the inside slope multiply, so wherever the inside is flat the whole gradient is zero.",
+    combo: "Some functions need two rules at once, like y = x(x² − 1)². Read the outermost operation first: it is x times something, so start with the product rule, with u = x and v = (x² − 1)². Finding v′ needs the chain rule: v′ = 2(x² − 1) × 2x = 4x(x² − 1). Then dy/dx = u′v + uv′ = (x² − 1)² + 4x²(x² − 1), which factorises to (x² − 1)(5x² − 1). Work from the outside in, and write down u, v, u′ and v′ before you combine anything."
+  };
+  const kdText = document.getElementById("kdText");
+  kdGroup.querySelectorAll("button").forEach(b => b.addEventListener("click", () => { press(kdGroup, b); kdText.textContent = KD[b.dataset.kd]; }));
+  kdText.textContent = KD.prod;
 
-btn1.addEventListener('click', () => {
-  slider.value = 0;
-  updateSlider();
-  updateUI();
-  particles = [];
-});
-
-btn2.addEventListener('click', () => {
-  slider.value = 1;
-  updateSlider();
-  updateUI();
-  particles = [];
-});
-
-btn3.addEventListener('click', () => {
-  slider.value = 2;
-  updateSlider();
-  updateUI();
-  particles = [];
-});
-
-function draw() {
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  const cx = w / 2;
-  const cy = h / 2;
-  
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, w, h);
-  
-  // Coordinate grid
-  ctx.save();
-  ctx.strokeStyle = 'rgba(62, 181, 86,0.08)';
-  ctx.lineWidth = 0.8;
-  const gridSpacing = 30;
-  for (let x = 0; x < w; x += gridSpacing) {
-    ctx.beginPath();
-    ctx.moveTo(x, 0);
-    ctx.lineTo(x, h);
-    ctx.stroke();
-  }
-  for (let y = 0; y < h; y += gridSpacing) {
-    ctx.beginPath();
-    ctx.moveTo(0, y);
-    ctx.lineTo(w, y);
-    ctx.stroke();
-  }
-  ctx.restore();
-  
-  time += 0.016;
-  
-  if (currentRule === 0) {
-    // Chain rule: nested circles with flowing particles
-    const outerR = Math.min(w, h) * 0.28;
-    const innerR = outerR * 0.55;
-    
-    // Outer function circle
-    ctx.save();
-    ctx.strokeStyle = 'rgba(62, 181, 86,0.5)';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.arc(cx, cy, outerR, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.restore();
-    
-    // Inner function circle
-    ctx.save();
-    ctx.strokeStyle = 'rgba(250,199,117,0.5)';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.arc(cx, cy, innerR, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.restore();
-    
-    // Spawn particles from inner to outer
-    if (Math.random() < 0.15) {
-      const angle = Math.random() * Math.PI * 2;
-      particles.push({
-        x: cx + Math.cos(angle) * innerR,
-        y: cy + Math.sin(angle) * innerR,
-        vx: Math.cos(angle) * 1.2,
-        vy: Math.sin(angle) * 1.2,
-        life: 1,
-        type: 'chain'
-      });
-    }
-    
-    // Labels
-    ctx.save();
-    ctx.font = '13px "JetBrains Mono"';
-    ctx.fillStyle = 'rgba(250,199,117,0.9)';
-    ctx.textAlign = 'center';
-    ctx.fillText('g(x)', cx, cy - innerR - 12);
-    ctx.fillStyle = 'rgba(62, 181, 86,0.9)';
-    ctx.fillText('f( )', cx, cy - outerR - 12);
-    ctx.restore();
-    
-  } else if (currentRule === 1) {
-    // Product rule: two curves multiplying
-    const amp1 = h * 0.15;
-    const amp2 = h * 0.12;
-    const freq1 = 0.015;
-    const freq2 = 0.022;
-    
-    // First function u(x)
-    ctx.save();
-    ctx.strokeStyle = 'rgba(62, 181, 86,0.6)';
-    ctx.lineWidth = 2.5;
-    ctx.beginPath();
-    for (let x = 0; x <= w; x += 2) {
-      const y = cy - amp1 * Math.sin((x + time * 30) * freq1);
-      if (x === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
-    }
-    ctx.stroke();
-    ctx.restore();
-    
-    // Second function v(x)
-    ctx.save();
-    ctx.strokeStyle = 'rgba(250,199,117,0.6)';
-    ctx.lineWidth = 2.5;
-    ctx.beginPath();
-    for (let x = 0; x <= w; x += 2) {
-      const y = cy + amp2 * Math.cos((x - time * 25) * freq2);
-      if (x === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
-    }
-    ctx.stroke();
-    ctx.restore();
-    
-    // Spawn particles along both curves
-    if (Math.random() < 0.12) {
-      const x = Math.random() * w;
-      const y1 = cy - amp1 * Math.sin((x + time * 30) * freq1);
-      particles.push({
-        x: x,
-        y: y1,
-        vx: (Math.random() - 0.5) * 0.5,
-        vy: 1.5,
-        life: 1,
-        type: 'product',
-        color: 'rgba(62, 181, 86,'
-      });
-    }
-    if (Math.random() < 0.12) {
-      const x = Math.random() * w;
-      const y2 = cy + amp2 * Math.cos((x - time * 25) * freq2);
-      particles.push({
-        x: x,
-        y: y2,
-        vx: (Math.random() - 0.5) * 0.5,
-        vy: -1.5,
-        life: 1,
-        type: 'product',
-        color: 'rgba(250,199,117,'
-      });
-    }
-    
-    // Labels
-    ctx.save();
-    ctx.font = '12px "JetBrains Mono"';
-    ctx.fillStyle = 'rgba(62, 181, 86,0.9)';
-    ctx.fillText('u(x)', 16, cy - amp1 - 10);
-    ctx.fillStyle = 'rgba(250,199,117,0.9)';
-    ctx.fillText('v(x)', 16, cy + amp2 + 20);
-    ctx.restore();
-    
-  } else {
-    // Quotient rule: division visualization
-    const numY = cy - h * 0.18;
-    const denY = cy + h * 0.18;
-    
-    // Numerator bar
-    ctx.save();
-    ctx.strokeStyle = 'rgba(62, 181, 86,0.6)';
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.moveTo(w * 0.15, numY);
-    ctx.lineTo(w * 0.85, numY);
-    ctx.stroke();
-    ctx.restore();
-    
-    // Denominator bar
-    ctx.save();
-    ctx.strokeStyle = 'rgba(250,199,117,0.6)';
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.moveTo(w * 0.15, denY);
-    ctx.lineTo(w * 0.85, denY);
-    ctx.stroke();
-    ctx.restore();
-    
-    // Division line
-    ctx.save();
-    ctx.strokeStyle = 'rgba(237,237,232,0.3)';
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(w * 0.12, cy);
-    ctx.lineTo(w * 0.88, cy);
-    ctx.stroke();
-    ctx.restore();
-    
-    // Spawn particles from numerator
-    if (Math.random() < 0.1) {
-      particles.push({
-        x: w * (0.15 + Math.random() * 0.7),
-        y: numY,
-        vx: (Math.random() - 0.5) * 2,
-        vy: 2,
-        life: 1,
-        type: 'quotient',
-        color: 'rgba(62, 181, 86,'
-      });
-    }
-    
-    // Spawn particles from denominator
-    if (Math.random() < 0.1) {
-      particles.push({
-        x: w * (0.15 + Math.random() * 0.7),
-        y: denY,
-        vx: (Math.random() - 0.5) * 2,
-        vy: -2,
-        life: 1,
-        type: 'quotient',
-        color: 'rgba(250,199,117,'
-      });
-    }
-    
-    // Labels
-    ctx.save();
-    ctx.font = '13px "JetBrains Mono"';
-    ctx.fillStyle = 'rgba(62, 181, 86,0.9)';
-    ctx.textAlign = 'right';
-    ctx.fillText('u(x)', w * 0.12, numY + 5);
-    ctx.fillStyle = 'rgba(250,199,117,0.9)';
-    ctx.fillText('v(x)', w * 0.12, denY + 5);
-    ctx.restore();
-  }
-  
-  // Update and draw particles
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  particles = particles.filter(p => {
-    p.x += p.vx;
-    p.y += p.vy;
-    p.life -= 0.012;
-    
-    if (p.life <= 0) return false;
-    
-    const size = p.life * 3 + 1;
-    if (p.type === 'chain') {
-      ctx.fillStyle = 'rgba(62, 181, 86,' + p.life * 0.7 + ')';
-    } else {
-      ctx.fillStyle = p.color + p.life * 0.6 + ')';
-    }
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
-    ctx.fill();
-    
-    return true;
-  });
-  ctx.restore();
-  
-  // Bloom
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
-  
-  // Vignette
-  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-  
-  requestAnimationFrame(draw);
-}
-
-window.addEventListener('resize', resize);
-resize();
-updateSlider();
-updateUI();
-draw();
+  function resize(){ size(); draw(); }
+  window.addEventListener("resize", resize);
+  if (window.ResizeObserver){ new ResizeObserver(() => resize()).observe(cv.parentElement); }
+  setFill(xs); size(); render();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(resize);
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'differentiation-rules-and-techniques'},'*');}catch(e){}}

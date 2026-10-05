@@ -203,12 +203,19 @@ canvas {
 }
 
 .tick-labels {
-  display: flex;
-  justify-content: space-between;
+  position: relative;
+  height: 14px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 9px;
   color: var(--ink-dim);
   margin-top: 4px;
+}
+
+.tick-labels span {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  white-space: nowrap;
 }
 
 .stat-row {
@@ -338,7 +345,7 @@ canvas {
 </style>
 
 <div class="container">
-  <h2 class="sr-only">Interactive spectroscopy visualization showing how atomic emission spectra reveal quantized energy levels</h2>
+  <h2 class="sr-only">Interactive spectroscopy visualisation showing how atomic emission spectra reveal quantised energy levels</h2>
 
   <h1>Every atom confesses its identity through the <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">gaps</span></h1>
   
@@ -346,10 +353,10 @@ canvas {
 
   <div class="card">
     <div class="card-header">
-      <div class="card-label">Hydrogen Emission</div>
-      <div class="live-tag" id="liveTag">Ground → n=3</div>
+      <div class="card-label" id="cardLabel">Hydrogen emission</div>
+      <div class="live-tag" id="liveTag">n=3 → n=2</div>
     </div>
-    <div class="card-hint">Electron jumps down; photon escapes at E = hf</div>
+    <div class="card-hint" id="cardHint">Electron drops down a level; a photon escapes with E = hf</div>
     
     <div class="canvas-wrapper">
       <canvas id="specCanvas"></canvas>
@@ -357,14 +364,14 @@ canvas {
     </div>
 
     <div class="slider-section">
-      <div class="slider-label">Final energy level (n)</div>
+      <div class="slider-label">Upper energy level (n)</div>
       <input type="range" min="2" max="6" value="3" step="1" class="spec-slider" id="levelSlider">
-      <div class="tick-labels">
-        <span>n=2</span>
-        <span>n=3</span>
-        <span>n=4</span>
-        <span>n=5</span>
-        <span>n=6</span>
+      <div class="tick-labels" aria-hidden="true">
+        <span style="left:calc(10px + (100% - 20px) * 0)">n=2</span>
+        <span style="left:calc(10px + (100% - 20px) * 0.25)">n=3</span>
+        <span style="left:calc(10px + (100% - 20px) * 0.5)">n=4</span>
+        <span style="left:calc(10px + (100% - 20px) * 0.75)">n=5</span>
+        <span style="left:calc(10px + (100% - 20px) * 1)">n=6</span>
       </div>
     </div>
 
@@ -415,6 +422,9 @@ const waveStat = document.getElementById('waveStat');
 const emissionBtn = document.getElementById('emissionBtn');
 const absorptionBtn = document.getElementById('absorptionBtn');
 const knowdrop = document.getElementById('knowdrop');
+const cardLabel = document.getElementById('cardLabel');
+const cardHint = document.getElementById('cardHint');
+let mode = "emission";
 
 const dpr = Math.min(window.devicePixelRatio || 1, 2);
 const buf = document.createElement('canvas');
@@ -424,13 +434,24 @@ let n = 3;
 let photonPhase = 0;
 let electronPhase = 0;
 
-const specData = {
-  2: { E: 10.2, nm: 122, color: '#9B59D6', name: 'UV (Lyman α)', series: 'Lyman' },
-  3: { E: 1.89, nm: 656, color: '#E74C3C', name: 'Visible red (Hα)', series: 'Balmer' },
-  4: { E: 2.55, nm: 486, color: '#3498DB', name: 'Visible cyan (Hβ)', series: 'Balmer' },
-  5: { E: 2.86, nm: 434, color: '#8E44AD', name: 'Visible violet (Hγ)', series: 'Balmer' },
-  6: { E: 3.02, nm: 410, color: '#6C3483', name: 'Visible violet (Hδ)', series: 'Balmer' }
+/* Bohr model of hydrogen: E_n = -13.6 / n^2 eV. Each slider value is the upper level;
+   the lower level is n=1 for the n=2 line (Lyman alpha) and n=2 for the rest (Balmer). */
+const HC = 1239.84; /* eV nm */
+const levelE = k => -13.6 / (k * k);
+const lowerOf = k => (k === 2 ? 1 : 2);
+const specLook = {
+  2: { color: '#9B59D6', name: 'Ultraviolet (Lyman α)' },
+  3: { color: '#E74C3C', name: 'Visible red (Hα)' },
+  4: { color: '#3498DB', name: 'Visible cyan (Hβ)' },
+  5: { color: '#8E44AD', name: 'Visible violet (Hγ)' },
+  6: { color: '#6C3483', name: 'Visible violet (Hδ)' }
 };
+function lineData(k) {
+  const lo = lowerOf(k);
+  const E = levelE(k) - levelE(lo);
+  return { up: k, lo: lo, E: E, nm: HC / E, color: specLook[k].color, name: specLook[k].name };
+}
+const specData = { 2: lineData(2), 3: lineData(3), 4: lineData(4), 5: lineData(5), 6: lineData(6) };
 
 function resize() {
   const rect = canvas.getBoundingClientRect();
@@ -444,10 +465,13 @@ function resize() {
 
 function updateUI() {
   const data = specData[n];
-  liveTag.textContent = `Ground → n=${n}`;
-  canvasTag.textContent = `${data.nm} nm · ${data.name}`;
+  const emit = mode === "emission";
+  liveTag.textContent = emit ? `n=${data.up} → n=${data.lo}` : `n=${data.lo} → n=${data.up}`;
+  canvasTag.textContent = `${Math.round(data.nm)} nm · ${data.name}`;
   energyStat.textContent = data.E.toFixed(2);
-  waveStat.textContent = data.nm;
+  waveStat.textContent = Math.round(data.nm);
+  cardLabel.textContent = emit ? "Hydrogen emission" : "Hydrogen absorption";
+  cardHint.textContent = emit ? "Electron drops down a level; a photon escapes with E = hf" : "A photon with exactly E = hf is absorbed; the electron jumps up a level";
   
   const fill = ((n - 2) / 4) * 100;
   slider.style.setProperty('--fill', fill + '%');
@@ -463,31 +487,63 @@ function draw() {
   const cx = w * 0.5;
   const cy = h * 0.5;
   
-  // Energy level diagram on left
-  const levelX = w * 0.22;
-  const groundY = h * 0.72;
-  const levelSpacing = h * 0.11;
-  
-  // Draw levels n=1 to n=6
+  // Energy level diagram on left, drawn to scale: E_n = -13.6/n^2 eV,
+  // so levels rise with n and bunch together under the ionisation line (E = 0)
+  const levelX = w * 0.24;
+  const groundY = h * 0.86;
+  const topY = h * 0.1;
+  const levelY = k => groundY - (1 - 1 / (k * k)) * (groundY - topY);
+  const data = specData[n];
+  const emit = mode === "emission";
+  const labFont = Math.max(9, Math.min(11, h * 0.05));
+  const gap = labFont + 1;
+  // label positions: spread upward-crowded labels downward so none overlap
+  const labY = {};
+  labY.inf = topY;
+  for (let i = 6; i >= 1; i--) {
+    const above = i === 6 ? labY.inf : labY[i + 1];
+    labY[i] = Math.max(levelY(i), above + gap);
+  }
+  ctx.font = labFont + 'px "JetBrains Mono"';
+  ctx.textAlign = 'right';
+  // ionisation line
+  ctx.strokeStyle = 'rgba(140,147,137,0.3)';
+  ctx.setLineDash([3, 3]);
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(levelX - 35, topY);
+  ctx.lineTo(levelX + 35, topY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = 'rgba(140,147,137,0.5)';
+  ctx.fillText('n=∞', levelX - 48, labY.inf + 4);
   for (let i = 1; i <= 6; i++) {
-    const ly = groundY - (i - 1) * levelSpacing * (1 / (i * i * 0.28));
-    ctx.strokeStyle = i === 1 ? 'rgba(' + RGB + ',0.25)' : 'rgba(140,147,137,0.3)';
-    ctx.lineWidth = i === 1 ? 2 : 1;
+    const ly = levelY(i);
+    const inJump = i === data.up || i === data.lo;
+    ctx.strokeStyle = inJump ? 'rgba(' + RGB + ',0.6)' : 'rgba(140,147,137,0.3)';
+    ctx.lineWidth = inJump ? 2 : 1;
     ctx.beginPath();
     ctx.moveTo(levelX - 35, ly);
     ctx.lineTo(levelX + 35, ly);
     ctx.stroke();
-    
-    ctx.fillStyle = i === 1 ? 'rgba(' + RGB + ',0.5)' : 'rgba(140,147,137,0.5)';
-    ctx.font = '11px "JetBrains Mono"';
-    ctx.textAlign = 'right';
-    ctx.fillText('n=' + i, levelX - 42, ly + 4);
+    // leader from label to level
+    ctx.strokeStyle = 'rgba(140,147,137,0.25)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(levelX - 46, labY[i]);
+    ctx.lineTo(levelX - 35, ly);
+    ctx.stroke();
+    ctx.fillStyle = inJump ? 'rgba(' + RGB + ',0.9)' : 'rgba(140,147,137,0.5)';
+    ctx.fillText('n=' + i, levelX - 48, labY[i] + 4);
   }
   
-  // Electron position - animates between levels
-  const fromY = groundY;
-  const toY = groundY - (n - 1) * levelSpacing * (1 / (n * n * 0.28));
-  const eY = fromY + (toY - fromY) * (0.5 + 0.5 * Math.sin(electronPhase));
+  // Electron position - moves between the two levels of the jump, in the direction of the jump
+  const upY = levelY(data.up);
+  const loY = levelY(data.lo);
+  const fromY = emit ? upY : loY;
+  const toY = emit ? loY : upY;
+  const prog = (electronPhase % (Math.PI * 2)) / (Math.PI * 2);
+  const eY = fromY + (toY - fromY) * Math.min(1, prog * 1.4);
   
   // Electron glow
   const eGrad = ctx.createRadialGradient(levelX, eY, 0, levelX, eY, 16);
@@ -520,18 +576,20 @@ function draw() {
   ctx.stroke();
   ctx.setLineDash([]);
   
-  // Arrow head
-  ctx.fillStyle = 'rgba(' + RGB + ',0.4)';
+  // Arrow head at the end of the jump
+  const dirY = toY > fromY ? 1 : -1;
+  ctx.fillStyle = 'rgba(' + RGB + ',0.7)';
   ctx.beginPath();
-  ctx.moveTo(levelX + 45, fromY);
-  ctx.lineTo(levelX + 40, fromY - 8);
-  ctx.lineTo(levelX + 50, fromY - 8);
+  ctx.moveTo(levelX + 45, toY);
+  ctx.lineTo(levelX + 40, toY - 8 * dirY);
+  ctx.lineTo(levelX + 50, toY - 8 * dirY);
   ctx.fill();
   ctx.restore();
   
-  // Photon emission - sine wave traveling right
-  const data = specData[n];
-  const wavelength = 40 / n; // visual wavelength
+  // Photon - leaves the atom (emission) or arrives at it (absorption);
+  // drawn wavelength is proportional to the real one
+  const wavelength = data.nm / 16; // visual wavelength
+  const flow = emit ? -1 : 1;
   const photonX = w * 0.48;
   const amplitude = 18;
   
@@ -545,7 +603,7 @@ function draw() {
   
   for (let x = 0; x < w * 0.42; x += 2) {
     const px = photonX + x;
-    const phase = photonPhase + (x / wavelength) * Math.PI * 2;
+    const phase = flow * photonPhase + (x / wavelength) * Math.PI * 2;
     const py = cy + Math.sin(phase) * amplitude;
     if (x === 0) ctx.moveTo(px, py);
     else ctx.lineTo(px, py);
@@ -556,7 +614,7 @@ function draw() {
   // Photon particles along wave
   for (let i = 0; i < 5; i++) {
     const px = photonX + (w * 0.42 * i) / 5;
-    const phase = photonPhase + ((px - photonX) / wavelength) * Math.PI * 2;
+    const phase = flow * photonPhase + ((px - photonX) / wavelength) * Math.PI * 2;
     const py = cy + Math.sin(phase) * amplitude;
     
     const pGrad = ctx.createRadialGradient(px, py, 0, px, py, 8);
@@ -577,19 +635,33 @@ function draw() {
   const specH = h * 0.6;
   const specY = (h - specH) / 2;
   
-  // Background bar
-  ctx.fillStyle = 'rgba(255,255,255,0.05)';
-  ctx.fillRect(specX, specY, specW, specH);
-  
-  // Active line
-  const lineY = specY + (specH * (650 - data.nm)) / 550;
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.fillStyle = data.color;
-  ctx.shadowColor = data.color;
-  ctx.shadowBlur = 16;
-  ctx.fillRect(specX - 4, lineY - 1.5, specW + 8, 3);
-  ctx.restore();
+  // Active line position (long wavelength at top)
+  const lineY = specY + (specH * (680 - data.nm)) / 580;
+  if (emit) {
+    // dark background, bright line
+    ctx.fillStyle = 'rgba(255,255,255,0.05)';
+    ctx.fillRect(specX, specY, specW, specH);
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.fillStyle = data.color;
+    ctx.shadowColor = data.color;
+    ctx.shadowBlur = 16;
+    ctx.fillRect(specX - 4, lineY - 1.5, specW + 8, 3);
+    ctx.restore();
+  } else {
+    // continuous bright background, dark line where the photon was taken out
+    const sg = ctx.createLinearGradient(0, specY, 0, specY + specH);
+    sg.addColorStop(0, 'rgba(231,76,60,0.55)');
+    sg.addColorStop(0.2, 'rgba(241,196,15,0.5)');
+    sg.addColorStop(0.35, 'rgba(58, 111, 200,0.5)');
+    sg.addColorStop(0.5, 'rgba(52,152,219,0.55)');
+    sg.addColorStop(0.65, 'rgba(142,68,173,0.55)');
+    sg.addColorStop(1, 'rgba(110,90,140,0.35)');
+    ctx.fillStyle = sg;
+    ctx.fillRect(specX, specY, specW, specH);
+    ctx.fillStyle = '#000';
+    ctx.fillRect(specX - 4, lineY - 1.5, specW + 8, 3);
+  }
   
   // Spectrum label
   ctx.fillStyle = 'rgba(140,147,137,0.6)';
@@ -626,16 +698,23 @@ function animate() {
 
 slider.addEventListener('input', (e) => {
   n = parseInt(e.target.value);
+  electronPhase = 0;
   updateUI();
 });
 
 emissionBtn.addEventListener('click', () => {
+  mode = "emission";
+  electronPhase = 0;
+  updateUI();
   emissionBtn.classList.add('active');
   absorptionBtn.classList.remove('active');
   knowdrop.textContent = "Heat hydrogen gas and it glows at sharp wavelengths — 656 nm red, 486 nm cyan, 434 nm violet. Each line is one electron dropping from a higher level to n=2 (the Balmer series). The photon's energy equals the gap: E = hf, so bigger jumps make bluer light. Every element has a unique set of allowed levels, so every element has a unique spectrum — astronomy's greatest forensic tool.";
 });
 
 absorptionBtn.addEventListener('click', () => {
+  mode = "absorption";
+  electronPhase = 0;
+  updateUI();
   absorptionBtn.classList.add('active');
   emissionBtn.classList.remove('active');
   knowdrop.textContent = "Shine white light through cool hydrogen and it steals the same wavelengths it emits when hot — dark lines at 656, 486, 434 nm. The gas absorbs only photons with exactly the right energy to lift an electron to a higher level. This is how we know what stars are made of: their absorption spectra reveal every element in the outer layers, even across billions of light-years.";

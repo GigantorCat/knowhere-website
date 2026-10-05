@@ -1,576 +1,431 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Index Laws and Surds — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Index laws and surds — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
-
-:root {
-  --bg: #0B0D0C;
-  --bg2: #12160F;
-  --acc: #2FA94E;
-  --ag: rgba(47, 169, 78, .7);
-  --ag1: rgba(47, 169, 78, .12);
-  --ag2: rgba(47, 169, 78, .45);
-  --amb: #FAC775;
-  --ink: #EDEDE8;
-  --ink-dim: #8C9389;
-  --line: #262B26;
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap");
+:root{
+  --bg:#0B0D0C;--bg2:#12160F;--acc:#2FA94E;--acc-rgb:47, 169, 78;
+  --ag:rgba(var(--acc-rgb),.7);--ag1:rgba(var(--acc-rgb),.12);--ag2:rgba(var(--acc-rgb),.45);
+  --amb:#FAC775;--ink:#EDEDE8;--ink-dim:#8C9389;--line:#262B26;
 }
-
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
-}
-
-body {
-  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
-  font-family: 'Geist', sans-serif;
-  color: var(--ink);
-  min-height: 100vh;
-  padding: 40px 16px 0;
-  line-height: 1.5;
-}
-
-.container {
-  max-width: 720px;
-  margin: 0 auto;
-}
-
-h1 {
-  font-size: clamp(26px, 6.5vw, 44px);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
-  margin-bottom: 14px;
-}
-
-.intro {
-  font-size: 15.5px;
-  font-weight: 400;
-  color: var(--ink-dim);
-  max-width: 58ch;
-  line-height: 1.55;
-  margin-bottom: 28px;
-}
-
-.card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  margin-bottom: 18px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
-}
-
-.card-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  color: var(--ink);
-}
-
-.live-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--acc);
-}
-
-.card-hint {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--ink-dim);
-  margin-bottom: 14px;
-}
-
-.canvas-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16/9;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
-  box-shadow: inset 0 0 0 1px var(--ag1);
-  margin-bottom: 16px;
-}
-
-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.canvas-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(4px);
-  padding: 9px 16px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  text-transform: uppercase;
-  color: var(--acc);
-  text-align: center;
-}
-
-.slider-row {
-  margin-bottom: 10px;
-}
-
-.slider-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 8px;
-}
-
-.exp-slider {
-  width: 100%;
-  height: 4px;
-  border-radius: 3px;
-  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
-  outline: none;
-  -webkit-appearance: none;
-  appearance: none;
-  cursor: pointer;
-}
-
-.exp-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  transition: box-shadow .15s;
-  cursor: pointer;
-}
-
-.exp-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  transition: box-shadow .15s;
-  cursor: pointer;
-}
-
-.exp-slider::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.exp-slider::-moz-range-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.tick-labels {
-  display: flex;
-  justify-content: space-between;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--ink-dim);
-  margin-top: 6px;
-}
-
-.stat-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-  margin-top: 16px;
-}
-
-.stat {
-  text-align: center;
-}
-
-.stat-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 6px;
-}
-
-.stat-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 24px;
-  font-weight: 500;
-}
-
-.stat-value.acc { color: var(--acc); }
-.stat-value.amb { color: var(--amb); }
-
-.toggle-section {
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-}
-
-.toggle-buttons {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.toggle-btn {
-  flex: 1;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14.5px;
-  padding: 12px;
-  border-radius: 11px;
-  border: 1px solid var(--line);
-  background: #12160F;
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: all .2s;
-}
-
-.toggle-btn.active {
-  background: rgba(47, 169, 78,.1);
-  border: 1px solid var(--acc);
-  color: var(--acc);
-  box-shadow: 0 0 22px rgba(47, 169, 78,.18);
-}
-
-.knowdrop {
-  font-size: 14.5px;
-  font-weight: 400;
-  line-height: 1.65;
-  color: var(--ink);
-}
-
-.know-this {
-  border-left: 3px solid var(--acc);
-  padding: 16px 18px;
-  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
-  border-radius: 0 12px 12px 0;
-  margin-bottom: 0;
-}
-
-.know-this-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--acc);
-  margin-bottom: 10px;
-}
-
-.know-this-body {
-  font-size: 17.4px;
-  font-weight: 400;
-  line-height: 1.55;
-  color: var(--ink);
-}
-
-.know-this-body .highlight {
-  color: var(--acc);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
+.il-root{font-family:"Geist",sans-serif;color:var(--ink);background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C 55%);min-height:100vh;padding:40px 16px 0;box-sizing:border-box}
+.il-root *{box-sizing:border-box}
+.il-wrap{max-width:720px;margin:0 auto}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.il-h1{font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin:0 0 14px}
+.il-intro{font-size:15.5px;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin:0 0 26px}
+.il-card{background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);margin-bottom:22px}
+.il-card.sec{border-radius:14px}
+.il-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.il-lab{font:500 13px "JetBrains Mono",monospace;text-transform:uppercase;color:#fff}
+.il-live{font:11px "JetBrains Mono",monospace;text-transform:uppercase;color:var(--acc)}
+.il-hint{font:11px "JetBrains Mono",monospace;color:var(--ink-dim);margin:6px 0 12px}
+.il-cw{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1)}
+.il-cw canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.il-ov{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);padding:9px 16px;font:14px "JetBrains Mono",monospace;text-transform:uppercase;color:var(--acc);text-align:center}
+.il-q{font:10.5px "JetBrains Mono",monospace;text-transform:uppercase;color:var(--ink-dim);margin:14px 0 8px}
+.il-tg{display:flex;gap:8px;flex-wrap:wrap}
+.il-tg button{flex:1 1 0;min-width:0;font:12px "JetBrains Mono",monospace;padding:10px 8px;border-radius:999px;background:#12160F;border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:all .2s;white-space:nowrap}
+.il-tg button[aria-pressed="true"]{background:rgba(var(--acc-rgb),.1);border-color:var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.il-row{display:flex;justify-content:space-between;align-items:baseline;margin-top:16px;font:10.5px "JetBrains Mono",monospace;text-transform:uppercase;color:var(--ink-dim)}
+.il-row b{font:500 13px "JetBrains Mono",monospace;color:var(--acc);text-transform:none}
+.il-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;margin:12px 0 4px;background:linear-gradient(90deg,var(--acc) var(--fill,0%),#23291f var(--fill,0%));outline:none}
+.il-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.il-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);cursor:pointer}
+.il-slider:hover::-webkit-slider-thumb{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.il-ticks{position:relative;height:14px;font:9px "JetBrains Mono",monospace;color:var(--ink-dim);margin:0 10px}
+.il-ticks span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+.il-work{margin-top:14px;padding:12px 14px;border-radius:12px;background:rgba(0,0,0,.35);border:1px solid var(--line);font:15px "JetBrains Mono",monospace;color:var(--ink);line-height:1.7;overflow-wrap:anywhere}
+.il-work .a{color:var(--acc)}.il-work .m{color:var(--amb)}
+.il-work sup,.il-stat sup{font-size:.68em}
+.il-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;border-top:1px solid var(--line);margin-top:16px;padding-top:14px}
+.il-stat small{display:block;font:10.5px "JetBrains Mono",monospace;text-transform:uppercase;color:var(--ink-dim);margin-bottom:4px}
+.il-stat div{font:500 24px "JetBrains Mono",monospace}
+.il-stat.l div{color:var(--acc)}.il-stat.r div{color:var(--amb)}
+.il-kd{border-top:1px solid var(--line);padding-top:16px;margin-top:14px;font-size:14.5px;line-height:1.65;color:var(--ink)}
+.il-kt{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));border-radius:0 12px 12px 0;margin:0;padding-bottom:16px}
+.il-kt-tag{display:flex;align-items:center;gap:9px;font:13px "JetBrains Mono",monospace;text-transform:uppercase;letter-spacing:0.15em;color:var(--acc);margin-bottom:10px}
+.il-kt-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:ilpulse 2.4s ease-in-out infinite}
+.il-kt p{font-size:17.4px;line-height:1.55;color:var(--ink);margin:0}
+@keyframes ilpulse{0%,100%{opacity:1}50%{opacity:.45}}
+@media (prefers-reduced-motion:reduce){.il-kt-dot{animation:none}.il-tg button{transition:none}}
 </style>
+<div class="il-root"><div class="il-wrap">
+<h2 class="sr-only">Index laws and surds: an index ladder, an index line for the three laws, and a solver that matches bases</h2>
+<h1 class="il-h1">A square root is just a power of <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">one half</span></h1>
+<p class="il-intro">Every surd is a power in disguise: √2 is 2 to the power of ½, and ⅛ is 2 to the power of −3. One small set of index laws runs whole numbers, zero, negatives, fractions and surds alike. Change the index and watch each step up the ladder multiply by the base.</p>
 
-<div class="container">
-  <h2 class="sr-only">Index Laws and Surds Interactive Widget</h2>
-  
-  <h1>Multiplying powers doesn't multiply — it <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">adds</span></h1>
-  
-  <p class="intro">Index laws reverse your intuition: x² × x³ isn't x⁶, it's x⁵. Powers combine by adding, dividing subtracts, and raising a power multiplies the exponents. Drag the slider to watch how changing the base transforms powers across different exponent rules.</p>
-
-  <div class="card">
-    <div class="card-header">
-      <span class="card-label">Power Visualiser</span>
-      <span class="live-tag" id="liveTag">BASE = 2.0</span>
-    </div>
-    <div class="card-hint">Drag to change the base value</div>
-    
-    <div class="canvas-wrapper">
-      <canvas id="canvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">x² × x³ = x⁵</div>
-    </div>
-
-    <div class="slider-row">
-      <div class="slider-label">Base Value</div>
-      <input type="range" class="exp-slider" id="baseSlider" min="1" max="5" step="0.1" value="2">
-      <div class="tick-labels">
-        <span>1</span>
-        <span>2</span>
-        <span>3</span>
-        <span>4</span>
-        <span>5</span>
-      </div>
-    </div>
-
-    <div class="stat-row">
-      <div class="stat">
-        <div class="stat-label">x² value</div>
-        <div class="stat-value acc" id="stat1">4.0</div>
-      </div>
-      <div class="stat">
-        <div class="stat-label">x⁵ value</div>
-        <div class="stat-value amb" id="stat2">32.0</div>
-      </div>
-    </div>
+<section class="il-card" aria-label="Index ladder">
+  <div class="il-head"><span class="il-lab">Index laws and surds: the ladder</span><span class="il-live" id="ilLive1">Index 3/2</span></div>
+  <div class="il-hint">Change the index. Watch which way you step and what each step does.</div>
+  <div class="il-cw" id="ilCw1"><canvas id="ilC1" role="img" aria-label="Staircase of powers of the base from index −3 to 3"></canvas><div class="il-ov" id="ilOv1">…</div></div>
+  <div class="il-q">Base</div>
+  <div class="il-tg" role="group" aria-label="Choose the base" id="ilBase">
+    <button aria-pressed="true" data-b="2">Base 2</button><button aria-pressed="false" data-b="3">Base 3</button><button aria-pressed="false" data-b="4">Base 4</button><button aria-pressed="false" data-b="8">Base 8</button>
   </div>
-
-  <div class="card">
-    <div class="toggle-buttons">
-      <button class="toggle-btn active" data-mode="multiply">Multiply</button>
-      <button class="toggle-btn" data-mode="divide">Divide</button>
-    </div>
-    
-    <div class="toggle-section">
-      <p class="knowdrop" id="knowdrop">When you multiply powers with the same base, you add the exponents: x² × x³ = x⁽²⁺³⁾ = x⁵. This isn't obvious until you expand it: (x·x) × (x·x·x) gives you five x's total. The operation on the bases (multiplication) becomes a different operation on the exponents (addition). This pattern holds for all real bases and exponents, making index laws the foundation for logarithms, exponential growth, and calculus differentiation rules.</p>
-    </div>
+  <div class="il-q">Index steps</div>
+  <div class="il-tg" role="group" aria-label="Choose the size of an index step" id="ilStep">
+    <button aria-pressed="true" data-q="2">Halves</button><button aria-pressed="false" data-q="3">Thirds</button>
   </div>
-
-  <div class="know-this">
-    <div class="know-this-tag">Know This</div>
-    <div class="know-this-body">Index laws transform operations: <span class="highlight">multiplying powers adds their exponents, dividing subtracts them, and raising a power multiplies the indices</span> — each rule follows from counting repeated factors.</div>
+  <div class="il-row"><span>Index</span><b id="ilNV">3/2</b></div>
+  <input type="range" class="il-slider" id="ilN" aria-label="Index" min="-6" max="6" step="1" value="3">
+  <div class="il-ticks" id="ilT1"></div>
+  <div class="il-work" id="ilW1" aria-live="polite"></div>
+  <div class="il-stats">
+    <div class="il-stat l"><small>Exact value</small><div id="ilS1a">2√2</div></div>
+    <div class="il-stat r"><small>Decimal</small><div id="ilS1b">2.828</div></div>
   </div>
+</section>
+
+<section class="il-card" aria-label="Index line for the three laws">
+  <div class="il-head"><span class="il-lab">Three laws on one line</span><span class="il-live" id="ilLive2">Multiply</span></div>
+  <div class="il-hint">Pick a law, then change each index. Follow the jumps along the line.</div>
+  <div class="il-cw" id="ilCw2"><canvas id="ilC2" role="img" aria-label="Index line showing jumps for multiplying, dividing and raising a power of 2"></canvas><div class="il-ov" id="ilOv2">…</div></div>
+  <div class="il-q">Law</div>
+  <div class="il-tg" role="group" aria-label="Choose the index law" id="ilLaw">
+    <button aria-pressed="true" data-l="mul">Multiply</button><button aria-pressed="false" data-l="div">Divide</button><button aria-pressed="false" data-l="pow">Power</button>
+  </div>
+  <div class="il-row"><span>First index m</span><b id="ilMV">1/2</b></div>
+  <input type="range" class="il-slider" id="ilM" aria-label="First index m" min="-6" max="6" step="1" value="1">
+  <div class="il-ticks" id="ilT2"></div>
+  <div class="il-row"><span>Second index n</span><b id="ilKV">3/2</b></div>
+  <input type="range" class="il-slider" id="ilK" aria-label="Second index n" min="-6" max="6" step="1" value="3">
+  <div class="il-ticks" id="ilT3"></div>
+  <div class="il-work" id="ilW2" aria-live="polite"></div>
+  <div class="il-stats">
+    <div class="il-stat l"><small>Index of answer</small><div id="ilS2a">2</div></div>
+    <div class="il-stat r"><small>Value</small><div id="ilS2b">4</div></div>
+  </div>
+</section>
+
+<section class="il-card" aria-label="Solve by matching bases">
+  <div class="il-head"><span class="il-lab">Solve by matching bases</span><span class="il-live" id="ilLive3">x = 3/4</span></div>
+  <div class="il-hint">Pick the left side, then change the right side. Watch where x lands.</div>
+  <div class="il-cw" id="ilCw3"><canvas id="ilC3" role="img" aria-label="Two index lines linking x to the power of 2 that solves the equation"></canvas><div class="il-ov" id="ilOv3" style="text-transform:none">…</div></div>
+  <div class="il-q">Left side</div>
+  <div class="il-tg" role="group" aria-label="Choose the left side of the equation" id="ilLeft">
+    <button aria-pressed="false" data-c="1">2<sup>x</sup></button><button aria-pressed="true" data-c="2">4<sup>x</sup></button><button aria-pressed="false" data-c="3">8<sup>x</sup></button><button aria-pressed="false" data-c="-1">(½)<sup>x</sup></button>
+  </div>
+  <div class="il-row"><span>Right side, as a power of 2</span><b id="ilRV">2^3/2</b></div>
+  <input type="range" class="il-slider" id="ilR" aria-label="Right side as a power of 2" min="-6" max="6" step="1" value="3">
+  <div class="il-ticks" id="ilT4"></div>
+  <div class="il-work" id="ilW3" aria-live="polite"></div>
+  <div class="il-stats">
+    <div class="il-stat l"><small>Solution x</small><div id="ilS3a">3/4</div></div>
+    <div class="il-stat r"><small>Right side</small><div id="ilS3b">2√2</div></div>
+  </div>
+</section>
+
+<section class="il-card sec" aria-label="More about indices">
+  <div class="il-tg" role="group" aria-label="What this switches" id="ilKdT">
+    <button aria-pressed="true" data-k="0">Negative</button><button aria-pressed="false" data-k="1">Fractional</button><button aria-pressed="false" data-k="2">Equations</button>
+  </div>
+  <div class="il-kd" id="ilKd"></div>
+</section>
+
+<div class="il-kt">
+  <div class="il-kt-tag"><span class="il-kt-dot"></span>Know this</div>
+  <p>Multiplying powers of one base is <span style="color:var(--acc)">adding the indices</span>, so a <span style="color:var(--acc)">negative index</span> means a reciprocal and a <span style="color:var(--acc)">fractional index</span> means a root: 2<sup>−1</sup> = ½ and 2<sup>1/2</sup> = √2.</p>
 </div>
-
+</div></div>
 <script>
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d', { alpha: false });
-const liveTag = document.getElementById('liveTag');
-const canvasOverlay = document.getElementById('canvasOverlay');
-const slider = document.getElementById('baseSlider');
-const stat1 = document.getElementById('stat1');
-const stat2 = document.getElementById('stat2');
-const knowdrop = document.getElementById('knowdrop');
-const toggleBtns = document.querySelectorAll('.toggle-btn');
+(function(){
+"use strict";
+const CSS=getComputedStyle(document.documentElement);
+const ACC=(CSS.getPropertyValue("--acc").trim()||"#2FA94E");
+const RGB=(CSS.getPropertyValue("--acc-rgb").trim()||"47,169,78");
+const AMB=(CSS.getPropertyValue("--amb").trim()||"#FAC775");
+const INK=(CSS.getPropertyValue("--ink").trim()||"#EDEDE8");
+const DIM=(CSS.getPropertyValue("--ink-dim").trim()||"#8C9389");
+const RM=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const MONO="\"JetBrains Mono\",monospace";
+const $=id=>document.getElementById(id);
 
-const dpr = Math.min(window.devicePixelRatio || 1, 2);
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d');
+/* ---------- exact arithmetic ---------- */
+function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){const t=b;b=a%b;a=t;}return a||1;}
+function red(p,q){if(q<0){p=-p;q=-q;}const g=gcd(p,q);return [p/g,q/g];}
+function fr(p,q){const r=red(p,q);const s=r[0]<0?"−":"";const a=Math.abs(r[0]);return r[1]===1?s+a:s+a+"/"+r[1];}
+const ROOT={2:"√",3:"∛",4:"∜"};
+/* exact value of b^(p/q) as {num, rad, rq, den}: (num * rq-th root of rad) / den, rationalised */
+function exact(b,p,q){
+  const r0=red(p,q);p=r0[0];q=r0[1];
+  const i=Math.floor(p/q), r=p-i*q;
+  let s=1,t=Math.pow(b,r);
+  if(q>1){for(let f=2;Math.pow(f,q)<=t;f++){const fq=Math.pow(f,q);while(t%fq===0){t/=fq;s*=f;}}}
+  let num=s,den=1;
+  if(i>=0)num=s*Math.pow(b,i);else den=Math.pow(b,-i);
+  const g=gcd(num,den);num/=g;den/=g;
+  return {num:num,rad:(q>1&&t>1)?t:1,rq:q,den:den};
+}
+function exStr(e){
+  let top;
+  if(e.rad>1)top=(e.num===1?"":e.num)+ROOT[e.rq]+e.rad;else top=String(e.num);
+  if(e.den===1)return top;
+  return top+"/"+e.den;
+}
+function dec(v){if(Math.abs(v-Math.round(v))<1e-9)return String(Math.round(v));const a=Math.abs(v);const d=a>=100?1:a>=10?2:a>=0.01?3:5;return v.toFixed(d).replace(/0+$/,"").replace(/\.$/,"");}
+function supH(b,p,q){return b+"<sup>"+fr(p,q)+"</sup>";}
+function nice(v){return String(v).replace("-","−");}
 
-let base = 2.0;
-let mode = 'multiply';
-let time = 0;
+/* ---------- canvas helper ---------- */
+function mk(cv){
+  const ctx=cv.getContext("2d");const buf=document.createElement("canvas");const bctx=buf.getContext("2d");
+  const o={cv:cv,ctx:ctx,buf:buf,bctx:bctx,dpr:1,w:0,h:0};
+  o.resize=function(){o.dpr=Math.min(window.devicePixelRatio||1,2);const r=cv.getBoundingClientRect();cv.width=Math.max(2,Math.round(r.width*o.dpr));cv.height=Math.max(2,Math.round(r.height*o.dpr));buf.width=cv.width;buf.height=cv.height;ctx.setTransform(o.dpr,0,0,o.dpr,0,0);o.w=cv.width/o.dpr;o.h=cv.height/o.dpr;};
+  o.begin=function(){ctx.setTransform(o.dpr,0,0,o.dpr,0,0);ctx.globalCompositeOperation="source-over";ctx.globalAlpha=1;ctx.filter="none";ctx.fillStyle="#000";ctx.fillRect(0,0,o.w,o.h);};
+  o.finish=function(){
+    const w=o.w,h=o.h;
+    bctx.setTransform(1,0,0,1,0,0);bctx.clearRect(0,0,buf.width,buf.height);(cv.width&&cv.height)&&bctx.drawImage(cv,0,0);
+    ctx.save();ctx.globalCompositeOperation="lighter";ctx.globalAlpha=0.38;ctx.filter="blur(7px)";(buf.width&&buf.height)&&ctx.drawImage(buf,0,0,w,h);ctx.restore();
+    const vig=ctx.createRadialGradient(w/2,h/2,h*0.28,w/2,h/2,w*0.72);vig.addColorStop(0,"rgba(0,0,0,0)");vig.addColorStop(1,"rgba(0,0,0,0.52)");ctx.fillStyle=vig;ctx.fillRect(0,0,w,h);
+  };
+  return o;
+}
+/* rich text: segs [{t, sup}] drawn on one baseline */
+function rich(ctx,segs,x,y,size,align,col){
+  ctx.save();ctx.textBaseline="alphabetic";ctx.textAlign="left";ctx.fillStyle=col;
+  let wsum=0;const ws=segs.map(s=>{ctx.font=(s.sup?Math.round(size*0.66):size)+"px "+MONO;const m=ctx.measureText(s.t).width;wsum+=m;return m;});
+  let cx=align==="center"?x-wsum/2:align==="right"?x-wsum:x;
+  segs.forEach((s,k)=>{ctx.font=(s.sup?Math.round(size*0.66):size)+"px "+MONO;ctx.fillText(s.t,cx,s.sup?y-size*0.45:y);cx+=ws[k];});
+  ctx.restore();return wsum;
+}
+function richW(ctx,segs,size){let w=0;segs.forEach(s=>{ctx.font=(s.sup?Math.round(size*0.66):size)+"px "+MONO;w+=ctx.measureText(s.t).width;});return w;}
+function glowDot(ctx,x,y,r,col,rgb){
+  ctx.save();ctx.globalCompositeOperation="lighter";const g=ctx.createRadialGradient(x,y,0,x,y,r*4);g.addColorStop(0,"rgba("+rgb+",0.55)");g.addColorStop(1,"rgba("+rgb+",0)");ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r*4,0,Math.PI*2);ctx.fill();ctx.restore();
+  ctx.fillStyle=col;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
+}
+function arrowHead(ctx,x,y,ang,s,col){ctx.save();ctx.fillStyle=col;ctx.translate(x,y);ctx.rotate(ang);ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(-s,-s*0.55);ctx.lineTo(-s,s*0.55);ctx.closePath();ctx.fill();ctx.restore();}
+const AMBRGB="250,199,117";
 
-const particles = [];
-for (let i = 0; i < 80; i++) {
-  particles.push({
-    x: Math.random(),
-    y: Math.random(),
-    vx: (Math.random() - 0.5) * 0.0008,
-    vy: (Math.random() - 0.5) * 0.0008,
-    r: Math.random() * 1.2 + 0.4,
-    phase: Math.random() * Math.PI * 2,
-    speed: 0.5 + Math.random() * 1.5
-  });
+/* tick labels at true value */
+function ticks(el,min,max,vals){el.innerHTML="";vals.forEach(v=>{const s=document.createElement("span");s.style.left=((v[0]-min)/(max-min)*100)+"%";s.textContent=v[1];el.appendChild(s);});}
+function fill(inp){const mn=+inp.min,mx=+inp.max;inp.style.setProperty("--fill",((+inp.value-mn)/(mx-mn)*100)+"%");}
+function group(id,cb){const g=$(id);const bs=[...g.querySelectorAll("button")];bs.forEach(b=>b.addEventListener("click",()=>{bs.forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false"));cb(b);}));}
+function intTicks(el,q){const v=[];for(let k=-3;k<=3;k++)v.push([k*q,nice(k)]);ticks(el,-3*q,3*q,v);}
+
+/* tween helper: one eased move, then stop */
+function tween(obj,key,target,draw){
+  if(RM||obj[key]===null){obj[key]=target;draw();return;}
+  const from=obj[key];const t0=performance.now();const dur=320;
+  if(obj._raf)cancelAnimationFrame(obj._raf);
+  const step=now=>{const k=Math.min(1,(now-t0)/dur);const e=1-Math.pow(1-k,3);obj[key]=from+(target-from)*e;draw();if(k<1)obj._raf=requestAnimationFrame(step);else obj._raf=0;};
+  obj._raf=requestAnimationFrame(step);
 }
 
-function resize() {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
-
-function updateUI() {
-  liveTag.textContent = `BASE = ${base.toFixed(1)}`;
-  
-  const exp2 = Math.pow(base, 2);
-  const exp3 = Math.pow(base, 3);
-  const exp5 = Math.pow(base, 5);
-  
-  stat1.textContent = exp2.toFixed(1);
-  stat2.textContent = exp5.toFixed(1);
-  
-  if (mode === 'multiply') {
-    canvasOverlay.textContent = `x² × x³ = x⁵`;
-  } else {
-    canvasOverlay.textContent = `x⁵ ÷ x³ = x²`;
+/* =========== CARD 1: the ladder =========== */
+const L={b:2,q:2,j:3,shown:null};
+const c1=mk($("ilC1"));
+function draw1(){
+  const o=c1,ctx=o.ctx,w=o.w,h=o.h;if(!w)return;o.begin();
+  const b=L.b,q=L.q,nT=L.j/q,n=L.shown===null?nT:L.shown;
+  const narrow=w<560;
+  const padL=narrow?52:66,padR=narrow?16:28,top=h*0.09,bot=h-Math.max(46,h*0.08+36);
+  const X=v=>padL+(v+3)/6*(w-padL-padR), Y=v=>bot-(v+3)/6*(bot-top);
+  /* grid rows at whole indices, values on the left */
+  ctx.lineWidth=1;
+  for(let k=-3;k<=3;k++){
+    const y=Y(k);ctx.strokeStyle=k===0?"rgba("+AMBRGB+",0.55)":"rgba(255,255,255,0.07)";ctx.setLineDash(k===0?[5,4]:[]);ctx.beginPath();ctx.moveTo(padL,y);ctx.lineTo(w-padR,y);ctx.stroke();ctx.setLineDash([]);
+    const e=exact(b,k,1);ctx.font=(narrow?11:12)+"px "+MONO;ctx.textAlign="right";ctx.textBaseline="middle";ctx.fillStyle=k===0?AMB:DIM;ctx.fillText(exStr(e),padL-8,y);
+    ctx.textAlign="center";ctx.textBaseline="top";ctx.fillStyle=DIM;ctx.fillText(nice(k),X(k),bot+8);
   }
-  
-  const fill = ((base - 1) / 4) * 100;
-  slider.style.setProperty('--fill', fill + '%');
-}
-
-function draw() {
-  time += 0.016;
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, w, h);
-  
-  const cx = w / 2;
-  const cy = h / 2;
-  
-  // Draw coordinate grid
-  ctx.strokeStyle = 'rgba(47, 169, 78,0.08)';
-  ctx.lineWidth = 0.8;
-  const gridSpacing = 30;
-  
-  for (let x = 0; x < w; x += gridSpacing) {
-    ctx.beginPath();
-    ctx.moveTo(x, 0);
-    ctx.lineTo(x, h);
-    ctx.stroke();
-  }
-  for (let y = 0; y < h; y += gridSpacing) {
-    ctx.beginPath();
-    ctx.moveTo(0, y);
-    ctx.lineTo(w, y);
-    ctx.stroke();
-  }
-  
-  // Update and draw particles
-  particles.forEach(p => {
-    p.x += p.vx;
-    p.y += p.vy;
-    if (p.x < 0 || p.x > 1) p.vx *= -1;
-    if (p.y < 0 || p.y > 1) p.vy *= -1;
-    p.x = Math.max(0, Math.min(1, p.x));
-    p.y = Math.max(0, Math.min(1, p.y));
-    
-    const brightness = 0.5 + 0.5 * Math.sin(time * p.speed + p.phase);
-    ctx.fillStyle = `rgba(47,169,78,${brightness * 0.4})`;
-    ctx.beginPath();
-    ctx.arc(p.x * w, p.y * h, p.r, 0, Math.PI * 2);
-    ctx.fill();
-  });
-  
-  // Draw power bars
-  const barWidth = 40;
-  const maxHeight = h * 0.6;
-  const baseValue = Math.pow(base, 2);
-  const resultValue = mode === 'multiply' ? Math.pow(base, 5) : Math.pow(base, 2);
-  const maxScale = Math.pow(5, 5);
-  
-  // Left bar (x²)
-  const h1 = (baseValue / maxScale) * maxHeight;
-  const x1 = cx - 80;
-  const grad1 = ctx.createLinearGradient(x1, cy - h1, x1, cy);
-  grad1.addColorStop(0, 'rgba(47, 169, 78,0.8)');
-  grad1.addColorStop(1, 'rgba(47, 169, 78,0.3)');
-  ctx.fillStyle = grad1;
-  ctx.fillRect(x1 - barWidth/2, cy - h1, barWidth, h1);
-  ctx.strokeStyle = 'rgba(47, 169, 78,1)';
-  ctx.lineWidth = 2;
-  ctx.strokeRect(x1 - barWidth/2, cy - h1, barWidth, h1);
-  
-  // Right bar (x⁵ or x²)
-  const h2 = (resultValue / maxScale) * maxHeight;
-  const x2 = cx + 80;
-  const grad2 = ctx.createLinearGradient(x2, cy - h2, x2, cy);
-  grad2.addColorStop(0, 'rgba(250,199,117,0.8)');
-  grad2.addColorStop(1, 'rgba(250,199,117,0.3)');
-  ctx.fillStyle = grad2;
-  ctx.fillRect(x2 - barWidth/2, cy - h2, barWidth, h2);
-  ctx.strokeStyle = 'rgba(250,199,117,1)';
-  ctx.lineWidth = 2;
-  ctx.strokeRect(x2 - barWidth/2, cy - h2, barWidth, h2);
-  
-  // Connection arc
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.strokeStyle = 'rgba(47, 169, 78,0.4)';
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(x1 + barWidth/2, cy - h1/2);
-  ctx.quadraticCurveTo(cx, cy - maxHeight * 0.8, x2 - barWidth/2, cy - h2/2);
+  ctx.textAlign="left";ctx.textBaseline="bottom";ctx.fillStyle=AMB;ctx.font=(narrow?11:12)+"px "+MONO;
+  rich(ctx,[{t:String(b)},{t:"0",sup:true},{t:" = 1"}],X(-3)+4,Y(0)-4,narrow?11:12,"left",AMB);
+  ctx.fillStyle=DIM;ctx.textAlign="right";ctx.textBaseline="top";ctx.font="11px "+MONO;ctx.fillText("index",padL-8,bot+12);
+  /* faint staircase of every step */
+  ctx.strokeStyle="rgba(255,255,255,0.16)";ctx.lineWidth=1.2;ctx.beginPath();
+  for(let s=-3*q;s<3*q;s++){const a=s/q,c=(s+1)/q;ctx.moveTo(X(a),Y(a));ctx.lineTo(X(c),Y(a));ctx.lineTo(X(c),Y(c));}
   ctx.stroke();
+  for(let s=-3*q;s<=3*q;s++){const a=s/q;ctx.fillStyle=s%q===0?"rgba(255,255,255,0.5)":"rgba(255,255,255,0.25)";ctx.beginPath();ctx.arc(X(a),Y(a),s%q===0?2.6:1.8,0,Math.PI*2);ctx.fill();}
+  /* highlighted path from index 0 to the current index */
+  const dir=nT>=0?1:-1;const steps=Math.round(Math.abs(nT)*q);
+  ctx.save();ctx.globalCompositeOperation="lighter";
+  for(let s=0;s<steps;s++){
+    const a=dir*s/q,c=dir*(s+1)/q;
+    ctx.strokeStyle=ACC;ctx.lineWidth=3;ctx.beginPath();
+    if(dir>0){ctx.moveTo(X(a),Y(a));ctx.lineTo(X(c),Y(a));ctx.lineTo(X(c),Y(c));}
+    else{ctx.moveTo(X(a),Y(a));ctx.lineTo(X(a),Y(c));ctx.lineTo(X(c),Y(c));}
+    ctx.stroke();
+  }
   ctx.restore();
-  
-  // Glow on bars
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.shadowBlur = 20;
-  ctx.shadowColor = 'rgba(47, 169, 78,0.6)';
-  ctx.strokeStyle = 'rgba(47, 169, 78,0.8)';
-  ctx.lineWidth = 3;
-  ctx.strokeRect(x1 - barWidth/2, cy - h1, barWidth, h1);
-  ctx.shadowColor = 'rgba(250,199,117,0.6)';
-  ctx.strokeStyle = 'rgba(250,199,117,0.8)';
-  ctx.strokeRect(x2 - barWidth/2, cy - h2, barWidth, h2);
-  ctx.restore();
-  
-  // Apply bloom
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
-  
-  // Vignette
-  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-  
-  requestAnimationFrame(draw);
+  /* label every riser on the path */
+  const lab=(dir>0?"×":"÷")+(q===1?String(b):ROOT[q]+b);
+  const fs=narrow?11:12;
+  for(let s=0;s<steps;s++){
+    const a=dir*s/q,c=dir*(s+1)/q;const rx=dir>0?X(c):X(a);const ry=(Y(a)+Y(c))/2;
+    ctx.font=fs+"px "+MONO;ctx.fillStyle=ACC;ctx.textBaseline="middle";ctx.textAlign=dir>0?"left":"right";
+    ctx.fillText(lab,rx+(dir>0?5:-5),ry);
+  }
+  /* marker */
+  const mx=X(n),my=Y(n);
+  ctx.strokeStyle="rgba("+RGB+",0.45)";ctx.setLineDash([3,4]);ctx.beginPath();ctx.moveTo(padL,my);ctx.lineTo(mx,my);ctx.moveTo(mx,my);ctx.lineTo(mx,bot);ctx.stroke();ctx.setLineDash([]);
+  glowDot(ctx,mx,my,6,ACC,RGB);
+  const p=L.j,e=exact(b,p,q);
+  const segs=[{t:String(b)},{t:fr(p,q),sup:true},{t:" = "+exStr(e)}];
+  const sz=narrow?13:15;const tw=richW(ctx,segs,sz);
+  let lx=mx,al="center";if(lx-tw/2<padL+4){lx=padL+4;al="left";}if(lx+tw/2>w-padR){lx=w-padR;al="right";}
+  let ly=my-14;if(ly<top+sz)ly=my+sz+16;
+  ctx.fillStyle="rgba(0,0,0,0.6)";const bx=al==="center"?lx-tw/2:al==="left"?lx:lx-tw;ctx.fillRect(bx-6,ly-sz-2,tw+12,sz+10);
+  rich(ctx,segs,lx,ly,sz,al,INK);
+  o.finish();
 }
+function upd1(){
+  const inp=$("ilN");const q=L.q;const b=L.b;L.j=+inp.value;fill(inp);
+  const p=L.j,e=exact(b,p,q),v=Math.pow(b,p/q);
+  $("ilNV").textContent=fr(p,q);$("ilLive1").textContent="Index "+fr(p,q);
+  $("ilOv1").textContent=b+"^("+fr(p,q)+") = "+exStr(e)+" ≈ "+dec(v);
+  $("ilS1a").textContent=exStr(e);$("ilS1b").textContent=dec(v);
+  /* working: computed from the same numbers */
+  const r=red(p,q);const P=r[0],Q=r[1];let wk;
+  if(P===0)wk=supH(b,0,1)+" = "+supH(b,1,1)+" ÷ "+supH(b,1,1)+" = <span class=\"m\">1</span>  (subtract the indices: 1 − 1 = 0)";
+  else if(P<0){const pe=exact(b,-P,Q);const ps=exStr(pe);const sq=(pe.rad>1&&pe.num>1)?"("+ps+")":ps;wk=supH(b,P,Q)+" = 1 ÷ "+supH(b,-P,Q)+" = 1/"+sq+" = <span class=\"a\">"+exStr(e)+"</span>"+(pe.rad>1?"  (rationalised)":"");}
+  else if(Q===1){const parts=[];for(let k=0;k<P;k++)parts.push(b);wk=supH(b,P,1)+" = "+parts.join(" × ")+" = <span class=\"a\">"+exStr(e)+"</span>";}
+  else{const i=Math.floor(P/Q),rr=P-i*Q;const rt=Q===2?(rr===1?"√"+b:"√("+b+"<sup>"+rr+"</sup>)"):(rr===1?"∛"+b:"∛("+b+"<sup>"+rr+"</sup>)");
+    if(i===0)wk=supH(b,P,Q)+" = "+rt+" = <span class=\"a\">"+exStr(e)+"</span>"+(rr===1?"  (because ("+supH(b,1,Q)+")<sup>"+Q+"</sup> = "+b+")":"");
+    else wk=supH(b,P,Q)+" = "+supH(b,i,1)+" × "+supH(b,rr,Q)+" = "+Math.pow(b,i)+" × "+rt+" = <span class=\"a\">"+exStr(e)+"</span>";}
+  $("ilW1").innerHTML=wk;
+  tween(L,"shown",p/q,draw1);
+}
+function setStep(q){const old=L.j/L.q;L.q=q;const inp=$("ilN");inp.min=-3*q;inp.max=3*q;inp.value=Math.round(old*q);intTicks($("ilT1"),q);L.shown=L.shown;upd1();}
+group("ilBase",bt=>{L.b=+bt.dataset.b;upd1();});
+group("ilStep",bt=>{setStep(+bt.dataset.q);});
+$("ilN").addEventListener("input",upd1);$("ilN").addEventListener("change",upd1);
 
-slider.addEventListener('input', e => {
-  base = parseFloat(e.target.value);
-  updateUI();
-});
+/* =========== CARD 2: three laws on an index line =========== */
+const M={law:"mul",m:1,k:3,shownR:null};
+const c2=mk($("ilC2"));
+function res2(){const m=M.m/2,n=M.k/2;return M.law==="mul"?m+n:M.law==="div"?m-n:m*n;}
+function draw2(){
+  const o=c2,ctx=o.ctx,w=o.w,h=o.h;if(!w)return;o.begin();
+  const narrow=w<560;const m=M.m/2,n=M.k/2,R=res2();const rS=M.shownR===null?R:M.shownR;
+  const span=M.law==="pow"?9:6;
+  const padX=narrow?18:30;const ay=h*0.58;const top=h*0.08;const bot=h-Math.max(46,h*0.08+36);
+  const X=v=>padX+(v+span)/(2*span)*(w-2*padX);
+  /* axis */
+  ctx.strokeStyle="rgba(255,255,255,0.35)";ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(padX,ay);ctx.lineTo(w-padX,ay);ctx.stroke();
+  const gap=(w-2*padX)/(2*span);const every=gap<22?3:1;
+  ctx.font="11px "+MONO;ctx.textAlign="center";ctx.textBaseline="top";
+  for(let k=-span;k<=span;k++){ctx.strokeStyle="rgba(255,255,255,"+(k===0?0.6:0.25)+")";ctx.beginPath();ctx.moveTo(X(k),ay-(k%every===0?6:3));ctx.lineTo(X(k),ay+(k%every===0?6:3));ctx.stroke();
+    if(k%every===0){ctx.fillStyle=k===0?AMB:DIM;ctx.fillText(nice(k),X(k),ay+10);}}
+  ctx.textAlign="right";ctx.textBaseline="bottom";ctx.fillStyle=DIM;ctx.fillText("index of 2",w-padX,ay-8);
+  /* arcs */
+  function arc(a,bv,col,rgb,hgt,label,below){
+    const x1=X(a),x2=X(bv);const s=below?1:-1;
+    if(Math.abs(x2-x1)<2){ctx.strokeStyle=col;ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(x1,ay+s*14,10,0,Math.PI*2);ctx.stroke();
+      ctx.font="12px "+MONO;ctx.fillStyle=col;ctx.textAlign="center";ctx.textBaseline=below?"top":"bottom";ctx.fillText(label,x1,ay+s*28);return;}
+    const cy=ay+s*hgt*2;const mxp=(x1+x2)/2;
+    ctx.save();ctx.globalCompositeOperation="lighter";ctx.strokeStyle=col;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(x1,ay);ctx.quadraticCurveTo(mxp,cy,x2,ay);ctx.stroke();ctx.restore();
+    const ang=Math.atan2(ay-cy,x2-mxp);arrowHead(ctx,x2,ay,ang,9,col);
+    ctx.font="12px "+MONO;ctx.fillStyle=col;ctx.textAlign="center";ctx.textBaseline=below?"top":"bottom";ctx.fillText(label,mxp,ay+s*hgt+(below?4:-4));
+  }
+  const room=ay-top-40;
+  const H1=Math.min(room*0.45,22+Math.abs(X(m)-X(0))*0.35);
+  const H2=M.law==="pow"?H1:Math.min(room,Math.max(30,22+Math.abs(X(rS)-X(m))*0.35));
+  const Hb=Math.min((bot-ay)*0.55,22+Math.abs(X(rS)-X(0))*0.3);
+  const nb=M.k<0?"("+fr(M.k,2)+")":fr(M.k,2);
+  if(M.law==="pow"){
+    arc(0,m,ACC,RGB,H1,"m = "+fr(M.m,2),false);
+    arc(0,rS,AMB,AMBRGB,Math.max(Hb,24),"× n = × "+nb,true);
+  }else{
+    arc(0,m,ACC,RGB,Math.max(36,Math.min((bot-ay)*0.6,Hb)),"m = "+fr(M.m,2),true);
+    arc(m,rS,AMB,AMBRGB,H2,(M.law==="mul"?"+ n = + ":"− n = − ")+nb,false);
+  }
+  /* points */
+  glowDot(ctx,X(0),ay,4,AMB,AMBRGB);glowDot(ctx,X(m),ay,5,ACC,RGB);glowDot(ctx,X(rS),ay,7,AMB,AMBRGB);
+  /* equation along the top, computed */
+  const sz=narrow?13:15;const opS=M.law==="mul"?" × ":M.law==="div"?" ÷ ":"";
+  let segs;
+  if(M.law==="pow")segs=[{t:"(2"},{t:fr(M.m,2),sup:true},{t:")"},{t:fr(M.k,2),sup:true},{t:" = 2"},{t:fr(Math.round(R*4),4),sup:true}];
+  else segs=[{t:"2"},{t:fr(M.m,2),sup:true},{t:opS+"2"},{t:fr(M.k,2),sup:true},{t:" = 2"},{t:fr(Math.round(R*4),4),sup:true}];
+  rich(ctx,segs,w/2,top+sz+2,sz,"center",INK);
+  o.finish();
+}
+function upd2(){
+  const im=$("ilM"),ik=$("ilK");M.m=+im.value;M.k=+ik.value;fill(im);fill(ik);
+  const R=res2();const R4=Math.round(R*4);const rr=red(R4,4);
+  $("ilMV").textContent=fr(M.m,2);$("ilKV").textContent=fr(M.k,2);
+  const e1=exStr(exact(2,M.m,2)),e2=exStr(exact(2,M.k,2)),eR=exStr(exact(2,rr[0],rr[1]));const v=Math.pow(2,R);
+  const law=M.law;$("ilLive2").textContent=law==="mul"?"Multiply: add":law==="div"?"Divide: subtract":"Power: multiply";
+  const m=fr(M.m,2),n=fr(M.k,2),r=fr(R4,4);
+  const nb=M.k<0?"("+n+")":n;
+  $("ilOv2").textContent=law==="mul"?"Indices: "+m+" + "+nb+" = "+r:law==="div"?"Indices: "+m+" − "+nb+" = "+r:"Indices: "+m+" × "+nb+" = "+r;
+  let wk;
+  if(law==="mul")wk=supH(2,M.m,2)+" × "+supH(2,M.k,2)+" = 2<sup>"+m+" + "+nb+"</sup> = "+supH(2,rr[0],rr[1])+"<br><span class=\"m\">"+e1+" × "+e2+" = "+eR+"</span>";
+  else if(law==="div")wk=supH(2,M.m,2)+" ÷ "+supH(2,M.k,2)+" = 2<sup>"+m+" − "+nb+"</sup> = "+supH(2,rr[0],rr[1])+"<br><span class=\"m\">"+e1+" ÷ "+e2+" = "+eR+"</span>"+(R4===0?"  (any base to the power 0 is 1)":"");
+  else wk="(2<sup>"+m+"</sup>)<sup>"+n+"</sup> = 2<sup>"+m+" × "+nb+"</sup> = "+supH(2,rr[0],rr[1])+"<br><span class=\"m\">("+e1+")<sup>"+n+"</sup> = "+eR+"</span>";
+  $("ilW2").innerHTML=wk;
+  $("ilS2a").textContent=r;$("ilS2b").textContent=eR;
+  tween(M,"shownR",R,draw2);
+}
+group("ilLaw",bt=>{M.law=bt.dataset.l;M.shownR=null;upd2();});
+["ilM","ilK"].forEach(id=>{$(id).addEventListener("input",upd2);$(id).addEventListener("change",upd2);});
 
-toggleBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    toggleBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    mode = btn.dataset.mode;
-    
-    if (mode === 'multiply') {
-      knowdrop.textContent = "When you multiply powers with the same base, you add the exponents: x² × x³ = x⁽²⁺³⁾ = x⁵. This isn't obvious until you expand it: (x·x) × (x·x·x) gives you five x's total. The operation on the bases (multiplication) becomes a different operation on the exponents (addition). This pattern holds for all real bases and exponents, making index laws the foundation for logarithms, exponential growth, and calculus differentiation rules.";
-    } else {
-      knowdrop.textContent = "Division reverses multiplication, so dividing powers subtracts exponents: x⁵ ÷ x³ = x⁽⁵⁻³⁾ = x². Think of it as cancelling: (x·x·x·x·x) ÷ (x·x·x) removes three x's from the numerator, leaving two. A negative exponent like x⁻² means 1/x², because subtracting more than you have creates a deficit that moves to the denominator. This is why x⁰ = 1: any number divided by itself (x¹ ÷ x¹) equals 1, and the exponent rule gives x⁽¹⁻¹⁾ = x⁰.";
-    }
-    
-    updateUI();
-  });
-});
+/* =========== CARD 3: solve by matching bases =========== */
+const SV={c:2,k:3,shown:null};
+const NAME={"1":"2","2":"4","3":"8","-1":"(½)"};
+const c3=mk($("ilC3"));
+function draw3(){
+  const o=c3,ctx=o.ctx,w=o.w,h=o.h;if(!w)return;o.begin();
+  const narrow=w<560;const c=SV.c,k=SV.k/2,x=k/c;const xs=SV.shown===null?x:SV.shown;
+  const padX=narrow?20:34;const top=h*0.12;const bot=h-Math.max(50,h*0.08+40);
+  const y1=top+(bot-top)*0.12,y2=bot-(bot-top)*0.08;
+  const X=v=>padX+(v+3)/6*(w-2*padX);
+  /* two axes */
+  [[y1,"x"],[y2,"index of 2"]].forEach((a,ii)=>{const y=a[0];ctx.strokeStyle="rgba(255,255,255,0.35)";ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(padX,y);ctx.lineTo(w-padX,y);ctx.stroke();
+    ctx.font="11px "+MONO;ctx.textAlign="center";
+    for(let t=-3;t<=3;t++){ctx.strokeStyle="rgba(255,255,255,0.3)";ctx.beginPath();ctx.moveTo(X(t),y-5);ctx.lineTo(X(t),y+5);ctx.stroke();ctx.fillStyle=DIM;ctx.textBaseline=ii===0?"bottom":"top";ctx.fillText(nice(t),X(t),ii===0?y-8:y+8);}
+    ctx.textAlign="left";ctx.textBaseline=ii===0?"bottom":"top";ctx.fillStyle=DIM;ctx.fillText(a[1],padX,ii===0?y-24:y+24);});
+  /* faint links: each x on top goes to c·x on the bottom */
+  for(let t=-6;t<=6;t++){const xv=t/2,bv=c*xv;if(Math.abs(bv)>3)continue;ctx.strokeStyle="rgba(255,255,255,0.12)";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(X(xv),y1);ctx.lineTo(X(bv),y2);ctx.stroke();}
+  /* the solution link */
+  const bx=X(c*xs),tx=X(xs);
+  ctx.save();ctx.globalCompositeOperation="lighter";ctx.strokeStyle=ACC;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(tx,y1);ctx.lineTo(bx,y2);ctx.stroke();ctx.restore();
+  const midx=(tx+bx)/2,midy=(y1+y2)/2;
+  const lab="× "+(c===-1?"(−1)":c);ctx.font="12px "+MONO;ctx.fillStyle=ACC;ctx.textAlign="left";ctx.textBaseline="middle";
+  ctx.fillStyle="rgba(0,0,0,0.6)";const lw=ctx.measureText(lab).width;ctx.fillRect(midx+8,midy-10,lw+10,20);ctx.fillStyle=ACC;ctx.fillText(lab,midx+13,midy);
+  /* target on the bottom line (amber) and the answer on the top line (accent) */
+  glowDot(ctx,X(k),y2,7,AMB,AMBRGB);glowDot(ctx,tx,y1,7,ACC,RGB);
+  const sz=narrow?12:14;
+  const eR=exStr(exact(2,SV.k,2));
+  rich(ctx,[{t:"2"},{t:fr(SV.k,2),sup:true},{t:" = "+eR}],Math.min(Math.max(X(k),padX+60),w-padX-60),y2+sz+30,sz,"center",AMB);
+  rich(ctx,[{t:"x = "+fr(SV.k,2*c)}],Math.min(Math.max(tx,padX+40),w-padX-40),y1-28,sz,"center",ACC);
+  o.finish();
+}
+function upd3(){
+  const ir=$("ilR");SV.k=+ir.value;fill(ir);const c=SV.c;
+  const kS=fr(SV.k,2),xS=fr(SV.k,2*c),eR=exStr(exact(2,SV.k,2));
+  $("ilRV").textContent="2^"+(SV.k%2===0?kS:"("+kS+")");$("ilLive3").textContent="x = "+xS;
+  $("ilOv3").textContent=NAME[String(c)]+"^x = "+eR+"  →  x = "+xS;
+  const L0=NAME[String(c)]+"<sup>x</sup>";
+  const asP=c===1?"":c===-1?"(2<sup>−1</sup>)<sup>x</sup> = ":"(2<sup>"+c+"</sup>)<sup>x</sup> = ";
+  const cx=c===1?"x":c===-1?"−x":c+"x";
+  let wk=L0+" = "+eR+"<br>"+asP+"2<sup>"+cx+"</sup> = 2<sup>"+kS+"</sup><br>"+(c===1?"x = ":cx+" = "+kS+"  so  x = ")+"<span class=\"a\">"+xS+"</span>";
+  wk+="<br><span class=\"m\">check: "+NAME[String(c)]+"<sup>"+xS+"</sup> = 2<sup>"+fr(SV.k,2)+"</sup> ✓</span>";
+  $("ilW3").innerHTML=wk;
+  $("ilS3a").textContent=xS;$("ilS3b").textContent=eR;
+  tween(SV,"shown",SV.k/2/c,draw3);
+}
+group("ilLeft",bt=>{SV.c=+bt.dataset.c;SV.shown=null;upd3();});
+$("ilR").addEventListener("input",upd3);$("ilR").addEventListener("change",upd3);
 
-window.addEventListener('resize', resize);
-resize();
-updateUI();
-draw();
+/* =========== knowdrop =========== */
+const KD=[
+  "A negative index never makes a number negative: it makes a reciprocal. Dividing 2<sup>1</sup> by 2<sup>4</sup> subtracts the indices to give 2<sup>−3</sup>, and the same division done by cancelling gives ⅛, so 2<sup>−3</sup> = 1/2<sup>3</sup>. Zero comes from the same law: a<sup>m</sup> ÷ a<sup>m</sup> = a<sup>0</sup>, and anything divided by itself is 1, so a<sup>0</sup> = 1 for any non-zero base. On the ladder, every step down from 1 divides by the base. When a negative index leaves a surd in the denominator, rationalise it: 1/√2 = √2/2.",
+  "A fractional index is a root. Because 2<sup>1/2</sup> × 2<sup>1/2</sup> = 2<sup>1</sup>, the number 2<sup>1/2</sup> must be the number that squares to 2, which is √2. In general a<sup>1/n</sup> is the nth root of a, and a<sup>m/n</sup> = (ⁿ√a)<sup>m</sup>, so 8<sup>2/3</sup> = 2<sup>2</sup> = 4. Splitting the index simplifies surds: 2<sup>5/2</sup> = 2<sup>2</sup> × 2<sup>1/2</sup> = 4√2. Surds only add when the root parts match, so 2√3 + 5√3 = 7√3 but √2 + √3 stays as it is.",
+  "To solve an exponential equation such as 4<sup>x</sup> = 8, write both sides as powers of the same base. Here 4 = 2<sup>2</sup> and 8 = 2<sup>3</sup>, so (2<sup>2</sup>)<sup>x</sup> = 2<sup>3</sup>, which is 2<sup>2x</sup> = 2<sup>3</sup>. Equal powers of the same base have equal indices, so 2x = 3 and x = 3/2. Surds join in the same way: √2 = 2<sup>1/2</sup>, so 4<sup>x</sup> = √2 gives x = 1/4. When the sides cannot share a base, as in 2<sup>x</sup> = 5, logarithms do the job: x = log<sub>2</sub>5."
+];
+group("ilKdT",bt=>{$("ilKd").innerHTML=KD[+bt.dataset.k];});
+$("ilKd").innerHTML=KD[0];
+
+/* =========== init + resize =========== */
+function all(){[c1,c2,c3].forEach(o=>o.resize());draw1();draw2();draw3();}
+intTicks($("ilT1"),2);intTicks($("ilT2"),2);intTicks($("ilT3"),2);intTicks($("ilT4"),2);
+upd1();upd2();upd3();
+all();
+let rt=0;window.addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(all,60);});
+if(window.ResizeObserver){const ro=new ResizeObserver(()=>{clearTimeout(rt);rt=setTimeout(all,60);});["ilCw1","ilCw2","ilCw3"].forEach(id=>ro.observe($(id)));}
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(all);
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'index-laws-and-surds'},'*');}catch(e){}}

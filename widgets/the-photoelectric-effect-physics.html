@@ -334,7 +334,7 @@ canvas {
     </div>
 
     <div class="slider-control">
-      <input type="range" min="0" max="100" value="35" class="pe-slider" id="freqSlider">
+      <input aria-label="Light frequency" type="range" min="0" max="100" value="35" class="pe-slider" id="freqSlider">
     </div>
     <div class="tick-labels">
       <span>Low f</span>
@@ -345,7 +345,7 @@ canvas {
     <div class="stat-row">
       <div class="stat">
         <div class="stat-label">Photon Energy</div>
-        <div class="stat-value" style="color:var(--acc)" id="photonEnergy">2.1 eV</div>
+        <div class="stat-value" style="color:var(--acc)" id="photonEnergy">2.9 eV</div>
       </div>
       <div class="stat">
         <div class="stat-label">Electron KE_max</div>
@@ -391,7 +391,7 @@ const btnFreq = document.getElementById('btnFreq');
 const btnIntensity = document.getElementById('btnIntensity');
 const knowdrop = document.getElementById('knowdrop');
 
-const WORK_FUNCTION = 3.0; // eV
+const WORK_FUNCTION = 3.5; // eV, so f = f0 lands at slider 50 (1.5 + 4 × 0.5)
 const H = 4.136e-15; // Planck constant in eV·s (for display purposes)
 const THRESHOLD_SLIDER = 50; // slider value where f = f0
 
@@ -399,6 +399,7 @@ let freq = 0.35; // normalized 0-1
 let photons = [];
 let electrons = [];
 let time = 0;
+let intensity = 1; // relative photon arrival rate, raised by the Intensity button
 
 const knowdropTexts = {
   freq: "Increasing the frequency of incident light increases the energy of each individual photon (E = hf). When a photon strikes the metal surface, it transfers all its energy to a single electron in a quantum interaction. If the photon energy exceeds the work function φ, the electron is ejected with kinetic energy equal to the excess: KE_max = hf - φ. Higher frequency means more energetic photons, which directly increases the maximum kinetic energy of emitted electrons. This is why ultraviolet light ejects faster electrons than visible light, even if the UV beam is dimmer.",
@@ -448,12 +449,14 @@ freqSlider.addEventListener('input', updateStats);
 btnFreq.addEventListener('click', () => {
   btnFreq.classList.add('active');
   btnIntensity.classList.remove('active');
+  intensity = 1;
   knowdrop.textContent = knowdropTexts.freq;
 });
 
 btnIntensity.addEventListener('click', () => {
   btnIntensity.classList.add('active');
   btnFreq.classList.remove('active');
+  intensity = 3;
   knowdrop.textContent = knowdropTexts.intensity;
 });
 
@@ -488,7 +491,7 @@ function draw() {
   const aboveThreshold = photonEnergy >= WORK_FUNCTION;
   
   // Spawn photons from left
-  if (Math.random() < 0.08) {
+  if (Math.random() < 0.08 * intensity) {
     photons.push({
       x: -10,
       y: surfaceY - 40 + (Math.random() - 0.5) * 60,

@@ -1,634 +1,331 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Budgeted Financial Statements — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Budgeted financial statements — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
-
-:root {
-  --bg: #0B0D0C;
-  --bg2: #12160F;
-  --acc: #CE4480;
-  --ag: rgba(206, 68, 128, .7);
-  --ag1: rgba(206, 68, 128, .12);
-  --ag2: rgba(206, 68, 128, .45);
-  --amb: #FAC775;
-  --ink: #EDEDE8;
-  --ink-dim: #8C9389;
-  --line: #262B26;
+:root{
+  --bg:#0B0D0C;--bg2:#12160F;--acc:#CE4480;--acc-rgb:206, 68, 128;
+  --ag:rgba(var(--acc-rgb),.7);--ag1:rgba(var(--acc-rgb),.12);--ag2:rgba(var(--acc-rgb),.45);
+  --amb:#FAC775;--ink:#EDEDE8;--ink-dim:#8C9389;--line:#262B26;
 }
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
-  font-family: 'Geist', sans-serif;
-  min-height: 100vh;
-  padding: 40px 16px 72px;
-  color: var(--ink);
-}
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
-}
-
-.container {
-  max-width: 720px;
-  margin: 0 auto;
-}
-
-h1 {
-  font-size: clamp(30px, 8vw, 52px);
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1.02;
-  margin-bottom: 16px;
-}
-
-.intro {
-  font-size: 15.5px;
-  font-weight: 400;
-  color: var(--ink-dim);
-  max-width: 58ch;
-  line-height: 1.55;
-  margin-bottom: 32px;
-}
-
-.card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 20px;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 4px;
-}
-
-.card-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  color: var(--ink);
-}
-
-.live-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--acc);
-}
-
-.card-hint {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--ink-dim);
-  margin-bottom: 14px;
-}
-
-.canvas-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16/9;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
-  box-shadow: inset 0 0 0 1px var(--ag1);
-  margin-bottom: 16px;
-}
-
-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.canvas-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(4px);
-  padding: 9px 16px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  text-transform: uppercase;
-  color: var(--acc);
-  text-align: center;
-}
-
-.slider-wrapper {
-  margin-bottom: 10px;
-}
-
-.bfs-slider {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  height: 4px;
-  border-radius: 3px;
-  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
-  outline: none;
-  cursor: pointer;
-}
-
-.bfs-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow .15s;
-}
-
-.bfs-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow .15s;
-}
-
-.bfs-slider::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.bfs-slider::-moz-range-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.slider-labels {
-  display: flex;
-  justify-content: space-between;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--ink-dim);
-  margin-bottom: 16px;
-}
-
-.stat-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-}
-
-.stat {
-  text-align: center;
-}
-
-.stat-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 6px;
-}
-
-.stat-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 24px;
-  font-weight: 500;
-}
-
-.stat-value.acc { color: var(--acc); }
-.stat-value.amb { color: var(--amb); }
-
-.toggle-section {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.toggle-btn {
-  flex: 1;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14.5px;
-  padding: 12px;
-  border-radius: 11px;
-  background: #12160F;
-  border: 1px solid var(--line);
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: all .2s;
-}
-
-.toggle-btn.active {
-  background: rgba(206,68,128,.1);
-  border: 1px solid var(--acc);
-  color: var(--acc);
-  box-shadow: 0 0 22px rgba(206,68,128,.18);
-}
-
-.knowdrop {
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-  font-size: 14.5px;
-  font-weight: 400;
-  line-height: 1.65;
-  color: var(--ink);
-}
-
-.knowthis {
-  border-left: 3px solid var(--acc);
-  padding: 16px 18px;
-  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
-  border-radius: 0 12px 12px 0;
-  margin-bottom: 34px;
-}
-
-.knowthis-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--acc);
-  margin-bottom: 10px;
-}
-
-.knowthis-body {
-  font-size: 17.4px;
-  font-weight: 400;
-  line-height: 1.55;
-  color: var(--ink);
-}
-
-.footer {
-  margin-top: 34px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.pulse-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--acc);
-  box-shadow: 0 0 10px var(--acc);
-  animation: bfsPulse 2.4s ease-in-out infinite;
-}
-
-@keyframes bfsPulse {
-  0%, 100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: .35;
-    transform: scale(.6);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
+*{box-sizing:border-box;margin:0;padding:0}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+body{background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C 55%);font-family:'Geist',sans-serif;color:var(--ink);min-height:100vh;padding:40px 16px 0;box-sizing:border-box}
+.container{max-width:720px;margin:0 auto}
+h1{font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin-bottom:16px}
+.intro{font-size:15.5px;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin-bottom:28px}
+.card{background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:18px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1)}
+.card-header{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+.card-label{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;color:#fff}
+.live-tag{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--acc);text-align:right}
+.card-hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin-bottom:14px}
+.bf-q{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:8px}
+.bf-group{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.bf-group .tg{flex:1 1 auto}
+.tg{font-family:'JetBrains Mono',monospace;font-size:12px;padding:10px 10px;border-radius:999px;background:#12160F;border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:all .2s;white-space:nowrap}
+.tg[aria-pressed="true"]{background:rgba(var(--acc-rgb),.1);border:1px solid var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.bf-evnote{font-size:13px;line-height:1.45;color:var(--ink-dim);margin-bottom:14px;min-height:19px}
+.canvas-wrapper{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1);margin-bottom:10px}
+.canvas-wrapper canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.canvas-overlay{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:14px;text-transform:uppercase;color:var(--acc);text-align:center}
+.bf-foot{font-size:12px;color:var(--ink-dim);line-height:1.45;margin-bottom:14px}
+.bf-row{display:flex;justify-content:space-between;align-items:baseline;font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:10px}
+.bf-row b{font-weight:500;color:var(--acc);font-size:12px}
+.bf-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;outline:none;cursor:pointer;background:linear-gradient(90deg,var(--acc) var(--fill,0%),#23291f var(--fill,0%))}
+.bf-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s}
+.bf-slider::-webkit-slider-thumb:hover{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.bf-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag)}
+.bf-ticks{position:relative;height:16px;margin:8px 10px 0;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink-dim)}
+.bf-ticks span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}
+.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;border-top:1px solid var(--line);margin-top:14px;padding-top:14px}
+.stat-label{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:6px}
+.stat-value{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500}
+.stat-value.acc{color:var(--acc)}.stat-value.amb{color:var(--amb)}
+.bf-drops{display:flex;gap:10px;flex-wrap:wrap}
+.bf-drops .tg{flex:1 1 auto;padding:12px 8px}
+.knowdrop{border-top:1px solid var(--line);padding-top:16px;margin-top:16px}
+.knowdrop p{font-size:14.5px;line-height:1.65;color:var(--ink)}
+.know-this{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));border-radius:0 12px 12px 0;margin-bottom:0}
+.know-this-tag{display:flex;align-items:center;gap:9px;margin-bottom:12px}
+.know-this-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:ktp 2.4s ease-in-out infinite}
+@keyframes ktp{0%,100%{opacity:1}50%{opacity:.45}}
+.know-this-label{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.15em;color:var(--acc)}
+.know-this-body{font-size:17.4px;line-height:1.55;color:var(--ink);margin-bottom:0;padding-bottom:0}
+@media (max-width:760px){.canvas-wrapper{aspect-ratio:auto;height:720px}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
-
 <div class="container">
-  <h2 class="sr-only">Budgeted Financial Statements Interactive</h2>
+<h2 class="sr-only">Interactive picture: a budgeted income statement, balance sheet and cash flow statement for one example trading business, redrawn as the share of credit sales and one extra plan change</h2>
+<h1>Budget a healthy profit and still run short of <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">cash</span></h1>
+<p class="intro">Before a quarter starts, a trading business drafts three budgeted financial statements: an Income Statement for expected profit, a Cash Flow Statement for expected cash in and out, and a Balance Sheet for where it expects to stand at the end. Raise the share of sales made on credit, then add one extra plan, and watch which figures move in each report.</p>
 
-  <h1>
-    Three reports from one <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">truth</span>
-  </h1>
-
-  <p class="intro">
-    The same business activity gets reported three different ways: profit in the income statement, balance sheet position, and actual cash. They tell different stories but must reconcile to the same underlying reality. Drag the slider to add transactions and watch how each statement responds.
-  </p>
-
-  <div class="card">
-    <div class="card-header">
-      <div class="card-label">Statement Flow</div>
-      <div class="live-tag" id="liveTag">Month 0</div>
-    </div>
-    <div class="card-hint">Watch how transactions flow through all three statements</div>
-
-    <div class="canvas-wrapper">
-      <canvas id="canvas"></canvas>
-      <div class="canvas-overlay" id="overlayTag">Starting position</div>
-    </div>
-
-    <div class="slider-wrapper">
-      <input type="range" min="0" max="100" value="0" class="bfs-slider" id="timeSlider">
-    </div>
-    <div class="slider-labels">
-      <span>Month 0</span>
-      <span>Month 6</span>
-      <span>Month 12</span>
-    </div>
-
-    <div class="stat-row">
-      <div class="stat">
-        <div class="stat-label">Net Profit</div>
-        <div class="stat-value acc" id="profitStat">$0</div>
-      </div>
-      <div class="stat">
-        <div class="stat-label">Cash Balance</div>
-        <div class="stat-value amb" id="cashStat">$50,000</div>
-      </div>
-    </div>
+<div class="card">
+  <div class="card-header"><span class="card-label">Budgeted financial statements</span><span class="live-tag" id="bfTag">Cash up $5,600</span></div>
+  <p class="card-hint">Raise credit sales. Add one extra plan. Follow the two linked figures.</p>
+  <div class="bf-q" data-for="bfEv">Extra plan this quarter</div>
+  <div class="bf-group" role="group" aria-label="Extra plan this quarter" id="bfEv">
+    <button class="tg" type="button" data-ev="none" aria-pressed="true">Nothing extra</button>
+    <button class="tg" type="button" data-ev="shelf" aria-pressed="false">Buy shelving</button>
+    <button class="tg" type="button" data-ev="draw" aria-pressed="false">Drawings</button>
+    <button class="tg" type="button" data-ev="loan" aria-pressed="false">New loan</button>
   </div>
-
-  <div class="card">
-    <div class="toggle-section">
-      <button class="toggle-btn active" id="btnIncome">Income Statement</button>
-      <button class="toggle-btn" id="btnBalance">Balance Sheet</button>
-    </div>
-    <div class="knowdrop" id="knowdrop">
-      The budgeted income statement aggregates all revenue and expense budgets using accrual accounting to show expected profit. Revenue comes from the sales budget, cost of goods sold from the COGS budget, and operating expenses from departmental expense budgets. The result is net profit before tax, which flows to equity in the balance sheet. This statement ignores timing of cash — it records transactions when earned or incurred, not when cash changes hands. A business can show strong profit while running out of cash if customers pay slowly or inventory ties up funds.
-    </div>
+  <p class="bf-evnote" id="bfEvNote"></p>
+  <div class="canvas-wrapper">
+    <canvas id="bfCanvas" role="img" aria-label="Budgeted income statement, balance sheet and cash flow statement"></canvas>
+    <div class="canvas-overlay" id="bfOverlay">Budget</div>
   </div>
-
-  <div class="knowthis">
-    <div class="knowthis-tag">Know This</div>
-    <div class="knowthis-body">
-      The <span style="color:var(--acc)">budgeted cash flow statement</span> converts accrual-based profit into anticipated cash movements by adjusting for <span style="color:var(--acc)">non-cash items like depreciation</span>, changes in working capital from receivables and payables, and all investing and financing activities.
-    </div>
-  </div>
-
-  <div class="footer">
-    <div class="pulse-dot"></div>
+  <p class="bf-foot">Example surf shop, budget for the coming quarter. All figures are budgeted, in dollars, with GST left out. Brackets mean money going out.</p>
+  <div class="bf-row"><span>Sales made on credit</span><b id="bfCV">40%</b></div>
+  <input type="range" class="bf-slider" id="bfC" aria-label="Sales made on credit" min="0" max="100" step="10" value="40">
+  <div class="bf-ticks" id="bfTicks"></div>
+  <div class="stat-row">
+    <div><div class="stat-label">Budgeted net profit</div><div class="stat-value acc" id="bfNP">$0</div></div>
+    <div><div class="stat-label">Budgeted net cash flow</div><div class="stat-value amb" id="bfNCF">$0</div></div>
+    <div><div class="stat-label">Accounts receivable</div><div class="stat-value acc" id="bfAR">$0</div></div>
+    <div><div class="stat-label">Balance check</div><div class="stat-value amb" id="bfChk">$0</div></div>
   </div>
 </div>
 
+<div class="card">
+  <div class="bf-q" data-for="bfDropG">Read about</div>
+  <div class="bf-drops" role="group" aria-label="Read about" id="bfDropG">
+    <button class="tg" type="button" data-drop="cf" aria-pressed="true">Cash flow</button>
+    <button class="tg" type="button" data-drop="is" aria-pressed="false">Income</button>
+    <button class="tg" type="button" data-drop="bs" aria-pressed="false">Balance sheet</button>
+  </div>
+  <div class="knowdrop"><p id="bfDrop"></p></div>
+</div>
+
+<div class="know-this">
+  <div class="know-this-tag"><span class="know-this-dot"></span><span class="know-this-label">Know This</span></div>
+  <p class="know-this-body">A budgeted <span style="color:var(--acc)">Income Statement</span> counts revenue when it is earned, a budgeted <span style="color:var(--acc)">Cash Flow Statement</span> counts cash when it moves, and the budgeted <span style="color:var(--acc)">Balance Sheet</span> holds the difference.</p>
+</div>
+</div>
 <script>
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-const slider = document.getElementById('timeSlider');
-const liveTag = document.getElementById('liveTag');
-const overlayTag = document.getElementById('overlayTag');
-const profitStat = document.getElementById('profitStat');
-const cashStat = document.getElementById('cashStat');
-const btnIncome = document.getElementById('btnIncome');
-const btnBalance = document.getElementById('btnBalance');
-const knowdrop = document.getElementById('knowdrop');
+(function(){
+var canvas=document.getElementById("bfCanvas"),ctx=canvas.getContext("2d");
+var dpr=Math.min(window.devicePixelRatio||1,2);
+var buf=document.createElement("canvas"),bctx=buf.getContext("2d");
+var CSS=getComputedStyle(document.documentElement);
+function cv(n){return CSS.getPropertyValue(n).trim();}
+var ACC=cv("--acc"),RGB=cv("--acc-rgb"),AMB=cv("--amb"),INK=cv("--ink"),DIM=cv("--ink-dim"),LINE=cv("--line");
+function acc(a){return "rgba("+RGB+","+a+")";}
+var MONO="'JetBrains Mono',monospace",SANS="'Geist',sans-serif";
 
-const dpr = Math.min(window.devicePixelRatio || 1, 2);
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d');
-
-let time = 0;
-let particles = [];
-
-function resize() {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+/* ---------- the budget: opening position and planned transactions for the quarter ---------- */
+var OPEN={cash:20000,ar:6000,inv:15000,equip:30000,ap:8000,loan:18000,capital:45000};
+var PLAN={sales:60000,cos:36000,purchases:36000,paySup:34000,wages:9000,rent:3000,interest:400,dep:1500,loanRepay:2000,collectShare:0.5};
+var EV={
+  none:{note:"No extra plans: only the normal trading for the quarter."},
+  shelf:{amt:6000,note:"Shelving costing $6,000, paid in cash on the last day of the quarter (depreciation on it starts next quarter)."},
+  draw:{amt:3000,note:"The owner takes $3,000 cash out of the business for personal use."},
+  loan:{amt:10000,note:"A new $10,000 loan is received in cash; its first repayment falls due more than 12 months away."}
+};
+function model(c,ev){
+  var credit=PLAN.sales*c, cashSales=PLAN.sales-credit;
+  var collected=OPEN.ar+credit*PLAN.collectShare;
+  var receipts=cashSales+collected;
+  var other=PLAN.wages+PLAN.rent+PLAN.interest;
+  var netOp=receipts-PLAN.paySup-other;
+  var inv=ev==="shelf"?-EV.shelf.amt:0;
+  var fin=-PLAN.loanRepay+(ev==="draw"?-EV.draw.amt:0)+(ev==="loan"?EV.loan.amt:0);
+  var ncf=netOp+inv+fin, cashEnd=OPEN.cash+ncf;
+  var gp=PLAN.sales-PLAN.cos, np=gp-other-PLAN.dep;
+  var ar=OPEN.ar+credit-collected;
+  var invEnd=OPEN.inv+PLAN.purchases-PLAN.cos;
+  var equip=OPEN.equip-PLAN.dep+(ev==="shelf"?EV.shelf.amt:0);
+  var ta=cashEnd+ar+invEnd+equip;
+  var ap=OPEN.ap+PLAN.purchases-PLAN.paySup;
+  var loanAll=OPEN.loan-PLAN.loanRepay;
+  var loanCur=Math.min(loanAll,4*PLAN.loanRepay), loanNon=loanAll-loanCur+(ev==="loan"?EV.loan.amt:0);
+  var cap=OPEN.capital+np-(ev==="draw"?EV.draw.amt:0);
+  var tle=ap+loanCur+loanNon+cap;
+  return {
+    IS:[["sales","Sales revenue",PLAN.sales,0],["cos","Cost of sales",-PLAN.cos,0],["gp","Gross profit",gp,1],["oth","Wages, rent, interest",-other,0],["dep","Depreciation",-PLAN.dep,0],["np","Net profit",np,2]],
+    BS:[["bcash","Cash at bank",cashEnd,0],["ar","Accounts receivable",ar,0],["inv","Inventory",invEnd,0],["eq","Equipment (net)",equip,0],["ta","Total assets",ta,1],["ap","Accounts payable",ap,0],["lc","Loan (current)",loanCur,0],["ln","Loan (non-current)",loanNon,0],["cap","Capital",cap,0],["tle","Liabilities + equity",tle,2]],
+    CF:[["rec","Receipts from customers",receipts,0],["psup","Payments to suppliers",-PLAN.paySup,0],["poth","Wages, rent, interest",-other,0],["nop","Net operating",netOp,1],["ninv","Net investing",inv,0],["nfin","Net financing",fin,0],["ncf","Net cash flow",ncf,1],["cs","Cash at start",OPEN.cash,0],["ce","Cash at end",cashEnd,2],["xdep","Depreciation: not a cash flow",null,3]],
+    np:np,ncf:ncf,ar:ar,check:ta-tle,cashEnd:cashEnd,credit:credit,collected:collected
+  };
 }
 
-function initParticles() {
-  particles = [];
-  for (let i = 0; i < 60; i++) {
-    particles.push({
-      x: Math.random(),
-      y: Math.random(),
-      vx: (Math.random() - 0.5) * 0.0003,
-      vy: (Math.random() - 0.5) * 0.0003,
-      phase: Math.random() * Math.PI * 2,
-      speed: 0.5 + Math.random() * 1.5
-    });
-  }
+/* ---------- state ---------- */
+var C=0.4,EVK="none",M=model(C,EVK);
+var disp={},prev={},hot={};
+function allRows(m){return m.IS.concat(m.BS,m.CF);}
+allRows(M).forEach(function(r){disp[r[0]]=r[2];});
+var raf=0,last=0;
+
+/* ---------- formatting ---------- */
+function commas(n){var s=String(Math.round(Math.abs(n)));return s.replace(/\B(?=(\d{3})+(?!\d))/g,",");}
+function acct(n){return n<-0.5?"("+commas(n)+")":commas(n);}
+function money(n){return (n<-0.5?"−$":"$")+commas(n);}
+
+/* ---------- canvas ---------- */
+function resize(){
+  var r=canvas.getBoundingClientRect();
+  if (!r.width || !r.height) return; /* f27c: refuse a zero measurement, keep the last good size */
+  canvas.width=Math.max(1,Math.round(r.width*dpr));canvas.height=Math.max(1,Math.round(r.height*dpr));
+  buf.width=canvas.width;buf.height=canvas.height;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  draw();
 }
-
-function draw() {
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, w, h);
-
-  const month = (slider.value / 100) * 12;
-  const progress = slider.value / 100;
-
-  // Three statement zones
-  const zoneW = w / 3;
-  const zoneH = h * 0.6;
-  const zoneY = h * 0.2;
-
-  // Income statement zone (left)
-  const incomeActive = progress * 100;
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  const incomeGrad = ctx.createRadialGradient(zoneW * 0.5, zoneY + zoneH * 0.5, 0, zoneW * 0.5, zoneY + zoneH * 0.5, zoneW * 0.45);
-  incomeGrad.addColorStop(0, `rgba(206,68,128,${0.3 * (incomeActive / 100)})`);
-  incomeGrad.addColorStop(0.6, `rgba(206,68,128,${0.08 * (incomeActive / 100)})`);
-  incomeGrad.addColorStop(1, 'rgba(206,68,128,0)');
-  ctx.fillStyle = incomeGrad;
-  ctx.fillRect(0, 0, zoneW, h);
-  ctx.restore();
-
-  // Balance sheet zone (center)
-  const balanceActive = Math.max(0, (progress - 0.15)) * 120;
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  const balanceGrad = ctx.createRadialGradient(zoneW * 1.5, zoneY + zoneH * 0.5, 0, zoneW * 1.5, zoneY + zoneH * 0.5, zoneW * 0.45);
-  balanceGrad.addColorStop(0, `rgba(250,199,117,${0.25 * Math.min(1, balanceActive / 100)})`);
-  balanceGrad.addColorStop(0.6, `rgba(250,199,117,${0.06 * Math.min(1, balanceActive / 100)})`);
-  balanceGrad.addColorStop(1, 'rgba(250,199,117,0)');
-  ctx.fillStyle = balanceGrad;
-  ctx.fillRect(zoneW, 0, zoneW, h);
-  ctx.restore();
-
-  // Cash flow zone (right)
-  const cashActive = Math.max(0, (progress - 0.3)) * 140;
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  const cashGrad = ctx.createRadialGradient(zoneW * 2.5, zoneY + zoneH * 0.5, 0, zoneW * 2.5, zoneY + zoneH * 0.5, zoneW * 0.45);
-  cashGrad.addColorStop(0, `rgba(206,68,128,${0.28 * Math.min(1, cashActive / 100)})`);
-  cashGrad.addColorStop(0.6, `rgba(206,68,128,${0.07 * Math.min(1, cashActive / 100)})`);
-  cashGrad.addColorStop(1, 'rgba(206,68,128,0)');
-  ctx.fillStyle = cashGrad;
-  ctx.fillRect(zoneW * 2, 0, zoneW, h);
-  ctx.restore();
-
-  // Update and draw particles
-  particles.forEach(p => {
-    p.x += p.vx;
-    p.y += p.vy;
-    if (p.x < 0 || p.x > 1) p.vx *= -1;
-    if (p.y < 0 || p.y > 1) p.vy *= -1;
-    p.x = Math.max(0, Math.min(1, p.x));
-    p.y = Math.max(0, Math.min(1, p.y));
-
-    const px = p.x * w;
-    const py = p.y * h;
-
-    const opacity = 0.4 + 0.3 * Math.sin(time * p.speed + p.phase);
-
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.fillStyle = `rgba(206,68,128,${opacity * 0.5})`;
-    ctx.beginPath();
-    ctx.arc(px, py, 1.5, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
+function line(a,b,c,d){ctx.beginPath();ctx.moveTo(a,b);ctx.lineTo(c,d);ctx.stroke();}
+function roundRect(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+var TITLES={IS:["Budgeted income statement","for the quarter"],BS:["Budgeted balance sheet","at the end of the quarter"],CF:["Budgeted cash flow statement","for the quarter"]};
+var LINKCOL={np:ACC,cap:ACC,ce:AMB,bcash:AMB};
+/* draw one statement inside a panel; returns the y of each row for the links */
+function panel(key,rows,x,y,w,rowH,fs,titleH){
+  var h=titleH+rows.length*rowH+8;
+  ctx.fillStyle="rgba(255,255,255,0.025)";ctx.strokeStyle=LINE;ctx.lineWidth=1;roundRect(x,y,w,h,10);ctx.fill();ctx.stroke();
+  var pad=Math.max(8,w*0.04);
+  ctx.textBaseline="alphabetic";ctx.textAlign="left";
+  ctx.font="500 "+Math.max(11,fs-0.5)+"px "+MONO;ctx.fillStyle=ACC;ctx.fillText(TITLES[key][0].toUpperCase(),x+pad,y+fs+6);
+  ctx.font="400 11px "+SANS;ctx.fillStyle=DIM;ctx.fillText(TITLES[key][1],x+pad,y+fs+6+14);
+  var ys={};
+  rows.forEach(function(r,i){
+    var cy=y+titleH+i*rowH+rowH*0.72,k=r[0],kind=r[3];
+    ys[k]=cy-fs*0.35;
+    if(kind===1||kind===2){ctx.strokeStyle=kind===2?"rgba(237,237,232,0.45)":"rgba(237,237,232,0.2)";ctx.lineWidth=1;line(x+w-pad-fs*4.6,cy-rowH*0.78,x+w-pad,cy-rowH*0.78);}
+    if(kind===3){
+      ctx.font="400 "+(fs-1)+"px "+SANS;ctx.fillStyle=DIM;ctx.textAlign="left";ctx.fillText(r[1],x+pad,cy);
+      var tw=ctx.measureText(r[1]).width;ctx.strokeStyle=DIM;ctx.lineWidth=1;line(x+pad,cy-fs*0.32,x+pad+tw,cy-fs*0.32);
+      return;
+    }
+    var moving=Math.abs(disp[k]-r[2])>0.5, glow=hot[k]||0;
+    if(glow>0.02){
+      ctx.save();ctx.globalCompositeOperation="lighter";ctx.fillStyle=acc(0.22*glow);
+      roundRect(x+3,cy-rowH*0.7,w-6,rowH*0.92,5);ctx.fill();ctx.restore();
+    }
+    ctx.font=(kind?"600 ":"400 ")+fs+"px "+SANS;
+    ctx.fillStyle=LINKCOL[k]||(kind?INK:"rgba(237,237,232,0.82)");ctx.textAlign="left";ctx.fillText(r[1],x+pad,cy);
+    ctx.font=(kind?"500 ":"400 ")+fs+"px "+MONO;ctx.textAlign="right";
+    ctx.fillStyle=LINKCOL[k]||(glow>0.02||moving?ACC:(kind?INK:"rgba(237,237,232,0.82)"));
+    ctx.fillText(acct(disp[k]),x+w-pad,cy);
   });
-
-  // Connection flows between zones
-  if (progress > 0.15) {
-    const flowOpacity = Math.min(1, (progress - 0.15) * 3);
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.strokeStyle = `rgba(206,68,128,${flowOpacity * 0.3})`;
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(zoneW * 0.9, h * 0.5);
-    ctx.quadraticCurveTo(zoneW * 1.2, h * 0.3, zoneW * 1.5, h * 0.5);
-    ctx.stroke();
-    ctx.restore();
-  }
-
-  if (progress > 0.3) {
-    const flowOpacity = Math.min(1, (progress - 0.3) * 3);
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.strokeStyle = `rgba(250,199,117,${flowOpacity * 0.3})`;
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(zoneW * 1.9, h * 0.5);
-    ctx.quadraticCurveTo(zoneW * 2.2, h * 0.7, zoneW * 2.5, h * 0.5);
-    ctx.stroke();
-    ctx.restore();
-  }
-
-  // Labels
-  ctx.font = '11px JetBrains Mono';
-  ctx.textAlign = 'center';
-
-  ctx.fillStyle = progress > 0 ? 'rgba(206,68,128,0.9)' : 'rgba(206,68,128,0.4)';
-  ctx.fillText('INCOME', zoneW * 0.5, h * 0.88);
-  ctx.fillText('STATEMENT', zoneW * 0.5, h * 0.93);
-
-  ctx.fillStyle = progress > 0.15 ? 'rgba(250,199,117,0.9)' : 'rgba(250,199,117,0.4)';
-  ctx.fillText('BALANCE', zoneW * 1.5, h * 0.88);
-  ctx.fillText('SHEET', zoneW * 1.5, h * 0.93);
-
-  ctx.fillStyle = progress > 0.3 ? 'rgba(206,68,128,0.9)' : 'rgba(206,68,128,0.4)';
-  ctx.fillText('CASH FLOW', zoneW * 2.5, h * 0.88);
-  ctx.fillStyle = progress > 0.3 ? 'rgba(206,68,128,0.9)' : 'rgba(206,68,128,0.4)';
-  ctx.fillText('STATEMENT', zoneW * 2.5, h * 0.93);
-
-  // Bloom
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  return {ys:ys,h:h};
+}
+function link(x1,y1,x2,y2,col,b1,b2){
+  ctx.save();ctx.strokeStyle=col;ctx.globalAlpha=0.85;ctx.lineWidth=1.6;ctx.setLineDash([4,3]);
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.bezierCurveTo(x1+b1,y1,x2+b2,y2,x2,y2);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle=col;ctx.beginPath();ctx.arc(x1,y1,3,0,Math.PI*2);ctx.fill();
+  var dir=b2>0?-1:1; /* arrowhead pointing into the balance sheet row */
+  ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-dir*7,y2-4);ctx.lineTo(x2-dir*7,y2+4);ctx.closePath();ctx.fill();
   ctx.restore();
-
-  // Vignette
-  const cx = w * 0.5;
-  const cy = h * 0.5;
-  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-
-  time += 0.016;
 }
-
-function updateStats() {
-  const progress = slider.value / 100;
-  const month = Math.round(progress * 12);
-  
-  // Profit accumulates over time
-  const profit = Math.round(progress * 48000);
-  profitStat.textContent = '$' + profit.toLocaleString();
-  
-  // Cash follows different pattern (starts at 50k, dips, then rises)
-  const cashBase = 50000;
-  const cashFlow = profit * 0.6 - Math.max(0, (progress - 0.3) * 12000);
-  const cash = Math.round(cashBase + cashFlow);
-  cashStat.textContent = '$' + cash.toLocaleString();
-  
-  liveTag.textContent = 'Month ' + month;
-  
-  if (progress === 0) {
-    overlayTag.textContent = 'Starting position';
-  } else if (progress < 0.33) {
-    overlayTag.textContent = 'Profit recorded, cash lagging';
-  } else if (progress < 0.67) {
-    overlayTag.textContent = 'Balance sheet updating';
+function fitFont(colW,maxFs){
+  var labels=["Receipts from customers","Liabilities + equity","Wages, rent, interest"],fs=maxFs;
+  while(fs>11){
+    var ok=true;
+    labels.forEach(function(l){ctx.font="600 "+fs+"px "+SANS;var a=ctx.measureText(l).width;ctx.font="500 "+fs+"px "+MONO;var b=ctx.measureText("(34,000)").width;if(a+b+fs*1.6>colW-Math.max(16,colW*0.08))ok=false;});
+    if(ok) break; fs-=0.5;
+  }
+  return fs;
+}
+function draw(){
+  var w=canvas.width/dpr,h=canvas.height/dpr;
+  ctx.clearRect(0,0,w,h);ctx.fillStyle="#000";ctx.fillRect(0,0,w,h);
+  var ov=document.getElementById("bfOverlay"),tagH=(ov&&ov.parentElement===canvas.parentElement)?44:6,top=h*0.04,bot=h-tagH-h*0.03;
+  var stacked=h>w*0.75;
+  var res={};
+  if(!stacked){
+    var g=Math.max(18,w*0.035),pw=(w-4*g)/3;
+    var rowsMax=10,titleH=40;
+    var rowH=Math.min(26,(bot-top-titleH-8)/rowsMax);
+    var fs=fitFont(pw,Math.min(13,rowH*0.62));
+    var xs=[g,2*g+pw,3*g+2*pw];
+    var hIS=titleH+6*rowH+8,hBS=titleH+10*rowH+8;
+    var yBS=top+(bot-top-hBS)/2;
+    res.IS=panel("IS",M.IS,xs[0],yBS,pw,rowH,fs,titleH);
+    res.BS=panel("BS",M.BS,xs[1],yBS,pw,rowH,fs,titleH);
+    res.CF=panel("CF",M.CF,xs[2],yBS,pw,rowH,fs,titleH);
+    link(xs[0]+pw-2,res.IS.ys.np,xs[1]+2,res.BS.ys.cap,ACC,g*0.9,-g*0.9);
+    link(xs[2]+2,res.CF.ys.ce,xs[1]+pw-2,res.BS.ys.bcash,AMB,-g*0.9,g*0.9);
   } else {
-    overlayTag.textContent = 'All statements reconciled';
+    var gx=Math.max(16,w*0.05),pw2=w-2*gx,gap=10,th=36;
+    var rh=Math.min(24,(bot-top-2*gap-3*(th+8))/26);
+    var fs2=fitFont(pw2,Math.min(13,Math.max(11,rh*0.64)));
+    var y=top;
+    res.IS=panel("IS",M.IS,gx,y,pw2,rh,fs2,th);y+=res.IS.h+gap;
+    res.BS=panel("BS",M.BS,gx,y,pw2,rh,fs2,th);y+=res.BS.h+gap;
+    res.CF=panel("CF",M.CF,gx,y,pw2,rh,fs2,th);
+    link(gx+2,res.IS.ys.np,gx+2,res.BS.ys.cap,ACC,-gx*0.9,-gx*0.9);
+    link(gx+pw2-2,res.CF.ys.ce,gx+pw2-2,res.BS.ys.bcash,AMB,gx*0.9,gx*0.9);
   }
+  /* bloom */
+  bctx.setTransform(1,0,0,1,0,0);bctx.clearRect(0,0,buf.width,buf.height);(canvas.width&&canvas.height)&&bctx.drawImage(canvas,0,0);
+  ctx.save();ctx.globalCompositeOperation="lighter";ctx.globalAlpha=0.38;ctx.filter="blur(7px)";(buf.width&&buf.height)&&ctx.drawImage(buf,0,0,w,h);ctx.restore();
+  /* vignette */
+  var cx=w/2,cy=h/2,vig=ctx.createRadialGradient(cx,cy,h*0.28,cx,cy,w*0.72);
+  vig.addColorStop(0,"rgba(0,0,0,0)");vig.addColorStop(1,"rgba(0,0,0,0.52)");ctx.fillStyle=vig;ctx.fillRect(0,0,w,h);
+}
+function step(now){
+  var dt=Math.min(now-(last||now),50);last=now;
+  var k=1-Math.pow(0.002,dt/500),moving=false;
+  allRows(M).forEach(function(r){
+    var key=r[0],t=r[2];if(t===null) return;
+    var d=t-disp[key];
+    if(Math.abs(d)>0.5){disp[key]+=d*k;moving=true;}else disp[key]=t;
+    if(hot[key]>0){hot[key]=Math.max(0,hot[key]-dt/900);if(hot[key]>0) moving=true;}
+  });
+  draw();
+  if(moving) raf=requestAnimationFrame(step); else {raf=0;last=0;}
+}
+function animate(){
+  if(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches){allRows(M).forEach(function(r){if(r[2]!==null) disp[r[0]]=r[2];hot[r[0]]=0;});draw();return;}
+  if(!raf){last=0;raf=requestAnimationFrame(step);}
 }
 
-slider.addEventListener('input', function() {
-  const val = this.value;
-  this.style.setProperty('--fill', val + '%');
-  updateStats();
-  draw();
-});
-
-btnIncome.addEventListener('click', function() {
-  btnIncome.classList.add('active');
-  btnBalance.classList.remove('active');
-  knowdrop.textContent = 'The budgeted income statement aggregates all revenue and expense budgets using accrual accounting to show expected profit. Revenue comes from the sales budget, cost of goods sold from the COGS budget, and operating expenses from departmental expense budgets. The result is net profit before tax, which flows to equity in the balance sheet. This statement ignores timing of cash — it records transactions when earned or incurred, not when cash changes hands. A business can show strong profit while running out of cash if customers pay slowly or inventory ties up funds.';
-});
-
-btnBalance.addEventListener('click', function() {
-  btnIncome.classList.remove('active');
-  btnBalance.classList.add('active');
-  knowdrop.textContent = 'The budgeted balance sheet projects financial position at period end by adjusting opening balances for all budgeted transactions. Asset accounts update for depreciation expense and new purchases, liability accounts adjust for loan payments and new borrowings, and equity increases by budgeted profit less any drawings. Each line item connects to specific subsidiary budgets — inventory to the purchases budget, accounts receivable to sales and collections, fixed assets to the capital expenditure budget. The balance sheet must balance: assets must equal liabilities plus equity after all adjustments flow through.';
-});
-
-window.addEventListener('resize', resize);
-window.addEventListener('load', function() {
-  resize();
-  initParticles();
-  slider.style.setProperty('--fill', '0%');
-  updateStats();
-  draw();
-  
-  function animate() {
-    draw();
-    requestAnimationFrame(animate);
-  }
+/* ---------- readouts, all from the model ---------- */
+var slider=document.getElementById("bfC");
+function update(){
+  var old={};allRows(M).forEach(function(r){old[r[0]]=r[2];});
+  M=model(C,EVK);
+  allRows(M).forEach(function(r){if(r[2]!==null&&old[r[0]]!==undefined&&Math.abs(old[r[0]]-r[2])>0.5) hot[r[0]]=1;});
+  var pct=Math.round(C*100);
+  document.getElementById("bfCV").textContent=pct+"%";
+  slider.style.setProperty("--fill",pct+"%");
+  document.getElementById("bfNP").textContent=money(M.np);
+  document.getElementById("bfNCF").textContent=money(M.ncf);
+  document.getElementById("bfAR").textContent=money(M.ar);
+  document.getElementById("bfChk").textContent=money(M.check);
+  document.getElementById("bfTag").textContent="Cash "+(M.ncf<0?"down ":"up ")+money(Math.abs(M.ncf));
+  document.getElementById("bfEvNote").textContent=EV[EVK].note;
+  var bal=Math.abs(M.check)<0.5?"balances":"does not balance";
+  document.getElementById("bfOverlay").textContent="Profit "+money(M.np)+" · net cash flow "+money(M.ncf)+" · balance sheet "+bal;
+  canvas.setAttribute("aria-label","Budgeted reports with "+pct+" percent of sales on credit. Income statement: net profit "+money(M.np)+". Cash flow statement: receipts from customers "+money(M.CF[0][2])+", net cash flow "+money(M.ncf)+", cash at end "+money(M.cashEnd)+". Balance sheet: accounts receivable "+money(M.ar)+", and it "+bal+".");
   animate();
-});
+}
+
+/* ticks at true positions */
+var ticks=document.getElementById("bfTicks");
+[0,25,50,75,100].forEach(function(t){var sp=document.createElement("span");sp.style.left=t+"%";sp.textContent=t+"%";ticks.appendChild(sp);});
+
+slider.addEventListener("input",function(){C=parseInt(slider.value,10)/100;update();});
+function wire(id,attr,fn){
+  var g=document.getElementById(id),bs=g.querySelectorAll("button");
+  bs.forEach(function(b){b.addEventListener("click",function(){bs.forEach(function(x){x.setAttribute("aria-pressed",x===b?"true":"false");});fn(b.getAttribute(attr));});});
+}
+wire("bfEv","data-ev",function(v){EVK=v;update();});
+
+var DROPS={
+  cf:"The budgeted Cash Flow Statement lists the cash the business expects to receive and pay during the period, sorted into operating, investing and financing activities. Receipts from customers are cash sales plus the money expected to be collected from accounts receivable, so the more that is sold on credit, the less cash arrives this quarter. Payments to suppliers are what will be paid to accounts payable, which is not the same figure as cost of sales. Buying shelving is an investing outflow, while loan repayments, new loans and owner drawings are financing. Depreciation never appears here, because no cash moves when an asset is depreciated.",
+  is:"The budgeted Income Statement reports the profit the business expects to earn over the period. It follows accrual accounting: sales revenue is recorded when the sale is made, whether or not the customer has paid yet, so changing the share of credit sales leaves it untouched. Cost of sales is the cost of the inventory expected to be sold, not the amount paid to suppliers. Depreciation is an expense here even though no cash leaves the business. Buying shelving, borrowing and drawings are not revenue or expenses, so none of them changes net profit.",
+  bs:"The budgeted Balance Sheet shows the assets, liabilities and owner’s equity the business expects at the end of the period, classified as current or non-current. It is where the other two reports meet: cash at the end of the Cash Flow Statement becomes Cash at bank, and net profit from the Income Statement is added to capital, less any drawings. Credit sales not yet collected sit in accounts receivable, which is how a business can show a good profit and a thin bank balance at the same time. Equipment is shown at its carrying amount, cost less accumulated depreciation. If assets do not equal liabilities plus owner’s equity, a figure has been carried across wrongly."
+};
+var dropBtns=document.querySelectorAll("[data-drop]");
+function setDrop(k){document.getElementById("bfDrop").textContent=DROPS[k];}
+dropBtns.forEach(function(b){b.addEventListener("click",function(){dropBtns.forEach(function(x){x.setAttribute("aria-pressed",x===b?"true":"false");});setDrop(b.getAttribute("data-drop"));});});
+setDrop("cf");
+
+/* a question label whose group the phone layer has turned into a picker is hidden, so it is never left orphaned */
+function syncQ(){document.querySelectorAll(".bf-q[data-for]").forEach(function(q){var g=document.getElementById(q.getAttribute("data-for"));var gone=!g||!g.isConnected||q.nextElementSibling!==g||!g.getClientRects().length;q.style.display=gone?"none":"";});}
+[0,500,1000,2000].forEach(function(t){setTimeout(syncQ,t);});
+window.addEventListener("resize",function(){resize();syncQ();});
+if(window.ResizeObserver){try{new ResizeObserver(function(){resize();}).observe(canvas.parentElement);}catch(e){}}
+update();hot={};resize();
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(function(){draw();});}
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'budgeted-financial-statements'},'*');}catch(e){}}

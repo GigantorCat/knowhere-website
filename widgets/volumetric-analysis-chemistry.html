@@ -192,12 +192,67 @@ canvas {
 }
 
 .tick-labels {
-  display: flex;
-  justify-content: space-between;
   font-family: 'JetBrains Mono', monospace;
   font-size: 9px;
   color: var(--ink-dim);
-  padding: 0 2px;
+  position: relative;
+  height: 14px;
+}
+.tick-labels > span {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+.titres {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.titre-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.titre-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  padding: 10px 14px;
+  border-radius: 11px;
+  border: 1px solid var(--acc);
+  background: rgba(62, 154, 214,.1);
+  color: var(--acc);
+  cursor: pointer;
+}
+.titre-btn:disabled { opacity: .45; cursor: default; }
+.titre-note {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  text-align: right;
+}
+.titre-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.titre-slot {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 8px 4px;
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+}
+.titre-slot .tl { font-size: 10px; color: var(--ink-dim); text-transform: uppercase; }
+.titre-slot .tv { font-size: 17px; margin-top: 4px; color: var(--ink); }
+.titre-verdict {
+  margin-top: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--amb);
+  text-align: center;
 }
 
 .stat-row {
@@ -309,14 +364,14 @@ canvas {
 <div class="container">
   <h1>A single dirty beaker ruins <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">precision</span></h1>
   
-  <p class="intro">In volumetric analysis, the entire calculation chain collapses if your primary standard isn't absolutely pure and stable — because every concentration you calculate flows from that one reference point. Watch how titre volume changes as you add standard solution, and see why concordance demands titres within 0.10 mL.</p>
+  <p class="intro">In volumetric analysis, the entire calculation chain collapses if your primary standard isn't absolutely pure and stable — because every concentration you calculate flows from that one reference point. Add standard solution past the equivalence point to see where the indicator actually changes, then record three titres and see why concordance demands titres within 0.10 mL.</p>
 
   <div class="card">
     <div class="card-header">
       <div class="card-label">Titration Simulation</div>
       <div class="live-tag" id="liveTag">Titrating</div>
     </div>
-    <div class="card-hint">Drag to add standard solution from the burette</div>
+    <div class="card-hint">0.100 M NaOH into 25.00 mL of 0.100 M HCl with phenolphthalein. Arrow keys add one drop (0.05 mL).</div>
     
     <div class="canvas-wrapper">
       <canvas id="titCanvas"></canvas>
@@ -325,11 +380,13 @@ canvas {
 
     <div class="slider-wrapper">
       <div class="slider-label">Burette Volume Delivered</div>
-      <input type="range" min="0" max="100" value="0" class="vol-slider" id="volSlider">
+      <input type="range" min="0" max="600" value="0" step="1" class="vol-slider" id="volSlider" aria-label="Burette volume delivered, mL">
       <div class="tick-labels">
-        <span>0.00</span>
-        <span>12.50</span>
-        <span>25.00</span>
+        <span style="left: calc(10px + (100% - 20px) * 0)">0.00</span>
+        <span style="left: calc(10px + (100% - 20px) * 0.3333)">10.00</span>
+        <span style="left: calc(10px + (100% - 20px) * 0.6667)">20.00</span>
+        <span style="left: calc(10px + (100% - 20px) * 0.8333)">25.00</span>
+        <span style="left: calc(10px + (100% - 20px) * 1)">30.00</span>
       </div>
     </div>
 
@@ -340,8 +397,21 @@ canvas {
       </div>
       <div class="stat">
         <div class="stat-label">Indicator</div>
-        <div class="stat-value" style="color:var(--amb)" id="indStat">Red</div>
+        <div class="stat-value" style="color:var(--amb)" id="indStat">Colourless</div>
       </div>
+    </div>
+
+    <div class="titres">
+      <div class="titre-head">
+        <button class="titre-btn" id="recBtn" disabled>Record titre</button>
+        <div class="titre-note" id="titreNote">Stop at the first pink, then record</div>
+      </div>
+      <div class="titre-row">
+        <div class="titre-slot"><div class="tl">Titre 1</div><div class="tv" id="t0">–</div></div>
+        <div class="titre-slot"><div class="tl">Titre 2</div><div class="tv" id="t1">–</div></div>
+        <div class="titre-slot"><div class="tl">Titre 3</div><div class="tv" id="t2">–</div></div>
+      </div>
+      <div class="titre-verdict" id="titreVerdict">Record three titres to check concordance</div>
     </div>
   </div>
 
@@ -385,7 +455,7 @@ let animFrame;
 
 const texts = {
   primary: "A primary standard must be pure (no impurities skewing your molar mass), stable (won't decompose or absorb water from air), and have a known, high molar mass (so weighing errors become negligible). Sodium carbonate (Na₂CO₃) is a classic example: it's stable, doesn't absorb moisture once dried, and you can weigh it accurately to prepare a solution of exact concentration. That exact concentration becomes your reference for every subsequent calculation — if it's wrong, every answer downstream is wrong. This is why glassware must be spotless and why you never estimate the standard's mass.",
-  concordance: "Concordant titres are results that agree within 0.10 mL — this tight window confirms your technique is reproducible and that you've hit the end point consistently. You discard rogue results (the first rough titre, or any outlier more than 0.10 mL away) and average only the concordant ones. Why 0.10 mL? Because burette graduations are typically 0.05 mL, and human reading error is around ±0.05 mL, so 0.10 mL captures genuine experimental variation without including sloppiness. If your titres scatter beyond this, your technique needs refinement — maybe you're overshooting the end point, or your swirling isn't uniform."
+  concordance: "Concordant titres are results that agree within 0.10 mL — this tight window confirms your technique is reproducible and that you've hit the end point consistently. You discard rogue results (the first rough titre, or any outlier more than 0.10 mL away) and average only the concordant ones. Why 0.10 mL? A burette is marked every 0.1 mL and read to the nearest 0.05 mL, so each reading is ±0.05 mL. A titre is the difference of two readings (start and finish), so it carries about ±0.10 mL, and 0.10 mL captures genuine reading variation without including sloppiness. If your titres scatter beyond this, your technique needs refinement — maybe you're overshooting the end point, or your swirling isn't uniform."
 };
 
 btn1.addEventListener('click', () => {
@@ -413,37 +483,74 @@ function resize() {
 window.addEventListener('resize', resize);
 resize();
 
-slider.addEventListener('input', (e) => {
-  volume = parseFloat(e.target.value) / 4; // 0-25 mL
-  const fillPct = (parseFloat(e.target.value) / 100) * 100;
-  slider.style.setProperty('--fill', fillPct + '%');
-  
+const recBtn = document.getElementById("recBtn");
+const titreNote = document.getElementById("titreNote");
+const titreVerdict = document.getElementById("titreVerdict");
+const titreEls = [0, 1, 2].map(i => document.getElementById("t" + i));
+let titres = [];
+
+/* model: 25.00 mL of 0.100 M HCl, titrated with 0.100 M NaOH, phenolphthalein (colourless below pH 8.2, pink from 8.2) */
+const V_ACID = 25.00, C_ACID = 0.100, C_BASE = 0.100, DROP = 0.05;
+const EQUIV = V_ACID * C_ACID / C_BASE;
+function pHAt(v) {
+  const nH = V_ACID * C_ACID - v * C_BASE; /* mmol of excess H+ (negative = excess OH-) */
+  const vt = V_ACID + v;
+  if (Math.abs(nH) < 1e-9) return 7.0;
+  if (nH > 0) return -Math.log10(nH / vt);
+  return 14 + Math.log10(-nH / vt);
+}
+function indicatorAt(pH) {
+  if (pH < 8.2) return "Colourless";
+  if (pH < 10) return "Pale pink";
+  return "Pink";
+}
+/* end point: the first drop at which the indicator turns pink, found from the model */
+let END_POINT = 0;
+for (let v = 0; v <= 30 + 1e-9; v += DROP) { if (pHAt(v) >= 8.2) { END_POINT = Math.round(v / DROP) * DROP; break; } }
+
+function update() {
+  const raw = parseFloat(slider.value);
+  volume = raw * DROP;
+  slider.style.setProperty("--fill", (raw / 600) * 100 + "%");
+  const pH = pHAt(volume);
+  const ind = indicatorAt(pH);
+  phStat.textContent = pH.toFixed(1);
+  indStat.textContent = ind;
   overlay.textContent = `Volume delivered: ${volume.toFixed(2)} mL`;
-  
-  // pH calculation (strong acid + strong base titration)
-  // Initial: 25.00 mL of 0.100 M HCl, titrating with 0.100 M NaOH
-  // Equivalence at 25.00 mL
-  if (volume < 24.90) {
-    // Before equivalence: excess acid
-    const excessH = (25.00 * 0.100 - volume * 0.100) / (25.00 + volume);
-    const pH = -Math.log10(excessH);
-    phStat.textContent = pH.toFixed(1);
-    indStat.textContent = 'Red';
-    liveTag.textContent = 'Before Equiv.';
-  } else if (volume >= 24.90 && volume <= 25.10) {
-    // At equivalence (within 0.10 mL)
-    phStat.textContent = '7.0';
-    indStat.textContent = 'Pink';
-    liveTag.textContent = 'At Equivalence';
+  if (volume < EQUIV - 1e-9) {
+    liveTag.textContent = "Before equivalence";
+  } else if (Math.abs(volume - EQUIV) < 1e-9) {
+    liveTag.textContent = "Equivalence: still colourless";
+  } else if (ind !== "Colourless" && volume < END_POINT + 0.5 * DROP) {
+    liveTag.textContent = `End point ${END_POINT.toFixed(2)} mL`;
   } else {
-    // After equivalence: excess base
-    const excessOH = (volume * 0.100 - 25.00 * 0.100) / (25.00 + volume);
-    const pOH = -Math.log10(excessOH);
-    const pH = 14 - pOH;
-    phStat.textContent = pH.toFixed(1);
-    indStat.textContent = 'Magenta';
-    liveTag.textContent = 'Past Equiv.';
+    liveTag.textContent = "Past the end point";
   }
+  recBtn.disabled = volume <= 0;
+}
+
+slider.addEventListener("input", update);
+
+function showTitres() {
+  titreEls.forEach((el, i) => { el.textContent = titres[i] !== undefined ? titres[i].toFixed(2) : "–"; });
+  if (titres.length < 3) {
+    titreVerdict.textContent = titres.length === 0 ? "Record three titres to check concordance" : `${3 - titres.length} more to go`;
+    return;
+  }
+  const spread = Math.max(...titres) - Math.min(...titres);
+  titreVerdict.textContent = spread <= 0.10 + 1e-9
+    ? `Spread ${spread.toFixed(2)} mL: concordant, average ${(titres.reduce((a, t) => a + t, 0) / 3).toFixed(2)} mL`
+    : `Spread ${spread.toFixed(2)} mL: not concordant, repeat`;
+}
+
+recBtn.addEventListener("click", () => {
+  if (volume <= 0) return;
+  titres.push(volume);
+  if (titres.length > 3) titres.shift();
+  showTitres();
+  titreNote.textContent = "Burette refilled: titrate again";
+  slider.value = 0; /* refill the burette for the next run */
+  update();
 });
 
 function draw() {
@@ -461,18 +568,19 @@ function draw() {
   const flaskY = h * 0.72;
   
   // Solution colour based on volume
+  const ind = indicatorAt(pHAt(volume));
   let solutionCol;
-  if (volume < 24.90) {
-    solutionCol = 'rgba(255,80,80,0.7)'; // red (acidic)
-  } else if (volume >= 24.90 && volume <= 25.10) {
-    solutionCol = 'rgba(255,150,180,0.75)'; // pink (neutral)
+  if (ind === "Colourless") {
+    solutionCol = "rgba(170,200,215,0.22)"; // clear
+  } else if (ind === "Pale pink") {
+    solutionCol = "rgba(255,150,190,0.55)";
   } else {
-    solutionCol = 'rgba(255,100,200,0.7)'; // magenta (basic)
+    solutionCol = "rgba(255,90,190,0.75)";
   }
   
-  // Fill level proportional to total volume (25 + added)
-  const totalVol = 25.00 + volume;
-  const fillLevel = Math.min((totalVol / 50) * flaskH, flaskH);
+  // Fill level proportional to total volume (25 + added), flask holds 60 mL
+  const totalVol = V_ACID + volume;
+  const fillLevel = Math.min((totalVol / 60) * flaskH, flaskH);
   
   ctx.save();
   ctx.fillStyle = solutionCol;
@@ -496,11 +604,11 @@ function draw() {
   ctx.strokeRect(burX, burY, burW, burH);
   
   // Burette fill (decreasing as volume increases)
-  const burFill = Math.max(0, (1 - volume / 25) * burH);
+  const burFill = Math.max(0, (1 - volume / 50) * burH); /* 50 mL burette */
   const burCol = 'rgba(62, 154, 214,0.5)';
   ctx.fillStyle = burCol;
   ctx.globalCompositeOperation = 'lighter';
-  ctx.fillRect(burX, burY, burW, burFill);
+  ctx.fillRect(burX, burY + burH - burFill, burW, burFill);
   ctx.globalCompositeOperation = 'source-over';
   
   // Drip animation if volume > 0
@@ -516,7 +624,7 @@ function draw() {
   }
   
   // Equivalence point marker line
-  const equivY = flaskY - (50 / 50) * flaskH;
+  const equivY = flaskY - ((V_ACID + EQUIV) / 60) * flaskH;
   ctx.save();
   ctx.strokeStyle = 'rgba(62, 154, 214,0.4)';
   ctx.lineWidth = 1;
@@ -556,6 +664,7 @@ function draw() {
   animFrame = requestAnimationFrame(draw);
 }
 
+update();
 draw();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Environmental Policy Instruments and Their Effectiveness — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Environmental policy instruments and their effectiveness — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -194,13 +194,15 @@ canvas {
 }
 
 .tick-labels {
-  display: flex;
-  justify-content: space-between;
+  position: relative;
+  height: 14px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 9px;
   color: var(--ink-dim);
   margin-top: 6px;
 }
+/* each tick sits at its true slider value: thumb centre runs from 10px to (width - 10px) */
+.tick-labels span { position: absolute; top: 0; left: calc(10px + (100% - 20px) * var(--at)); transform: translateX(-50%); white-space: nowrap; }
 
 .stat-row {
   display: grid;
@@ -339,16 +341,16 @@ canvas {
       <label class="slider-label" for="taxSlider">Tax per unit of pollution</label>
       <input type="range" id="taxSlider" class="tax-slider" min="0" max="100" value="0" step="1">
       <div class="tick-labels">
-        <span>$0</span>
-        <span>Optimal</span>
-        <span>$100</span>
+        <span style="--at:0">$0</span>
+        <span style="--at:0.5">Optimal ($50)</span>
+        <span style="--at:1">$100</span>
       </div>
     </div>
 
     <div class="stat-row">
       <div class="stat">
         <div class="stat-label">Deadweight Loss</div>
-        <div class="stat-value" id="dwlValue" style="color:var(--acc)">$420</div>
+        <div class="stat-value" id="dwlValue" style="color:var(--acc)">$2,000</div>
       </div>
       <div class="stat">
         <div class="stat-label">Net Social Benefit</div>
@@ -399,7 +401,12 @@ const AMB = CSS.getPropertyValue('--amb').trim();
 let animFrame;
 let currentTax = 0;
 const targetTax = () => parseFloat(slider.value);
-const optimalTax = 60;
+function MSC(q) { return 10 + 0.8 * q; }
+function MBA(q) { return 90 - 0.8 * q; }
+const OPT_Q = 50;                     /* where MSC(q) = MBA(q) */
+const OPT_TAX = MSC(OPT_Q);           /* $50: the optimal tax */
+function abateAt(t) { return Math.max(0, Math.min(100, (t - 10) / 0.8)); } /* firms abate until MSC = tax */
+function netBenefit(q) { return 80 * q - 0.8 * q * q; } /* area between MBA and MSC from 0 to q */
 
 function resize() {
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -421,6 +428,7 @@ function draw() {
 
   // Smooth tax transition
   currentTax += (targetTax() - currentTax) * 0.12;
+  if (Math.abs(targetTax() - currentTax) < 0.05) currentTax = targetTax(); /* settle exactly so readouts match the slider */
 
   ctx.fillStyle = '#000';
   ctx.fillRect(0, 0, w, h);
@@ -458,78 +466,39 @@ function draw() {
   ctx.lineTo(ox, oy - graphH);
   ctx.stroke();
 
-  // MSC curve (marginal social cost - rising)
-  const mscPath = [];
-  for (let q = 0; q <= 100; q += 2) {
-    const x = ox + (q / 100) * graphW;
-    const msc = 10 + q * 0.7; // Rising cost
-    const y = oy - (msc / 100) * graphH;
-    mscPath.push({ x, y });
+  /* One model for the curves, the dots and the readouts (q = units of pollution abated, 0-100; $ per unit).
+     Rising curve MSC(q) = 10 + 0.8q (cost of each extra unit of abatement).
+     Falling curve MBA(q) = 90 - 0.8q (benefit of each extra unit of abatement).
+     They cross at q* = 50, $50: that is the optimal tax. With a tax t, firms abate until MSC(q) = t. */
+  const xq = q => ox + (q / 100) * graphW;
+  const yv = v => oy - (v / 100) * graphH;
+  const taxQ = abateAt(currentTax);
+  const taxX = xq(taxQ), taxY = yv(MSC(taxQ));
+  const optX = xq(OPT_Q), optY = yv(OPT_TAX);
+
+  function curve(fn, colour, glow) {
+    const pts = [];
+    for (let q = 0; q <= 100; q += 2) pts.push({ x: xq(q), y: yv(fn(q)) });
+    ctx.strokeStyle = colour;
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    pts.forEach((p, k) => { if (k === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
+    ctx.stroke();
+    ctx.save();
+    ctx.strokeStyle = glow;
+    ctx.lineWidth = 5;
+    ctx.filter = "blur(6px)";
+    ctx.globalCompositeOperation = "lighter";
+    ctx.beginPath();
+    pts.forEach((p, k) => { if (k === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
+    ctx.stroke();
+    ctx.restore();
   }
+  curve(MSC, AMB, "rgba(250, 199, 117, 0.4)");
+  curve(MBA, "rgba(" + RGB + ", 0.9)", "rgba(" + RGB + ", 0.4)");
 
-  ctx.strokeStyle = AMB;
-  ctx.lineWidth = 2.5;
-  ctx.beginPath();
-  mscPath.forEach((p, i) => {
-    if (i === 0) ctx.moveTo(p.x, p.y);
-    else ctx.lineTo(p.x, p.y);
-  });
-  ctx.stroke();
-
-  // Glow for MSC
-  ctx.save();
-  ctx.strokeStyle = 'rgba(250, 199, 117, 0.4)';
-  ctx.lineWidth = 5;
-  ctx.filter = 'blur(6px)';
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.beginPath();
-  mscPath.forEach((p, i) => {
-    if (i === 0) ctx.moveTo(p.x, p.y);
-    else ctx.lineTo(p.x, p.y);
-  });
-  ctx.stroke();
-  ctx.restore();
-
-  // MBA curve (marginal benefit of abatement - falling from left)
-  const mbaPath = [];
-  for (let q = 0; q <= 100; q += 2) {
-    const x = ox + (q / 100) * graphW;
-    const mba = 80 - q * 0.6; // Falling benefit
-    const y = oy - Math.max(0, mba / 100) * graphH;
-    mbaPath.push({ x, y });
-  }
-
-  ctx.strokeStyle = 'rgba(' + RGB + ', 0.9)';
-  ctx.lineWidth = 2.5;
-  ctx.beginPath();
-  mbaPath.forEach((p, i) => {
-    if (i === 0) ctx.moveTo(p.x, p.y);
-    else ctx.lineTo(p.x, p.y);
-  });
-  ctx.stroke();
-
-  // Glow for MBA
-  ctx.save();
-  ctx.strokeStyle = 'rgba(' + RGB + ', 0.4)';
-  ctx.lineWidth = 5;
-  ctx.filter = 'blur(6px)';
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.beginPath();
-  mbaPath.forEach((p, i) => {
-    if (i === 0) ctx.moveTo(p.x, p.y);
-    else ctx.lineTo(p.x, p.y);
-  });
-  ctx.stroke();
-  ctx.restore();
-
-  // Optimal intersection (MBA = MSC)
-  const optQ = optimalTax;
-  const optX = ox + (optQ / 100) * graphW;
-  const optMSC = 10 + optQ * 0.7;
-  const optY = oy - (optMSC / 100) * graphH;
-
-  // Dashed line to optimal
-  ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+  // Dashed guide to the crossing (the optimum)
+  ctx.strokeStyle = "rgba(255,255,255,0.25)";
   ctx.lineWidth = 1;
   ctx.setLineDash([4, 4]);
   ctx.beginPath();
@@ -539,26 +508,17 @@ function draw() {
   ctx.stroke();
   ctx.setLineDash([]);
 
-  // Current tax level indicator
-  const taxQ = currentTax;
-  const taxX = ox + (taxQ / 100) * graphW;
-  const taxMSC = 10 + taxQ * 0.7;
-  const taxY = oy - (taxMSC / 100) * graphH;
-
-  // Tax line (horizontal from current tax)
+  // Tax line (horizontal at the tax) and the point where firms stop abating
   if (currentTax > 1) {
-    ctx.strokeStyle = 'rgba(' + RGB + ', 0.5)';
+    ctx.strokeStyle = "rgba(" + RGB + ", 0.5)";
     ctx.lineWidth = 2;
     ctx.setLineDash([6, 3]);
     ctx.beginPath();
-    ctx.moveTo(ox, taxY);
-    ctx.lineTo(ox + graphW, taxY);
+    ctx.moveTo(ox, yv(currentTax));
+    ctx.lineTo(ox + graphW, yv(currentTax));
     ctx.stroke();
     ctx.setLineDash([]);
-  }
 
-  // Current equilibrium dot
-  if (currentTax > 1) {
     ctx.fillStyle = ACC;
     ctx.shadowColor = ACC;
     ctx.shadowBlur = 12;
@@ -568,7 +528,7 @@ function draw() {
     ctx.shadowBlur = 0;
   }
 
-  // Optimal dot
+  // Optimal dot, on the crossing
   ctx.fillStyle = AMB;
   ctx.shadowColor = AMB;
   ctx.shadowBlur = 14;
@@ -577,25 +537,13 @@ function draw() {
   ctx.fill();
   ctx.shadowBlur = 0;
 
-  // Deadweight loss triangle (if not at optimal)
-  if (Math.abs(currentTax - optimalTax) > 2) {
-    ctx.fillStyle = 'rgba(' + RGB + ', 0.15)';
+  // Deadweight loss triangle, bounded by the two curves between q and q*
+  if (Math.abs(taxQ - OPT_Q) > 0.5) {
+    ctx.fillStyle = "rgba(" + RGB + ", 0.15)";
     ctx.beginPath();
-    if (currentTax < optimalTax) {
-      // Under-taxed: triangle to the right of current
-      const mbaAtCurrent = 80 - taxQ * 0.6;
-      const mbaY = oy - (mbaAtCurrent / 100) * graphH;
-      ctx.moveTo(taxX, taxY);
-      ctx.lineTo(optX, optY);
-      ctx.lineTo(taxX, mbaY);
-    } else {
-      // Over-taxed: triangle to the left of current
-      const mbaAtCurrent = 80 - taxQ * 0.6;
-      const mbaY = oy - (mbaAtCurrent / 100) * graphH;
-      ctx.moveTo(taxX, taxY);
-      ctx.lineTo(optX, optY);
-      ctx.lineTo(taxX, mbaY);
-    }
+    ctx.moveTo(taxX, taxY);
+    ctx.lineTo(optX, optY);
+    ctx.lineTo(taxX, yv(MBA(taxQ)));
     ctx.closePath();
     ctx.fill();
   }
@@ -603,10 +551,15 @@ function draw() {
   // Labels
   ctx.fillStyle = AMB;
   ctx.font = '11px "JetBrains Mono"';
-  ctx.fillText('MSC', ox + graphW - 40, oy - (10 + 100 * 0.7) / 100 * graphH - 8);
+  ctx.fillText("MSC", ox + graphW - 40, yv(MSC(100)) - 8);
 
   ctx.fillStyle = ACC;
-  ctx.fillText('MBA', ox + 10, oy - (80 - 0 * 0.6) / 100 * graphH - 8);
+  ctx.fillText("MBA", ox + 10, yv(MBA(0)) - 8);
+
+  ctx.fillStyle = "rgba(255,255,255,0.4)";
+  ctx.font = '10px "JetBrains Mono"';
+  ctx.fillText("Pollution abated", ox + graphW - 112, oy - 8);
+  ctx.fillText("$ per unit", ox - 40, oy - graphH - 10);
 
   // Bloom
   bctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -627,22 +580,22 @@ function draw() {
   ctx.fillStyle = vig;
   ctx.fillRect(0, 0, w, h);
 
-  // Update stats
-  const dwl = Math.abs(currentTax - optimalTax) * 7;
-  const nsb = Math.max(0, 420 - dwl);
-  dwlValue.textContent = '$' + Math.round(dwl);
-  nsbValue.textContent = '$' + Math.round(nsb);
+  // Update stats: areas between the curves (net benefit of abating up to q)
+  const nsb = netBenefit(taxQ);
+  const dwl = netBenefit(OPT_Q) - nsb;
+  dwlValue.textContent = "$" + Math.round(dwl).toLocaleString("en-AU");
+  nsbValue.textContent = "$" + Math.round(nsb).toLocaleString("en-AU");
 
-  taxLabel.textContent = 'Tax: $' + Math.round(currentTax) + '/unit';
+  taxLabel.textContent = "Tax: $" + Math.round(currentTax) + "/unit";
 
-  if (currentTax < 10) {
-    canvasTag.textContent = 'UNTAXED EQUILIBRIUM';
-  } else if (Math.abs(currentTax - optimalTax) < 5) {
-    canvasTag.textContent = 'OPTIMAL TAX • MSC = MBA';
-  } else if (currentTax < optimalTax) {
-    canvasTag.textContent = 'UNDER-TAXED • DWL FROM REMAINING EXTERNALITY';
+  if (taxQ === 0) {
+    canvasTag.textContent = "UNTAXED EQUILIBRIUM • NO ABATEMENT";
+  } else if (Math.abs(taxQ - OPT_Q) < 2.5) {
+    canvasTag.textContent = "OPTIMAL TAX • MSC = MBA";
+  } else if (taxQ < OPT_Q) {
+    canvasTag.textContent = "UNDER-TAXED • DWL FROM REMAINING EXTERNALITY";
   } else {
-    canvasTag.textContent = 'OVER-TAXED • DWL FROM EXCESS ABATEMENT';
+    canvasTag.textContent = "OVER-TAXED • DWL FROM EXCESS ABATEMENT";
   }
 
   animFrame = requestAnimationFrame(draw);

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Acute Responses to Exercise — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Acute responses to exercise — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -317,11 +317,11 @@ canvas {
 </style>
 
 <div class="container">
-  <h2 class="sr-only">Interactive visualization of acute physiological responses to exercise</h2>
+  <h2 class="sr-only">Interactive visualisation of acute physiological responses to exercise</h2>
   
   <h1>Your body shifts into exercise mode <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">immediately</span></h1>
   
-  <p class="intro">The cardiovascular, respiratory and muscular systems don't wait to respond — they react in the first seconds of movement, ramping up delivery and clearance before you've even noticed you're working. Slide the intensity slider to see how each system responds.</p>
+  <p class="intro">The cardiovascular, respiratory and muscular systems don't wait to respond — they react in the first seconds of movement, ramping up delivery and clearance before you've even noticed you're working. Slide the intensity slider to see the heart and lungs respond: heart rate, stroke volume, cardiac output, and breathing rate and depth.</p>
 
   <div class="card">
     <div class="card-header">
@@ -347,12 +347,20 @@ canvas {
 
     <div class="stat-row">
       <div class="stat">
-        <div class="stat-label">Heart Rate</div>
+        <div class="stat-label">Heart rate (bpm)</div>
         <div class="stat-value" id="hr-stat" style="color:var(--acc)">72</div>
       </div>
       <div class="stat">
-        <div class="stat-label">Cardiac Output</div>
+        <div class="stat-label">Stroke volume (mL)</div>
+        <div class="stat-value" id="sv-stat" style="color:var(--acc)">70</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Cardiac output (L/min)</div>
         <div class="stat-value" id="co-stat" style="color:var(--amb)">5.0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Breaths/min · depth (L)</div>
+        <div class="stat-value" id="br-stat" style="color:var(--amb)">12 · 0.5</div>
       </div>
     </div>
   </div>
@@ -373,7 +381,7 @@ canvas {
   <div class="know-this">
     <div class="know-this-tag">Know This</div>
     <p class="know-this-body">
-      Acute responses — <span style="color:var(--acc)">heart rate</span>, <span style="color:var(--acc)">breathing rate</span>, <span style="color:var(--acc)">muscle temperature</span> — happen within seconds of starting exercise and return to baseline soon after you stop.
+      Acute responses — <span style="color:var(--acc)">heart rate</span>, <span style="color:var(--acc)">stroke volume</span>, <span style="color:var(--acc)">breathing rate and depth</span> — happen within seconds of starting exercise and return to baseline soon after you stop.
     </p>
   </div>
 </div>
@@ -389,6 +397,18 @@ const intensityTag = document.getElementById('intensity-tag');
 const overlayTag = document.getElementById('overlay-tag');
 const hrStat = document.getElementById('hr-stat');
 const coStat = document.getElementById('co-stat');
+const svStat = document.getElementById('sv-stat');
+const brStat = document.getElementById('br-stat');
+
+/* one model drives the drawing and every readout */
+function model(i) {
+  const hr = 72 + 108 * i;                          /* 72 to 180 bpm */
+  const sv = 70 + 50 * Math.min(1, i / 0.5);        /* mL per beat, plateaus near half intensity */
+  const co = hr * sv / 1000;                        /* L/min */
+  const rr = 12 + 33 * i;                           /* breaths per minute */
+  const tv = 0.5 + 2.0 * (1 - Math.exp(-3 * i)) / (1 - Math.exp(-3)); /* litres per breath */
+  return { hr, sv, co, rr, tv };
+}
 const toggleBtns = document.querySelectorAll('.toggle-btn');
 const knowdropText = document.getElementById('knowdrop-text');
 
@@ -429,8 +449,9 @@ const particles = Array.from({ length: 80 }, () => ({
 function draw() {
   const w = canvas.width / Math.min(window.devicePixelRatio || 1, 2);
   const h = canvas.height / Math.min(window.devicePixelRatio || 1, 2);
-  const cx = w / 2;
-  const cy = h / 2;
+  const cx = w * 0.32;
+  const cy = h * 0.4;
+  const m = model(intensity);
 
   ctx.fillStyle = '#000';
   ctx.fillRect(0, 0, w, h);
@@ -482,8 +503,8 @@ function draw() {
   });
 
   // Central heart pulse visualization
-  const heartbeat = Math.sin(time * (3 + intensity * 4)) * 0.5 + 0.5;
-  const baseR = Math.min(w, h) * 0.12;
+  const heartbeat = Math.sin(time * 2 * Math.PI * m.hr / 60) * 0.5 + 0.5;
+  const baseR = Math.min(w, h) * 0.1;
   const pulseR = baseR * (1 + heartbeat * intensity * 0.4);
   
   // Heart glow rings
@@ -523,7 +544,7 @@ function draw() {
   for (let i = 0; i < lineCount; i++) {
     const angle = (i / lineCount) * Math.PI * 2 + time * 0.3;
     const dist = pulseR * 2 + Math.sin(time * 2 + i) * 10;
-    const endDist = dist + 40 + intensity * 60;
+    const endDist = dist + 20 + intensity * 30;
     
     const sx = cx + Math.cos(angle) * dist;
     const sy = cy + Math.sin(angle) * dist;
@@ -543,6 +564,38 @@ function draw() {
     ctx.stroke();
     ctx.restore();
   }
+
+  // Lungs: breathing rate sets the rhythm, depth sets the size
+  const lx = w * 0.72;
+  const ly = h * 0.4;
+  const breath = 0.5 - 0.5 * Math.cos(time * 2 * Math.PI * m.rr / 60);
+  const fill = (0.5 + (m.tv - 0.5) * breath) / 2.5;
+  const lr = Math.min(w, h) * (0.13 + 0.11 * fill);
+  ctx.save();
+  ctx.strokeStyle = 'rgba(237,237,232,0.55)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(lx, ly - lr * 1.6);
+  ctx.lineTo(lx, ly - lr * 0.6);
+  ctx.stroke();
+  for (const side of [-1, 1]) {
+    const g = ctx.createRadialGradient(lx + side * lr * 0.6, ly, 0, lx + side * lr * 0.6, ly, lr * 1.2);
+    g.addColorStop(0, `rgba(250,199,117,${0.25 + 0.45 * fill})`);
+    g.addColorStop(1, 'rgba(250,199,117,0.05)');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.ellipse(lx + side * lr * 0.62, ly, lr * 0.5, lr * 0.95, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(250,199,117,0.8)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  }
+  ctx.restore();
+  ctx.font = '10px "JetBrains Mono", monospace';
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#8C9389';
+  ctx.fillText("HEART", cx, h * 0.74);
+  ctx.fillText("LUNGS", lx, h * 0.74);
 
   // Bloom effect
   bctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -570,27 +623,35 @@ slider.addEventListener('input', (e) => {
   slider.style.setProperty('--fill', val + '%');
   intensity = val / 100;
   
-  // Update tags
+  updateReadouts();
+});
+
+function updateReadouts() {
+  const m = model(intensity);
   let tag, overlay;
-  if (val < 35) {
-    tag = 'Resting';
-    overlay = 'Baseline state';
-  } else if (val < 70) {
-    tag = 'Moderate';
-    overlay = 'Systems ramping';
+  if (m.hr < 80) {
+    tag = "Resting";
+    overlay = "Systems at baseline";
+  } else if (intensity < 0.35) {
+    tag = "Light";
+    overlay = "Systems responding";
+  } else if (intensity < 0.7) {
+    tag = "Moderate";
+    overlay = "Systems ramping";
+  } else if (intensity < 0.95) {
+    tag = "Vigorous";
+    overlay = "Working hard";
   } else {
-    tag = 'Vigorous';
-    overlay = 'Maximum output';
+    tag = "Maximal";
+    overlay = "Near maximum output";
   }
   intensityTag.textContent = tag;
   overlayTag.textContent = overlay;
-  
-  // Update stats
-  const hr = Math.round(72 + intensity * 108); // 72 → 180
-  const co = (5.0 + intensity * 20).toFixed(1); // 5.0 → 25.0 L/min
-  hrStat.textContent = hr;
-  coStat.textContent = co;
-});
+  hrStat.textContent = Math.round(m.hr);
+  svStat.textContent = Math.round(m.sv);
+  coStat.textContent = m.co.toFixed(1);
+  brStat.textContent = Math.round(m.rr) + ' · ' + m.tv.toFixed(1);
+}
 
 toggleBtns.forEach(btn => {
   btn.addEventListener('click', () => {
@@ -601,6 +662,7 @@ toggleBtns.forEach(btn => {
   });
 });
 
+updateReadouts();
 draw();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */

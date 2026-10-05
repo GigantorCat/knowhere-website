@@ -1,642 +1,318 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Impacts and Management Responses — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Impacts and management responses — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
-
-:root {
-  --bg: #0B0D0C;
-  --bg2: #12160F;
-  --acc: #7870C0;
-  --ag: rgba(120, 112, 192, .7);
-  --ag1: rgba(120, 112, 192, .12);
-  --ag2: rgba(120, 112, 192, .45);
-  --amb: #FAC775;
-  --ink: #EDEDE8;
-  --ink-dim: #8C9389;
-  --line: #262B26;
+:root{
+  --bg:#0B0D0C;--bg2:#12160F;--acc:#7870C0;--acc-rgb:120, 112, 192;
+  --ag:rgba(var(--acc-rgb),.7);--ag1:rgba(var(--acc-rgb),.12);--ag2:rgba(var(--acc-rgb),.45);
+  --amb:#FAC775;--ink:#EDEDE8;--ink-dim:#8C9389;--line:#262B26;
 }
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
-  font-family: 'Geist', sans-serif;
-  min-height: 100vh;
-  padding: 40px 16px 0;
-  color: var(--ink);
-}
-
-.container {
-  max-width: 720px;
-  margin: 0 auto;
-}
-
-h1 {
-  font-size: clamp(26px, 6.5vw, 44px);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
-  margin-bottom: 14px;
-}
-
-.intro {
-  font-size: 15.5px;
-  font-weight: 400;
-  color: var(--ink-dim);
-  line-height: 1.55;
-  max-width: 58ch;
-  margin-bottom: 32px;
-}
-
-.card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 18px;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.card-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  color: white;
-}
-
-.live-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--acc);
-}
-
-.card-hint {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--ink-dim);
-  margin-bottom: 14px;
-}
-
-.canvas-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16/9;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
-  box-shadow: inset 0 0 0 1px var(--ag1);
-  margin-bottom: 16px;
-}
-
-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.canvas-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(4px);
-  padding: 9px 16px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  text-transform: uppercase;
-  color: var(--acc);
-  text-align: center;
-  letter-spacing: 0.05em;
-}
-
-.slider-row {
-  margin-bottom: 12px;
-}
-
-.slider-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 10px;
-  display: block;
-}
-
-.lc-slider {
-  width: 100%;
-  height: 4px;
-  -webkit-appearance: none;
-  appearance: none;
-  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
-  border-radius: 3px;
-  outline: none;
-  cursor: pointer;
-}
-
-.lc-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow .15s;
-}
-
-.lc-slider::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.lc-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow .15s;
-}
-
-.lc-slider::-moz-range-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.tick-labels {
-  display: flex;
-  justify-content: space-between;
-  padding: 0 10px;
-  margin-top: 6px;
-}
-
-.tick-labels span {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--ink-dim);
-}
-
-.stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-}
-
-.stat {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.stat-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-}
-
-.stat-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 24px;
-  font-weight: 500;
-}
-
-.stat:first-child .stat-value {
-  color: var(--acc);
-}
-
-.stat:last-child .stat-value {
-  color: var(--amb);
-}
-
-.toggle-section {
-  border-top: 1px solid var(--line);
-  padding-top: 16px;
-}
-
-.toggle-buttons {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.toggle-btn {
-  flex: 1;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14.5px;
-  padding: 12px;
-  border-radius: 11px;
-  background: #12160F;
-  border: 1px solid var(--line);
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: all .2s;
-}
-
-.toggle-btn.active {
-  background: rgba(120,112,192,.1);
-  border: 1px solid var(--acc);
-  color: var(--acc);
-  box-shadow: 0 0 22px rgba(120,112,192,.18);
-}
-
-.knowdrop-divider {
-  height: 1px;
-  background: var(--line);
-  margin-bottom: 16px;
-}
-
-.knowdrop {
-  font-size: 14.5px;
-  font-weight: 400;
-  line-height: 1.65;
-  color: var(--ink);
-}
-
-.know-this {
-  border-left: 3px solid var(--acc);
-  padding: 16px 18px;
-  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
-  border-radius: 0 12px 12px 0;
-  margin-top: 18px;
-  margin-bottom: 0;
-}
-
-.know-this-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--acc);
-  margin-bottom: 10px;
-  display: block;
-}
-
-.know-this-body {
-  font-size: 17.4px;
-  font-weight: 400;
-  line-height: 1.55;
-  color: var(--ink);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
+.im *{box-sizing:border-box}
+body{margin:0;background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C 55%);font-family:'Geist',sans-serif;min-height:100vh;padding:40px 16px 0;box-sizing:border-box;color:var(--ink)}
+.im{max-width:720px;margin:0 auto;color:var(--ink)}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.im h1{font-family:'Geist',sans-serif;font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin:0 0 14px}
+.im .intro{font-size:15.5px;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin:0 0 24px}
+.im .card{background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);margin-bottom:20px}
+.im .card.sec{border-radius:14px}
+.im .hdr{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.im .hdr-l{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;color:#fff}
+.im .live{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--acc)}
+.im .hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin:6px 0 12px}
+.im .qlab{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin:0 0 6px}
+.im .tg{display:flex;gap:10px;margin:0 0 12px;flex-wrap:wrap}
+.im .tg button{flex:1 1 0;min-width:0;font-family:'JetBrains Mono',monospace;font-size:12px;padding:10px 8px;border-radius:999px;background:#12160F;border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:all .2s;white-space:nowrap}
+.im .tg button[aria-pressed="true"]{background:rgba(var(--acc-rgb),.1);border:1px solid var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.im .wrap{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1)}
+.im .wrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.im .ovl{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:14px;text-transform:none;color:var(--acc);text-align:center}
+.im .sl{margin-top:16px}
+.im .im-row{display:flex;justify-content:space-between;align-items:baseline;font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:8px}
+.im .im-row b{font-weight:500;color:var(--acc);font-size:12px;text-transform:none}
+.im .im-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;background:linear-gradient(90deg,var(--acc) var(--fill,0%),#23291f var(--fill,0%));outline:none;margin:6px 0}
+.im .im-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.im .im-slider::-webkit-slider-thumb:hover{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.im .im-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag)}
+.im .ticks{position:relative;height:14px;margin:2px 10px 0}
+.im .ticks span{position:absolute;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink-dim);white-space:nowrap}
+.im .stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;border-top:1px solid var(--line);margin-top:16px;padding-top:14px}
+.im .st-l{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim)}
+.im .st-v{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500;margin-top:4px}
+.im .st-v.a{color:var(--acc)}.im .st-v.b{color:var(--amb)}
+.im .st-s{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-dim);margin-top:3px}
+.im .kd{border-top:1px solid var(--line);padding-top:16px;font-size:14.5px;line-height:1.65;color:var(--ink);margin:0}
+.im .kt{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));border-radius:0 12px 12px 0;margin:0;padding-bottom:16px}
+.im .kt-tag{display:flex;align-items:center;gap:9px;font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:0.15em;color:var(--acc);margin-bottom:10px}
+.im .kt-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:impulse 2.4s ease-in-out infinite}
+.im .kt p{font-size:17.4px;line-height:1.55;color:var(--ink);margin:0}
+@keyframes impulse{0%,100%{opacity:1}50%{opacity:.45}}
+@media (prefers-reduced-motion:reduce){.im .kt-dot{animation:none}.im .tg button{transition:none}}
+.im .legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin:10px 0 0;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-dim)}
+.im .legend span{display:inline-flex;align-items:center;gap:6px}
+.im .legend i{display:inline-block;width:10px;height:10px;border-radius:2px}
+.im .sw-fuel{background:rgba(var(--acc-rgb),.6)}
+.im .sw-early{background:var(--ink-dim)}
+.im .sw-late{background:var(--amb)}
+.im .sw-river{background:var(--line);box-shadow:inset 0 0 0 1px var(--ink-dim)}
+.im .cap{font-size:13.5px;line-height:1.5;color:var(--ink-dim);margin:12px 0 0}
+.im .cap b{color:var(--ink);font-weight:500}
+.im .tg.four button{flex:1 1 calc(50% - 10px)}
+@media (min-width:520px){.im .tg.four button{flex:1 1 0}}
+.im .kt{margin-bottom:0}
+@media (max-width:440px){.im .ovl{font-size:12px;padding:8px 8px;white-space:nowrap}}
 </style>
 
-<h2 class="sr-only">Land Cover Change: Impacts and Management Responses Interactive</h2>
-
-<div class="container">
-  <h1>Every response creates <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">new impacts</span></h1>
-  
-  <p class="intro">Management strategies don't just solve problems — they trigger cascading effects across environmental, social, and economic systems. Strong answers evaluate whether the cure was worse than the disease. Drag the slider to see how a single response type ripples through all three impact domains.</p>
+<div class="im" id="imRoot">
+  <h2 class="sr-only">Managing late dry-season wildfire in West Arnhem Land: a model plateau where early cool burns at the scale of one estate or the whole plateau change how much land hot late fires reach</h2>
+  <h1>The best fire plan here starts with more <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">fire</span></h1>
+  <p class="intro">In the tropical savanna of West Arnhem Land, the big challenge is hot wildfire late in the dry season, with impacts on the land, its people and the economy. Aboriginal ranger groups manage it with small, cool burns early in the year, and whether that response works depends on the scale they burn at. Add early burns, then switch between one estate and the whole plateau and watch how much country the late fires reach.</p>
 
   <div class="card">
-    <div class="card-header">
-      <span class="card-label">Response Cascade Model</span>
-      <span class="live-tag" id="responseTag">Prevention Selected</span>
-    </div>
-    <div class="card-hint">Drag to shift from prevention → mitigation → restoration</div>
-    
-    <div class="canvas-wrapper">
-      <canvas id="cascadeCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">Prevention: blocks initial change</div>
+    <div class="hdr"><span class="hdr-l">Model plateau, one dry season</span><span class="live" id="liveTag">Late fire 65%</span></div>
+    <div class="hint">Add early burns. Then switch the scale.</div>
+
+    <div class="qlab" id="qScale">Where the early burns go</div>
+    <div class="tg" role="group" aria-label="Choose the scale of the early burns" aria-describedby="qScale" id="scaleGroup">
+      <button type="button" data-scale="local" aria-pressed="false">One estate</button>
+      <button type="button" data-scale="regional" aria-pressed="true">Whole plateau</button>
     </div>
 
-    <div class="slider-row">
-      <label class="slider-label" for="responseSlider">Response Type</label>
-      <input type="range" id="responseSlider" class="lc-slider" min="0" max="100" value="0" style="--fill: 0%">
-      <div class="tick-labels">
-        <span>Prevention</span>
-        <span>Mitigation</span>
-        <span>Restoration</span>
+    <div class="wrap" id="imWrap">
+      <canvas id="imCanvas" role="img" aria-label="Schematic map of a savanna plateau with a coastline to the north, two rivers, early burn patches and the land reached by late dry-season fire"></canvas>
+      <div class="ovl" id="imOvl" aria-live="polite">6 burns · whole plateau · late fire 42%</div>
+    </div>
+    <div class="legend" aria-hidden="true">
+      <span><i class="sw-fuel"></i>Unburnt grass</span>
+      <span><i class="sw-early"></i>Cool early burn</span>
+      <span><i class="sw-late"></i>Hot late fire</span>
+      <span><i class="sw-river"></i>River (fire stops)</span>
+    </div>
+
+    <div class="sl">
+      <div class="im-row"><span>Early burns</span><b id="burnV">6 patches</b></div>
+      <input type="range" class="im-slider" id="burnS" aria-label="Number of early dry-season burn patches" min="0" max="12" step="1" value="6">
+      <div class="ticks" aria-hidden="true">
+        <span style="left:0%">0</span><span style="left:25%">3</span><span style="left:50%">6</span><span style="left:75%">9</span><span style="left:100%">12</span>
       </div>
     </div>
 
     <div class="stats">
-      <div class="stat">
-        <span class="stat-label">Active Impacts</span>
-        <span class="stat-value" id="impactCount">3</span>
-      </div>
-      <div class="stat">
-        <span class="stat-label">Effectiveness</span>
-        <span class="stat-value" id="effectiveness">High</span>
-      </div>
+      <div><div class="st-l">Land burnt late</div><div class="st-v a" id="stLate">42%</div><div class="st-s">hot fires, end of the dry</div></div>
+      <div><div class="st-l">Late fire cut by</div><div class="st-v b" id="stCut">35%</div><div class="st-s">against no early burns</div></div>
     </div>
+    <p class="cap" id="imCap"></p>
   </div>
 
-  <div class="card">
-    <div class="toggle-buttons">
-      <button class="toggle-btn active" data-scale="local">Local</button>
-      <button class="toggle-btn" data-scale="national">National</button>
-      <button class="toggle-btn" data-scale="international">International</button>
+  <div class="card sec">
+    <div class="hdr" style="margin-bottom:10px"><span class="hdr-l">Impacts and management responses</span></div>
+    <div class="qlab" id="qLens">Look at the place through</div>
+    <div class="tg four" role="group" aria-label="Choose what the paragraph explains" aria-describedby="qLens" id="lensGroup">
+      <button type="button" data-lens="challenge" aria-pressed="true">Challenge</button>
+      <button type="button" data-lens="opportunity" aria-pressed="false">Opportunity</button>
+      <button type="button" data-lens="response" aria-pressed="false">Response</button>
+      <button type="button" data-lens="judge" aria-pressed="false">How well?</button>
     </div>
-    
-    <div class="knowdrop-divider"></div>
-    
-    <p class="knowdrop" id="scaleText">Local responses (community reforestation, urban greening, catchment restoration) are highly adaptive and directly accountable to affected populations, but they struggle with coordination across boundaries and often lack funding. A single council area protecting riparian vegetation can't control upstream deforestation. Effectiveness depends on whether the scale matches the process — local erosion control works; local climate mitigation doesn't. Always ask: does this scale match the system being changed?</p>
+    <p class="kd" id="imKd"></p>
   </div>
 
-  <div class="know-this">
-    <span class="know-this-tag">Know This</span>
-    <p class="know-this-body">Every <span style="color:var(--acc)">management response</span> generates its own set of <span style="color:var(--acc)">environmental, social, and economic impacts</span> — evaluation isn't optional, it's the geographical insight that separates description from analysis.</p>
+  <div class="kt">
+    <div class="kt-tag"><span class="kt-dot"></span>Know This</div>
+    <p>A management response is judged by whether it shrank the challenge, and early burning only cuts <span style="color:var(--acc)">late dry-season fire</span> when it works at the <span style="color:var(--acc)">same scale</span> the fire travels: <span style="color:var(--acc)">the whole landscape</span>.</p>
   </div>
 </div>
 
 <script>
-const canvas = document.getElementById('cascadeCanvas');
-const ctx = canvas.getContext('2d', { alpha: false });
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d', { alpha: false });
-const dpr = Math.min(window.devicePixelRatio || 1, 2);
+(function(){
+  "use strict";
+  var root=document.getElementById("imRoot");
+  var canvas=document.getElementById("imCanvas"), wrap=document.getElementById("imWrap");
+  var ctx=canvas.getContext("2d");
+  var dpr=Math.min(window.devicePixelRatio||1,2);
+  var buf=document.createElement("canvas"), bctx=buf.getContext("2d");
+  var CSS=getComputedStyle(document.documentElement);
+  function cv(n){return CSS.getPropertyValue(n).trim();}
+  var ACC=cv("--acc"), RGB=cv("--acc-rgb"), AMB=cv("--amb"), DIM=cv("--ink-dim"), LINE=cv("--line"), INK=cv("--ink"), BG2=cv("--bg2");
+  function hexRgb(h){h=h.replace("#","");if(h.length===3){h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];}var n=parseInt(h,16);return ((n>>16)&255)+","+((n>>8)&255)+","+(n&255);}
+  var AMBR=hexRgb(AMB), DIMR=hexRgb(DIM), INKR=hexRgb(INK);
+  var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-const slider = document.getElementById('responseSlider');
-const responseTag = document.getElementById('responseTag');
-const canvasOverlay = document.getElementById('canvasOverlay');
-const impactCount = document.getElementById('impactCount');
-const effectiveness = document.getElementById('effectiveness');
-
-const toggleBtns = document.querySelectorAll('.toggle-btn');
-const scaleText = document.getElementById('scaleText');
-
-const scaleData = {
-  local: "Local responses (community reforestation, urban greening, catchment restoration) are highly adaptive and directly accountable to affected populations, but they struggle with coordination across boundaries and often lack funding. A single council area protecting riparian vegetation can't control upstream deforestation. Effectiveness depends on whether the scale matches the process — local erosion control works; local climate mitigation doesn't. Always ask: does this scale match the system being changed?",
-  national: "National strategies (protected area networks, carbon pricing, agricultural subsidies) have legislative power and funding, but they're politically vulnerable and often too rigid for local contexts. Australia's carbon farming initiative incentivises land-use change, but its effectiveness varies wildly by region — what works in temperate woodlands fails in arid rangelands. National policy can ignore Indigenous land management that's worked for millennia. Evaluate whether the strategy actually reaches the ground, or just looks good in parliament.",
-  international: "International agreements (Paris, Ramsar, REDD+) set frameworks but depend entirely on national implementation — and enforcement is weak. REDD+ pays developing nations to protect forests, but it's created perverse incentives where countries claim credit for not clearing land they never planned to touch. The scale matches planetary systems (climate, biodiversity), but the response mechanisms are fragmented. Always evaluate: did the treaty change behaviour, or just create paperwork?"
-};
-
-let responseType = 0; // 0 = prevention, 0.5 = mitigation, 1 = restoration
-let time = 0;
-let lastTime = performance.now();
-
-// Nodes for cascade (environment, social, economic)
-const nodes = [
-  { x: 0.3, y: 0.35, label: 'ENV', r: 0, pulsePhase: 0 },
-  { x: 0.5, y: 0.65, label: 'SOC', r: 0, pulsePhase: Math.PI * 0.66 },
-  { x: 0.7, y: 0.35, label: 'ECO', r: 0, pulsePhase: Math.PI * 1.33 }
-];
-
-// Response source (top centre)
-const source = { x: 0.5, y: 0.15 };
-
-// Particles flowing from source to nodes
-let particles = [];
-
-function resize() {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
-
-function updateSlider() {
-  const val = parseFloat(slider.value);
-  slider.style.setProperty('--fill', val + '%');
-  
-  responseType = val / 100;
-  
-  if (val < 33) {
-    responseTag.textContent = 'Prevention Selected';
-    canvasOverlay.textContent = 'Prevention: blocks initial change';
-    impactCount.textContent = '3';
-    effectiveness.textContent = 'High';
-  } else if (val < 67) {
-    responseTag.textContent = 'Mitigation Active';
-    canvasOverlay.textContent = 'Mitigation: reduces ongoing damage';
-    impactCount.textContent = '5';
-    effectiveness.textContent = 'Medium';
-  } else {
-    responseTag.textContent = 'Restoration Mode';
-    canvasOverlay.textContent = 'Restoration: reverses past degradation';
-    impactCount.textContent = '7';
-    effectiveness.textContent = 'Variable';
+  /* ---- the model plateau: a fixed 48 x 27 grid of land cells ---- */
+  var C=48, R=27, N=C*R, RAD=3.4;
+  function rng(s){return function(){s|=0;s=s+0x6D2B79F5|0;var t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+  var rnd=rng(7);
+  var land=new Uint8Array(N), fuel=new Uint8Array(N), river=new Uint8Array(N), landCount=0;
+  var x,y,i;
+  for(y=0;y<R;y++)for(x=0;x<C;x++){
+    var u=x/(C-1), v=y/(R-1);
+    var coast=0.13+0.07*Math.sin(u*9.0+0.6)+0.05*Math.sin(u*21+1.3);
+    var south=0.97-0.03*Math.sin(u*7);
+    var west=0.03+0.03*Math.sin(v*8), east=0.97-0.04*Math.sin(v*6+1);
+    land[y*C+x]=(v>coast&&v<south&&u>west&&u<east)?1:0;
   }
-}
-
-slider.addEventListener('input', updateSlider);
-
-toggleBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    toggleBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const scale = btn.dataset.scale;
-    scaleText.textContent = scaleData[scale];
+  [[0.33,0.05],[0.70,-0.06]].forEach(function(r){
+    for(var yy=0;yy<R;yy++){var vv=yy/(R-1); if(vv>0.78) continue;
+      var xx=Math.round((r[0]+r[1]*vv+0.025*Math.sin(vv*11))*(C-1)); var k=yy*C+xx; if(land[k]) river[k]=1;}
   });
-});
+  for(i=0;i<N;i++){fuel[i]=land[i]&&!river[i]&&rnd()<0.72?1:0; if(land[i]) landCount++;}
+  var IGN=[[8,20],[20,10],[29,22],[38,9],[44,18],[14,13]];
+  var SITES={
+    regional:[[24,15],[12,8],[36,15],[18,21],[30,8],[6,15],[42,12],[24,23],[12,20],[36,22],[18,10],[30,17]],
+    local:[[9,14],[14,12],[9,19],[14,18],[5,11],[18,15],[6,22],[12,23],[4,16],[17,21],[11,9],[16,9]]
+  };
+  var ESTATE={x0:2,y0:6,x1:20,y1:25};
 
-function spawnParticle() {
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  const targetNode = nodes[Math.floor(Math.random() * nodes.length)];
-  
-  particles.push({
-    x: source.x * w,
-    y: source.y * h,
-    tx: targetNode.x * w,
-    ty: targetNode.y * h,
-    progress: 0,
-    speed: 0.008 + Math.random() * 0.012,
-    size: 2 + Math.random() * 2
-  });
-}
+  function run(n,scale){
+    var early=new Uint8Array(N), sites=SITES[scale], k, xx, yy;
+    for(k=0;k<n;k++){var sx=sites[k][0], sy=sites[k][1];
+      for(yy=0;yy<R;yy++)for(xx=0;xx<C;xx++){ if((xx-sx)*(xx-sx)+(yy-sy)*(yy-sy)<=RAD*RAD){var j=yy*C+xx; if(fuel[j]) early[j]=1;} } }
+    var dist=new Int16Array(N); dist.fill(-1); var q=[], h, maxD=0;
+    IGN.forEach(function(p){var j=p[1]*C+p[0]; if(fuel[j]&&!early[j]){dist[j]=0;q.push(j);}});
+    var D=[[1,0],[-1,0],[0,1],[0,-1]];
+    for(h=0;h<q.length;h++){var a=q[h], ax=a%C, ay=(a/C)|0;
+      for(var d=0;d<4;d++){var nx=ax+D[d][0], ny=ay+D[d][1]; if(nx<0||ny<0||nx>=C||ny>=R) continue;
+        var b=ny*C+nx; if(fuel[b]&&!early[b]&&dist[b]<0){dist[b]=dist[a]+1; if(dist[b]>maxD) maxD=dist[b]; q.push(b);} } }
+    var e=0; for(k=0;k<N;k++) if(early[k]) e++;
+    return {early:early, dist:dist, late:q.length, earlyN:e, maxD:maxD,
+            latePct:Math.round(100*q.length/landCount), earlyPct:Math.round(100*e/landCount)};
+  }
+  var BASE=run(0,"regional");
 
-function draw() {
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  const cx = w / 2;
-  const cy = h / 2;
-  
-  // Clear
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, w, h);
-  
-  // Update node pulse based on response type
-  nodes.forEach(n => {
-    const targetR = 18 + responseType * 18;
-    n.r += (targetR - n.r) * 0.08;
-  });
-  
-  // Spawn particles
-  if (Math.random() < 0.15) spawnParticle();
-  
-  // Update and draw particles
-  particles = particles.filter(p => {
-    p.progress += p.speed;
-    if (p.progress >= 1) return false;
-    
-    const t = p.progress;
-    const px = p.x + (p.tx - p.x) * t;
-    const py = p.y + (p.ty - p.y) * t;
-    
-    const alpha = t < 0.1 ? t / 0.1 : (t > 0.9 ? (1 - t) / 0.1 : 1);
-    
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.fillStyle = `rgba(120,112,192, ${alpha * 0.7})`;
-    ctx.beginPath();
-    ctx.arc(px, py, p.size, 0, Math.PI * 2);
-    ctx.fill();
+  /* ---- state ---- */
+  var state={n:6, scale:"regional"}, cur=run(6,"regional"), prog=1, raf=0, t0=0, last=0;
+
+  /* ---- drawing ---- */
+  function resize(){
+    var rect=canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return; /* f27c: refuse a zero measurement, keep the last good size */
+    canvas.width=Math.max(1,Math.round(rect.width*dpr)); canvas.height=Math.max(1,Math.round(rect.height*dpr));
+    buf.width=canvas.width; buf.height=canvas.height;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    draw();
+  }
+  function rr(px,py,pw,ph,r){ctx.beginPath();ctx.moveTo(px+r,py);ctx.arcTo(px+pw,py,px+pw,py+ph,r);ctx.arcTo(px+pw,py+ph,px,py+ph,r);ctx.arcTo(px,py+ph,px,py,r);ctx.arcTo(px,py,px+pw,py,r);ctx.closePath();}
+  function draw(){
+    var w=canvas.width/dpr, h=canvas.height/dpr; if(w<2||h<2) return;
+    var ovlH=document.getElementById("imOvl").offsetHeight||38;
+    var top=h*0.03, bot=h-ovlH-4, left=w*0.015, right=w*0.985;
+    var cw=(right-left)/C, ch=(bot-top)/R, gap=Math.max(0.6,Math.min(cw,ch)*0.12);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.globalCompositeOperation="source-over"; ctx.globalAlpha=1; ctx.filter="none";
+    ctx.clearRect(0,0,w,h);
+    var sea=ctx.createLinearGradient(0,0,0,h*0.5); sea.addColorStop(0,"rgba("+RGB+",0.10)"); sea.addColorStop(1,"rgba(0,0,0,0)");
+    ctx.fillStyle=sea; ctx.fillRect(0,0,w,h);
+    var front=prog*(cur.maxD+1);
+    for(var yy=0;yy<R;yy++)for(var xx=0;xx<C;xx++){
+      var k=yy*C+xx; if(!land[k]) continue;
+      var px=left+xx*cw, py=top+yy*ch;
+      if(river[k]){ctx.fillStyle="rgba("+DIMR+",0.35)";}
+      else if(cur.early[k]){ctx.fillStyle="rgba("+DIMR+","+(0.25+0.6*Math.min(1,prog*1.6))+")";}
+      else if(cur.dist[k]>=0&&cur.dist[k]<=front){var edge=front-cur.dist[k]; ctx.fillStyle=edge<2&&prog<1?"rgba("+INKR+",0.95)":"rgba("+AMBR+",0.88)";}
+      else if(fuel[k]){ctx.fillStyle="rgba("+RGB+",0.6)";}
+      else {ctx.fillStyle="rgba("+RGB+",0.16)";}
+      rr(px+gap/2,py+gap/2,cw-gap,ch-gap,Math.min(cw,ch)*0.22); ctx.fill();
+    }
+    /* scale outline */
+    ctx.save(); ctx.setLineDash([5,4]); ctx.lineWidth=1.4; ctx.strokeStyle=ACC;
+    var fs=Math.max(11,Math.min(14,w/48));
+    ctx.font="500 "+fs+"px 'JetBrains Mono', monospace"; ctx.textBaseline="top";
+    if(state.scale==="local"){
+      var ex=left+ESTATE.x0*cw, ey=top+ESTATE.y0*ch, ew=(ESTATE.x1-ESTATE.x0)*cw, eh=(ESTATE.y1-ESTATE.y0)*ch;
+      ctx.strokeRect(ex,ey,ew,eh); ctx.setLineDash([]);
+      label("ONE CLAN ESTATE", ex+4, ey+4, fs);
+    } else {
+      ctx.setLineDash([]);
+      var pt="WHOLE-PLATEAU PLAN"; label(pt, right-ctx.measureText(pt).width-6, top+2, fs);
+    }
     ctx.restore();
-    
-    return true;
-  });
-  
-  // Draw beams from source to nodes
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  nodes.forEach(n => {
-    const grad = ctx.createLinearGradient(source.x * w, source.y * h, n.x * w, n.y * h);
-    grad.addColorStop(0, 'rgba(120,112,192, 0.12)');
-    grad.addColorStop(1, 'rgba(120,112,192, 0.3)');
-    ctx.strokeStyle = grad;
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(source.x * w, source.y * h);
-    ctx.lineTo(n.x * w, n.y * h);
-    ctx.stroke();
-  });
-  ctx.restore();
-  
-  // Draw source
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  const sourceGlow = ctx.createRadialGradient(source.x * w, source.y * h, 0, source.x * w, source.y * h, 28);
-  sourceGlow.addColorStop(0, 'rgba(120,112,192, 0.6)');
-  sourceGlow.addColorStop(0.5, 'rgba(120,112,192, 0.2)');
-  sourceGlow.addColorStop(1, 'rgba(120,112,192, 0)');
-  ctx.fillStyle = sourceGlow;
-  ctx.beginPath();
-  ctx.arc(source.x * w, source.y * h, 28, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
-  
-  ctx.fillStyle = '#7870C0';
-  ctx.beginPath();
-  ctx.arc(source.x * w, source.y * h, 8, 0, Math.PI * 2);
-  ctx.fill();
-  
-  // Draw nodes
-  nodes.forEach(n => {
-    const pulse = 0.85 + 0.15 * Math.sin(time * 1.2 + n.pulsePhase);
-    const r = n.r * pulse;
-    
-    // Glow
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    const glow = ctx.createRadialGradient(n.x * w, n.y * h, 0, n.x * w, n.y * h, r * 2.2);
-    glow.addColorStop(0, 'rgba(120,112,192, 0.5)');
-    glow.addColorStop(0.5, 'rgba(120,112,192, 0.2)');
-    glow.addColorStop(1, 'rgba(120,112,192, 0)');
-    ctx.fillStyle = glow;
-    ctx.beginPath();
-    ctx.arc(n.x * w, n.y * h, r * 2.2, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-    
-    // Core
-    ctx.fillStyle = '#0B0D0C';
-    ctx.beginPath();
-    ctx.arc(n.x * w, n.y * h, r, 0, Math.PI * 2);
-    ctx.fill();
-    
-    ctx.strokeStyle = '#7870C0';
-    ctx.lineWidth = 2;
-    ctx.stroke();
-    
-    // Label
-    ctx.fillStyle = '#7870C0';
-    ctx.font = '500 11px "JetBrains Mono"';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(n.label, n.x * w, n.y * h);
-  });
-  
-  // Connecting lines between nodes (cascade)
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.strokeStyle = 'rgba(120,112,192, 0.25)';
-  ctx.lineWidth = 1.2;
-  ctx.setLineDash([4, 4]);
-  ctx.beginPath();
-  ctx.moveTo(nodes[0].x * w, nodes[0].y * h);
-  ctx.lineTo(nodes[1].x * w, nodes[1].y * h);
-  ctx.lineTo(nodes[2].x * w, nodes[2].y * h);
-  ctx.lineTo(nodes[0].x * w, nodes[0].y * h);
-  ctx.stroke();
-  ctx.restore();
-  
-  // Bloom
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
-  
-  // Vignette
-  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-}
+    /* late-season ignitions */
+    IGN.forEach(function(p){var cx=left+(p[0]+0.5)*cw, cy=top+(p[1]+0.5)*ch, s=Math.max(4,Math.min(cw,ch)*0.75);
+      ctx.save(); ctx.strokeStyle=AMB; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(cx-s,cy-s); ctx.lineTo(cx+s,cy+s); ctx.moveTo(cx+s,cy-s); ctx.lineTo(cx-s,cy+s); ctx.stroke(); ctx.restore();});
+    ctx.save(); ctx.font="500 "+fs+"px 'JetBrains Mono', monospace"; ctx.fillStyle="rgba("+INKR+",0.7)"; ctx.textBaseline="top";
+    ctx.fillText("SEA", left+4, top+2); ctx.restore();
+    /* bloom */
+    bctx.setTransform(1,0,0,1,0,0); bctx.clearRect(0,0,buf.width,buf.height); (canvas.width&&canvas.height)&&bctx.drawImage(canvas,0,0);
+    ctx.save(); ctx.globalCompositeOperation="lighter"; ctx.globalAlpha=0.38; ctx.filter="blur(7px)"; (buf.width&&buf.height)&&ctx.drawImage(buf,0,0,w,h); ctx.restore();
+    /* vignette */
+    var cx0=w/2, cy0=h/2, vig=ctx.createRadialGradient(cx0,cy0,h*0.28,cx0,cy0,w*0.72);
+    vig.addColorStop(0,"rgba(0,0,0,0)"); vig.addColorStop(1,"rgba(0,0,0,0.52)"); ctx.fillStyle=vig; ctx.fillRect(0,0,w,h);
+  }
+  function label(t,lx,ly,fs){
+    ctx.save(); ctx.setLineDash([]); var tw=ctx.measureText(t).width;
+    ctx.fillStyle="rgba(0,0,0,0.6)"; ctx.fillRect(lx-3,ly-2,tw+6,fs+5);
+    ctx.fillStyle=ACC; ctx.fillText(t,lx,ly); ctx.restore();
+  }
 
-function animate(now) {
-  const dt = Math.min((now - lastTime) / 1000, 0.1);
-  time += dt;
-  lastTime = now;
-  
-  draw();
-  requestAnimationFrame(animate);
-}
+  function frame(now){
+    var dt=Math.min(now-last,50); last=now;
+    prog=Math.min(1,prog+dt/1100);
+    draw();
+    if(prog<1){raf=requestAnimationFrame(frame);} else {raf=0;}
+  }
+  function play(){
+    if(raf) cancelAnimationFrame(raf);
+    if(reduce){prog=1; draw(); return;}
+    prog=0; last=performance.now(); raf=requestAnimationFrame(frame);
+  }
 
-resize();
-window.addEventListener('resize', resize);
-updateSlider();
-requestAnimationFrame(animate);
+  /* ---- readouts, all from the same run ---- */
+  var KD={
+    challenge:`West Arnhem Land, in the Top End of the Northern Territory, is tropical savanna: grass that grows in the wet season dries into fuel by the end of the dry. When fewer people were living on and burning their country through the 1900s, hot wildfires late in the dry season took over large areas each year. These fires scorch tree canopies and fire-sensitive plants, strip habitat from wildlife and release more greenhouse gas than cooler fires. They also threaten outstations, cultural sites such as rock art, and the value of the land, so the challenge is environmental, social and economic at once.`,
+    opportunity:`Fires lit early in the dry season burn cooler, because the grass still holds moisture, and they go out overnight in patches, leaving the tree canopy standing. A patchwork of early burns breaks up the fuel, so a fire lit later has less continuous grass to run through. Smaller, cooler fires also release less methane and nitrous oxide, and that cut can be measured. Australia's carbon crediting scheme includes savanna fire management methods, so a burning project can earn Australian Carbon Credit Units (ACCUs) and sell them. That turns caring for country into paid ranger work.`,
+    response:`The West Arnhem Land Fire Abatement project (WALFA) covers about 28,000 square kilometres. Aboriginal Traditional Owners and five Aboriginal ranger groups run the burning: the Djelk, Warddeken, Mimal, Jawoyn and Adjumarllarl rangers, working on foot and from helicopters. ConocoPhillips, which ran the Darwin LNG gas plant, agreed to pay about 1 million dollars a year for 17 years to offset 100,000 tonnes of greenhouse emissions a year. The Northern Territory Government and the Northern Land Council were also partners. Burns are planned across the whole plateau each year, not estate by estate, which is the scale the model rewards.`,
+    judge:`Judge a response against the challenge it set out to manage. Satellite fire maps show that after early burning scaled up from 2005, the share of the area burnt by late dry-season fire each year fell from about 29% to about 12.5%, and the total burnt also fell. The income has paid for ranger jobs on country and kept knowledge passing between generations, and other ranger groups across northern Australia now run savanna burning projects too. The limits are real: lightning and a hard season can still bring big late fires, and income rises and falls with carbon prices and buyers. An offset manages the fire challenge, but the gas plant still releases its own emissions.`
+  };
+  function setLens(l){
+    document.querySelectorAll("#lensGroup button").forEach(function(b){b.setAttribute("aria-pressed",b.getAttribute("data-lens")===l?"true":"false");});
+    document.getElementById("imKd").textContent=KD[l];
+  }
+  function update(animate){
+    cur=run(state.n,state.scale);
+    var cut=BASE.late>0?Math.round(100*(BASE.late-cur.late)/BASE.late):0;
+    var scaleWord=state.scale==="local"?"one estate":"whole plateau";
+    var burns=state.n===1?"1 burn":state.n+" burns";
+    document.getElementById("burnV").textContent=state.n+(state.n===1?" patch":" patches");
+    var s=document.getElementById("burnS"); s.style.setProperty("--fill",(state.n/12*100)+"%");
+    document.getElementById("liveTag").textContent="Late fire "+cur.latePct+"%";
+    document.getElementById("imOvl").textContent=burns+" · "+scaleWord+" · late fire "+cur.latePct+"%";
+    document.getElementById("stLate").textContent=cur.latePct+"%";
+    document.getElementById("stCut").textContent=cut+"%";
+    var total=Math.round(100*(cur.late+cur.earlyN)/landCount);
+    var capTxt;
+    if(state.n===0){
+      capTxt="With no early burns, the late fires reach <b>"+cur.latePct+"%</b> of the land. This is the baseline every response is judged against.";
+    } else {
+      if(state.scale==="local"){
+        var outside=0, outBase=0, outLand=0;
+        for(var k=0;k<N;k++){if(!land[k]) continue; var xx=k%C, yy=(k/C)|0; var inE=xx>=ESTATE.x0&&xx<ESTATE.x1&&yy>=ESTATE.y0&&yy<ESTATE.y1; if(!inE){outLand++; if(cur.dist[k]>=0) outside++; if(BASE.dist[k]>=0) outBase++;}}
+        capTxt="Early burns covered <b>"+cur.earlyPct+"%</b> of the land, all inside one estate. Outside it, late fire reaches <b>"+Math.round(100*outside/outLand)+"%</b> of the land (<b>"+Math.round(100*outBase/outLand)+"%</b> with no early burns). Total burnt this season: <b>"+total+"%</b>, against <b>"+BASE.latePct+"%</b> with no early burns.";
+      } else {
+        capTxt="Early burns covered <b>"+cur.earlyPct+"%</b> of the land, spread across the plateau. Total burnt this season: <b>"+total+"%</b>, against <b>"+BASE.latePct+"%</b> with no early burns.";
+      }
+    }
+    document.getElementById("imCap").innerHTML=capTxt;
+    if(animate) play(); else {prog=1; draw();}
+  }
+
+  document.getElementById("burnS").addEventListener("input",function(e){state.n=parseInt(e.target.value,10)||0; update(true);});
+  document.querySelectorAll("#scaleGroup button").forEach(function(b){
+    b.addEventListener("click",function(){
+      state.scale=b.getAttribute("data-scale");
+      document.querySelectorAll("#scaleGroup button").forEach(function(o){o.setAttribute("aria-pressed",o===b?"true":"false");});
+      update(true);
+    });
+  });
+  document.querySelectorAll("#lensGroup button").forEach(function(b){
+    b.addEventListener("click",function(){setLens(b.getAttribute("data-lens"));});
+  });
+  window.addEventListener("resize",resize);
+  if(window.ResizeObserver){new ResizeObserver(function(){resize();}).observe(wrap);}
+  setLens("challenge");
+  update(false);
+  resize();
+  if(document.fonts&&document.fonts.ready){document.fonts.ready.then(function(){draw();});}
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'impacts-and-management-responses'},'*');}catch(e){}}

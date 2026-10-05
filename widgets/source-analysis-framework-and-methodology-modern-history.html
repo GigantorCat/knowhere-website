@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Source Analysis Framework and Methodology — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Source analysis framework and methodology — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -333,9 +333,9 @@ canvas {
 <div class="container">
   <h2 class="sr-only">Interactive source analysis framework demonstrating how layers of scrutiny reveal historical truth</h2>
   
-  <h1>The best sources are the most <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">unreliable</span></h1>
+  <h1>No source is simply <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">reliable</span> or unreliable</h1>
   
-  <p class="intro">Every historical source lies — through bias, omission, or intent. Historians don't trust sources; they interrogate them through layered analysis, where propaganda and partisan accounts often reveal more truth than neutral records ever could. Drag the slider to see how scrutiny depth transforms what a source reveals.</p>
+  <p class="intro">Reliability depends on what you ask of a source. A biased speech can be poor evidence of what happened and strong evidence of what its speaker wanted people to believe. Historians don't simply trust or dismiss sources; they question them layer by layer. Drag the slider to see how each layer of questions changes what a source can tell you.</p>
 
   <div class="card">
     <div class="card-header">
@@ -350,7 +350,7 @@ canvas {
     </div>
 
     <div class="slider-row">
-      <input type="range" min="0" max="100" value="15" class="sa-slider" id="slider">
+      <input aria-label="Depth of analysis (%)" type="range" min="0" max="100" value="15" class="sa-slider" id="slider">
     </div>
     <div class="tick-labels">
       <span>Content</span>
@@ -366,8 +366,8 @@ canvas {
           <div class="stat-value" style="color:var(--acc)" id="depthStat">15%</div>
         </div>
         <div class="stat">
-          <div class="stat-label">Reliability</div>
-          <div class="stat-value" style="color:var(--amb)" id="reliabilityStat">22%</div>
+          <div class="stat-label">Questions asked</div>
+          <div class="stat-value" style="color:var(--amb)" id="reliabilityStat">1 of 5</div>
         </div>
       </div>
     </div>
@@ -466,16 +466,15 @@ function updateSlider() {
   
   depthStat.textContent = val + '%';
   
-  // Reliability increases non-linearly with depth
-  const reliability = Math.round(20 + (val / 100) * 65);
-  reliabilityStat.textContent = reliability + '%';
-  
   // Activate nodes based on depth
   nodes[0].active = val >= 0;   // Content always active
   nodes[1].active = val >= 25;  // Origin at 25%
   nodes[2].active = val >= 50;  // Purpose at 50%
   nodes[3].active = val >= 75;  // Value at 75%
   nodes[4].active = val >= 90;  // Limits at 90%
+
+  // Readout counts the questions now lit in the picture (no reliability score: it depends on the question asked)
+  reliabilityStat.textContent = nodes.filter(n => n.active).length + " of " + nodes.length;
   
   // Update live tag and overlay
   if (val < 25) {
@@ -629,7 +628,7 @@ btnOrigin.addEventListener('click', () => {
 btnPurpose.addEventListener('click', () => {
   btnPurpose.classList.add('active');
   btnOrigin.classList.remove('active');
-  knowdropText.textContent = "Purpose investigation identifies why the source was created, its intended audience, and the creator's motivations, revealing the selective presentations and distortions embedded within. A politician's public speech serves different purposes than their private correspondence; a newspaper article written for domestic consumption differs fundamentally from diplomatic cables meant for foreign governments. Propaganda sources, far from being worthless, often reveal more about historical attitudes, fears, and power structures than neutral documents ever could. Understanding purpose exposes what the creator chose to emphasize, what they omitted, and how they framed events to persuade their audience. A wartime recruitment poster tells us less about battlefield conditions than about how governments mobilized populations; a colonial administrator's report reveals more about imperial ideology than about the colonized society being described. The gap between stated purpose and actual function — between official justifications and underlying motivations — becomes a primary site of historical analysis.";
+  knowdropText.textContent = "Purpose investigation identifies why the source was created, its intended audience, and the creator's motivations, revealing the selective presentations and distortions embedded within. A politician's public speech serves different purposes than their private correspondence; a newspaper article written for domestic consumption differs fundamentally from diplomatic cables meant for foreign governments. Propaganda sources, far from being worthless, can be strong evidence of historical attitudes, fears, and power structures, even when they are poor evidence of events. Understanding purpose exposes what the creator chose to emphasise, what they omitted, and how they framed events to persuade their audience. A wartime recruitment poster tells us less about battlefield conditions than about how governments mobilised populations; a colonial administrator's report reveals more about imperial ideology than about the colonised society being described. The gap between stated purpose and actual function — between official justifications and underlying motivations — becomes a primary site of historical analysis.";
 });
 
 window.addEventListener('resize', resize);

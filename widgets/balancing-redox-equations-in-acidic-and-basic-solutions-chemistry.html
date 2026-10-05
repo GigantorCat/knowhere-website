@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Balancing Redox Equations in Acidic and Basic Solutions — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Balancing redox equations in acidic and basic solutions — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -323,22 +323,22 @@ canvas {
   <div class="card">
     <div class="card-header">
       <div class="card-label">Electron Transfer</div>
-      <div class="live-tag" id="liveTag">Electrons flowing</div>
+      <div class="live-tag" id="liveTag">Steady transfer</div>
     </div>
-    <div class="card-hint">Drag to control electron transfer rate</div>
+    <div class="card-hint">Drag to change how fast electrons move; the number transferred never changes</div>
     
     <div class="canvas-wrapper">
       <canvas id="rxCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">Oxidation loses • Reduction gains</div>
+      <div class="canvas-overlay" id="canvasOverlay">2e⁻ lost = 2e⁻ gained at every speed</div>
     </div>
 
     <div class="slider-row">
-      <div class="slider-label">Electron flow</div>
+      <div class="slider-label">Transfer speed</div>
       <input type="range" min="0" max="100" value="50" class="rx-slider" id="flowSlider">
       <div class="tick-labels">
-        <span>Zero flow</span>
-        <span>Balanced</span>
-        <span>Maximum</span>
+        <span>Paused</span>
+        <span>Steady</span>
+        <span>Fast</span>
       </div>
     </div>
 
@@ -367,7 +367,7 @@ canvas {
 
   <div class="know-this">
     <div class="know-this-tag">Know This</div>
-    <div class="know-this-body">Redox balancing succeeds when you <span style="color:var(--acc)">split the overall equation into oxidation and reduction half-equations</span>, balance atoms (non-H/O first, then O with H₂O, then H with H⁺ in acid or OH⁻ in base), balance charge by adding electrons, then multiply so <span style="color:var(--acc)">electrons cancel when you add them together</span>.</div>
+    <div class="know-this-body">Redox balancing succeeds when you <span style="color:var(--acc)">split the overall equation into oxidation and reduction half-equations</span>, balance atoms (non-H/O first, then O with H₂O, then H with H⁺; in basic solution, add OH⁻ to both sides to turn that H⁺ into water), balance charge by adding electrons, then multiply so <span style="color:var(--acc)">electrons cancel when you add them together</span>.</div>
   </div>
 
   <div class="footer">
@@ -396,9 +396,13 @@ let electrons = [];
 let time = 0;
 let isAcidic = true;
 
+// Half-equations shown: Zn(s) → Zn²⁺(aq) + 2e⁻ and Cu²⁺(aq) + 2e⁻ → Cu(s)
+const E_COUNT = 2; // set by the species, not by speed
+const HALF_SUMMARY = `${E_COUNT}e⁻ lost = ${E_COUNT}e⁻ gained at every speed`;
+
 const acidText = "In acidic solution, you balance oxygen atoms by adding water molecules to the side that needs oxygen, then balance hydrogen by adding H⁺ ions to the opposite side. The acid provides an unlimited supply of hydrogen ions, so you can add as many as needed to balance each half-equation. After balancing atoms, you add electrons to balance charge — the side with more positive charge gets electrons. This works because the acidic environment naturally contains excess H⁺ ions that participate in the reaction mechanism.";
 
-const baseText = "In basic solution, you balance oxygen with water just like in acid, but then you add OH⁻ ions instead of H⁺ to balance hydrogen. The trick: if you end up with H⁺ in your equation, add equal OH⁻ to both sides to form water, then cancel waters that appear on both sides. Hydroxide ions are abundant in basic solution, making them the natural choice for balancing. This method ensures your final equation reflects the actual basic environment where the reaction occurs, with OH⁻ as the active hydrogen-balancing species.";
+const baseText = "Extension (not every course asks for this): to balance in basic solution, first balance exactly as in acid, with H₂O for oxygen and H⁺ for hydrogen. Then add as many OH⁻ ions to both sides as there are H⁺ ions, so each H⁺ + OH⁻ pair becomes one H₂O. Finally cancel any water molecules that appear on both sides. The finished equation has OH⁻ and H₂O but no H⁺, which matches a basic solution.";
 
 function resize() {
   const rect = canvas.getBoundingClientRect();
@@ -417,27 +421,19 @@ slider.addEventListener('input', (e) => {
   flowRate = e.target.value / 100;
   slider.style.setProperty('--fill', e.target.value + '%');
   
-  if (flowRate < 0.2) {
-    liveTag.textContent = 'No flow';
-    canvasOverlay.textContent = 'Reactions stopped';
-  } else if (flowRate < 0.45) {
+  // The slider sets speed only: electrons lost always equal electrons gained
+  if (flowRate < 0.05) {
+    liveTag.textContent = 'Paused';
+  } else if (flowRate < 0.35) {
     liveTag.textContent = 'Slow transfer';
-    canvasOverlay.textContent = 'Oxidation dominant';
-  } else if (flowRate < 0.55) {
-    liveTag.textContent = 'Balanced';
-    canvasOverlay.textContent = 'Electrons cancel perfectly';
-  } else if (flowRate < 0.8) {
-    liveTag.textContent = 'Fast transfer';
-    canvasOverlay.textContent = 'Reduction dominant';
+  } else if (flowRate < 0.7) {
+    liveTag.textContent = 'Steady transfer';
   } else {
-    liveTag.textContent = 'Maximum flow';
-    canvasOverlay.textContent = 'Full electron saturation';
+    liveTag.textContent = 'Fast transfer';
   }
-  
-  const oxidationE = Math.round(2 + flowRate * 4);
-  const reductionE = Math.round(2 + flowRate * 4);
-  oxidationStat.textContent = oxidationE;
-  reductionStat.textContent = reductionE;
+  canvasOverlay.textContent = HALF_SUMMARY;
+  oxidationStat.textContent = E_COUNT;
+  reductionStat.textContent = E_COUNT;
 });
 
 slider.style.setProperty('--fill', '50%');
@@ -516,7 +512,8 @@ function draw() {
   ctx.fillText('OXIDATION', w * 0.22, h * 0.2);
   ctx.font = '400 12px "JetBrains Mono"';
   ctx.fillStyle = 'rgba(250,199,117,0.6)';
-  ctx.fillText('e⁻ lost', w * 0.22, h * 0.24);
+  ctx.font = '400 11px "JetBrains Mono"';
+  ctx.fillText('Zn → Zn²⁺ + 2e⁻', w * 0.22, h * 0.29);
   ctx.restore();
   
   // Reduction label
@@ -528,7 +525,8 @@ function draw() {
   ctx.fillText('REDUCTION', w * 0.78, h * 0.2);
   ctx.font = '400 12px "JetBrains Mono"';
   ctx.fillStyle = 'rgba(62, 154, 214,0.6)';
-  ctx.fillText('e⁻ gained', w * 0.78, h * 0.24);
+  ctx.font = '400 11px "JetBrains Mono"';
+  ctx.fillText('Cu²⁺ + 2e⁻ → Cu', w * 0.78, h * 0.29);
   ctx.restore();
   
   // Transfer beam

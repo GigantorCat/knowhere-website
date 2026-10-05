@@ -305,6 +305,13 @@ canvas {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* s10: tick labels sit at their true value on the slider (thumb 20px) */
+.tick-labels{display:block;position:relative;height:36px}
+.tick-labels>span{position:absolute;top:0;left:calc(10px + (100% - 20px) * var(--p));transform:translateX(-50%);white-space:nowrap;line-height:12px}
+.tick-labels>span.lo{left:0;transform:none}
+.tick-labels>span.hi{left:auto;right:0;transform:none}
+.tick-labels{height:14px}
 </style>
 
 <div class="container">
@@ -327,16 +334,18 @@ canvas {
     </div>
 
     <div class="slider-wrap">
-      <div class="slider-label">Element mass number</div>
-      <input type="range" min="1" max="100" value="4" class="nuc-slider" id="massSlider">
+      <div class="slider-label">Nucleus (mass number)</div>
+      <input type="range" min="0" max="6" step="1" value="1" class="nuc-slider" id="massSlider" aria-label="Nucleus, from hydrogen-1 to uranium-238">
     </div>
     
-    <div class="tick-labels">
-      <span>H (1)</span>
-      <span>He (4)</span>
-      <span>C (12)</span>
-      <span>Fe (56)</span>
-      <span>U (238)</span>
+    <div class="tick-labels" aria-hidden="true">
+      <span style="--p:0">H-1</span>
+      <span style="--p:0.1667">He-4</span>
+      <span style="--p:0.3333">C-12</span>
+      <span style="--p:0.5">O-16</span>
+      <span style="--p:0.6667">Si-28</span>
+      <span style="--p:0.8333">Fe-56</span>
+      <span style="--p:1">U-238</span>
     </div>
 
     <div class="stat-row">
@@ -359,7 +368,7 @@ canvas {
     
     <div class="knowdrop-divider">
       <p class="knowdrop-text" id="knowdrop-content">
-        Stars spend most of their lives fusing hydrogen into helium, then climb the periodic table as their cores contract and heat up. Carbon, oxygen, neon, silicon — each fusion stage is shorter and hotter than the last. But at iron-56, the game ends. Iron has the highest binding energy per nucleon: fusing it costs energy instead of releasing it. A massive star builds an iron core that can't burn, and when it collapses, the rebound shockwave tears the star apart. That supernova forges elements heavier than iron in seconds — gold, uranium, platinum — scattering them into space to seed the next generation of stars and planets.
+        Stars spend most of their lives fusing hydrogen into helium, then climb the periodic table as their cores contract and heat up. Carbon, oxygen, neon, silicon — each fusion stage is shorter and hotter than the last. But at iron-56, the game ends. Iron has the highest binding energy per nucleon: fusing it costs energy instead of releasing it. A massive star builds an iron core that can't burn, and when it collapses, the rebound shockwave tears the star apart. Elements heavier than iron, such as uranium and gold, are not made by fusion: they are built by neutron capture in dying stars, supernovae and neutron-star mergers, and scattered into space to seed the next generation of stars and planets.
       </p>
     </div>
   </div>
@@ -369,7 +378,7 @@ canvas {
       <div class="know-this-dot"></div>
       <div class="know-this-label">Know This</div>
     </div>
-    <p class="know-this-body">Fusion builds elements up to <span style="color:var(--acc)">iron</span>, which has the highest <span style="color:var(--acc)">binding energy per nucleon</span>; heavier elements require <span style="color:var(--acc)">supernova explosions</span> because fusing past iron costs energy instead of releasing it.</p>
+    <p class="know-this-body">Fusion builds elements up to <span style="color:var(--acc)">iron</span>, which has the highest <span style="color:var(--acc)">binding energy per nucleon</span>; heavier elements are built by <span style="color:var(--acc)">neutron capture</span> (in dying stars, supernovae and neutron-star mergers) because fusing past iron costs energy instead of releasing it.</p>
   </div>
 </div>
 
@@ -404,19 +413,14 @@ const elements = [
   { mass: 4, symbol: 'He', name: 'Helium', binding: 7.1, process: 'Hydrogen burning', barrier: 'Low' },
   { mass: 12, symbol: 'C', name: 'Carbon', binding: 7.7, process: 'Helium burning', barrier: 'Medium' },
   { mass: 16, symbol: 'O', name: 'Oxygen', binding: 7.98, process: 'Helium burning', barrier: 'Medium' },
-  { mass: 28, symbol: 'Si', name: 'Silicon', binding: 8.45, process: 'Silicon burning', barrier: 'High' },
-  { mass: 56, symbol: 'Fe', name: 'Iron', binding: 8.79, process: 'Fusion stops here', barrier: 'Wall' },
-  { mass: 238, symbol: 'U', name: 'Uranium', binding: 7.6, process: 'Supernova/neutron capture', barrier: 'Supernova' }
+  { mass: 28, symbol: 'Si', name: 'Silicon', binding: 8.45, process: 'Oxygen burning', barrier: 'High' },
+  { mass: 56, symbol: 'Fe', name: 'Iron', binding: 8.79, process: 'Silicon burning: fusion stops here', barrier: 'Wall' },
+  { mass: 238, symbol: 'U', name: 'Uranium', binding: 7.57, process: 'Neutron capture, not fusion', barrier: 'No fusion' }
 ];
+/* binding = binding energy per nucleon in MeV. The slider steps through these real nuclides. */
 
 function getElementData(mass) {
-  if (mass <= 1) return elements[0];
-  if (mass <= 4) return elements[1];
-  if (mass <= 14) return elements[2];
-  if (mass <= 22) return elements[3];
-  if (mass <= 42) return elements[4];
-  if (mass <= 70) return elements[5];
-  return elements[6];
+  return elements.find(e => e.mass === mass) || elements[0];
 }
 
 function resize() {
@@ -464,12 +468,12 @@ function spawnParticles(n) {
 }
 
 slider.addEventListener('input', (e) => {
-  const pct = (e.target.value - 1) / 99;
+  const idx = parseInt(e.target.value);
+  const pct = idx / 6;
   slider.style.setProperty('--fill', pct * 100 + '%');
-  currentMass = parseInt(e.target.value);
-  
-  const data = getElementData(currentMass);
-  elementTag.textContent = `${data.symbol} (${currentMass})`;
+  const data = elements[idx];
+  currentMass = data.mass;
+  elementTag.textContent = `${data.name}-${data.mass}`;
   overlayTag.textContent = data.process;
   bindingVal.textContent = data.binding.toFixed(1);
   barrierVal.textContent = data.barrier;
@@ -488,9 +492,9 @@ toggleBtns.forEach(btn => {
     
     const mode = btn.dataset.mode;
     if (mode === 'fusion') {
-      knowdropContent.textContent = "Stars spend most of their lives fusing hydrogen into helium, then climb the periodic table as their cores contract and heat up. Carbon, oxygen, neon, silicon — each fusion stage is shorter and hotter than the last. But at iron-56, the game ends. Iron has the highest binding energy per nucleon: fusing it costs energy instead of releasing it. A massive star builds an iron core that can't burn, and when it collapses, the rebound shockwave tears the star apart. That supernova forges elements heavier than iron in seconds — gold, uranium, platinum — scattering them into space to seed the next generation of stars and planets.";
+      knowdropContent.textContent = "Stars spend most of their lives fusing hydrogen into helium, then climb the periodic table as their cores contract and heat up. Carbon, oxygen, neon, silicon — each fusion stage is shorter and hotter than the last. But at iron-56, the game ends. Iron has the highest binding energy per nucleon: fusing it costs energy instead of releasing it. A massive star builds an iron core that can't burn, and when it collapses, the rebound shockwave tears the star apart. Elements heavier than iron, such as uranium and gold, are not made by fusion: they are built by neutron capture in dying stars, supernovae and neutron-star mergers, and scattered into space to seed the next generation of stars and planets.";
     } else {
-      knowdropContent.textContent = "When a massive star exhausts its fuel, its iron core collapses in under a second. The rebound generates a shockwave and a flood of neutrons that slam into existing nuclei, building elements heavier than iron through rapid neutron capture. This r-process happens so fast that unstable isotopes don't have time to decay before capturing another neutron. Supernovae eject these freshly minted heavy elements — along with carbon, oxygen, and everything else the star built — into interstellar space. That gas cloud cools, collapses, and forms new stars and planets. Earth is made from the ashes of dead stars; every heavy element in your body came from a supernova billions of years ago.";
+      knowdropContent.textContent = "When a massive star exhausts its fuel, its iron core collapses in under a second. The rebound generates a shockwave and a flood of neutrons that slam into existing nuclei, building elements heavier than iron through rapid neutron capture. This r-process happens so fast that unstable isotopes don't have time to decay before capturing another neutron. Supernovae eject these freshly minted heavy elements — along with carbon, oxygen, and everything else the star built — into interstellar space. That gas cloud cools, collapses, and forms new stars and planets. Earth is made from the ashes of dead stars. Many heavy elements were spread by supernovae and other stellar deaths, and the very heaviest, such as gold, are made by rapid neutron capture in rare events like neutron-star mergers.";
     }
   });
 });
@@ -514,7 +518,7 @@ function draw() {
   });
 
   // Central nucleus
-  const coreR = 18 + currentMass * 0.18;
+  const coreR = 18 + Math.min(currentMass, 100) * 0.18;
   const coreGlow = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreR * 3);
   coreGlow.addColorStop(0, 'rgba(' + RGB + ',0.7)');
   coreGlow.addColorStop(0.4, 'rgba(' + RGB + ',0.25)');

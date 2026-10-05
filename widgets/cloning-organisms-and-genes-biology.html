@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Cloning Organisms and Genes — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Cloning organisms and genes — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -186,11 +186,18 @@ canvas {
 }
 
 .tick-labels {
-  display: flex;
-  justify-content: space-between;
+  position: relative;
+  height: 14px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 9px;
   color: var(--ink-dim);
+}
+.tick-labels span {
+  position: absolute;
+  top: 0;
+  white-space: nowrap;
+  transform: translateX(-50%);
+  left: calc(10px + (100% - 20px) * var(--at));
 }
 
 .stat-row {
@@ -222,6 +229,11 @@ canvas {
 }
 
 .stat:first-child .stat-value { color: var(--acc); }
+.stat-value { font-size: 20px; }
+@media (max-width: 520px) {
+  .canvas-wrapper { aspect-ratio: 4/3; }
+  .stat-value { font-size: 17px; }
+}
 .stat:last-child .stat-value { color: var(--amb); }
 
 .toggle-section {
@@ -311,42 +323,42 @@ canvas {
 </style>
 
 <div class="container">
-  <h2 class="sr-only">Cloning Organisms and Genes: Interactive Biology Widget</h2>
+  <h2 class="sr-only">Cloning organisms and genes: interactive biology widget</h2>
 
-  <h1>Most "cloning" has nothing to do with <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">sheep</span></h1>
+  <h1>A whole new animal can start from one <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">nucleus</span></h1>
   
-  <p class="intro">When you hear "clone," Dolly the sheep probably comes to mind — but gene cloning (copying DNA in plasmids or by PCR) is a daily research tool, while whole-organism cloning remains rare and ethically fraught. Drag the slider to see how success rates change across cloning methods.</p>
+  <p class="intro">Reproductive cloning makes a whole organism that is genetically identical to another. Embryo splitting divides one early embryo into twins; somatic cell nuclear transfer (SCNT), the method behind Dolly the sheep, puts a body cell’s nucleus into an emptied egg. Drag the slider to step through each method, then compare gene cloning, which copies a single gene rather than an organism.</p>
 
   <div class="card">
     <div class="card-header">
-      <span class="card-label">Cloning Methods</span>
-      <span class="live-tag" id="methodTag">Gene Cloning (Plasmid)</span>
+      <span class="card-label">Cloning methods, step by step</span>
+      <span class="live-tag" id="methodTag">Embryo splitting · step 1 of 5</span>
     </div>
-    <p class="card-hint">Drag to compare success rates and complexity</p>
+    <p class="card-hint">Drag slowly: each method’s steps play in order</p>
     
     <div class="canvas-wrapper">
       <canvas id="cloneCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">SUCCESS RATE: ~100%</div>
+      <div class="canvas-overlay" id="canvasOverlay">An egg is fertilised (IVF) to make one zygote</div>
     </div>
 
     <div class="slider-container">
-      <label class="slider-label" for="methodSlider">Cloning complexity</label>
-      <input type="range" min="0" max="100" value="0" class="clone-slider" id="methodSlider">
+      <label class="slider-label" for="methodSlider">Method and step</label>
+      <input type="range" min="0" max="100" step="1" value="0" class="clone-slider" id="methodSlider">
       <div class="tick-labels">
-        <span>Gene (plasmid)</span>
-        <span>Gene (PCR)</span>
-        <span>SCNT (Dolly)</span>
+        <span style="--at:0.1667">Embryo splitting</span>
+        <span style="--at:0.5">SCNT (Dolly)</span>
+        <span style="--at:0.8333">Gene cloning</span>
       </div>
     </div>
 
     <div class="stat-row">
       <div class="stat">
-        <span class="stat-label">Success rate</span>
-        <span class="stat-value" id="successRate">~100%</span>
+        <span class="stat-label">DNA comes from</span>
+        <span class="stat-value" id="successRate">One embryo</span>
       </div>
       <div class="stat">
-        <span class="stat-label">Copies per run</span>
-        <span class="stat-value" id="copiesCount">10⁶+</span>
+        <span class="stat-label">Result</span>
+        <span class="stat-value" id="copiesCount">Identical twins</span>
       </div>
     </div>
   </div>
@@ -367,7 +379,7 @@ canvas {
       <div class="know-dot"></div>
       <span class="know-tag">Know This</span>
     </div>
-    <p><span style="color:var(--acc)">Gene cloning</span> (plasmids, PCR) is routine lab work with near-perfect success, while <span style="color:var(--acc)">whole-organism cloning</span> via SCNT remains technically difficult and raises welfare concerns that <span style="color:var(--acc)">natural clones</span> never encounter.</p>
+    <p><span style="color:var(--acc)">Reproductive cloning</span> (embryo splitting or SCNT) makes a whole organism with the same nuclear DNA as its twin or its donor; SCNT is still inefficient and raises welfare concerns. <span style="color:var(--acc)">Gene cloning</span> copies one gene in bacteria, not an organism, and <span style="color:var(--acc)">natural clones</span> such as identical twins arise without any technology.</p>
   </div>
 </div>
 
@@ -433,195 +445,176 @@ function initParticles() {
   }
 }
 
-let sliderValue = 0;
-let targetValue = 0;
+const METHODS = [
+  { name: "Embryo splitting", dna: "One embryo", result: "Identical twins",
+    steps: [
+      ["Zygote", "An egg is fertilised (IVF) to make one zygote"],
+      ["8 cells", "The zygote divides into an early embryo of about 8 cells"],
+      ["Split", "The early embryo is split into separate groups of cells"],
+      ["Implant", "Each group grows into an embryo and is implanted in a surrogate"],
+      ["Twins", "The offspring are clones of each other, not of a parent"]
+    ] },
+  { name: "SCNT (Dolly)", dna: "Donor’s nucleus", result: "Clone of donor",
+    steps: [
+      ["Body cell", "A body (somatic) cell is taken from the donor, e.g. an udder cell"],
+      ["Empty egg", "The nucleus is removed from an egg cell of a second animal"],
+      ["Fuse", "An electric pulse fuses the donor cell with the empty egg and starts division"],
+      ["Embryo", "The embryo grows in the lab to an early stage"],
+      ["Surrogate", "The embryo is implanted in a third animal, a surrogate mother"],
+      ["Clone", "The newborn shares the donor’s nuclear DNA (mitochondrial DNA comes from the egg)"]
+    ] },
+  { name: "Gene cloning", dna: "One gene", result: "Many gene copies",
+    steps: [
+      ["Cut", "The gene and a plasmid are cut with the same restriction enzyme"],
+      ["Join", "DNA ligase joins the gene into the plasmid"],
+      ["Bacterium", "A bacterium takes up the plasmid (transformation)"],
+      ["Copies", "The bacteria divide, copying the gene each time: a gene, not an organism"]
+    ] }
+];
 
-slider.addEventListener('input', e => {
-  targetValue = parseFloat(e.target.value);
-  const fill = targetValue + '%';
-  slider.style.setProperty('--fill', fill);
+function stateOf(val) {
+  const m = Math.min(2, Math.floor(val / (100 / 3)));
+  const frac = Math.min(0.999, (val - m * (100 / 3)) / (100 / 3));
+  const n = METHODS[m].steps.length;
+  return { m, step: Math.min(n - 1, Math.floor(frac * n)) };
+}
+
+let current = stateOf(0);
+
+slider.addEventListener("input", e => {
+  const v = parseFloat(e.target.value);
+  slider.style.setProperty("--fill", v + "%");
+  current = stateOf(v);
+  updateUI();
 });
 
-function updateUI(val) {
-  if (val < 33) {
-    methodTag.textContent = 'Gene Cloning (Plasmid)';
-    canvasOverlay.textContent = 'SUCCESS RATE: ~100%';
-    successRate.textContent = '~100%';
-    copiesCount.textContent = '10⁶+';
-  } else if (val < 67) {
-    methodTag.textContent = 'Gene Cloning (PCR)';
-    canvasOverlay.textContent = 'SUCCESS RATE: ~100%';
-    successRate.textContent = '~100%';
-    copiesCount.textContent = '10⁹+';
-  } else {
-    methodTag.textContent = 'SCNT (Dolly method)';
-    canvasOverlay.textContent = 'SUCCESS RATE: <5%';
-    successRate.textContent = '<5%';
-    copiesCount.textContent = '1';
-  }
+function updateUI() {
+  const M = METHODS[current.m];
+  methodTag.textContent = M.name + " · step " + (current.step + 1) + " of " + M.steps.length;
+  canvasOverlay.textContent = M.steps[current.step][1];
+  successRate.textContent = M.dna;
+  copiesCount.textContent = M.result;
 }
 
 btnTherapeutic.addEventListener('click', () => {
   btnTherapeutic.classList.add('active');
   btnReproductive.classList.remove('active');
-  knowdropText.textContent = 'Therapeutic cloning uses somatic cell nuclear transfer (SCNT) to create embryonic stem cells for research and potential treatments — the embryo is never implanted, so no organism develops. Reproductive cloning (like Dolly) uses the same SCNT technique but implants the embryo to produce a live animal. The biology is identical; the ethical dividing line is whether you let development continue. Dolly proved mammals could be cloned from adult cells, but success rates remain below 5% — most embryos fail, and survivors often have health defects. Meanwhile, natural clones (identical twins, asexual organisms like strawberry runners) happen all the time with zero intervention and 100% viability.';
+  knowdropText.textContent = "Therapeutic cloning uses somatic cell nuclear transfer (SCNT) to create embryonic stem cells for research and potential treatments — the embryo is never implanted, so no organism develops. Reproductive cloning (like Dolly) uses the same SCNT technique but implants the embryo to produce a live animal. The biology is identical; the ethical dividing line is whether you let development continue. Dolly proved mammals could be cloned from adult cells, but success rates remain below 5% — most embryos fail, and survivors often have health defects. Meanwhile, natural clones (identical twins, asexual organisms like strawberry runners) happen all the time with zero intervention and 100% viability.";
 });
 
 btnReproductive.addEventListener('click', () => {
   btnReproductive.classList.add('active');
   btnTherapeutic.classList.remove('active');
-  knowdropText.textContent = 'Reproductive cloning creates a live organism (like Dolly the sheep) by implanting an SCNT embryo into a surrogate. The process is the same as therapeutic cloning up to the blastocyst stage — the difference is intent and outcome. Of 277 embryos created for Dolly, only 29 survived to implantation, and only one lived to birth. Most clones die in utero or shortly after birth; survivors often have shortened lifespans, obesity, immune defects, and premature aging due to telomere shortening. These welfare concerns, plus the question of individuality and consent (the clone had no say in existing), make reproductive cloning of humans universally banned. Gene cloning and natural clones avoid these issues entirely.';
+  knowdropText.textContent = "Reproductive cloning creates a live organism (like Dolly the sheep) by implanting an SCNT embryo into a surrogate. The process is the same as therapeutic cloning up to the blastocyst stage — the difference is intent and outcome. Of 277 embryos created for Dolly, only 29 survived to implantation, and only one lived to birth. Most clones die in utero or shortly after birth; survivors can have health problems such as large birth size, organ defects and early deaths; whether Dolly showed early signs of ageing (shorter telomeres, arthritis) was debated, and later clones of the same cell line aged normally. These welfare concerns, plus the question of individuality and consent (the clone had no say in existing), mean human reproductive cloning is banned in many countries, including Australia. Gene cloning and natural clones avoid these issues entirely.";
 });
 
 let time = 0;
+
+function cell(x, y, r, nucleus, opts) {
+  opts = opts || {};
+  ctx.strokeStyle = "rgba(237,237,232," + (opts.dim ? 0.25 : 0.7) + ")";
+  ctx.lineWidth = 1.5;
+  if (opts.dash) ctx.setLineDash([3, 3]);
+  ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.stroke();
+  ctx.setLineDash([]);
+  if (nucleus === "acc") {
+    ctx.fillStyle = "rgba(" + RGB + "," + (opts.dim ? 0.35 : 0.95) + ")";
+    ctx.beginPath(); ctx.arc(x, y, r * 0.38, 0, Math.PI * 2); ctx.fill();
+  } else if (nucleus === "plain") {
+    ctx.fillStyle = "rgba(237,237,232," + (opts.dim ? 0.15 : 0.45) + ")";
+    ctx.beginPath(); ctx.arc(x, y, r * 0.38, 0, Math.PI * 2); ctx.fill();
+  } else if (nucleus === "empty") {
+    ctx.strokeStyle = "rgba(250,199,117," + (opts.dim ? 0.3 : 0.9) + ")";
+    ctx.setLineDash([2, 3]);
+    ctx.beginPath(); ctx.arc(x, y, r * 0.38, 0, Math.PI * 2); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+}
+function cluster(x, y, r, k, dim, gapX) {
+  const s = r * 0.55;
+  for (let i = 0; i < k; i++) {
+    const a = (i / k) * Math.PI * 2;
+    cell(x + Math.cos(a) * s + (gapX || 0), y + Math.sin(a) * s, r * 0.45, "acc", { dim });
+  }
+}
+function plasmid(x, y, r, withGene, dim) {
+  ctx.strokeStyle = "rgba(237,237,232," + (dim ? 0.25 : 0.7) + ")";
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(x, y, r, 0.35, Math.PI * 2 - (withGene ? 0.35 : 0.35)); ctx.stroke();
+  if (withGene) {
+    ctx.strokeStyle = "rgba(" + RGB + "," + (dim ? 0.35 : 1) + ")";
+    ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.arc(x, y, r, -0.35, 0.35); ctx.stroke();
+  }
+}
+
+function drawStage(m, k, x, y, R, dim) {
+  if (m === 0) {
+    if (k === 0) cell(x, y, R, "acc", { dim });
+    else if (k === 1) cluster(x, y, R, 8, dim);
+    else if (k === 2) { cluster(x - R * 0.55, y, R * 0.8, 4, dim); cluster(x + R * 0.55, y, R * 0.8, 4, dim); }
+    else if (k === 3) { cell(x, y, R * 1.1, null, { dim }); cluster(x - R * 0.4, y, R * 0.5, 4, dim); cluster(x + R * 0.4, y, R * 0.5, 4, dim); }
+    else { cell(x - R * 0.5, y, R * 0.45, "acc", { dim }); cell(x + R * 0.5, y, R * 0.45, "acc", { dim }); }
+  } else if (m === 1) {
+    if (k === 0) cell(x, y, R * 0.8, "acc", { dim });
+    else if (k === 1) cell(x, y, R, "empty", { dim });
+    else if (k === 2) {
+      cell(x, y, R, "acc", { dim });
+      if (!dim) { ctx.strokeStyle = "rgba(250,199,117,0.9)"; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(x + R * 1.05, y - R * 0.6); ctx.lineTo(x + R * 0.8, y - R * 0.1); ctx.lineTo(x + R * 1.1, y); ctx.lineTo(x + R * 0.85, y + R * 0.5); ctx.stroke(); }
+    }
+    else if (k === 3) cluster(x, y, R, 8, dim);
+    else if (k === 4) { cell(x, y, R * 1.1, null, { dim }); cluster(x, y, R * 0.5, 6, dim); }
+    else cell(x, y, R * 0.8, "acc", { dim });
+  } else {
+    if (k === 0) { plasmid(x - R * 0.3, y, R * 0.6, false, dim); ctx.strokeStyle = "rgba(" + RGB + "," + (dim ? 0.35 : 1) + ")"; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(x + R * 0.55, y - R * 0.3); ctx.lineTo(x + R * 0.55, y + R * 0.3); ctx.stroke(); }
+    else if (k === 1) plasmid(x, y, R * 0.7, true, dim);
+    else if (k === 2) { cell(x, y, R, null, { dim }); plasmid(x, y, R * 0.35, true, dim); }
+    else { for (let i = 0; i < 6; i++) { const a = i / 6 * Math.PI * 2; cell(x + Math.cos(a) * R * 0.6, y + Math.sin(a) * R * 0.6, R * 0.35, null, { dim }); plasmid(x + Math.cos(a) * R * 0.6, y + Math.sin(a) * R * 0.6, R * 0.14, true, dim); } }
+  }
+}
 
 function draw() {
   time += 0.016;
   const w = canvas.width / dpr;
   const h = canvas.height / dpr;
 
-  sliderValue += (targetValue - sliderValue) * 0.08;
-
-  ctx.fillStyle = '#000';
+  ctx.fillStyle = "#000";
   ctx.fillRect(0, 0, w, h);
 
-  const mode = sliderValue < 33 ? 0 : sliderValue < 67 ? 1 : 2;
+  const M = METHODS[current.m];
+  const n = M.steps.length;
+  const slot = w * 0.92 / n;
+  const x0 = w * 0.04 + slot / 2;
+  const y = h * 0.4;
+  const R = Math.min(slot * 0.32, h * 0.16);
 
-  if (mode === 0) {
-    // Gene cloning (plasmid) - circular plasmid with many copies
-    const cx = w * 0.5;
-    const cy = h * 0.5;
-    const mainR = Math.min(w, h) * 0.18;
+  ctx.font = "11px \"JetBrains Mono\"";
+  ctx.textAlign = "left";
+  ctx.fillStyle = "rgba(237,237,232,0.7)";
+  ctx.fillText(M.name.toUpperCase(), w * 0.04, h * 0.1);
 
-    // Main plasmid ring
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    for (let i = 0; i < 60; i++) {
-      const a = (i / 60) * Math.PI * 2 + time * 0.5;
-      const x = cx + Math.cos(a) * mainR;
-      const y = cy + Math.sin(a) * mainR;
-      const pulse = 0.6 + 0.4 * Math.sin(time * 2 + i * 0.3);
-      ctx.fillStyle = 'rgba(' + RGB + ',' + pulse * 0.7 + ')';
-      ctx.beginPath();
-      ctx.arc(x, y, 2.5, 0, Math.PI * 2);
-      ctx.fill();
+  for (let k = 0; k < n; k++) {
+    const x = x0 + k * slot;
+    const dim = k > current.step;
+    if (k === current.step) {
+      const pulse = 0.75 + 0.25 * Math.sin(time * 3);
+      const g = ctx.createRadialGradient(x, y, 0, x, y, R * 1.8);
+      g.addColorStop(0, "rgba(" + RGB + "," + 0.22 * pulse + ")");
+      g.addColorStop(1, "rgba(" + RGB + ",0)");
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(x, y, R * 1.8, 0, Math.PI * 2); ctx.fill();
     }
-    ctx.restore();
-
-    // Multiple copies orbiting
-    for (let j = 0; j < 8; j++) {
-      const angle = (j / 8) * Math.PI * 2 + time * 0.3;
-      const orbitR = mainR * 2.2;
-      const copyX = cx + Math.cos(angle) * orbitR;
-      const copyY = cy + Math.sin(angle) * orbitR;
-      const copyR = mainR * 0.4;
-
-      ctx.save();
-      ctx.globalCompositeOperation = 'lighter';
-      for (let i = 0; i < 20; i++) {
-        const a = (i / 20) * Math.PI * 2 + time * 0.5;
-        const x = copyX + Math.cos(a) * copyR;
-        const y = copyY + Math.sin(a) * copyR;
-        ctx.fillStyle = 'rgba(' + RGB + ',0.35)';
-        ctx.beginPath();
-        ctx.arc(x, y, 1.5, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      ctx.restore();
+    drawStage(current.m, k, x, y, R, dim);
+    if (k < n - 1) {
+      ctx.strokeStyle = "rgba(237,237,232," + (k < current.step ? 0.5 : 0.15) + ")";
+      ctx.lineWidth = 1;
+      const ax = x + slot / 2;
+      ctx.beginPath(); ctx.moveTo(ax - 5, y); ctx.lineTo(ax + 5, y); ctx.lineTo(ax + 1, y - 3); ctx.moveTo(ax + 5, y); ctx.lineTo(ax + 1, y + 3); ctx.stroke();
     }
-
-  } else if (mode === 1) {
-    // PCR - exponential branching DNA strands
-    const startX = w * 0.15;
-    const startY = h * 0.5;
-    const levels = 4;
-    const spacing = w * 0.2;
-
-    function drawStrand(x, y, level, angle) {
-      if (level > levels) return;
-      const len = spacing * (1 - level * 0.15);
-      const endX = x + Math.cos(angle) * len;
-      const endY = y + Math.sin(angle) * len;
-
-      const grad = ctx.createLinearGradient(x, y, endX, endY);
-      grad.addColorStop(0, 'rgba(' + RGB + ',0.6)');
-      grad.addColorStop(1, 'rgba(' + RGB + ',0.3)');
-
-      ctx.save();
-      ctx.globalCompositeOperation = 'lighter';
-      ctx.strokeStyle = grad;
-      ctx.lineWidth = 2.5;
-      ctx.beginPath();
-      ctx.moveTo(x, y);
-      ctx.lineTo(endX, endY);
-      ctx.stroke();
-      ctx.restore();
-
-      // Branch
-      const branchAngle = Math.PI * 0.25;
-      drawStrand(endX, endY, level + 1, angle - branchAngle);
-      drawStrand(endX, endY, level + 1, angle + branchAngle);
-    }
-
-    drawStrand(startX, startY, 1, 0);
-
-  } else {
-    // SCNT - complex cell machinery, low success (dimmed, fragmented)
-    const cx = w * 0.5;
-    const cy = h * 0.5;
-
-    // Nucleus
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    const nucGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, h * 0.15);
-    nucGrad.addColorStop(0, 'rgba(' + RGB + ',0.25)');
-    nucGrad.addColorStop(1, 'rgba(' + RGB + ',0)');
-    ctx.fillStyle = nucGrad;
-    ctx.beginPath();
-    ctx.arc(cx, cy, h * 0.15, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-
-    // Fragmented DNA strands (low success)
-    for (let i = 0; i < 12; i++) {
-      const angle = (i / 12) * Math.PI * 2 + time * 0.2;
-      const dist = h * 0.25;
-      const x = cx + Math.cos(angle) * dist;
-      const y = cy + Math.sin(angle) * dist;
-      
-      ctx.save();
-      ctx.globalCompositeOperation = 'lighter';
-      ctx.strokeStyle = 'rgba(' + RGB + ',0.15)';
-      ctx.lineWidth = 1.5;
-      ctx.setLineDash([4, 6]);
-      ctx.beginPath();
-      ctx.moveTo(cx, cy);
-      ctx.lineTo(x, y);
-      ctx.stroke();
-      ctx.restore();
-
-      // Failure markers
-      if (i % 3 === 0) {
-        ctx.fillStyle = 'rgba(250,199,117,0.3)';
-        ctx.beginPath();
-        ctx.arc(x, y, 3, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
-
-    // Success indicator (single bright spot)
-    const successX = cx + Math.cos(time * 0.4) * h * 0.25;
-    const successY = cy + Math.sin(time * 0.4) * h * 0.25;
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    const successGrad = ctx.createRadialGradient(successX, successY, 0, successX, successY, 12);
-    successGrad.addColorStop(0, 'rgba(' + RGB + ',0.8)');
-    successGrad.addColorStop(1, 'rgba(' + RGB + ',0)');
-    ctx.fillStyle = successGrad;
-    ctx.beginPath();
-    ctx.arc(successX, successY, 12, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
+    ctx.textAlign = "center";
+    ctx.font = (k === current.step ? "600 " : "400 ") + "10px \"JetBrains Mono\"";
+    ctx.fillStyle = k === current.step ? ACC || "#5AADD4" : "rgba(237,237,232," + (dim ? 0.3 : 0.6) + ")";
+    ctx.fillText(M.steps[k][0], x, y + R * 1.25 + 16);
   }
 
   // Background particles
@@ -661,7 +654,7 @@ function draw() {
 
 window.addEventListener('resize', resize);
 resize();
-updateUI(0);
+updateUI();
 draw();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Aggregate Demand and the Budget — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Aggregate demand and the budget — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -293,7 +293,7 @@ canvas {
 </style>
 
 <div class="container">
-  <h2 class="sr-only">Interactive visualization of how government spending and taxation directly shift aggregate demand in the economy</h2>
+  <h2 class="sr-only">Interactive visualisation of how government spending and taxation directly shift aggregate demand in the economy</h2>
 
   <h1>The budget moves the <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">demand</span></h1>
   
@@ -312,7 +312,7 @@ canvas {
     </div>
 
     <div class="slider-wrapper">
-      <input type="range" min="0" max="100" value="50" class="ad-slider" id="gSlider" style="--fill: 50%">
+      <input aria-label="Government spending" type="range" min="0" max="100" value="50" class="ad-slider" id="gSlider" style="--fill: 50%">
     </div>
     <div class="ticks">
       <span>Low G</span>
@@ -323,11 +323,11 @@ canvas {
     <div class="stat-row">
       <div class="stat">
         <div class="stat-label">Total AD</div>
-        <div class="stat-value" id="adValue" style="color:var(--acc)">$520B</div>
+        <div class="stat-value" id="adValue" style="color:var(--acc)">$500B</div>
       </div>
       <div class="stat">
         <div class="stat-label">G Contribution</div>
-        <div class="stat-value" id="gValue" style="color:var(--amb)">25%</div>
+        <div class="stat-value" id="gValue" style="color:var(--amb)">20%</div>
       </div>
     </div>
   </div>
@@ -339,7 +339,7 @@ canvas {
     </div>
     
     <div class="knowdrop-divider">
-      <p class="knowdrop" id="knowdropText">When government spending increases, the G component of AD rises directly — every dollar flows into the circular flow as income for contractors, employees, or suppliers. This immediate injection boosts total demand without any time lag. The multiplier effect then amplifies the impact as recipients spend their new income, generating further rounds of consumption. This is why fiscal stimulus through spending is considered the most direct demand-side lever available to policymakers.</p>
+      <p class="knowdrop" id="knowdropText">When government spending increases, the G component of AD rises directly — every dollar flows into the circular flow as income for contractors, employees, or suppliers. Projects take time to plan and start, so the extra demand builds over months rather than all at once. The multiplier effect then amplifies the impact as recipients spend their new income, generating further rounds of consumption. This is why fiscal stimulus through spending is considered the most direct demand-side lever available to policymakers.</p>
     </div>
   </div>
 
@@ -366,8 +366,9 @@ const btnTax = document.getElementById('btnTax');
 const knowdropText = document.getElementById('knowdropText');
 
 let gLevel = 50;
-let targetAD = 520;
-let currentAD = 520;
+let targetAD = 500;
+let currentAD = 500;
+function gSpend(level) { return 40 + level * 1.2; } /* government spending, $B */
 
 const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
@@ -444,15 +445,12 @@ function draw() {
   ctx.fillStyle = '#000';
   ctx.fillRect(0, 0, w, h);
   
-  // Calculate component counts based on gLevel
+  // Particle counts follow the model: G particles = G / 2 ($B); C, I and X - M are held fixed while G moves
   const baseC = 80;
   const baseI = 40;
   const baseX = 30;
-  const gCount = Math.round(20 + (gLevel / 100) * 60);
-  
-  // Adjust C based on implicit tax (inverse of G for visual balance)
-  const taxEffect = (100 - gLevel) / 100;
-  const cCount = Math.round(baseC * (0.7 + taxEffect * 0.3));
+  const gCount = Math.round(gSpend(gLevel) / 2);
+  const cCount = baseC;
   
   updateParticles('C', cCount);
   updateParticles('I', baseI);
@@ -529,16 +527,14 @@ function draw() {
 draw();
 
 function updateStats() {
-  // Base values
+  // Model: C + I + (X - M) held at $400B; G runs $40B (low) to $160B (high), $100B at baseline
   const baseAD = 400;
-  const gContrib = 100 + (gLevel - 50) * 3;
+  const gContrib = gSpend(gLevel);
   targetAD = baseAD + gContrib;
-  
-  // Smooth transition
-  currentAD += (targetAD - currentAD) * 0.1;
+  currentAD = targetAD;
   
   adValue.textContent = '$' + Math.round(currentAD) + 'B';
-  gValue.textContent = Math.round((gContrib / currentAD) * 100) + '%';
+  gValue.textContent = Math.round((gContrib / currentAD) * 100) + '%'; /* 9% to 29%, never negative */
   
   liveTag.textContent = `G at ${gLevel}%`;
   
@@ -563,13 +559,13 @@ updateStats();
 btnSpending.addEventListener('click', () => {
   btnSpending.classList.add('active');
   btnTax.classList.remove('active');
-  knowdropText.textContent = "When government spending increases, the G component of AD rises directly — every dollar flows into the circular flow as income for contractors, employees, or suppliers. This immediate injection boosts total demand without any time lag. The multiplier effect then amplifies the impact as recipients spend their new income, generating further rounds of consumption. This is why fiscal stimulus through spending is considered the most direct demand-side lever available to policymakers.";
+  knowdropText.textContent = "When government spending increases, the G component of AD rises directly — every dollar flows into the circular flow as income for contractors, employees, or suppliers. Projects take time to plan and start, so the extra demand builds over months rather than all at once. The multiplier effect then amplifies the impact as recipients spend their new income, generating further rounds of consumption. This is why fiscal stimulus through spending is considered the most direct demand-side lever available to policymakers.";
 });
 
 btnTax.addEventListener('click', () => {
   btnTax.classList.add('active');
   btnSpending.classList.remove('active');
-  knowdropText.textContent = "When taxation increases, households have less disposable income — the C component of AD falls immediately. Unlike spending cuts which might take time to flow through, tax increases hit consumption straight away as people adjust their budgets. The effect compounds through the negative multiplier: reduced consumption lowers incomes elsewhere, triggering further spending cuts. This is why tax hikes are sometimes called 'fiscal drag' — they pull aggregate demand downward through the income channel.";
+  knowdropText.textContent = "When taxation increases, households have less disposable income, so the C component of AD falls. Like spending changes, this works through the economy over time: people adjust their budgets gradually, and some draw on savings at first. The effect compounds through the negative multiplier: reduced consumption lowers incomes elsewhere, triggering further spending cuts.";
 });
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */

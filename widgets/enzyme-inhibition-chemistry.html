@@ -411,6 +411,8 @@ class Enzyme {
     this.bound = null; // 'substrate' | 'inhibitor' | null
     this.deformed = false;
     this.deformAmt = 0; // for smooth transition
+    this.boundTimer = 0; // frames the current binding persists
+    this.deformTimer = 0; // frames the allosteric warp persists
   }
 }
 
@@ -475,6 +477,8 @@ function updateParticleCounts() {
 updateParticleCounts();
 
 let time = 0;
+let smoothOcc = 0;
+let smoothInhib = 0;
 
 function draw() {
   time += 0.016;
@@ -488,13 +492,19 @@ function draw() {
   substrates.forEach(s => s.update(w, h));
   inhibitors.forEach(i => i.update(w, h));
 
-  // Binding logic
+  // Binding logic (binding is sticky: it lasts a few seconds once made)
   enzymes.forEach(e => {
-    e.bound = null;
-    if (mode === 'noncompetitive') {
+    if (e.boundTimer > 0) {
+      e.boundTimer--;
+    } else {
+      e.bound = null;
+    }
+    if (mode === 'noncompetitive' && e.deformTimer > 0) {
+      e.deformTimer--;
       e.deformed = true;
       e.deformAmt = Math.min(1, e.deformAmt + 0.05);
     } else {
+      e.deformTimer = 0;
       e.deformed = false;
       e.deformAmt = Math.max(0, e.deformAmt - 0.05);
     }
@@ -509,13 +519,10 @@ function draw() {
       const ey = e.y * h;
       const dist = Math.hypot(sx - ex, sy - ey);
       if (dist < e.r + s.r && !e.bound) {
-        if (mode === 'competitive') {
+        if (mode === 'competitive' || !e.deformed) {
+          // Non-competitive: a warped enzyme cannot bind substrate
           e.bound = 'substrate';
-        } else {
-          // Non-competitive: fewer substrate bindings due to shape change
-          if (Math.random() > 0.6) {
-            e.bound = 'substrate';
-          }
+          e.boundTimer = 120;
         }
       }
     });
@@ -532,10 +539,16 @@ function draw() {
       if (mode === 'competitive') {
         if (dist < e.r + i.r && !e.bound) {
           e.bound = 'inhibitor';
+          e.boundTimer = 120;
         }
       } else {
-        // Non-competitive: always deforms, substrate can't displace
-        // Inhibitor doesn't occupy active site visually
+        // Non-competitive: inhibitor docks on the allosteric site and warps only this enzyme
+        if (dist < e.r + i.r && !e.deformed) {
+          e.deformed = true;
+          e.deformTimer = 180;
+          e.bound = 'inhibitor';
+          e.boundTimer = 180;
+        }
       }
     });
   });
@@ -662,11 +675,15 @@ function draw() {
   const boundCount = enzymes.filter(e => e.bound === 'substrate').length;
   const inhibCount = enzymes.filter(e => e.bound === 'inhibitor').length;
   const totalBound = boundCount + inhibCount;
-  const occupiedPct = Math.round((boundCount / enzymes.length) * 100);
-  const inhibPct = mode === 'competitive' ? Math.round((inhibCount / totalBound) * 100) || 0 : 100;
+  const deformedCount = enzymes.filter(e => e.deformed).length;
+  const occupiedPct = (boundCount / enzymes.length) * 100;
+  const inhibPct = mode === 'competitive' ? ((inhibCount / totalBound) * 100 || 0) : (deformedCount / enzymes.length) * 100;
+  // Smooth the readouts over roughly a second so they do not flicker
+  smoothOcc += (occupiedPct - smoothOcc) * 0.03;
+  smoothInhib += (inhibPct - smoothInhib) * 0.03;
 
-  occupiedStat.textContent = occupiedPct + '%';
-  inhibStat.textContent = inhibPct + '%';
+  occupiedStat.textContent = Math.round(smoothOcc) + '%';
+  inhibStat.textContent = Math.round(smoothInhib) + '%';
 
   requestAnimationFrame(draw);
 }

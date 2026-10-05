@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>How Revolutionary Was France? — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>How revolutionary was France? — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -191,13 +191,31 @@ canvas {
 }
 
 .tick-labels {
-  display: flex;
-  justify-content: space-between;
+  position: relative;
+  height: 14px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 9px;
   color: var(--ink-dim);
   margin-bottom: 16px;
 }
+
+.tick-labels span {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+.tick-labels span:first-child { transform: translateX(-10px); }
+.tick-labels span:last-child { transform: translateX(calc(-100% + 10px)); }
+
+.dim-evidence {
+  margin: 14px 0 0;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ink);
+  text-align: left;
+}
+.dim-evidence b { font-weight: 600; }
 
 .stat-row {
   display: grid;
@@ -304,52 +322,52 @@ canvas {
 </style>
 
 <div class="container">
-  <h2 class="sr-only">Interactive visualisation exploring the real extent of change during the French Revolution from 1789 to 1795</h2>
+  <h2 class="sr-only">How revolutionary was France: weigh what changed against what persisted in four areas, 1789 to 1795</h2>
   
-  <h1>Liberty Declared, <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">Inequality Remained</span></h1>
+  <h1>Liberty declared, <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">inequality remained</span></h1>
   
-  <p class="intro">The Revolution abolished feudalism and proclaimed equality—yet by 1795 the poor were still poor, women had no vote, and stability was nowhere. Some changes were genuine. Others were promises on parchment. Drag the slider to measure how much truly changed across four key dimensions.</p>
+  <p class="intro">The Revolution abolished feudalism and proclaimed equality—yet by 1795 the poor were still poor, women had no vote, and stability was nowhere. Some changes were genuine. Others were promises on parchment. Step the slider through four areas of French life and weigh what changed against what persisted.</p>
 
   <div class="card">
     <div class="card-header">
-      <span class="card-label">Dimensions of Change</span>
-      <span class="live-tag" id="liveTag">4 Dimensions</span>
+      <span class="card-label">Areas of change</span>
+      <span class="live-tag" id="liveTag">Legal</span>
     </div>
-    <p class="card-hint">Explore legal, economic, political, and institutional changes</p>
+    <p class="card-hint">Brighter node = deeper change. The depth is a judgement from the evidence below, not a measurement.</p>
     
     <div class="canvas-wrapper">
       <canvas id="canvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">4 Dimensions Active</div>
+      <div class="canvas-overlay" id="canvasOverlay">Legal: deep change</div>
     </div>
 
     <div class="slider-row">
-      <div class="slider-label">Dimensions Active</div>
-      <input type="range" min="0" max="4" value="4" class="fr-slider" id="dimSlider">
-      <div class="tick-labels">
-        <span>None</span>
-        <span>Legal</span>
-        <span>Economic</span>
-        <span>Political</span>
-        <span>All Four</span>
+      <label class="slider-label" for="dimSlider" style="display:block">Area of French life</label>
+      <input type="range" min="0" max="3" value="0" step="1" class="fr-slider" id="dimSlider">
+      <div class="tick-labels" aria-hidden="true">
+        <span style="left:10px">Legal</span>
+        <span style="left:calc(10px + (100% - 20px) / 3)">Economic</span>
+        <span style="left:calc(10px + (100% - 20px) * 2 / 3)">Political</span>
+        <span style="left:calc(100% - 10px)">Institutional</span>
       </div>
     </div>
 
     <div class="stat-row">
       <div class="stat">
-        <div class="stat-label">Change Score</div>
-        <div class="stat-value acc" id="changeScore">100%</div>
+        <div class="stat-label">Judgement</div>
+        <div class="stat-value acc" id="changeScore">Deep</div>
       </div>
       <div class="stat">
-        <div class="stat-label">Unrealised</div>
-        <div class="stat-value amb" id="unrealised">0%</div>
+        <div class="stat-label">Deep-change areas</div>
+        <div class="stat-value amb" id="unrealised">2 of 4</div>
       </div>
     </div>
+    <p class="dim-evidence" id="dimEvidence" aria-live="polite"></p>
   </div>
 
   <div class="card toggle-section">
     <div class="toggle-buttons">
-      <button class="toggle-btn active" data-view="abolished">What Changed</button>
-      <button class="toggle-btn" data-view="persistent">What Persisted</button>
+      <button class="toggle-btn active" data-view="abolished">What changed</button>
+      <button class="toggle-btn" data-view="persistent">What persisted</button>
     </div>
     
     <div class="knowdrop-divider">
@@ -358,8 +376,8 @@ canvas {
   </div>
 
   <div class="know-this">
-    <div class="know-this-tag">Know This</div>
-    <p class="know-this-body">The Revolution was <span style="color:var(--acc)">structurally radical but socially incomplete</span>—it destroyed <span style="color:var(--acc)">feudalism and legal privilege</span> while leaving <span style="color:var(--acc)">economic inequality and gendered exclusion</span> untouched.</p>
+    <div class="know-this-tag">Know this</div>
+    <p class="know-this-body">The Revolution was <span style="color:var(--acc)">structurally radical but socially incomplete</span>—it destroyed <span style="color:var(--acc)">feudalism and legal privilege</span> while leaving <span style="color:var(--acc)">women&rsquo;s exclusion from politics and wide economic inequality</span> largely in place.</p>
   </div>
 </div>
 
@@ -375,6 +393,7 @@ const liveTag = document.getElementById('liveTag');
 const canvasOverlay = document.getElementById('canvasOverlay');
 const changeScore = document.getElementById('changeScore');
 const unrealised = document.getElementById('unrealised');
+const dimEvidence = document.getElementById('dimEvidence');
 
 const toggleBtns = document.querySelectorAll('.toggle-btn');
 const knowdropText = document.getElementById('knowdropText');
@@ -393,12 +412,25 @@ toggleBtns.forEach(btn => {
   });
 });
 
+/* Each area carries a judgement of how deep the change was by 1795 (3 deep, 2 partial, 1 limited),
+   reached from the evidence listed with it. It is an illustrative judgement, not a measured score. */
+const LEVELS = ["", "Limited", "Partial", "Deep"];
 let dimensions = [
-  { name: 'Legal', angle: 0, changeAmt: 0.9, x: 0, y: 0, active: true },
-  { name: 'Economic', angle: Math.PI/2, changeAmt: 0.35, x: 0, y: 0, active: true },
-  { name: 'Political', angle: Math.PI, changeAmt: 0.45, x: 0, y: 0, active: true },
-  { name: 'Institutional', angle: 3*Math.PI/2, changeAmt: 0.75, x: 0, y: 0, active: true }
+  { name: "Legal", angle: -3 * Math.PI / 4, depth: 3, x: 0, y: 0, active: true,
+    changed: "Noble privilege, tax exemptions and the tithe were abolished (1789); equality before the law was declared; civil marriage and divorce came in (1792).",
+    persisted: "Women did not gain legal equality with men, and slavery in the colonies lasted until 1794." },
+  { name: "Economic", angle: -Math.PI / 4, depth: 1, x: 0, y: 0, active: true,
+    changed: "Feudal dues ended (fully without compensation in 1793), guilds were abolished (1791) and Church lands were sold.",
+    persisted: "Land mostly went to those who could buy it; the gap between rich and poor stayed wide, and food shortages hit the poor." },
+  { name: "Political", angle: Math.PI / 4, depth: 2, x: 0, y: 0, active: true,
+    changed: "Absolute monarchy ended; a republic was declared (1792) and the Convention was elected by near-universal male suffrage.",
+    persisted: "Women were kept out of political rights; the 1795 constitution brought back a property test for voters; coups and purges kept power unstable." },
+  { name: "Institutional", angle: 3 * Math.PI / 4, depth: 3, x: 0, y: 0, active: true,
+    changed: "Departments replaced the old provinces (1790), the Church was reorganised under the state, and a single metric system replaced local measures.",
+    persisted: "A strong central state continued, building on the centralising work of the old monarchy." }
 ];
+dimensions.forEach(d => { d.changeAmt = d.depth / 3; });
+let selected = 0;
 
 let beams = [];
 
@@ -413,30 +445,20 @@ function resize() {
 }
 
 function updateUI() {
-  const val = parseInt(slider.value);
-  const fill = (val / 4) * 100;
+  const val = parseInt(slider.value, 10);
+  selected = val;
+  const fill = (val / 3) * 100;
   slider.style.setProperty('--fill', fill + '%');
-  
-  for (let i = 0; i < 4; i++) {
-    dimensions[i].active = i < val;
-  }
-  
-  const labels = ['None', '1 Dimension', '2 Dimensions', '3 Dimensions', '4 Dimensions'];
-  liveTag.textContent = labels[val];
-  canvasOverlay.textContent = labels[val] + ' Active';
-  
-  let totalChange = 0;
-  let count = 0;
-  dimensions.forEach(d => {
-    if (d.active) {
-      totalChange += d.changeAmt;
-      count++;
-    }
-  });
-  
-  const avgChange = count > 0 ? totalChange / count : 0;
-  changeScore.textContent = Math.round(avgChange * 100) + '%';
-  unrealised.textContent = Math.round((1 - avgChange) * 100) + '%';
+
+  const d = dimensions[val];
+  const level = LEVELS[d.depth];
+  liveTag.textContent = d.name;
+  canvasOverlay.textContent = d.name + ": " + level.toLowerCase() + " change";
+  changeScore.textContent = level;
+  const deepN = dimensions.filter(x => x.depth === 3).length;
+  unrealised.textContent = deepN + " of " + dimensions.length;
+  dimEvidence.innerHTML = "<b>Changed:</b> " + d.changed + "<br><b>Persisted:</b> " + d.persisted;
+  slider.setAttribute("aria-valuetext", d.name + ", judged " + level.toLowerCase() + " change");
 }
 
 slider.addEventListener('input', updateUI);
@@ -447,24 +469,24 @@ function draw() {
   const w = canvas.width / dpr;
   const h = canvas.height / dpr;
   const cx = w / 2;
-  const cy = h / 2;
-  
+  const cy = (h - 36) / 2 + 2; /* clear of the caption bar */
+
   ctx.fillStyle = '#000';
   ctx.fillRect(0, 0, w, h);
   
   time += 0.016;
   
   // Update dimension positions
-  const radius = Math.min(w, h) * 0.32;
+  const rx = w * 0.4, ry = cy - 14;
   dimensions.forEach(d => {
-    d.x = cx + Math.cos(d.angle) * radius;
-    d.y = cy + Math.sin(d.angle) * radius;
+    d.x = cx + Math.cos(d.angle) * rx;
+    d.y = cy + Math.sin(d.angle) * ry;
   });
   
   // Spawn beams from active dimensions
   if (Math.random() < 0.08) {
     dimensions.forEach(d => {
-      if (d.active && Math.random() < 0.5) {
+      if (d.active && Math.random() < (d === dimensions[selected] ? 0.9 : 0.15)) {
         beams.push({
           sx: d.x,
           sy: d.y,
@@ -507,9 +529,10 @@ function draw() {
   // Draw dimension nodes
   dimensions.forEach(d => {
     if (!d.active) return;
-    
+    const isSel = d === dimensions[selected];
+
     const pulse = 0.7 + 0.3 * Math.sin(time * 2 + d.angle);
-    const nodeR = 8 * pulse;
+    const nodeR = (isSel ? 11 : 6) * pulse;
     
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
@@ -532,10 +555,29 @@ function draw() {
     ctx.restore();
   });
   
-  // Central convergence glow
+  // Area names and judgement
+  ctx.save();
+  ctx.font = "500 " + Math.min(12, Math.max(10, Math.round(h * 0.05))) + "px JetBrains Mono, monospace";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "top";
+  dimensions.forEach(d => {
+    const isSel = d === dimensions[selected];
+    ctx.fillStyle = isSel ? "#EDEDE8" : "rgba(237,237,232,0.45)";
+    ctx.fillText(d.name + " \u00b7 " + LEVELS[d.depth].toLowerCase(), d.x, d.y + 14);
+    if (isSel) {
+      ctx.strokeStyle = "rgba(237,237,232,0.7)";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(d.x, d.y, 12, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+  });
+  ctx.restore();
+
+  // Central convergence glow (stronger for a deeper change in the selected area)
   const activeCount = dimensions.filter(d => d.active).length;
   if (activeCount > 0) {
-    const intensity = activeCount / 4;
+    const intensity = dimensions[selected].depth / 3;
     
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';

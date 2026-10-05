@@ -96,6 +96,15 @@ h1 {
   color: var(--acc);
 }
 
+.rate-read {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--ink);
+  margin: 4px 0 14px;
+}
+.rate-read b { color: var(--acc); font-weight: 500; }
+
 .card-hint {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
@@ -193,12 +202,17 @@ canvas {
 }
 
 .tick-labels {
-  display: flex;
-  justify-content: space-between;
   font-family: 'JetBrains Mono', monospace;
   font-size: 9px;
   color: var(--ink-dim);
-  padding: 0 2px;
+  position: relative;
+  height: 14px;
+}
+.tick-labels > span {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  white-space: nowrap;
 }
 
 .stat-row {
@@ -245,7 +259,7 @@ canvas {
   flex: 1;
   font-family: 'JetBrains Mono', monospace;
   font-size: 14.5px;
-  padding: 12px;
+  padding: 12px 8px;
   border-radius: 11px;
   background: #12160F;
   border: 1px solid var(--line);
@@ -338,12 +352,14 @@ canvas {
       <div class="slider-label">AUD Exchange Rate (USD)</div>
       <input type="range" min="50" max="100" value="70" class="exr-slider" id="exrSlider">
       <div class="tick-labels">
-        <span>0.50</span>
-        <span>0.65</span>
-        <span>0.80</span>
-        <span>1.00</span>
+        <span style="left: calc(10px + (100% - 20px) * 0.0)">0.50</span>
+        <span style="left: calc(10px + (100% - 20px) * 0.3)">0.65</span>
+        <span style="left: calc(10px + (100% - 20px) * 0.6)">0.80</span>
+        <span style="left: calc(10px + (100% - 20px) * 1.0)">1.00</span>
       </div>
     </div>
+
+    <div class="rate-read" id="rateRead" aria-live="polite"></div>
 
     <div class="stat-row">
       <div class="stat">
@@ -359,13 +375,14 @@ canvas {
 
   <div class="card">
     <div class="toggle-container">
-      <button class="toggle-btn active" id="btnDrivers">Drivers</button>
+      <button class="toggle-btn active" id="btnRead">Reading a rate</button>
+      <button class="toggle-btn" id="btnDrivers">Drivers</button>
       <button class="toggle-btn" id="btnImpacts">Impacts</button>
     </div>
     
     <div class="knowdrop-section">
       <div class="knowdrop-body" id="knowdropText">
-        The AUD exchange rate is driven by four primary forces: interest rate differentials (higher RBA rates attract capital inflows, pushing the AUD up), terms of trade (when commodity prices rise, demand for AUD increases to pay Australian exporters), capital flows (foreign investment seeking Australian assets appreciates the currency), and market confidence (geopolitical stability and economic growth forecasts shift demand). These drivers interact continuously in global foreign exchange markets where the AUD is traded 24/7, with supply and demand determining the clearing price against major currencies like the USD, EUR and CNY.
+        An exchange rate is the price of one currency in terms of another. A bilateral rate compares two currencies: A$1 = US$0.70 means one Australian dollar buys 70 US cents, and one US dollar buys about A$1.43 (1 ÷ 0.70). If the number rises the Australian dollar has appreciated; if it falls it has depreciated. Trade and investment need a rate because buyers and sellers use different money: an American buying Australian wheat, a student paying Australian fees, or a firm investing here must first swap their currency for Australian dollars, and Australians buying overseas goods or assets do the reverse.
       </div>
     </div>
   </div>
@@ -385,6 +402,9 @@ const slider = document.getElementById('exrSlider');
 const exportImpact = document.getElementById('exportImpact');
 const importImpact = document.getElementById('importImpact');
 const btnDrivers = document.getElementById('btnDrivers');
+const btnRead = document.getElementById('btnRead');
+const rateRead = document.getElementById('rateRead');
+const readText = "An exchange rate is the price of one currency in terms of another. A bilateral rate compares two currencies: A$1 = US$0.70 means one Australian dollar buys 70 US cents, and one US dollar buys about A$1.43 (1 ÷ 0.70). If the number rises the Australian dollar has appreciated; if it falls it has depreciated. Trade and investment need a rate because buyers and sellers use different money: an American buying Australian wheat, a student paying Australian fees, or a firm investing here must first swap their currency for Australian dollars, and Australians buying overseas goods or assets do the reverse.";
 const btnImpacts = document.getElementById('btnImpacts');
 const knowdropText = document.getElementById('knowdropText');
 
@@ -437,6 +457,8 @@ function updateSlider() {
   slider.style.setProperty('--fill', fillPercent + '%');
   
   liveTag.textContent = `AUD @ ${rate.toFixed(2)} USD`;
+  /* reading the bilateral rate, computed from the slider */
+  rateRead.innerHTML = `A$1 buys <b>US$${rate.toFixed(2)}</b> · US$1 buys <b>A$${(1 / rate).toFixed(2)}</b><br>A$100 of Australian exports costs a US buyer <b>US$${(100 * rate).toFixed(0)}</b>`;
   
   // Update export impact
   if (rate < 0.60) {
@@ -473,8 +495,16 @@ function updateSlider() {
 slider.addEventListener('input', updateSlider);
 updateSlider();
 
+btnRead.addEventListener('click', () => {
+  btnRead.classList.add('active');
+  btnDrivers.classList.remove('active');
+  btnImpacts.classList.remove('active');
+  knowdropText.textContent = readText;
+});
+
 btnDrivers.addEventListener('click', () => {
   btnDrivers.classList.add('active');
+  btnRead.classList.remove('active');
   btnImpacts.classList.remove('active');
   knowdropText.textContent = driversText;
 });
@@ -482,6 +512,7 @@ btnDrivers.addEventListener('click', () => {
 btnImpacts.addEventListener('click', () => {
   btnImpacts.classList.add('active');
   btnDrivers.classList.remove('active');
+  btnRead.classList.remove('active');
   knowdropText.textContent = impactsText;
 });
 

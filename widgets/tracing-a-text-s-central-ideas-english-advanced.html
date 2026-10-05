@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Tracing a Text's Central Ideas — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Tracing a text's central ideas — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -163,6 +163,13 @@ h1 {
   border-color: var(--ag);
 }
 
+.trace-map {
+  display: block;
+  width: 100%;
+  height: 22px;
+  margin: -4px 0 14px;
+}
+
 .annotation {
   border-top: 1px solid var(--line);
   padding-top: 14px;
@@ -313,6 +320,8 @@ h1 {
       </div>
     </div>
 
+    <svg id="traceMap" class="trace-map" viewBox="0 0 300 22" preserveAspectRatio="none" role="img" aria-label="Where the chosen idea appears, from the start of the passage to the end"></svg>
+
     <div class="annotation" id="annotation">
       Select a lens above to see how central ideas recur and develop across this passage. Notice how some moments carry multiple ideas simultaneously — that's where complexity lives.
     </div>
@@ -348,25 +357,22 @@ h1 {
 <script>
 const lensData = {
   power: {
-    name: 'Power',
-    annotation: 'Power appears five times, but notice how it evolves: from the father\'s absent authority, through the councillors\' waiting deference, to her own command of the room. The text doesn\'t just depict power — it shows power transferring, reversing. Each instance builds on the last, creating a trajectory. That\'s what makes it central: it develops.',
-    count: 5
+    name: "Power",
+    annotation: `Power appears four times, but notice how it evolves: from the father's absent authority, through the councillors' waiting deference, to her own command of the room. The text doesn't just depict power — it shows power transferring, reversing. Each instance builds on the last, creating a trajectory. That's what makes it central: it develops.`
   },
   memory: {
-    name: 'Memory',
-    annotation: 'Memory appears four times, linking past and present. The father\'s voice "echoes," her childhood experience of invisibility resurfaces, and the transformed meaning of silence bridges both moments. Memory here isn\'t nostalgia — it\'s the lens through which present power is understood. The text uses recurrence to show how past and present interpret each other.',
-    count: 5
+    name: "Memory",
+    annotation: `Memory appears four times, linking past and present. The father's voice "echoes," her childhood experience of invisibility resurfaces, and the transformed meaning of silence bridges both moments. Memory here isn't nostalgia — it's the lens through which present power is understood. The text uses recurrence to show how past and present interpret each other.`
   },
   silence: {
-    name: 'Silence',
-    annotation: 'Silence appears four times and carries opposite meanings depending on context. Initially it marks exclusion ("invisible, unheard"), but by the end it signifies control ("she let the quiet lengthen"). The same phenomenon — silence — means different things based on who holds power. That transformation is what makes silence a central concern: the text interrogates what it means.',
-    count: 4
+    name: "Silence",
+    annotation: `Silence appears four times and carries opposite meanings depending on context. Initially it marks exclusion ("invisible, unheard"), but by the end it signifies control ("she let the quiet lengthen"). The same phenomenon — silence — means different things based on who holds power. That transformation is what makes silence a central concern: the text interrogates what it means.`
   }
 };
 
 const knowdropContent = {
-  central: 'Central ideas are the concerns that recur, develop, and carry weight across the entire text. They\'re what the text keeps returning to — through different characters, scenes, or images. In this passage, power, memory, and silence aren\'t just mentioned once; they\'re woven throughout, each instance adding complexity to the pattern. A strong essay builds its spine around these recurring concerns, showing how they evolve and interact. You\'re not just listing themes — you\'re tracing a path through the text that reveals what it\'s genuinely working through.',
-  minor: 'Minor details — like the vaulted ceiling or the councillors as a group — provide texture but don\'t recur or develop. They\'re scene-setting, not structural. A weak essay treats every detail as equally significant, resulting in a flat reading. The skill is distinguishing between what the text mentions once (context, atmosphere, plot mechanics) and what it returns to repeatedly with evolving complexity. Central ideas are the ones you can trace across multiple moments, watching them shift meaning or accumulate depth. Minor details support those ideas but don\'t carry the text\'s interpretive weight on their own.'
+  central: `Central ideas are the concerns that recur, develop, and carry weight across the entire text. They're what the text keeps returning to — through different characters, scenes, or images. In this passage, power, memory, and silence aren't just mentioned once; they're woven throughout, each instance adding complexity to the pattern. A strong essay builds its spine around these recurring concerns, showing how they evolve and interact. You're not just listing themes — you're tracing a path through the text that reveals what it's genuinely working through.`,
+  minor: `Minor details — like the vaulted ceiling or the chamber itself — provide texture but don't recur or develop. They're scene-setting, not structural. A weak essay treats every detail as equally significant, resulting in a flat reading. The skill is distinguishing between what the text mentions once (context, atmosphere, plot mechanics) and what it returns to repeatedly with evolving complexity. Central ideas are the ones you can trace across multiple moments, watching them shift meaning or accumulate depth. Minor details support those ideas but don't carry the text's interpretive weight on their own.`
 };
 
 let activeLens = null;
@@ -391,19 +397,32 @@ document.querySelectorAll('.lens-btn').forEach(btn => {
   });
 });
 
+const traceMap = document.getElementById("traceMap");
+function drawTrace() {
+  const n = spans.length, gap = 3, w = (300 - gap * (n - 1)) / n;
+  let out = "";
+  spans.forEach((sp, i) => {
+    const on = activeLens && (sp.dataset.tags || "").split(" ").includes(activeLens);
+    out += `<rect x="${(i * (w + gap)).toFixed(1)}" y="${on ? 2 : 8}" width="${w.toFixed(1)}" height="${on ? 18 : 6}" rx="2" fill="${on ? "#BB6FE2" : "#262B26"}"/>`;
+  });
+  traceMap.innerHTML = out;
+}
+
 function updatePassage() {
   if (!activeLens) {
     spans.forEach(span => {
       span.classList.remove('active', 'inactive');
     });
-    annotation.textContent = 'Select a lens above to see how central ideas recur and develop across this passage. Notice how some moments carry multiple ideas simultaneously — that\'s where complexity lives.';
-    activeTag.textContent = 'No lens active';
+    annotation.textContent = `Select a lens above to see how central ideas recur and develop across this passage. Notice how some moments carry multiple ideas simultaneously — that's where complexity lives.`;
+    activeTag.textContent = "No lens active";
+    drawTrace();
     return;
   }
 
   const data = lensData[activeLens];
   activeTag.textContent = data.name + ' highlighted';
   annotation.textContent = data.annotation;
+  drawTrace();
 
   spans.forEach(span => {
     const tags = span.dataset.tags ? span.dataset.tags.split(' ') : [];
@@ -426,7 +445,7 @@ function updateStats() {
   
   const data = lensData[activeLens];
   lensName.textContent = data.name;
-  instanceCount.textContent = data.count;
+  instanceCount.textContent = String(Array.from(spans).filter(sp => (sp.dataset.tags || "").split(" ").includes(activeLens)).length);
 }
 
 document.querySelectorAll('.toggle-btn').forEach(btn => {

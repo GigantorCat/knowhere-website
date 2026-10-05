@@ -329,7 +329,7 @@ canvas {
   <h1>There is no <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">centripetal force</span></h1>
   
   <p class="intro">
-    Centripetal force is a role, not a thing. Whatever real force points at the centre fills that role — friction on a flat road, a component of the normal force on a banked track. Drag the slider below to increase speed and watch friction change colour as it tries (or fails) to keep the car on the curve.
+    Centripetal force is a role, not a thing. Whatever real force points at the centre fills that role — friction on a flat road, a component of the normal force on a banked track. Raise the speed below and watch friction change colour as it tries (or fails) to keep the car on the curve.
   </p>
 
   <div class="card">
@@ -337,7 +337,7 @@ canvas {
       <span class="card-label">Flat Circular Road</span>
       <span class="live-tag" id="liveTag">Speed: 15 m/s</span>
     </div>
-    <p class="card-hint">Friction provides the centripetal force — up to a limit</p>
+    <p class="card-hint">Raise the speed. Watch the two forces.</p>
     
     <div class="canvas-wrapper">
       <canvas id="trackCanvas"></canvas>
@@ -359,11 +359,11 @@ canvas {
     <div class="stat-row">
       <div class="stat">
         <span class="stat-label">Req'd Force</span>
-        <span class="stat-value" id="reqForce" style="color:var(--acc)">562 N</span>
+        <span class="stat-value" id="reqForce" style="color:var(--acc)">8438 N</span>
       </div>
       <div class="stat">
         <span class="stat-label">Friction Limit</span>
-        <span class="stat-value" id="maxFriction" style="color:var(--amb)">2400 N</span>
+        <span class="stat-value" id="maxFriction" style="color:var(--amb)">11760 N</span>
       </div>
     </div>
   </div>
@@ -440,14 +440,15 @@ function updateStats() {
   speed = parseFloat(slider.value);
   const reqF = (mass * speed * speed) / radius;
   
-  liveTag.textContent = `Speed: ${speed.toFixed(0)} m/s`;
+  liveTag.textContent = `Speed: ${speed % 1 ? speed.toFixed(1) : speed.toFixed(0)} m/s`;
   reqForce.textContent = Math.round(reqF) + ' N';
+  maxFriction.textContent = Math.round(maxFric) + ' N'; /* same cap the slide test uses: mu x m x g */
   
   if (reqF > maxFric) {
-    canvasOverlay.textContent = 'Friction exceeded — car slides out';
+    canvasOverlay.textContent = `Friction exceeded (needs ${Math.round(reqF / maxFric * 100)}% of limit) — car slides out`;
   } else {
-    const margin = ((maxFric - reqF) / maxFric * 100).toFixed(0);
-    canvasOverlay.textContent = `Friction margin: ${margin}%`;
+    const used = Math.round(reqF / maxFric * 100);
+    canvasOverlay.textContent = `Friction used: ${used}% of limit`;
   }
 }
 

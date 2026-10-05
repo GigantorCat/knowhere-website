@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Heat of Combustion and Energy Efficiency — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Heat of combustion and energy efficiency — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -314,7 +314,7 @@ canvas {
       <span class="card-label">Combustion Calorimeter</span>
       <span class="live-tag" id="effTag">70% efficiency</span>
     </div>
-    <p class="card-hint">Move slider to adjust experimental efficiency</p>
+    <p class="card-hint">Move slider to adjust experimental efficiency · 0.5 g ethanol burned releases 14.9 kJ</p>
     
     <div class="canvas-wrapper">
       <canvas id="combustCanvas"></canvas>
@@ -333,11 +333,11 @@ canvas {
     <div class="stat-row">
       <div class="stat">
         <span class="stat-label">Useful energy</span>
-        <span class="stat-value" id="usefulStat" style="color:var(--acc)">2800 kJ</span>
+        <span class="stat-value" id="usefulStat" style="color:var(--acc)">10.4 kJ</span>
       </div>
       <div class="stat">
         <span class="stat-label">Lost energy</span>
-        <span class="stat-value" id="lostStat" style="color:var(--amb)">1200 kJ</span>
+        <span class="stat-value" id="lostStat" style="color:var(--amb)">4.5 kJ</span>
       </div>
     </div>
   </div>
@@ -349,7 +349,7 @@ canvas {
     </div>
     
     <div class="knowdrop">
-      <p id="knowdropText">Heat escapes to the surroundings because air is a poor insulator—convection currents carry energy away faster than you can measure it. The apparatus itself (beaker, stirrer, thermometer) absorbs energy, warming up instead of just the water. Evaporation from the water surface carries latent heat away. Incomplete combustion produces CO instead of CO₂, releasing less energy per mole of fuel. All four factors stack, so even careful technique gives you 60–80% of the published value. The exam wants you to list these specific mechanisms, not just say "heat loss."</p>
+      <p id="knowdropText">Heat escapes to the surroundings because air is a poor insulator—convection currents carry energy away faster than you can measure it. The apparatus itself (beaker, stirrer, thermometer) absorbs energy, warming up instead of just the water. Evaporation from the water surface carries latent heat away. Incomplete combustion produces CO instead of CO₂, releasing less energy per mole of fuel. All four factors stack, so even careful technique gives you 60–80% of the published value. Assessment tasks want you to list these specific mechanisms, not just say "heat loss."</p>
     </div>
   </div>
 
@@ -376,11 +376,11 @@ const bctx = buf.getContext('2d', { alpha: false });
 
 let w, h, cx, cy;
 let efficiency = 70;
-const totalEnergy = 4000;
+const totalEnergy = 14.9;
 
 const knowdrops = {
-  sources: "Heat escapes to the surroundings because air is a poor insulator—convection currents carry energy away faster than you can measure it. The apparatus itself (beaker, stirrer, thermometer) absorbs energy, warming up instead of just the water. Evaporation from the water surface carries latent heat away. Incomplete combustion produces CO instead of CO₂, releasing less energy per mole of fuel. All four factors stack, so even careful technique gives you 60–80% of the published value. The exam wants you to list these specific mechanisms, not just say \"heat loss.\"",
-  calculation: "Start with the theoretical value from data tables (e.g., ethanol = –1367 kJ/mol). Measure your temperature rise, calculate energy absorbed by water using Q = mcΔT. Divide your measured energy by the theoretical energy, multiply by 100 to get efficiency percentage. If you burned 0.5 g ethanol (0.0109 mol), theory says 14.9 kJ. If you measured 10.4 kJ, efficiency = (10.4/14.9) × 100 = 70%. The difference (4.5 kJ) went to surroundings, apparatus, evaporation, and incomplete combustion. Always show this calculation step-by-step in exams—they mark the method, not just the final %."
+  sources: "Heat escapes to the surroundings because air is a poor insulator—convection currents carry energy away faster than you can measure it. The apparatus itself (beaker, stirrer, thermometer) absorbs energy, warming up instead of just the water. Evaporation from the water surface carries latent heat away. Incomplete combustion produces CO instead of CO₂, releasing less energy per mole of fuel. All four factors stack, so even careful technique gives you 60–80% of the published value. Assessment tasks want you to list these specific mechanisms, not just say \"heat loss.\"",
+  calculation: "Start with the theoretical value from data tables (e.g., ethanol = –1367 kJ/mol). Measure your temperature rise, calculate energy absorbed by water using Q = mcΔT. Divide your measured energy by the theoretical energy, multiply by 100 to get efficiency percentage. If you burned 0.5 g ethanol (0.0109 mol), theory says 14.9 kJ. If you measured 10.4 kJ, efficiency = (10.4/14.9) × 100 = 70%. The difference (4.5 kJ) went to surroundings, apparatus, evaporation, and incomplete combustion. Always show this calculation step-by-step in tests—they mark the method, not just the final %."
 };
 
 function resize() {
@@ -443,18 +443,19 @@ function draw() {
   ctx.rect(beakerX, beakerY, beakerW, beakerH);
   ctx.stroke();
 
-  // Water inside beaker (useful energy - teal)
-  const waterHeight = beakerH * useful;
+  // Water inside beaker (fixed amount; brighter teal = warmer water)
+  const waterHeight = beakerH * 0.8;
+  const warmth = (efficiency - 40) / (95 - 40);
   const waterGrad = ctx.createLinearGradient(beakerX, beakerY + beakerH, beakerX, beakerY + beakerH - waterHeight);
-  waterGrad.addColorStop(0, 'rgba(62, 154, 214,0.25)');
-  waterGrad.addColorStop(1, 'rgba(62, 154, 214,0.5)');
+  waterGrad.addColorStop(0, `rgba(62, 154, 214,${0.15 + 0.25 * warmth})`);
+  waterGrad.addColorStop(1, `rgba(62, 154, 214,${0.3 + 0.4 * warmth})`);
   ctx.fillStyle = waterGrad;
   ctx.fillRect(beakerX + 2, beakerY + beakerH - waterHeight, beakerW - 4, waterHeight);
 
   // Water glow
   ctx.save();
   ctx.globalCompositeOperation = 'lighter';
-  ctx.fillStyle = 'rgba(62, 154, 214,0.15)';
+  ctx.fillStyle = `rgba(62, 154, 214,${0.05 + 0.2 * warmth})`;
   ctx.fillRect(beakerX, beakerY + beakerH - waterHeight - 5, beakerW, waterHeight + 5);
   ctx.restore();
 
@@ -562,11 +563,11 @@ function draw() {
 }
 
 function updateStats() {
-  const useful = Math.round(totalEnergy * (efficiency / 100));
-  const lost = totalEnergy - useful;
+  const useful = Math.round(totalEnergy * (efficiency / 100) * 10) / 10;
+  const lost = Math.round((totalEnergy - useful) * 10) / 10;
   
-  usefulStat.textContent = useful.toLocaleString() + ' kJ';
-  lostStat.textContent = lost.toLocaleString() + ' kJ';
+  usefulStat.textContent = useful.toFixed(1) + ' kJ';
+  lostStat.textContent = lost.toFixed(1) + ' kJ';
   effTag.textContent = efficiency + '% efficiency';
   canvasOverlay.textContent = `${efficiency}% to water · ${100 - efficiency}% lost to surroundings`;
 }

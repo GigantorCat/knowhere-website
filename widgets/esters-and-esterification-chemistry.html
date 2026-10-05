@@ -321,7 +321,7 @@ canvas {
 <div class="container">
   <h1>Fruit smells aren't gifts from nature—they're <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">equilibrium traps</span></h1>
   
-  <p class="intro">Esters give bananas, pineapples, and strawberries their signature scents, but the reaction that makes them sits stubbornly in the middle, never fully finishing. Esterification is a reversible condensation: acid meets alcohol, sulfuric acid kicks it off, heat keeps it going, and a reflux apparatus stops the product evaporating before you've made enough. Drag the slider to add heat and watch the equilibrium shift toward ester formation.</p>
+  <p class="intro">Esters give bananas, pineapples, and strawberries their signature scents, but the reaction that makes them sits stubbornly in the middle, never fully finishing. Esterification is a reversible condensation: acid meets alcohol, a sulfuric acid catalyst speeds it up, heat gets it to equilibrium sooner, and a reflux apparatus stops the reactants and product evaporating before equilibrium is reached. Drag the slider to add heat and watch the mixture reach the same roughly two-thirds yield faster.</p>
 
   <div class="card">
     <div class="card-header">
@@ -364,7 +364,7 @@ canvas {
       <button class="toggle-btn" id="btn-excess">Excess Alcohol</button>
     </div>
     <div class="knowdrop" id="knowdrop-text">
-      Reflux is the esterification lifeline: the condenser above the flask captures evaporating alcohol and ester vapour, cooling them back to liquid before they escape. Without it, you'd lose reactants and products to the air before equilibrium could even establish. The technique lets you heat the mixture vigorously for hours without losing mass, giving the slow reversible reaction time to creep toward a useful yield. Le Chatelier's principle kicks in when you run reflux continuously—adding heat shifts the equilibrium position toward products, but the reverse reaction still operates, so you never get 100% conversion.
+      Reflux is the esterification lifeline: the condenser above the flask captures evaporating alcohol and ester vapour, cooling them back to liquid before they escape. Without it, you'd lose reactants and products to the air before equilibrium could even establish. The technique lets you heat the mixture vigorously for hours without losing mass, giving the slow reversible reaction time to creep toward a useful yield. Heat does not shift the equilibrium position, though: esterification is almost thermoneutral, so heating speeds up the forward and reverse reactions by the same factor and simply gets you to the same roughly 67% yield sooner, and because the reverse reaction keeps operating you never get 100% conversion.
     </div>
   </div>
 
@@ -374,7 +374,7 @@ canvas {
       <div class="know-tag-text">Know This</div>
     </div>
     <div class="know-body">
-      Esterification is a <span style="color:var(--acc)">reversible condensation</span> that reaches <span style="color:var(--acc)">equilibrium</span> midway, so reflux heating and <span style="color:var(--acc)">excess reactant</span> are essential to push the yield beyond 50%.
+      Esterification is a <span style="color:var(--acc)">reversible condensation</span> that reaches <span style="color:var(--acc)">equilibrium</span> at roughly two-thirds conversion, so reflux heating gets it there faster without losing material, and <span style="color:var(--acc)">excess reactant</span> is what pushes the yield higher.
     </div>
   </div>
 </div>
@@ -488,16 +488,13 @@ function updateReaction(temp) {
      shown, so the cold end is a slow equilibrium rather than a still picture. */
   const celsius = 25 + temp * 0.75;
 
-  /* Both rates rise with heat, but not by the same factor. Scaling them
-     identically -- which is what temp/8000 and temp/12000 did -- locks the
-     ratio, so the equilibrium POSITION could never move and the slider only
-     ever changed how fast it reached the same place. The forward step carries
-     the higher activation barrier, so it gains more from heat than the
-     reverse does, and that difference is the Le Chatelier shift this card
-     says it teaches. Measured after: ~32% yield cold, ~56% hot, and it comes
-     back down when the mixture is cooled. */
+  /* Esterification is nearly thermoneutral, so heat barely moves the
+     equilibrium position. Scale forward and reverse by the SAME temperature
+     factor: the slider changes how fast equilibrium is reached, not where it
+     sits. A 4:1 ratio gives K about 4, which for a 1:1 mixture settles at
+     roughly 67% ester, cold or hot. */
   const reactionProb = celsius / 8000;
-  const reverseProb  = (celsius + 320) / 60000;
+  const reverseProb  = celsius / 32000;
 
   for (let i = 0; i < molecules.length; i++) {
     for (let j = i + 1; j < molecules.length; j++) {
@@ -568,7 +565,7 @@ setInterval(updateUI, 200);
 btnReflux.addEventListener('click', () => {
   btnReflux.classList.add('active');
   btnExcess.classList.remove('active');
-  knowdropText.textContent = "Reflux is the esterification lifeline: the condenser above the flask captures evaporating alcohol and ester vapour, cooling them back to liquid before they escape. Without it, you'd lose reactants and products to the air before equilibrium could even establish. The technique lets you heat the mixture vigorously for hours without losing mass, giving the slow reversible reaction time to creep toward a useful yield. Le Chatelier's principle kicks in when you run reflux continuously—adding heat shifts the equilibrium position toward products, but the reverse reaction still operates, so you never get 100% conversion.";
+  knowdropText.textContent = "Reflux is the esterification lifeline: the condenser above the flask captures evaporating alcohol and ester vapour, cooling them back to liquid before they escape. Without it, you'd lose reactants and products to the air before equilibrium could even establish. The technique lets you heat the mixture vigorously for hours without losing mass, giving the slow reversible reaction time to creep toward a useful yield. Heat does not shift the equilibrium position, though: esterification is almost thermoneutral, so heating speeds up the forward and reverse reactions by the same factor and simply gets you to the same roughly 67% yield sooner, and because the reverse reaction keeps operating you never get 100% conversion.";
 });
 
 btnExcess.addEventListener('click', () => {

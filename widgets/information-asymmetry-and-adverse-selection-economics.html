@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Information Asymmetry and Adverse Selection — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Information asymmetry and adverse selection — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -328,7 +328,7 @@ canvas {
 <div class="container">
   <h2 class="sr-only">Information Asymmetry Interactive Widget</h2>
   
-  <h1>Too much honesty <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">kills markets</span></h1>
+  <h1>Hidden information can <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">kill a market</span></h1>
   
   <p class="intro">When sellers know their cars are lemons but buyers don't, rational buyers offer only low prices—which drives all quality sellers out of the market. This information asymmetry creates a death spiral where only the worst products remain for sale. Drag the slider to watch the market unravel as information gaps widen.</p>
   
@@ -415,9 +415,13 @@ for (let i = 0; i < 40; i++) {
     quality: i < 20 ? 'good' : 'lemon',
     opacity: 1,
     targetOpacity: 1,
-    size: 8 + Math.random() * 4
+    size: 8 + Math.random() * 4,
+    rank: i < 20 ? i : -1
   });
 }
+const GOOD_TOTAL = 20, LEMON_TOTAL = 20;
+/* the one model behind the drawing and every readout: how many quality cars are still for sale */
+function goodShown() { return Math.round(GOOD_TOTAL * (1 - asymmetry / 100)); }
 
 function resize() {
   const rect = canvas.getBoundingClientRect();
@@ -457,12 +461,8 @@ function draw() {
     car.x = Math.max(0, Math.min(1, car.x));
     car.y = Math.max(0, Math.min(1, car.y));
     
-    // Quality cars exit as asymmetry increases
-    if (car.quality === 'good') {
-      car.targetOpacity = 1 - exitThreshold;
-    } else {
-      car.targetOpacity = 1;
-    }
+    // Quality cars exit as asymmetry increases: exactly goodShown() of them stay on screen
+    car.targetOpacity = (car.quality === 'lemon' || car.rank < goodShown()) ? 1 : 0;
     
     // Smooth opacity transition
     car.opacity += (car.targetOpacity - car.opacity) * 0.08;
@@ -522,23 +522,27 @@ function draw() {
 function updateUI() {
   asymmetry = parseFloat(asymSlider.value);
   
-  // Calculate remaining quality cars
-  const qualityRemaining = Math.round((1 - asymmetry / 100) * 100);
+  // Readouts worked out from the cars shown
+  const good = goodShown();
+  const qualityRemaining = Math.round(good / GOOD_TOTAL * 100);
   qualityStat.textContent = qualityRemaining + '%';
   
-  // Calculate market efficiency (drops as quality exits)
-  const efficiency = Math.round(75 + (qualityRemaining - 50) * 0.5);
+  // Market efficiency: share of the 40 worthwhile sales that still happen (every car is worth trading with full information)
+  const efficiency = Math.round((good + LEMON_TOTAL) / (GOOD_TOTAL + LEMON_TOTAL) * 100);
   efficiencyStat.textContent = efficiency + '%';
+  const lemonShare = Math.round(LEMON_TOTAL / (LEMON_TOTAL + good) * 100);
   
   // Update labels
   liveTag.textContent = asymmetry.toFixed(0) + '% INFO ASYMMETRY';
   
-  if (asymmetry < 20) {
-    canvasOverlay.textContent = 'TRANSPARENT MARKET — FEW LEMONS';
-  } else if (asymmetry < 60) {
-    canvasOverlay.textContent = 'MIXED MARKET — ' + Math.round(50 + asymmetry * 0.5) + '% LEMONS';
+  if (good === 0) {
+    canvasOverlay.textContent = "Adverse selection — only lemons remain";
+  } else if (asymmetry < 20) {
+    canvasOverlay.textContent = "Clear information — " + lemonShare + "% lemons";
+  } else if (lemonShare < 75) {
+    canvasOverlay.textContent = "Mixed market — " + lemonShare + "% lemons";
   } else {
-    canvasOverlay.textContent = 'ADVERSE SELECTION — ONLY LEMONS REMAIN';
+    canvasOverlay.textContent = "Adverse selection — " + lemonShare + "% lemons";
   }
 }
 
@@ -555,9 +559,9 @@ toggleBtns.forEach(btn => {
     const mode = btn.dataset.mode;
     
     if (mode === 'principal') {
-      knowdropText.textContent = 'Principal-agent problems arise when agents pursue self-interest against principal interests due to information gaps. A company shareholder (principal) cannot perfectly observe whether the CEO (agent) is maximising firm value or building a personal empire. The agent has hidden information about effort levels and hidden actions that benefit themselves at the principal\'s expense. This asymmetry means agents can shirk, take excessive risks, or prioritise short-term bonuses over long-term sustainability. Without monitoring mechanisms or incentive alignment, the agent\'s interests diverge from the principal\'s, creating allocative inefficiency and welfare loss.';
+      knowdropText.textContent = "Principal-agent problems arise when agents pursue self-interest against principal interests due to information gaps. A company shareholder (principal) cannot perfectly observe whether the CEO (agent) is maximising firm value or building a personal empire. The agent has hidden information about effort levels and hidden actions that benefit themselves at the principal's expense. This asymmetry means agents can shirk, take excessive risks, or prioritise short-term bonuses over long-term sustainability. Without monitoring mechanisms or incentive alignment, the agent's interests diverge from the principal's, creating allocative inefficiency and welfare loss.";
     } else {
-      knowdropText.textContent = 'Moral hazard occurs when insured parties take excessive risks because they do not bear full consequences. After purchasing comprehensive car insurance, a driver might park in dangerous areas or drive recklessly because the insurer covers theft or damage costs. The insured party has hidden actions that increase claim probability, but the insurer cannot perfectly monitor behaviour. This information asymmetry leads to overuse of insurance, higher premiums for all, and potential market failure where high-risk individuals crowd out low-risk ones. Government intervention through co-payments, deductibles, or mandatory safety standards internalises some risk back to the insured party.';
+      knowdropText.textContent = "Moral hazard occurs after a deal is made, when insured parties take more risk because they do not bear the full consequences. After buying comprehensive car insurance, a driver might park in risky areas or drive less carefully because the insurer covers theft or damage. These are hidden actions: the insurer cannot fully monitor behaviour, so claims rise and premiums go up for everyone. (Adverse selection is different: it happens before the deal, from hidden information about quality or risk.) Excesses, no-claim bonuses and safety rules push some of the risk back onto the insured party.";
     }
   });
 });

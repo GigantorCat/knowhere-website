@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>The Labour Force, Participation and Underutilisation — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>The labour force, participation and underutilisation — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -338,40 +338,56 @@ canvas {
   
   <h1>You can have falling unemployment <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">and rising underutilisation</span></h1>
   
-  <p class="intro">The headline unemployment rate is just one slice of a three-part population: employed, unemployed, and not in the labour force. Movement between these categories — and who gets counted where — determines both the participation rate and the underutilisation rate. Drag the slider to recompose the labour force and watch how the official numbers respond.</p>
+  <p class="intro">The headline unemployment rate is just one slice of a three-part population: employed, unemployed, and not in the labour force. Movement between these categories — and who gets counted where — determines both the participation rate and the underutilisation rate. Use the three sliders to recompose the labour force and watch how the official rates respond. They start close to recent Australian figures.</p>
 
   <div class="card">
     <div class="card-header">
-      <div class="card-label">Labour Force Composition</div>
-      <div class="live-tag" id="liveTag">50% participation</div>
+      <div class="card-label">Labour force composition</div>
+      <div class="live-tag" id="liveTag">67% participation</div>
     </div>
-    <div class="card-hint">Move the slider to shift workers between employment, unemployment and not in the labour force</div>
+    <div class="card-hint">Each dot is a person aged 15 and over. Pink: employed (full hours) · amber: underemployed · white: unemployed · grey: not in the labour force.</div>
     
     <div class="canvas-wrapper">
       <canvas id="lfCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">50% employed · 50% not in labour force</div>
+      <div class="canvas-overlay" id="canvasOverlay">64% employed · 33% not in labour force</div>
     </div>
 
     <div class="slider-container">
       <label class="slider-label" for="lfSlider">Participation rate</label>
-      <input type="range" id="lfSlider" class="lf-slider" min="0" max="100" value="50" step="1" style="--fill: 50%">
+      <input type="range" id="lfSlider" class="lf-slider" min="50" max="80" value="67" step="1" style="--fill: 56.67%">
+      <div class="tick-labels">
+        <span>50%</span>
+        <span>65%</span>
+        <span>80%</span>
+      </div>
+    </div>
+    <div class="slider-container">
+      <label class="slider-label" for="uSlider">Unemployed (share of labour force)</label>
+      <input type="range" id="uSlider" class="lf-slider" min="0" max="16" value="4.5" step="0.5" style="--fill: 28.13%">
       <div class="tick-labels">
         <span>0%</span>
-        <span>25%</span>
-        <span>50%</span>
-        <span>75%</span>
-        <span>100%</span>
+        <span>8%</span>
+        <span>16%</span>
+      </div>
+    </div>
+    <div class="slider-container">
+      <label class="slider-label" for="ueSlider">Underemployed (share of labour force)</label>
+      <input type="range" id="ueSlider" class="lf-slider" min="0" max="16" value="6" step="0.5" style="--fill: 37.5%">
+      <div class="tick-labels">
+        <span>0%</span>
+        <span>8%</span>
+        <span>16%</span>
       </div>
     </div>
 
     <div class="stat-row">
       <div class="stat">
-        <div class="stat-label">Unemployment Rate</div>
-        <div class="stat-value acc" id="unemploymentRate">20.0%</div>
+        <div class="stat-label">Unemployment rate</div>
+        <div class="stat-value acc" id="unemploymentRate">4.5%</div>
       </div>
       <div class="stat">
         <div class="stat-label">Underutilisation</div>
-        <div class="stat-value amb" id="underutilRate">30.0%</div>
+        <div class="stat-value amb" id="underutilRate">10.4%</div>
       </div>
     </div>
   </div>
@@ -467,9 +483,11 @@ function initParticles() {
 
 initParticles();
 
-let participation = 0.50;
-let unemploymentFrac = 0.20; // of labour force
-let underemploymentFrac = 0.15; // of labour force
+let participation = 0.67;
+let unemploymentFrac = 0.045; // of labour force, set by its own slider
+let underemploymentFrac = 0.06; // of labour force, set by its own slider
+const uSlider = document.getElementById('uSlider');
+const ueSlider = document.getElementById('ueSlider');
 
 function updateParticles() {
   const lfSize = Math.round(TOTAL_POP * participation);
@@ -524,8 +542,8 @@ function draw() {
       col = AMB;
       alpha = 0.75;
     } else if (p.state === 'unemployed') {
-      col = 'rgba(' + RGB + ', 0.9)';
-      alpha = 0.9;
+      col = '#EDEDE8';
+      alpha = 0.95;
     } else {
       col = '#4A4A4A';
       alpha = 0.25;
@@ -568,21 +586,26 @@ draw();
 
 function updateStats() {
   participation = slider.value / 100;
-  slider.style.setProperty('--fill', slider.value + '%');
+  unemploymentFrac = parseFloat(uSlider.value) / 100;
+  underemploymentFrac = parseFloat(ueSlider.value) / 100;
+  for (const s of [slider, uSlider, ueSlider]) {
+    const mn = parseFloat(s.min), mx = parseFloat(s.max);
+    s.style.setProperty('--fill', ((parseFloat(s.value) - mn) / (mx - mn) * 100) + '%');
+  }
 
-  // Unemployment rate is unemployed / labour force
-  const lfSize = TOTAL_POP * participation;
-  const unemployedCount = lfSize * unemploymentFrac;
+  // Rates are computed from the people (dots) in the model
+  const lfSize = Math.round(TOTAL_POP * participation);
+  const unemployedCount = Math.round(lfSize * unemploymentFrac);
+  const underemployedCount = Math.round(lfSize * underemploymentFrac);
+  // Unemployment rate = unemployed / labour force
   const uRate = lfSize > 0 ? (unemployedCount / lfSize) * 100 : 0;
-
   // Underutilisation = (unemployed + underemployed) / labour force
-  const underemployedCount = lfSize * underemploymentFrac;
   const uuRate = lfSize > 0 ? ((unemployedCount + underemployedCount) / lfSize) * 100 : 0;
 
   unemploymentRate.textContent = uRate.toFixed(1) + '%';
   underutilRate.textContent = uuRate.toFixed(1) + '%';
 
-  const employedPct = ((lfSize - unemployedCount - underemployedCount) / TOTAL_POP * 100).toFixed(0);
+  const employedPct = ((lfSize - unemployedCount) / TOTAL_POP * 100).toFixed(0); /* underemployed people are employed */
   const nilfPct = ((TOTAL_POP - lfSize) / TOTAL_POP * 100).toFixed(0);
 
   liveTag.textContent = (participation * 100).toFixed(0) + '% participation';
@@ -592,6 +615,8 @@ function updateStats() {
 }
 
 slider.addEventListener('input', updateStats);
+uSlider.addEventListener('input', updateStats);
+ueSlider.addEventListener('input', updateStats);
 updateStats();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */

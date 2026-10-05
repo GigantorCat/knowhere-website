@@ -197,12 +197,27 @@ canvas {
 }
 
 .tick-labels {
-  display: flex;
-  justify-content: space-between;
+  position: relative;
+  height: 12px;
+  line-height: 12px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 9px;
   color: var(--ink-dim);
   margin-top: 6px;
+}
+.tick-labels .tk {
+  position: absolute;
+  top: 0;
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+.tick-labels .tk-min {
+  left: 0;
+  transform: none;
+}
+.tick-labels .tk-max {
+  right: 0;
+  transform: none;
 }
 
 .stat-row {
@@ -327,22 +342,22 @@ canvas {
   <div class="card">
     <div class="card-header">
       <span class="card-label">Population simulator</span>
-      <span class="live-tag" id="liveTag">TFR 2.1 • Stable</span>
+      <span class="live-tag" id="liveTag">TFR 2.1 • Near stable</span>
     </div>
-    <div class="card-hint">Drag to change total fertility rate</div>
+    <div class="card-hint">Drag to change total fertility rate. The readout is the long-run rate, once momentum from today's age structure has faded.</div>
     
     <div class="canvas-wrapper">
       <canvas id="popCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">Natural increase: 0.0% per year</div>
+      <div class="canvas-overlay" id="canvasOverlay">Long-run natural increase: 0.0% per year</div>
     </div>
 
     <div class="slider-control">
       <label class="slider-label" for="tfrSlider">Total Fertility Rate</label>
       <input type="range" id="tfrSlider" class="pop-slider" min="0.8" max="4.5" step="0.1" value="2.1">
       <div class="tick-labels">
-        <span>0.8</span>
-        <span>2.1</span>
-        <span>4.5</span>
+        <span class="tk tk-min">0.8</span>
+        <span class="tk" style="left: calc(10px + (100% - 20px) * 0.3514)">2.1</span>
+        <span class="tk tk-max">4.5</span>
       </div>
     </div>
 
@@ -352,7 +367,7 @@ canvas {
         <div class="stat-value" id="birthStat">2.1</div>
       </div>
       <div class="stat">
-        <div class="stat-label">Net change</div>
+        <div class="stat-label">Long-run change</div>
         <div class="stat-value" id="changeStat">0.0%</div>
       </div>
     </div>
@@ -366,7 +381,7 @@ canvas {
     
     <div class="knowdrop-divider">
       <p class="knowdrop-text" id="knowdropText">
-        In developed nations like Japan and Italy, fertility has fallen to 1.3–1.4 births per woman — well below replacement. Yet deaths still outnumber births only slightly, because these populations are old: decades of low fertility have aged the structure, and mortality rises slowly as large cohorts move into older age brackets. The gap between births and deaths narrows gradually, not overnight, even when fertility plummets.
+        In developed nations like Japan and Italy, fertility has fallen to about 1.2 births per woman — well below replacement. Deaths now far outnumber births: in 2024 Japan recorded about 1.6 million deaths but fewer than 0.7 million births, and Italy about 651,000 deaths to 370,000 births. These populations are old: decades of low fertility have aged the structure, so large older cohorts push deaths up while ever-smaller generations of parents mean fewer births. This natural decrease grows year after year, even without any rise in death rates.
       </p>
     </div>
   </div>
@@ -399,7 +414,7 @@ let particles = [];
 let time = 0;
 
 const knowdropContent = {
-  developed: "In developed nations like Japan and Italy, fertility has fallen to 1.3–1.4 births per woman — well below replacement. Yet deaths still outnumber births only slightly, because these populations are old: decades of low fertility have aged the structure, and mortality rises slowly as large cohorts move into older age brackets. The gap between births and deaths narrows gradually, not overnight, even when fertility plummets.",
+  developed: "In developed nations like Japan and Italy, fertility has fallen to about 1.2 births per woman — well below replacement. Deaths now far outnumber births: in 2024 Japan recorded about 1.6 million deaths but fewer than 0.7 million births, and Italy about 651,000 deaths to 370,000 births. These populations are old: decades of low fertility have aged the structure, so large older cohorts push deaths up while ever-smaller generations of parents mean fewer births. This natural decrease grows year after year, even without any rise in death rates.",
   developing: "In developing nations like Niger and Mali, fertility remains above 5 births per woman. Young populations mean births vastly outnumber deaths — mortality rates are low simply because few people have reached old age yet. Natural increase exceeds 3% annually, doubling the population every 23 years. This momentum is locked in: even if fertility dropped tomorrow to replacement level, decades of growth are already baked into the age pyramid."
 };
 
@@ -441,10 +456,8 @@ function draw() {
   ctx.fillStyle = '#000';
   ctx.fillRect(0, 0, w, h);
 
-  // Calculate rates
-  const birthRate = tfr * 15; // births per 1000
-  const deathRate = 8 + (2.1 - tfr) * 3; // mortality adjusts inversely
-  const naturalIncrease = ((birthRate - deathRate) / 10);
+  // Long-run natural increase from the same model as the readout
+  const naturalIncrease = longRunIncrease(tfr);
 
   // Update particles
   const targetCount = Math.floor(80 + tfr * 15);
@@ -578,22 +591,30 @@ function draw() {
   requestAnimationFrame(draw);
 }
 
+/* Long-run (stable-population) natural increase, % per year, once age-structure momentum has faded.
+   Lotka: r = ln(NRR) / T, with NRR = TFR / 2.1 (replacement in a low-mortality population)
+   and T = mean generation length, about 29 years. Death rate is held at low-mortality levels. */
+const REPLACEMENT = 2.1, GENERATION = 29;
+function longRunIncrease(t) {
+  return 100 * Math.log(t / REPLACEMENT) / GENERATION;
+}
+
 function updateUI() {
   const fillPercent = ((tfr - 0.8) / (4.5 - 0.8)) * 100;
   slider.style.setProperty('--fill', fillPercent + '%');
 
   birthStat.textContent = tfr.toFixed(1);
 
-  const birthRate = tfr * 15;
-  const deathRate = 8 + (2.1 - tfr) * 3;
-  const naturalIncrease = ((birthRate - deathRate) / 10);
+  const naturalIncrease = longRunIncrease(tfr);
+  const shown = Math.abs(naturalIncrease) < 0.05 ? 0 : naturalIncrease;
   
-  changeStat.textContent = (naturalIncrease >= 0 ? '+' : '') + naturalIncrease.toFixed(1) + '%';
-  canvasOverlay.textContent = `Natural increase: ${(naturalIncrease >= 0 ? '+' : '')}${naturalIncrease.toFixed(1)}% per year`;
+  const sign = shown > 0 ? "+" : (shown < 0 ? "−" : "");
+  changeStat.textContent = sign + Math.abs(shown).toFixed(1) + "%";
+  canvasOverlay.textContent = `Long-run natural increase: ${sign}${Math.abs(shown).toFixed(1)}% per year`;
 
-  let status = 'Stable';
-  if (tfr < 1.8) status = 'Declining';
-  else if (tfr > 2.5) status = 'Growing';
+  let status = "Near stable";
+  if (naturalIncrease < -0.2) status = "Declining";
+  else if (naturalIncrease > 0.2) status = "Growing";
   
   liveTag.textContent = `TFR ${tfr.toFixed(1)} • ${status}`;
 }

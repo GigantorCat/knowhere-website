@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Preparing the Balance Sheet — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Preparing the balance sheet — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -103,7 +103,8 @@ h1 {
 .canvas-wrapper {
   position: relative;
   width: 100%;
-  aspect-ratio: 16/9;
+  aspect-ratio: 16/10;
+  min-height: 340px;
   border-radius: 12px;
   overflow: hidden;
   background: #000;
@@ -295,42 +296,42 @@ canvas {
 </style>
 
 <div class="container">
-  <h2 class="sr-only">Balance Sheet Interactive Widget</h2>
+  <h2 class="sr-only">Balance sheet interactive widget</h2>
   
   <h1>A balance sheet must always <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">balance</span></h1>
   
-  <p class="intro">The accounting equation isn't just theory — it's an ironclad mathematical truth enforced on every balance sheet. Watch what happens when you adjust one side: the scales must tip back to equilibrium. Drag the slider to change total assets.</p>
+  <p class="intro">The accounting equation isn't just theory — it's an ironclad mathematical truth enforced on every balance sheet. Every transaction changes at least two items, so the two sides always agree. Drag the slider to buy equipment with a bank loan: a non-current asset and a non-current liability rise together, the subtotals update, and the beam stays level.</p>
 
   <div class="card">
     <div class="card-header">
-      <span class="card-label">Balance Sheet Scales</span>
-      <span class="live-tag" id="liveTag">In Balance</span>
+      <span class="card-label">Balance sheet scales</span>
+      <span class="live-tag" id="liveTag">In balance</span>
     </div>
     <div class="card-hint">Assets always equal Liabilities + Owner's Equity</div>
     
     <div class="canvas-wrapper">
       <canvas id="balanceCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">Assets = Liabilities + Equity</div>
+      <div class="canvas-overlay" id="canvasOverlay">Assets $140,000 = Liabilities $85,000 + Equity $55,000</div>
     </div>
 
     <div class="slider-container">
-      <div class="slider-label">Total Assets</div>
-      <input type="range" min="0" max="100" value="50" class="balance-slider" id="assetSlider">
+      <div class="slider-label">Equipment bought with a bank loan</div>
+      <input type="range" min="0" max="40000" step="1000" value="0" class="balance-slider" id="assetSlider">
       <div class="tick-labels">
         <span>$0</span>
-        <span>$250k</span>
-        <span>$500k</span>
+        <span>$20k</span>
+        <span>$40k</span>
       </div>
     </div>
 
     <div class="stat-row">
       <div class="stat">
-        <div class="stat-label">Left Side</div>
-        <div class="stat-value" style="color:var(--acc)" id="leftStat">$250k</div>
+        <div class="stat-label">Total assets</div>
+        <div class="stat-value" style="color:var(--acc)" id="leftStat">$140,000</div>
       </div>
       <div class="stat">
-        <div class="stat-label">Right Side</div>
-        <div class="stat-value" style="color:var(--amb)" id="rightStat">$250k</div>
+        <div class="stat-label">Liabilities + equity</div>
+        <div class="stat-value" style="color:var(--amb)" id="rightStat">$140,000</div>
       </div>
     </div>
   </div>
@@ -338,7 +339,7 @@ canvas {
   <div class="card">
     <div class="toggle-section">
       <button class="toggle-btn active" id="btnCurrent">Current</button>
-      <button class="toggle-btn" id="btnNonCurrent">Non-Current</button>
+      <button class="toggle-btn" id="btnNonCurrent">Non-current</button>
     </div>
     <div class="knowdrop" id="knowdropText">
       Current assets and liabilities settle within 12 months — cash, receivables, inventory, payables. They flow fast. Non-current stretch beyond the year: land, equipment, long-term debt. This classification reveals liquidity at a glance. A business with strong current assets can meet short-term obligations. Too many non-current liabilities and equity might signal long-term commitments without near-term flexibility. Classified format transforms raw numbers into strategic insight.
@@ -352,29 +353,40 @@ canvas {
 </div>
 
 <script>
-const canvas = document.getElementById('balanceCanvas');
-const ctx = canvas.getContext('2d');
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d');
-const slider = document.getElementById('assetSlider');
-const liveTag = document.getElementById('liveTag');
-const canvasOverlay = document.getElementById('canvasOverlay');
-const leftStat = document.getElementById('leftStat');
-const rightStat = document.getElementById('rightStat');
-const btnCurrent = document.getElementById('btnCurrent');
-const btnNonCurrent = document.getElementById('btnNonCurrent');
-const knowdropText = document.getElementById('knowdropText');
+const canvas = document.getElementById("balanceCanvas");
+const ctx = canvas.getContext("2d");
+const buf = document.createElement("canvas");
+const bctx = buf.getContext("2d");
+const slider = document.getElementById("assetSlider");
+const liveTag = document.getElementById("liveTag");
+const canvasOverlay = document.getElementById("canvasOverlay");
+const leftStat = document.getElementById("leftStat");
+const rightStat = document.getElementById("rightStat");
+const btnCurrent = document.getElementById("btnCurrent");
+const btnNonCurrent = document.getElementById("btnNonCurrent");
+const knowdropText = document.getElementById("knowdropText");
 
 const dpr = Math.min(window.devicePixelRatio || 1, 2);
-
-let assets = 50;
-let targetTilt = 0;
-let currentTilt = 0;
+let focus = "current"; // which classification the toggle highlights
+let x = 0;             // equipment bought with a bank loan
 
 const knowdropContent = {
   current: "Current assets and liabilities settle within 12 months — cash, receivables, inventory, payables. They flow fast. Non-current stretch beyond the year: land, equipment, long-term debt. This classification reveals liquidity at a glance. A business with strong current assets can meet short-term obligations. Too many non-current liabilities and equity might signal long-term commitments without near-term flexibility. Classified format transforms raw numbers into strategic insight.",
-  noncurrent: "Non-current assets and liabilities extend beyond 12 months. Property, plant, equipment anchor the business for years. Long-term debt funds expansion, equity represents owners' stake. While current items measure operational health, non-current structure shows strategic capacity. A manufacturing firm needs heavy non-current assets; a consulting practice runs lean. Reading both classifications together reveals the full financial architecture — what cycles fast versus what endures."
+  noncurrent: "Non-current assets and liabilities extend beyond 12 months. Property, plant, equipment anchor the business for years. Long-term debt funds expansion, equity represents owners’ stake. While current items measure operational health, non-current structure shows strategic capacity. A manufacturing firm needs heavy non-current assets; a consulting practice runs lean. Reading both classifications together reveals the full financial architecture — what cycles fast versus what endures."
 };
+
+// A sole trader's classified Balance Sheet. Every figure on screen is summed from these items.
+function sheet() {
+  return {
+    ca: [["Cash", 18000], ["Accounts receivable", 12000], ["Inventory", 20000]],
+    nca: [["Equipment", 60000 + x], ["Vehicle", 30000]],
+    cl: [["Accounts payable", 15000], ["Accrued wages", 5000]],
+    ncl: [["Bank loan", 65000 + x]],
+    oe: [["Capital", 55000]]
+  };
+}
+const sum = rows => rows.reduce((a, r) => a + r[1], 0);
+const fmt = v => "$" + Math.round(v).toLocaleString("en-AU");
 
 function resize() {
   const rect = canvas.getBoundingClientRect();
@@ -384,192 +396,155 @@ function resize() {
   buf.width = canvas.width;
   buf.height = canvas.height;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
-
-function formatCurrency(val) {
-  return '$' + Math.round(val) + 'k';
+  draw();
 }
 
 function draw() {
   const w = canvas.width / dpr;
   const h = canvas.height / dpr;
-  const cx = w / 2;
-  const cy = h / 2;
+  if (!w || !h) return;
+  ctx.fillStyle = "#000";
+  ctx.fillRect(0, 0, w, h);
 
-  ctx.clearRect(0, 0, w, h);
+  const b = sheet();
+  const tCA = sum(b.ca), tNCA = sum(b.nca), tA = tCA + tNCA;
+  const tCL = sum(b.cl), tNCL = sum(b.ncl), tL = tCL + tNCL, tOE = sum(b.oe), tR = tL + tOE;
 
-  // Smooth tilt transition
-  currentTilt += (targetTilt - currentTilt) * 0.12;
-
-  // Balance beam
-  const beamWidth = w * 0.7;
-  const beamHeight = 8;
-  const beamY = cy;
-
+  // Level beam: it tilts only if the totals differ, and they never do
+  const cx = w / 2, beamY = h * 0.09, beamW = w * 0.62;
+  const tilt = Math.max(-0.2, Math.min(0.2, (tR - tA) / 100000));
   ctx.save();
   ctx.translate(cx, beamY);
-  ctx.rotate(currentTilt);
-
-  // Beam glow
-  const beamGlow = ctx.createLinearGradient(0, -beamHeight/2, 0, beamHeight/2);
-  beamGlow.addColorStop(0, 'rgba(206,68,128,0.25)');
-  beamGlow.addColorStop(0.5, 'rgba(206,68,128,0.45)');
-  beamGlow.addColorStop(1, 'rgba(206,68,128,0.25)');
-  ctx.fillStyle = beamGlow;
-  ctx.fillRect(-beamWidth/2, -beamHeight/2, beamWidth, beamHeight);
-
-  // Beam solid
-  ctx.fillStyle = 'rgba(206,68,128,0.8)';
-  ctx.fillRect(-beamWidth/2, -beamHeight/2-1, beamWidth, 2);
-  ctx.fillRect(-beamWidth/2, beamHeight/2-1, beamWidth, 2);
-
-  // Left pan (Assets)
-  const panOffset = beamWidth * 0.38;
-  const panWidth = w * 0.18;
-  const panHeight = h * 0.12;
-  const chainLength = h * 0.15;
-
-  // Left chain
-  ctx.strokeStyle = 'rgba(206,68,128,0.6)';
-  ctx.lineWidth = 1.5;
-  ctx.beginPath();
-  ctx.moveTo(-panOffset, 0);
-  ctx.lineTo(-panOffset, chainLength);
-  ctx.stroke();
-
-  // Left pan
-  ctx.translate(-panOffset, chainLength);
-  ctx.rotate(-currentTilt); // Counter-rotate to keep pan level
-  
-  const leftPanGrad = ctx.createLinearGradient(0, 0, 0, panHeight);
-  leftPanGrad.addColorStop(0, 'rgba(206,68,128,0.3)');
-  leftPanGrad.addColorStop(1, 'rgba(206,68,128,0.15)');
-  ctx.fillStyle = leftPanGrad;
-  ctx.fillRect(-panWidth/2, 0, panWidth, panHeight);
-  
-  ctx.strokeStyle = 'rgba(206,68,128,0.7)';
-  ctx.lineWidth = 1.5;
-  ctx.strokeRect(-panWidth/2, 0, panWidth, panHeight);
-
-  // Left label
-  ctx.fillStyle = 'rgba(206,68,128,1)';
-  ctx.font = '500 11px "JetBrains Mono"';
-  ctx.textAlign = 'center';
-  ctx.fillText('ASSETS', 0, panHeight/2 + 4);
-
-  ctx.rotate(currentTilt);
-  ctx.translate(panOffset, -chainLength);
-
-  // Right chain
-  ctx.strokeStyle = 'rgba(250,199,117,0.6)';
-  ctx.lineWidth = 1.5;
-  ctx.beginPath();
-  ctx.moveTo(panOffset, 0);
-  ctx.lineTo(panOffset, chainLength);
-  ctx.stroke();
-
-  // Right pan
-  ctx.translate(panOffset, chainLength);
-  ctx.rotate(-currentTilt);
-  
-  const rightPanGrad = ctx.createLinearGradient(0, 0, 0, panHeight);
-  rightPanGrad.addColorStop(0, 'rgba(250,199,117,0.3)');
-  rightPanGrad.addColorStop(1, 'rgba(250,199,117,0.15)');
-  ctx.fillStyle = rightPanGrad;
-  ctx.fillRect(-panWidth/2, 0, panWidth, panHeight);
-  
-  ctx.strokeStyle = 'rgba(250,199,117,0.7)';
-  ctx.lineWidth = 1.5;
-  ctx.strokeRect(-panWidth/2, 0, panWidth, panHeight);
-
-  // Right label top
-  ctx.fillStyle = 'rgba(250,199,117,1)';
-  ctx.font = '500 9px "JetBrains Mono"';
-  ctx.textAlign = 'center';
-  ctx.fillText('LIABILITIES', 0, panHeight * 0.35);
-  ctx.fillText('+ EQUITY', 0, panHeight * 0.65);
-
+  ctx.rotate(tilt);
+  ctx.fillStyle = "rgba(206,68,128,0.8)";
+  ctx.fillRect(-beamW / 2, -2, beamW, 4);
   ctx.restore();
-
-  // Fulcrum
-  const fulcrumSize = 16;
-  ctx.fillStyle = 'rgba(206,68,128,0.5)';
+  ctx.fillStyle = "rgba(206,68,128,0.5)";
   ctx.beginPath();
-  ctx.moveTo(cx - fulcrumSize, beamY);
-  ctx.lineTo(cx, beamY + fulcrumSize);
-  ctx.lineTo(cx + fulcrumSize, beamY);
+  ctx.moveTo(cx - 10, beamY + 2);
+  ctx.lineTo(cx, beamY + 14);
+  ctx.lineTo(cx + 10, beamY + 2);
   ctx.closePath();
   ctx.fill();
 
-  ctx.strokeStyle = 'rgba(206,68,128,0.8)';
-  ctx.lineWidth = 1.5;
-  ctx.stroke();
+  // Two columns
+  const fs = Math.max(9, Math.min(12, w / 46));
+  const lh = fs * 1.45;
+  const colW = w * 0.44;
+  const lx = w * 0.04, rx = w * 0.52;
+  const top = beamY + 26;
 
-  // Bloom
+  function col(x0, title, colour, groups, total, totalLabel) {
+    let y = top;
+    ctx.textBaseline = "alphabetic";
+    ctx.font = "600 " + fs + "px \"JetBrains Mono\"";
+    ctx.fillStyle = colour;
+    ctx.textAlign = "left";
+    ctx.fillText(title, x0, y);
+    y += lh * 1.15;
+    for (const g of groups) {
+      const on = g.cls === focus;
+      const alpha = g.cls === "equity" ? 0.85 : (on ? 1 : 0.45);
+      if (on) {
+        ctx.fillStyle = "rgba(206,68,128,0.10)";
+        ctx.fillRect(x0 - 4, y - lh * 0.8, colW + 8, lh * (g.rows.length + 1.25));
+      }
+      ctx.font = "500 " + (fs - 1) + "px \"JetBrains Mono\"";
+      ctx.fillStyle = "rgba(237,237,232," + (alpha * 0.7) + ")";
+      ctx.textAlign = "left";
+      ctx.fillText(g.head.toUpperCase(), x0, y);
+      y += lh;
+      ctx.font = "400 " + fs + "px \"JetBrains Mono\"";
+      for (const [name, val] of g.rows) {
+        ctx.fillStyle = "rgba(237,237,232," + alpha + ")";
+        ctx.textAlign = "left";
+        ctx.fillText(name, x0 + 6, y);
+        ctx.textAlign = "right";
+        ctx.fillText(fmt(val), x0 + colW, y);
+        y += lh;
+      }
+      // subtotal
+      ctx.strokeStyle = "rgba(237,237,232," + (alpha * 0.4) + ")";
+      ctx.beginPath();
+      ctx.moveTo(x0 + colW * 0.6, y - lh * 0.75);
+      ctx.lineTo(x0 + colW, y - lh * 0.75);
+      ctx.stroke();
+      ctx.font = "600 " + fs + "px \"JetBrains Mono\"";
+      ctx.fillStyle = "rgba(" + (on ? "206,68,128" : "237,237,232") + "," + alpha + ")";
+      ctx.textAlign = "right";
+      ctx.fillText(fmt(sum(g.rows)), x0 + colW, y - lh * 0.05);
+      y += lh * 1.05;
+    }
+    ctx.strokeStyle = colour;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x0, y - lh * 0.8);
+    ctx.lineTo(x0 + colW, y - lh * 0.8);
+    ctx.stroke();
+    ctx.font = "700 " + fs + "px \"JetBrains Mono\"";
+    ctx.fillStyle = colour;
+    ctx.textAlign = "left";
+    ctx.fillText(totalLabel, x0, y);
+    ctx.textAlign = "right";
+    ctx.fillText(fmt(total), x0 + colW, y);
+    return y;
+  }
+
+  col(lx, "ASSETS", "#CE4480", [
+    { head: "Current assets", cls: "current", rows: b.ca },
+    { head: "Non-current assets", cls: "noncurrent", rows: b.nca }
+  ], tA, "Total assets");
+  col(rx, "LIABILITIES + EQUITY", "#FAC775", [
+    { head: "Current liabilities", cls: "current", rows: b.cl },
+    { head: "Non-current liabilities", cls: "noncurrent", rows: b.ncl },
+    { head: "Owner’s equity", cls: "equity", rows: b.oe }
+  ], tR, "Total L + OE");
+
+  // Readouts, all summed from the items above
+  leftStat.textContent = fmt(tA);
+  rightStat.textContent = fmt(tR);
+  liveTag.textContent = tA === tR ? "In balance" : "Out of balance";
+  canvasOverlay.textContent = "Assets " + fmt(tA) + " = Liabilities " + fmt(tL) + " + Equity " + fmt(tOE);
+
   bctx.setTransform(1, 0, 0, 1, 0, 0);
   bctx.clearRect(0, 0, buf.width, buf.height);
   if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
   ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
+  ctx.globalCompositeOperation = "lighter";
+  ctx.globalAlpha = 0.25;
+  ctx.filter = "blur(6px)";
   if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
   ctx.restore();
-
-  // Vignette
-  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-
-  requestAnimationFrame(draw);
 }
 
 function updateBalance() {
-  const val = parseFloat(slider.value);
-  assets = val;
-  
-  // Calculate imbalance
-  const imbalance = (val - 50) / 50;
-  targetTilt = imbalance * 0.15;
-
-  // Update stats
-  const assetVal = val * 5;
-  leftStat.textContent = formatCurrency(assetVal);
-  rightStat.textContent = formatCurrency(assetVal);
-
-  // Update slider track fill
-  slider.style.setProperty('--fill', val + '%');
-
-  // Update tags
-  if (Math.abs(imbalance) < 0.02) {
-    liveTag.textContent = 'In Balance';
-    canvasOverlay.textContent = 'Assets = Liabilities + Equity';
-  } else {
-    liveTag.textContent = 'Balancing...';
-    canvasOverlay.textContent = 'Equation Holds: ' + formatCurrency(assetVal) + ' = ' + formatCurrency(assetVal);
-  }
+  x = parseFloat(slider.value);
+  const pct = (x - parseFloat(slider.min)) / (parseFloat(slider.max) - parseFloat(slider.min)) * 100;
+  slider.style.setProperty("--fill", pct + "%");
+  draw();
 }
 
-slider.addEventListener('input', updateBalance);
+slider.addEventListener("input", updateBalance);
 
-btnCurrent.addEventListener('click', () => {
-  btnCurrent.classList.add('active');
-  btnNonCurrent.classList.remove('active');
+btnCurrent.addEventListener("click", () => {
+  focus = "current";
+  btnCurrent.classList.add("active");
+  btnNonCurrent.classList.remove("active");
   knowdropText.textContent = knowdropContent.current;
+  draw();
 });
 
-btnNonCurrent.addEventListener('click', () => {
-  btnNonCurrent.classList.add('active');
-  btnCurrent.classList.remove('active');
+btnNonCurrent.addEventListener("click", () => {
+  focus = "noncurrent";
+  btnNonCurrent.classList.add("active");
+  btnCurrent.classList.remove("active");
   knowdropText.textContent = knowdropContent.noncurrent;
+  draw();
 });
 
-window.addEventListener('resize', resize);
+window.addEventListener("resize", resize);
 resize();
 updateBalance();
-draw();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'preparing-the-balance-sheet'},'*');}catch(e){}}

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Antiderivatives and Indefinite Integration — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Antiderivatives and indefinite integration — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -365,7 +365,7 @@ h1 {
   <div class="card">
     <div class="toggle-section">
       <button class="toggle-btn active" id="btn1">Power Rule</button>
-      <button class="toggle-btn" id="btn2">Special Cases</button>
+      <button class="toggle-btn" id="btn2">Finding C</button>
     </div>
     <div class="knowdrop-divider">
       <p class="knowdrop-text" id="knowdropText">The power rule for integration states that the integral of x to the power n equals x to the power n+1 divided by n+1, plus C—but only when n is not equal to negative one. This rule reverses the power rule for differentiation: since differentiating x to the power n+1 brings the exponent down and reduces it by one, integrating x to the power n does the opposite, increasing the exponent by one and dividing by the new exponent. Constant multiples can be factored outside the integral sign, and the integral of a sum equals the sum of the integrals, so you can integrate polynomials term by term. Every antiderivative includes the constant C because differentiating any constant gives zero, meaning infinite vertical translations of the same curve are all valid antiderivatives.</p>
@@ -403,7 +403,7 @@ let animFrame;
 
 const text1 = "The power rule for integration states that the integral of x to the power n equals x to the power n+1 divided by n+1, plus C—but only when n is not equal to negative one. This rule reverses the power rule for differentiation: since differentiating x to the power n+1 brings the exponent down and reduces it by one, integrating x to the power n does the opposite, increasing the exponent by one and dividing by the new exponent. Constant multiples can be factored outside the integral sign, and the integral of a sum equals the sum of the integrals, so you can integrate polynomials term by term. Every antiderivative includes the constant C because differentiating any constant gives zero, meaning infinite vertical translations of the same curve are all valid antiderivatives.";
 
-const text2 = "The integral of e to the power x equals e to the power x plus C, a remarkable property where the function is its own antiderivative. The integral of 1 over x equals the natural logarithm of the absolute value of x plus C, which handles the special case where n equals negative one in the power rule. These two results are essential because they cannot be derived from the power rule alone. The absolute value in the logarithm integral ensures the result is defined for all non-zero x, since ln(x) is only defined for positive x but 1/x exists for negative x as well. Together with the power rule, these formulas form the foundation for integrating most elementary functions you will encounter in calculus.";
+const text2 = "Every curve in the family x² + C has the same gradient function 2x, so one extra fact is needed to pick out a single curve. That fact is a boundary (or initial) condition, such as a point the curve must pass through. Suppose F(x) = x² + C must pass through (1, 5). Substitute x = 1 and F = 5: 5 = 1² + C, so C = 4 and F(x) = x² + 4. Try it above: slide C to 4 and the bright curve passes through (1, 5), with its lowest point at (0, 4). Write + C as soon as you anti-differentiate, then substitute the point to find it.";
 
 function resize() {
   const rect = canvas.getBoundingClientRect();
@@ -419,7 +419,7 @@ function updateUI() {
   const sign = C >= 0 ? '+' : '';
   liveTag.textContent = `C = ${sign}${C.toFixed(1)}`;
   cValue.textContent = `${sign}${C.toFixed(1)}`;
-  shiftValue.textContent = `${sign}${Math.abs(C).toFixed(1)} units`;
+  shiftValue.textContent = C === 0 ? `0.0 units` : `${sign}${C.toFixed(1)} units ${C > 0 ? `up` : `down`}`;
   
   const fill = ((C + 4) / 8) * 100;
   slider.style.setProperty('--fill', fill + '%');
@@ -429,7 +429,10 @@ function draw() {
   const w = canvas.width / dpr;
   const h = canvas.height / dpr;
   const cx = w / 2;
-  const cy = h / 2;
+  /* y window runs from -5 to +7 so every curve x^2 + C for C in [-4, 4] keeps its vertex and dot on screen */
+  const yMin = -5, yMax = 7;
+  const yScale = h / (yMax - yMin);
+  const cy = yMax * yScale;
 
   ctx.fillStyle = '#000';
   ctx.fillRect(0, 0, w, h);
@@ -443,9 +446,11 @@ function draw() {
     ctx.moveTo(cx + i * gridSpacing, 0);
     ctx.lineTo(cx + i * gridSpacing, h);
     ctx.stroke();
+  }
+  for (let gy = yMin; gy <= yMax; gy++) {
     ctx.beginPath();
-    ctx.moveTo(0, cy + i * gridSpacing);
-    ctx.lineTo(w, cy + i * gridSpacing);
+    ctx.moveTo(0, cy - gy * yScale);
+    ctx.lineTo(w, cy - gy * yScale);
     ctx.stroke();
   }
 
@@ -470,7 +475,7 @@ function draw() {
   for (let px = 0; px <= w; px += 1) {
     const x = (px - cx) / scale;
     const y = 2 * x;
-    const py = cy - y * scale;
+    const py = cy - y * yScale;
     if (px === 0) ctx.moveTo(px, py);
     else ctx.lineTo(px, py);
   }
@@ -486,7 +491,7 @@ function draw() {
   for (let px = 0; px <= w; px += 1) {
     const x = (px - cx) / scale;
     const y = x * x + C;
-    const py = cy - y * scale;
+    const py = cy - y * yScale;
     if (px === 0) ctx.moveTo(px, py);
     else ctx.lineTo(px, py);
   }
@@ -502,7 +507,7 @@ function draw() {
     for (let px = 0; px <= w; px += 2) {
       const x = (px - cx) / scale;
       const y = x * x + c;
-      const py = cy - y * scale;
+      const py = cy - y * yScale;
       if (px === 0) ctx.moveTo(px, py);
       else ctx.lineTo(px, py);
     }
@@ -510,7 +515,7 @@ function draw() {
   });
 
   // Draw dot at origin on current curve
-  const dotY = cy - C * scale;
+  const dotY = cy - C * yScale;
   ctx.save();
   ctx.fillStyle = '#3EB556';
   ctx.shadowColor = 'rgba(62, 181, 86,0.8)';

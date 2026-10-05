@@ -1,628 +1,369 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Empirical &amp; Molecular Formulae — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Empirical &amp; molecular formulae — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
-
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap");
 :root {
   --bg: #0B0D0C;
   --bg2: #12160F;
   --acc: #3E9AD6;
   --acc-rgb: 62, 154, 214;
-  --ag: rgba(var(--acc-rgb), .7);
-  --ag1: rgba(var(--acc-rgb), .12);
-  --ag2: rgba(var(--acc-rgb), .45);
+  --ag:  rgba(var(--acc-rgb),.7);
+  --ag1: rgba(var(--acc-rgb),.12);
+  --ag2: rgba(var(--acc-rgb),.45);
   --amb: #FAC775;
+  --amb-rgb: 250, 199, 117;
   --ink: #EDEDE8;
+  --ink-rgb: 237, 237, 232;
   --ink-dim: #8C9389;
   --line: #262B26;
+  --bg-top: #11160F;
+  --card-end: #0d100b;
+  --track: #23291f;
+  --black: #000;
 }
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
-}
-
-body {
-  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
-  font-family: 'Geist', sans-serif;
-  min-height: 100vh;
-  padding: 40px 16px 0;
-  color: var(--ink);
-}
-
-.container {
-  max-width: 720px;
-  margin: 0 auto;
-}
-
-h1 {
-  font-size: clamp(26px, 6.5vw, 44px);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
-  margin-bottom: 14px;
-}
-
-.intro {
-  font-size: 15.5px;
-  font-weight: 400;
-  color: var(--ink-dim);
-  max-width: 58ch;
-  line-height: 1.55;
-  margin-bottom: 28px;
-}
-
-.card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 18px;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
-}
-
-.card-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  color: var(--ink);
-}
-
-.live-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--acc);
-}
-
-.card-hint {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--ink-dim);
-  margin-bottom: 14px;
-}
-
-.canvas-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16/9;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
-  box-shadow: inset 0 0 0 1px var(--ag1);
-  margin-bottom: 16px;
-}
-
-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.canvas-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(4px);
-  padding: 9px 16px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  text-transform: uppercase;
-  color: var(--acc);
-  text-align: center;
-}
-
-.slider-row {
-  margin-bottom: 10px;
-}
-
-.slider-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 8px;
-}
-
-.ef-slider {
-  width: 100%;
-  height: 4px;
-  border-radius: 3px;
-  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
-  appearance: none;
-  outline: none;
-  cursor: pointer;
-}
-
-.ef-slider::-webkit-slider-thumb {
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  transition: box-shadow .15s;
-  cursor: pointer;
-}
-
-.ef-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  transition: box-shadow .15s;
-  cursor: pointer;
-}
-
-.ef-slider::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.ef-slider::-moz-range-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.tick-labels {
-  display: flex;
-  justify-content: space-between;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--ink-dim);
-  margin-top: 6px;
-}
-
-.stat-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-  margin-top: 16px;
-}
-
-.stat {
-  text-align: center;
-}
-
-.stat-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 6px;
-}
-
-.stat-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 24px;
-  font-weight: 500;
-}
-
-.stat-value.acc {
-  color: var(--acc);
-}
-
-.stat-value.amb {
-  color: var(--amb);
-}
-
-.toggle-section {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.toggle-btn {
-  flex: 1;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14.5px;
-  padding: 12px;
-  border-radius: 11px;
-  background: #12160F;
-  border: 1px solid var(--line);
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: all .2s;
-}
-
-.toggle-btn.active {
-  background: rgba(var(--acc-rgb), .1);
-  border: 1px solid var(--acc);
-  color: var(--acc);
-  box-shadow: 0 0 22px rgba(var(--acc-rgb), .18);
-}
-
-.knowdrop {
-  border-top: 1px solid var(--line);
-  padding-top: 16px;
-  font-size: 14.5px;
-  font-weight: 400;
-  line-height: 1.65;
-  color: var(--ink);
-}
-
-.know-this {
-  border-left: 3px solid var(--acc);
-  padding: 16px 18px;
-  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
-  border-radius: 0 12px 12px 0;
-  margin-bottom: 0;
-}
-
-.know-this-tag {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  margin-bottom: 11px;
-}
-
-.pulse-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--acc);
-  box-shadow: 0 0 8px var(--acc);
-  animation: pulse 2.4s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.45; transform: scale(0.6); }
-}
-
-.tag-text {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--acc);
-}
-
-.know-this-body {
-  font-size: 17.4px;
-  font-weight: 400;
-  line-height: 1.55;
-  color: var(--ink);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
+body{margin:0;background:radial-gradient(120% 80% at 50% -10%,var(--bg-top) 0%,var(--bg) 55%);font-family:"Geist",sans-serif;color:var(--ink);min-height:100vh;padding:40px 16px 0;box-sizing:border-box}
+.ef{max-width:720px;margin:0 auto}
+.ef *{box-sizing:border-box}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.ef h1{font-family:"Geist",sans-serif;font-weight:800;font-size:clamp(26px,6.5vw,44px);letter-spacing:-0.03em;line-height:1.05;margin:0 0 14px}
+.ef .intro{font-size:15.5px;font-weight:400;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin:0 0 26px}
+.ef .card{background:linear-gradient(180deg,var(--bg2),var(--card-end));border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);margin-bottom:22px}
+.ef .card.sec{border-radius:14px}
+.ef .head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.ef .lbl{font-family:"JetBrains Mono",monospace;font-size:13px;text-transform:uppercase;color:var(--ink);letter-spacing:.04em}
+.ef .live{font-family:"JetBrains Mono",monospace;font-size:11px;text-transform:uppercase;color:var(--acc)}
+.ef .hint{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--ink-dim);margin:6px 0 12px;line-height:1.45}
+.ef .cv-wrap{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:var(--black);box-shadow:inset 0 0 0 1px var(--ag1)}
+.ef .cv-wrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.ef .ov{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);padding:9px 16px;font-family:"JetBrains Mono",monospace;font-size:14px;text-transform:uppercase;color:var(--acc);text-align:center;line-height:1.3}
+.ef .ov .f{text-transform:none}
+.ef .srow{margin-top:16px}
+.ef .slbl{display:flex;justify-content:space-between;gap:10px;font-family:"JetBrains Mono",monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:10px}
+.ef .slbl b{color:var(--acc);font-weight:500;text-transform:none}
+.ef-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;outline:none;margin:6px 0;background:linear-gradient(90deg,var(--acc) var(--fill,0%),var(--track) var(--fill,0%))}
+.ef-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:var(--bg);border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.ef-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--bg);border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.ef-slider:hover::-webkit-slider-thumb{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.ef-slider:hover::-moz-range-thumb{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.ef-slider:focus-visible::-webkit-slider-thumb{outline:2px solid var(--acc);outline-offset:2px}
+.ef .ticks{display:flex;justify-content:space-between;gap:6px;font-family:"JetBrains Mono",monospace;font-size:9px;color:var(--ink-dim);margin-top:6px;padding:0 4px}
+.ef .stats{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+.ef .stat{min-width:0}
+.ef .stat .k{font-family:"JetBrains Mono",monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:4px}
+.ef .stat .v{font-family:"JetBrains Mono",monospace;font-size:24px;font-weight:500;line-height:1.15;white-space:nowrap}
+.ef .stat .s{font-family:"JetBrains Mono",monospace;font-size:10.5px;color:var(--ink-dim);margin-top:3px;line-height:1.45}
+.ef .stat.a .v{color:var(--acc)}
+.ef .stat.b .v{color:var(--amb)}
+.ef .tq{font-family:"JetBrains Mono",monospace;font-size:11px;text-transform:uppercase;color:var(--ink-dim);margin:0 0 10px}
+.ef .tgs{display:flex;gap:10px}
+.ef .tg{flex:1;font-family:"JetBrains Mono",monospace;font-size:13px;padding:12px 8px;border-radius:999px;background:var(--bg2);border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:all .2s;line-height:1.2}
+.ef .tg.on{background:rgba(var(--acc-rgb),.1);border:1px solid var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.ef .tg:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.ef .kd{border-top:1px solid var(--line);padding-top:16px;margin-top:16px}
+.ef .kd p{font-family:"Geist",sans-serif;font-size:14.5px;font-weight:400;line-height:1.65;color:var(--ink);margin:0}
+.ef .know{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));border-radius:0 12px 12px 0;margin-bottom:0}
+.ef .ktag{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.ef .kdot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:kpulse 2.4s ease-in-out infinite;flex:none}
+.ef .ktxt{font-family:"JetBrains Mono",monospace;font-size:13px;text-transform:uppercase;letter-spacing:0.15em;color:var(--acc)}
+.ef .know p{font-family:"Geist",sans-serif;font-size:17.4px;font-weight:400;line-height:1.55;color:var(--ink);margin:0}
+.ef > :last-child{margin-bottom:0;padding-bottom:16px}
+@keyframes kpulse{0%,100%{opacity:1}50%{opacity:.45}}
+@media (prefers-reduced-motion: reduce){.ef .kdot{animation:none}.ef .tg{transition:none}}
+@media (max-width:420px){.ef .stat .v{font-size:21px}.ef .tg{font-size:12px;padding:11px 6px}.ef .ov{font-size:12px;padding:8px 10px}}
 </style>
 
-<div class="container">
-  <h2 class="sr-only">Empirical and Molecular Formula Interactive Widget</h2>
-  
-  <h1>Two completely different molecules can share the exact same <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">empirical formula</span></h1>
-  
-  <p class="intro">CH₂O is the empirical formula for glucose, formaldehyde, and acetic acid — wildly different compounds with nothing in common except a 1:2:1 atom ratio. Understanding the gap between empirical and molecular formulae is how you decode real exam combustion data. Drag the slider to scale up from empirical to molecular formula.</p>
+<div class="ef">
+  <h2 class="sr-only">Interactive: empirical and molecular formulae. The top half of the picture turns the percentage composition of a compound into grams in a 100 gram sample, then moles, then the simplest whole-number ratio of carbon to hydrogen to oxygen, which gives the empirical formula CH2O. The bottom half shows the atoms in one molecule. Choosing a molar mass from 30 to 180 grams per mole sets the whole-number multiplier n, and the molecule grows from methanal to ethanoic acid, lactic acid, erythrose, ribose and glucose, while the percentage composition stays exactly the same. Stats show the molecular formula and the number of molecules in 100 grams. Buttons switch the worked explanation between the empirical formula, the molecular formula and counting particles.</h2>
+  <h1>Six different molecules. One identical <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">recipe</span>.</h1>
+  <p class="intro">Methanal, the acid in vinegar and glucose are all 40.0% carbon, 6.7% hydrogen and 53.3% oxygen by mass, so percentages alone give only the simplest ratio of atoms. The molar mass is what tells them apart. Raise the molar mass and watch what changes in one molecule, and what never changes at all.</p>
 
   <div class="card">
-    <div class="card-header">
-      <span class="card-label">Formula Scaler</span>
-      <span class="live-tag" id="liveTag">n = 1 (empirical)</span>
+    <div class="head">
+      <span class="lbl">Empirical &amp; molecular formulae</span>
+      <span class="live" id="efLive">Live · n = 1</span>
     </div>
-    <div class="card-hint">Scale factor × empirical = molecular</div>
-    
-    <div class="canvas-wrapper">
-      <canvas id="canvas"></canvas>
-      <div class="canvas-overlay" id="canvasTag">CH₂O × 1 = CH₂O</div>
+    <div class="hint">Pick a molar mass. Watch the top working and the atoms in one molecule.</div>
+    <div class="cv-wrap">
+      <canvas id="efCanvas" aria-label="Percentage composition turned into a mole ratio above, and the atoms in one molecule below"></canvas>
+      <div class="ov" id="efTag">CH₂O × 1 = CH₂O · methanal</div>
     </div>
-
-    <div class="slider-row">
-      <div class="slider-label">Scale factor (n)</div>
-      <input type="range" class="ef-slider" id="slider" min="1" max="6" value="1" step="1">
-      <div class="tick-labels">
-        <span>1</span>
-        <span>2</span>
-        <span>3</span>
-        <span>4</span>
-        <span>5</span>
-        <span>6</span>
-      </div>
+    <div class="srow">
+      <div class="slbl"><span>Molar mass</span><b id="efVal">30.0 g/mol</b></div>
+      <input type="range" class="ef-slider" id="efSlider" min="1" max="6" step="1" value="1" aria-label="Molar mass of the compound, in grams per mole">
+      <div class="ticks" id="efTicks"></div>
     </div>
-
-    <div class="stat-row">
-      <div class="stat">
-        <div class="stat-label">Empirical mass</div>
-        <div class="stat-value acc" id="empMass">30</div>
-      </div>
-      <div class="stat">
-        <div class="stat-label">Molecular mass</div>
-        <div class="stat-value amb" id="molMass">30</div>
-      </div>
+    <div class="stats">
+      <div class="stat a"><div class="k">Molecular formula</div><div class="v" id="efF">CH₂O</div><div class="s" id="efFSub">n = 1 × CH₂O</div></div>
+      <div class="stat b"><div class="k">Molecules in 100 g</div><div class="v" id="efN">2.01×10²⁴</div><div class="s" id="efNSub">100 ÷ 30.0 = 3.33 mol</div></div>
     </div>
   </div>
 
-  <div class="card">
-    <div class="toggle-section">
-      <button class="toggle-btn active" id="btn1">Glucose example</button>
-      <button class="toggle-btn" id="btn2">From % data</button>
+  <div class="card sec">
+    <div class="tq" id="efQ">Show the working for</div>
+    <div class="tgs" role="group" aria-label="Show the working for">
+      <button class="tg on" id="efB0" type="button" aria-pressed="true">Empirical</button>
+      <button class="tg" id="efB1" type="button" aria-pressed="false">Molecular</button>
+      <button class="tg" id="efB2" type="button" aria-pressed="false">Particles</button>
     </div>
-    <div class="knowdrop" id="knowdrop">
-      Glucose (C₆H₁₂O₆, molar mass 180) and formaldehyde (CH₂O, molar mass 30) both reduce to the same empirical formula: CH₂O. The empirical mass is 30 g/mol (12 + 2 + 16), so glucose's molecular formula is exactly 6 empirical units stacked together — 180 ÷ 30 = 6, so multiply every subscript by 6. This is why you need both percentage composition and molar mass to find the real formula: percentage gets you the ratio (empirical), molar mass tells you the scaling factor. The worked method: from %C, %H, %O → divide by atomic mass → divide all by smallest → whole-number ratio = empirical → then molar mass ÷ empirical mass = n, the multiplier that gets you from empirical to molecular.
-    </div>
+    <div class="kd"><p id="efDrop"></p></div>
   </div>
 
-  <div class="know-this">
-    <div class="know-this-tag">
-      <div class="pulse-dot"></div>
-      <span class="tag-text">Know This</span>
-    </div>
-    <div class="know-this-body">
-      The <span style="color:var(--acc)">empirical formula</span> is the simplest ratio; the <span style="color:var(--acc)">molecular formula</span> is the real count, always an integer multiple of the empirical.
-    </div>
+  <div class="know">
+    <div class="ktag"><span class="kdot"></span><span class="ktxt">Know This</span></div>
+    <p>Percentage composition gives only the <span style="color:var(--acc)">empirical formula</span>; the <span style="color:var(--acc)">molar mass</span> sets the whole-number <span style="color:var(--acc)">multiplier n</span>.</p>
   </div>
 </div>
-
 <script>
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-const slider = document.getElementById('slider');
-const liveTag = document.getElementById('liveTag');
-const canvasTag = document.getElementById('canvasTag');
-const empMass = document.getElementById('empMass');
-const molMass = document.getElementById('molMass');
-const btn1 = document.getElementById('btn1');
-const btn2 = document.getElementById('btn2');
-const knowdrop = document.getElementById('knowdrop');
+(function(){
+  const canvas = document.getElementById("efCanvas");
+  const ctx = canvas.getContext("2d");
+  const slider = document.getElementById("efSlider");
+  const btns = [0, 1, 2].map(i => document.getElementById("efB" + i));
+  const elLive = document.getElementById("efLive"), elTag = document.getElementById("efTag"), elVal = document.getElementById("efVal");
+  const elF = document.getElementById("efF"), elFSub = document.getElementById("efFSub");
+  const elN = document.getElementById("efN"), elNSub = document.getElementById("efNSub");
+  const elDrop = document.getElementById("efDrop"), elTicks = document.getElementById("efTicks");
 
-const CSS = getComputedStyle(document.documentElement);
-const ACC = CSS.getPropertyValue('--acc').trim();
-const RGB = CSS.getPropertyValue('--acc-rgb').trim();
+  const CSS = getComputedStyle(document.documentElement);
+  const ACC = CSS.getPropertyValue("--acc").trim();
+  const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+  const AMB = CSS.getPropertyValue("--amb").trim();
+  const ARGB = CSS.getPropertyValue("--amb-rgb").trim();
+  const INK = CSS.getPropertyValue("--ink").trim();
+  const IRGB = CSS.getPropertyValue("--ink-rgb").trim();
+  const DIM = CSS.getPropertyValue("--ink-dim").trim();
+  const LINE = CSS.getPropertyValue("--line").trim();
+  const BG = CSS.getPropertyValue("--bg").trim();
+  const acc = a => "rgba(" + RGB + "," + a + ")";
+  const amb = a => "rgba(" + ARGB + "," + a + ")";
+  const ink = a => "rgba(" + IRGB + "," + a + ")";
 
-const dpr = Math.min(window.devicePixelRatio || 1, 2);
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d');
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const buf = document.createElement("canvas"); const bctx = buf.getContext("2d");
 
-let n = 1;
-let time = 0;
-let animFrame;
+  /* the model: one empirical unit CH2O, standard molar masses */
+  const NA = 6.022e23;
+  const EL = [
+    { s: "C", name: "carbon", M: 12.01, k: 1 },
+    { s: "H", name: "hydrogen", M: 1.008, k: 2 },
+    { s: "O", name: "oxygen", M: 16.00, k: 1 }
+  ];
+  const MEMP = EL.reduce((t, e) => t + e.M * e.k, 0);              /* 30.026 g/mol */
+  /* the data a student is given: percentages to 1 decimal place, computed from the formula */
+  EL.forEach(e => { e.pct = Math.round(1000 * e.M * e.k / MEMP) / 10; e.mol = e.pct / e.M; });
+  const SMALL = Math.min(...EL.map(e => e.mol));
+  EL.forEach(e => { e.ratio = e.mol / SMALL; e.whole = Math.round(e.ratio); });
+  const MAXPCT = Math.max(...EL.map(e => e.pct)), MAXMOL = Math.max(...EL.map(e => e.mol));
+  const NAMES = ["methanal", "ethanoic acid", "lactic acid", "erythrose", "ribose", "glucose"];
 
-const empirical = {C: 1, H: 2, O: 1};
-const empMassValue = 12 + 2 + 16; // 30
+  const SUBS = "₀₁₂₃₄₅₆₇₈₉", SUPS = "⁰¹²³⁴⁵⁶⁷⁸⁹";
+  const sub = k => String(k).split("").map(d => SUBS[+d]).join("");
+  const sup = k => String(k).split("").map(d => d === "-" ? "⁻" : SUPS[+d]).join("");
+  const formula = n => EL.map(e => e.s + (e.k * n === 1 ? "" : sub(e.k * n))).join("");
+  const EMP = formula(1);
+  const molarOf = n => n * MEMP;
+  const sci = x => { const p = Math.floor(Math.log10(x)); let m = x / Math.pow(10, p); if (m >= 9.995){ m /= 10; return (m.toFixed(2) + "×10" + sup(p + 1)); } return m.toFixed(2) + "×10" + sup(p); };
 
-function resize() {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
+  /* ticks sit at their true value: one tick per step of the slider, labelled with the molar mass at that step */
+  for (let n = 1; n <= 6; n++){ const t = document.createElement("span"); t.textContent = Math.round(molarOf(n)); elTicks.appendChild(t); }
 
-window.addEventListener('resize', resize);
-resize();
+  const st = { n: 1, nv: 1, mode: 0, e: [1, 0, 0] , ev: [1, 0, 0] };
+  let raf = 0, last = 0;
 
-function updateUI() {
-  const percent = ((n - 1) / 5) * 100;
-  slider.style.setProperty('--fill', percent + '%');
-  
-  liveTag.textContent = n === 1 ? 'n = 1 (empirical)' : `n = ${n}`;
-  
-  const mol = {
-    C: empirical.C * n,
-    H: empirical.H * n,
-    O: empirical.O * n
-  };
-  
-  canvasTag.textContent = `CH₂O × ${n} = C${mol.C}H${mol.H}O${mol.O}`;
-  empMass.textContent = empMassValue;
-  molMass.textContent = empMassValue * n;
-}
-
-slider.addEventListener('input', (e) => {
-  n = parseInt(e.target.value);
-  updateUI();
-});
-
-btn1.addEventListener('click', () => {
-  btn1.classList.add('active');
-  btn2.classList.remove('active');
-  knowdrop.textContent = "Glucose (C₆H₁₂O₆, molar mass 180) and formaldehyde (CH₂O, molar mass 30) both reduce to the same empirical formula: CH₂O. The empirical mass is 30 g/mol (12 + 2 + 16), so glucose's molecular formula is exactly 6 empirical units stacked together — 180 ÷ 30 = 6, so multiply every subscript by 6. This is why you need both percentage composition and molar mass to find the real formula: percentage gets you the ratio (empirical), molar mass tells you the scaling factor. The worked method: from %C, %H, %O → divide by atomic mass → divide all by smallest → whole-number ratio = empirical → then molar mass ÷ empirical mass = n, the multiplier that gets you from empirical to molecular.";
-});
-
-btn2.addEventListener('click', () => {
-  btn2.classList.add('active');
-  btn1.classList.remove('active');
-  knowdrop.textContent = "Say combustion analysis gives you a hydrocarbon that's 85.7% C and 14.3% H by mass. Divide each by atomic mass: C → 85.7/12 = 7.14, H → 14.3/1 = 14.3. Divide both by the smallest (7.14): C = 1, H = 2. Empirical formula is CH₂, empirical mass is 14 g/mol. Now you're told the compound's molar mass is 42 g/mol. That's 42 ÷ 14 = 3 empirical units, so the molecular formula is C₃H₆ (propene). This is the two-step method every stoichiometry exam question uses: percentage composition → empirical formula via divide-by-smallest, then molar mass → scaling factor → molecular formula. The key insight: you can't get the molecular formula from percentage alone because infinite compounds share the same ratio.";
-});
-
-function draw() {
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, w, h);
-  
-  const spacing = w / 8;
-  const centerY = h / 2;
-  
-  // Draw empirical unit
-  const empX = spacing * 1.5;
-  drawMolecule(empX, centerY, 1, 'Empirical');
-  
-  // Draw arrow
-  const arrowX = spacing * 3.5;
-  ctx.save();
-  ctx.strokeStyle = 'rgba(' + RGB + ', 0.4)';
-  ctx.fillStyle = 'rgba(' + RGB + ', 0.4)';
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(arrowX - 20, centerY);
-  ctx.lineTo(arrowX + 20, centerY);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(arrowX + 20, centerY);
-  ctx.lineTo(arrowX + 12, centerY - 6);
-  ctx.lineTo(arrowX + 12, centerY + 6);
-  ctx.closePath();
-  ctx.fill();
-  ctx.restore();
-  
-  // Draw "×n" label
-  ctx.save();
-  ctx.font = '500 16px JetBrains Mono';
-  ctx.fillStyle = ACC;
-  ctx.textAlign = 'center';
-  ctx.fillText('×' + n, arrowX, centerY - 20);
-  ctx.restore();
-  
-  // Draw molecular units
-  const molX = spacing * 5.5;
-  drawMolecule(molX, centerY, n, 'Molecular');
-  
-  // Bloom
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
-  
-  // Vignette
-  const cx = w / 2;
-  const cy = h / 2;
-  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-  
-  time += 0.016;
-  animFrame = requestAnimationFrame(draw);
-}
-
-function drawMolecule(x, y, count, label) {
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  const baseR = 8;
-  const spacing = 28;
-  
-  // Calculate grid layout for multiple units
-  const cols = Math.min(count, 3);
-  const rows = Math.ceil(count / cols);
-  const startX = x - ((cols - 1) * spacing) / 2;
-  const startY = y - ((rows - 1) * spacing) / 2;
-  
-  for (let i = 0; i < count; i++) {
-    const col = i % cols;
-    const row = Math.floor(i / cols);
-    const ux = startX + col * spacing;
-    const uy = startY + row * spacing;
-    
-    // Pulsing effect
-    const pulse = 1 + Math.sin(time * 2 + i * 0.5) * 0.1;
-    
-    // C atom (center)
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    const cglow = ctx.createRadialGradient(ux, uy, 0, ux, uy, baseR * 2.5);
-    cglow.addColorStop(0, 'rgba(' + RGB + ', 0.6)');
-    cglow.addColorStop(1, 'rgba(' + RGB + ', 0)');
-    ctx.fillStyle = cglow;
-    ctx.beginPath();
-    ctx.arc(ux, uy, baseR * 2.5 * pulse, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-    
-    ctx.fillStyle = ACC;
-    ctx.beginPath();
-    ctx.arc(ux, uy, baseR * pulse, 0, Math.PI * 2);
-    ctx.fill();
-    
-    // H atoms (left and right)
-    const hOffset = 18;
-    for (let hi = 0; hi < 2; hi++) {
-      const hx = ux + (hi === 0 ? -hOffset : hOffset);
-      const hy = uy;
-      
-      ctx.save();
-      ctx.globalCompositeOperation = 'lighter';
-      const hglow = ctx.createRadialGradient(hx, hy, 0, hx, hy, baseR * 1.8);
-      hglow.addColorStop(0, 'rgba(255,255,255,0.4)');
-      hglow.addColorStop(1, 'rgba(255,255,255,0)');
-      ctx.fillStyle = hglow;
-      ctx.beginPath();
-      ctx.arc(hx, hy, baseR * 1.8 * pulse, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-      
-      ctx.fillStyle = '#EDEDE8';
-      ctx.beginPath();
-      ctx.arc(hx, hy, baseR * 0.65 * pulse, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    
-    // O atom (top)
-    const ox = ux;
-    const oy = uy - 18;
-    
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    const oglow = ctx.createRadialGradient(ox, oy, 0, ox, oy, baseR * 2);
-    oglow.addColorStop(0, 'rgba(250, 199, 117, 0.5)');
-    oglow.addColorStop(1, 'rgba(250, 199, 117, 0)');
-    ctx.fillStyle = oglow;
-    ctx.beginPath();
-    ctx.arc(ox, oy, baseR * 2 * pulse, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-    
-    ctx.fillStyle = '#FAC775';
-    ctx.beginPath();
-    ctx.arc(ox, oy, baseR * 0.8 * pulse, 0, Math.PI * 2);
-    ctx.fill();
+  function fit(text, maxW, size, weight){
+    let s = size;
+    ctx.font = (weight || "400") + " " + s + "px JetBrains Mono, monospace";
+    while (s > 11 && ctx.measureText(text).width > maxW){ s -= 0.5; ctx.font = (weight || "400") + " " + s + "px JetBrains Mono, monospace"; }
+    return s;
   }
-  
-  // Label
-  ctx.save();
-  ctx.font = '400 11px JetBrains Mono';
-  ctx.fillStyle = 'rgba(237, 237, 232, 0.5)';
-  ctx.textAlign = 'center';
-  ctx.fillText(label, x, y + (count > 3 ? spacing * 1.8 : spacing * 1.2));
-  ctx.restore();
-}
+  function label(text, x, y, maxW, size, color, align, weight){
+    fit(text, maxW, size, weight); ctx.fillStyle = color; ctx.textAlign = align || "left"; ctx.fillText(text, x, y);
+  }
+  function resize(){
+    const r = canvas.getBoundingClientRect();
+    if (!r.width || !r.height) return; /* f27c: refuse a zero measurement, keep the last good size */
+    canvas.width = Math.max(1, Math.round(r.width * dpr)); canvas.height = Math.max(1, Math.round(r.height * dpr));
+    buf.width = canvas.width; buf.height = canvas.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    draw();
+  }
+  function atom(x, y, r, el, a){
+    if (a <= 0.01) return;
+    const col = el === "C" ? acc(0.95 * a) : el === "O" ? amb(0.95 * a) : ink(0.85 * a);
+    ctx.save(); ctx.globalCompositeOperation = "lighter";
+    const g = ctx.createRadialGradient(x, y, 0, x, y, r * 1.9);
+    g.addColorStop(0, el === "C" ? acc(0.35 * a) : el === "O" ? amb(0.3 * a) : ink(0.18 * a)); g.addColorStop(1, acc(0));
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r * 1.9, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+    ctx.fillStyle = col; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+    ctx.save(); ctx.globalAlpha = a; ctx.fillStyle = BG; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.font = "500 " + Math.max(11, Math.min(16, r * 1.1)) + "px JetBrains Mono, monospace";
+    ctx.fillText(el, x, y + 0.5); ctx.restore();
+  }
 
-updateUI();
-draw();
+  function draw(){
+    const w = canvas.width / dpr, h = canvas.height / dpr;
+    if (w < 2 || h < 2) return;
+    const nv = st.nv, n = st.n, nar = w < 560;
+    const fs = nar ? 11 : Math.max(11, Math.min(13, h * 0.034));
+    ctx.save(); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    ctx.textBaseline = "alphabetic";
+
+    /* faint grid */
+    ctx.strokeStyle = LINE; ctx.lineWidth = 1; ctx.globalAlpha = 0.35;
+    for (let gx = 0; gx <= w; gx += w / 16){ ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke(); }
+    for (let gy = 0; gy <= h; gy += h / 9){ ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke(); }
+    ctx.globalAlpha = 1;
+
+    const top = h * 0.07, bot = h - 44;
+    const aEnd = top + (bot - top) * 0.47;
+    const aA = 0.6 + 0.4 * st.ev[0], aB = 0.6 + 0.4 * Math.max(st.ev[1], st.ev[2]);
+
+    /* ---------- top: percentages → grams in 100 g → moles → ratio ---------- */
+    ctx.save(); ctx.globalAlpha = aA;
+    const cS = w * 0.055, m0 = w * 0.11, m1 = w * 0.43, o0 = w * 0.5, o1 = w * 0.8, rX = w * 0.95;
+    const hy = top + fs;
+    label(nar ? "g IN 100 g" : "MASS IN 100 g (= %)", m0, hy, m1 - m0, fs * 0.9, DIM, "left");
+    label(nar ? "÷ M = mol" : "÷ MOLAR MASS = MOLES", o0, hy, o1 - o0, fs * 0.9, DIM, "left");
+    label(nar ? "÷ min" : "÷ SMALLEST", rX, hy, w - o1 - 8, fs * 0.9, DIM, "right");
+    const rowsTop = hy + fs * 0.9, rh = (aEnd - rowsTop) / 3;
+    EL.forEach((e, i) => {
+      const yc = rowsTop + rh * (i + 0.5);
+      const r = Math.max(9, Math.min(rh * 0.3, 14));
+      atom(cS, yc, r, e.s, 1);
+      const barH = Math.max(4, Math.min(rh * 0.16, 8)), by = yc + fs * 0.25;
+      /* mass bar */
+      const mw = (m1 - m0) * e.pct / MAXPCT;
+      ctx.fillStyle = ink(0.12); ctx.fillRect(m0, by, m1 - m0, barH);
+      ctx.fillStyle = e.s === "C" ? ACC : e.s === "O" ? AMB : INK; ctx.fillRect(m0, by, mw, barH);
+      label(e.pct.toFixed(1) + " g", m0, by - 4, m1 - m0, fs, INK, "left", "500");
+      /* arrow */
+      ctx.strokeStyle = DIM; ctx.lineWidth = 1.2;
+      const ax0 = m1 + (o0 - m1) * 0.2, ax1 = o0 - (o0 - m1) * 0.25, ay = by + barH / 2;
+      ctx.beginPath(); ctx.moveTo(ax0, ay); ctx.lineTo(ax1, ay); ctx.lineTo(ax1 - 4, ay - 3); ctx.moveTo(ax1, ay); ctx.lineTo(ax1 - 4, ay + 3); ctx.stroke();
+      /* mole bar */
+      const ow = (o1 - o0) * e.mol / MAXMOL;
+      ctx.fillStyle = ink(0.12); ctx.fillRect(o0, by, o1 - o0, barH);
+      ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.fillStyle = e.s === "C" ? ACC : e.s === "O" ? AMB : INK; ctx.fillRect(o0, by, ow, barH); ctx.restore();
+      const mtxt = nar ? e.mol.toFixed(2) + " mol" : "÷ " + (e.M < 10 ? e.M.toFixed(3) : e.M.toFixed(2)) + " = " + e.mol.toFixed(2) + " mol";
+      label(mtxt, o0, by - 4, o1 - o0, fs, INK, "left", "500");
+      /* ratio */
+      label(String(e.whole), rX, by + barH, w - o1 - 8, fs * 1.7, AMB, "right", "500");
+      if (!nar) label(e.ratio.toFixed(2) + " →", rX - fs * 1.5, by + barH, rX - o1 - fs * 1.5, fs * 0.85, DIM, "right");
+    });
+    ctx.restore();
+
+    /* divider: empirical formula */
+    const dy = aEnd + fs * 0.6;
+    ctx.save(); ctx.setLineDash([3, 5]); ctx.strokeStyle = acc(0.35); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(w * 0.04, dy); ctx.lineTo(w * 0.96, dy); ctx.stroke(); ctx.restore();
+    const eTxt = "EMPIRICAL " + EMP + " · " + MEMP.toFixed(2) + " g/mol";
+    fit(eTxt, w * 0.7, fs, "500"); const etw = ctx.measureText(eTxt).width;
+    ctx.fillStyle = BG; ctx.fillRect(w / 2 - etw / 2 - 8, dy - fs * 0.8, etw + 16, fs * 1.4);
+    label(eTxt, w / 2, dy + fs * 0.35, w * 0.7, fs, ACC, "center", "500");
+
+    /* ---------- bottom: the atoms in ONE molecule ---------- */
+    ctx.save(); ctx.globalAlpha = aB;
+    const M = molarOf(n);
+    const l1 = dy + fs * 2.3, l2 = l1 + fs * 1.45;
+    label("ONE MOLECULE · " + NAMES[n - 1] + " · " + formula(n), w * 0.04, l1, w * 0.92, fs, INK, "left", "500");
+    const line2 = st.mode === 2
+      ? "100 g = 100 ÷ " + M.toFixed(1) + " = " + (100 / M).toFixed(3) + " mol = " + sci(100 / M * NA) + " molecules"
+      : "n = " + M.toFixed(1) + " ÷ " + MEMP.toFixed(2) + " = " + Math.round(M / MEMP) + " · every subscript × " + n;
+    label(line2, w * 0.04, l2, w * 0.92, fs * 0.92, AMB, "left");
+    const bTop = l2 + fs * 0.9, bBot = bot - fs * 0.4, bh = bBot - bTop;
+    const slot = bh / 4;
+    const colW = Math.min((w * 0.9) / 6, slot * 1.5);
+    const r = Math.max(8, Math.min(slot * 0.36, colW * 0.36));
+    const boxW = colW * nv + r * 0.8, x0 = w / 2 - boxW / 2;
+    /* one molecule: one envelope around every atom */
+    ctx.save(); ctx.globalCompositeOperation = "lighter";
+    ctx.strokeStyle = acc(0.8); ctx.lineWidth = 1.6; ctx.shadowColor = ACC; ctx.shadowBlur = 10;
+    const rr = Math.min(14, boxW / 2);
+    ctx.beginPath();
+    ctx.moveTo(x0 + rr, bTop); ctx.lineTo(x0 + boxW - rr, bTop); ctx.quadraticCurveTo(x0 + boxW, bTop, x0 + boxW, bTop + rr);
+    ctx.lineTo(x0 + boxW, bBot - rr); ctx.quadraticCurveTo(x0 + boxW, bBot, x0 + boxW - rr, bBot);
+    ctx.lineTo(x0 + rr, bBot); ctx.quadraticCurveTo(x0, bBot, x0, bBot - rr);
+    ctx.lineTo(x0, bTop + rr); ctx.quadraticCurveTo(x0, bTop, x0 + rr, bTop); ctx.closePath(); ctx.stroke();
+    ctx.fillStyle = acc(0.05); ctx.fill();
+    ctx.restore();
+    const order = ["C", "H", "H", "O"];
+    for (let k = 0; k < 6; k++){
+      const vis = Math.max(0, Math.min(1, nv - k));
+      if (vis <= 0) continue;
+      const cx = x0 + r * 0.4 + colW * (k + 0.5);
+      order.forEach((s, j) => atom(cx, bTop + slot * (j + 0.5), r * (0.6 + 0.4 * vis), s, vis));
+    }
+    /* row tallies: count of each element in this molecule */
+    if (x0 > fs * 3){
+      const tally = [["C", 1, 0], ["H", 2, 1.5], ["O", 1, 3]];
+      tally.forEach(t => label(t[0] + " " + t[1] * n, x0 - fs * 0.8, bTop + slot * (t[2] + 0.5) + fs * 0.35, x0 - 8, fs, DIM, "right"));
+    }
+    ctx.restore();
+
+    /* bloom */
+    bctx.setTransform(1, 0, 0, 1, 0, 0); bctx.clearRect(0, 0, buf.width, buf.height);
+    if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+    ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
+    (buf.width&&buf.height)&&ctx.drawImage(buf, 0, 0, w, h); ctx.restore();
+    /* vignette */
+    const vx = w / 2, vy = h / 2;
+    const vig = ctx.createRadialGradient(vx, vy, h * 0.28, vx, vy, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
+    ctx.restore();
+  }
+
+  function drops(n){
+    const [C, H, O] = EL, M = molarOf(n), mol = 100 / M;
+    return [
+      `Percentage composition is the mass of each element in 100 g of a compound: for ${EMP}, %C = ${C.M.toFixed(2)} ÷ ${MEMP.toFixed(2)} × 100 = ${C.pct.toFixed(1)}%. To go the other way, treat the percentages as grams in a 100 g sample: ${C.pct.toFixed(1)} g C, ${H.pct.toFixed(1)} g H and ${O.pct.toFixed(1)} g O. Divide each mass by its molar mass to get moles (n = m ÷ MM): ${C.mol.toFixed(2)}, ${H.mol.toFixed(2)} and ${O.mol.toFixed(2)} mol. Divide every amount by the smallest, ${SMALL.toFixed(2)}, to get ${C.ratio.toFixed(2)} : ${H.ratio.toFixed(2)} : ${O.ratio.toFixed(2)}, which is ${C.whole} : ${H.whole} : ${O.whole}, so the empirical formula is ${EMP}. If a ratio lands near 1.5 or 1.33, multiply every number by 2 or 3 rather than rounding.`,
+      `Percentages cannot tell ${NAMES[0]} from ${NAMES[5]}: every compound in this family is ${C.pct.toFixed(1)}% carbon, because each has the same ${C.whole} : ${H.whole} : ${O.whole} ratio of atoms. A separately measured molar mass, for example from mass spectrometry, fixes how many empirical units make one molecule. Here n = ${M.toFixed(1)} ÷ ${MEMP.toFixed(2)} = ${n}, so the molecular formula of ${NAMES[n - 1]} is ${formula(n)}. Multiply every subscript in ${EMP} by n, and never write a subscript of 1. If n does not come out as a whole number, recheck the empirical formula.`,
+      `Moles link a mass to a count of particles. With n = m ÷ MM, 100 g of ${NAMES[n - 1]} is 100 ÷ ${M.toFixed(1)} = ${mol.toFixed(3)} mol, and multiplying by Avogadro's constant, 6.022 × 10²³ mol⁻¹, gives ${sci(mol * NA)} molecules. Each molecule holds ${n} carbon atom${n === 1 ? "" : "s"}, so 100 g holds ${sci(mol * n * NA)} carbon atoms, the same for every compound in this family because the percentages are the same. Bigger molecules just mean fewer of them. The same grams-to-moles step settles limiting reagent problems: compare moles against the balanced equation, never grams.`
+    ];
+  }
+
+  function updateText(){
+    const n = st.n, M = molarOf(n), mol = 100 / M, F = formula(n);
+    elVal.textContent = M.toFixed(1) + " g/mol";
+    elLive.textContent = "Live · n = " + n;
+    elF.textContent = F;
+    elFSub.textContent = "n = " + n + " × " + EMP + " · " + NAMES[n - 1];
+    elN.textContent = sci(mol * NA);
+    elNSub.textContent = "100 ÷ " + M.toFixed(1) + " = " + mol.toFixed(3) + " mol";
+    elTag.textContent = "";
+    const f = document.createElement("span"); f.className = "f"; f.textContent = EMP + " × " + n + " = " + F;
+    elTag.appendChild(f); elTag.appendChild(document.createTextNode(" · " + NAMES[n - 1]));
+    slider.style.setProperty("--fill", ((n - 1) / 5 * 100).toFixed(1) + "%");
+    btns.forEach((b, i) => { const on = i === st.mode; b.classList.toggle("on", on); b.setAttribute("aria-pressed", String(on)); });
+    elDrop.textContent = drops(n)[st.mode];
+  }
+
+  function tick(now){
+    const dt = Math.min(now - last, 50); last = now;
+    const kn = 1 - Math.exp(-dt / 220), km = 1 - Math.exp(-dt / 140);
+    st.nv += (st.n - st.nv) * kn;
+    let done = Math.abs(st.n - st.nv) < 0.003;
+    for (let i = 0; i < 3; i++){ st.ev[i] += (st.e[i] - st.ev[i]) * km; if (Math.abs(st.e[i] - st.ev[i]) >= 0.003) done = false; }
+    if (done){ st.nv = st.n; st.ev = st.e.slice(); draw(); raf = 0; return; }
+    draw(); raf = requestAnimationFrame(tick);
+  }
+  function kick(){
+    if (reduce){ st.nv = st.n; st.ev = st.e.slice(); draw(); return; }
+    if (!raf){ last = performance.now(); raf = requestAnimationFrame(tick); }
+  }
+  function setMode(i){ st.mode = i; st.e = [0, 1, 2].map(k => (k === i ? 1 : 0)); updateText(); kick(); }
+
+  slider.addEventListener("input", () => { st.n = Number(slider.value); updateText(); kick(); });
+  btns.forEach((b, i) => b.addEventListener("click", () => setMode(i)));
+  window.addEventListener("resize", resize);
+  updateText(); resize();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(draw).catch(() => {});
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'empirical-and-molecular-formulae'},'*');}catch(e){}}

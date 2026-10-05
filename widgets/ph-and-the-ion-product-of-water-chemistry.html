@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>pH and the Ion Product of Water — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>pH and the ion product of water — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -324,7 +324,7 @@ h1 {
       <div class="card-label">Ion Balance</div>
       <div class="live-tag" id="phTag">pH 7.0</div>
     </div>
-    <div class="card-hint">Drag slider to shift pH from 0 to 14</div>
+    <div class="card-hint">Drag slider to shift pH from 0 to 14 • dot counts follow the log scale, each pH unit is a 10× change in concentration</div>
     
     <div class="canvas-wrapper">
       <canvas id="ionCanvas"></canvas>
@@ -356,7 +356,7 @@ h1 {
       <button class="toggle-btn" id="btnLog">pH scale</button>
     </div>
     <div class="knowdrop">
-      <p id="knowdropText">The ion product of water, Kw = [H⁺][OH⁻], always equals 1.0 × 10⁻¹⁴ at 25°C in any aqueous solution—pure water, acid, or base. When you add acid, the surge in H⁺ ions forces OH⁻ down to keep the product constant. Add base and OH⁻ rises while H⁺ drops, but Kw never changes. This inverse relationship is why knowing one ion concentration instantly tells you the other: [H⁺] = Kw / [OH⁻]. Water self-ionizes to produce equal tiny amounts of both ions, giving pH 7, but the product remains locked at 1.0 × 10⁻¹⁴ regardless of what you dissolve in it.</p>
+      <p id="knowdropText">The ion product of water, Kw = [H⁺][OH⁻], always equals 1.0 × 10⁻¹⁴ at 25°C in any aqueous solution—pure water, acid, or base. When you add acid, the surge in H⁺ ions forces OH⁻ down to keep the product constant. Add base and OH⁻ rises while H⁺ drops, but Kw never changes. This inverse relationship is why knowing one ion concentration instantly tells you the other: [H⁺] = Kw / [OH⁻]. Water self-ionises to produce equal tiny amounts of both ions, giving pH 7, but the product remains locked at 1.0 × 10⁻¹⁴ regardless of what you dissolve in it.</p>
     </div>
   </div>
 
@@ -408,8 +408,9 @@ function initIons() {
   const hConc = Math.pow(10, -pH);
   const ohConc = 1e-14 / hConc;
   
-  const hCount = Math.min(Math.max(Math.round(hConc * 3e7), 3), 120);
-  const ohCount = Math.min(Math.max(Math.round(ohConc * 3e7), 3), 120);
+  /* dot counts follow the log scale: 8 dots per pH unit, never fewer than 1, so every step of the slider is visible */
+  const hCount = Math.max(Math.round(8 * (14 - pH)), 1);
+  const ohCount = Math.max(Math.round(8 * pH), 1);
   
   for (let i = 0; i < hCount; i++) {
     hIons.push({
@@ -538,13 +539,19 @@ function updateStats() {
   ohStat.textContent = ohConc.toExponential(1);
   phTag.textContent = `pH ${pH.toFixed(1)}`;
   
-  if (pH < 6.5) {
-    canvasTag.textContent = 'Acidic • H⁺ dominant';
+  /* tag follows the readouts: equal ions only when [H+] = [OH-], i.e. pH 7.0 at 25 C */
+  if (Math.abs(pH - 7) < 0.001) {
+    canvasTag.textContent = "Neutral solution • equal ions";
+  } else if (pH < 6.5) {
+    canvasTag.textContent = "Acidic • H⁺ dominant";
   } else if (pH > 7.5) {
-    canvasTag.textContent = 'Basic • OH⁻ dominant';
+    canvasTag.textContent = "Basic • OH⁻ dominant";
+  } else if (pH < 7) {
+    canvasTag.textContent = "Close to neutral • more H⁺ than OH⁻";
   } else {
-    canvasTag.textContent = 'Neutral solution • equal ions';
+    canvasTag.textContent = "Close to neutral • more OH⁻ than H⁺";
   }
+  canvasTag.textContent += ` • [H⁺][OH⁻] = ${(hConc * ohConc * 1e14).toFixed(1)} × 10⁻¹⁴`;
 }
 
 slider.addEventListener('input', e => {
@@ -558,7 +565,7 @@ slider.addEventListener('input', e => {
 btnKw.addEventListener('click', () => {
   btnKw.classList.add('active');
   btnLog.classList.remove('active');
-  knowdropText.textContent = "The ion product of water, Kw = [H⁺][OH⁻], always equals 1.0 × 10⁻¹⁴ at 25°C in any aqueous solution—pure water, acid, or base. When you add acid, the surge in H⁺ ions forces OH⁻ down to keep the product constant. Add base and OH⁻ rises while H⁺ drops, but Kw never changes. This inverse relationship is why knowing one ion concentration instantly tells you the other: [H⁺] = Kw / [OH⁻]. Water self-ionizes to produce equal tiny amounts of both ions, giving pH 7, but the product remains locked at 1.0 × 10⁻¹⁴ regardless of what you dissolve in it.";
+  knowdropText.textContent = "The ion product of water, Kw = [H⁺][OH⁻], always equals 1.0 × 10⁻¹⁴ at 25°C in any aqueous solution—pure water, acid, or base. When you add acid, the surge in H⁺ ions forces OH⁻ down to keep the product constant. Add base and OH⁻ rises while H⁺ drops, but Kw never changes. This inverse relationship is why knowing one ion concentration instantly tells you the other: [H⁺] = Kw / [OH⁻]. Water self-ionises to produce equal tiny amounts of both ions, giving pH 7, but the product remains locked at 1.0 × 10⁻¹⁴ regardless of what you dissolve in it.";
 });
 
 btnLog.addEventListener('click', () => {

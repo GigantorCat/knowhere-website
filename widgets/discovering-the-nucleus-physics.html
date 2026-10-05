@@ -338,7 +338,7 @@ canvas {
     
     <div class="canvas-wrapper">
       <canvas id="scatterCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">8000 alphas fired · 0 rebounded</div>
+      <div class="canvas-overlay" id="canvasOverlay">0 alphas fired · 0 rebounded</div>
     </div>
 
     <div class="slider-container">
@@ -441,9 +441,8 @@ canvas {
     
     // Generate particles
     particles = [];
-    const passRate = model === "pudding" ? 1.0 : 0.9987;
-    const pass = Math.floor(particleCount * passRate);
-    const rebound = particleCount - pass;
+    const rebound = model === "pudding" ? 0 : Math.round(particleCount / 8000);
+    const pass = particleCount - rebound;
 
     for (let i = 0; i < pass; i++) {
       particles.push({
@@ -519,9 +518,8 @@ canvas {
     const val = parseInt(slider.value);
     particleCount = Math.floor((val / 100) * 8000);
     particles = [];
-    const passRate = 0.9987;
-    const pass = Math.floor(particleCount * passRate);
-    const rebound = particleCount - pass;
+    const rebound = Math.round(particleCount / 8000);
+    const pass = particleCount - rebound;
 
     for (let i = 0; i < pass; i++) {
       particles.push({
@@ -647,7 +645,7 @@ canvas {
     time += 0.016;
     
     particles.forEach(p => {
-      const progress = (Math.sin(time * p.speed + p.phase) + 1) * 0.5;
+      const progress = (time * p.speed + p.phase) % 1;
       
       if (p.type === "pass") {
         const x = sourceX + (foilX - sourceX) * progress + (progress > 0.5 ? (progress - 0.5) * w * 0.4 : 0);

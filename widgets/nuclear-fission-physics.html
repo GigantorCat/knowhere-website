@@ -331,14 +331,14 @@ canvas {
 
   <h1>One atom splits, three neutrons escape—each finds another, and suddenly you're producing <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">millions</span></h1>
 
-  <p class="intro">Nuclear fission doesn't scale linearly—it multiplies. A single U-235 nucleus absorbing a neutron releases 2–3 more neutrons, each capable of triggering another split. Without control, this chain reaction grows exponentially. Drag the slider to add neutrons and watch the cascade unfold.</p>
+  <p class="intro">Nuclear fission doesn't scale linearly—it multiplies. A single U-235 nucleus absorbing a neutron releases 2–3 more neutrons, each capable of triggering another split, and k counts how many go on to cause another. Without control, this chain reaction grows exponentially. Push the control rods in, pull them out, and watch what the chain does.</p>
 
   <div class="card">
     <div class="card-header">
       <span class="card-label">Chain Reaction Simulator</span>
       <span class="live-tag" id="liveTag">0 Fissions</span>
     </div>
-    <div class="card-hint">Each fission releases 2–3 neutrons — k counts how many go on to cause another</div>
+    <div class="card-hint">Move the control rods. Watch the neutron count and k.</div>
     
     <div class="canvas-wrapper">
       <canvas id="canvas"></canvas>
@@ -379,7 +379,7 @@ canvas {
       <button class="toggle-btn" data-mode="controlled">Controlled</button>
     </div>
     <div class="knowdrop" id="knowdrop">
-      In an uncontrolled chain reaction, every neutron released has the potential to trigger another fission, causing the number of reactions to double with each generation. This exponential growth is what makes nuclear weapons so destructive—within microseconds, trillions of nuclei have split, releasing energy equivalent to thousands of tons of TNT. The critical mass is the minimum amount of fissile material needed for this self-sustaining reaction to occur; below it, too many neutrons escape without causing fissions. In practice, weapons use sophisticated compression techniques to achieve supercriticality, while reactor cores are kept deliberately subcritical in their base state.
+      In an uncontrolled chain reaction, every neutron released has the potential to trigger another fission, causing the number of reactions to double with each generation. This exponential growth is what makes nuclear weapons so destructive—within about a microsecond, roughly 10²³ nuclei (a hundred thousand billion billion) split for every kilotonne of TNT the blast releases. The critical mass is the minimum amount of fissile material needed for this self-sustaining reaction to occur; below it, too many neutrons escape without causing fissions. In practice, weapons use sophisticated compression techniques to achieve supercriticality, while a reactor core is held exactly critical (k = 1) while it operates and is made subcritical to shut it down.
     </div>
   </div>
 
@@ -769,21 +769,21 @@ function animate() {
   kMeasured = 2.5 * Math.exp(-2.78 * Math.pow(rodInsertion, 1.6));
 
   const activeNeutrons = neutrons.length;
-  liveTag.textContent = totalFissions + ' Fissions';
+  liveTag.textContent = totalFissions + " Fissions";
   fissionCount.textContent = totalFissions;
   energyCount.textContent = totalEnergy.toLocaleString();
   kStat.textContent = seeded ? kMeasured.toFixed(2) : '—';
 
   if (activeNeutrons >= NEUTRON_CAP * 0.55 && rodInsertion < 0.1) {
-    overlayTag.textContent = 'Supercritical — runaway, ' + activeNeutrons + ' neutrons';
+    overlayTag.textContent = "Supercritical — runaway, " + activeNeutrons + " neutrons";
   } else if (!seeded) {
-    overlayTag.textContent = 'Subcritical — 0 Active Neutrons';
+    overlayTag.textContent = "Subcritical — 0 Active Neutrons";
   } else if (kMeasured > 1.1) {
-    overlayTag.textContent = 'Supercritical — k = ' + kMeasured.toFixed(2) + ', ' + activeNeutrons + ' neutrons';
+    overlayTag.textContent = "Supercritical — k = " + kMeasured.toFixed(2) + ", " + activeNeutrons + " neutrons";
   } else if (kMeasured > 0.9) {
-    overlayTag.textContent = 'Critical — k = ' + kMeasured.toFixed(2) + ', holding at ' + activeNeutrons;
+    overlayTag.textContent = "Critical — k = " + kMeasured.toFixed(2) + ", holding at " + activeNeutrons;
   } else {
-    overlayTag.textContent = 'Subcritical — k = ' + kMeasured.toFixed(2) + ', ' + activeNeutrons + ' neutrons';
+    overlayTag.textContent = "Subcritical — k = " + kMeasured.toFixed(2) + ", " + activeNeutrons + " neutrons";
   }
 
   requestAnimationFrame(animate);
@@ -809,15 +809,15 @@ toggleBtns.forEach(btn => {
     mode = btn.dataset.mode;
     /* The toggle is now a position for the rods, not a hidden change to the
        physics: a weapon has no control rods at all, a reactor sits near the
-       critical position. The student can drag away from either. */
+       critical position. The student can move the rods away from either. */
     const preset = mode === 'controlled' ? 50 : 0;
     slider.value = preset;
     setRods(preset);
     
     if (mode === 'controlled') {
-      knowdrop.textContent = 'In a nuclear reactor, control rods made of neutron-absorbing materials like boron or cadmium are inserted between fuel assemblies to regulate the chain reaction. Each fission still releases 2–3 neutrons, but the control rods capture the excess, ensuring that on average only one neutron from each fission goes on to trigger the next. This maintains a steady, controlled release of energy over months or years. Operators can adjust the depth of the rods: inserting them further slows the reaction (subcritical), while withdrawing them increases the reaction rate. Emergency shutdown systems drop all control rods fully into the core within seconds, immediately halting the chain reaction.';
+      knowdrop.textContent = "In a nuclear reactor, control rods made of neutron-absorbing materials like boron or cadmium are inserted between fuel assemblies to regulate the chain reaction. Each fission still releases 2–3 neutrons, but the control rods capture the excess, ensuring that on average only one neutron from each fission goes on to trigger the next. This maintains a steady, controlled release of energy over months or years. Operators can adjust the depth of the rods: inserting them further slows the reaction (subcritical), while withdrawing them increases the reaction rate. Emergency shutdown systems drop all control rods fully into the core within seconds, immediately halting the chain reaction.";
     } else {
-      knowdrop.textContent = 'In an uncontrolled chain reaction, every neutron released has the potential to trigger another fission, causing the number of reactions to double with each generation. This exponential growth is what makes nuclear weapons so destructive—within microseconds, trillions of nuclei have split, releasing energy equivalent to thousands of tons of TNT. The critical mass is the minimum amount of fissile material needed for this self-sustaining reaction to occur; below it, too many neutrons escape without causing fissions. In practice, weapons use sophisticated compression techniques to achieve supercriticality, while reactor cores are kept deliberately subcritical in their base state.';
+      knowdrop.textContent = "In an uncontrolled chain reaction, every neutron released has the potential to trigger another fission, causing the number of reactions to double with each generation. This exponential growth is what makes nuclear weapons so destructive—within about a microsecond, roughly 10²³ nuclei (a hundred thousand billion billion) split for every kilotonne of TNT the blast releases. The critical mass is the minimum amount of fissile material needed for this self-sustaining reaction to occur; below it, too many neutrons escape without causing fissions. In practice, weapons use sophisticated compression techniques to achieve supercriticality, while a reactor core is held exactly critical (k = 1) while it operates and is made subcritical to shut it down.";
     }
   });
 });

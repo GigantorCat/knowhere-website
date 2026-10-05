@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Differential Equations with Exponential Growth and Decay — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Differential equations with exponential growth and decay — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -347,7 +347,7 @@ canvas {
 
   <h1>One constant k controls both <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">halving and doubling</span></h1>
   
-  <p class="intro">Whether a population explodes or a substance decays, the mathematics is identical — only the sign of k changes. The same formula ln(2)/k gives you half-life for decay and doubling time for growth. Drag the slider to change k and watch how exponential behaviour unfolds in real-time.</p>
+  <p class="intro">Whether a population explodes or a substance decays, the mathematics is identical — only the sign of k changes. The same size, ln(2)/|k|, gives you the half-life for decay (k &lt; 0) and the doubling time for growth (k &gt; 0). Drag the slider to change k and watch how exponential behaviour unfolds in real-time.</p>
 
   <div class="card">
     <div class="card-header">
@@ -377,7 +377,7 @@ canvas {
         <div class="stat-value" style="color:var(--acc)" id="yValue">1.65</div>
       </div>
       <div class="stat">
-        <div class="stat-label">Time constant</div>
+        <div class="stat-label" id="timeLabel">Doubling time</div>
         <div class="stat-value" style="color:var(--amb)" id="timeConstant">1.39</div>
       </div>
     </div>
@@ -394,7 +394,7 @@ canvas {
 
   <div class="know-this">
     <div class="know-this-tag">Know This</div>
-    <p class="know-this-body">The half-life formula <span style="color:var(--acc)">t<sub>½</sub> = ln(2)/k</span> for decay and the doubling time formula for growth are mathematically identical — both equal <span style="color:var(--acc)">ln(2)/|k|</span> — revealing that exponential processes have a characteristic timescale determined entirely by the rate constant.</p>
+    <p class="know-this-body">The half-life for decay, <span style="color:var(--acc)">t<sub>½</sub> = ln(2)/|k|</span> (k &lt; 0), and the doubling time for growth, ln(2)/k (k &gt; 0), are the same formula in size — both equal <span style="color:var(--acc)">ln(2)/|k|</span> — revealing that exponential processes have a characteristic timescale determined entirely by the rate constant.</p>
   </div>
 
   <div class="footer">
@@ -405,6 +405,7 @@ canvas {
 <script>
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
+const timeLabel = document.getElementById(`timeLabel`);
 const kSlider = document.getElementById('kSlider');
 const liveTag = document.getElementById('liveTag');
 const canvasOverlay = document.getElementById('canvasOverlay');
@@ -462,6 +463,7 @@ function updateUI() {
   const yCurrent = Math.exp(k * xCurrent);
   yValue.textContent = yCurrent.toFixed(2);
   timeConstant.textContent = tConstStr;
+  timeLabel.textContent = k > 0 ? `Doubling time` : (k < 0 ? `Half-life` : `Half-life or doubling time`);
 }
 
 updateUI();

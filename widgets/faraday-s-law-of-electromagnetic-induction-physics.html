@@ -314,18 +314,18 @@ canvas {
   
   <h1>Stillness generates <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">nothing</span></h1>
   
-  <p class="intro">A powerful magnet sitting perfectly still inside a coil produces zero voltage, no matter how strong the field. Only when flux is changing does current flow. Drag the slider to control how fast the magnet moves through the coil and watch the induced voltage spike.</p>
+  <p class="intro">A powerful magnet sitting perfectly still inside a coil produces zero voltage, no matter how strong the field. Only when flux is changing does current flow. Set how fast the magnet moves in and out of the coil and watch the induced voltage.</p>
 
   <div class="card">
     <div class="card-header">
       <span class="card-label">Magnetic flux simulation</span>
-      <span class="live-tag" id="liveTag">Moving at 0 m/s</span>
+      <span class="live-tag" id="liveTag">Magnet parked</span>
     </div>
-    <div class="card-hint">Magnet velocity controls rate of flux change</div>
+    <div class="card-hint">Change the magnet speed. Watch the emf.</div>
     
     <div class="canvas-wrapper">
       <canvas id="canvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">Induced emf: 0.00 V</div>
+      <div class="canvas-overlay" id="canvasOverlay">Induced emf now: <span style="text-transform:none">0.0 mV</span></div>
     </div>
 
     <div class="slider-control">
@@ -341,12 +341,12 @@ canvas {
 
     <div class="stat-row">
       <div class="stat">
-        <div class="stat-label">Rate of change dΦ/dt</div>
-        <div class="stat-value" style="color:var(--acc)" id="rateValue">0.00</div>
+        <div class="stat-label">Peak <span style="text-transform:none">dΦ/dt</span></div>
+        <div class="stat-value" style="color:var(--acc)" id="rateValue">0.00 mWb/s</div>
       </div>
       <div class="stat">
-        <div class="stat-label">Induced emf ε</div>
-        <div class="stat-value" style="color:var(--amb)" id="emfValue">0.00 V</div>
+        <div class="stat-label">Peak emf <span style="text-transform:none">ε</span> (N = 50)</div>
+        <div class="stat-value" style="color:var(--amb)" id="emfValue">0.0 mV</div>
       </div>
     </div>
   </div>
@@ -373,35 +373,67 @@ canvas {
 </div>
 
 <script>
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d', { alpha: false });
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d', { alpha: false });
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d", { alpha: false });
+const buf = document.createElement("canvas");
+const bctx = buf.getContext("2d", { alpha: false });
 
-const slider = document.getElementById('velocitySlider');
-const liveTag = document.getElementById('liveTag');
-const canvasOverlay = document.getElementById('canvasOverlay');
-const rateValue = document.getElementById('rateValue');
-const emfValue = document.getElementById('emfValue');
+const slider = document.getElementById("velocitySlider");
+const liveTag = document.getElementById("liveTag");
+const canvasOverlay = document.getElementById("canvasOverlay");
+const rateValue = document.getElementById("rateValue");
+const emfValue = document.getElementById("emfValue");
 
-const turnBtn = document.getElementById('turnBtn');
-const lenzBtn = document.getElementById('lenzBtn');
-const knowdropText = document.getElementById('knowdropText');
+const turnBtn = document.getElementById("turnBtn");
+const lenzBtn = document.getElementById("lenzBtn");
+const knowdropText = document.getElementById("knowdropText");
 
 const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
-let velocity = 0;
-let magnetPos = 0;
-let time = 0;
-let fieldLines = [];
+/* Physical model (SI units).
+   Bar magnet = point dipole, moment M on the coil axis, N pole facing the coil.
+   Coil: N turns of radius R spread over length LC, centred at z = 0.
+   Magnet centre runs z = ZMID + AMP * sin(theta): from just inside the coil (5 mm) out to 13.5 cm.
+   The slider sets the magnet PEAK speed v0 = AMP * omega (0 to 1 m/s). */
+const MU0 = 4e-7 * Math.PI;
+const M = 1.0;          /* A m^2, a small neodymium bar */
+const R = 0.02;         /* m, coil radius */
+const LC = 0.04;        /* m, coil length */
+const N = 50;           /* turns */
+const LOOPS = 8;        /* turns sampled along the coil length */
+const ZMID = 0.07, AMP = 0.065;
+const VMAX = 1.0;       /* m/s at the top of the slider */
 
-// Generate field lines
-for (let i = 0; i < 16; i++) {
-  fieldLines.push({
-    angle: (i / 16) * Math.PI * 2,
-    phase: Math.random() * Math.PI * 2
-  });
+const loopZ = [];
+for (let k = 0; k < LOOPS; k++) loopZ.push(-LC / 2 + (k / (LOOPS - 1)) * LC);
+
+/* flux through one loop from the dipole at axial distance d: mu0 M R^2 / (2 (R^2 + d^2)^1.5) */
+function fluxAt(z) {
+  let s = 0;
+  for (const u of loopZ) { const d = z - u; s += MU0 * M * R * R / (2 * Math.pow(R * R + d * d, 1.5)); }
+  return s / LOOPS;     /* Wb, average flux per turn */
 }
+function dFluxDz(z) {
+  let s = 0;
+  for (const u of loopZ) { const d = z - u; s += -1.5 * MU0 * M * R * R * d / Math.pow(R * R + d * d, 2.5); }
+  return s / LOOPS;     /* Wb per m */
+}
+
+/* K = max over one cycle of |dPhi/dz * cos(theta)|, so peak dPhi/dt = K * v0 exactly */
+let K = 0;
+for (let i = 0; i < 4000; i++) {
+  const th = (i / 4000) * Math.PI * 2;
+  K = Math.max(K, Math.abs(dFluxDz(ZMID + AMP * Math.sin(th)) * Math.cos(th)));
+}
+const EMF_TOP = N * K * VMAX;   /* biggest emf the slider can make, sets the trace scale */
+
+let v0 = 0, omega = 0;
+let theta = -Math.PI / 2;       /* start parked just inside the coil */
+let emfNow = 0, dPhiNow = 0;
+let time = 0, lastT = null, lastText = 0;
+let flowPhase = 0;
+const trace = [];
+const TRACE_N = 180;
 
 function resize() {
   const rect = canvas.getBoundingClientRect();
@@ -413,180 +445,199 @@ function resize() {
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 
-function draw() {
+function fmt(x, dp) { const t = Math.abs(x).toFixed(dp); return (x < 0 && Number(t) !== 0 ? "\u2212" : "") + t; }
+function setUnit(el, label, val) { el.textContent = label; const sp = document.createElement("span"); sp.style.textTransform = "none"; sp.textContent = val; el.appendChild(sp); }
+
+function step(dt) {
+  theta += omega * dt;
+  if (theta > Math.PI * 2) theta -= Math.PI * 2;
+  const z = ZMID + AMP * Math.sin(theta);
+  const vz = v0 * Math.cos(theta);          /* m/s, + = moving out of the coil */
+  dPhiNow = dFluxDz(z) * vz;                /* Wb/s */
+  emfNow = -N * dPhiNow;                    /* V */
+  trace.push(emfNow);
+  if (trace.length > TRACE_N) trace.shift();
+  flowPhase += dt * 6 * (emfNow / (EMF_TOP || 1));
+  return z;
+}
+
+function draw(t) {
+  const now = typeof t === "number" ? t : performance.now();
+  let dt = lastT === null ? 0.016 : (now - lastT) / 1000;
+  lastT = now;
+  if (!(dt > 0)) dt = 0.016;
+  dt = Math.min(dt, 0.05);
+  time += dt;
+  const z = step(dt);
+
   const w = canvas.width / dpr;
   const h = canvas.height / dpr;
   const cx = w / 2;
-  const cy = h / 2;
+  const cy = h * 0.54;
 
-  ctx.fillStyle = '#000';
+  ctx.fillStyle = "#000";
   ctx.fillRect(0, 0, w, h);
 
-  // Coil
-  const coilY = cy;
-  const coilW = w * 0.35;
-  const coilH = h * 0.5;
-  const numTurns = 8;
-  
-  for (let i = 0; i < numTurns; i++) {
-    const y = coilY - coilH/2 + (i / (numTurns-1)) * coilH;
-    ctx.strokeStyle = 'rgba(250,199,117,0.6)';
+  /* metres to pixels */
+  const S = (w * 0.5) / 0.16;
+  const coilX = w * 0.32;
+  const rPx = Math.min(R * S, h * 0.24);
+  const rx = rPx * 0.28;
+  const magX = coilX + z * S;
+  const magL = 0.05 * S;
+  const magT = Math.max(10, 0.014 * S);
+  const glow = Math.min(1, Math.abs(emfNow) / (EMF_TOP || 1));
+
+  const turnXs = [];
+  for (let k = 0; k < 10; k++) turnXs.push(coilX - (LC * S) / 2 + (k / 9) * LC * S);
+
+  /* coil, back halves */
+  ctx.strokeStyle = "rgba(250,199,117,0.22)";
+  ctx.lineWidth = 1.5;
+  turnXs.forEach(x => { ctx.beginPath(); ctx.ellipse(x, cy, rx, rPx, 0, -Math.PI / 2, Math.PI / 2); ctx.stroke(); });
+
+  /* magnet field loops (N on the left end, S on the right end) */
+  ctx.save();
+  ctx.globalCompositeOperation = "lighter";
+  for (let k = 1; k <= 3; k++) {
+    const a = 0.12 + 0.06 * Math.sin(time * 1.4 + k);
+    ctx.strokeStyle = `rgba(58,111,200,${a})`;
     ctx.lineWidth = 1.5;
     ctx.beginPath();
-    ctx.arc(cx - coilW/2, y, 8, Math.PI * 0.5, Math.PI * 1.5);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.arc(cx + coilW/2, y, 8, Math.PI * 1.5, Math.PI * 0.5);
-    ctx.stroke();
-    
-    ctx.strokeStyle = 'rgba(250,199,117,0.3)';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(cx - coilW/2, y - 8);
-    ctx.lineTo(cx + coilW/2, y - 8);
-    ctx.moveTo(cx - coilW/2, y + 8);
-    ctx.lineTo(cx + coilW/2, y + 8);
+    ctx.ellipse(magX, cy, magL * 0.5 + k * 10, magT * 0.5 + k * rPx * 0.45, 0, 0, Math.PI * 2);
     ctx.stroke();
   }
-
-  // Magnet position oscillates
-  const magnetX = cx + magnetPos;
-  const magnetR = 16;
-
-  // Field lines emanating from magnet
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  
-  fieldLines.forEach(fl => {
-    const dist = 120 + 40 * Math.sin(time * 0.8 + fl.phase);
-    const x1 = magnetX + Math.cos(fl.angle) * magnetR;
-    const y1 = cy + Math.sin(fl.angle) * magnetR;
-    const x2 = magnetX + Math.cos(fl.angle) * dist;
-    const y2 = cy + Math.sin(fl.angle) * dist;
-    
-    const grad = ctx.createLinearGradient(x1, y1, x2, y2);
-    grad.addColorStop(0, 'rgba(58,111,200,0.5)');
-    grad.addColorStop(1, 'rgba(58,111,200,0)');
-    
-    ctx.strokeStyle = grad;
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
-    ctx.stroke();
-  });
-  
   ctx.restore();
 
-  // Magnet body
-  ctx.fillStyle = '#3A6FC8';
-  ctx.shadowColor = 'rgba(58,111,200,0.8)';
-  ctx.shadowBlur = 20;
-  ctx.beginPath();
-  ctx.arc(magnetX, cy, magnetR, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.shadowBlur = 0;
+  /* magnet body: N half (left, facing the coil) and S half */
+  ctx.save();
+  ctx.shadowColor = "rgba(58,111,200,0.8)";
+  ctx.shadowBlur = 18;
+  ctx.fillStyle = "#3A6FC8";
+  ctx.fillRect(magX - magL / 2, cy - magT / 2, magL / 2, magT);
+  ctx.fillStyle = "#24477f";
+  ctx.fillRect(magX, cy - magT / 2, magL / 2, magT);
+  ctx.restore();
+  ctx.fillStyle = "#EDEDE8";
+  ctx.font = `700 ${Math.max(9, Math.round(magT * 0.7))}px JetBrains Mono`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("N", magX - magL / 4, cy + 0.5);
+  ctx.fillText("S", magX + magL / 4, cy + 0.5);
 
-  // Magnet poles
-  ctx.fillStyle = '#0B0D0C';
-  ctx.font = '700 10px JetBrains Mono';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText('N', magnetX - 6, cy);
-  ctx.fillText('S', magnetX + 6, cy);
+  /* coil, front halves: brighten with the emf */
+  ctx.strokeStyle = `rgba(250,199,117,${0.5 + 0.45 * glow})`;
+  ctx.lineWidth = 2;
+  turnXs.forEach(x => { ctx.beginPath(); ctx.ellipse(x, cy, rx, rPx, 0, Math.PI / 2, Math.PI * 1.5); ctx.stroke(); });
 
-  // Current flow in coil (when moving)
-  if (Math.abs(velocity) > 0.01) {
-    const flowIntensity = Math.abs(velocity) / 5;
-    const flowPhase = time * 4 * Math.sign(velocity);
-    
-    for (let i = 0; i < 3; i++) {
-      const offset = (flowPhase + i * Math.PI * 0.66) % (Math.PI * 2);
-      const flowY = coilY - coilH/2 + (offset / (Math.PI * 2)) * coilH;
-      
-      if (flowY >= coilY - coilH/2 && flowY <= coilY + coilH/2) {
-        ctx.save();
-        ctx.globalCompositeOperation = 'lighter';
-        ctx.fillStyle = `rgba(250,199,117,${flowIntensity * 0.7})`;
-        ctx.shadowColor = 'rgba(250,199,117,0.9)';
-        ctx.shadowBlur = 12;
+  /* induced current: dots run along the front of each turn, speed and direction follow the emf */
+  if (glow > 0.01) {
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    ctx.fillStyle = `rgba(250,199,117,${0.25 + 0.75 * glow})`;
+    ctx.shadowColor = "rgba(250,199,117,0.9)";
+    ctx.shadowBlur = 10;
+    turnXs.forEach((x, k) => {
+      for (let j = 0; j < 2; j++) {
+        let f = ((flowPhase + j * 0.5 + k * 0.13) % 1 + 1) % 1;
+        const ang = Math.PI / 2 + f * Math.PI;   /* bottom to top along the front */
         ctx.beginPath();
-        ctx.arc(cx - coilW/2, flowY, 4, 0, Math.PI * 2);
+        ctx.arc(x + rx * Math.cos(ang), cy + rPx * Math.sin(ang), 2.6, 0, Math.PI * 2);
         ctx.fill();
-        ctx.beginPath();
-        ctx.arc(cx + coilW/2, flowY, 4, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
       }
-    }
+    });
+    ctx.restore();
   }
 
-  // Bloom
+  /* emf trace, top strip: fixed scale (top of the strip = the biggest emf the slider allows) */
+  const tx0 = 12, tx1 = w - 12, ty = Math.max(20, h * 0.13), th = Math.max(12, h * 0.1);
+  ctx.strokeStyle = "rgba(140,147,137,0.35)";
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(tx0, ty); ctx.lineTo(tx1, ty); ctx.stroke();
+  ctx.fillStyle = "rgba(140,147,137,0.8)";
+  ctx.font = "500 9px JetBrains Mono";
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  ctx.fillText("emf vs time", tx0, 4);
+  if (trace.length > 1) {
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    ctx.strokeStyle = "rgba(250,199,117,0.9)";
+    ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    trace.forEach((e, i) => {
+      const x = tx1 - (trace.length - 1 - i) * ((tx1 - tx0) / (TRACE_N - 1));
+      const y = ty - (e / (EMF_TOP || 1)) * th;
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  /* Bloom */
   bctx.setTransform(1, 0, 0, 1, 0, 0);
   bctx.clearRect(0, 0, buf.width, buf.height);
   if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
   ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalCompositeOperation = "lighter";
   ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
+  ctx.filter = "blur(7px)";
   if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
   ctx.restore();
 
-  // Vignette
+  /* Vignette */
   const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  vig.addColorStop(0, "rgba(0,0,0,0)");
+  vig.addColorStop(1, "rgba(0,0,0,0.52)");
   ctx.fillStyle = vig;
   ctx.fillRect(0, 0, w, h);
 
-  time += 0.016;
+  /* live readout, refreshed ten times a second so it can be read */
+  if (now - lastText > 100) {
+    lastText = now;
+    setUnit(canvasOverlay, "Induced emf now: ", `${fmt(emfNow * 1000, 1)} mV`);
+  }
+
   requestAnimationFrame(draw);
 }
 
 function updatePhysics() {
   const v = parseFloat(slider.value);
-  velocity = v / 10; // Scale to reasonable range
-  
-  // Update magnet position (oscillate around center)
-  magnetPos = Math.sin(time * velocity * 0.5) * 80;
-  
-  // Calculate dΦ/dt and emf (simplified model)
-  const dFluxDt = Math.abs(velocity * Math.cos(time * velocity * 0.5)) * 2.5;
-  const turns = 50; // Assumed coil turns
-  const inducedEmf = turns * dFluxDt;
-  
-  // Update UI
-  const speedText = v === 0 ? '0 m/s' : v < 30 ? `${(v/10).toFixed(1)} m/s (slow)` : v < 70 ? `${(v/10).toFixed(1)} m/s (moderate)` : `${(v/10).toFixed(1)} m/s (rapid)`;
-  liveTag.textContent = `Moving at ${speedText}`;
-  
-  canvasOverlay.textContent = `Induced emf: ${inducedEmf.toFixed(2)} V`;
-  rateValue.textContent = dFluxDt.toFixed(2);
-  emfValue.textContent = `${inducedEmf.toFixed(2)} V`;
-  
-  // Update slider fill
-  slider.style.setProperty('--fill', v + '%');
+  v0 = (v / 100) * VMAX;
+  omega = v0 / AMP;
+
+  const peakRate = K * v0;          /* Wb/s */
+  const peakEmf = N * peakRate;     /* V */
+
+  const band = v === 0 ? "" : v < 30 ? " (slow)" : v < 70 ? " (moderate)" : " (rapid)";
+  if (v === 0) liveTag.textContent = "Magnet parked"; else setUnit(liveTag, "Peak speed ", `${v0.toFixed(2)} m/s${band}`);
+  rateValue.textContent = `${(peakRate * 1000).toFixed(2)} mWb/s`;
+  emfValue.textContent = `${(peakEmf * 1000).toFixed(1)} mV`;
+
+  slider.style.setProperty("--fill", v + "%");
 }
 
-slider.addEventListener('input', updatePhysics);
+slider.addEventListener("input", updatePhysics);
 
 // Toggle buttons
-turnBtn.addEventListener('click', () => {
-  turnBtn.classList.add('active');
-  lenzBtn.classList.remove('active');
+turnBtn.addEventListener("click", () => {
+  turnBtn.classList.add("active");
+  lenzBtn.classList.remove("active");
   knowdropText.textContent = "Increasing the number of turns N in a coil proportionally increases the induced emf for the same rate of flux change. If you double the turns, you double the voltage. This is because each loop experiences the same rate of flux change, and the individual emfs add in series. A 100-turn coil moving through a field at the same speed as a 10-turn coil generates ten times the voltage. Generators exploit this by using coils with hundreds or thousands of turns to maximise output from a given rotation speed. The formula ε = -NdΦ/dt shows this linear relationship explicitly.";
 });
 
-lenzBtn.addEventListener('click', () => {
-  lenzBtn.classList.add('active');
-  turnBtn.classList.remove('active');
-  knowdropText.textContent = "The negative sign in ε = -NdΦ/dt encodes Lenz's Law: the induced emf creates a current whose magnetic field opposes the change in flux that produced it. When you push a magnet toward a coil, the induced current generates a field that repels the magnet. Pull it away, and the induced field attracts it back. This isn't just mathematical housekeeping—it's a manifestation of energy conservation. If the induced field assisted the motion instead of opposing it, you'd get free energy, violating thermodynamics. Lenz's Law ensures you must do work to induce current.";
+lenzBtn.addEventListener("click", () => {
+  lenzBtn.classList.add("active");
+  turnBtn.classList.remove("active");
+  knowdropText.textContent = "The negative sign in ε = -NdΦ/dt encodes Lenz’s Law: the induced emf creates a current whose magnetic field opposes the change in flux that produced it. When you push a magnet toward a coil, the induced current generates a field that repels the magnet. Pull it away, and the induced field attracts it back. This is not just mathematical housekeeping. It is energy conservation: if the induced field assisted the motion instead of opposing it, you would get energy from nothing. Lenz’s Law ensures you must do work to induce current.";
 });
 
-window.addEventListener('resize', resize);
+window.addEventListener("resize", resize);
 resize();
 updatePhysics();
-draw();
+requestAnimationFrame(draw);
 </script>
+
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'faraday-s-law-of-electromagnetic-induction'},'*');}catch(e){}}
 if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

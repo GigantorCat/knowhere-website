@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Polymer Structure and Physical Properties Relationship — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Polymer structure and physical properties relationship — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -229,6 +229,31 @@ canvas {
   transition: all .2s;
 }
 
+.chain-buttons {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.chain-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12.5px;
+  padding: 9px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: #12160F;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.chain-btn.active {
+  background: rgba(62,154,214,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+}
+
 .toggle-btn.active {
   background: rgba(62,154,214,.1);
   border: 1px solid var(--acc);
@@ -322,17 +347,22 @@ canvas {
   <div class="card">
     <div class="card-header">
       <div class="card-label">Polymer Chain Structure</div>
-      <div class="live-tag" id="liveTag">Linear • 0% Crosslinked</div>
+      <div class="live-tag" id="liveTag">Thermoplastic • 0% cross-linked</div>
     </div>
-    <div class="card-hint">Drag to add cross-links between chains</div>
+    <div class="card-hint">Pick the chain shape, then drag to add cross-links between chains</div>
+
+    <div class="chain-buttons" role="group" aria-label="Chain shape">
+      <button class="chain-btn active" data-chain="linear">Linear chains</button>
+      <button class="chain-btn" data-chain="branched">Branched chains</button>
+    </div>
     
     <div class="canvas-wrapper">
       <canvas id="polyCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">Thermoplastic • Melts on Heating</div>
+      <div class="canvas-overlay" id="canvasOverlay">Thermoplastic • Melts on heating</div>
     </div>
 
     <div class="slider-wrapper">
-      <input type="range" min="0" max="100" value="0" class="ps-slider" id="crossSlider">
+      <input aria-label="Cross-linking" type="range" min="0" max="100" value="0" class="ps-slider" id="crossSlider">
     </div>
     <div class="tick-labels">
       <span>No cross-links</span>
@@ -389,6 +419,8 @@ const buf = document.createElement('canvas');
 const bctx = buf.getContext('2d');
 
 let crossAmount = 0;
+let branched = false; /* side chains on the main chains (as in low-density polyethene), separate from cross-links */
+const chainBtns = document.querySelectorAll('.chain-btn');
 let chains = [];
 let crossLinks = [];
 
@@ -426,14 +458,16 @@ function initChains() {
 function updateCrossLinks() {
   crossLinks = [];
   const targetLinks = Math.floor((crossAmount / 100) * 45);
+  const pairs = chains.length - 1;
+  if (pairs < 1) return;
+  const slots = [4, 1, 7, 2, 6, 0, 8, 3, 5]; /* fixed fill order along the chain, so links never reshuffle */
   
   for (let i = 0; i < targetLinks; i++) {
-    const c1 = Math.floor(Math.random() * chains.length);
-    let c2 = Math.floor(Math.random() * chains.length);
-    while (c2 === c1) c2 = Math.floor(Math.random() * chains.length);
-    
-    const n1 = Math.floor(Math.random() * chains[c1].nodes.length);
-    const n2 = Math.floor(Math.random() * chains[c2].nodes.length);
+    const c1 = i % pairs; /* only neighbouring chains are joined */
+    const c2 = c1 + 1;
+    const slot = Math.floor(i / pairs) % slots.length;
+    const n1 = 1 + slots[slot] * 2 + (c1 % 2);
+    const n2 = n1;
     
     crossLinks.push({ c1, n1, c2, n2 });
   }
@@ -470,6 +504,31 @@ function draw() {
     });
   });
   
+  // Draw side chains (branching): short branches that belong to ONE chain and do not join chains
+  if (branched) {
+    chains.forEach((chain, idx) => {
+      const hue = (idx * 60) % 360;
+      ctx.strokeStyle = `hsl(${hue}, 45%, 55%)`;
+      ctx.fillStyle = `hsl(${hue}, 60%, 65%)`;
+      ctx.lineWidth = 2;
+      chain.nodes.forEach((node, i) => {
+        if (i % 4 !== 2) return;
+        const dir = ((i + idx) % 8 < 4) ? -1 : 1;
+        const pts = [node, { x: node.x + 5, y: node.y + dir * 9 }, { x: node.x + 2, y: node.y + dir * 17 }];
+        ctx.beginPath();
+        ctx.moveTo(pts[0].x, pts[0].y);
+        ctx.lineTo(pts[1].x, pts[1].y);
+        ctx.lineTo(pts[2].x, pts[2].y);
+        ctx.stroke();
+        for (let k = 1; k < pts.length; k++) {
+          ctx.beginPath();
+          ctx.arc(pts[k].x, pts[k].y, 2.6, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      });
+    });
+  }
+
   // Draw cross-links
   ctx.save();
   ctx.globalCompositeOperation = 'lighter';
@@ -537,15 +596,15 @@ function updateUI() {
   const rigidity = Math.round(12 + (crossAmount / 100) * 78);
   rigidVal.textContent = rigidity;
   
-  if (crossAmount < 30) {
-    liveTag.textContent = 'Linear • ' + crossAmount + '% Crosslinked';
-    canvasOverlay.textContent = 'Thermoplastic • Melts on Heating';
+  if (crossAmount < 3) {
+    liveTag.textContent = "Thermoplastic • " + crossAmount + "% cross-linked";
+    canvasOverlay.textContent = branched ? "Thermoplastic • Looser packing, melts lower" : "Thermoplastic • Melts on heating";
   } else if (crossAmount < 70) {
-    liveTag.textContent = 'Branched • ' + crossAmount + '% Crosslinked';
-    canvasOverlay.textContent = 'Partial Network • Softens';
+    liveTag.textContent = "Lightly cross-linked • " + crossAmount + "%";
+    canvasOverlay.textContent = "Lightly cross-linked • Softens, does not flow";
   } else {
-    liveTag.textContent = 'Network • ' + crossAmount + '% Crosslinked';
-    canvasOverlay.textContent = 'Thermosetting • Decomposes';
+    liveTag.textContent = "Thermoset network • " + crossAmount + "% cross-linked";
+    canvasOverlay.textContent = "Thermosetting • Decomposes";
   }
   
   updateCrossLinks();
@@ -554,6 +613,15 @@ function updateUI() {
 
 slider.addEventListener('input', updateUI);
 
+chainBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    chainBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    branched = btn.dataset.chain === "branched";
+    updateUI();
+  });
+});
+
 toggleBtns.forEach(btn => {
   btn.addEventListener('click', () => {
     toggleBtns.forEach(b => b.classList.remove('active'));
@@ -561,9 +629,9 @@ toggleBtns.forEach(btn => {
     
     const mode = btn.dataset.mode;
     if (mode === 'thermo') {
-      kdText.textContent = 'Thermoplastics like polyethene, polystyrene, and polyvinyl chloride contain linear or branched chains held together only by weak van der Waals forces or hydrogen bonds between molecules. When you heat these materials, the intermolecular forces weaken and the chains slide past each other, allowing the plastic to melt and flow into new shapes. Once cooled, the forces re-establish and the plastic solidifies again in its new form. This reversible process means thermoplastics can be melted and remoulded repeatedly without chemical change—why plastic bottles can be recycled. High-density polyethene has unbranched chains that pack efficiently into crystalline regions with stronger intermolecular attractions, making it rigid and dense, while low-density polyethene has branched chains that prevent tight packing, creating a more flexible, less crystalline material.';
+      kdText.textContent = `Thermoplastics like polyethene, polystyrene, and polyvinyl chloride contain linear or branched chains held together only by weak van der Waals forces or hydrogen bonds between molecules. When you heat these materials, the intermolecular forces weaken and the chains slide past each other, allowing the plastic to melt and flow into new shapes. Once cooled, the forces re-establish and the plastic solidifies again in its new form. This reversible process means thermoplastics can be melted and remoulded repeatedly without chemical change—why plastic bottles can be recycled. High-density polyethene has unbranched chains that pack efficiently into crystalline regions with stronger intermolecular attractions, making it rigid and dense, while low-density polyethene has branched chains that prevent tight packing, creating a more flexible, less crystalline material.`;
     } else {
-      kdText.textContent = 'Thermosetting polymers like Bakelite and melamine-formaldehyde resins undergo irreversible cross-linking during their formation, creating covalent bonds between polymer chains that lock them into a rigid three-dimensional network structure. Unlike the weak intermolecular forces in thermoplastics, these covalent cross-links are strong chemical bonds that cannot be broken by heating without destroying the molecule itself. When you try to heat a thermosetting polymer, the material doesn\'t soften or melt—instead it chars and decomposes because breaking the cross-links requires breaking covalent bonds, which happens at temperatures far above where the material burns. This is why Bakelite electrical components and melamine kitchen countertops maintain their shape under heat but will eventually burn or crack rather than flow. Once formed, the cross-linked network is permanent and cannot be remoulded or recycled like thermoplastics.';
+      kdText.textContent = `Thermosetting polymers like Bakelite and melamine-formaldehyde resins undergo irreversible cross-linking during their formation, creating covalent bonds between polymer chains that lock them into a rigid three-dimensional network structure. Unlike the weak intermolecular forces in thermoplastics, these covalent cross-links are strong chemical bonds that cannot be broken by heating without destroying the molecule itself. When you try to heat a thermosetting polymer, the material doesn't soften or melt—instead it chars and decomposes because breaking the cross-links requires breaking covalent bonds, which happens at temperatures far above where the material burns. This is why Bakelite electrical components and melamine kitchen countertops maintain their shape under heat but will eventually burn or crack rather than flow. Once formed, the cross-linked network is permanent and cannot be remoulded or recycled like thermoplastics.`;
     }
   });
 });

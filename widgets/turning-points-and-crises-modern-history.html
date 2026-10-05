@@ -3,708 +3,397 @@
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
-
-:root {
-  --bg: #0B0D0C;
-  --bg2: #12160F;
-  --acc: #9A5FD2;
-  --acc-rgb: 154, 95, 210;
-  --ag: rgba(var(--acc-rgb), .7);
-  --ag1: rgba(var(--acc-rgb), .12);
-  --ag2: rgba(var(--acc-rgb), .45);
-  --amb: #FAC775;
-  --ink: #EDEDE8;
-  --ink-dim: #8C9389;
-  --line: #262B26;
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap");
+:root{
+  --bg:#0B0D0C;--bg2:#12160F;--acc:#9A5FD2;--acc-rgb:154, 95, 210;
+  --ag:rgba(var(--acc-rgb),.7);--ag1:rgba(var(--acc-rgb),.12);--ag2:rgba(var(--acc-rgb),.45);
+  --amb:#FAC775;--ink:#EDEDE8;--ink-dim:#8C9389;--line:#262B26;
 }
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-body {
-  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
-  font-family: 'Geist', sans-serif;
-  color: var(--ink);
-  min-height: 100vh;
-  padding: 40px 16px 0;
-  line-height: 1.5;
-}
-
-.container {
-  max-width: 720px;
-  margin: 0 auto;
-}
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
-}
-
-h1 {
-  font-size: clamp(26px, 6.5vw, 44px);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
-  margin-bottom: 14px;
-}
-
-.intro {
-  font-size: 15.5px;
-  color: var(--ink-dim);
-  max-width: 58ch;
-  line-height: 1.55;
-  margin-bottom: 32px;
-}
-
-.card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  margin-bottom: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 4px;
-}
-
-.card-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  color: white;
-}
-
-.live-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--acc);
-}
-
-.card-hint {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--ink-dim);
-  margin-bottom: 14px;
-}
-
-.canvas-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16/9;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
-  box-shadow: inset 0 0 0 1px var(--ag1);
-  margin-bottom: 16px;
-}
-
-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.canvas-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(4px);
-  padding: 9px 16px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  text-transform: uppercase;
-  color: var(--acc);
-  text-align: center;
-}
-
-.tp-slider {
-  margin-bottom: 8px;
-}
-
-.tp-slider input[type="range"] {
-  width: 100%;
-  height: 4px;
-  border-radius: 3px;
-  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
-  outline: none;
-  -webkit-appearance: none;
-  appearance: none;
-}
-
-.tp-slider input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow .15s;
-}
-
-.tp-slider input[type="range"]::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow .15s;
-}
-
-.tp-slider input[type="range"]::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.tp-slider input[type="range"]::-moz-range-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.tick-labels {
-  display: flex;
-  justify-content: space-between;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--ink-dim);
-  padding: 0 2px;
-}
-
-.stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  border-top: 1px solid var(--line);
-  padding-top: 16px;
-  margin-top: 16px;
-}
-
-.stat {
-  text-align: center;
-}
-
-.stat-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 6px;
-}
-
-.stat-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 24px;
-  font-weight: 500;
-}
-
-.toggle-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.toggle-btn {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14.5px;
-  padding: 12px;
-  border-radius: 11px;
-  border: 1px solid var(--line);
-  background: #12160F;
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: all .2s;
-}
-
-.toggle-btn.active {
-  background: rgba(var(--acc-rgb), .1);
-  border-color: var(--acc);
-  color: var(--acc);
-  box-shadow: 0 0 22px rgba(var(--acc-rgb), .18);
-}
-
-.knowdrop-section {
-  border-top: 1px solid var(--line);
-  padding-top: 16px;
-}
-
-.knowdrop-body {
-  font-size: 14.5px;
-  line-height: 1.65;
-  color: var(--ink);
-}
-
-.know-this {
-  border-left: 3px solid var(--acc);
-  padding: 16px 18px;
-  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
-  border-radius: 0 12px 12px 0;
-  margin-bottom: 0;
-}
-
-.know-this-tag {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  margin-bottom: 10px;
-}
-
-.know-this-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--acc);
-  box-shadow: 0 0 8px var(--acc);
-  animation: pulse 2.4s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.45; }
-}
-
-.know-this-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--acc);
-}
-
-.know-this-body {
-  font-size: 17.4px;
-  line-height: 1.55;
-  color: var(--ink);
-}
+body{margin:0;background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C 55%);font-family:"Geist",sans-serif;color:var(--ink);min-height:100vh;padding:40px 16px 0;box-sizing:border-box}
+.tp-wrap{max-width:720px;margin:0 auto}
+.tp-wrap *{box-sizing:border-box}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.tp-h1{font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin:0 0 14px}
+.tp-intro{font-size:15.5px;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin:0 0 24px}
+.tp-card{background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);margin-bottom:18px}
+.tp-card.sec{border-radius:14px}
+.tp-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.tp-label{font-family:"JetBrains Mono",monospace;font-size:13px;text-transform:uppercase;color:#fff}
+.tp-live{font-family:"JetBrains Mono",monospace;font-size:11px;text-transform:uppercase;color:var(--acc)}
+.tp-hint{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--ink-dim);margin:6px 0 12px}
+.tp-qs{font-family:"JetBrains Mono",monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin:4px 0 8px}
+.tp-tg{display:flex;gap:10px;margin-bottom:14px}
+.tp-tg button{flex:1 1 0;min-width:0;font-family:"JetBrains Mono",monospace;font-size:12px;padding:12px 8px;border-radius:999px;background:#12160F;border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:all .2s;line-height:1.2}
+.tp-tg button small{display:block;font-size:10px;opacity:.8;margin-top:2px}
+.tp-tg button[aria-pressed="true"]{background:rgba(var(--acc-rgb),.1);border:1px solid var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.tp-stage{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1)}
+.tp-stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.tp-tag{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);padding:9px 16px;font-family:"JetBrains Mono",monospace;font-size:14px;text-transform:uppercase;color:var(--acc);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tp-key{display:flex;gap:16px;flex-wrap:wrap;font-family:"JetBrains Mono",monospace;font-size:10.5px;color:var(--ink-dim);margin:10px 0 0}
+.tp-key i{font-style:normal}
+.tp-key .a{color:var(--acc)}.tp-key .b{color:var(--amb)}
+.tp-row{display:flex;justify-content:space-between;align-items:baseline;font-family:"JetBrains Mono",monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin:16px 0 8px}
+.tp-row b{color:var(--acc);font-weight:500;font-size:13px}
+.tp-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;background:linear-gradient(90deg,var(--acc) var(--fill,0%),#23291f var(--fill,0%));outline:none;margin:6px 0}
+.tp-slider::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.tp-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);cursor:pointer}
+.tp-slider:hover::-webkit-slider-thumb{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.tp-ticks{position:relative;height:16px;margin:4px 10px 0;font-family:"JetBrains Mono",monospace;font-size:9px;color:var(--ink-dim)}
+.tp-ticks span{position:absolute;top:0;transform:translateX(-50%)}
+.tp-note{font-size:14px;color:var(--ink);line-height:1.55;margin:12px 0 0;min-height:4.6em}
+.tp-note b{color:var(--acc);font-weight:600}
+.tp-note em{font-style:normal;color:var(--amb)}
+.tp-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;border-top:1px solid var(--line);margin-top:14px;padding-top:14px}
+.tp-sl{font-family:"JetBrains Mono",monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim)}
+.tp-sv{font-family:"JetBrains Mono",monospace;font-size:24px;font-weight:500;margin-top:4px}
+.tp-sv.a{color:var(--acc)}.tp-sv.b{color:var(--amb)}
+.tp-drop{border-top:1px solid var(--line);padding-top:16px;margin-top:2px;font-size:14.5px;line-height:1.65;color:var(--ink)}
+.tp-drop p{margin:0}
+.tp-know{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));border-radius:0 12px 12px 0;margin-bottom:0}
+.tp-kt{display:flex;align-items:center;gap:9px;font-family:"JetBrains Mono",monospace;font-size:13px;text-transform:uppercase;letter-spacing:0.15em;color:var(--acc);margin-bottom:8px}
+.tp-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:tppulse 2.4s ease-in-out infinite}
+@keyframes tppulse{0%,100%{opacity:1}50%{opacity:.45}}
+.tp-kb{font-size:17.4px;line-height:1.55;color:var(--ink);margin:0;padding-bottom:0}
+@media (prefers-reduced-motion:reduce){.tp-dot{animation:none}.tp-tg button{transition:none}}
 </style>
+<div class="tp-wrap">
+  <h2 class="sr-only">Interactive timeline that tests turning points: pick the American Civil War or the Cold War, choose a battle or crisis, and see whether the direction of the conflict changed and whether the change lasted</h2>
+  <h1 class="tp-h1">Lee’s greatest win changed almost nothing. A turning point is judged by what comes <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">next</span></h1>
+  <p class="tp-intro">A turning point is a moment after which a conflict runs a different way and keeps going that way. A crisis is a moment of peak danger that can force that change. Pick a conflict, then step through its battles and crises and test each one: did the direction change, and did it last?</p>
 
-<div class="container">
-  <h2 class="sr-only">Interactive timeline showing how turning points and crises created branching paths in twentieth-century conflicts</h2>
-
-  <h1>History is written by decisions <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">not taken</span></h1>
-  
-  <p class="intro">Every turning point splits the timeline: the path chosen versus the path avoided. Drag the slider to rewind history and see how each crisis created two futures — one real, one imagined.</p>
-
-  <div class="card">
-    <div class="card-header">
-      <div class="card-label">Timeline Branches</div>
-      <div class="live-tag" id="liveTag">1941 • Barbarossa</div>
+  <div class="tp-card">
+    <div class="tp-head"><span class="tp-label">Which way the conflict ran</span><span class="tp-live" id="tpLive">Momentum: Union</span></div>
+    <div class="tp-hint">Pick a conflict. Move to an event. Read what came after it.</div>
+    <div class="tp-qs" id="tpCaseQ">Choose a conflict</div>
+    <div class="tp-tg" role="group" aria-labelledby="tpCaseQ" id="tpCase">
+      <button type="button" data-c="acw" aria-pressed="true">Civil War<small>1861 to 1865</small></button>
+      <button type="button" data-c="cold" aria-pressed="false">Cold War<small>1948 to 1991</small></button>
     </div>
-    <div class="card-hint">Each crisis splits into two paths: history taken (solid) and history avoided (dashed)</div>
-    
-    <div class="canvas-wrapper">
-      <canvas id="timelineCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">Operation Barbarossa • June 1941</div>
-    </div>
-
-    <div class="tp-slider">
-      <input type="range" id="timeSlider" min="0" max="6" value="0" step="1">
-    </div>
-    <div class="tick-labels">
-      <span>1941</span>
-      <span>1942</span>
-      <span>1961</span>
-      <span>1962</span>
-      <span>1968</span>
-      <span>1968</span>
-      <span>1991</span>
-    </div>
-
-    <div class="stats">
-      <div class="stat">
-        <div class="stat-label">Path Taken</div>
-        <div class="stat-value" id="takenStat" style="color:var(--acc)">Soviet Victory</div>
-      </div>
-      <div class="stat">
-        <div class="stat-label">Path Avoided</div>
-        <div class="stat-value" id="avoidedStat" style="color:var(--amb)">Axis Triumph</div>
-      </div>
+    <div class="tp-stage"><canvas id="tpCv" role="img" aria-label="Line through time showing which way the conflict was heading, with the chosen event ringed and the events after it marked as going the same way or reversing"></canvas><div class="tp-tag" id="tpTag">Jul 1863</div></div>
+    <div class="tp-key"><span><i class="a">●</i> after it, kept the new direction</span><span><i class="b">◆</i> after it, ran the other way</span><span>Shape only, not a measurement</span></div>
+    <div class="tp-row"><span>Event</span><b id="tpEvV">Jul 1863</b></div>
+    <input type="range" class="tp-slider" id="tpEv" aria-label="Event" min="0" max="13" step="1" value="9">
+    <div class="tp-ticks" id="tpTicks"></div>
+    <p class="tp-note" id="tpNote"></p>
+    <div class="tp-stats">
+      <div><div class="tp-sl">Later events, same way</div><div class="tp-sv a" id="tpSame">0 of 0</div></div>
+      <div><div class="tp-sl">Verdict on the turn</div><div class="tp-sv b" id="tpVerdict">Start</div></div>
     </div>
   </div>
 
-  <div class="card">
-    <div class="toggle-grid">
-      <button class="toggle-btn active" data-mode="sources">Historical Sources</button>
-      <button class="toggle-btn" data-mode="impact">Historian Debate</button>
+  <div class="tp-card sec">
+    <div class="tp-qs" id="tpDropQ">Read more about this conflict</div>
+    <div class="tp-tg" role="group" aria-labelledby="tpDropQ" id="tpDropG">
+      <button type="button" data-k="story" aria-pressed="true">Why it turned</button>
+      <button type="button" data-k="debate" aria-pressed="false">The debate</button>
     </div>
-    
-    <div class="knowdrop-section">
-      <div class="knowdrop-body" id="knowdropText">
-        Turning points are not obvious when they happen. Operation Barbarossa appeared unstoppable in its first weeks, yet Stalingrad reversed the entire eastern front. The Tet Offensive was a military defeat for North Vietnam but destroyed American public support for the war. Historians identify turning points retrospectively, looking for the moment when the range of possible futures narrowed. Primary sources from the time often show confusion, not clarity — participants rarely know they are living through history's pivot. The turning point becomes visible only when we can see both branches: the world that emerged and the world that did not.
-      </div>
-    </div>
+    <div class="tp-drop"><p id="tpDrop"></p></div>
   </div>
 
-  <div class="know-this">
-    <div class="know-this-tag">
-      <div class="know-this-dot"></div>
-      <div class="know-this-label">Know This</div>
-    </div>
-    <div class="know-this-body">
-      Turning points only exist in hindsight — contemporaries saw <span style="color:var(--acc)">uncertainty</span>, not <span style="color:var(--acc)">inevitability</span>, and historians construct the pivot by comparing what happened against <span style="color:var(--acc)">what nearly did</span>.
-    </div>
+  <div class="tp-know">
+    <div class="tp-kt"><span class="tp-dot"></span>Know this</div>
+    <p class="tp-kb">A <span style="color:var(--acc)">turning point</span> is judged by <span style="color:var(--acc)">what changed afterwards</span>, and a <span style="color:var(--acc)">crisis</span> often matters most for the turn that follows it.</p>
   </div>
 </div>
-
 <script>
-const canvas = document.getElementById("timelineCanvas");
-const ctx = canvas.getContext("2d");
-const slider = document.getElementById("timeSlider");
-const liveTag = document.getElementById("liveTag");
-const canvasOverlay = document.getElementById("canvasOverlay");
-const takenStat = document.getElementById("takenStat");
-const avoidedStat = document.getElementById("avoidedStat");
-
-const CSS = getComputedStyle(document.documentElement);
-const ACC = CSS.getPropertyValue("--acc").trim();
-const RGB = CSS.getPropertyValue("--acc-rgb").trim();
-const AMB = CSS.getPropertyValue("--amb").trim();
-
-const dpr = Math.min(window.devicePixelRatio || 1, 2);
-const buf = document.createElement("canvas");
-const bctx = buf.getContext("2d");
-
-const crises = [
-  { 
-    year: "1941", 
-    name: "Operation Barbarossa", 
-    full: "Operation Barbarossa • June 1941",
-    taken: "Soviet Victory",
-    avoided: "Axis Triumph"
-  },
-  { 
-    year: "1942", 
-    name: "Battle of Midway", 
-    full: "Battle of Midway • June 1942",
-    taken: "Pacific Turn",
-    avoided: "Japan Dominant"
-  },
-  { 
-    year: "1961", 
-    name: "Berlin Wall", 
-    full: "Berlin Wall • August 1961",
-    taken: "Division Set",
-    avoided: "Open Border"
-  },
-  { 
-    year: "1962", 
-    name: "Cuban Missile Crisis", 
-    full: "Cuban Missile Crisis • October 1962",
-    taken: "Negotiation",
-    avoided: "Nuclear War"
-  },
-  { 
-    year: "1968", 
-    name: "Tet Offensive", 
-    full: "Tet Offensive • January 1968",
-    taken: "US Withdrawal",
-    avoided: "Escalation"
-  },
-  { 
-    year: "1968", 
-    name: "Prague Spring", 
-    full: "Prague Spring • August 1968",
-    taken: "Soviet Control",
-    avoided: "Czech Freedom"
-  },
-  { 
-    year: "1991", 
-    name: "Gulf War", 
-    full: "Gulf War • February 1991",
-    taken: "Coalition Win",
-    avoided: "Regional Chaos"
-  }
-];
-
-let currentIndex = 0;
-let branchOpacities = [0, 0, 0, 0, 0, 0, 0];
-let animationFrame = null;
-
-function resize() {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  draw();
-}
-
-function animateBranches() {
-  let needsUpdate = false;
-  
-  for (let i = 0; i < branchOpacities.length; i++) {
-    const target = i === currentIndex ? 1 : 0;
-    const current = branchOpacities[i];
-    
-    if (Math.abs(current - target) > 0.01) {
-      branchOpacities[i] += (target - current) * 0.12;
-      needsUpdate = true;
-    } else {
-      branchOpacities[i] = target;
+(function(){
+  const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const CASES = {
+    acw: {
+      y0:1861, m0:1, y1:1865, m1:6, def:9,
+      way:d => (d > 0 ? "went the Union way" : "went the Confederate way"), topL:"Union gaining ↑", botL:"Confederacy gaining ↓",
+      live:d => "Momentum: " + (d > 0 ? "Union" : "Confederacy"),
+      ticks:[1861,1862,1863,1864,1865],
+      ev:[
+        {y:1861,m:4,d:-1,s:"Fort Sumter",t:"Confederate guns force the surrender of Fort Sumter in Charleston harbour. The war begins and Lincoln calls for volunteers."},
+        {y:1861,m:7,d:-1,s:"First Bull Run",t:"The first big battle, in Virginia, ends with Union troops fleeing back to Washington. Both sides learn the war will not be short."},
+        {y:1862,m:2,d:1,s:"Forts Henry and Donelson",t:"Grant captures two Confederate forts in Tennessee and demands unconditional surrender. The Tennessee and Cumberland rivers open to Union gunboats."},
+        {y:1862,m:4,d:1,s:"Shiloh",t:"Grant beats back a surprise Confederate attack in Tennessee after two days of fighting. The scale of the losses shocks both sides."},
+        {y:1862,m:6,d:-1,s:"Seven Days",t:"Lee, newly in command, drives McClellan back from the outskirts of Richmond, the Confederate capital."},
+        {y:1862,m:8,d:-1,s:"Second Bull Run",t:"Lee and Jackson beat a Union army in Virginia again, and Lee decides to invade the North."},
+        {y:1862,m:9,d:2,s:"Antietam",t:"McClellan stops Lee’s invasion of Maryland on the bloodiest single day of the war. Lincoln issues the preliminary Emancipation Proclamation, and Britain and France hold back from recognising the Confederacy."},
+        {y:1862,m:12,d:-1,s:"Fredericksburg",t:"Union troops make repeated attacks on Confederates dug in on high ground and are thrown back. A clear Confederate win."},
+        {y:1863,m:5,d:-1,s:"Chancellorsville",t:"Lee splits his smaller army and defeats a much larger Union force, his most brilliant victory. Stonewall Jackson is shot by his own men and dies."},
+        {y:1863,m:7,d:2,s:"Gettysburg and Vicksburg",t:"Lee’s second invasion of the North fails at Gettysburg (1 to 3 July), and Vicksburg surrenders to Grant on 4 July. The Union now controls the Mississippi and the Confederacy is cut in two."},
+        {y:1864,m:5,d:1,s:"Overland Campaign",t:"Grant, now Union commander, attacks Lee again and again in Virginia, at the Wilderness, Spotsylvania and Cold Harbor, then pins him in a siege at Petersburg."},
+        {y:1864,m:9,d:2,s:"Atlanta falls",t:"Sherman captures Atlanta, a key railway and supply centre. The news helps Lincoln win re-election in November against a candidate backed by those who wanted peace talks."},
+        {y:1864,m:11,d:1,s:"March to the Sea",t:"Sherman marches from Atlanta to Savannah, destroying railways, farms and supplies, to break the South’s ability to fight."},
+        {y:1865,m:4,d:2,s:"Appomattox",t:"Lee abandons Petersburg and Richmond and surrenders to Grant at Appomattox Court House on 9 April. The war is effectively over."}
+      ]
+    },
+    cold: {
+      y0:1948, m0:1, y1:1992, m1:3, def:8,
+      way:d => (d > 0 ? "raised tension" : "eased tension"), topL:"More tension ↑", botL:"Less tension ↓",
+      live:d => "Tension: " + (d > 0 ? "rising" : "easing"),
+      ticks:[1948,1956,1961,1968,1975,1985,1991],
+      ev:[
+        {y:1948,m:6,d:2,s:"Berlin Blockade",t:"Stalin cuts road and rail links to West Berlin. The Western allies supply the city by air for almost a year."},
+        {y:1949,m:5,d:-1,s:"Blockade lifted",t:"The blockade ends without a shot fired, but Germany splits into two states: West Germany (FRG) and East Germany (GDR)."},
+        {y:1950,m:6,d:2,s:"Korean War",t:"Communist North Korea invades the South. A US-led United Nations force fights back, and China sends troops when it nears the Chinese border."},
+        {y:1953,m:7,d:-2,s:"Korean armistice",t:"An armistice stops the fighting near where it began, at the 38th parallel. Korea stays divided, with no peace treaty."},
+        {y:1956,m:11,d:1,s:"Hungary crushed",t:"After unrest in Poland, Hungarians rise against Soviet control. Soviet tanks crush the uprising and the West does not step in."},
+        {y:1959,m:1,d:1,s:"Cuban Revolution",t:"Fidel Castro’s rebels overthrow the dictator Batista. Cuba soon nationalises US-owned businesses and turns to the USSR."},
+        {y:1961,m:4,d:1,s:"Bay of Pigs",t:"CIA-trained Cuban exiles land at the Bay of Pigs to overthrow Castro and are defeated within days. Castro moves closer to Moscow."},
+        {y:1961,m:8,d:2,s:"Berlin Wall built",t:"East Germany, policed by the Stasi secret police, seals off West Berlin with a wall to stop its people escaping to the West."},
+        {y:1962,m:10,d:2,s:"Cuban missile crisis",t:"The US finds Soviet nuclear missiles in Cuba and blockades the island. For 13 days the world is closer to nuclear war than ever before, until Khrushchev agrees to remove them."},
+        {y:1963,m:8,d:-2,s:"Hotline and test ban",t:"Shaken by Cuba, the superpowers set up a direct hotline and sign the Partial Test Ban Treaty, ending nuclear tests in the air, in space and under water."},
+        {y:1965,m:3,d:1,s:"Vietnam escalates",t:"US combat troops land in South Vietnam. Leaders fear the Domino Theory: if one country falls to communism, its neighbours will follow."},
+        {y:1968,m:8,d:1,s:"Prague Spring crushed",t:"Warsaw Pact armies invade Czechoslovakia to end the Prague Spring reforms. Moscow will not let a satellite loosen its grip."},
+        {y:1972,m:5,d:-2,s:"SALT I and détente",t:"Nixon and Brezhnev sign SALT I to limit nuclear weapons. Détente, a relaxing of tension, brings summits and trade."},
+        {y:1973,m:1,d:-1,s:"US leaves Vietnam",t:"The Paris Peace Accords let the US pull out its troops after years of protest from a growing anti-war movement. Saigon falls to the North in 1975."},
+        {y:1975,m:11,d:1,s:"Angola",t:"As Angola wins independence from Portugal, civil war breaks out. Cuban troops and Soviet arms back the MPLA, while the US and South Africa back UNITA and the FNLA."},
+        {y:1979,m:12,d:2,s:"Afghanistan invaded",t:"Soviet troops invade Afghanistan and détente collapses. The US boycotts the 1980 Moscow Olympics."},
+        {y:1985,m:3,d:-2,s:"Gorbachev",t:"Mikhail Gorbachev becomes Soviet leader and chooses reform at home and talks abroad."},
+        {y:1987,m:12,d:-2,s:"INF Treaty",t:"Reagan and Gorbachev agree to scrap a whole class of nuclear missiles, the first deal to cut arsenals rather than cap them."},
+        {y:1989,m:11,d:-2,s:"Berlin Wall falls",t:"After mass protests, and with Gorbachev refusing to send tanks, East Germany opens the border and crowds tear into the Wall."},
+        {y:1991,m:12,d:-2,s:"USSR dissolved",t:"The Soviet Union breaks into 15 independent states. The Cold War is over."}
+      ]
     }
+  };
+  const DROP = {
+    acw: {
+      story: `Early in the war the Confederacy won the big battles in the east, at First Bull Run, in the Seven Days and at Second Bull Run, while Grant’s victories at Forts Henry and Donelson and at Shiloh opened the rivers of the west. Antietam in September 1862 stopped Lee’s first invasion of the North, let Lincoln issue the preliminary Emancipation Proclamation and helped keep Britain and France out of the war. In July 1863 Lee’s second invasion failed at Gettysburg and Vicksburg surrendered, giving the Union the Mississippi and cutting the Confederacy in two. From 1864 Grant pressed Lee without a pause, the fall of Atlanta helped Lincoln win re-election, and Sherman’s March to the Sea wrecked the South’s railways and supplies. Lee surrendered at Appomattox Court House in April 1865.`,
+      debate: `Historians argue over which battle was the turning point. Many choose Gettysburg and Vicksburg in July 1863, because the Confederacy never again invaded the North or held the Mississippi. Others choose Antietam, because it turned the war into a fight against slavery and kept Europe out, or Atlanta in 1864, because without it Lincoln might have lost the election. Dazzling Confederate wins like Chancellorsville changed little: Lee won the battle but the war kept running the same way. Notice that the test on screen depends on which battles are on the timeline, which is why a turning point is an argument you support with evidence, not a fact you look up.`
+    },
+    cold: {
+      story: `The superpowers never fought each other directly. Tension rose and fell through crises and proxy wars instead. The Berlin Blockade and the Korean War hardened the split, Soviet tanks crushed Hungary in 1956 and Czechoslovakia in 1968, and Cuba went from revolution in 1959 to the Bay of Pigs and the missile crisis of October 1962. That crisis was the peak of danger, and it changed superpower relations: a hotline and the Partial Test Ban Treaty followed in 1963, and détente arrived with SALT I in 1972. Proxy wars in Vietnam and Angola and the Soviet invasion of Afghanistan in 1979 pushed tension back up, until Gorbachev, the INF Treaty and the fall of the Berlin Wall brought it down for good.`,
+      debate: `A crisis is not the same as a turning point. The Cuban missile crisis brought the world closest to nuclear war, yet on the line it is still a rise; the turn comes in its aftermath, when both sides built a hotline and banned tests in the air. Some historians argue the real turning point was détente in 1972, others 1985, when Gorbachev chose reform over confrontation. The test on screen counts what came next, and its answer shifts with which events are on the timeline. That is why judging a turning point means arguing from evidence about what changed afterwards, not from how dramatic the moment felt.`
+    }
+  };
+
+  const cv = document.getElementById("tpCv"), ctx = cv.getContext("2d");
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const buf = document.createElement("canvas"), bctx = buf.getContext("2d");
+  const CSS = getComputedStyle(document.documentElement);
+  const ACC = CSS.getPropertyValue("--acc").trim();
+  const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+  const AMB = CSS.getPropertyValue("--amb").trim();
+  const INK = CSS.getPropertyValue("--ink").trim();
+  const DIM = CSS.getPropertyValue("--ink-dim").trim();
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const slider = document.getElementById("tpEv");
+  const evV = document.getElementById("tpEvV");
+  const tag = document.getElementById("tpTag");
+  const live = document.getElementById("tpLive");
+  const note = document.getElementById("tpNote");
+  const sameEl = document.getElementById("tpSame"), verdEl = document.getElementById("tpVerdict");
+  const ticksEl = document.getElementById("tpTicks");
+  const drop = document.getElementById("tpDrop");
+
+  let caseKey = "acw", C = CASES.acw, sel = 0, shown = 0, raf = 0, last = 0, dropKey = "story";
+
+  const mIdx = (y, m) => (y * 12 + m) - (C.y0 * 12 + C.m0);
+  const dateOf = e => MON[e.m - 1] + " " + e.y;
+  const sgn = v => (v > 0 ? 1 : -1);
+
+  function setCase(k){
+    caseKey = k; C = CASES[k];
+    C.span = mIdx(C.y1, C.m1);
+    let run = 0;
+    C.ev.forEach(e => { e.k = mIdx(e.y, e.m); run += e.d; e.v = run; });
+    const vals = [0].concat(C.ev.map(e => e.v));
+    C.vmin = Math.min.apply(null, vals); C.vmax = Math.max.apply(null, vals);
+    const n = C.ev.length - 1;
+    slider.max = String(n);
+    sel = C.def; shown = sel;
+    slider.value = String(sel);
+    ticksEl.innerHTML = "";
+    C.ticks.forEach(y => {
+      const i = C.ev.findIndex(e => e.y === y);
+      if (i < 0) return;
+      const s = document.createElement("span");
+      s.style.left = (i / n * 100) + "%";
+      s.textContent = String(y); ticksEl.appendChild(s);
+    });
+    drop.textContent = DROP[caseKey][dropKey];
+    readouts(); draw();
   }
-  
-  if (needsUpdate) {
+
+  /* the test: did the direction change, and did the events after it keep the new direction? */
+  function test(i){
+    const e = C.ev[i], dir = sgn(e.d), later = C.ev.slice(i + 1);
+    const same = later.filter(x => sgn(x.d) === dir).length;
+    const out = {dir, later:later.length, same, turned:false, verdict:"", line:""};
+    const side = C.way(dir);
+    if (i === C.ev.length - 1){ out.verdict = "End"; out.line = "This ends the timeline, so there is nothing after it to test."; return out; }
+    if (i === 0){ out.verdict = "Start"; out.line = "This opens the timeline, so there is no earlier direction for it to turn from."; return out; }
+    out.turned = sgn(C.ev[i - 1].d) !== dir;
+    if (!out.turned){ out.verdict = "Same way"; out.line = "No change of direction: the event before it also " + side + ", so this continues a run, however dramatic it was."; return out; }
+    const tail = same + " of the " + later.length + " later events on this timeline also " + side;
+    if (3 * same >= 2 * later.length){ out.verdict = "Lasting"; out.line = "Direction changed, and " + tail + ": a lasting turn."; }
+    else if (2 * same > later.length){ out.verdict = "Partial"; out.line = "Direction changed, but only " + tail + ": a partial turn that was contested."; }
+    else { out.verdict = "Faded"; out.line = "Direction changed, but only " + tail + ": a swing that faded, not a turning point."; }
+    return out;
+  }
+
+  function readouts(){
+    const e = C.ev[sel], r = test(sel), n = C.ev.length - 1;
+    evV.textContent = dateOf(e);
+    slider.setAttribute("aria-valuetext", dateOf(e) + ", " + e.s);
+    slider.style.setProperty("--fill", (sel / n * 100) + "%");
+    live.textContent = C.live(e.d);
+    tag.textContent = dateOf(e) + " · " + e.s;
+    sameEl.textContent = r.later ? r.same + " of " + r.later : "none";
+    verdEl.textContent = r.verdict;
+    note.innerHTML = "";
+    const b = document.createElement("b"); b.textContent = dateOf(e) + " · " + e.s + ": ";
+    note.appendChild(b); note.appendChild(document.createTextNode(e.t + " "));
+    const em = document.createElement("em"); em.textContent = r.line;
+    note.appendChild(em);
+  }
+
+  function resize(){
+    const r = cv.getBoundingClientRect();
+    if (!r.width || !r.height) return; /* f27c: refuse a zero measurement, keep the last good size */
+    cv.width = Math.max(1, Math.round(r.width * dpr)); cv.height = Math.max(1, Math.round(r.height * dpr));
+    buf.width = cv.width; buf.height = cv.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     draw();
-    animationFrame = requestAnimationFrame(animateBranches);
-  } else {
-    animationFrame = null;
   }
-}
 
-function draw() {
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  
-  ctx.clearRect(0, 0, w, h);
-  
-  const marginX = w * 0.05;
-  const marginY = h * 0.18;
-  const startX = marginX;
-  const endX = w - marginX * 3;
-  const centerY = h * 0.5;
-  
-  // Persistent TAKEN label at top
-  ctx.fillStyle = ACC;
-  ctx.font = "11px 'JetBrains Mono'";
-  ctx.textAlign = "center";
-  ctx.fillText("TAKEN", w / 2, marginY * 0.45);
-  
-  // Persistent AVOIDED label at bottom - moved up
-  ctx.fillStyle = AMB;
-  ctx.font = "11px 'JetBrains Mono'";
-  ctx.textAlign = "center";
-  ctx.fillText("AVOIDED", w / 2, h - marginY * 0.7);
-  
-  // Timeline base
-  ctx.strokeStyle = "rgba(" + RGB + ", 0.25)";
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(startX, centerY);
-  ctx.lineTo(endX, centerY);
-  ctx.stroke();
-  
-  // Draw all crisis points and branches
-  const numCrises = crises.length;
-  const spacing = (endX - startX) / (numCrises - 1);
-  
-  for (let i = 0; i < numCrises; i++) {
-    const x = startX + i * spacing;
-    const isActive = i === currentIndex;
-    const isPast = i < currentIndex;
-    
-    // Crisis node
-    ctx.beginPath();
-    ctx.arc(x, centerY, isActive ? 7 : 5, 0, Math.PI * 2);
-    if (isActive) {
-      ctx.fillStyle = ACC;
-      ctx.fill();
-      ctx.strokeStyle = ACC;
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      
-      // Glow
-      ctx.save();
-      ctx.globalCompositeOperation = "lighter";
-      const glow = ctx.createRadialGradient(x, centerY, 0, x, centerY, 22);
-      glow.addColorStop(0, "rgba(" + RGB + ", 0.5)");
-      glow.addColorStop(1, "rgba(" + RGB + ", 0)");
-      ctx.fillStyle = glow;
-      ctx.beginPath();
-      ctx.arc(x, centerY, 22, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-    } else if (isPast) {
-      ctx.fillStyle = "rgba(" + RGB + ", 0.4)";
-      ctx.fill();
-    } else {
-      ctx.fillStyle = "#23291f";
-      ctx.fill();
-      ctx.strokeStyle = "#3a3f37";
-      ctx.lineWidth = 1;
-      ctx.stroke();
-    }
-    
-    // Year label
-    ctx.fillStyle = isActive ? ACC : (isPast ? "rgba(" + RGB + ", 0.6)" : "#5a5f57");
-    ctx.font = "10px 'JetBrains Mono'";
-    ctx.textAlign = "center";
-    ctx.fillText(crises[i].year, x, centerY - 20);
-    
-    // Draw branches only for current crisis with fade
-    const opacity = branchOpacities[i];
-    if (opacity > 0.01) {
-      const branchLength = (h - 2 * marginY) * 0.35;
-      const branchAngle = Math.PI / 6;
-      
-      // Taken path (solid, upward)
-      const takenEndX = x + branchLength * Math.cos(-branchAngle);
-      const takenEndY = centerY + branchLength * Math.sin(-branchAngle);
-      
-      ctx.globalAlpha = opacity;
-      ctx.strokeStyle = ACC;
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.moveTo(x, centerY);
-      ctx.lineTo(takenEndX, takenEndY);
-      ctx.stroke();
-      
-      // Arrow head for taken
-      const arrowSize = 8;
-      const takenAngle = -branchAngle;
-      ctx.fillStyle = ACC;
-      ctx.beginPath();
-      ctx.moveTo(takenEndX, takenEndY);
-      ctx.lineTo(
-        takenEndX - arrowSize * Math.cos(takenAngle - Math.PI / 6),
-        takenEndY - arrowSize * Math.sin(takenAngle - Math.PI / 6)
-      );
-      ctx.lineTo(
-        takenEndX - arrowSize * Math.cos(takenAngle + Math.PI / 6),
-        takenEndY - arrowSize * Math.sin(takenAngle + Math.PI / 6)
-      );
-      ctx.closePath();
-      ctx.fill();
-      
-      // Taken outcome label
-      ctx.fillStyle = ACC;
-      ctx.font = "10px 'JetBrains Mono'";
-      ctx.textAlign = "center";
-      ctx.fillText(crises[i].taken, takenEndX, takenEndY - 8);
-      
-      // Avoided path (dashed, downward)
-      const avoidedEndX = x + branchLength * Math.cos(branchAngle);
-      const avoidedEndY = centerY + branchLength * Math.sin(branchAngle);
-      
-      ctx.strokeStyle = AMB;
-      ctx.lineWidth = 3;
-      ctx.setLineDash([6, 4]);
-      ctx.beginPath();
-      ctx.moveTo(x, centerY);
-      ctx.lineTo(avoidedEndX, avoidedEndY);
-      ctx.stroke();
-      ctx.setLineDash([]);
-      
-      // Arrow head for avoided
-      const avoidedAngle = branchAngle;
-      ctx.fillStyle = AMB;
-      ctx.beginPath();
-      ctx.moveTo(avoidedEndX, avoidedEndY);
-      ctx.lineTo(
-        avoidedEndX - arrowSize * Math.cos(avoidedAngle - Math.PI / 6),
-        avoidedEndY - arrowSize * Math.sin(avoidedAngle - Math.PI / 6)
-      );
-      ctx.lineTo(
-        avoidedEndX - arrowSize * Math.cos(avoidedAngle + Math.PI / 6),
-        avoidedEndY - arrowSize * Math.sin(avoidedAngle + Math.PI / 6)
-      );
-      ctx.closePath();
-      ctx.fill();
-      
-      // Avoided outcome label
-      ctx.fillStyle = AMB;
-      ctx.font = "10px 'JetBrains Mono'";
-      ctx.textAlign = "center";
-      ctx.fillText(crises[i].avoided, avoidedEndX, avoidedEndY + 16);
-      
-      ctx.globalAlpha = 1;
-    }
+  function diamond(x, y, r){ ctx.beginPath(); ctx.moveTo(x, y - r); ctx.lineTo(x + r, y); ctx.lineTo(x, y + r); ctx.lineTo(x - r, y); ctx.closePath(); }
+
+  function draw(){
+    const w = cv.width / dpr, h = cv.height / dpr;
+    if (w < 2 || h < 2) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.globalCompositeOperation = "source-over"; ctx.globalAlpha = 1; ctx.filter = "none";
+    ctx.fillStyle = "#000"; ctx.fillRect(0, 0, w, h);
+    const narrow = w < 560;
+    const L = narrow ? 16 : 30, R = w - (narrow ? 16 : 30);
+    const T = Math.max(h * 0.1, 30), B = h - 40 - 24;
+    const X = k => L + (k / C.span) * (R - L);
+    const Bl = B - 24;
+    const Y = v => Bl - ((v - C.vmin) / (C.vmax - C.vmin)) * (Bl - T);
+    const rN = narrow ? 4 : 5;
+    const ev = C.ev;
+    const selF = Math.max(0, Math.min(ev.length - 1, shown));
+    const i0 = Math.floor(selF), fr = selF - i0;
+    const e0 = ev[i0], e1 = ev[Math.min(ev.length - 1, i0 + 1)];
+    const cutK = e0.k + (e1.k - e0.k) * fr;
+    const cutX = X(cutK);
+    const target = test(sel);
+
+    /* what happened next: shaded region after the chosen event */
+    const g = ctx.createLinearGradient(cutX, 0, R, 0);
+    g.addColorStop(0, "rgba(" + RGB + ",0.14)"); g.addColorStop(1, "rgba(" + RGB + ",0.02)");
+    ctx.fillStyle = g; ctx.fillRect(cutX, T - 10, Math.max(0, R - cutX), B - T + 14);
+    ctx.font = "11px JetBrains Mono, monospace"; ctx.textBaseline = "top"; ctx.fillStyle = DIM;
+    if (R - cutX > 90){ ctx.textAlign = "right"; ctx.fillText("what came next", R - 4, 10); }
+
+    /* start level and axis labels */
+    ctx.save(); ctx.setLineDash([3, 5]); ctx.strokeStyle = "rgba(255,255,255,0.16)"; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(L, Y(0)); ctx.lineTo(R, Y(0)); ctx.stroke(); ctx.restore();
+    ctx.textAlign = "left"; ctx.textBaseline = "top"; ctx.fillStyle = INK;
+    ctx.fillText(C.topL, L, 10);
+    ctx.textBaseline = "bottom"; ctx.fillStyle = DIM;
+    ctx.fillText(C.botL, L, B - 2);
+
+    /* time axis */
+    ctx.strokeStyle = "rgba(255,255,255,0.18)"; ctx.beginPath(); ctx.moveTo(L, B + 4); ctx.lineTo(R, B + 4); ctx.stroke();
+    ctx.textAlign = "center"; ctx.textBaseline = "top"; ctx.fillStyle = DIM;
+    const yrs = C.ticks.filter((y, j) => !narrow || j % 2 === 0 || j === C.ticks.length - 1);
+    for (const y of yrs){ const tx = X(mIdx(y, 1)); ctx.fillRect(tx - 0.5, B + 4, 1, 4); ctx.fillText(String(y), Math.max(L + 12, Math.min(R - 12, tx)), B + 10); }
+
+    /* the line: bright up to the chosen event, dim after it */
+    const pts = [{x:X(0), y:Y(0)}].concat(ev.map(e => ({x:X(e.k), y:Y(e.v)})));
+    pts.push({x:X(C.span), y:Y(ev[ev.length - 1].v)});
+    ctx.lineJoin = "round"; ctx.lineCap = "round";
+    ctx.strokeStyle = "rgba(255,255,255,0.28)"; ctx.lineWidth = 1.6;
+    ctx.beginPath(); pts.forEach((p, j) => j ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)); ctx.stroke();
+    ctx.save(); ctx.beginPath(); ctx.rect(0, 0, cutX, h); ctx.clip();
+    ctx.globalCompositeOperation = "lighter";
+    ctx.strokeStyle = "rgba(" + RGB + ",0.35)"; ctx.lineWidth = 7;
+    ctx.beginPath(); pts.forEach((p, j) => j ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)); ctx.stroke();
+    ctx.globalCompositeOperation = "source-over";
+    ctx.strokeStyle = ACC; ctx.lineWidth = 2.6;
+    ctx.beginPath(); pts.forEach((p, j) => j ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)); ctx.stroke();
+    ctx.restore();
+
+    /* events: before = grey, after = same way (accent dot) or other way (amber diamond) */
+    ev.forEach((e, j) => {
+      const x = X(e.k), y = Y(e.v);
+      if (j < sel){ ctx.fillStyle = "rgba(237,237,232,0.55)"; ctx.beginPath(); ctx.arc(x, y, rN * 0.75, 0, Math.PI * 2); ctx.fill(); return; }
+      if (j === sel) return;
+      if (sgn(e.d) === target.dir){
+        ctx.save(); ctx.globalCompositeOperation = "lighter";
+        const rg = ctx.createRadialGradient(x, y, 0, x, y, rN * 2.8);
+        rg.addColorStop(0, "rgba(" + RGB + ",0.6)"); rg.addColorStop(1, "rgba(" + RGB + ",0)");
+        ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(x, y, rN * 2.8, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+        ctx.fillStyle = ACC; ctx.beginPath(); ctx.arc(x, y, rN, 0, Math.PI * 2); ctx.fill();
+      } else {
+        ctx.fillStyle = "#000"; diamond(x, y, rN * 1.3); ctx.fill();
+        ctx.strokeStyle = AMB; ctx.lineWidth = 2; diamond(x, y, rN * 1.3); ctx.stroke();
+      }
+    });
+
+    /* the chosen event, at the eased position */
+    const px = cutX, py = Y(e0.v + (e1.v - e0.v) * fr);
+    ctx.save(); ctx.globalCompositeOperation = "lighter";
+    const cg = ctx.createRadialGradient(px, py, 0, px, py, rN * 5);
+    cg.addColorStop(0, "rgba(" + RGB + ",0.7)"); cg.addColorStop(1, "rgba(" + RGB + ",0)");
+    ctx.fillStyle = cg; ctx.beginPath(); ctx.arc(px, py, rN * 5, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+    ctx.fillStyle = INK; ctx.beginPath(); ctx.arc(px, py, rN + 1.5, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = target.turned ? AMB : INK; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(px, py, rN + 6, 0, Math.PI * 2); ctx.stroke();
+
+    /* label on the chosen event */
+    const lab = C.ev[sel].s + (target.turned ? " · turns" : "");
+    ctx.font = "500 12px JetBrains Mono, monospace";
+    const tw = ctx.measureText(lab).width;
+    const lx = Math.max(L - 6, Math.min(R - tw - 2, px - tw / 2 - 4));
+    let ly = py - rN - 32;
+    if (ly < T - 6) ly = py + rN + 12;
+    if (ly + 18 > B) ly = py - rN - 32;
+    ctx.fillStyle = "rgba(0,0,0,0.8)"; ctx.fillRect(lx, ly, tw + 8, 18);
+    ctx.strokeStyle = "rgba(" + RGB + ",0.6)"; ctx.lineWidth = 1; ctx.strokeRect(lx + 0.5, ly + 0.5, tw + 7, 17);
+    ctx.fillStyle = INK; ctx.textAlign = "left"; ctx.textBaseline = "middle";
+    ctx.fillText(lab, lx + 4, ly + 9.5);
+
+    /* bloom */
+    bctx.setTransform(1, 0, 0, 1, 0, 0); bctx.clearRect(0, 0, buf.width, buf.height);
+    if (cv.width && cv.height) bctx.drawImage(cv, 0, 0);
+    ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
+    (buf.width&&buf.height)&&ctx.drawImage(buf, 0, 0, w, h); ctx.restore();
+    /* vignette */
+    const vig = ctx.createRadialGradient(w / 2, h / 2, h * 0.28, w / 2, h / 2, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
   }
-  
-  // Bloom
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  ctx.save();
-  ctx.globalCompositeOperation = "lighter";
-  ctx.globalAlpha = 0.38;
-  ctx.filter = "blur(7px)";
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
-  
-  // Vignette
-  const vig = ctx.createRadialGradient(w/2, h/2, h * 0.28, w/2, h/2, w * 0.72);
-  vig.addColorStop(0, "rgba(0,0,0,0)");
-  vig.addColorStop(1, "rgba(0,0,0,0.52)");
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-}
 
-function updateUI() {
-  const crisis = crises[currentIndex];
-  liveTag.textContent = crisis.year + " • " + crisis.name;
-  canvasOverlay.textContent = crisis.full;
-  takenStat.textContent = crisis.taken;
-  avoidedStat.textContent = crisis.avoided;
-  
-  const fill = (currentIndex / 6) * 100;
-  slider.style.setProperty("--fill", fill + "%");
-}
-
-slider.addEventListener("input", function() {
-  currentIndex = parseInt(this.value);
-  updateUI();
-  if (!animationFrame) {
-    animateBranches();
+  function tick(now){
+    const dt = Math.min(now - (last || now), 50) / 1000; last = now;
+    shown += (sel - shown) * (1 - Math.exp(-dt * 10));
+    if (Math.abs(sel - shown) < 0.01){ shown = sel; draw(); raf = 0; last = 0; return; }
+    draw(); raf = requestAnimationFrame(tick);
   }
-});
+  function kick(){
+    if (reduce){ shown = sel; draw(); return; }
+    if (!raf){ last = 0; raf = requestAnimationFrame(tick); }
+  }
 
-// Toggle buttons
-const toggleBtns = document.querySelectorAll(".toggle-btn");
-const knowdropText = document.getElementById("knowdropText");
+  function onSlide(){ sel = Math.max(0, Math.min(C.ev.length - 1, Math.round(parseFloat(slider.value)))); readouts(); kick(); }
+  slider.addEventListener("input", onSlide);
+  slider.addEventListener("change", onSlide);
 
-const knowdropContent = {
-  sources: "Turning points are not obvious when they happen. Operation Barbarossa appeared unstoppable in its first weeks, yet Stalingrad reversed the entire eastern front. The Tet Offensive was a military defeat for North Vietnam but destroyed American public support for the war. Historians identify turning points retrospectively, looking for the moment when the range of possible futures narrowed. Primary sources from the time often show confusion, not clarity — participants rarely know they are living through history's pivot. The turning point becomes visible only when we can see both branches: the world that emerged and the world that did not.",
-  
-  impact: "The Cuban Missile Crisis is remembered as the moment humanity avoided nuclear war, but that framing depends on treating nuclear war as the default outcome. Historians debate whether Kennedy and Khrushchev ever intended to launch, or whether the crisis was political theatre with minimal real danger. Similarly, the Berlin Wall is taught as cementing the Cold War division, but some argue the division was already permanent and the Wall simply made it visible. Turning points gain their status through narrative construction: we select them because they fit the story we want to tell about how we got here. A different historian, asking different questions, might identify entirely different pivots in the same sequence of events."
-};
+  const caseBtns = document.querySelectorAll("#tpCase button");
+  caseBtns.forEach(b => b.addEventListener("click", () => {
+    caseBtns.forEach(x => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
+    if (raf){ cancelAnimationFrame(raf); raf = 0; }
+    setCase(b.dataset.c);
+  }));
 
-toggleBtns.forEach(btn => {
-  btn.addEventListener("click", function() {
-    toggleBtns.forEach(b => b.classList.remove("active"));
-    this.classList.add("active");
-    const mode = this.dataset.mode;
-    knowdropText.textContent = knowdropContent[mode];
-  });
-});
+  const dropBtns = document.querySelectorAll("#tpDropG button");
+  dropBtns.forEach(b => b.addEventListener("click", () => {
+    dropBtns.forEach(x => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
+    dropKey = b.dataset.k; drop.textContent = DROP[caseKey][dropKey];
+  }));
 
-window.addEventListener("resize", resize);
-resize();
-updateUI();
-branchOpacities[currentIndex] = 1;
+  window.addEventListener("resize", resize);
+  if (window.ResizeObserver){ new ResizeObserver(() => resize()).observe(cv.parentElement); }
+  setCase("acw"); resize();
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'turning-points-and-crises'},'*');}catch(e){}}

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Diffraction and Polarisation (Malus' Law) — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Diffraction and polarisation (Malus' law) — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -331,9 +331,40 @@ canvas {
 <div class="container">
   <h2 class="sr-only">Wave-particle duality interactive: diffraction and polarisation with Malus' law</h2>
   
-  <h1>The only way to prove light is a <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">wave</span></h1>
+  <h1>The evidence that light is a <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">wave</span></h1>
   
-  <p class="intro">Particles travel in straight lines. Waves bend around corners and care which way they vibrate. Watch diffraction spread light through a narrowing slit, then rotate a polariser to prove transverse waves obey Malus' law: <em>I</em> = <em>I</em>₀ cos²<em>θ</em>. Drag the slider to change the angle.</p>
+  <p class="intro">Waves bend around edges and care which way they vibrate. Narrow the slit to watch diffraction spread the light, then rotate a polariser to see transverse waves obey Malus' law: <em>I</em> = <em>I</em>₀ cos²<em>θ</em>. Drag each slider to see the pattern change.</p>
+  <div class="card">
+    <div class="card-header">
+      <div class="card-label">Single-slit diffraction</div>
+      <div class="live-tag" id="slitTag" style="text-transform:none">Slit 4λ wide</div>
+    </div>
+    <div class="card-hint">Light of wavelength λ through one slit: brightness on a distant screen</div>
+    <div class="canvas-wrapper">
+      <canvas id="slitCanvas" aria-label="Single-slit diffraction pattern: a bright central band with dimmer side fringes that widens as the slit narrows"></canvas>
+      <div class="canvas-overlay" id="slitOverlay" style="text-transform:none">Central band edges at ±14°</div>
+    </div>
+    <div class="slider-row">
+      <div class="slider-label">Slit width (in wavelengths)</div>
+      <input type="range" min="1" max="10" value="4" step="0.5" class="pol-slider" id="slitSlider" aria-label="Slit width in wavelengths">
+      <div class="tick-labels" id="slitTicks">
+        <span data-v="1">1λ</span>
+        <span data-v="4">4λ</span>
+        <span data-v="7">7λ</span>
+        <span data-v="10">10λ</span>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-label">Slit width</div>
+        <div class="stat-value" style="color:var(--acc)" id="statSlit">4λ</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">First dark fringe θ</div>
+        <div class="stat-value" style="color:var(--amb)" id="statSpread">14°</div>
+      </div>
+    </div>
+  </div>
 
   <div class="card">
     <div class="card-header">
@@ -375,7 +406,7 @@ canvas {
       <button class="toggle-btn" data-mode="polarisation">Polarisation</button>
     </div>
     <div class="knowdrop" id="knowdropText">
-      When a wave hits an obstacle or slit comparable to its wavelength, it bends around the edges — this is diffraction. Narrower slits create wider spreading patterns because the wavefront is more constrained. When light passes through a single slit just a few wavelengths wide, it fans out into a characteristic interference pattern with a bright central maximum and dimmer side fringes. This spreading is impossible for particles, which would travel straight through and produce a sharp shadow. Double slits create the famous alternating bright and dark bands as waves from each slit interfere constructively and destructively — direct proof that light is a wave. Diffraction underpins everything from CD rainbow reflections to the resolution limits of microscopes and telescopes.
+      When a wave hits an obstacle or slit comparable to its wavelength, it bends around the edges — this is diffraction. Narrower slits create wider spreading patterns because the wavefront is more constrained. When light passes through a single slit just a few wavelengths wide, it fans out into a characteristic interference pattern with a bright central maximum and dimmer side fringes. The classical particle model of light, with tiny bullets moving in straight lines, cannot explain this spreading or the fringes, which is the evidence that light behaves as a wave. Double slits create the famous alternating bright and dark bands as waves from each slit interfere constructively and destructively — strong evidence that light behaves as a wave. Diffraction underpins everything from CD rainbow reflections to the resolution limits of microscopes and telescopes.
     </div>
   </div>
 
@@ -384,7 +415,7 @@ canvas {
       <div class="know-dot"></div>
       <div class="know-label">Know This</div>
     </div>
-    <p><span>Diffraction</span> proves waves because particles can't bend, and <span>polarisation</span> proves transverse oscillation because only waves with orientation can be filtered by a <span>polarising plane</span>.</p>
+    <p><span>Diffraction</span> and interference are evidence for waves because the classical particle model of light cannot explain them, and <span>polarisation</span> shows transverse oscillation because only waves with orientation can be filtered by a <span>polarising plane</span>.</p>
   </div>
 </div>
 
@@ -640,16 +671,113 @@ toggleBtns.forEach(btn => {
     
     const mode = btn.dataset.mode;
     if (mode === 'diffraction') {
-      knowdropText.textContent = "When a wave hits an obstacle or slit comparable to its wavelength, it bends around the edges — this is diffraction. Narrower slits create wider spreading patterns because the wavefront is more constrained. When light passes through a single slit just a few wavelengths wide, it fans out into a characteristic interference pattern with a bright central maximum and dimmer side fringes. This spreading is impossible for particles, which would travel straight through and produce a sharp shadow. Double slits create the famous alternating bright and dark bands as waves from each slit interfere constructively and destructively — direct proof that light is a wave. Diffraction underpins everything from CD rainbow reflections to the resolution limits of microscopes and telescopes.";
+      knowdropText.textContent = "When a wave hits an obstacle or slit comparable to its wavelength, it bends around the edges — this is diffraction. Narrower slits create wider spreading patterns because the wavefront is more constrained. When light passes through a single slit just a few wavelengths wide, it fans out into a characteristic interference pattern with a bright central maximum and dimmer side fringes. The classical particle model of light, with tiny bullets moving in straight lines, cannot explain this spreading or the fringes, which is the evidence that light behaves as a wave. Double slits create the famous alternating bright and dark bands as waves from each slit interfere constructively and destructively — strong evidence that light behaves as a wave. Diffraction underpins everything from CD rainbow reflections to the resolution limits of microscopes and telescopes.";
     } else {
       knowdropText.textContent = "Polarisation only works for transverse waves because the oscillation direction matters — you can't polarise a longitudinal wave like sound. Light is an electromagnetic wave with electric and field components oscillating perpendicular to the direction of travel. A polarising filter contains long aligned molecules that absorb one orientation of oscillation and transmit the perpendicular component. When unpolarised light hits the first filter, half the intensity passes through, all vibrating in one plane. Malus' law describes what happens at the second filter: I = I₀ cos²θ, where θ is the angle between the two polarisers. At 0° you get full transmission, at 45° you get half, at 90° you get zero — complete extinction. This is how polarised sunglasses cut glare, LCD screens control pixel brightness, and engineers use photoelastic stress analysis to visualise internal forces in transparent materials.";
     }
   });
 });
 
+/* single-slit diffraction: I(theta) = sinc^2(pi a sin(theta) / lambda), a in wavelengths */
+const slitCanvas = document.getElementById("slitCanvas");
+const sctx = slitCanvas.getContext("2d", { alpha: false });
+const slitSlider = document.getElementById("slitSlider");
+const SLIT_MIN = Number(slitSlider.min), SLIT_MAX = Number(slitSlider.max);
+document.querySelectorAll("#slitTicks span").forEach(s => {
+  s.style.position = "absolute";
+  s.style.left = (((Number(s.dataset.v) - SLIT_MIN) / (SLIT_MAX - SLIT_MIN)) * 100) + "%";
+  const v = Number(s.dataset.v);
+  s.style.transform = v === SLIT_MIN ? "none" : (v === SLIT_MAX ? "translateX(-100%)" : "translateX(-50%)");
+  s.style.whiteSpace = "nowrap";
+});
+const slitTicksEl = document.getElementById("slitTicks");
+slitTicksEl.style.position = "relative";
+slitTicksEl.style.height = "12px";
+slitTicksEl.style.display = "block";
+let slitA = Number(slitSlider.value);
+function slitIntensity(thetaRad) {
+  const beta = Math.PI * slitA * Math.sin(thetaRad);
+  if (Math.abs(beta) < 1e-6) return 1;
+  const s = Math.sin(beta) / beta;
+  return s * s;
+}
+function firstDarkDeg() {
+  return slitA <= 1 ? 90 : Math.asin(1 / slitA) * 180 / Math.PI;
+}
+function drawSlit() {
+  const rect = slitCanvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return;
+  slitCanvas.width = Math.round(rect.width * dpr);
+  slitCanvas.height = Math.round(rect.height * dpr);
+  sctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const w = rect.width, hgt = rect.height;
+  sctx.fillStyle = "#000";
+  sctx.fillRect(0, 0, w, hgt);
+  const left = w * 0.06, right = w * 0.94, span = right - left;
+  const stripTop = hgt * 0.1, stripH = hgt * 0.22;
+  const base = hgt * 0.88, top = hgt * 0.42;
+  /* screen strip: brightness = intensity, angle -90 to 90 deg across */
+  for (let px = 0; px <= span; px += 2) {
+    const th = ((px / span) * 180 - 90) * Math.PI / 180;
+    const I = slitIntensity(th);
+    sctx.fillStyle = "rgba(" + RGB + ", " + Math.min(1, Math.sqrt(I)).toFixed(3) + ")";
+    sctx.fillRect(left + px, stripTop, 2, stripH);
+  }
+  sctx.strokeStyle = "rgba(255,255,255,0.15)";
+  sctx.strokeRect(left, stripTop, span, stripH);
+  /* intensity curve */
+  sctx.strokeStyle = "rgba(255,255,255,0.18)";
+  sctx.beginPath(); sctx.moveTo(left, base); sctx.lineTo(right, base); sctx.stroke();
+  sctx.beginPath(); sctx.moveTo(left + span / 2, base); sctx.lineTo(left + span / 2, top - 6); sctx.stroke();
+  sctx.strokeStyle = ACC;
+  sctx.lineWidth = 2;
+  sctx.beginPath();
+  for (let px = 0; px <= span; px += 1) {
+    const th = ((px / span) * 180 - 90) * Math.PI / 180;
+    const y = base - slitIntensity(th) * (base - top);
+    if (px === 0) sctx.moveTo(left + px, y); else sctx.lineTo(left + px, y);
+  }
+  sctx.stroke();
+  sctx.lineWidth = 1;
+  /* first dark fringe markers */
+  const d = firstDarkDeg();
+  if (d < 90) {
+    sctx.strokeStyle = AMB;
+    sctx.setLineDash([4, 4]);
+    [-d, d].forEach(deg => {
+      const x = left + ((deg + 90) / 180) * span;
+      sctx.beginPath(); sctx.moveTo(x, stripTop); sctx.lineTo(x, base); sctx.stroke();
+    });
+    sctx.setLineDash([]);
+  }
+  sctx.fillStyle = "rgba(255,255,255,0.45)";
+  sctx.font = "10px JetBrains Mono, monospace";
+  sctx.textAlign = "left"; sctx.fillText("−90°", left, base + 14);
+  sctx.textAlign = "center"; sctx.fillText("0°", left + span / 2, base + 14);
+  sctx.textAlign = "right"; sctx.fillText("90°", right, base + 14);
+}
+function updateSlit() {
+  const d = firstDarkDeg();
+  const aText = (Number.isInteger(slitA) ? slitA : slitA.toFixed(1)) + "λ";
+  document.getElementById("slitTag").textContent = "Slit " + aText + " wide";
+  document.getElementById("statSlit").textContent = aText;
+  document.getElementById("statSpread").textContent = d >= 90 ? "none" : Math.round(d) + "°";
+  document.getElementById("slitOverlay").textContent = d >= 90
+    ? "Slit ≤ 1λ: light spreads across the whole screen"
+    : "sin θ = λ/a • central band edges at ±" + Math.round(d) + "°";
+  slitSlider.style.setProperty("--fill", (((slitA - SLIT_MIN) / (SLIT_MAX - SLIT_MIN)) * 100) + "%");
+  drawSlit();
+}
+slitSlider.addEventListener("input", (e) => {
+  slitA = Number(e.target.value);
+  updateSlit();
+});
+window.addEventListener("resize", drawSlit);
+
 window.addEventListener('resize', resize);
 resize();
 updateUI();
+updateSlit();
 requestAnimationFrame(draw);
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */

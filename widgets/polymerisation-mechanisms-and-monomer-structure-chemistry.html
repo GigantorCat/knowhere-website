@@ -1,548 +1,505 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Polymerisation Mechanisms and Monomer Structure — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Polymerisation mechanisms and monomer structure — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
-
-:root {
-  --bg: #0B0D0C;
-  --bg2: #12160F;
-  --acc: #3E9AD6;
-  --ag: rgba(62, 154, 214, .7);
-  --ag1: rgba(62, 154, 214, .12);
-  --ag2: rgba(62, 154, 214, .45);
-  --amb: #FAC775;
-  --ink: #EDEDE8;
-  --ink-dim: #8C9389;
-  --line: #262B26;
+:root{
+  --bg:#0B0D0C;--bg2:#12160F;--acc:#3E9AD6;--acc-rgb:62, 154, 214;
+  --ag:rgba(var(--acc-rgb),.7);--ag1:rgba(var(--acc-rgb),.12);--ag2:rgba(var(--acc-rgb),.45);
+  --amb:#FAC775;--ink:#EDEDE8;--ink-dim:#8C9389;--line:#262B26;
 }
-
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-
+*{box-sizing:border-box;margin:0;padding:0}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-
-body{
-  background:radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
-  font-family:'Geist',sans-serif;
-  color:var(--ink);
-  min-height:100vh;
-  padding:40px 16px 72px;
-}
-
+body{background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C 55%);font-family:'Geist',sans-serif;color:var(--ink);min-height:100vh;padding:40px 16px 0;box-sizing:border-box}
 .container{max-width:720px;margin:0 auto}
-
-h1{
-  font-size:clamp(30px,8vw,52px);
-  font-weight:700;
-  letter-spacing:-0.03em;
-  line-height:1.02;
-  margin-bottom:14px;
-}
-
-.intro{
-  font-size:15.5px;
-  color:var(--ink-dim);
-  max-width:58ch;
-  line-height:1.55;
-  margin-bottom:28px;
-}
-
-.card{
-  background:linear-gradient(180deg,#12160F,#0d100b);
-  border:1px solid var(--line);
-  border-radius:18px;
-  padding:16px;
-  box-shadow:0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
-  margin-bottom:18px;
-}
-
-.card-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:6px;
-}
-
-.card-label{
-  font-family:'JetBrains Mono',monospace;
-  font-size:13px;
-  text-transform:uppercase;
-  color:#fff;
-}
-
-.live-tag{
-  font-family:'JetBrains Mono',monospace;
-  font-size:11px;
-  text-transform:uppercase;
-  color:var(--acc);
-}
-
-.card-hint{
-  font-family:'JetBrains Mono',monospace;
-  font-size:11px;
-  color:var(--ink-dim);
-  margin-bottom:14px;
-}
-
-.canvas-wrapper{
-  position:relative;
-  width:100%;
-  aspect-ratio:16/9;
-  border-radius:12px;
-  overflow:hidden;
-  background:#000;
-  box-shadow:inset 0 0 0 1px var(--ag1);
-  margin-bottom:16px;
-}
-
-canvas{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  display:block;
-}
-
-.canvas-overlay{
-  position:absolute;
-  left:0;
-  right:0;
-  bottom:0;
-  background:rgba(0,0,0,0.55);
-  backdrop-filter:blur(4px);
-  padding:9px 16px;
-  font-family:'JetBrains Mono',monospace;
-  font-size:14px;
-  text-transform:uppercase;
-  color:var(--acc);
-  text-align:center;
-}
-
-.slider-row{
-  margin-bottom:12px;
-}
-
-.slider-label{
-  font-family:'JetBrains Mono',monospace;
-  font-size:10.5px;
-  text-transform:uppercase;
-  color:var(--ink-dim);
-  margin-bottom:8px;
-  display:block;
-}
-
-.pm-slider{
-  width:100%;
-  height:4px;
-  border-radius:3px;
-  background:linear-gradient(90deg, var(--acc) var(--fill,0%), #23291f var(--fill,0%));
-  -webkit-appearance:none;
-  appearance:none;
-  outline:none;
-  cursor:pointer;
-}
-
-.pm-slider::-webkit-slider-thumb{
-  -webkit-appearance:none;
-  appearance:none;
-  width:20px;
-  height:20px;
-  border-radius:50%;
-  background:#0B0D0C;
-  border:2px solid var(--acc);
-  box-shadow:0 0 16px var(--ag), 0 0 4px var(--ag);
-  transition:box-shadow .15s;
-  cursor:grab;
-}
-
-.pm-slider::-webkit-slider-thumb:active{cursor:grabbing}
-.pm-slider::-webkit-slider-thumb:hover{box-shadow:0 0 24px var(--acc), 0 0 8px var(--ag)}
-
-.pm-slider::-moz-range-thumb{
-  width:20px;
-  height:20px;
-  border-radius:50%;
-  background:#0B0D0C;
-  border:2px solid var(--acc);
-  box-shadow:0 0 16px var(--ag), 0 0 4px var(--ag);
-  transition:box-shadow .15s;
-  cursor:grab;
-}
-
-.pm-slider::-moz-range-thumb:active{cursor:grabbing}
-.pm-slider::-moz-range-thumb:hover{box-shadow:0 0 24px var(--acc), 0 0 8px var(--ag)}
-
-.tick-labels{
-  display:flex;
-  justify-content:space-between;
-  font-family:'JetBrains Mono',monospace;
-  font-size:9px;
-  color:var(--ink-dim);
-  margin-top:6px;
-}
-
-.stat-row{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:16px;
-  padding-top:16px;
-  border-top:1px solid var(--line);
-}
-
-.stat{
-  display:flex;
-  flex-direction:column;
-  gap:4px;
-}
-
-.stat-label{
-  font-family:'JetBrains Mono',monospace;
-  font-size:10.5px;
-  text-transform:uppercase;
-  color:var(--ink-dim);
-}
-
-.stat-value{
-  font-family:'JetBrains Mono',monospace;
-  font-size:24px;
-  font-weight:500;
-}
-
-.toggle-section{
-  display:flex;
-  gap:10px;
-  margin-bottom:16px;
-}
-
-.toggle-btn{
-  flex:1;
-  font-family:'JetBrains Mono',monospace;
-  font-size:14.5px;
-  padding:12px;
-  border-radius:11px;
-  background:#12160F;
-  border:1px solid var(--line);
-  color:var(--ink-dim);
-  cursor:pointer;
-  transition:all .2s;
-}
-
-.toggle-btn.active{
-  background:rgba(62,154,214,.1);
-  border:1px solid var(--acc);
-  color:var(--acc);
-  box-shadow:0 0 22px rgba(62,154,214,.18);
-}
-
-.knowdrop{
-  border-top:1px solid var(--line);
-  padding-top:16px;
-  font-size:14.5px;
-  line-height:1.65;
-}
-
-.know-this{
-  border-left:3px solid var(--acc);
-  padding:16px 18px;
-  background:linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
-  border-radius:0 12px 12px 0;
-  margin-bottom:18px;
-}
-
-.know-this-tag{
-  font-family:'JetBrains Mono',monospace;
-  font-size:13px;
-  text-transform:uppercase;
-  letter-spacing:0.15em;
-  color:var(--acc);
-  margin-bottom:10px;
-  display:block;
-}
-
-.know-this-body{
-  font-size:17.4px;
-  line-height:1.55;
-  color:var(--ink);
-}
-
-.footer{
-  margin-top:34px;
-  padding-top:16px;
-  border-top:1px solid var(--line);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-}
-
-.pulse-dot{
-  width:7px;
-  height:7px;
-  border-radius:50%;
-  background:var(--acc);
-  box-shadow:0 0 10px var(--acc);
-  animation:pmPulse 2.4s ease-in-out infinite;
-}
-
-@keyframes pmPulse{
-  0%,100%{opacity:1;transform:scale(1)}
-  50%{opacity:.35;transform:scale(.6)}
-}
-
-@media(prefers-reduced-motion:reduce){
-  .pulse-dot{animation:none}
-}
+h1{font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin-bottom:16px}
+.intro{font-size:15.5px;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin-bottom:28px}
+.card{background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:18px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1)}
+.card-header{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+.card-label{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;color:#fff}
+.live-tag{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--acc);text-align:right}
+.card-hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin-bottom:14px}
+.pm-q{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin:0 0 8px}
+.pm-pick{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+@media (max-width:560px){.pm-pick{grid-template-columns:repeat(2,1fr)}}
+.tg{font-family:'JetBrains Mono',monospace;font-size:12px;padding:10px 8px;border-radius:999px;background:#12160F;border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:all .2s;line-height:1.25}
+.tg small{display:block;font-size:10px;opacity:.75}
+.tg[aria-pressed="true"]{background:rgba(var(--acc-rgb),.1);border:1px solid var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.canvas-wrapper{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1);margin-bottom:16px}
+.canvas-wrapper canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.canvas-overlay{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:14px;text-transform:uppercase;color:var(--acc);text-align:center}
+.pm-row{display:flex;justify-content:space-between;align-items:baseline;font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin:6px 0 10px}
+.pm-row b{font-weight:500;color:var(--acc);font-size:12px;text-transform:none}
+.pm-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;outline:none;cursor:pointer;background:linear-gradient(90deg,var(--acc) var(--fill,0%),#23291f var(--fill,0%))}
+.pm-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s}
+.pm-slider::-webkit-slider-thumb:hover{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.pm-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag)}
+.pm-ticks{position:relative;height:16px;margin:8px 0 6px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink-dim)}
+.pm-ticks span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}
+.pm-cap{font-size:14.5px;line-height:1.6;color:var(--ink);margin-top:12px}
+.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;border-top:1px solid var(--line);margin-top:14px;padding-top:14px}
+.stat-label{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:6px}
+.stat-value{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500}
+.stat-value.acc{color:var(--acc)}.stat-value.amb{color:var(--amb)}
+.pm-drops{display:flex;gap:10px}
+.pm-drops .tg{flex:1;padding:12px 8px}
+.knowdrop{border-top:1px solid var(--line);padding-top:16px;margin-top:16px}
+.knowdrop p{font-size:14.5px;line-height:1.65;color:var(--ink)}
+.know-this{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));border-radius:0 12px 12px 0;margin-bottom:0}
+.know-this-tag{display:flex;align-items:center;gap:9px;margin-bottom:12px}
+.know-this-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:ktp 2.4s ease-in-out infinite}
+@keyframes ktp{0%,100%{opacity:1}50%{opacity:.45}}
+.know-this-label{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.15em;color:var(--acc)}
+.know-this-body{font-size:17.4px;line-height:1.55;color:var(--ink)}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
 
-<div class="container">
-  <h2 class="sr-only">Polymerisation Mechanisms Interactive Widget</h2>
+<h2 class="sr-only">Polymerisation: build a chain by addition or condensation and see what each monomer keeps or loses, then change chain length and branching in an addition polymer</h2>
 
-  <h1>A single molecule can grow from <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">hundreds</span></h1>
-  
-  <p class="intro">
-    Polymers aren't just big molecules—they're chains where tiny monomers link up hundreds or thousands of times, each addition step changing the material's strength and melting point. Drag the slider to grow the chain and watch the degree of polymerisation climb.
-  </p>
+<div class="container">
+  <h1>Some polymers grow by throwing atoms <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">away</span></h1>
+  <p class="intro">An addition polymer forms when the C=C double bond in each monomer opens and the monomers link up, keeping every atom. A condensation polymer forms when two functional groups join and a small molecule, usually water, is lost at every link. Pick a monomer, then raise the number of monomers joined and watch what is left over.</p>
 
   <div class="card">
     <div class="card-header">
-      <span class="card-label">Chain Builder</span>
-      <span class="live-tag" id="chainTag">ADDITION MODE</span>
+      <span class="card-label">Build a chain</span>
+      <span class="live-tag" id="pmTag">Addition · 4 units</span>
     </div>
-    <p class="card-hint">Drag slider to add monomer units to the growing chain</p>
-    
-    <div class="canvas-wrapper">
-      <canvas id="chainCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">0 MONOMER UNITS</div>
+    <div class="card-hint">Pick a monomer. Add units. Watch what is released.</div>
+
+    <div class="pm-q">Pick a monomer: addition (C=C) or condensation (two functional groups)</div>
+    <div class="pm-pick" id="pmAdd" role="group" aria-label="Choose a monomer">
+      <button class="tg" data-m="ethene" aria-pressed="true">Ethene<small>addition · polyethene</small></button>
+      <button class="tg" data-m="chloro" aria-pressed="false">Chloroethene<small>addition · PVC</small></button>
+      <button class="tg" data-m="propene" aria-pressed="false">Propene<small>addition · polypropene</small></button>
+      <button class="tg" data-m="tfe" aria-pressed="false">Tetrafluoroethene<small>addition · PTFE</small></button>
+      <button class="tg" data-m="amino" aria-pressed="false">Amino acids<small>condensation · protein</small></button>
+      <button class="tg" data-m="glucose" aria-pressed="false">Glucose<small>condensation · starch</small></button>
+      <button class="tg" data-m="nylon" aria-pressed="false">Diacid + diamine<small>condensation · nylon 6,6</small></button>
+      <button class="tg" data-m="pet" aria-pressed="false">Diacid + diol<small>condensation · PET</small></button>
     </div>
 
-    <div class="slider-row">
-      <label class="slider-label" for="chainSlider">Degree of Polymerisation</label>
-      <input type="range" id="chainSlider" class="pm-slider" min="0" max="100" value="0" style="--fill:0%">
-      <div class="tick-labels">
-        <span>0</span>
-        <span>25</span>
-        <span>50</span>
-        <span>75</span>
-        <span>100</span>
-      </div>
+    <div class="canvas-wrapper">
+      <canvas id="pmCanvas" role="img" aria-label="The chain built so far, the next monomer with its reacting part highlighted, and a tray of small molecules released"></canvas>
+      <div class="canvas-overlay" id="pmOverlay">4 ethene → chain · nothing lost</div>
     </div>
+
+    <div class="pm-row"><span>Monomers joined</span><b id="pmNV">4</b></div>
+    <input type="range" class="pm-slider" id="pmN" aria-label="Monomers joined" min="1" max="8" step="1" value="4">
+    <div class="pm-ticks" id="pmNTicks"></div>
 
     <div class="stat-row">
-      <div class="stat">
-        <span class="stat-label">Chain Length</span>
-        <span class="stat-value" style="color:var(--acc)" id="chainLength">0</span>
-      </div>
-      <div class="stat">
-        <span class="stat-label">Rel. Mol. Mass</span>
-        <span class="stat-value" style="color:var(--amb)" id="molMass">0</span>
-      </div>
+      <div class="stat"><div class="stat-label">Chain molar mass</div><div class="stat-value acc" id="pmM">112.2 g/mol</div></div>
+      <div class="stat"><div class="stat-label">Water released</div><div class="stat-value amb" id="pmW">0 H₂O</div></div>
     </div>
   </div>
 
   <div class="card">
-    <div class="toggle-section">
-      <button class="toggle-btn active" data-mode="addition">Addition</button>
-      <button class="toggle-btn" data-mode="condensation">Condensation</button>
+    <div class="card-header">
+      <span class="card-label">Design an addition polymer</span>
+      <span class="live-tag" id="pdTag">Close-packed</span>
     </div>
-    <div class="knowdrop" id="knowdrop">
-      Addition polymerisation occurs when monomers containing carbon-carbon double bonds (C=C) join together without losing any atoms, with the π-bond breaking to form new σ-bonds between successive monomer units. Classic examples include ethene forming polyethene, styrene forming polystyrene, and vinyl chloride forming PVC—all proceeding via radical or ionic chain mechanisms that propagate rapidly once initiated. The polymer chain grows by sequential addition of identical monomer units, preserving the entire molecular structure of each monomer in the final polymer backbone, which means the empirical formula of the polymer matches the monomer exactly. This mechanism is characterised by three distinct stages: initiation (radical or ion formation), propagation (rapid chain growth), and termination (chain-end coupling or disproportionation).
+    <div class="card-hint">Choose a side group. Change chain length and branching. Watch the packing.</div>
+
+    <div class="pm-q">Monomer (sets the side group)</div>
+    <div class="pm-pick" id="pdMon" role="group" aria-label="Monomer for the designed polymer">
+      <button class="tg" data-m="ethene" aria-pressed="true">Ethene<small>side group H</small></button>
+      <button class="tg" data-m="chloro" aria-pressed="false">Chloroethene<small>side group Cl</small></button>
+      <button class="tg" data-m="propene" aria-pressed="false">Propene<small>side group CH₃</small></button>
+      <button class="tg" data-m="tfe" aria-pressed="false">Tetrafluoroethene<small>all F</small></button>
+    </div>
+
+    <div class="canvas-wrapper">
+      <canvas id="pdCanvas" role="img" aria-label="Polymer chains packed in a box: longer chains show fewer chain ends, more branches push the chains further apart"></canvas>
+      <div class="canvas-overlay" id="pdOverlay">Few branches · chains pack closely</div>
+    </div>
+
+    <div class="pm-row"><span>Chain length</span><b id="pdLV">10 000 units</b></div>
+    <input type="range" class="pm-slider" id="pdL" aria-label="Chain length in monomer units" min="1000" max="20000" step="1000" value="10000">
+    <div class="pm-ticks" id="pdLTicks"></div>
+
+    <div class="pm-row"><span>Branches per 1000 C</span><b id="pdBV">3</b></div>
+    <input type="range" class="pm-slider" id="pdB" aria-label="Branches per 1000 backbone carbons" min="0" max="30" step="1" value="3">
+    <div class="pm-ticks" id="pdBTicks"></div>
+
+    <p class="pm-cap" id="pdCap"></p>
+
+    <div class="stat-row">
+      <div class="stat"><div class="stat-label">Molar mass of one chain</div><div class="stat-value acc" id="pdM">280 500 g/mol</div></div>
+      <div class="stat"><div class="stat-label">Branches per chain</div><div class="stat-value amb" id="pdBr">60</div></div>
     </div>
   </div>
 
-  <div class="know-this">
-    <span class="know-this-tag">Know This</span>
-    <p class="know-this-body">
-      The <span style="color:var(--acc)">degree of polymerisation</span> is the average number of <span style="color:var(--acc)">monomer units</span> in a polymer chain, directly controlling molecular mass and critical mechanical properties like <span style="color:var(--acc)">tensile strength</span> and <span style="color:var(--acc)">melting temperature</span>.
-    </p>
+  <div class="card">
+    <div class="pm-q">Take it further</div>
+    <div class="pm-drops" role="group" aria-label="Choose what the paragraph explains">
+      <button class="tg" data-d="nat" aria-pressed="true">Natural</button>
+      <button class="tg" data-d="man" aria-pressed="false">Manufactured</button>
+      <button class="tg" data-d="spot" aria-pressed="false">Spot the type</button>
+    </div>
+    <div class="knowdrop"><p id="pmDrop"></p></div>
   </div>
 
-  <div class="footer">
-    <div class="pulse-dot"></div>
+  <div class="card know-this">
+    <div class="know-this-tag"><div class="know-this-dot"></div><div class="know-this-label">Know This</div></div>
+    <p class="know-this-body"><span style="color:var(--acc)">Addition polymers</span> keep every atom as each C=C bond opens, while <span style="color:var(--acc)">condensation polymers</span> join two functional groups and lose a <span style="color:var(--acc)">small molecule</span> such as water at every link.</p>
   </div>
 </div>
 
 <script>
-const canvas = document.getElementById('chainCanvas');
-const ctx = canvas.getContext('2d');
-const slider = document.getElementById('chainSlider');
-const chainTag = document.getElementById('chainTag');
-const canvasOverlay = document.getElementById('canvasOverlay');
-const chainLengthEl = document.getElementById('chainLength');
-const molMassEl = document.getElementById('molMass');
-const knowdrop = document.getElementById('knowdrop');
-const toggleBtns = document.querySelectorAll('.toggle-btn');
+(function(){
+const AR = { H: 1.008, C: 12.01, N: 14.01, O: 16.00, F: 19.00, Cl: 35.45 };
+function mass(f){ let m = 0; for (const k in f) m += AR[k] * f[k]; return m; }
+const WATER = mass({ H: 2, O: 1 });
 
-let currentMode = 'addition';
-let chainValue = 0;
-let targetChain = 0;
-let time = 0;
-let animFrame;
+/* addition monomers: CH2=CXY drawn as structural formulas; subs = [top-left, bottom-left, top-right, bottom-right] */
+const ADD = {
+  ethene: { name: "ethene", poly: "polyethene", f: { C: 2, H: 4 }, subs: ["H", "H", "H", "H"], side: "H" },
+  chloro: { name: "chloroethene", poly: "PVC", f: { C: 2, H: 3, Cl: 1 }, subs: ["H", "H", "Cl", "H"], side: "Cl" },
+  propene: { name: "propene", poly: "polypropene", f: { C: 3, H: 6 }, subs: ["H", "H", "CH₃", "H"], side: "CH₃" },
+  tfe: { name: "tetrafluoroethene", poly: "PTFE", f: { C: 2, F: 4 }, subs: ["F", "F", "F", "F"], side: "F" }
+};
+/* condensation monomers: each kind lists its monomers in order (they alternate when there are two).
+   free = the whole monomer as coloured pieces (amber = atoms that leave as water); unit = what stays in the chain */
+const CON = {
+  amino: { poly: "a protein (polypeptide)", link: "peptide (amide) link", start: "H–", seq: [
+    { name: "glycine", f: { C: 2, H: 5, N: 1, O: 2 }, free: [["H", 1], ["–NH–CH₂–CO–", 0], ["OH", 1]], unit: "NHCH₂CO", endR: "–OH" },
+    { name: "alanine", f: { C: 3, H: 7, N: 1, O: 2 }, free: [["H", 1], ["–NH–CH(CH₃)–CO–", 0], ["OH", 1]], unit: "NHCH(CH₃)CO", endR: "–OH" } ] },
+  glucose: { poly: "starch", link: "glycosidic (–O–) link", start: "HO–", oLink: true, seq: [
+    { name: "glucose", f: { C: 6, H: 12, O: 6 }, free: [["H", 1], ["–O–C₆H₁₀O₄–", 0], ["OH", 1]], unit: "C₆H₁₀O₄", endR: "–OH" } ] },
+  nylon: { poly: "nylon 6,6 (a polyamide)", link: "amide link", start: "HO–", seq: [
+    { name: "hexanedioic acid", f: { C: 6, H: 10, O: 4 }, free: [["HO", 1], ["–CO(CH₂)₄CO–", 0], ["OH", 1]], unit: "CO(CH₂)₄CO", endR: "–OH" },
+    { name: "hexane-1,6-diamine", f: { C: 6, H: 16, N: 2 }, free: [["H", 1], ["–NH(CH₂)₆NH–", 0], ["H", 1]], unit: "NH(CH₂)₆NH", endR: "–H" } ] },
+  pet: { poly: "PET (a polyester)", link: "ester link", start: "HO–", seq: [
+    { name: "benzene-1,4-dicarboxylic acid", f: { C: 8, H: 6, O: 4 }, free: [["HO", 1], ["–COC₆H₄CO–", 0], ["OH", 1]], unit: "COC₆H₄CO", endR: "–OH" },
+    { name: "ethane-1,2-diol", f: { C: 2, H: 6, O: 2 }, free: [["H", 1], ["–OCH₂CH₂O–", 0], ["H", 1]], unit: "OCH₂CH₂O", endR: "–H" } ] }
+};
 
+const CSS = getComputedStyle(document.documentElement);
+const ACC = CSS.getPropertyValue("--acc").trim();
+const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+const AMB = CSS.getPropertyValue("--amb").trim();
+const INK = CSS.getPropertyValue("--ink").trim();
+const DIM = CSS.getPropertyValue("--ink-dim").trim();
+const MONO = `"JetBrains Mono", monospace`;
 const dpr = Math.min(window.devicePixelRatio || 1, 2);
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d');
 
-function resize() {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+let mon = "ethene", lastAdd = "ethene", dropKey = "nat";
+const $ = id => document.getElementById(id);
+const nS = $("pmN"), lS = $("pdL"), bS = $("pdB");
+
+function ticks(box, slider, vals, fmt){
+  const mn = +slider.min, mx = +slider.max;
+  vals.forEach(v => { const s = document.createElement("span"); const f = (v - mn) / (mx - mn);
+    s.style.left = `calc(10px + (100% - 20px) * ${f})`; s.textContent = fmt(v); box.appendChild(s); });
+}
+ticks($("pmNTicks"), nS, [1, 2, 3, 4, 5, 6, 7, 8], v => String(v));
+ticks($("pdLTicks"), lS, [1000, 5000, 10000, 15000, 20000], v => v === 1000 ? "1k" : (v / 1000) + "k");
+ticks($("pdBTicks"), bS, [0, 10, 20, 30], v => String(v));
+
+function grp(n){ return n.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, " "); }
+function setFill(s){ s.style.setProperty("--fill", ((s.value - s.min) / (s.max - s.min) * 100) + "%"); }
+
+/* ---------- model for card 1 ---------- */
+function chainModel(){
+  const n = +nS.value;
+  if (ADD[mon]) { const a = ADD[mon], Mm = mass(a.f); return { kind: "add", a, n, M: n * Mm, Mm, water: 0 }; }
+  const c = CON[mon]; let M = 0; const units = [];
+  for (let i = 0; i < n; i++) { const u = c.seq[i % c.seq.length]; units.push(u); M += mass(u.f); }
+  return { kind: "con", c, n, units, M: M - (n - 1) * WATER, water: n - 1, next: c.seq[n % c.seq.length] };
 }
 
-resize();
-window.addEventListener('resize', resize);
-
-function parseAccent() {
-  const style = getComputedStyle(document.documentElement);
-  const acc = style.getPropertyValue('--acc').trim();
-  const match = acc.match(/^#([0-9a-fA-F]{6})$/);
-  if (!match) return { r: 123, g: 234, b: 90 };
-  const hex = match[1];
-  return {
-    r: parseInt(hex.slice(0, 2), 16),
-    g: parseInt(hex.slice(2, 4), 16),
-    b: parseInt(hex.slice(4, 6), 16)
-  };
+function setup(cv){
+  const ctx = cv.getContext("2d"), buf = document.createElement("canvas"), bctx = buf.getContext("2d");
+  return { cv, ctx, buf, bctx };
 }
-
-const accRGB = parseAccent();
-
-slider.addEventListener('input', (e) => {
-  const val = parseInt(e.target.value);
-  targetChain = val;
-  slider.style.setProperty('--fill', val + '%');
-  canvasOverlay.textContent = val + (val === 1 ? ' MONOMER UNIT' : ' MONOMER UNITS');
-});
-
-toggleBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    toggleBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentMode = btn.dataset.mode;
-    
-    if (currentMode === 'addition') {
-      chainTag.textContent = 'ADDITION MODE';
-      knowdrop.innerHTML = `Addition polymerisation occurs when monomers containing carbon-carbon double bonds (C=C) join together without losing any atoms, with the π-bond breaking to form new σ-bonds between successive monomer units. Classic examples include ethene forming polyethene, styrene forming polystyrene, and vinyl chloride forming PVC—all proceeding via radical or ionic chain mechanisms that propagate rapidly once initiated. The polymer chain grows by sequential addition of identical monomer units, preserving the entire molecular structure of each monomer in the final polymer backbone, which means the empirical formula of the polymer matches the monomer exactly. This mechanism is characterised by three distinct stages: initiation (radical or ion formation), propagation (rapid chain growth), and termination (chain-end coupling or disproportionation).`;
-    } else {
-      chainTag.textContent = 'CONDENSATION MODE';
-      knowdrop.innerHTML = `Condensation polymerisation requires monomers with two reactive functional groups—such as dicarboxylic acids reacting with diamines to form polyamides (nylon), or diols reacting with dicarboxylic acids to form polyesters (PET). Each condensation step releases a small molecule, typically water or HCl, as the functional groups combine to form a new covalent linkage between monomer units. This mechanism is fundamentally different from addition polymerisation because atoms are lost during polymerisation, meaning the repeat unit's empirical formula differs from the original monomers. The reaction proceeds stepwise rather than via chain propagation, with polymer chains growing gradually as individual condensation reactions occur between available functional groups throughout the reaction mixture. Common examples include the formation of proteins (amino acids condensing via peptide bonds), nylon-6,6 (hexanediamine + adipic acid), and polyethylene terephthalate (ethylene glycol + terephthalic acid).`;
-    }
-  });
-});
-
-function draw() {
-  time += 0.016;
-  
-  // Smooth chain value animation
-  chainValue += (targetChain - chainValue) * 0.12;
-  
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, w, h);
-  
-  const numMonomers = Math.max(1, Math.round(chainValue));
-  const spacing = Math.min(w * 0.85 / numMonomers, 32);
-  const startX = (w - (numMonomers - 1) * spacing) / 2;
-  const cy = h / 2;
-  
-  // Draw bonds first
-  ctx.strokeStyle = `rgba(${accRGB.r},${accRGB.g},${accRGB.b},0.3)`;
-  ctx.lineWidth = 2;
-  for (let i = 0; i < numMonomers - 1; i++) {
-    const x1 = startX + i * spacing;
-    const x2 = startX + (i + 1) * spacing;
-    ctx.beginPath();
-    ctx.moveTo(x1, cy);
-    ctx.lineTo(x2, cy);
-    ctx.stroke();
-  }
-  
-  // Draw monomers
-  for (let i = 0; i < numMonomers; i++) {
-    const x = startX + i * spacing;
-    const phase = time * 1.2 + i * 0.3;
-    const pulse = 0.85 + 0.15 * Math.sin(phase);
-    const radius = 8 * pulse;
-    
-    // Glow
-    const glow = ctx.createRadialGradient(x, cy, 0, x, cy, radius * 3);
-    glow.addColorStop(0, `rgba(${accRGB.r},${accRGB.g},${accRGB.b},0.4)`);
-    glow.addColorStop(0.5, `rgba(${accRGB.r},${accRGB.g},${accRGB.b},0.15)`);
-    glow.addColorStop(1, `rgba(${accRGB.r},${accRGB.g},${accRGB.b},0)`);
-    
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.fillStyle = glow;
-    ctx.beginPath();
-    ctx.arc(x, cy, radius * 3, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-    
-    // Core
-    ctx.fillStyle = `rgb(${accRGB.r},${accRGB.g},${accRGB.b})`;
-    ctx.beginPath();
-    ctx.arc(x, cy, radius, 0, Math.PI * 2);
-    ctx.fill();
-    
-    // Inner highlight
-    ctx.fillStyle = 'rgba(255,255,255,0.5)';
-    ctx.beginPath();
-    ctx.arc(x - radius * 0.25, cy - radius * 0.25, radius * 0.3, 0, Math.PI * 2);
-    ctx.fill();
-    
-    // If condensation mode, add water droplets
-    if (currentMode === 'condensation' && i < numMonomers - 1 && chainValue > 5) {
-      const dropX = (startX + i * spacing + startX + (i + 1) * spacing) / 2;
-      const dropY = cy + 20 + 6 * Math.sin(time * 2 + i);
-      
-      ctx.fillStyle = 'rgba(173,216,230,0.6)';
-      ctx.beginPath();
-      ctx.arc(dropX, dropY, 3, 0, Math.PI * 2);
-      ctx.fill();
-      
-      ctx.fillStyle = 'rgba(255,255,255,0.4)';
-      ctx.beginPath();
-      ctx.arc(dropX - 1, dropY - 1, 1, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  }
-  
-  // Bloom
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+const C1 = setup($("pmCanvas")), C2 = setup($("pdCanvas"));
+function size(C){
+  const r = C.cv.getBoundingClientRect(); if (!r.width || !r.height) return false;
+  C.cv.width = Math.round(r.width * dpr); C.cv.height = Math.round(r.height * dpr);
+  C.buf.width = C.cv.width; C.buf.height = C.cv.height; return true;
+}
+function begin(C){
+  const ctx = C.ctx; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.globalCompositeOperation = "source-over"; ctx.globalAlpha = 1; ctx.filter = "none";
+  const w = C.cv.width / dpr, h = C.cv.height / dpr;
+  ctx.fillStyle = "#000"; ctx.fillRect(0, 0, w, h); return { w, h };
+}
+function finish(C, w, h){
+  const ctx = C.ctx;
+  C.bctx.setTransform(1, 0, 0, 1, 0, 0); C.bctx.clearRect(0, 0, C.buf.width, C.buf.height);
+  if (C.cv.width && C.cv.height) C.bctx.drawImage(C.cv, 0, 0);
+  ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
+  if (C.buf.width && C.buf.height) ctx.drawImage(C.buf, 0, 0, w, h);
   ctx.restore();
-  
-  // Vignette
-  const vig = ctx.createRadialGradient(w / 2, cy, h * 0.28, w / 2, cy, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-  
-  // Update stats
-  const displayChain = Math.round(chainValue);
-  chainLengthEl.textContent = displayChain;
-  
-  // Assume monomer mass ~28 (like ethene) for addition, ~100 for condensation
-  const monomerMass = currentMode === 'addition' ? 28 : 100;
-  const totalMass = displayChain * monomerMass;
-  molMassEl.textContent = totalMass.toLocaleString();
-  
-  animFrame = requestAnimationFrame(draw);
+  const vig = ctx.createRadialGradient(w / 2, h / 2, h * 0.28, w / 2, h / 2, w * 0.72);
+  vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+  ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
+}
+function line(ctx, x1, y1, x2, y2, col, lw){ ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); }
+function txt(ctx, s, x, y, col, size, weight, align){ ctx.font = `${weight || 400} ${size}px ${MONO}`; ctx.fillStyle = col; ctx.textAlign = align || "center"; ctx.textBaseline = "middle"; ctx.fillText(s, x, y); }
+
+/* one CH2=CXY unit: two carbons at (x, y) and (x + s, y); dbl = draw the C=C double bond */
+function drawUnit(ctx, a, x, y, s, fs, dbl, colC){
+  const v = fs * 1.55;
+  const subs = a.subs;
+  [[x, subs[0], subs[1]], [x + s, subs[2], subs[3]]].forEach(c => {
+    line(ctx, c[0], y - fs * 0.6, c[0], y - v + fs * 0.6, DIM, 1.2);
+    line(ctx, c[0], y + fs * 0.6, c[0], y + v - fs * 0.6, DIM, 1.2);
+    txt(ctx, c[1], c[0], y - v, INK, fs, 400);
+    txt(ctx, c[2], c[0], y + v, INK, fs, 400);
+    txt(ctx, "C", c[0], y, colC || INK, fs, 600);
+  });
+  if (dbl) { line(ctx, x + fs * 0.55, y - 3, x + s - fs * 0.55, y - 3, AMB, 2); line(ctx, x + fs * 0.55, y + 3, x + s - fs * 0.55, y + 3, AMB, 2); }
+  else line(ctx, x + fs * 0.55, y, x + s - fs * 0.55, y, INK, 1.4);
+}
+function pieces(ctx, parts, x, y, fs, cols){
+  ctx.font = `500 ${fs}px ${MONO}`; let tw = 0; parts.forEach(p => tw += ctx.measureText(p[0]).width);
+  let cx = x - tw / 2;
+  parts.forEach(p => { const pw = ctx.measureText(p[0]).width; txt(ctx, p[0], cx, y, cols[p[1]], fs, 500, "left");
+    if (p[1] === 1) { ctx.strokeStyle = AMB; ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(cx + pw / 2, y, pw / 2 + 4, fs * 0.75, 0, 0, Math.PI * 2); ctx.stroke(); }
+    cx += pw; });
+  return tw;
+}
+function waterMol(ctx, x, y, r){
+  ctx.fillStyle = AMB; ctx.strokeStyle = AMB; ctx.lineWidth = 1.5;
+  const hx = r * 1.4, hy = r * 1.1;
+  line(ctx, x, y, x - hx, y + hy, AMB, 1.5); line(ctx, x, y, x + hx, y + hy, AMB, 1.5);
+  ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+  ctx.globalAlpha = 0.8; ctx.beginPath(); ctx.arc(x - hx, y + hy, r * 0.6, 0, Math.PI * 2); ctx.arc(x + hx, y + hy, r * 0.6, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1;
 }
 
-draw();
+function draw1(){
+  const C = C1, ctx = C.ctx; if (!C.cv.width) return;
+  const d = begin(C), w = d.w, h = d.h, st = chainModel();
+  const pad = Math.max(14, w * 0.04), ovH = 40;
+  const fs = Math.max(11, Math.min(15, w / 50));
+  const usable = w - pad * 2;
+  /* ---- top: the chain ---- */
+  txt(ctx, `Chain · ${st.n} ${st.n === 1 ? "monomer" : "monomers"} joined`, pad, h * 0.07, DIM, Math.max(11, fs * 0.9), 400, "left");
+  const chainTop = h * 0.07 + fs * 1.4;
+  const lowerH = Math.max(fs * 7, (h - ovH) * 0.36);
+  const chainBot = h - ovH - lowerH - fs * 0.6;
+  const cols = [INK, AMB];
+  if (st.kind === "add") {
+    const s = Math.max(fs * 2.1, Math.min(fs * 3.2, usable / 17));
+    const pitch = s * 2;
+    const perRow = Math.max(1, Math.floor((usable - s * 1.2) / pitch));
+    const rows = Math.ceil(st.n / perRow);
+    const rowH = fs * 4.6;
+    const y0 = chainTop + Math.max(fs * 1.6, ((chainBot - chainTop) - rows * rowH) / 2 + fs * 1.6);
+    for (let i = 0; i < st.n; i++) {
+      const r = Math.floor(i / perRow), c = i % perRow;
+      const inRow = Math.min(perRow, st.n - r * perRow);
+      const x0 = w / 2 - (inRow * pitch - s) / 2 + c * pitch, y = y0 + r * rowH;
+      drawUnit(ctx, st.a, x0, y, s, fs, false);
+      /* new C–C bonds to the neighbours (accent) */
+      const lx = x0 - fs * 0.55, rx = x0 + s + fs * 0.55;
+      line(ctx, lx - (s - fs * 1.1) / (c === 0 ? 2 : 1), y, lx, y, ACC, 2.4);
+      line(ctx, rx, y, rx + (s - fs * 1.1) / (c === inRow - 1 ? 2 : 1), y, ACC, 2.4);
+      if (i === 0 && st.n >= 2) {
+        /* bracket the repeating unit */
+        ctx.strokeStyle = DIM; ctx.lineWidth = 1;
+        const bx1 = x0 - s * 0.5, bx2 = x0 + s * 1.5, by1 = y - fs * 2.2, by2 = y + fs * 2.2;
+        ctx.beginPath(); ctx.moveTo(bx1 + 5, by1); ctx.lineTo(bx1, by1); ctx.lineTo(bx1, by2); ctx.lineTo(bx1 + 5, by2); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(bx2 - 5, by1); ctx.lineTo(bx2, by1); ctx.lineTo(bx2, by2); ctx.lineTo(bx2 - 5, by2); ctx.stroke();
+      }
+    }
+    txt(ctx, w < 560 ? "green = new C–C bonds; old C=C now single" : "green bonds = new C–C bonds; the old C=C is now single", w / 2, chainBot, ACC, Math.max(11, fs * 0.82), 400);
+  } else {
+    /* text chain: start group, units, links, end group */
+    const c = st.c, ufs = fs;
+    ctx.font = `500 ${ufs}px ${MONO}`;
+    const linkW = c.oLink ? ctx.measureText("–O–").width : ufs * 1.4;
+    const items = [];
+    items.push({ t: c.start, col: INK, end: true });
+    st.units.forEach((u, i) => { if (i) items.push({ link: true }); items.push({ t: u.unit, col: INK }); });
+    items.push({ t: st.units[st.n - 1].endR, col: INK, end: true });
+    items.forEach(it => it.w = it.link ? linkW : ctx.measureText(it.t).width);
+    /* wrap into rows */
+    const rowsArr = [[]]; let acc = 0;
+    items.forEach(it => { if (acc + it.w > usable && rowsArr[rowsArr.length - 1].length) { rowsArr.push([]); acc = 0; } rowsArr[rowsArr.length - 1].push(it); acc += it.w; });
+    const rowH = ufs * 2.6;
+    const y0 = chainTop + Math.max(ufs, ((chainBot - chainTop) - rowsArr.length * rowH) / 2 + ufs);
+    let firstLink = null;
+    rowsArr.forEach((row, r) => {
+      let tw = 0; row.forEach(it => tw += it.w);
+      let x = w / 2 - tw / 2; const y = y0 + r * rowH;
+      row.forEach(it => {
+        if (it.link) {
+          if (c.oLink) txt(ctx, "–O–", x + it.w / 2, y, ACC, ufs, 600);
+          else line(ctx, x + 2, y, x + it.w - 2, y, ACC, 2.6);
+          if (!firstLink) firstLink = { x: x + it.w / 2, y };
+        } else txt(ctx, it.t, x, y, it.end ? DIM : it.col, ufs, 500, "left");
+        x += it.w;
+      });
+    });
+    if (firstLink) txt(ctx, `green = ${c.link}`, w / 2, chainBot, ACC, Math.max(11, fs * 0.82), 400);
+    else txt(ctx, "one monomer: no link yet", w / 2, chainBot, DIM, Math.max(11, fs * 0.82), 400);
+  }
+
+  /* ---- lower panel: next monomer (left) and what is released (right); stacked when narrow ---- */
+  const narrow = false;
+  const top = h - ovH - lowerH;
+  ctx.strokeStyle = "rgba(" + RGB + ",0.18)"; ctx.lineWidth = 1;
+  line(ctx, pad, top, w - pad, top, "rgba(" + RGB + ",0.18)", 1);
+  const lw = usable * (w < 560 ? 0.6 : 0.55);
+  const nx = pad + lw / 2;
+  const nTop = top + fs * 1.1;
+  txt(ctx, "Next monomer · amber part reacts", narrow ? w / 2 : nx, nTop, DIM, Math.max(11, fs * 0.82), 400);
+  const nH = narrow ? lowerH * 0.5 : lowerH;
+  const ny = nTop + (nH - fs * 1.1) / 2 + fs * 0.2;
+  if (st.kind === "add") {
+    const s = fs * 2.6;
+    ctx.font = `400 ${Math.max(11, fs * 0.85)}px ${MONO}`; const nmW = ctx.measureText(st.a.name).width;
+    drawUnit(ctx, st.a, nx - (s + fs * 1.6 + nmW) / 2, ny, s, fs, true);
+    txt(ctx, st.a.name, nx - (s + fs * 1.6 + nmW) / 2 + s + fs * 1.6, ny, INK, Math.max(11, fs * 0.85), 400, "left");
+  } else {
+    const nm = st.next;
+    let pfs = fs; ctx.font = `500 ${pfs}px ${MONO}`;
+    let tw = 0; nm.free.forEach(p => tw += ctx.measureText(p[0]).width);
+    if (tw > lw - 16) pfs = Math.max(11, pfs * (lw - 16) / tw);
+    pieces(ctx, nm.free, narrow ? w / 2 : nx, ny - fs * 0.4, pfs, cols);
+    txt(ctx, nm.name, narrow ? w / 2 : nx, ny + fs * 1.3, DIM, Math.max(11, fs * 0.8), 400);
+  }
+  /* released tray */
+  const rx0 = narrow ? pad : pad + lw + usable * 0.03, rw = narrow ? usable : usable - lw - usable * 0.03;
+  const rTop = narrow ? top + nH + fs * 0.4 : nTop;
+  const rcx = rx0 + rw / 2;
+  txt(ctx, "Released", rcx, rTop, DIM, Math.max(11, fs * 0.82), 400);
+  const rBot = h - ovH - fs * 0.5;
+  if (st.water === 0) {
+    const my = (rTop + rBot) / 2 + fs * 0.3, tfs = Math.max(11, fs * 0.85);
+    if (st.kind === "add") { txt(ctx, "nothing:", rcx, my - tfs * 0.7, ACC, tfs, 500); txt(ctx, "every atom stays", rcx, my + tfs * 0.7, ACC, tfs, 500); }
+    else txt(ctx, "nothing yet", rcx, my, DIM, tfs, 500);
+  } else {
+    const r = Math.max(3.5, fs * 0.38), cell = r * 5.2;
+    const per = Math.max(1, Math.floor(rw / cell));
+    const rowsN = Math.ceil(st.water / per);
+    const midY = (rTop + fs * 0.6 + rBot) / 2;
+    for (let i = 0; i < st.water; i++) {
+      const rr = Math.floor(i / per), cc = i % per, inRow = Math.min(per, st.water - rr * per);
+      const x = rcx - (inRow - 1) * cell / 2 + cc * cell, y = midY - (rowsN - 1) * cell * 0.45 + rr * cell * 0.9 - r * 0.4;
+      waterMol(ctx, x, y, r);
+    }
+  }
+  finish(C, w, h);
+}
+
+/* ---------- card 2: chain packing ---------- */
+function seeded(i){ const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
+function draw2(){
+  const C = C2, ctx = C.ctx; if (!C.cv.width) return;
+  const d = begin(C), w = d.w, h = d.h;
+  const a = ADD[lastAdd], L = +lS.value, B = +bS.value;
+  const pad = Math.max(14, w * 0.04), ovH = 40;
+  const fs = Math.max(11, Math.min(14, w / 52));
+  const top = h * 0.08 + fs, bot = h - ovH - h * 0.05;
+  txt(ctx, `${a.poly} · side group ${a.side}`, pad, h * 0.07, DIM, fs, 400, "left");
+  const boxW = w - pad * 2;
+  /* spacing between chains grows with branching: branches stop chains lying close together */
+  const gap = fs * 1.15 + B * fs * 0.075;
+  const lanes = Math.max(2, Math.floor((bot - top) / gap));
+  const off = ((bot - top) - (lanes - 1) * gap) / 2;
+  /* drawn chain length grows with chain length: shorter chains = more chain ends in the same box */
+  const segL = boxW * (0.22 + 0.78 * (L - 1000) / 19000);
+  const amp = fs * 0.12 + B * fs * 0.02;
+  const brPerSeg = Math.round(B * segL / boxW * 0.45);
+  for (let k = 0; k < lanes; k++) {
+    const y = top + off + k * gap;
+    let x = pad - seeded(k + 1) * segL * 0.9;
+    let segIdx = 0;
+    while (x < pad + boxW) {
+      const x1 = Math.max(pad, x), x2 = Math.min(pad + boxW, x + segL);
+      if (x2 - x1 > 4) {
+        ctx.strokeStyle = "rgba(" + RGB + ",0.85)"; ctx.lineWidth = 1.6; ctx.beginPath();
+        for (let px = x1; px <= x2; px += 3) { const yy = y + Math.sin(px * 0.22 + k) * amp; if (px === x1) ctx.moveTo(px, yy); else ctx.lineTo(px, yy); }
+        ctx.stroke();
+        /* side groups along the chain */
+        if (a.side !== "H") { ctx.fillStyle = AMB; for (let px = x1 + 4; px < x2; px += 9) { ctx.beginPath(); ctx.arc(px, y + Math.sin(px * 0.22 + k) * amp - 3, a.side === "F" ? 1.3 : 1.8, 0, Math.PI * 2); ctx.fill(); } }
+        /* chain ends */
+        ctx.fillStyle = INK;
+        if (x >= pad) { ctx.beginPath(); ctx.arc(x1, y + Math.sin(x1 * 0.22 + k) * amp, 2.6, 0, Math.PI * 2); ctx.fill(); }
+        if (x + segL <= pad + boxW) { ctx.beginPath(); ctx.arc(x2, y + Math.sin(x2 * 0.22 + k) * amp, 2.6, 0, Math.PI * 2); ctx.fill(); }
+        /* branches: short side chains that poke into the space between chains */
+        for (let b = 0; b < brPerSeg; b++) {
+          const bx = x + segL * (b + 0.5 + (seeded(k * 31 + segIdx * 7 + b) - 0.5) * 0.6) / brPerSeg;
+          if (bx < x1 || bx > x2) continue;
+          const by = y + Math.sin(bx * 0.22 + k) * amp, dir = seeded(k * 13 + b + segIdx) > 0.5 ? 1 : -1;
+          line(ctx, bx, by, bx + gap * 0.25, by + dir * gap * 0.42, "rgba(" + RGB + ",0.85)", 1.4);
+        }
+      }
+      x += segL + fs * 0.9; segIdx++;
+    }
+  }
+  finish(C, w, h);
+}
+
+function dropText(){
+  if (dropKey === "nat") return `Living things make polymers too, and the big natural ones are condensation polymers. Proteins form when amino acids join: the –COOH of one reacts with the –NH₂ of the next, making a peptide (amide) link and releasing one water molecule. Starch and cellulose both form from glucose, joined by –O– (glycosidic) links with a water molecule lost each time; starch is built from α-glucose and cellulose from β-glucose, which is why one is food and the other is wood. Breaking these links back apart needs water added again, which is called hydrolysis. Natural rubber is the odd one out: its chain has the shape of an addition polymer of isoprene, a monomer with C=C bonds.`;
+  if (dropKey === "man") return `Most packaging plastics are addition polymers made from alkenes: ethene gives polyethene, chloroethene gives PVC, propene gives polypropene and tetrafluoroethene gives PTFE. The monomer is chosen for its side group: polar C–Cl bonds add dipole–dipole forces that make PVC rigid, while the C–F bonds in PTFE are so strong and unreactive that it is used for non-stick coatings. Manufactured condensation polymers need monomers with two functional groups at each end. Nylon 6,6 joins hexanedioic acid and hexane-1,6-diamine through amide links, and PET (drink bottles) joins benzene-1,4-dicarboxylic acid and ethane-1,2-diol through ester links. In both, water is released every time a link forms.`;
+  return `To decide which process made a polymer, look at the monomer first. If it has a C=C double bond and nothing else that reacts, it is an addition monomer, and the polymer has the same empirical formula as the monomer because no atoms are lost. If it has two reactive groups, such as –OH, –COOH or –NH₂, it is a condensation monomer, and a small molecule (usually water) leaves at every link. In the polymer, a backbone of only carbon atoms points to addition, while amide (–CONH–), ester (–COO–) or –O– links in the backbone point to condensation. For n monomers in one chain, condensation releases n − 1 water molecules, which is why the chain weighs less than the monomers that made it.`;
+}
+
+function update1(){
+  setFill(nS);
+  const st = chainModel();
+  $("pmNV").textContent = String(st.n);
+  $("pmM").textContent = st.M.toFixed(1) + " g/mol";
+  $("pmW").textContent = st.water + " H₂O";
+  if (st.kind === "add") {
+    $("pmTag").textContent = `Addition · ${st.n} ${st.n === 1 ? "unit" : "units"}`;
+    $("pmOverlay").textContent = `${st.n} × ${st.Mm.toFixed(2)} g/mol · nothing lost`;
+  } else {
+    $("pmTag").textContent = `Condensation · ${st.n} ${st.n === 1 ? "unit" : "units"}`;
+    $("pmOverlay").textContent = st.water ? `${st.n} monomers → ${st.c.poly.split(" (")[0]} + ${st.water} H₂O` : `1 monomer · no link yet`;
+  }
+  draw1();
+}
+function update2(){
+  setFill(lS); setFill(bS);
+  const a = ADD[lastAdd], L = +lS.value, B = +bS.value;
+  const Mm = mass(a.f);
+  $("pdLV").textContent = grp(L) + " units";
+  $("pdBV").textContent = String(B);
+  $("pdM").textContent = grp(Math.round(L * Mm)) + " g/mol";
+  $("pdBr").textContent = grp(Math.round(B * 2 * L / 1000));
+  const close = B <= 10;
+  $("pdTag").textContent = close ? "Close-packed" : "Loosely packed";
+  $("pdOverlay").textContent = close ? `${B} branches per 1000 C · chains pack closely` : `${B} branches per 1000 C · chains held apart`;
+  const longC = L >= 10000;
+  const forces = a.side === "Cl" ? "dispersion forces plus dipole–dipole forces from the polar C–Cl bonds" : a.side === "F" ? "dispersion forces between chains wrapped in unreactive C–F bonds" : a.side === "CH₃" ? "dispersion forces, with CH₃ side groups along the chain" : "dispersion forces only";
+  $("pdCap").textContent = `${a.poly[0].toUpperCase() + a.poly.slice(1)} chains are held together by ${forces}. ` +
+    (close ? "With few branches the chains lie close together, so the forces between them are stronger: denser, stiffer, higher softening temperature (like HDPE, about 0.94 to 0.97 g/cm³). " : "Branches stop the chains lying close together, so the forces between them are weaker: less dense, softer, more flexible (like LDPE, about 0.91 to 0.93 g/cm³). ") +
+    (longC ? `At ${grp(L)} units the chains are long: more contact and more tangling, so the plastic is stronger and softens at a higher temperature.` : `At ${grp(L)} units the chains are short: less contact and less tangling, so the plastic is weaker and softens at a lower temperature.`);
+  draw2();
+}
+
+function press(groupSel, btn){ document.querySelectorAll(groupSel).forEach(x => x.setAttribute("aria-pressed", x === btn ? "true" : "false")); }
+document.querySelectorAll("#pmAdd .tg").forEach(b => b.addEventListener("click", () => {
+  mon = b.dataset.m; press("#pmAdd .tg", b);
+  if (ADD[mon]) { lastAdd = mon; document.querySelectorAll("#pdMon .tg").forEach(x => x.setAttribute("aria-pressed", x.dataset.m === mon ? "true" : "false")); update2(); }
+  update1();
+}));
+document.querySelectorAll("#pdMon .tg").forEach(b => b.addEventListener("click", () => {
+  lastAdd = b.dataset.m; press("#pdMon .tg", b);
+  if (ADD[mon]) { mon = lastAdd; document.querySelectorAll("#pmAdd .tg").forEach(x => x.setAttribute("aria-pressed", x.dataset.m === mon && ADD[x.dataset.m] ? "true" : "false")); update1(); }
+  update2();
+}));
+document.querySelectorAll(".pm-drops .tg").forEach(b => b.addEventListener("click", () => {
+  dropKey = b.dataset.d; press(".pm-drops .tg", b); $("pmDrop").textContent = dropText();
+}));
+nS.addEventListener("input", update1);
+lS.addEventListener("input", update2);
+bS.addEventListener("input", update2);
+function resizeAll(){ if (size(C1)) draw1(); if (size(C2)) draw2(); }
+window.addEventListener("resize", resizeAll);
+if (window.ResizeObserver) { const ro = new ResizeObserver(() => resizeAll()); ro.observe(C1.cv.parentElement); ro.observe(C2.cv.parentElement); }
+$("pmDrop").textContent = dropText();
+update1(); update2(); resizeAll();
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { draw1(); draw2(); });
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'polymerisation-mechanisms-and-monomer-structure'},'*');}catch(e){}}

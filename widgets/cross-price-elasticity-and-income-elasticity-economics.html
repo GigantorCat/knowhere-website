@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Cross Price Elasticity and Income Elasticity — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Cross price elasticity and income elasticity — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -402,7 +402,7 @@ let animFrame;
 
 const knowdrops = {
   substitute: "Positive XED identifies substitute goods like Coke and Pepsi where consumers switch between alternatives when relative prices change. When Coke's price rises by 10% and Pepsi demand increases by 8%, the XED of +0.8 confirms they're substitutes — buyers flee the more expensive option for its cheaper rival. The stronger the substitutability, the higher the positive XED value. Perfect substitutes would have infinite XED as any price difference causes complete switching, while weak substitutes have XED values closer to zero reflecting limited consumer willingness to switch between them.",
-  luxury: "YED greater than 1 identifies luxury goods whose demand grows proportionally faster than income rises. Restaurant meals with YED of 1.5 mean a 10% income increase produces a 15% demand increase — consumers splurge disproportionately on luxuries when they feel wealthier. Normal goods have positive YED between 0 and 1 showing demand rises with income but at a slower rate, while inferior goods like instant noodles have negative YED as rising income causes consumers to trade up to better alternatives. The income elasticity boundary at YED = 1 separates necessities from luxuries in consumer spending patterns."
+  luxury: "YED greater than 1 identifies luxury goods whose demand grows proportionally faster than income rises. Restaurant meals with YED of 1.5 mean a 10% income increase produces a 15% demand increase — consumers splurge disproportionately on luxuries when they feel wealthier. Normal goods are any goods with a positive YED (above 0), so luxuries are normal goods too. Necessities are normal goods with YED between 0 and 1, showing demand rises with income but at a slower rate, while inferior goods like instant noodles have negative YED as rising income causes consumers to trade up to better alternatives. The income elasticity boundary at YED = 1 separates necessities from luxuries in consumer spending patterns."
 };
 
 function resize() {
@@ -493,8 +493,11 @@ function draw() {
   const baseY = h - 40;
   const rangeY = h - 80;
   
-  const startY = baseY - (rangeY / 2) - (xedValue * rangeY / 4);
-  const endY = baseY - (rangeY / 2) + (xedValue * rangeY / 4);
+  /* Good B demand change = XED x Good A price change. Left end = Good A price -10%, right end = +10%.
+     Canvas y grows downward, so a rise in demand is a smaller y. Positive XED rises left to right. */
+  const midY = baseY - (rangeY / 2);
+  const startY = midY + (xedValue * rangeY / 4);
+  const endY = midY - (xedValue * rangeY / 4);
   
   ctx.strokeStyle = '#F187B6';
   ctx.lineWidth = 3;

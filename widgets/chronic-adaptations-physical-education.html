@@ -394,6 +394,7 @@ btnAerobic.addEventListener('click', () => {
   btnAerobic.classList.add('active');
   btnResistance.classList.remove('active');
   knowdropText.textContent = aerobicText;
+  updateStats();
   draw();
 });
 
@@ -402,6 +403,7 @@ btnResistance.addEventListener('click', () => {
   btnResistance.classList.add('active');
   btnAerobic.classList.remove('active');
   knowdropText.textContent = resistanceText;
+  updateStats();
   draw();
 });
 
@@ -423,13 +425,19 @@ slider.addEventListener('input', (e) => {
     canvasTag.textContent = 'Peak chronic adaptations';
   }
   
-  const mitoIncrease = 1 + (weeks / 12) * 0.85;
-  const muscleIncrease = 1 + (weeks / 12) * 0.35;
-  mitoStat.textContent = Math.round(mitoIncrease * 100) + '%';
-  muscleStat.textContent = Math.round(muscleIncrease * 100) + '%';
-  
+  updateStats();
   draw();
 });
+
+/* Adaptations are specific to the training done: aerobic work raises mitochondria density and leaves
+   fibre size about the same; resistance work enlarges fibres and does not raise mitochondria density. */
+function updateStats() {
+  const p = weeks / 12;
+  const mitoIncrease = mode === 'aerobic' ? 1 + p * 0.85 : 1;
+  const muscleIncrease = mode === 'resistance' ? 1 + p * 0.35 : 1;
+  mitoStat.textContent = Math.round(mitoIncrease * 100) + '%';
+  muscleStat.textContent = Math.round(muscleIncrease * 100) + '%';
+}
 
 function resize() {
   const dpr = Math.min(window.devicePixelRatio || 1, 2);

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Calorimetry and the Calibration Factor — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Calorimetry and the calibration factor — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -319,7 +319,7 @@ canvas {
 <div class="container">
   <h1>Your Calorimeter Doesn't Measure <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">Heat</span></h1>
   
-  <p class="intro">It measures temperature change — and you have to teach it what that temperature change means in joules. The calibration factor is that translation key, unique to your specific apparatus. Drag the slider to adjust the CF and watch how it changes the energy you'd calculate from the same reaction.</p>
+  <p class="intro">It measures temperature change — and you have to teach it what that temperature change means in joules. The calibration factor is that translation key, unique to your specific apparatus. Drag the slider to change the CF: the same reaction always releases the same 5000 J, so a calorimeter with a bigger CF shows a smaller temperature rise.</p>
 
   <div class="card">
     <div class="card-header">
@@ -330,7 +330,7 @@ canvas {
     
     <div class="canvas-wrapper">
       <canvas id="mainCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">Energy calculated = 5000 J</div>
+      <div class="canvas-overlay" id="canvasOverlay">ΔT = 20.0 °C for 5000 J</div>
     </div>
 
     <div class="slider-section">
@@ -345,11 +345,11 @@ canvas {
 
     <div class="stat-row">
       <div class="stat">
-        <div class="stat-label">CF Value</div>
-        <div class="stat-value" style="color:var(--acc)" id="cfValue">250</div>
+        <div class="stat-label">Temperature rise (°C)</div>
+        <div class="stat-value" style="color:var(--acc)" id="cfValue">20.0</div>
       </div>
       <div class="stat">
-        <div class="stat-label">Energy Released</div>
+        <div class="stat-label">Energy released (J, same reaction)</div>
         <div class="stat-value" style="color:var(--amb)" id="energyValue">5000</div>
       </div>
     </div>
@@ -390,7 +390,8 @@ const btnMeasure = document.getElementById('btnMeasure');
 const knowdropText = document.getElementById('knowdropText');
 
 let cf = 250;
-const deltaT = 20; // Fixed temperature rise for the reaction
+const energyReleased = 5000; // J, fixed: the same reaction releases the same energy in any calorimeter
+function tempRise() { return energyReleased / cf; } // ΔT = E / CF
 
 const particles = [];
 for (let i = 0; i < 40; i++) {
@@ -415,10 +416,11 @@ function resize() {
 }
 
 function updateUI() {
-  const energy = Math.round(cf * deltaT);
+  const dT = tempRise();
+  const energy = Math.round(cf * dT); // CF × ΔT gives back the energy released
   cfTag.textContent = `CF = ${cf} J °C⁻¹`;
-  canvasOverlay.textContent = `Energy calculated = ${energy} J`;
-  cfValue.textContent = cf;
+  canvasOverlay.textContent = `ΔT = ${dT.toFixed(1)} °C for ${energy} J`;
+  cfValue.textContent = dT.toFixed(1);
   energyValue.textContent = energy;
   
   const fillPercent = ((cf - 100) / 400) * 100;
@@ -457,8 +459,9 @@ function draw(time) {
   ctx.lineTo(caloX + caloW, waterLevel);
   ctx.stroke();
   
-  // Animate particles based on CF (higher CF = more energetic particles)
-  const intensity = (cf - 100) / 400;
+  // Water warmth follows the temperature rise: ΔT runs from 50 °C (CF 100) down to 10 °C (CF 500)
+  const dT = tempRise();
+  const intensity = Math.max(0, Math.min(1, (dT - 10) / 40));
   
   particles.forEach(p => {
     p.x += p.vx * 0.003;
@@ -493,8 +496,8 @@ function draw(time) {
   ctx.lineWidth = 1.5;
   ctx.strokeRect(thermX, thermY, thermW, thermH);
   
-  // Mercury column rises with intensity
-  const mercuryHeight = thermH * (0.2 + intensity * 0.6);
+  // Thermometer column shows the temperature rise (0 to 50 °C scale)
+  const mercuryHeight = thermH * (0.1 + 0.8 * Math.min(dT, 50) / 50);
   const gradient = ctx.createLinearGradient(thermX, thermY + thermH, thermX, thermY + thermH - mercuryHeight);
   gradient.addColorStop(0, 'rgba(250,199,117,0.8)');
   gradient.addColorStop(1, 'rgba(250,199,117,0.4)');
@@ -543,13 +546,13 @@ cfSlider.addEventListener('input', (e) => {
 btnCalibrate.addEventListener('click', () => {
   btnCalibrate.classList.add('active');
   btnMeasure.classList.remove('active');
-  knowdropText.textContent = 'You run a calibration first by supplying a known amount of electrical energy and recording the temperature rise. If you put in 2500 joules and the temperature rises by 10 °C, your CF is 250 J °C⁻¹. This number absorbs all the quirks of your specific setup — the mass of water, the heat capacity of the container, even heat lost to the air. Once you know your CF, you can measure any reaction in that same calorimeter by multiplying CF by the observed temperature change.';
+  knowdropText.textContent = `You run a calibration first by supplying a known amount of electrical energy and recording the temperature rise. If you put in 2500 joules and the temperature rises by 10 °C, your CF is 250 J °C⁻¹. This number absorbs all the quirks of your specific setup — the mass of water, the heat capacity of the container, even heat lost to the air. Once you know your CF, you can measure any reaction in that same calorimeter by multiplying CF by the observed temperature change.`;
 });
 
 btnMeasure.addEventListener('click', () => {
   btnMeasure.classList.add('active');
   btnCalibrate.classList.remove('active');
-  knowdropText.textContent = 'Now you run your unknown reaction in the same calorimeter. You observe a temperature rise of 20 °C. You don\'t know the energy directly, but you know your CF is 250 J °C⁻¹ from calibration. So the energy released is simply CF × ΔT = 250 × 20 = 5000 J. If you change calorimeters or modify your setup, you must recalibrate because the CF will change. The CF is not a universal constant — it\'s a property of your specific apparatus.';
+  knowdropText.textContent = `Now you run your unknown reaction in the same calorimeter. You observe a temperature rise of 20 °C. You don't know the energy directly, but you know your CF is 250 J °C⁻¹ from calibration. So the energy released is simply CF × ΔT = 250 × 20 = 5000 J. If you change calorimeters or modify your setup, you must recalibrate because the CF will change. The CF is not a universal constant — it's a property of your specific apparatus.`;
 });
 
 window.addEventListener('resize', resize);

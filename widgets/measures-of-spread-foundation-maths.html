@@ -179,17 +179,23 @@ canvas {
 }
 
 .ticks {
-  display: flex;
-  justify-content: space-between;
+  position: relative;
+  height: 12px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 9px;
   color: var(--ink-dim);
   margin-top: 6px;
 }
 
+.ticks span {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+}
+
 .stat-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 16px;
   padding-top: 16px;
   border-top: 1px solid var(--line);
@@ -316,14 +322,14 @@ canvas {
   
   <h1>Two Outliers Can Make Your Data Look <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">Perfectly Scattered</span></h1>
   
-  <p class="intro">Range and standard deviation respond very differently to extreme values — range captures only the edges while standard deviation weighs every point. Drag the slider below to add outliers and watch how each measure reacts to the same dataset.</p>
+  <p class="intro">Range and standard deviation are both pulled hard by extreme values — range uses only the two edges, and standard deviation squares every distance from the mean. The interquartile range (IQR) uses only the middle half, so it barely moves. Drag the slider below to add outliers and watch how each measure reacts to the same dataset.</p>
   
   <div class="card">
     <div class="card-header">
       <span class="card-label">Dataset Viewer</span>
       <span class="live-tag" id="liveTag">20 points clustered</span>
     </div>
-    <p class="card-hint">Slider adds extreme outliers to the distribution</p>
+    <p class="card-hint">Each value is a point’s distance from the centre. The slider adds up to four extreme outliers.</p>
     
     <div class="canvas-wrapper">
       <canvas id="canvas"></canvas>
@@ -332,11 +338,13 @@ canvas {
     
     <div class="slider-group">
       <label class="slider-label" for="spreadSlider">Outlier Count</label>
-      <input type="range" id="spreadSlider" class="spread-slider" min="0" max="100" value="0" step="1">
-      <div class="ticks">
-        <span>None</span>
-        <span>Some</span>
-        <span>Many</span>
+      <input type="range" id="spreadSlider" class="spread-slider" min="0" max="4" value="0" step="1">
+      <div class="ticks" aria-hidden="true">
+        <span style="left:calc(10px + 0 * (100% - 20px))">0</span>
+        <span style="left:calc(10px + 0.25 * (100% - 20px))">1</span>
+        <span style="left:calc(10px + 0.5 * (100% - 20px))">2</span>
+        <span style="left:calc(10px + 0.75 * (100% - 20px))">3</span>
+        <span style="left:calc(10px + 1 * (100% - 20px))">4</span>
       </div>
     </div>
     
@@ -346,8 +354,12 @@ canvas {
         <div class="stat-value" id="rangeValue">4.0</div>
       </div>
       <div class="stat">
-        <div class="stat-label">Std Dev</div>
-        <div class="stat-value" id="sdValue">0.6</div>
+        <div class="stat-label">Std dev</div>
+        <div class="stat-value" id="sdValue" style="color:var(--amb)">0.6</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">IQR</div>
+        <div class="stat-value" id="iqrValue" style="color:var(--ink)">0.5</div>
       </div>
     </div>
   </div>
@@ -380,6 +392,7 @@ const liveTag = document.getElementById('liveTag');
 const overlayTag = document.getElementById('overlayTag');
 const rangeValue = document.getElementById('rangeValue');
 const sdValue = document.getElementById('sdValue');
+const iqrValue = document.getElementById('iqrValue');
 const slider = document.getElementById('spreadSlider');
 const knowdrop = document.getElementById('knowdrop');
 const toggleBtns = document.querySelectorAll('.toggle-btn');
@@ -423,12 +436,13 @@ function initPoints() {
 }
 
 function updatePoints() {
-  const targetOutliers = Math.floor(outlierCount / 5);
+  const targetOutliers = outlierCount;
   const currentOutliers = points.filter(p => p.outlier).length;
   
   if (currentOutliers < targetOutliers) {
     for (let i = currentOutliers; i < targetOutliers; i++) {
-      const angle = Math.random() * Math.PI * 2;
+      // Keep outliers within 30 degrees of horizontal so every one stays on the canvas
+      const angle = (Math.random() < 0.5 ? 0 : Math.PI) + (Math.random() - 0.5) * Math.PI / 3;
       const dist = 8 + Math.random() * 4;
       points.push({
         x: Math.cos(angle) * dist,
@@ -477,17 +491,25 @@ function updatePoints() {
   const variance = values.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / values.length;
   const sd = Math.sqrt(variance);
   
+  // IQR: median of the lower half to median of the upper half
+  const sorted = values.slice().sort((a, b) => a - b);
+  const half = Math.floor(sorted.length / 2);
+  const med = arr => {
+    const m = Math.floor(arr.length / 2);
+    return arr.length % 2 ? arr[m] : (arr[m - 1] + arr[m]) / 2;
+  };
+  const iqr = med(sorted.slice(sorted.length - half)) - med(sorted.slice(0, half));
+  
   rangeValue.textContent = range.toFixed(1);
   sdValue.textContent = sd.toFixed(1);
+  iqrValue.textContent = iqr.toFixed(1);
   
   liveTag.textContent = `${points.length} points${outlierCount > 0 ? ' + outliers' : ' clustered'}`;
   
   if (outlierCount === 0) {
     overlayTag.textContent = 'All points within 2 units of centre';
-  } else if (outlierCount < 50) {
-    overlayTag.textContent = 'Outliers appearing at edges';
   } else {
-    overlayTag.textContent = 'Heavy outlier contamination';
+    overlayTag.textContent = `${outlierCount} outlier${outlierCount > 1 ? 's' : ''} · IQR holds`;
   }
 }
 
@@ -602,7 +624,7 @@ function animate() {
 slider.addEventListener('input', (e) => {
   const val = parseInt(e.target.value);
   outlierCount = val;
-  const pct = (val / 100) * 100;
+  const pct = (val / 4) * 100;
   slider.style.setProperty('--fill', pct + '%');
 });
 

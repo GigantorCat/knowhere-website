@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Corporate Social Responsibility in Business — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Corporate social responsibility in business — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -178,13 +178,19 @@ canvas {
 }
 
 .tick-labels {
-  display: flex;
-  justify-content: space-between;
+  position: relative;
+  height: 12px;
+  line-height: 12px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 9px;
   color: var(--ink-dim);
+  margin-top: 4px;
   text-transform: uppercase;
 }
+.tick-labels .tk { position: absolute; top: 0; white-space: nowrap; transform: translateX(-50%); }
+.tick-labels .tk-min { left: 0; transform: none; }
+.tick-labels .tk-max { right: 0; transform: none; }
+
 
 .stat-row {
   display: grid;
@@ -208,7 +214,8 @@ canvas {
 
 .stat-value {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 24px;
+  font-size: 18px;
+  line-height: 1.25;
   font-weight: 500;
 }
 
@@ -328,7 +335,7 @@ canvas {
 </style>
 
 <div class="container">
-  <h2 class="sr-only">Interactive CSR Spectrum Visualisation</h2>
+  <h2 class="sr-only">Interactive CSR spectrum visualisation</h2>
 
   <h1>Compliance is the floor, not the <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">ceiling</span></h1>
   
@@ -336,34 +343,34 @@ canvas {
 
   <div class="card">
     <div class="card-header">
-      <span class="card-label">CSR Spectrum</span>
-      <span class="card-live" id="liveCsr">Minimum Compliance</span>
+      <span class="card-label">CSR spectrum</span>
+      <span class="card-live" id="liveCsr">Minimum compliance</span>
     </div>
     <p class="card-hint">Visualising responsibility beyond legal requirements</p>
     
     <div class="canvas-wrapper">
       <canvas id="csrCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasTag">Compliance Floor</div>
+      <div class="canvas-overlay" id="canvasTag">Compliance floor</div>
     </div>
 
     <div class="slider-container">
-      <label class="slider-label" for="csrSlider">CSR Commitment Level</label>
+      <label class="slider-label" for="csrSlider">CSR commitment level</label>
       <input type="range" id="csrSlider" class="csr-slider" min="0" max="100" value="15" style="--fill: 15%">
       <div class="tick-labels">
-        <span>Legal Min</span>
-        <span>Industry Standard</span>
-        <span>Leading Practice</span>
+        <span class="tk tk-min">Legal min</span>
+        <span class="tk" style="left: calc(10px + (100% - 20px) * 0.5000)">Industry standard</span>
+        <span class="tk tk-max">Leading practice</span>
       </div>
     </div>
 
     <div class="stat-row">
       <div class="stat">
-        <div class="stat-label">Responsibility</div>
-        <div class="stat-value" id="statResp">15%</div>
+        <div class="stat-label">Extra cost</div>
+        <div class="stat-value" id="statResp">None</div>
       </div>
       <div class="stat">
-        <div class="stat-label">Reputational Gain</div>
-        <div class="stat-value" id="statRep">+12%</div>
+        <div class="stat-label">Reputation benefit (not guaranteed)</div>
+        <div class="stat-value" id="statRep">None extra</div>
       </div>
     </div>
   </div>
@@ -414,7 +421,7 @@ let time = 0;
 
 const knowdropContent = {
   operations: "CSR in operations means going beyond legal sourcing, waste disposal, and safety standards. Businesses audit supply chains for labour conditions, reduce environmental footprint beyond regulatory minimums, and invest in ethical suppliers even when cheaper alternatives exist. The compliance floor covers minimum environmental permits and occupational health regulations; the ethical ceiling asks whether every link in the supply chain reflects the company's stated values.",
-  marketing: "Ethical marketing extends beyond avoiding false advertising—it means fair competition, transparency in pricing, and protecting vulnerable audiences from manipulative tactics. The legal floor prohibits outright deception; CSR asks whether advertising exploits psychological vulnerabilities, whether claims are technically true but misleading, and whether promotional strategies respect consumer autonomy. Truth in advertising is compliance; respecting audience dignity is responsibility.",
+  marketing: "Ethical marketing starts from the law. Under the Australian Consumer Law, misleading or deceptive conduct is illegal even when each statement is technically true, and competition and pricing rules (such as showing the total price) apply too. That is the compliance floor. CSR goes beyond it: not targeting vulnerable audiences such as children or people under financial stress, avoiding pressure tactics that exploit psychological weak spots, and giving customers the information they need to choose freely even where no law requires it. Telling the truth is compliance; respecting the audience is responsibility.",
   people: "CSR in managing people starts where employment law ends. Compliance covers minimum wage, safe conditions, and anti-discrimination protections; ethical people management asks about work-life balance, mental health support, genuine inclusion, career development for all employees, and fair treatment of casual and contract workers. The floor is legal contracts and occupational health regulations; the ceiling is treating every person as a stakeholder whose wellbeing matters beyond their productivity."
 };
 
@@ -560,20 +567,19 @@ function draw() {
 
 function updateUI() {
   slider.style.setProperty('--fill', csrLevel + '%');
-  statResp.textContent = Math.round(csrLevel) + '%';
-  
-  const repGain = Math.round(csrLevel * 0.8);
-  statRep.textContent = '+' + repGain + '%';
+  const band = csrLevel < 25 ? 0 : csrLevel < 60 ? 1 : 2;
+  statResp.textContent = ["None", "Moderate", "High"][band];
+  statRep.textContent = ["None extra", "Some", "More"][band];
   
   if (csrLevel < 25) {
-    liveCsr.textContent = 'Minimum Compliance';
-    canvasTag.textContent = 'Compliance Floor';
+    liveCsr.textContent = "Minimum compliance";
+    canvasTag.textContent = "Compliance floor";
   } else if (csrLevel < 60) {
-    liveCsr.textContent = 'Industry Standard';
-    canvasTag.textContent = 'Above Legal Minimum';
+    liveCsr.textContent = "Industry standard";
+    canvasTag.textContent = "Above the legal minimum";
   } else {
-    liveCsr.textContent = 'Leading Practice';
-    canvasTag.textContent = 'Ethical Ceiling';
+    liveCsr.textContent = "Leading practice";
+    canvasTag.textContent = "Ethical ceiling";
   }
 }
 

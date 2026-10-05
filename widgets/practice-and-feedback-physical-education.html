@@ -116,7 +116,7 @@ h1 .acc {
 .canvas-wrapper {
   position: relative;
   width: 100%;
-  aspect-ratio: 16/9;
+  aspect-ratio: 4/3;
   border-radius: 12px;
   overflow: hidden;
   background: #000;
@@ -337,7 +337,7 @@ canvas {
 <div class="container">
   <h1>Harder practice now means easier <span class="acc">retention</span></h1>
   
-  <p class="intro">Random practice feels messier than blocked drills—but it builds long-term skill faster. The same paradox applies to feedback: intrinsic (what you felt) often teaches more than constant external correction. Drag the slider to see how practice structure shapes learning curves over time.</p>
+  <p class="intro">Random practice feels messier than blocked drills—and looks worse during practice—but it usually leads to better retention once the practice stops. Beginners often start with blocked practice to get the basic movement, then shift toward random practice as they improve. The same paradox applies to feedback: intrinsic (what you felt) often teaches more than constant external correction. Drag the slider from blocked to random and watch your curve change during practice and at a retention test after a break.</p>
 
   <div class="card">
     <div class="card-header">
@@ -348,7 +348,7 @@ canvas {
     
     <div class="canvas-wrapper">
       <canvas id="canvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">Blocked: Early success, shallow retention</div>
+      <div class="canvas-overlay" id="canvasOverlay">Blocked: fast in practice</div>
     </div>
 
     <div class="slider-row">
@@ -363,11 +363,11 @@ canvas {
 
     <div class="stat-row">
       <div class="stat">
-        <div class="stat-label">Early Performance</div>
+        <div class="stat-label">End of practice</div>
         <div class="stat-value" id="earlyPerf">85%</div>
       </div>
       <div class="stat">
-        <div class="stat-label">Retention</div>
+        <div class="stat-label">Retention test</div>
         <div class="stat-value" id="retention">52%</div>
       </div>
     </div>
@@ -418,6 +418,18 @@ const feedbackContent = {
   augmented: "Augmented feedback is external information provided by a coach, device, or video—knowledge of results (outcome: \"You hit the target\") or knowledge of performance (technique: \"Your elbow dropped\"). It accelerates early learning by clarifying errors the athlete can't yet feel, but too much creates dependency. The goal is to fade augmented feedback as the learner develops intrinsic awareness. Effective coaches give precise, timely cues then step back, letting the athlete problem-solve. High-frequency correction prevents the athlete from learning to self-monitor, which is essential for competition when no external voice is available."
 };
 
+/* learning model: s = 0 blocked, 1 random; x = 0..1 along the time axis */
+const PRACTICE_END = 0.6;
+const TEST_START = 0.72;
+function endOfPractice(sv) { return 85 - 15 * sv; }
+function retentionLevel(sv) { return 52 + 14 * sv; }
+function perfAt(sv, x) {
+  if (x >= TEST_START) return retentionLevel(sv);
+  const tau = 0.08 + 0.22 * sv;
+  const xx = Math.min(x, PRACTICE_END);
+  return 20 + (endOfPractice(sv) - 20) * (1 - Math.exp(-xx / tau)) / (1 - Math.exp(-PRACTICE_END / tau));
+}
+
 function resize() {
   const rect = canvas.getBoundingClientRect();
   if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
@@ -435,25 +447,21 @@ function updateUI() {
   const fill = practiceVal;
   slider.style.setProperty('--fill', fill + '%');
 
-  let mode, overlay, early, ret;
+  const sv = practiceVal / 100;
+  let mode, overlay;
   if (practiceVal < 33) {
-    mode = 'Blocked';
-    overlay = 'Blocked: Early success, shallow retention';
-    early = Math.round(85 - practiceVal * 0.15);
-    ret = Math.round(52 + practiceVal * 0.3);
+    mode = "Blocked";
+    overlay = "Blocked: fast in practice";
   } else if (practiceVal < 67) {
     mode = 'Mixed';
-    overlay = 'Mixed: Moderate challenge, better transfer';
-    const local = (practiceVal - 33) / 34;
-    early = Math.round(80 - local * 8);
-    ret = Math.round(62 + local * 10);
+    overlay = "Mixed: a bit of both";
   } else {
-    mode = 'Random';
-    overlay = 'Random: Tough drills, strong long-term skill';
-    const local = (practiceVal - 67) / 33;
-    early = Math.round(72 - local * 7);
-    ret = Math.round(72 + local * 16);
+    mode = "Random";
+    overlay = "Random: best at the test";
   }
+  /* readouts are read off the same model the curve is drawn from */
+  const early = Math.round(perfAt(sv, PRACTICE_END));
+  const ret = Math.round(perfAt(sv, 1));
 
   liveTag.textContent = mode;
   canvasOverlay.textContent = overlay;
@@ -486,119 +494,105 @@ function draw() {
   const cx = w / 2;
   const cy = h / 2;
 
-  // Coordinate grid
-  ctx.strokeStyle = 'rgba(38,43,38,0.6)';
-  ctx.lineWidth = 1;
-  ctx.setLineDash([]);
-  
-  // Vertical lines
-  for (let x = w * 0.1; x < w; x += w * 0.1) {
-    ctx.beginPath();
-    ctx.moveTo(x, 0);
-    ctx.lineTo(x, h);
-    ctx.stroke();
-  }
-  
-  // Horizontal lines
-  for (let y = h * 0.15; y < h; y += h * 0.15) {
-    ctx.beginPath();
-    ctx.moveTo(0, y);
-    ctx.lineTo(w, y);
-    ctx.stroke();
-  }
+  const L = 38, Rt = w - 14, T = 30, Bm = h - 60;
+  const X = x => L + x * (Rt - L);
+  const Y = v => Bm - (v / 100) * (Bm - T);
+  const sv = practiceVal / 100;
 
-  // Axes
-  ctx.strokeStyle = 'rgba(141,147,137,0.4)';
+  // Break band
+  ctx.fillStyle = 'rgba(38,43,38,0.55)';
+  ctx.fillRect(X(PRACTICE_END), T, X(TEST_START) - X(PRACTICE_END), Bm - T);
+
+  // Grid and axis scale
+  ctx.font = '9px JetBrains Mono';
+  ctx.textBaseline = 'middle';
+  for (const v of [0, 50, 100]) {
+    ctx.strokeStyle = 'rgba(38,43,38,0.8)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(L, Y(v));
+    ctx.lineTo(Rt, Y(v));
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(141,147,137,0.8)';
+    ctx.textAlign = 'right';
+    ctx.fillText(v + '%', L - 5, Y(v));
+  }
+  ctx.strokeStyle = 'rgba(141,147,137,0.5)';
   ctx.lineWidth = 1.5;
   ctx.beginPath();
-  ctx.moveTo(w * 0.1, h * 0.85);
-  ctx.lineTo(w * 0.95, h * 0.85);
+  ctx.moveTo(L, T);
+  ctx.lineTo(L, Bm);
+  ctx.lineTo(Rt, Bm);
   ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(w * 0.1, h * 0.15);
-  ctx.lineTo(w * 0.1, h * 0.85);
-  ctx.stroke();
+  ctx.fillStyle = 'rgba(141,147,137,0.85)';
+  ctx.textBaseline = 'top';
+  ctx.textAlign = 'center';
+  ctx.fillText("Practice sessions", X(PRACTICE_END / 2), Bm + 5);
+  ctx.fillText("Break", X((PRACTICE_END + TEST_START) / 2), Bm + 5);
+  ctx.fillText("Test", X((TEST_START + 1) / 2), Bm + 5);
 
-  // Labels
-  ctx.fillStyle = 'rgba(141,147,137,0.6)';
+  function curve(sv2) {
+    const pts = [];
+    for (let i = 0; i <= 60; i++) { const x = (i / 60) * PRACTICE_END; pts.push({ x: X(x), y: Y(perfAt(sv2, x)) }); }
+    return { practice: pts, test: [{ x: X(TEST_START), y: Y(perfAt(sv2, 1)) }, { x: X(1), y: Y(perfAt(sv2, 1)) }] };
+  }
+  function stroke(c, style, width, dash) {
+    ctx.strokeStyle = style;
+    ctx.lineWidth = width;
+    ctx.setLineDash(dash);
+    for (const seg of [c.practice, c.test]) {
+      ctx.beginPath();
+      ctx.moveTo(seg[0].x, seg[0].y);
+      for (let i = 1; i < seg.length; i++) ctx.lineTo(seg[i].x, seg[i].y);
+      ctx.stroke();
+    }
+    ctx.setLineDash([]);
+  }
+
+  // Reference curves: pure blocked (amber, dashed) and pure random (white, dotted)
+  const blocked = curve(0);
+  const random = curve(1);
+  stroke(blocked, 'rgba(250,199,117,0.75)', 1.6, [6, 4]);
+  stroke(random, 'rgba(237,237,232,0.7)', 1.6, [2, 3]);
+
+  // Direct labels
   ctx.font = '9px JetBrains Mono';
-  ctx.fillText('TIME', w * 0.88, h * 0.88);
-  ctx.save();
-  ctx.translate(w * 0.05, h * 0.2);
-  ctx.rotate(-Math.PI / 2);
-  ctx.fillText('SKILL', 0, 0);
-  ctx.restore();
+  ctx.textBaseline = 'middle';
+  ctx.textAlign = 'right';
+  ctx.fillStyle = '#FAC775';
+  ctx.fillText("Blocked", X(1), Y(perfAt(0, 1)) + 9);
+  ctx.fillText("Blocked", X(PRACTICE_END) - 2, Y(perfAt(0, PRACTICE_END)) - 9);
+  ctx.fillStyle = '#EDEDE8';
+  ctx.fillText("Random", X(1), Y(perfAt(1, 1)) - 9);
+  ctx.fillText("Random", X(PRACTICE_END) - 2, Y(perfAt(1, PRACTICE_END)) + 10);
 
-  // Blocked curve (amber)
-  const blockedPts = [];
-  for (let i = 0; i <= 60; i++) {
-    const t = i / 60;
-    const x = w * 0.1 + t * (w * 0.85);
-    let y;
-    if (t < 0.3) {
-      y = h * 0.85 - t * 3 * (h * 0.5);
-    } else {
-      const decay = (t - 0.3) / 0.7;
-      y = h * 0.85 - (0.3 * 3 * (h * 0.5) - decay * (h * 0.28));
-    }
-    blockedPts.push({ x, y });
-  }
-
-  ctx.strokeStyle = 'rgba(250,199,117,0.7)';
-  ctx.lineWidth = 2.5;
-  ctx.beginPath();
-  ctx.moveTo(blockedPts[0].x, blockedPts[0].y);
-  for (let i = 1; i < blockedPts.length; i++) {
-    ctx.lineTo(blockedPts[i].x, blockedPts[i].y);
-  }
-  ctx.stroke();
-
-  // Random curve (accent)
-  const randomPts = [];
-  for (let i = 0; i <= 60; i++) {
-    const t = i / 60;
-    const x = w * 0.1 + t * (w * 0.85);
-    let y;
-    if (t < 0.5) {
-      y = h * 0.85 - t * 1.4 * (h * 0.5);
-    } else {
-      const growth = (t - 0.5) / 0.5;
-      y = h * 0.85 - (0.5 * 1.4 * (h * 0.5) + growth * (h * 0.25));
-    }
-    randomPts.push({ x, y });
-  }
-
-  ctx.strokeStyle = 'rgba(232,106,50,0.85)';
-  ctx.lineWidth = 2.5;
-  ctx.beginPath();
-  ctx.moveTo(randomPts[0].x, randomPts[0].y);
-  for (let i = 1; i < randomPts.length; i++) {
-    ctx.lineTo(randomPts[i].x, randomPts[i].y);
-  }
-  ctx.stroke();
-
-  // Glow on random curve
+  // Your schedule: solid accent curve that follows the slider
+  const mine = curve(sv);
+  stroke(mine, 'rgba(232,106,50,0.95)', 3, []);
   ctx.save();
   ctx.globalCompositeOperation = 'lighter';
-  ctx.strokeStyle = 'rgba(232,106,50,0.4)';
-  ctx.lineWidth = 5;
   ctx.filter = 'blur(4px)';
-  ctx.beginPath();
-  ctx.moveTo(randomPts[0].x, randomPts[0].y);
-  for (let i = 1; i < randomPts.length; i++) {
-    ctx.lineTo(randomPts[i].x, randomPts[i].y);
-  }
-  ctx.stroke();
+  stroke(mine, 'rgba(232,106,50,0.4)', 5, []);
   ctx.restore();
 
-  // Flowing dots along random curve
-  const dotCount = 8;
+  // Legend
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'middle';
+  ctx.strokeStyle = 'rgba(232,106,50,0.95)';
+  ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(L + 4, 14); ctx.lineTo(L + 20, 14); ctx.stroke();
+  ctx.fillStyle = '#E86A32';
+  ctx.fillText("Your mix", L + 25, 14);
+  ctx.fillStyle = 'rgba(141,147,137,0.9)';
+  ctx.fillText("Skill", 4, 14);
+
+  // Flowing dots along your curve
+  const dotCount = 6;
   for (let i = 0; i < dotCount; i++) {
     const phase = (time * 0.3 + i / dotCount) % 1;
-    const idx = Math.floor(phase * (randomPts.length - 1));
-    const pt = randomPts[idx];
+    const idx = Math.floor(phase * (mine.practice.length - 1));
+    const pt = mine.practice[idx];
     const alpha = Math.sin(phase * Math.PI) * 0.8;
-    
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
     const grad = ctx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, 6);
@@ -610,17 +604,6 @@ function draw() {
     ctx.fill();
     ctx.restore();
   }
-
-  // Transition marker
-  const markerX = w * 0.1 + (0.4 + practiceVal / 100 * 0.2) * (w * 0.85);
-  ctx.strokeStyle = 'rgba(232,106,50,0.5)';
-  ctx.lineWidth = 1.5;
-  ctx.setLineDash([4, 4]);
-  ctx.beginPath();
-  ctx.moveTo(markerX, h * 0.15);
-  ctx.lineTo(markerX, h * 0.85);
-  ctx.stroke();
-  ctx.setLineDash([]);
 
   // Bloom
   bctx.setTransform(1, 0, 0, 1, 0, 0);

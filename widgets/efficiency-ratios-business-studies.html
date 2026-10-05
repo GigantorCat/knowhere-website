@@ -310,28 +310,28 @@ canvas{
 }
 </style>
 
-<h2 class="sr-only">Efficiency Ratios Interactive Widget</h2>
+<h2 class="sr-only">Efficiency ratios interactive picture: inventory, debtors and creditors turnover and the cash cycle</h2>
 
 <div class="container">
-  <h1>Faster Isn't Always <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">Better</span></h1>
+  <h1>Faster stock turnover, shorter cash <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">cycle</span></h1>
   
-  <p class="intro">While faster turnover ratios signal efficient asset management and lower holding costs, extending payment periods can actually improve cash flow without harming supplier relationships. Drag the slider to see how inventory turnover period affects working capital dynamics.</p>
+  <p class="intro">The cash cycle is inventory days plus debtor days, less the days the business takes to pay its creditors. Drag the slider to see a shorter inventory turnover period shorten the cash cycle and the cost of holding stock. The slider shows the timing side only: cut stock too far and the business risks running out and losing sales.</p>
 
   <div class="card">
     <div class="card-header">
-      <div class="card-label">Turnover Period</div>
+      <div class="card-label">Turnover period</div>
       <div class="live-tag" id="liveTag">45 DAYS</div>
     </div>
-    <div class="card-hint">Watch cash cycle compress as inventory moves faster</div>
+    <div class="card-hint">Example business: cost of sales $365,000 a year, holding cost 10% of stock a year</div>
     
     <div class="canvas-wrapper">
-      <canvas id="canvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">CASH CYCLE: 72 DAYS</div>
+      <canvas id="canvas" role="img" aria-label="Day-scale bars for inventory, debtors and creditors, with the cash cycle marked between paying creditors and collecting cash"></canvas>
+      <div class="canvas-overlay" id="canvasOverlay">CASH CYCLE: 33 DAYS</div>
     </div>
 
     <div class="slider-group">
-      <div class="slider-label">Inventory Turnover Period (Days)</div>
-      <input type="range" min="15" max="90" value="45" class="itp-slider" id="itpSlider">
+      <div class="slider-label">Inventory turnover period (days)</div>
+      <input type="range" min="15" max="90" value="45" class="itp-slider" id="itpSlider" aria-label="Inventory turnover period in days">
       <div class="tick-labels">
         <span>15</span>
         <span>52.5</span>
@@ -345,7 +345,7 @@ canvas{
         <div class="stat-value" style="color:var(--acc)" id="convertStat">45</div>
       </div>
       <div class="stat">
-        <div class="stat-label">Holding cost</div>
+        <div class="stat-label">Holding cost a year</div>
         <div class="stat-value" style="color:var(--amb)" id="costStat">$4,500</div>
       </div>
     </div>
@@ -372,227 +372,180 @@ canvas{
 </div>
 
 <script>
-const canvas=document.getElementById('canvas');
-const ctx=canvas.getContext('2d');
-const liveTag=document.getElementById('liveTag');
-const canvasOverlay=document.getElementById('canvasOverlay');
-const slider=document.getElementById('itpSlider');
-const convertStat=document.getElementById('convertStat');
-const costStat=document.getElementById('costStat');
-const btn1=document.getElementById('btn1');
-const btn2=document.getElementById('btn2');
-const knowdrop=document.getElementById('knowdrop');
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+const liveTag = document.getElementById("liveTag");
+const canvasOverlay = document.getElementById("canvasOverlay");
+const slider = document.getElementById("itpSlider");
+const convertStat = document.getElementById("convertStat");
+const costStat = document.getElementById("costStat");
+const btn1 = document.getElementById("btn1");
+const btn2 = document.getElementById("btn2");
+const knowdrop = document.getElementById("knowdrop");
 
-const dpr=Math.min(window.devicePixelRatio||1,2);
-const buf=document.createElement('canvas');
-const bctx=buf.getContext('2d');
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement("canvas");
+const bctx = buf.getContext("2d");
 
-let itpDays=45;
-const debtorDays=30;
-const creditorDays=42;
+/* the model */
+let itpDays = 45;
+const debtorDays = 30;
+const creditorDays = 42;
+const costOfSales = 365000;   /* a year */
+const holdingRate = 0.10;     /* of average stock, a year */
+const cashCycle = () => itpDays + debtorDays - creditorDays;
+const avgInventory = () => costOfSales * itpDays / 365;
 
-function resize(){
-  const rect=canvas.getBoundingClientRect();
+function resize() {
+  const rect = canvas.getBoundingClientRect();
   if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width=Math.round(rect.width*dpr);
-  canvas.height=Math.round(rect.height*dpr);
-  buf.width=canvas.width;
-  buf.height=canvas.height;
-  ctx.setTransform(dpr,0,0,dpr,0,0);
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   draw();
 }
 
-function updateUI(){
-  const fill=(itpDays-15)/(90-15)*100;
-  slider.style.setProperty('--fill',fill+'%');
-  liveTag.textContent=itpDays+' DAYS';
-  
-  const cashCycle=itpDays+debtorDays-creditorDays;
-  canvasOverlay.textContent='CASH CYCLE: '+cashCycle+' DAYS';
-  
-  convertStat.textContent=itpDays;
-  const cost=Math.round(itpDays*100);
-  costStat.textContent='$'+cost.toLocaleString();
+function updateUI() {
+  const fill = (itpDays - 15) / (90 - 15) * 100;
+  slider.style.setProperty("--fill", fill + "%");
+  liveTag.textContent = itpDays + " DAYS";
+  canvasOverlay.textContent = "CASH CYCLE: " + cashCycle() + " DAYS";
+  convertStat.textContent = itpDays;
+  costStat.textContent = "$" + Math.round(avgInventory() * holdingRate).toLocaleString("en-AU");
 }
 
-function draw(){
-  const w=canvas.width/dpr;
-  const h=canvas.height/dpr;
-  
-  ctx.fillStyle='#000';
-  ctx.fillRect(0,0,w,h);
-  
-  const cx=w/2;
-  const cy=h/2;
-  
-  // Grid background
-  ctx.strokeStyle='rgba(38,43,38,0.4)';
-  ctx.lineWidth=0.8;
-  for(let x=0;x<=w;x+=w/12){
-    ctx.beginPath();
-    ctx.moveTo(x,0);
-    ctx.lineTo(x,h);
-    ctx.stroke();
-  }
-  for(let y=0;y<=h;y+=h/8){
-    ctx.beginPath();
-    ctx.moveTo(0,y);
-    ctx.lineTo(w,y);
-    ctx.stroke();
-  }
-  
-  // Three flow lanes: Inventory -> Debtors -> Cash
-  const laneY=[h*0.28,h*0.5,h*0.72];
-  const laneLabels=['INVENTORY','DEBTORS','CASH'];
-  const laneColors=['rgba(232, 93, 151,0.7)','rgba(250,199,117,0.7)','rgba(232, 93, 151,0.7)'];
-  
-  ctx.font='11px "JetBrains Mono"';
-  ctx.textAlign='center';
-  
-  for(let i=0;i<3;i++){
-    ctx.fillStyle=laneColors[i];
-    ctx.fillText(laneLabels[i],w*0.12,laneY[i]+4);
-  }
-  
-  // Inventory stage width proportional to ITP
-  const invWidth=(itpDays/90)*w*0.5;
-  const invX1=w*0.2;
-  const invX2=invX1+invWidth;
-  
-  // Debtors stage fixed 30 days
-  const debtWidth=(debtorDays/90)*w*0.5;
-  const debtX1=invX2+w*0.05;
-  const debtX2=debtX1+debtWidth;
-  
-  // Cash endpoint
-  const cashX=debtX2+w*0.05;
-  
-  // Draw inventory bar
+function bar(x1, x2, y, hh, rgb, label, fs) {
   ctx.save();
-  ctx.globalCompositeOperation='lighter';
-  const invGrad=ctx.createLinearGradient(invX1,0,invX2,0);
-  invGrad.addColorStop(0,'rgba(232, 93, 151,0.15)');
-  invGrad.addColorStop(1,'rgba(232, 93, 151,0.5)');
-  ctx.fillStyle=invGrad;
-  ctx.fillRect(invX1,laneY[0]-12,invWidth,24);
-  ctx.strokeStyle='rgba(232, 93, 151,0.8)';
-  ctx.lineWidth=1.5;
-  ctx.strokeRect(invX1,laneY[0]-12,invWidth,24);
+  ctx.globalCompositeOperation = "lighter";
+  const g = ctx.createLinearGradient(x1, 0, x2, 0);
+  g.addColorStop(0, "rgba(" + rgb + ",0.15)");
+  g.addColorStop(1, "rgba(" + rgb + ",0.5)");
+  ctx.fillStyle = g;
+  ctx.fillRect(x1, y - hh / 2, x2 - x1, hh);
+  ctx.strokeStyle = "rgba(" + rgb + ",0.85)";
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(x1, y - hh / 2, x2 - x1, hh);
   ctx.restore();
-  
-  // Draw debtors bar
+  ctx.fillStyle = "rgba(" + rgb + ",1)";
+  ctx.font = "500 " + fs + "px \"JetBrains Mono\", monospace";
+  ctx.textAlign = "left";
+  ctx.textBaseline = "bottom";
+  ctx.fillText(label, x1, y - hh / 2 - 3);
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  if (!w || !h) { requestAnimationFrame(draw); return; }
+
+  ctx.fillStyle = "#000";
+  ctx.fillRect(0, 0, w, h);
+  const cx = w / 2, cy = h / 2;
+
+  const fs = Math.max(9, Math.min(11, w / 60));
+  const usable = h - (canvasOverlay.offsetHeight || 0) - 6;
+  const x0 = w * 0.05, x1 = w * 0.95;
+  const maxDays = 120;
+  const dx = d => x0 + (d / maxDays) * (x1 - x0);   /* one shared day scale */
+  const hh = Math.max(10, Math.min(20, usable * 0.08));
+  const lane = [0.3, 0.5, 0.7, 0.92].map(f => f * usable);
+
+  /* day grid */
+  ctx.strokeStyle = "rgba(38,43,38,0.6)";
+  ctx.lineWidth = 0.8;
+  ctx.fillStyle = "rgba(140,147,137,0.6)";
+  ctx.font = (fs - 1) + "px \"JetBrains Mono\", monospace";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "top";
+  for (let d = 0; d <= maxDays; d += 30) {
+    ctx.beginPath(); ctx.moveTo(dx(d), lane[0] - hh * 1.6); ctx.lineTo(dx(d), usable); ctx.stroke();
+    ctx.fillText("day " + d, Math.min(w - 20, Math.max(16, dx(d))), 4);
+  }
+
+  const invEnd = itpDays, cashDay = itpDays + debtorDays;
+  bar(dx(0), dx(invEnd), lane[0], hh, "232, 93, 151", "Inventory " + itpDays + " days", fs);
+  bar(dx(invEnd), dx(cashDay), lane[1], hh, "250,199,117", "Debtors " + debtorDays + " days", fs);
+  bar(dx(0), dx(creditorDays), lane[2], hh, "140,180,220", "Creditors " + creditorDays + " days (pay suppliers)", fs);
+
+  /* cash collected marker */
+  ctx.fillStyle = "#E85D97";
+  ctx.beginPath(); ctx.arc(dx(cashDay), lane[1], 5, 0, Math.PI * 2); ctx.fill();
+
+  /* cash cycle bracket: from paying suppliers to collecting from customers */
+  const a = dx(creditorDays), b = dx(cashDay), y = lane[3];
   ctx.save();
-  ctx.globalCompositeOperation='lighter';
-  const debtGrad=ctx.createLinearGradient(debtX1,0,debtX2,0);
-  debtGrad.addColorStop(0,'rgba(250,199,117,0.15)');
-  debtGrad.addColorStop(1,'rgba(250,199,117,0.5)');
-  ctx.fillStyle=debtGrad;
-  ctx.fillRect(debtX1,laneY[1]-12,debtWidth,24);
-  ctx.strokeStyle='rgba(250,199,117,0.8)';
-  ctx.lineWidth=1.5;
-  ctx.strokeRect(debtX1,laneY[1]-12,debtWidth,24);
-  ctx.restore();
-  
-  // Cash circle
-  ctx.save();
-  ctx.globalCompositeOperation='lighter';
-  const cashGrad=ctx.createRadialGradient(cashX,laneY[2],0,cashX,laneY[2],18);
-  cashGrad.addColorStop(0,'rgba(232, 93, 151,0.6)');
-  cashGrad.addColorStop(0.5,'rgba(232, 93, 151,0.3)');
-  cashGrad.addColorStop(1,'rgba(232, 93, 151,0)');
-  ctx.fillStyle=cashGrad;
-  ctx.beginPath();
-  ctx.arc(cashX,laneY[2],18,0,Math.PI*2);
-  ctx.fill();
-  ctx.restore();
-  
-  ctx.strokeStyle='rgba(232, 93, 151,0.8)';
-  ctx.lineWidth=2;
-  ctx.beginPath();
-  ctx.arc(cashX,laneY[2],10,0,Math.PI*2);
-  ctx.stroke();
-  
-  // Flow arrows
-  ctx.strokeStyle='rgba(232, 93, 151,0.4)';
-  ctx.lineWidth=1.5;
-  ctx.setLineDash([4,4]);
-  ctx.beginPath();
-  ctx.moveTo(invX2+2,laneY[0]);
-  ctx.lineTo(debtX1-2,laneY[1]);
-  ctx.stroke();
-  
-  ctx.strokeStyle='rgba(250,199,117,0.4)';
-  ctx.beginPath();
-  ctx.moveTo(debtX2+2,laneY[1]);
-  ctx.lineTo(cashX-12,laneY[2]);
-  ctx.stroke();
+  ctx.strokeStyle = "rgba(232, 93, 151,0.9)";
+  ctx.lineWidth = 2;
+  ctx.setLineDash([4, 3]);
+  ctx.beginPath(); ctx.moveTo(a, lane[2]); ctx.lineTo(a, y); ctx.moveTo(b, lane[1]); ctx.lineTo(b, y); ctx.stroke();
   ctx.setLineDash([]);
-  
-  // Particle flows
-  const time=Date.now()*0.001;
-  for(let i=0;i<8;i++){
-    const phase=(time*0.6+i*0.4)%1;
-    const px=invX1+phase*invWidth;
-    ctx.save();
-    ctx.globalCompositeOperation='lighter';
-    ctx.fillStyle='rgba(232, 93, 151,'+(0.6-phase*0.3)+')';
-    ctx.beginPath();
-    ctx.arc(px,laneY[0],2.5,0,Math.PI*2);
-    ctx.fill();
-    ctx.restore();
-  }
-  
-  for(let i=0;i<6;i++){
-    const phase=(time*0.7+i*0.5)%1;
-    const px=debtX1+phase*debtWidth;
-    ctx.save();
-    ctx.globalCompositeOperation='lighter';
-    ctx.fillStyle='rgba(250,199,117,'+(0.6-phase*0.3)+')';
-    ctx.beginPath();
-    ctx.arc(px,laneY[1],2.5,0,Math.PI*2);
-    ctx.fill();
-    ctx.restore();
-  }
-  
-  // Bloom
-  bctx.setTransform(1,0,0,1,0,0);
-  bctx.clearRect(0,0,buf.width,buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas,0,0);
-  ctx.save();
-  ctx.globalCompositeOperation='lighter';
-  ctx.globalAlpha=0.38;
-  ctx.filter='blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf,0,0,w,h);
+  ctx.beginPath(); ctx.moveTo(a, y); ctx.lineTo(b, y); ctx.stroke();
   ctx.restore();
-  
+  ctx.fillStyle = "#E85D97";
+  ctx.font = "600 " + fs + "px \"JetBrains Mono\", monospace";
+  ctx.textBaseline = "bottom";
+  const lbl = "Cash cycle " + itpDays + " + " + debtorDays + " − " + creditorDays + " = " + cashCycle() + " days";
+  const tw = ctx.measureText(lbl).width;
+  ctx.textAlign = "center";
+  ctx.fillText(lbl, Math.max(tw / 2 + 4, Math.min(w - tw / 2 - 4, (a + b) / 2)), y - 4);
+
+  /* particles keep the stock moving */
+  const time = Date.now() * 0.001;
+  ctx.save();
+  ctx.globalCompositeOperation = "lighter";
+  for (let i = 0; i < 8; i++) {
+    const ph = (time * 0.6 + i * 0.4) % 1;
+    ctx.fillStyle = "rgba(232, 93, 151," + (0.6 - ph * 0.3) + ")";
+    ctx.beginPath(); ctx.arc(dx(0) + ph * (dx(invEnd) - dx(0)), lane[0], 2.5, 0, Math.PI * 2); ctx.fill();
+  }
+  for (let i = 0; i < 6; i++) {
+    const ph = (time * 0.7 + i * 0.5) % 1;
+    ctx.fillStyle = "rgba(250,199,117," + (0.6 - ph * 0.3) + ")";
+    ctx.beginPath(); ctx.arc(dx(invEnd) + ph * (dx(cashDay) - dx(invEnd)), lane[1], 2.5, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.restore();
+
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = "lighter";
+  ctx.globalAlpha = 0.3;
+  ctx.filter = "blur(7px)";
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+
   // Vignette
-  const vig=ctx.createRadialGradient(cx,cy,h*0.28,cx,cy,w*0.72);
-  vig.addColorStop(0,'rgba(0,0,0,0)');
-  vig.addColorStop(1,'rgba(0,0,0,0.52)');
-  ctx.fillStyle=vig;
-  ctx.fillRect(0,0,w,h);
-  
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, "rgba(0,0,0,0)");
+  vig.addColorStop(1, "rgba(0,0,0,0.45)");
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+
   requestAnimationFrame(draw);
 }
 
-slider.addEventListener('input',e=>{
-  itpDays=parseInt(e.target.value);
+slider.addEventListener("input", e => {
+  itpDays = parseInt(e.target.value);
   updateUI();
 });
 
-btn1.addEventListener('click',()=>{
-  btn1.classList.add('active');
-  btn2.classList.remove('active');
-  knowdrop.textContent='Debtors Turnover Period equals Average Debtors divided by Credit Sales times 365, indicating how quickly customers pay their invoices. A 30-day period means the business collects receivables monthly on average. Lower values suggest strong credit control and faster cash conversion, but overly aggressive collection can damage customer relationships. The ideal balance depends on industry norms and competitive positioning. Extending credit strategically can increase sales volume while maintaining acceptable risk levels.';
+btn1.addEventListener("click", () => {
+  btn1.classList.add("active");
+  btn2.classList.remove("active");
+  knowdrop.textContent = "Debtors Turnover Period equals Average Debtors divided by Credit Sales times 365, indicating how quickly customers pay their invoices. A 30-day period means the business collects receivables monthly on average. Lower values suggest strong credit control and faster cash conversion, but overly aggressive collection can damage customer relationships. The ideal balance depends on industry norms and competitive positioning. Extending credit strategically can increase sales volume while maintaining acceptable risk levels.";
 });
 
-btn2.addEventListener('click',()=>{
-  btn2.classList.add('active');
-  btn1.classList.remove('active');
-  knowdrop.textContent='Creditors Turnover Period equals Average Creditors divided by Credit Purchases times 365, revealing payment timing to suppliers. A 42-day period means the business pays suppliers six weeks after purchase on average. Higher values improve short-term cash flow by delaying outflows, effectively using suppliers as interest-free financing. However, excessively slow payment risks supplier relationship damage and potential supply chain disruption. Smart businesses negotiate extended terms formally rather than simply delaying payment, maintaining goodwill while optimizing working capital.';
+btn2.addEventListener("click", () => {
+  btn2.classList.add("active");
+  btn1.classList.remove("active");
+  knowdrop.textContent = "Creditors Turnover Period equals Average Creditors divided by Credit Purchases times 365, revealing payment timing to suppliers. A 42-day period means the business pays suppliers six weeks after purchase on average. Higher values improve short-term cash flow by delaying outflows, so in the cash cycle creditor days are subtracted. However, excessively slow payment risks supplier relationship damage and potential supply chain disruption. Smart businesses negotiate extended terms formally rather than simply delaying payment, maintaining goodwill while optimising working capital.";
 });
 
-window.addEventListener('resize',resize);
+window.addEventListener("resize", resize);
 resize();
 updateUI();
 </script>

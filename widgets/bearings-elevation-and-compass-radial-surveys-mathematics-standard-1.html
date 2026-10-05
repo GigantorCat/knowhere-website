@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Bearings, Elevation and Compass Radial Surveys — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Bearings, elevation and compass radial surveys — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -328,23 +328,23 @@ canvas {
 
   <h1>A single observer with a compass can map an entire <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">paddock</span></h1>
   
-  <p class="intro">Bearings aren't just compass directions — they're the foundation of radial surveying, where every bearing-and-distance pair from one point turns into a triangle you can measure. Drag the slider to rotate the bearing and watch the surveyed triangle change.</p>
+  <p class="intro">Bearings aren't just compass directions — they're the foundation of radial surveying, where every bearing-and-distance pair from one point turns into a triangle you can measure. Here Q is fixed at 120°, 70 m from the observer. Drag the slider to swing the bearing to P (85 m away) and watch the angle between the bearings, and the surveyed area, change.</p>
 
   <div class="card">
     <div class="card-header">
       <div class="card-label">Compass Radial Survey</div>
       <div class="live-tag" id="liveTag">BEARING 045°</div>
     </div>
-    <div class="hint">Drag to change the bearing (000° to 360°)</div>
+    <div class="hint">Drag to change the bearing of P (000° to 360°)</div>
     
     <div class="canvas-wrapper">
       <canvas id="compass"></canvas>
-      <div class="canvas-overlay" id="canvasTag">SURVEYED AREA: 154 m²</div>
+      <div class="canvas-overlay" id="canvasTag" style="text-transform:none">Area = ½ × 85 × 70 × sin 75° = 2874 m²</div>
     </div>
 
     <div class="slider-row">
       <div class="slider-label">Bearing Angle</div>
-      <input type="range" min="0" max="360" value="45" class="bearing-slider" id="bearingSlider">
+      <input aria-label="Bearing of P" type="range" min="0" max="360" value="45" class="bearing-slider" id="bearingSlider">
       <div class="tick-labels">
         <span>000°</span>
         <span>090°</span>
@@ -361,7 +361,7 @@ canvas {
       </div>
       <div class="stat">
         <div class="stat-label">Triangle Area</div>
-        <div class="stat-value" style="color:var(--amb)" id="areaStat">154 m²</div>
+        <div class="stat-value" style="color:var(--amb)" id="areaStat">2874 m²</div>
       </div>
     </div>
   </div>
@@ -409,6 +409,15 @@ const buf = document.createElement('canvas');
 const bctx = buf.getContext('2d');
 
 let currentBearing = 45;
+
+/* the survey as measured in the field: metres and degrees, not pixels */
+const SURVEY = { dP: 85, dQ: 70, bearingQ: 120 };
+function surveyNow() {
+  let between = Math.abs(currentBearing - SURVEY.bearingQ) % 360;
+  if (between > 180) between = 360 - between;
+  const area = 0.5 * SURVEY.dP * SURVEY.dQ * Math.sin(between * Math.PI / 180);
+  return { between, area };
+}
 
 function resize() {
   const rect = canvas.getBoundingClientRect();
@@ -509,17 +518,18 @@ function draw() {
   ctx.fill();
   ctx.restore();
 
-  // Survey points (fixed at two distances)
-  const dist1 = roseR * 0.85;
-  const dist2 = roseR * 0.7;
+  // Survey points: drawn to scale from the measured distances
+  const pxPerM = roseR / 85;
+  const dist1 = SURVEY.dP * pxPerM;
+  const dist2 = SURVEY.dQ * pxPerM;
   
   // First bearing line (current bearing)
   const bearing1Rad = (currentBearing - 90) * Math.PI / 180;
   const p1x = cx + Math.cos(bearing1Rad) * dist1;
   const p1y = cy + Math.sin(bearing1Rad) * dist1;
 
-  // Second bearing line (60° from first)
-  const bearing2 = (currentBearing + 60) % 360;
+  // Second bearing line: Q stays on its own fixed bearing
+  const bearing2 = SURVEY.bearingQ;
   const bearing2Rad = (bearing2 - 90) * Math.PI / 180;
   const p2x = cx + Math.cos(bearing2Rad) * dist2;
   const p2y = cy + Math.sin(bearing2Rad) * dist2;
@@ -551,9 +561,9 @@ function draw() {
 
   // Draw bearing lines with glow
   [
-    { x: p1x, y: p1y, angle: bearing1Rad, dist: dist1, color: ACC },
-    { x: p2x, y: p2y, angle: bearing2Rad, dist: dist2, color: AMB }
-  ].forEach(({ x, y, angle, dist, color }) => {
+    { x: p1x, y: p1y, angle: bearing1Rad, dist: dist1, color: ACC, m: SURVEY.dP, name: 'P' },
+    { x: p2x, y: p2y, angle: bearing2Rad, dist: dist2, color: AMB, m: SURVEY.dQ, name: 'Q' }
+  ].forEach(({ x, y, angle, dist, color, m, name }) => {
     // Line
     ctx.save();
     ctx.strokeStyle = color;
@@ -593,8 +603,8 @@ function draw() {
     ctx.fillStyle = color;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    const distM = Math.round(dist * 0.5);
-    ctx.fillText(distM + 'm', midX, midY - 10);
+    ctx.fillText(m + ' m', midX, midY - 10);
+    ctx.fillText(name, x + Math.cos(angle) * 12, y + Math.sin(angle) * 12);
     ctx.restore();
   });
 
@@ -615,7 +625,7 @@ function draw() {
   ctx.strokeStyle = 'rgba(' + RGB + ',0.5)';
   ctx.lineWidth = 1.5;
   ctx.beginPath();
-  ctx.arc(cx, cy, 30, -Math.PI / 2, bearing1Rad, currentBearing < 270);
+  ctx.arc(cx, cy, 30, -Math.PI / 2, bearing1Rad, false); /* clockwise from north through the bearing */
   ctx.stroke();
   ctx.restore();
 
@@ -637,13 +647,10 @@ function draw() {
   ctx.fillStyle = vig;
   ctx.fillRect(0, 0, w, h);
 
-  // Calculate and update area
-  const side1 = dist1 * 0.5;
-  const side2 = dist2 * 0.5;
-  const includedAngle = 60 * Math.PI / 180;
-  const area = Math.round(0.5 * side1 * side2 * Math.sin(includedAngle));
-  
-  canvasTag.textContent = `SURVEYED AREA: ${area} m²`;
+  // Area from the two measured distances and the angle between the bearings
+  const sv = surveyNow();
+  const area = Math.round(sv.area + 1e-6); /* guard float error at exact halves */
+  canvasTag.textContent = `Area = ½ × ${SURVEY.dP} × ${SURVEY.dQ} × sin ${Math.round(sv.between)}° = ${area} m²`;
   areaStat.textContent = `${area} m²`;
 }
 
@@ -662,13 +669,13 @@ slider.addEventListener('input', (e) => {
 btn1.addEventListener('click', () => {
   btn1.classList.add('active');
   btn2.classList.remove('active');
-  knowdrop.textContent = 'True bearings are always written as three digits measured clockwise from north: 045° not 45°, 008° not 8°. This removes ambiguity in navigation. When solving multi-step bearing problems, sketch the triangle first and identify which sides and angles you know. The sine rule connects opposite pairs (side/angle), while the cosine rule handles situations where you know two sides and the included angle. Back bearings (the reverse direction) differ by exactly 180°, so a bearing of 045° has a back bearing of 225°.';
+  knowdrop.textContent = "True bearings are always written as three digits measured clockwise from north: 045° not 45°, 008° not 8°. This removes ambiguity in navigation. When solving multi-step bearing problems, sketch the triangle first and identify which sides and angles you know. The sine rule connects opposite pairs (side/angle), while the cosine rule handles situations where you know two sides and the included angle. Back bearings (the reverse direction) differ by exactly 180°, so a bearing of 045° has a back bearing of 225°.";
 });
 
 btn2.addEventListener('click', () => {
   btn2.classList.add('active');
   btn1.classList.remove('active');
-  knowdrop.textContent = 'Angles of elevation look up from horizontal, angles of depression look down from horizontal — both measured from the observer\'s eye line, not from the ground. In height problems, the angle of depression from the top of a building equals the angle of elevation from the ground (alternate angles in parallel lines). Set up right triangles using tan when you know one side and need the other, or use sine/cosine if you have the hypotenuse. Always check whether the problem gives you the angle or asks you to find it — that determines whether you use tan, sin⁻¹, or cos⁻¹.';
+  knowdrop.textContent = "Angles of elevation look up from horizontal, angles of depression look down from horizontal — both measured from the observer's eye line, not from the ground. In height problems, the angle of depression from the top of a building equals the angle of elevation from the ground (alternate angles in parallel lines). Set up right triangles using tan when you know one side and need the other, or use sine/cosine if you have the hypotenuse. Always check whether the problem gives you the angle or asks you to find it — that determines whether you use tan, sin⁻¹, or cos⁻¹.";
 });
 
 // Initialize
