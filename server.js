@@ -322,6 +322,10 @@ app.post('/api/contact', async (req, res) => {
   }
 });
 
+// KNOWHERE:JOIN — knowhere.me/join → the app's join page (call it., piece 4). 302 so the destination can change. Sits BEFORE go-links (its regex would eat /join).
+app.get(['/join', '/join.html'], (req, res) => { res.set('Cache-Control', 'no-store'); const q = req.originalUrl.indexOf('?'); return res.redirect(302, String(process.env.APP_URL || 'https://app.knowhere.me').replace(/\/knowhere\.html.*$/, '').replace(/\/$/, '') + '/join' + (q >= 0 ? req.originalUrl.slice(q) : '')); });
+// /KNOWHERE:JOIN
+
 // KNOWHERE:GO-LINKS v1 — short links for creator bios (302 so the destination can change). Add a slug here, redeploy, done.
 const GO_LINKS = {
   acevce:   'https://knowhere.me/experience-it?utm_source=creator&utm_medium=influencer&utm_campaign=kw-launch-2026&utm_term=stu&utm_content=C1',

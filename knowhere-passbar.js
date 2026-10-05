@@ -28,7 +28,8 @@
   var SIGNUP = "https://app.knowhere.me/signup?as=" + (PARENT ? "parent" : "student");
   var CTA = PARENT ? "start their free week" : "start your free week";
   var WHERE = ds.where || location.pathname;
-  var CLOSE = Date.UTC(2026, 9, 26, 12, 59), now = Date.now(), closed = now > CLOSE;
+  /* W9-YEAR-11: data-pass="off" = always the plain free-week bar, never the exam pass (Year 11 pages: no exam, no pass) */
+  var CLOSE = Date.UTC(2026, 9, 26, 12, 59), now = Date.now(), closed = now > CLOSE || ds.pass === "off";
   var claim = Math.max(0, Math.ceil((CLOSE - now) / 864e5));
   function track(n, d) { try { if (window.umami) window.umami.track(n, d || {}); } catch (e) {} }
 

@@ -472,6 +472,14 @@ def write_sitemap():
         for subj in sorted(os.listdir(base)):
             d = os.path.join(base, subj)
             if not os.path.isdir(d): continue
+            if subj == "year-11":   # W9-YEAR-11: /<cert>/year-11/<subject>/<slug> sits one folder deeper
+                for s2 in sorted(os.listdir(d)):
+                    d2 = os.path.join(d, s2)
+                    if not os.path.isdir(d2): continue
+                    for f in sorted(os.listdir(d2)):
+                        if not f.endswith(".html") or ".bak" in f: continue
+                        rows.append(f"  <url><loc>{SITE}/{cert}/year-11/{s2}/{f[:-5]}</loc><lastmod>{TODAY}</lastmod><priority>0.7</priority></url>")
+                continue
             for f in sorted(os.listdir(d)):
                 if not f.endswith(".html") or ".bak" in f: continue
                 rows.append(f"  <url><loc>{SITE}/{cert}/{subj}/{f[:-5]}</loc><lastmod>{TODAY}</lastmod><priority>0.7</priority></url>")

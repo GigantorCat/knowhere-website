@@ -78,9 +78,18 @@ const injectAccent = new Function(srv.slice(ai, ei) + '; return injectAccent;')(
 
 /* ── the data ── */
 const scapes = JSON.parse(fs.readFileSync('SCAPES-PROPOSED.json', 'utf8'));
+/* W9-YEAR-11 (5 Oct 2026): the public Year 11 pages have their own picks (nominate-scapes.mjs --level=11 → SCAPES-Y11.json)
+   and their own addresses, /<cert>/year-11/<subject>/<slug> (D42). A page is built only while its cohort has a live
+   release; until then it does not exist anywhere — not on disk, not in the sitemap, not as a link from another page. */
+const Y11_DIR = 'year-11';
+const scapesY11 = fs.existsSync('SCAPES-Y11.json') ? JSON.parse(fs.readFileSync('SCAPES-Y11.json', 'utf8')) : { cells: [], pages: [] };
+const targetsY11 = [];
 const manifest = JSON.parse(fs.readFileSync(path.join(APP, 'generated-concepts.json'), 'utf8'));
+/* W9-YEAR-11: KW_REGISTRY points the generator at a planted registry copy (the same switch the server's gates use), so a
+   proof run can build the Year 11 pages before 4 Jan without touching pipeline/cohorts.json */
+const REGISTRY = process.env.KW_REGISTRY ? path.resolve(process.env.KW_REGISTRY) : path.join(APP, 'pipeline', 'cohorts.json');
 /* s7-y11-fence: cohorts with no live release (pipeline/cohorts.json) — their mappings do not exist to the public site yet */
-const darkCohorts = new Set(Object.entries(JSON.parse(fs.readFileSync(path.join(APP, 'pipeline', 'cohorts.json'), 'utf8'))).filter(([k, v]) => !k.startsWith('_') && v && v.releases && !Object.values(v.releases).some(r => r && r.live === true)).map(([k]) => k));
+const darkCohorts = new Set(Object.entries(JSON.parse(fs.readFileSync(REGISTRY, 'utf8'))).filter(([k, v]) => !k.startsWith('_') && v && v.releases && !Object.values(v.releases).some(r => r && r.live === true)).map(([k]) => k));
 const bigIdeas = new Map(Object.entries(JSON.parse(fs.readFileSync(path.join(APP, 'big-ideas.json'), 'utf8')).entries || {}));
 const byId = new Map(manifest.concepts.map(c => [c.id, c]));
 const bySlug = new Map(manifest.concepts.map(c => [c.slug, c]));
@@ -147,28 +156,72 @@ function homeOf(concept) {
   const d = subjSlug(concept.discipline || '');
   return own.find(m => subjSlug(m.subject) === d) || own[0];
 }
+/* W9-YEAR-11 · A LIVE URL NEVER MOVES. A page already on disk keeps its address, whatever its concept's mappings say
+   today. Found 5 Oct: since 17 Sep the manifest re-filed 5 live pages wholly into the Year 11 cohorts (empirical formulae,
+   polymerisation, market equilibrium, scheduling, index laws) and HSC Year 12 absorbed 3 VCE Economics pages, so a plain
+   re-run would have dropped 5 from the sitemap and moved 3 from /vce/ to /hsc/. Pinned, they rebuild where they are,
+   from the cell they were nominated for. */
+const certOf = h => (h.curriculum === 'HSC' ? 'hsc' : 'vce');
+const onDiskHome = new Map();
+for (const cert of ['hsc', 'vce']) {
+  if (!fs.existsSync(cert)) continue;
+  for (const d of fs.readdirSync(cert)) {
+    if (d === Y11_DIR || !fs.statSync(path.join(cert, d)).isDirectory()) continue;
+    for (const f of fs.readdirSync(path.join(cert, d))) if (f.endsWith('.html')) onDiskHome.set(f.slice(0, -5), { cert, dir: d });
+  }
+}
+const pinned = [];
 const skipped = [];
 for (const p of targets) {
   const concept = byId.get(p.id);
-  const home = concept && homeOf(concept);
+  let home = concept && homeOf(concept);
+  const was = onDiskHome.get(p.slug);
+  /* also pinned: a live page whose home would become a Year 11 cohort mapping once that cohort goes live — it stays the
+     page it went live as, and the Year 11 framing lives on the /year-11/ pages */
+  if (concept && was && (!home || certOf(home) !== was.cert || subjSlug(home.subject) !== was.dir || /^(hsc|vce)-y11\//.test(String(home.origin || '')))) {
+    home = p.home = p.cells.find(c => certOf(c) === was.cert && subjSlug(c.subject) === was.dir) || p.cells[0];
+    pinned.push(`${was.cert}/${was.dir}/${p.slug}`);
+  }
   if (!home) { skipped.push([p.slug, 'no curriculum mapping']); continue; }
-  const cert = home.curriculum === 'HSC' ? 'hsc' : 'vce';
+  /* a concept that is Year 11 alone never gets a NEW address outside /year-11/ — its page, if any, comes from SCAPES-Y11 */
+  if (!was && (home.level || 'Year 12') !== 'Year 12') { skipped.push([p.slug, 'Year 11 only — no new page at a Year 12 address']); continue; }
+  const cert = p.home ? was.cert : certOf(home);
   p.cert = cert;
-  p.dir = subjSlug(home.subject);
+  p.dir = p.home ? was.dir : subjSlug(home.subject);
   p.homeSubject = home.subject;
   if (!isShipped(cert, p.dir)) { skipped.push([p.slug, `${home.curriculum} ${home.subject} is not in release 1`]); continue; }
   p.url = `https://knowhere.me/${cert}/${p.dir}/${p.slug}`;
   p.file = path.join(cert, p.dir, p.slug + '.html');
   pageFor.set(p.slug, p);
 }
-const live = targets.filter(p => pageFor.has(p.slug));
+/* W9-YEAR-11: the Year 11 pages — one per Year 11 cell, only while that cohort is live */
+for (const p of (scapesY11.pages || []).filter(q => !ONLY || q.slug === ONLY)) {
+  const cell = p.cells[0];
+  const cert = certOf(cell);
+  if (darkCohorts.has(`${cert}-y11`)) { skipped.push([p.slug, `Year 11 ${cell.curriculum} is not live yet`]); continue; }
+  if (!byId.get(p.id)) { skipped.push([p.slug, 'not in the manifest']); continue; }
+  if (pageFor.has(p.slug) || onDiskHome.has(p.slug)) { skipped.push([p.slug, 'already has a page (its URL never moves)']); continue; }
+  p.level = 'Year 11';
+  p.home = { ...cell, level: 'Year 11' };
+  p.cert = cert;
+  p.dir = subjSlug(cell.subject);
+  p.homeSubject = cell.subject;
+  if (!isShipped(cert, p.dir)) { skipped.push([p.slug, `${cell.curriculum} ${cell.subject} is not in release 1`]); continue; }
+  p.url = `https://knowhere.me/${cert}/${Y11_DIR}/${p.dir}/${p.slug}`;
+  p.file = path.join(cert, Y11_DIR, p.dir, p.slug + '.html');
+  pageFor.set(p.slug, p);
+  targetsY11.push(p);
+}
+const live = [...targets, ...targetsY11].filter(p => pageFor.get(p.slug) === p);
 if (skipped.length) {
   const why = new Map();
   for (const [, reason] of skipped) why.set(reason, (why.get(reason) || 0) + 1);
-  console.log('\nnot built — not in release 1:');
+  console.log('\nnot built:');
   for (const [reason, n] of [...why].sort((a, b) => b[1] - a[1])) console.log(`  ${String(n).padStart(3)} pages · ${reason}`);
 }
 console.log(`${targets.length} nominated · ${scapes.cells.length} cells`);
+console.log(`Year 11: ${(scapesY11.pages || []).length} nominated · ${(scapesY11.cells || []).length} cells · ${targetsY11.length} live`);
+if (pinned.length) { console.log('\npinned — live address kept, the manifest has moved on:'); for (const f of pinned) console.log('  · ' + f); }
 
 /* ── the shared template ───────────────────────────────────────────────────────────────────────────── */
 const CSS = `
@@ -293,7 +346,7 @@ if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}windo
 const WORDMARK = `know<b>here</b>${TM ? '<sup>™</sup>' : ''}`;
 
 const certName = c => (c === 'hsc' ? 'HSC' : 'VCE');
-const linkTo = slug => { const p = pageFor.get(slug); return p ? `/${p.cert}/${p.dir}/${p.slug}` : null; };
+const linkTo = slug => { const p = pageFor.get(slug); return p ? `/${p.cert}/${p.level === 'Year 11' ? Y11_DIR + '/' : ''}${p.dir}/${p.slug}` : null; };
 const titleOf = slug => { const c = bySlug.get(slug); const m = c && metaOf(c.id); return (m && m.title) || String(slug).replace(/-s-/g, "'s-").replace(/-/g, ' '); };
 const firstSentence = s => { const m = /^[\s\S]*?[.!?](\s|$)/.exec(String(s || '')); return (m ? m[0] : String(s || '')).trim(); };
 
@@ -301,13 +354,13 @@ function buildPage(p) {
   const concept = byId.get(p.id) || die('no manifest concept for ' + p.slug);
   const meta = metaOf(p.id) || die('no sidecar meta for ' + p.slug);
   const accent = accentFor(p.cert, p.dir, p.subject);
-  const home = homeOf(concept);
+  const home = p.home || homeOf(concept);
   /* the eyebrow and the JSON-LD alignment name only subjects the product actually has — an "also VCE
      Modern History" on a page would advertise a subject that is not in release 1 */
   const cells = [home, ...p.cells.filter(c =>
     !(c.curriculum === home.curriculum && c.topic === home.topic)
     && isShipped(c.curriculum === 'HSC' ? 'hsc' : 'vce', subjSlug(c.subject)))];
-  const cellRec = scapes.cells.find(c => c.curriculum === home.curriculum && c.subject === home.subject && c.topic === home.topic);
+  const cellRec = (p.level === 'Year 11' ? scapesY11 : scapes).cells.find(c => c.curriculum === home.curriculum && c.subject === home.subject && c.topic === home.topic);
   const idea = bigIdeas.get(`${home.subject}/${home.topic}`);
   /* An ITW scene belongs to a TOPIC and its analogy names ONE concept in that topic. When that is not this
      concept, the analogy is about something else on the same page as a big claim — "Fusion works like..."
@@ -328,7 +381,14 @@ function buildPage(p) {
   /* The level is DERIVED, never assumed. Six concepts in the full map are Year 11 only — a page that says
      Year 12 over a Year 11 concept is wrong in the description, in the JSON-LD and to the reader. */
   const levels = new Set((concept.curriculumMappings || []).map(m => m.level).filter(Boolean));
-  const level = levels.has('Year 12') ? 'Year 12' : (levels.has('Year 11') ? 'Year 11' : 'Year 12');
+  const level = p.level || (levels.has('Year 12') ? 'Year 12' : (levels.has('Year 11') ? 'Year 11' : 'Year 12'));
+  /* W9-YEAR-11: a Year 11 page talks like the app's Year 11 view — the marker, not the examiner. S9's Year 11 assessment
+     line when the picture has one; no box at all when it does not (the Year 12 exam line is never shown to Year 11). */
+  const Y11P = p.level === 'Year 11';
+  const y11Copy = Y11P ? (((meta.levelCopy || {})['Year 11']) || {}) : null;
+  const catchBox = Y11P
+    ? (y11Copy.assessment ? `<div class="catch"><b>what markers look for</b> — ${stars(y11Copy.assessment)}</div>` : '')
+    : (meta.exam ? `<div class="catch"><b>what examiners catch</b> — ${stars(meta.exam)}</div>` : '');
 
   /* ── 1. the widget: the app's own accent bake, done once at build ── */
   const srcFile = fileById.get(p.id) || die('no widget on disk for ' + p.slug);
@@ -345,7 +405,7 @@ ${baked}
 ${beacon(p.slug)}</body></html>`;
 
   /* ── 2. the page ── */
-  const eyebrowMain = `${home.curriculum} · ${home.subject} · ${esc(home.topic)}`;
+  const eyebrowMain = `${home.curriculum} · ${Y11P ? 'Year 11 · ' : ''}${home.subject} · ${esc(home.topic)}`;
   const also = cells.slice(1).map(c => `${c.curriculum} ${esc(c.topic)}`).join(' · ');
   /* The description is budgeted tail-first: the curriculum sentence names NSW and Victoria on EVERY page
      (doctrine — never "Australia"), so it is reserved before the concept's own sentence is allowed in,
@@ -356,11 +416,11 @@ ${beacon(p.slug)}</body></html>`;
   let head = firstSentence(meta.summary || meta.explanation).replace(/\s+/g, ' ').trim();
   if (head.length > headBudget) head = head.slice(0, headBudget).replace(/[\s,;:]+\S*$/, '').replace(/[.,;:]$/, '') + '…';
   const DESC = (head + tail).replace(/\s+/g, ' ');
-  const TITLE = `${title.toLowerCase()} — ${home.curriculum} ${home.subject.toLowerCase()}, live — knowhere`;
+  const TITLE = `${title.toLowerCase()} — ${home.curriculum} ${home.subject.toLowerCase()}${Y11P ? ' year 11' : ''}, live — knowhere`;
 
   const alignments = cells.map(c => ({
     '@type': 'AlignmentObject', alignmentType: 'educationalSubject',
-    educationalFramework: c.curriculum === 'HSC' ? `NSW HSC ${c.subject}` : `VCE ${c.subject} Units 3&4`,
+    educationalFramework: Y11P ? (c.curriculum === 'HSC' ? `NSW Stage 6 ${c.subject} Year 11` : `VCE ${c.subject} Units 1&2`) : (c.curriculum === 'HSC' ? `NSW HSC ${c.subject}` : `VCE ${c.subject} Units 3&4`),
     targetName: c.topic,
   }));
   const LD = {
@@ -378,7 +438,7 @@ ${beacon(p.slug)}</body></html>`;
       {
         '@type': 'BreadcrumbList', itemListElement: [
           { '@type': 'ListItem', position: 1, name: 'knowhere', item: 'https://knowhere.me/' },
-          { '@type': 'ListItem', position: 2, name: `${home.curriculum} ${home.subject}`, item: p.url },
+          { '@type': 'ListItem', position: 2, name: `${home.curriculum} ${home.subject}${Y11P ? ' Year 11' : ''}`, item: p.url },
           { '@type': 'ListItem', position: 3, name: title, item: p.url },
         ],
       },
@@ -399,15 +459,15 @@ ${beacon(p.slug)}</body></html>`;
       ${b.action ? `<p>${stars(b.action)}</p>` : ''}
       ${b.result ? `<p>${stars(b.result)}</p>` : ''}
     </div>
-    ${meta.exam ? `<div class="catch"><b>what examiners catch</b> — ${stars(meta.exam)}</div>` : ''}
+    ${catchBox}
   </section>`;
-  } else if (idea || meta.exam) {
+  } else if (idea || catchBox) {
     wild = `
   <section class="section">
     <div class="mono">the one idea</div>
     <h2>why this one <span class="s">carries the topic.</span></h2>
     <div class="prose">${idea ? `<p>${esc(idea.canonical || idea.grounded)}</p>` : ''}${meta.summary && meta.summary !== meta.explanation ? `<p>${esc(meta.summary)}</p>` : ''}</div>
-    ${meta.exam ? `<div class="catch"><b>what examiners catch</b> — ${stars(meta.exam)}</div>` : ''}
+    ${catchBox}
   </section>`;
   }
 
@@ -479,7 +539,7 @@ ${beacon(p.slug)}</body></html>`;
 <meta property="og:image" content="https://knowhere.me/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="knowhere — Year 12 study built for your brain">
+<meta property="og:image:alt" content="knowhere — ${Y11P ? 'Year 11' : 'Year 12'} study built for your brain">
 <meta property="og:locale" content="en_AU">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${esc(TITLE)}">
@@ -494,7 +554,7 @@ ${beacon(p.slug)}</body></html>`;
 <script src="/knowhere-marks.js?v=2"></script>
 <script src="/knowhere-pass.js" defer></script>
 <script src="/knowhere-handoff.js?v=3" defer></script><!-- KW:HANDOFF -->
-<script src="/knowhere-passbar.js?v=2" defer data-where="concept:${p.slug}" data-away=".cta-box"></script><!-- KW:PASSBAR -->
+<script src="/knowhere-passbar.js?v=${Y11P ? 3 : 2}" defer data-where="concept:${p.slug}"${Y11P ? ' data-pass="off"' : ''} data-away=".cta-box"></script><!-- KW:PASSBAR -->
 <style>${CSS.replace('__ACCENT__', accent)}</style>
 </head>
 <body>
@@ -540,7 +600,7 @@ ${wild}${points}${under}${rest}
         <a class="door pri" data-kw-cta href="https://app.knowhere.me/signup?as=student">start your free week →</a>
         <a class="door sec" href="/for-parents?as=parent">parent? start their free week →</a>
       </div>
-      <div class="passbox kw-pass">
+      ${Y11P ? `<p class="pass-line">Free for a week, then a plan you can stop any time.</p>` : `<div class="passbox kw-pass">
         <div>
           <div class="t">the 2026 exam pass</div>
           <p>Free for a week, then one payment. It ends itself after the last exam — no subscription.</p>
@@ -550,7 +610,7 @@ ${wild}${points}${under}${rest}
           <span class="pill"><b data-pass-days>0</b> days left</span>
         </div>
       </div>
-      <p class="pass-line" data-pass-fallback="block">Free for a week, then a plan you can stop any time.</p>
+      <p class="pass-line" data-pass-fallback="block">Free for a week, then a plan you can stop any time.</p>`}
       <div class="hand">
         <p class="fr">not your card? send it to whoever's is.</p>
         <button type="button" class="kw-hand" data-kw-handoff="concept:${p.slug}">send this to a parent</button>
@@ -560,7 +620,7 @@ ${wild}${points}${under}${rest}
         <button type="button" id="kwCopy">copy the link</button>
       </div>
     </div>
-    <div class="crumbs"><a href="/">knowhere</a><span>›</span><span>${esc(home.curriculum.toLowerCase())} ${esc(home.subject.toLowerCase())}</span><span>›</span><span style="color:var(--ink)">${esc(title.toLowerCase())}</span></div>
+    <div class="crumbs"><a href="/">knowhere</a><span>›</span><span>${esc(home.curriculum.toLowerCase())} ${esc(home.subject.toLowerCase())}${Y11P ? ' year 11' : ''}</span><span>›</span><span style="color:var(--ink)">${esc(title.toLowerCase())}</span></div>
   </section>
 
   <knowhere-footer-nav></knowhere-footer-nav>
@@ -574,7 +634,7 @@ ${wild}${points}${under}${rest}
   var f=document.getElementById('kwFrame');
   window.addEventListener('message',function(e){ var d=e&&e.data; if(!d||d.kwId!==${JSON.stringify(p.slug)}||!d.kwH) return; var h=Math.max(420,Math.min(2600,d.kwH)); if(Math.abs(parseInt(f.style.height||0,10)-h)>8) f.style.height=h+'px'; });
   var url=${JSON.stringify(shareUrl)};
-  var text=${JSON.stringify(String(title).toLowerCase() + ', as a thing you can drag — one Year 12 ' + home.subject.toLowerCase() + ' concept from knowhere.')};
+  var text=${JSON.stringify(String(title).toLowerCase() + ', as a thing you can drag — one ' + (Y11P ? 'Year 11' : 'Year 12') + ' ' + home.subject.toLowerCase() + ' concept from knowhere.')};
   function track(n,d){ try{ if(window.umami) window.umami.track(n,d||{}); }catch(e){} }
   function did(b,t){ var o=b.textContent; b.classList.add('did'); b.textContent=t; setTimeout(function(){ b.classList.remove('did'); b.textContent=o; },1800); }
   var sh=document.getElementById('kwShare'), cp=document.getElementById('kwCopy');
@@ -606,6 +666,12 @@ for (const b of built) {
   if (b.DESC.length > 300) warn.push(`${b.p.slug}: description ${b.DESC.length} chars`);
   if (/\bevery subject\b/i.test(b.html)) die(`${b.p.slug}: "every subject" — it is 15 HSC and 16 VCE`);
   if (/\b(grade|ATAR|marks? improve|band 6)\b/i.test(b.html.replace(/what examiners catch[\s\S]*?<\/div>/g, ''))) warn.push(`${b.p.slug}: check for an outcome claim`);
+  /* W9-YEAR-11: Year 11 has no external exam — a Year 11 page whose words still say exam, ATAR or Year 12 is wrong */
+  if (b.p.level === 'Year 11') {
+    const words = b.html.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>|<[^>]+>/g, ' ');
+    const hit = words.match(/\b(exams?|examiners?|ATAR|Year 12)\b/i);
+    if (hit) warn.push(`${b.p.slug}: Year 11 page says "${hit[0]}"`);
+  }
 }
 
 console.log(`\n${APPLY ? 'APPLY' : 'DRY RUN'} — ${built.length} pages, ${built.length} widgets`);
@@ -629,6 +695,8 @@ for (const cert of ['hsc', 'vce']) {
   for (const d of fs.readdirSync(cert)) {
     const dir = path.join(cert, d);
     if (!fs.statSync(dir).isDirectory()) continue;
+    /* W9-YEAR-11: /<cert>/year-11/<subject>/<slug> sits one folder deeper */
+    if (d === Y11_DIR) { for (const s of fs.readdirSync(dir)) { const sd = path.join(dir, s); if (fs.statSync(sd).isDirectory()) for (const f of fs.readdirSync(sd)) if (f.endsWith('.html')) onDisk.add(path.join(sd, f)); } continue; }
     for (const f of fs.readdirSync(dir)) if (f.endsWith('.html')) onDisk.add(path.join(cert, d, f));
   }
 }
@@ -699,7 +767,7 @@ for (const b of built) {
   const pg = fs.readFileSync(b.p.file, 'utf8');
   const wd = fs.readFileSync(path.join('widgets', b.widgetName), 'utf8');
   const ok = pg.includes('<base href="/">') && pg.includes(esc(b.TITLE)) && pg.includes(`/widgets/${b.widgetName}`)
-    && pg.includes('for-parents?as=parent') && pg.includes('data-pass-days') && pg.includes('data-kw-handoff') && pg.includes('knowhere-passbar.js')
+    && pg.includes('for-parents?as=parent') && (b.p.level === 'Year 11' ? (!pg.includes('data-pass-days') && pg.includes('data-pass="off"')) : pg.includes('data-pass-days')) && pg.includes('data-kw-handoff') && pg.includes('knowhere-passbar.js')
     && pg.includes(`<link rel="canonical" href="${b.p.url}">`)
     && !/#3AADA0/i.test(wd) && wd.includes('kwMobFix') && wd.includes('kwH') && wd.includes(b.accent);
   if (!ok) { console.log(`  ✗ ${b.p.file}`); bad++; }
