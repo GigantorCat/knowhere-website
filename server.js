@@ -361,6 +361,28 @@ app.use((req, res, next) => {
 });
 // /KNOWHERE:SEO-REDIRECTS
 
+// KNOWHERE:LOST-QUERY v1 — repair a link that lost its "?" (10 Oct 2026)
+// A creator link in the wild points at /experience-itutm_source=creator&utm_medium=influencer&... with no
+// question mark, so the whole query string arrives as part of the PATH: the visitor got 404.html instead of
+// the page, and because Umami reads utm from the query string the visit was invisible to every utm report.
+// One real visit on 9 Oct 2026. Deliberately narrow — the run-on text must begin with a utm_ key AND the
+// slug must be a real page — so nothing else can fall into it. Relative redirect, so it works on localhost
+// and Railway preview hosts too; the canonical-host rule above tidies www on the follow-up request.
+// Note: creator bios should use the GO_LINKS short links (/acevce, /road2med) — they have no "?" to lose.
+app.use((req, res, next) => {
+  if (req.method !== 'GET' && req.method !== 'HEAD') return next();
+  const m = req.path.match(/^\/([A-Za-z0-9-]+?)[?&]?(utm_[A-Za-z0-9_]*=.*)$/i);
+  if (!m) return next();
+  const slug = m[1].toLowerCase();
+  if (!SEO_PAGES.has(slug)) return next();
+  const cut = req.originalUrl.indexOf('?');
+  const tail = cut >= 0 ? req.originalUrl.slice(cut + 1) : '';
+  console.log('[lost-query] repaired ' + req.path.slice(0, 120));
+  res.set('Cache-Control', 'no-store');
+  return res.redirect(301, '/' + slug + '?' + m[2] + (tail ? '&' + tail : ''));
+});
+// /KNOWHERE:LOST-QUERY
+
 // ---------- static site ----------
 app.use((req, res, next) => {
   // never serve backups, patch scripts, the app prototype or server files
