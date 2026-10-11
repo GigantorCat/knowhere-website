@@ -18,6 +18,7 @@
    in the app repo are opened read-only and never written.                                                */
 import fs from 'node:fs';
 import path from 'node:path';
+import { VCAA_LINE } from './vcaa-ack.mjs';   /* the VCAA acknowledgement, VCE pages only (11 Oct 2026) */
 
 const APPLY = process.argv.includes('--apply');
 const ONLY = (process.argv.find(a => a.startsWith('--only=')) || '').slice(7);
@@ -624,7 +625,7 @@ ${wild}${points}${under}${rest}
   </section>
 
   <knowhere-footer-nav></knowhere-footer-nav>
-
+${p.cert === 'vce' ? '  ' + VCAA_LINE + '\n' : ''}
 </div>
 <script src="/knowhere-footer.js?v=23"></script>
 <script src="/knowhere-mobile-menu.js?v=8" defer></script>
