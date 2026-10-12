@@ -65,17 +65,17 @@ function welcome({ email, firstName, type, position, teacherSeat }) {
     student: `You're on the list. When the doors open you'll be first through them — 15 HSC and 16 VCE subjects, every concept, rebuilt for the way your brain actually fires.`,
     parent: `You're on the list. When the doors open you'll be first to know — and first to see how your kid is really going, without the dinner-table interrogation.`,
     teacher: seat
-      ? `You've got founding-teacher seat <strong style="color:#F2F0EB">#${teacherSeat} of ${TEACHER_SEATS}</strong>. That's three months free once the teacher experience lands, and first say in how the classroom tools work.`
-      : `You're on the list for the teacher experience. The ${TEACHER_SEATS} founding seats are gone, but you're first in line when it lands — and we'll find you something for the wait.`,
+      ? `Congrats, you've secured your seat at the knowhere · teach it. table. Free rein right up to the end of Term 1, 2027, and first say in how the classroom tools work.`
+      : `You're on the list for knowhere · teach it. The ${TEACHER_SEATS} founding seats are gone, but you're first in line when it opens — and we'll find you something for the wait.`,
   }[type] || `You're on the list.`;
   const html = shell({
     goat: 'delighted', pill: seat ? 'Founding teacher' : 'Waitlist',
-    bodyHtml: B.eyebrow("you're in") + (seat ? B.num(`seat #${teacherSeat} <span style="font-size:22px;color:#8C9389;letter-spacing:0">of ${TEACHER_SEATS}</span>`) : '') + B.h1(`${hey(firstName)}, you're good to goat.`) + B.p(body)
-      + B.p(`Three emails from here: a week out, three days out, launch day. No drip, no "just checking in".`)
+    bodyHtml: B.eyebrow("you're in") + '' + B.h1(`${hey(firstName)}, you're good to goat.`) + B.p(body)
+      + B.p(type === 'teacher' ? `One email from here: the day knowhere · teach it. opens. No drip, no "just checking in".` : `Three emails from here: a week out, three days out, launch day. No drip, no "just checking in".`)
       + B.btn('Poke the real thing meanwhile →', `${SITE}/experience-it.html`) + B.sig(),
     footHtml: `Sent to ${email} because you joined the waitlist at knowhere.me. Not you? Ignore this and nothing else will arrive.`, unsub: unsubUrl(email),
   });
-  return { from: FROM_GOAT, reply_to: REPLY_TO, to: email, subject: seat ? `You're in — founding teacher seat #${teacherSeat} 🐐` : `You're in 🐐`, html, text: strip(html) };
+  return { from: FROM_GOAT, reply_to: REPLY_TO, to: email, subject: seat ? `You're in — a founding seat at knowhere · teach it. 🐐` : `You're in 🐐`, html, text: strip(html) };
 }
 
 /* ── 2. countdown: t7 / t3 / t0 — per cohort ── */

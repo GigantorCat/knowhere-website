@@ -22,13 +22,13 @@
   var COPY = {
     student: { h: "if you're waiting for a sign, this is it.", p: "Year 12, rebuilt for your brain. The doors open before the exams — get on the list and you're at the front of the queue. No elbows required.", btn: 'get on the list' },
     parent:  { h: "if you're waiting for a sign, this is it.", p: "A study system built for how your kid actually learns — and a window into how it's really going. Three emails: a week out, three days out, launch day. Then peace breaks out at dinner.", btn: 'get on the list' },
-    teacher: { h: "if you're waiting for a sign, this is it.", p: "The teacher experience lands right after the student launch. The first 50 on this list get three months free and first say in how the classroom tools work. Yes, that's a bribe. A good one.", btn: 'claim a founding seat' },
+    teacher: { h: "if you're waiting for a sign, this is it.", p: "The first 50 on this list get knowhere · teach it. free until the end of Term 1, 2027, and first say in how the classroom tools work. Yes, that's a bribe. A good one.", btn: 'claim a founding seat' },
     login:   { h: "nothing to log into. yet.", p: "The Goat is still cooking. Get on the list and we'll hold the door — you'll be first through it before the exams.", btn: 'get on the list' }
   };
   var DONE = {
     student: "You're on the list. Check your inbox — and until the doors open, the real thing is already on the site to poke.",
     parent:  "You're on the list. You'll hear from us a week out, three days out, and on the day. Then it's their turn.",
-    teacherSeat: "Seat confirmed. Three months free, first say on the classroom tools, and the Goat's personal respect.",
+    teacherSeat: "Welcome to the founding fifty. You're one of the first teachers in knowhere · teach it. Free until the end of Term 1, 2027, a real say in how the classroom tools work, and the Goat's eternal respect.",
     teacher: "The founding seats are gone, but you're first in line for what's next. The Goat has noted your enthusiasm."
   };
 
@@ -279,7 +279,7 @@
     } else if (r.type === 'parent') {
       share.appendChild(el('a', { href: 'mailto:?subject=' + encodeURIComponent('Year 12 study app worth a look') + '&body=' + encodeURIComponent('Built around how each kid actually learns — worth a look before the exams. ' + url), text: 'tell another parent' }));
     } else {
-      share.appendChild(el('a', { href: 'mailto:?subject=' + encodeURIComponent('Founding teacher seats — knowhere') + '&body=' + encodeURIComponent('First 50 teachers get three months free. ' + url), text: 'tell the staffroom' }));
+      share.appendChild(el('a', { href: 'mailto:?subject=' + encodeURIComponent('Founding teacher seats — knowhere') + '&body=' + encodeURIComponent('First 50 teachers get knowhere · teach it. free until the end of Term 1, 2027.' + (typeof r.teacherSeatsLeft === 'number' ? ' ' + r.teacherSeatsLeft + (r.teacherSeatsLeft === 1 ? ' seat' : ' seats') + ' left.' : '') + ' ' + url), text: 'tell the staffroom' }));
     }
     share.appendChild(el('a', { href: '/experience-it', text: 'poke the real thing →' }));
     wrap.appendChild(share);
