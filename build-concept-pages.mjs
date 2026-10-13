@@ -669,7 +669,8 @@ for (const b of built) {
   if (/\b(grade|ATAR|marks? improve|band 6)\b/i.test(b.html.replace(/what examiners catch[\s\S]*?<\/div>/g, ''))) warn.push(`${b.p.slug}: check for an outcome claim`);
   /* W9-YEAR-11: Year 11 has no external exam — a Year 11 page whose words still say exam, ATAR or Year 12 is wrong */
   if (b.p.level === 'Year 11') {
-    const words = b.html.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>|<[^>]+>/g, ' ');
+    /* S14-PREP (14 Oct 2026): VCAA's required acknowledgement says "past VCE exams" word for word — never a page fault, so it is skipped */
+    const words = b.html.replace(/<div data-kw-vcaa[\s\S]*?<\/div>/g, ' ').replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>|<[^>]+>/g, ' ');
     const hit = words.match(/\b(exams?|examiners?|ATAR|Year 12)\b/i);
     if (hit) warn.push(`${b.p.slug}: Year 11 page says "${hit[0]}"`);
   }
