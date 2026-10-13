@@ -323,6 +323,9 @@ app.post('/api/contact', async (req, res) => {
 });
 
 // KNOWHERE:JOIN — knowhere.me/join → the app's join page (call it., piece 4). 302 so the destination can change. Sits BEFORE go-links (its regex would eat /join).
+/* KW:TEACH-SITE (13 Oct 2026): the pre-launch waitlist page is retired — teachers claim a seat in the app now, and the page's
+   copy still says the app "goes live before the exams". The API under /api/waitlist stays (the app forwards teacher seats to it). */
+app.get(['/waitlist', '/waitlist.html'], (req, res) => res.redirect(301, '/for-teachers'));
 app.get(['/join', '/join.html'], (req, res) => { res.set('Cache-Control', 'no-store'); const q = req.originalUrl.indexOf('?'); return res.redirect(302, String(process.env.APP_URL || 'https://app.knowhere.me').replace(/\/knowhere\.html.*$/, '').replace(/\/$/, '') + '/join' + (q >= 0 ? req.originalUrl.slice(q) : '')); });
 // /KNOWHERE:JOIN
 

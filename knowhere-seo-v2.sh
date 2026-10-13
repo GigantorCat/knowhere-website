@@ -70,7 +70,7 @@ PAGES = {
    ]),
  "for-teachers.html": dict(path="/for-teachers", kind="faq",
    title="knowhere · teach it. — HSC & VCE concepts live",
-   desc="Every HSC and VCE concept as a live explanation for the projector, mapped to the NESA syllabus and VCAA study design. 50 founding seats, free to the end of Term 1 2027.",
+   desc="Every Physics and Chemistry concept as a live deck for the projector: a call it. round for the room, slides you can edit, share links with no student login, tonight’s homeplay. Mapped to the HSC syllabus and VCE study design. 50 founding seats, free until 9 April 2027.",
    name="For teachers",
    faq=[
     ("Does knowhere follow the actual study design?",
@@ -79,6 +79,8 @@ PAGES = {
      "No. Put a concept on the projector, or send the class a share link: it opens in any browser, no login. A personalised student plan for home study is separate and entirely the student's call."),
     ("Can I use knowhere for lesson planning?",
      "Yes. Every Physics and Chemistry concept is a ready-made deck: the picture, a call it. round for the room, the takeaway and a homeplay task. Change the words, add your own slides, then present it or share it. More subjects from Term 1. Class groups and progress views are on the list — founding teachers get first say in how they work."),
+    ("Will knowhere work on the school network?",   # KW:TEACH-SITE
+     "It is a normal website, nothing to install, on the projector laptop or the students’ own. Some school filters have not categorised knowhere.me yet; a one-page note for the IT team lists the handful of domains to allow."),
    ]),
  "compare.html": dict(path="/compare", kind="faq",
    title="knowhere vs Atomi vs Edrolo vs a tutor — honest comparison",
@@ -123,6 +125,7 @@ PAGES = {
    title="Terms of use — knowhere",
    desc="The terms for using knowhere: accounts, parent and student access, free trial, subscriptions, billing, refunds, AI-generated content and acceptable use.",
    name="Terms"),
+ "for-your-it-team.html": dict(path="/for-your-it-team", kind="noindex", title="knowhere · teach it. — a note for your IT team", desc="What knowhere needs from a school network: nothing installed, a handful of domains allowed, filed under Education.", name="For your IT team"),   # KW:TEACH-SITE
  "waitlist.html": dict(path="/waitlist", kind="noindex",
    title="Hold a seat — knowhere",
    desc="Founding teacher seats and early access for knowhere, the Year 12 study app for HSC and VCE.",
