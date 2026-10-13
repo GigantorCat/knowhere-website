@@ -2,6 +2,8 @@
 // "nowhere"; brat-green particles then sweep in to build the leading "k"
 // (nowhere → knowhere); finally every particle turns brat green. Lockup +
 // single CTA fade in beneath the word. Self-contained web component.
+// v24: phone layout for the footer nav (KW:FOOT-MOBILE, Cat 13 Oct 2026); pages load knowhere-footer.js?v=24.
+// v24: the © year in the footer nav is today's year, not a hard-coded 2026 (Cat, 13 Oct 2026). Pages still load ?v=23 on purpose: until Jan 2027 both copies print the same year, and no cache lives that long.
 // v23: goo CTA parked behind KF_GOO (standard button by default) — KW:GOO-OFF; pages load knowhere-footer.js?v=23.
 // v22: one CTA label site-wide (start your free week), footer CTAs mirror the page's nav CTA — KW:LABELS (Muppet, 14 Sep); pages load knowhere-footer.js?v=22.
 // v20: SOCIAL row in the footer nav (Cat, 4 Sep, release day) — Instagram · TikTok ·
@@ -259,13 +261,25 @@
             '.kfn-soc{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;color:#9b9a96;text-decoration:none;transition:color .16s,background .16s}' +
             '.kfn-soc:hover,.kfn-soc:focus-visible{color:#7BEA5A;background:rgba(123,234,90,.08)}' +
             '.kfn-soc:focus-visible{outline:2px solid #7BEA5A;outline-offset:2px}' +
-            '.kfn-soc i{display:block;width:17px;height:17px;background:currentColor;-webkit-mask:var(--ico) center/contain no-repeat;mask:var(--ico) center/contain no-repeat}';
+            '.kfn-soc i{display:block;width:17px;height:17px;background:currentColor;-webkit-mask:var(--ico) center/contain no-repeat;mask:var(--ico) center/contain no-repeat}' +
+            /* KW:FOOT-MOBILE (Cat, 13 Oct 2026): phone layout. Inline styles win over classes, hence !important. */
+            '.kfn-links{display:contents}' +
+            '@media (max-width:640px){' +
+              '.kfn-in{padding-top:56px!important;padding-bottom:28px!important}' +
+              '.kfn-row{flex-direction:column;align-items:flex-start!important;gap:0!important}' +
+              '.kfn-brand{margin:0 0 26px!important}' +
+              '.kfn-links{display:grid;grid-template-columns:1fr 1fr;gap:16px 24px;width:100%}' +
+              '.kfn-socs{margin:22px 0 0 -11px}' +
+              '.kfn-legalrow{gap:10px 20px!important;margin-top:26px!important;padding-top:22px!important}' +
+              '.kfn-tag{flex-basis:100%}' +
+              '.kfn-sp{display:none}' +
+            '}';
           document.head.appendChild(st);
         }
         this.innerHTML =
           '<div style="position:relative;border-top:1px solid rgba(123,234,90,0.14);background:#070708;overflow:hidden;min-height:100vh;display:flex;flex-direction:column;font-family:\'Geist\',system-ui,sans-serif">' +
             '<canvas data-kfn-brain style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none"></canvas>' +
-              '<div style="position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:64px 34px 36px;width:100%;box-sizing:border-box;flex:1;display:flex;flex-direction:column">' +
+              '<div class="kfn-in" style="position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:64px 34px 36px;width:100%;box-sizing:border-box;flex:1;display:flex;flex-direction:column">' +
               '<div style="display:flex;align-items:center;flex:1">' +
                 '<div style="max-width:820px">' +
                   '<div style="font-size:11px;font-weight:700;letter-spacing:0.26em;text-transform:uppercase;color:#8C8B87;margin-bottom:18px">no gatekeeping. iykyk.</div>' +
@@ -273,21 +287,21 @@
                   '<div style="margin-top:30px"><a data-kf-nav-cta href="https://app.knowhere.me/signup" style="display:inline-flex;align-items:center;font-size:15px;font-weight:700;color:#070708;background:#7BEA5A;border-radius:12px;padding:15px 28px;text-decoration:none;letter-spacing:-0.01em;box-shadow:0 10px 40px rgba(123,234,90,.32)">start your free week</a></div>' +
                 '</div>' +
               '</div>' +
-              '<div style="display:flex;align-items:center;gap:30px;flex-wrap:wrap;margin-top:auto;padding-top:12px">' +
-                '<span style="display:flex;align-items:center;gap:10px;margin-right:14px"><span data-kfn-logo style="display:flex;align-items:center;color:#EDECE8"></span><span style="font-size:18px;font-weight:700;letter-spacing:-0.04em;color:#EDECE8">know<b style="color:#7BEA5A">here</b><sup style="font-size:0.48em;font-weight:600;letter-spacing:0;vertical-align:super;opacity:0.55;margin-left:1px">™</sup></span></span>' +
-                '<a class="kfn-link" href="/compare">compare</a>' +
+              '<div class="kfn-row" style="display:flex;align-items:center;gap:30px;flex-wrap:wrap;margin-top:auto;padding-top:12px">' +
+                '<span class="kfn-brand" style="display:flex;align-items:center;gap:10px;margin-right:14px"><span data-kfn-logo style="display:flex;align-items:center;color:#EDECE8"></span><span style="font-size:18px;font-weight:700;letter-spacing:-0.04em;color:#EDECE8">know<b style="color:#7BEA5A">here</b><sup style="font-size:0.48em;font-weight:600;letter-spacing:0;vertical-align:super;opacity:0.55;margin-left:1px">™</sup></span></span>' +
+                '<span class="kfn-links"><a class="kfn-link" href="/compare">compare</a>' +
                 '<a class="kfn-link" href="/know-us">know us</a>' +
                 '<a class="kfn-link" href="/mission">mission</a>' +
                 '<a class="kfn-link" href="/press">press</a>' +
-                '<a class="kfn-link" href="/talk-to-us">talk to us</a>' +
+                '<a class="kfn-link" href="/talk-to-us">talk to us</a></span>' +
                 (window.KnowhereMarks && window.KnowhereMarks.socialHtml ? '<span class="kfn-socs">' + window.KnowhereMarks.socialHtml('kfn-soc') + '</span>' : '') +
               '</div>' +
-              '<div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:22px;padding-top:26px;border-top:1px solid rgba(255,255,255,0.06)">' +
-                '<span class="kfn-legal" style="cursor:default">from nowhere to knowing.</span>' +
-                '<span style="flex:1"></span>' +
+              '<div class="kfn-legalrow" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:22px;padding-top:26px;border-top:1px solid rgba(255,255,255,0.06)">' +
+                '<span class="kfn-legal kfn-tag" style="cursor:default">from nowhere to knowing.</span>' +
+                '<span class="kfn-sp" style="flex:1"></span>' +
                 '<a class="kfn-legal" href="/privacy">privacy</a>' +
                 '<a class="kfn-legal" href="/terms">terms of use</a>' +
-                '<span class="kfn-legal" style="cursor:default">\u00A9 2026 knowhere\u2122</span>' +
+                '<span class="kfn-legal" style="cursor:default">\u00A9 ' + new Date().getFullYear() + ' knowhere\u2122</span>' +
               '</div>' +
             '</div>' +
           '</div>';

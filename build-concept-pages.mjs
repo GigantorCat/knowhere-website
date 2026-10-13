@@ -627,7 +627,7 @@ ${wild}${points}${under}${rest}
   <knowhere-footer-nav></knowhere-footer-nav>
 ${p.cert === 'vce' ? '  ' + VCAA_LINE + '\n' : ''}
 </div>
-<script src="/knowhere-footer.js?v=23"></script>
+<script src="/knowhere-footer.js?v=24"></script>
 <script src="/knowhere-mobile-menu.js?v=8" defer></script>
 <script>
 (function(){
