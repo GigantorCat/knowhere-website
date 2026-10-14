@@ -304,14 +304,14 @@ canvas {
 
   <h1>More Substrate Won't Save You From The <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">Wrong</span> Blocker</h1>
 
-  <p class="intro">Not all enzyme inhibitors play by the same rules. Competitive inhibitors fight for the active site and lose when substrate floods in. Non-competitive inhibitors bind somewhere else, warp the enzyme's shape, and can't be outcompeted no matter how much substrate you add. Tap the buttons to switch between inhibitor types and watch what happens.</p>
+  <p class="intro">Not all enzyme inhibitors play by the same rules. Competitive inhibitors fight for the active site and lose when substrate floods in. Non-competitive inhibitors bind somewhere else, warp the enzyme's shape, and can't be outcompeted no matter how much substrate you add. Switch between the two inhibitor types and watch what happens as substrate floods in.</p>
 
   <div class="card">
     <div class="card-header">
       <span class="card-label">Enzyme Kinetics</span>
       <span class="live-tag" id="modeTag">Competitive</span>
     </div>
-    <div class="card-hint">Inhibitor binds active site</div>
+    <div class="card-hint" id="modeHint">Inhibitor binds active site</div>
     
     <div class="canvas-wrapper">
       <canvas id="enzymeCanvas"></canvas>
@@ -379,6 +379,7 @@ const inhibStat = document.getElementById('inhibStat');
 const compBtn = document.getElementById('compBtn');
 const noncompBtn = document.getElementById('noncompBtn');
 const knowdropText = document.getElementById('knowdropText');
+const modeHint = document.getElementById('modeHint');
 
 let mode = 'competitive'; // competitive | noncompetitive
 let substrateLevel = 30; // 0-100
@@ -476,6 +477,19 @@ function updateParticleCounts() {
 
 updateParticleCounts();
 
+/* Fixed shares, no dice: IK = inhibitor strength [I]/Ki, KM = Km as a share of the slider.
+   Both inhibitors block 75% with no substrate. Competitive: substrate outcompetes it, IK/(1 + IK + S/KM).
+   Non-competitive: always IK/(1 + IK) = 75%; the free 25% still fill with substrate, S/(S + KM). */
+const IK = 3;
+const KM = 0.087;
+const ORDER = [5, 2, 7, 0, 3, 6, 1, 4];
+function shares() {
+  const S = substrateLevel / 100;
+  const sk = S / KM;
+  if (mode === 'competitive') return { inhib: IK / (1 + IK + sk), occ: sk / (1 + IK + sk) };
+  return { inhib: IK / (1 + IK), occ: (1 / (1 + IK)) * (S / (S + KM)) };
+}
+
 let time = 0;
 let smoothOcc = 0;
 let smoothInhib = 0;
@@ -492,65 +506,16 @@ function draw() {
   substrates.forEach(s => s.update(w, h));
   inhibitors.forEach(i => i.update(w, h));
 
-  // Binding logic (binding is sticky: it lasts a few seconds once made)
-  enzymes.forEach(e => {
-    if (e.boundTimer > 0) {
-      e.boundTimer--;
-    } else {
-      e.bound = null;
-    }
-    if (mode === 'noncompetitive' && e.deformTimer > 0) {
-      e.deformTimer--;
-      e.deformed = true;
-      e.deformAmt = Math.min(1, e.deformAmt + 0.05);
-    } else {
-      e.deformTimer = 0;
-      e.deformed = false;
-      e.deformAmt = Math.max(0, e.deformAmt - 0.05);
-    }
-  });
-
-  // Check substrate binding first
-  substrates.forEach(s => {
-    const sx = s.x * w;
-    const sy = s.y * h;
-    enzymes.forEach(e => {
-      const ex = e.x * w;
-      const ey = e.y * h;
-      const dist = Math.hypot(sx - ex, sy - ey);
-      if (dist < e.r + s.r && !e.bound) {
-        if (mode === 'competitive' || !e.deformed) {
-          // Non-competitive: a warped enzyme cannot bind substrate
-          e.bound = 'substrate';
-          e.boundTimer = 120;
-        }
-      }
-    });
-  });
-
-  // Check inhibitor binding
-  inhibitors.forEach(i => {
-    const ix = i.x * w;
-    const iy = i.y * h;
-    enzymes.forEach(e => {
-      const ex = e.x * w;
-      const ey = e.y * h;
-      const dist = Math.hypot(ix - ex, iy - ey);
-      if (mode === 'competitive') {
-        if (dist < e.r + i.r && !e.bound) {
-          e.bound = 'inhibitor';
-          e.boundTimer = 120;
-        }
-      } else {
-        // Non-competitive: inhibitor docks on the allosteric site and warps only this enzyme
-        if (dist < e.r + i.r && !e.deformed) {
-          e.deformed = true;
-          e.deformTimer = 180;
-          e.bound = 'inhibitor';
-          e.boundTimer = 180;
-        }
-      }
-    });
+  // Binding follows the fixed shares: the first n enzymes (in a fixed order) hold an inhibitor, the next ones hold substrate
+  const sh = shares();
+  const nInhib = Math.round(enzymes.length * sh.inhib);
+  const nSub = Math.min(enzymes.length - nInhib, Math.round(enzymes.length * sh.occ));
+  ORDER.forEach((idx, k) => {
+    const e = enzymes[idx];
+    const isInhib = k < nInhib;
+    e.bound = isInhib ? 'inhibitor' : (k < nInhib + nSub ? 'substrate' : null);
+    e.deformed = mode === 'noncompetitive' && isInhib;
+    e.deformAmt = e.deformed ? Math.min(1, e.deformAmt + 0.05) : Math.max(0, e.deformAmt - 0.05);
   });
 
   // Draw enzymes
@@ -672,15 +637,12 @@ function draw() {
   ctx.fillRect(0, 0, w, h);
 
   // Stats
-  const boundCount = enzymes.filter(e => e.bound === 'substrate').length;
-  const inhibCount = enzymes.filter(e => e.bound === 'inhibitor').length;
-  const totalBound = boundCount + inhibCount;
-  const deformedCount = enzymes.filter(e => e.deformed).length;
-  const occupiedPct = (boundCount / enzymes.length) * 100;
-  const inhibPct = mode === 'competitive' ? ((inhibCount / totalBound) * 100 || 0) : (deformedCount / enzymes.length) * 100;
-  // Smooth the readouts over roughly a second so they do not flicker
-  smoothOcc += (occupiedPct - smoothOcc) * 0.03;
-  smoothInhib += (inhibPct - smoothInhib) * 0.03;
+  // Readouts are the shares themselves (inhibitor success = share of enzymes the inhibitor has knocked out)
+  const occupiedPct = sh.occ * 100;
+  const inhibPct = sh.inhib * 100;
+  // Glide to the new value over about half a second
+  smoothOcc += (occupiedPct - smoothOcc) * 0.08;
+  smoothInhib += (inhibPct - smoothInhib) * 0.08;
 
   occupiedStat.textContent = Math.round(smoothOcc) + '%';
   inhibStat.textContent = Math.round(smoothInhib) + '%';
@@ -699,6 +661,7 @@ compBtn.addEventListener('click', () => {
   compBtn.classList.add('active');
   noncompBtn.classList.remove('active');
   modeTag.textContent = 'Competitive';
+  modeHint.textContent = 'Inhibitor binds active site';
   canvasStatus.textContent = 'Substrate can compete for binding';
   knowdropText.textContent = "Competitive inhibitors are structurally similar to the natural substrate. They dock into the active site and physically block it. When substrate concentration increases, substrate molecules start winning the competition for binding sites through sheer numbers — it's a statistical game. At very high substrate levels, the inhibitor can be almost completely displaced. This is why competitive inhibition is reversible and concentration-dependent. The inhibitor hasn't changed the enzyme; it's just occupying space that substrate wants.";
 });
@@ -708,6 +671,7 @@ noncompBtn.addEventListener('click', () => {
   noncompBtn.classList.add('active');
   compBtn.classList.remove('active');
   modeTag.textContent = 'Non-competitive';
+  modeHint.textContent = 'Inhibitor binds a second (allosteric) site';
   canvasStatus.textContent = 'Enzyme shape warped • substrate cannot restore function';
   knowdropText.textContent = "Non-competitive inhibitors bind to an allosteric site — a location away from the active site. This binding causes a conformational change that distorts the active site's shape. Even if substrate is present in huge excess, it cannot bind effectively because the geometry is wrong. The key difference: you're not fighting for the same spot anymore. The inhibitor has sabotaged the enzyme's structure itself. No amount of substrate can undo that shape change, which is why non-competitive inhibition cannot be overcome by raising substrate concentration. The enzyme is physically compromised.";
 });

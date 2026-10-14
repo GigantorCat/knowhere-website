@@ -178,9 +178,47 @@ canvas {
   display: flex;
   justify-content: space-between;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
+  font-size: 10px;
   color: var(--ink-dim);
   margin-top: 6px;
+}
+
+.turns-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.turns-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-right: 4px;
+  white-space: nowrap;
+}
+
+/* the phone layer turns the group into a picker that already carries the Coil turns name */
+.turns-label.kw-segtitle { display: none !important; }
+
+.turns-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  padding: 9px 6px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: #12160F;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.turns-btn.active {
+  background: rgba(58,111,200,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
 }
 
 .stat-row {
@@ -321,7 +359,7 @@ canvas {
       <span class="card-label">Magnetic flux simulation</span>
       <span class="live-tag" id="liveTag">Magnet parked</span>
     </div>
-    <div class="card-hint">Change the magnet speed. Watch the emf.</div>
+    <div class="card-hint">Change the magnet speed or the coil turns. Watch the emf.</div>
     
     <div class="canvas-wrapper">
       <canvas id="canvas"></canvas>
@@ -339,13 +377,20 @@ canvas {
       </div>
     </div>
 
+    <div class="turns-row" role="group" aria-label="Coil turns">
+      <span class="turns-label">Coil turns</span>
+      <button class="turns-btn" id="turns25" data-n="25" aria-pressed="false">25</button>
+      <button class="turns-btn active" id="turns50" data-n="50" aria-pressed="true">50</button>
+      <button class="turns-btn" id="turns100" data-n="100" aria-pressed="false">100</button>
+    </div>
+
     <div class="stat-row">
       <div class="stat">
-        <div class="stat-label">Peak <span style="text-transform:none">dΦ/dt</span></div>
+        <div class="stat-label">Peak <span style="text-transform:none">dΦ/dt</span> per turn</div>
         <div class="stat-value" style="color:var(--acc)" id="rateValue">0.00 mWb/s</div>
       </div>
       <div class="stat">
-        <div class="stat-label">Peak emf <span style="text-transform:none">ε</span> (N = 50)</div>
+        <div class="stat-label">Peak emf <span style="text-transform:none">ε</span> (<span style="text-transform:none" id="nLabel">N = 50</span>)</div>
         <div class="stat-value" style="color:var(--amb)" id="emfValue">0.0 mV</div>
       </div>
     </div>
@@ -358,7 +403,7 @@ canvas {
     </div>
     
     <div class="knowdrop" id="knowdropText">
-      Increasing the number of turns N in a coil proportionally increases the induced emf for the same rate of flux change. If you double the turns, you double the voltage. This is because each loop experiences the same rate of flux change, and the individual emfs add in series. A 100-turn coil moving through a field at the same speed as a 10-turn coil generates ten times the voltage. Generators exploit this by using coils with hundreds or thousands of turns to maximise output from a given rotation speed. The formula ε = -NdΦ/dt shows this linear relationship explicitly.
+      Increasing the number of turns N in a coil proportionally increases the induced emf for the same rate of flux change. If you double the turns, you double the voltage. This is because each loop experiences the same rate of flux change, and the individual emfs add in series. Try it: switch the coil from 50 to 100 turns and Peak emf doubles, while Peak dΦ/dt per turn stays the same. Generators exploit this by using coils with hundreds or thousands of turns to maximise output from a given rotation speed. The formula ε = -NdΦ/dt shows this linear relationship explicitly.
     </div>
   </div>
 
@@ -383,6 +428,8 @@ const liveTag = document.getElementById("liveTag");
 const canvasOverlay = document.getElementById("canvasOverlay");
 const rateValue = document.getElementById("rateValue");
 const emfValue = document.getElementById("emfValue");
+const nLabel = document.getElementById("nLabel");
+const turnsBtns = [...document.querySelectorAll(".turns-btn")];
 
 const turnBtn = document.getElementById("turnBtn");
 const lenzBtn = document.getElementById("lenzBtn");
@@ -399,7 +446,8 @@ const MU0 = 4e-7 * Math.PI;
 const M = 1.0;          /* A m^2, a small neodymium bar */
 const R = 0.02;         /* m, coil radius */
 const LC = 0.04;        /* m, coil length */
-const N = 50;           /* turns */
+let N = 50;             /* turns: the Coil turns buttons set 25, 50 or 100 */
+const N_MAX = 100;
 const LOOPS = 8;        /* turns sampled along the coil length */
 const ZMID = 0.07, AMP = 0.065;
 const VMAX = 1.0;       /* m/s at the top of the slider */
@@ -425,7 +473,7 @@ for (let i = 0; i < 4000; i++) {
   const th = (i / 4000) * Math.PI * 2;
   K = Math.max(K, Math.abs(dFluxDz(ZMID + AMP * Math.sin(th)) * Math.cos(th)));
 }
-const EMF_TOP = N * K * VMAX;   /* biggest emf the slider can make, sets the trace scale */
+const EMF_TOP = N_MAX * K * VMAX;   /* biggest emf the controls can make (100 turns, 1 m/s), sets the trace scale */
 
 let v0 = 0, omega = 0;
 let theta = -Math.PI / 2;       /* start parked just inside the coil */
@@ -489,7 +537,8 @@ function draw(t) {
   const glow = Math.min(1, Math.abs(emfNow) / (EMF_TOP || 1));
 
   const turnXs = [];
-  for (let k = 0; k < 10; k++) turnXs.push(coilX - (LC * S) / 2 + (k / 9) * LC * S);
+  const drawn = Math.round(N / 5);   /* one drawn loop stands for 5 turns */
+  for (let k = 0; k < drawn; k++) turnXs.push(coilX - (LC * S) / 2 + (k / (drawn - 1)) * LC * S);
 
   /* coil, back halves */
   ctx.strokeStyle = "rgba(250,199,117,0.22)";
@@ -555,7 +604,7 @@ function draw(t) {
   ctx.lineWidth = 1;
   ctx.beginPath(); ctx.moveTo(tx0, ty); ctx.lineTo(tx1, ty); ctx.stroke();
   ctx.fillStyle = "rgba(140,147,137,0.8)";
-  ctx.font = "500 9px JetBrains Mono";
+  ctx.font = "500 10px JetBrains Mono";
   ctx.textAlign = "left";
   ctx.textBaseline = "top";
   ctx.fillText("emf vs time", tx0, 4);
@@ -613,17 +662,25 @@ function updatePhysics() {
   if (v === 0) liveTag.textContent = "Magnet parked"; else setUnit(liveTag, "Peak speed ", `${v0.toFixed(2)} m/s${band}`);
   rateValue.textContent = `${(peakRate * 1000).toFixed(2)} mWb/s`;
   emfValue.textContent = `${(peakEmf * 1000).toFixed(1)} mV`;
+  nLabel.textContent = `N = ${N}`;
 
   slider.style.setProperty("--fill", v + "%");
 }
 
 slider.addEventListener("input", updatePhysics);
 
+/* Coil turns: every turn sees the same flux change, so emf scales with N; dPhi/dt per turn does not change */
+turnsBtns.forEach(b => b.addEventListener("click", () => {
+  N = parseInt(b.dataset.n, 10);
+  turnsBtns.forEach(o => { const on = o === b; o.classList.toggle("active", on); o.setAttribute("aria-pressed", on ? "true" : "false"); });
+  updatePhysics();
+}));
+
 // Toggle buttons
 turnBtn.addEventListener("click", () => {
   turnBtn.classList.add("active");
   lenzBtn.classList.remove("active");
-  knowdropText.textContent = "Increasing the number of turns N in a coil proportionally increases the induced emf for the same rate of flux change. If you double the turns, you double the voltage. This is because each loop experiences the same rate of flux change, and the individual emfs add in series. A 100-turn coil moving through a field at the same speed as a 10-turn coil generates ten times the voltage. Generators exploit this by using coils with hundreds or thousands of turns to maximise output from a given rotation speed. The formula ε = -NdΦ/dt shows this linear relationship explicitly.";
+  knowdropText.textContent = "Increasing the number of turns N in a coil proportionally increases the induced emf for the same rate of flux change. If you double the turns, you double the voltage. This is because each loop experiences the same rate of flux change, and the individual emfs add in series. Try it: switch the coil from 50 to 100 turns and Peak emf doubles, while Peak dΦ/dt per turn stays the same. Generators exploit this by using coils with hundreds or thousands of turns to maximise output from a given rotation speed. The formula ε = -NdΦ/dt shows this linear relationship explicitly.";
 });
 
 lenzBtn.addEventListener("click", () => {

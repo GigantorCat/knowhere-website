@@ -9,9 +9,10 @@ body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body
   --bg: #0B0D0C;
   --bg2: #12160F;
   --acc: #F0A04E;
-  --ag: rgba(240, 160, 78, .7);
-  --ag1: rgba(240, 160, 78, .12);
-  --ag2: rgba(240, 160, 78, .45);
+  --acc-rgb: 240, 160, 78;
+  --ag:  rgba(var(--acc-rgb),.7);
+  --ag1: rgba(var(--acc-rgb),.12);
+  --ag2: rgba(var(--acc-rgb),.45);
   --amb: #FAC775;
   --ink: #EDEDE8;
   --ink-dim: #8C9389;
@@ -19,17 +20,11 @@ body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
+[hidden] { display: none !important; }
 
 .sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
 }
 
 body {
@@ -40,7 +35,7 @@ body {
   padding: 40px 16px 0;
 }
 
-.container { max-width: 720px; margin: 0 auto; }
+.mp-wrap { max-width: 720px; margin: 0 auto; padding-bottom: 0; }
 
 h1 {
   font-size: clamp(26px, 6.5vw, 44px);
@@ -69,194 +64,97 @@ h1 {
 }
 
 .card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  display: flex; justify-content: space-between; align-items: center; gap: 10px;
   margin-bottom: 6px;
 }
-
 .card-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  color: var(--ink);
+  font-family: 'JetBrains Mono', monospace; font-size: 13px;
+  text-transform: uppercase; color: var(--ink);
 }
-
 .live-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--acc);
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  text-transform: uppercase; color: var(--acc); white-space: nowrap;
 }
-
 .card-hint {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--ink-dim);
-  margin-bottom: 14px;
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  color: var(--ink-dim); margin-bottom: 14px;
 }
 
-.canvas-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16/9;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
+.tog-title {
+  font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+  text-transform: uppercase; color: var(--ink-dim); margin-bottom: 6px;
+}
+.tog-row { display: flex; gap: 8px; margin-bottom: 12px; }
+.pill {
+  flex: 1 1 auto;
+  font-family: 'JetBrains Mono', monospace; font-size: 12.5px;
+  padding: 10px 14px; border-radius: 999px; white-space: nowrap;
+  background: #12160F; border: 1px solid var(--line); color: var(--ink-dim);
+  cursor: pointer; transition: background .2s, color .2s, border-color .2s, box-shadow .2s;
+}
+.pill[aria-pressed="true"] {
+  background: rgba(var(--acc-rgb),.1);
+  border-color: var(--acc); color: var(--acc);
+  box-shadow: 0 0 22px rgba(var(--acc-rgb),.18);
+}
+
+.canvas-wrap {
+  position: relative; width: 100%; aspect-ratio: 16/9;
+  border-radius: 12px; overflow: hidden; background: #000;
   box-shadow: inset 0 0 0 1px var(--ag1);
-  margin-bottom: 16px;
 }
-
-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
+.canvas-wrap canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .canvas-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(4px);
-  padding: 9px 16px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  text-transform: uppercase;
-  color: var(--acc);
-  text-align: center;
+  position: absolute; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.55); backdrop-filter: blur(4px);
+  padding: 9px 16px; font-family: 'JetBrains Mono', monospace; font-size: 14px;
+  text-transform: uppercase; color: var(--acc); text-align: center;
 }
 
-.slider-wrapper { margin-bottom: 12px; }
-
-.mbs-slider {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  height: 4px;
-  border-radius: 3px;
-  background: linear-gradient(90deg, var(--acc) var(--fill, 50%), #23291f var(--fill, 50%));
-  outline: none;
-  cursor: pointer;
+.mp-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+  text-transform: uppercase; color: var(--ink-dim); margin: 16px 0 8px;
 }
+.mp-row b { color: var(--ink); font-weight: 500; font-size: 12.5px; }
 
-.mbs-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow .15s;
+.mp-slider {
+  -webkit-appearance: none; appearance: none; width: 100%; height: 4px;
+  border-radius: 3px; outline: none; cursor: pointer;
+  background: linear-gradient(90deg, var(--acc) var(--fill,0%), #23291f var(--fill,0%));
 }
+.mp-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%;
+  background: #0B0D0C; border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag); transition: box-shadow .15s; cursor: pointer;
+}
+.mp-slider::-moz-range-thumb {
+  width: 20px; height: 20px; border-radius: 50%;
+  background: #0B0D0C; border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag); transition: box-shadow .15s; cursor: pointer;
+}
+.mp-slider::-webkit-slider-thumb:hover { box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag); }
+.mp-slider::-moz-range-thumb:hover { box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag); }
 
-.mbs-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow .15s;
+.ticks {
+  position: relative; height: 16px; margin: 8px 0 14px;
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-dim);
 }
-
-.mbs-slider::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.mbs-slider::-moz-range-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.tick-labels {
-  display: flex;
-  justify-content: space-between;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--ink-dim);
-  margin-bottom: 16px;
-}
+.ticks span { position: absolute; top: 0; white-space: nowrap; }
 
 .stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  border-top: 1px solid var(--line);
-  padding-top: 16px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  border-top: 1px solid var(--line); padding-top: 16px;
 }
-
-.stat {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
+.stat { display: flex; flex-direction: column; gap: 6px; }
 .stat-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
+  font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+  text-transform: uppercase; color: var(--ink-dim);
 }
+.stat-value { font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 500; }
 
-.stat-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 24px;
-  font-weight: 500;
-}
-
-.toggle-card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  margin-bottom: 18px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
-}
-
-.toggle-buttons {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.toggle-btn {
-  flex: 1;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14.5px;
-  padding: 12px;
-  border-radius: 11px;
-  background: #12160F;
-  border: 1px solid var(--line);
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: all .2s;
-}
-
-.toggle-btn.active {
-  background: rgba(240,160,78,.1);
-  border: 1px solid var(--acc);
-  color: var(--acc);
-  box-shadow: 0 0 22px rgba(240,160,78,.18);
-}
-
-.knowdrop-divider {
-  border-top: 1px solid var(--line);
-  padding-top: 16px;
-}
-
-.knowdrop {
-  font-size: 14.5px;
-  font-weight: 400;
-  line-height: 1.65;
-  color: var(--ink);
-}
+.kd-divider { border-top: 1px solid var(--line); padding-top: 16px; }
+.knowdrop { font-size: 14.5px; font-weight: 400; line-height: 1.65; color: var(--ink); }
 
 .know-this {
   border-left: 3px solid var(--acc);
@@ -265,23 +163,17 @@ canvas {
   border-radius: 0 12px 12px 0;
   margin-bottom: 0;
 }
-
-.know-this-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--acc);
-  margin-bottom: 10px;
-  display: block;
+.kt-tag { display: flex; align-items: center; gap: 9px; margin-bottom: 10px; }
+.kt-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--acc);
+  box-shadow: 0 0 8px var(--acc); animation: ktp 2.4s ease-in-out infinite;
 }
-
-.know-this-body {
-  font-size: 17.4px;
-  font-weight: 400;
-  line-height: 1.55;
-  color: var(--ink);
+@keyframes ktp { 0%,100% { opacity: 1; } 50% { opacity: .45; } }
+.kt-text {
+  font-family: 'JetBrains Mono', monospace; font-size: 13px;
+  text-transform: uppercase; letter-spacing: 0.15em; color: var(--acc);
 }
+.kt-body { font-size: 17.4px; font-weight: 400; line-height: 1.55; color: var(--ink); }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -292,274 +184,399 @@ canvas {
 }
 </style>
 
-<div class="container">
-  <h2 class="sr-only">Medicare and PBS Coverage Interactive Widget</h2>
-  
-  <h1>Every Australian pays for healthcare twice — once through tax, again at the <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">counter</span></h1>
-  
-  <p class="intro">Medicare might be "universal", but it doesn't cover everything. Slide to adjust out-of-pocket costs and watch the coverage gap emerge. This split-funding model defines Australian healthcare equity and access.</p>
+<div class="mp-wrap">
+  <h2 class="sr-only">Interactive picture splitting a doctor's fee between the Medicare rebate and the patient's gap, or a medicine price between the PBS co-payment and the PBS subsidy</h2>
+
+  <h1>Medicare caps what the government pays. The PBS caps what you <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">pay</span>.</h1>
+
+  <p class="intro">Both schemes are funded from taxation, but they share a bill in opposite ways. A Medicare rebate is a fixed amount (example 2025: $42.85 for a standard GP visit), so any fee a doctor charges above the schedule fee becomes the patient's gap; a PBS co-payment is a fixed ceiling (example 2026: $25.00, or $7.70 with a concession card), so any price above it becomes the government's subsidy. Raise the doctor's fee and watch the gap open; switch to the PBS and raise the medicine price.</p>
 
   <div class="card">
     <div class="card-header">
-      <span class="card-label">Coverage Split</span>
-      <span class="live-tag" id="liveTag">50% covered</span>
+      <span class="card-label">Who pays what</span>
+      <span class="live-tag" id="liveTag" aria-live="polite">Gap $47.15</span>
     </div>
-    <p class="card-hint">Drag to adjust Medicare rebate percentage</p>
-    
-    <div class="canvas-wrapper">
-      <canvas id="canvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">Patient pays $45 · Medicare covers $45</div>
+    <p class="card-hint">Raise the fee or the price. Watch who pays what.</p>
+
+    <div class="tog-title">Scheme</div>
+    <div class="tog-row" role="group" aria-label="Scheme shown in the picture">
+      <button class="pill" type="button" data-mode="medicare" aria-pressed="true">Medicare</button>
+      <button class="pill" type="button" data-mode="pbs" aria-pressed="false">PBS</button>
     </div>
 
-    <div class="slider-wrapper">
-      <input aria-label="Medicare rebate (%)" type="range" min="0" max="100" value="50" class="mbs-slider" id="slider">
+    <div id="patientBlock" hidden>
+      <div class="tog-title">Patient</div>
+      <div class="tog-row" role="group" aria-label="Patient type for the PBS co-payment">
+        <button class="pill" type="button" data-pat="general" aria-pressed="true">General</button>
+        <button class="pill" type="button" data-pat="concession" aria-pressed="false">Concession card</button>
+      </div>
     </div>
-    <div class="tick-labels">
-      <span>0%</span>
-      <span>50%</span>
-      <span>100%</span>
+
+    <div class="canvas-wrap" id="wrap">
+      <canvas id="cv"></canvas>
+      <div class="canvas-overlay" id="overlay" aria-live="polite">Patient $47.15 · Medicare $42.85</div>
     </div>
+
+    <div class="mp-row"><span id="sliderLabel">Doctor's fee</span><b id="sliderVal">$90</b></div>
+    <input type="range" class="mp-slider" id="slider" aria-label="Doctor's fee in dollars" min="40" max="200" step="1" value="90">
+    <div class="ticks" id="ticks"></div>
 
     <div class="stats">
       <div class="stat">
-        <span class="stat-label">Out-of-pocket</span>
-        <span class="stat-value" style="color:var(--acc)" id="outOfPocket">$45</span>
+        <span class="stat-label" id="statLLabel">Gap · patient pays</span>
+        <span class="stat-value" style="color:var(--acc)" id="statL">$47.15</span>
       </div>
       <div class="stat">
-        <span class="stat-label">Medicare rebate</span>
-        <span class="stat-value" style="color:var(--amb)" id="rebate">$45</span>
+        <span class="stat-label" id="statRLabel">Medicare rebate</span>
+        <span class="stat-value" style="color:var(--amb)" id="statR">$42.85</span>
       </div>
     </div>
   </div>
 
-  <div class="toggle-card">
-    <div class="toggle-buttons">
-      <button class="toggle-btn active" id="btnMedicare">Medicare</button>
-      <button class="toggle-btn" id="btnPBS">PBS</button>
+  <div class="card">
+    <div class="tog-title">Role in promoting health</div>
+    <div class="tog-row" role="group" aria-label="Which role of the health system the paragraph explains">
+      <button class="pill" type="button" data-kd="fund" aria-pressed="true">Funding</button>
+      <button class="pill" type="button" data-kd="equity" aria-pressed="false">Access and equity</button>
     </div>
-    
-    <div class="knowdrop-divider">
-      <p class="knowdrop" id="knowdropText">Medicare provides universal access to medical services — GP visits, specialist consultations, diagnostic tests, and public hospital treatment — funded by a 2% Medicare levy on taxable income plus general taxation revenue. The system is built on bulk billing (where doctors accept the Medicare rebate as full payment) but many services charge gap fees, creating out-of-pocket costs that can exceed hundreds of dollars for specialist care. Medicare doesn't cover glasses or contact lenses (though it does rebate optometrist eye tests), most dental care (other than public dental services and the Child Dental Benefits Schedule for eligible under-18s), most physiotherapy (some sessions are rebated under a GP chronic condition plan), private hospital accommodation, or ambulance services in most states. This coverage boundary means Australians pay twice: once through compulsory taxation, again directly for services outside the safety net. The gap between what Medicare rebates and what providers charge is where equity issues emerge — higher-income patients can afford specialists who charge large gaps, while lower-income patients may delay care or stick to bulk-billing clinics with longer wait times.</p>
+    <div class="kd-divider">
+      <p class="knowdrop" id="kd"></p>
     </div>
   </div>
 
   <div class="know-this">
-    <span class="know-this-tag">Know This</span>
-    <p class="know-this-body"><span style="color:var(--acc)">Medicare</span> guarantees <span style="color:var(--acc)">universal access to medical services</span> funded by the <span style="color:var(--acc)">Medicare levy and general taxation</span>, while the <span style="color:var(--acc)">PBS subsidises the cost of medicines</span>, both systems designed to <span style="color:var(--acc)">promote access and equity</span> despite significant coverage gaps.</p>
+    <div class="kt-tag"><span class="kt-dot"></span><span class="kt-text">Know This</span></div>
+    <p class="kt-body"><span style="color:var(--acc)">Medicare</span> fixes what the government pays for a service, while the <span style="color:var(--acc)">PBS</span> fixes what the patient pays for a medicine, and both are judged on <span style="color:var(--acc)">access and equity</span>.</p>
   </div>
 </div>
 
 <script>
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d', { alpha: false });
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d', { alpha: false });
-const slider = document.getElementById('slider');
-const liveTag = document.getElementById('liveTag');
-const canvasOverlay = document.getElementById('canvasOverlay');
-const outOfPocket = document.getElementById('outOfPocket');
-const rebate = document.getElementById('rebate');
-const btnMedicare = document.getElementById('btnMedicare');
-const btnPBS = document.getElementById('btnPBS');
-const knowdropText = document.getElementById('knowdropText');
+(function () {
+  const CSS = getComputedStyle(document.documentElement);
+  const ACC = CSS.getPropertyValue("--acc").trim();
+  const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+  const AMB = CSS.getPropertyValue("--amb").trim();
+  const INK = CSS.getPropertyValue("--ink").trim();
+  const DIM = CSS.getPropertyValue("--ink-dim").trim();
+  const BG  = CSS.getPropertyValue("--bg").trim();
 
-const medicareText = "Medicare provides universal access to medical services — GP visits, specialist consultations, diagnostic tests, and public hospital treatment — funded by a 2% Medicare levy on taxable income plus general taxation revenue. The system is built on bulk billing (where doctors accept the Medicare rebate as full payment) but many services charge gap fees, creating out-of-pocket costs that can exceed hundreds of dollars for specialist care. Medicare doesn't cover glasses or contact lenses (though it does rebate optometrist eye tests), most dental care (other than public dental services and the Child Dental Benefits Schedule for eligible under-18s), most physiotherapy (some sessions are rebated under a GP chronic condition plan), private hospital accommodation, or ambulance services in most states. This coverage boundary means Australians pay twice: once through compulsory taxation, again directly for services outside the safety net. The gap between what Medicare rebates and what providers charge is where equity issues emerge — higher-income patients can afford specialists who charge large gaps, while lower-income patients may delay care or stick to bulk-billing clinics with longer wait times.";
+  const REBATE = 42.85; // example 2025 Medicare rebate for a standard GP consultation (item 23)
+  const COPAY = { general: 25.00, concession: 7.70 }; // example 2026 PBS co-payments
+  const RANGES = {
+    medicare: { min: 40, max: 200, def: 90, ticks: [40, 80, 120, 160, 200], scale: 200 },
+    pbs: { min: 10, max: 300, def: 120, ticks: [10, 100, 200, 300], scale: 300 }
+  };
 
-const pbsText = "The Pharmaceutical Benefits Scheme (PBS) subsidises prescription medicines, reducing what could be $100+ medications to a maximum co-payment of $25.00 for general patients or $7.70 for concession card holders (rates from 1 January 2026; they are usually updated each January). The PBS is funded through general taxation and keeps essential medicines accessible regardless of income — patients with chronic conditions requiring multiple scripts can reach a safety net threshold ($1,748.20 for general patients, $277.20 for concession card holders), after which general patients pay the concession rate of $7.70 per script and concession card holders pay nothing for the rest of the calendar year. This progressive pricing structure directly targets equity: concession patients pay about 70% less per script than general patients, and heavy users hit thresholds that cut further costs. However, the PBS only covers listed medications; doctors can prescribe non-PBS drugs that cost patients full retail price. Not all new or specialist medicines make the PBS list immediately due to cost-effectiveness reviews by the PBAC (Pharmaceutical Benefits Advisory Committee), creating access barriers for cutting-edge treatments. The PBS and Medicare work in tandem — Medicare covers the GP appointment to get the prescription, PBS covers the medicine itself, but gaps remain in both systems where patient costs accumulate.";
+  let mode = "medicare";
+  let patient = "general";
+  const vals = { medicare: 90, pbs: 120 };
 
-let coverage = 50;
-const totalCost = 90;
+  const cv = document.getElementById("cv");
+  const ctx = cv.getContext("2d");
+  const buf = document.createElement("canvas");
+  const bctx = buf.getContext("2d");
+  const wrap = document.getElementById("wrap");
+  const overlay = document.getElementById("overlay");
+  const liveTag = document.getElementById("liveTag");
+  const slider = document.getElementById("slider");
+  const sliderLabel = document.getElementById("sliderLabel");
+  const sliderVal = document.getElementById("sliderVal");
+  const ticks = document.getElementById("ticks");
+  const statL = document.getElementById("statL");
+  const statR = document.getElementById("statR");
+  const statLLabel = document.getElementById("statLLabel");
+  const statRLabel = document.getElementById("statRLabel");
+  const patientBlock = document.getElementById("patientBlock");
+  const kd = document.getElementById("kd");
 
-const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const RM = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
-function resize() {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  draw();
-}
+  function fmt(n) { return "$" + n.toFixed(2); }
 
-function draw() {
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, w, h);
-
-  const barHeight = h * 0.18;
-  const barY = h * 0.5 - barHeight / 2;
-  const barPad = w * 0.08;
-  const barWidth = w - barPad * 2;
-
-  const splitX = barPad + barWidth * (coverage / 100);
-
-  // Medicare portion (right side - amber)
-  const medicareGrad = ctx.createLinearGradient(splitX, 0, barPad + barWidth, 0);
-  medicareGrad.addColorStop(0, 'rgba(250,199,117,0.3)');
-  medicareGrad.addColorStop(1, 'rgba(250,199,117,0.8)');
-  ctx.fillStyle = medicareGrad;
-  ctx.fillRect(splitX, barY, barPad + barWidth - splitX, barHeight);
-
-  // Out-of-pocket portion (left side - accent)
-  const oopGrad = ctx.createLinearGradient(barPad, 0, splitX, 0);
-  oopGrad.addColorStop(0, 'rgba(240,160,78,0.8)');
-  oopGrad.addColorStop(1, 'rgba(240,160,78,0.3)');
-  ctx.fillStyle = oopGrad;
-  ctx.fillRect(barPad, barY, splitX - barPad, barHeight);
-
-  // Border around full bar
-  ctx.strokeStyle = 'rgba(240,160,78,0.5)';
-  ctx.lineWidth = 1.5;
-  ctx.strokeRect(barPad, barY, barWidth, barHeight);
-
-  // Divider line
-  ctx.strokeStyle = 'rgba(237,237,232,0.7)';
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(splitX, barY - 8);
-  ctx.lineTo(splitX, barY + barHeight + 8);
-  ctx.stroke();
-
-  // Divider glow
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.strokeStyle = 'rgba(240,160,78,0.6)';
-  ctx.lineWidth = 6;
-  ctx.filter = 'blur(4px)';
-  ctx.beginPath();
-  ctx.moveTo(splitX, barY - 8);
-  ctx.lineTo(splitX, barY + barHeight + 8);
-  ctx.stroke();
-  ctx.restore();
-
-  // Labels
-  ctx.font = '500 13px "JetBrains Mono"';
-  ctx.textAlign = 'center';
-  
-  const oopWidth = splitX - barPad;
-  if (oopWidth > 60) {
-    ctx.fillStyle = 'rgba(240,160,78,1)';
-    ctx.fillText('OUT-OF-POCKET', barPad + oopWidth / 2, barY + barHeight / 2 + 5);
+  function model() {
+    const v = vals[mode];
+    if (mode === "medicare") {
+      const gov = Math.min(v, REBATE);
+      const pat = v - gov;
+      return { total: v, fixed: gov, vari: pat, patient: pat, gov: gov, fixedIsGov: true, cap: REBATE, scaleMax: RANGES.medicare.scale };
+    }
+    const cap = COPAY[patient];
+    const pat = Math.min(v, cap);
+    const gov = v - pat;
+    return { total: v, fixed: pat, vari: gov, patient: pat, gov: gov, fixedIsGov: false, cap: cap, scaleMax: RANGES.pbs.scale };
   }
 
-  const medWidth = barPad + barWidth - splitX;
-  if (medWidth > 60) {
-    ctx.fillStyle = 'rgba(250,199,117,1)';
-    ctx.fillText('MEDICARE', splitX + medWidth / 2, barY + barHeight / 2 + 5);
+  // ---- animation state (eases to a resting position, then stops)
+  let cur = null, from = null, to = null, raf = 0, animStart = 0;
+
+  function setTarget() {
+    const m = model();
+    const t = { end: m.total / m.scaleMax, split: Math.min(m.fixed, m.total) / m.scaleMax };
+    if (RM || !cur) { cur = { end: t.end, split: t.split }; draw(); return; }
+    from = { end: cur.end, split: cur.split };
+    to = t;
+    animStart = performance.now();
+    if (!raf) raf = requestAnimationFrame(step);
+  }
+  function step(now) {
+    const dur = 380;
+    const p = Math.min(1, (now - animStart) / dur);
+    const e = 1 - Math.pow(1 - p, 3);
+    cur.end = from.end + (to.end - from.end) * e;
+    cur.split = from.split + (to.split - from.split) * e;
+    draw();
+    if (p < 1) raf = requestAnimationFrame(step); else raf = 0;
   }
 
-  // Dollar amounts
-  ctx.font = '700 17px "Geist"';
-  const oopAmount = Math.round(totalCost * (1 - coverage / 100));
-  const medAmount = Math.round(totalCost * (coverage / 100));
-
-  if (oopWidth > 50) {
-    ctx.fillStyle = '#EDEDE8';
-    ctx.fillText('$' + oopAmount, barPad + oopWidth / 2, barY - 16);
+  function resize() {
+    const rect = wrap.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    cv.width = Math.round(rect.width * dpr);
+    cv.height = Math.round(rect.height * dpr);
+    buf.width = cv.width; buf.height = cv.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    if (cur) draw();
   }
 
-  if (medWidth > 50) {
-    ctx.fillStyle = '#EDEDE8';
-    ctx.fillText('$' + medAmount, splitX + medWidth / 2, barY - 16);
+  function placeRight(s, e, tw, leftEdge, xMax) {
+    const segW = e - s;
+    const minC = leftEdge + 8 + tw / 2;
+    if (segW >= tw + 10) {
+      const c = Math.max((s + e) / 2, minC);
+      if (c + tw / 2 <= e) return c;
+    }
+    let c = Math.max(e + 8 + tw / 2, minC);
+    if (c + tw / 2 > xMax) c = Math.max(xMax - tw / 2, minC);
+    return c;
   }
 
-  // Money flow arrows
-  const arrowY = h * 0.72;
-  const arrowSpacing = 18;
-  
-  // Out-of-pocket arrows (going up from patient)
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  for (let i = 0; i < 5; i++) {
-    const x = barPad + (oopWidth / 6) * (i + 1);
-    const offset = (Date.now() / 800 + i * 0.3) % 1;
-    const y = arrowY - offset * 30;
-    const alpha = (1 - offset) * 0.5;
-    
-    ctx.fillStyle = `rgba(240,160,78,${alpha})`;
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.lineTo(x - 3, y + 6);
-    ctx.lineTo(x + 3, y + 6);
-    ctx.fill();
+  function legend(x, y, col, text, align, sq) {
+    const tw = ctx.measureText(text).width;
+    let sx, tx;
+    if (align === "left") { sx = x; tx = x + sq + 6; ctx.textAlign = "left"; }
+    else { tx = x; sx = x - tw - 6 - sq; ctx.textAlign = "right"; }
+    ctx.fillStyle = col;
+    ctx.fillRect(sx, y - sq + 1, sq, sq);
+    ctx.fillText(text, tx, y);
+    return align === "left" ? tx + tw : sx;
   }
 
-  // Medicare arrows (going down from government)
-  for (let i = 0; i < 5; i++) {
-    const x = splitX + (medWidth / 6) * (i + 1);
-    const offset = (Date.now() / 800 + i * 0.3) % 1;
-    const y = h * 0.22 + offset * 30;
-    const alpha = (1 - offset) * 0.5;
-    
-    ctx.fillStyle = `rgba(250,199,117,${alpha})`;
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.lineTo(x - 3, y - 6);
-    ctx.lineTo(x + 3, y - 6);
-    ctx.fill();
+  function draw() {
+    const w = cv.width / dpr, h = cv.height / dpr;
+    if (w < 10 || h < 10 || !cur) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+
+    const m = model();
+    const ovH = overlay.offsetHeight || 36;
+    const u = Math.max(80, h - ovH - 4);
+    const x0 = w * 0.07, x1 = w * 0.93, T = x1 - x0;
+    const f1 = Math.max(11, Math.min(13, w * 0.038));
+    const fA = Math.max(15, Math.min(22, w * 0.052));
+    const mono = `500 ${f1}px "JetBrains Mono", monospace`;
+    const geist = `700 ${fA}px "Geist", sans-serif`;
+    const headerY = u * 0.14, amtY = u * 0.36, barTop = u * 0.44, barBot = u * 0.64;
+    const barH = barBot - barTop, scaleY = u * 0.80, legY = u * 0.94;
+    const colFixed = m.fixedIsGov ? AMB : ACC;
+    const colVar = m.fixedIsGov ? ACC : AMB;
+    const endX = x0 + T * cur.end;
+    const splitX = x0 + T * Math.min(cur.split, cur.end);
+    const capX = x0 + T * (m.cap / m.scaleMax);
+
+    // header
+    ctx.font = mono; ctx.textAlign = "left"; ctx.textBaseline = "alphabetic"; ctx.fillStyle = DIM;
+    ctx.fillText(mode === "medicare" ? `GP CONSULTATION · FEE ${fmt(m.total)}` : `PRESCRIPTION MEDICINE · PRICE ${fmt(m.total)}`, x0, headerY);
+
+    // faint track = the dollar scale
+    ctx.fillStyle = INK; ctx.globalAlpha = 0.07;
+    ctx.fillRect(x0, barTop, T, barH);
+    ctx.globalAlpha = 1;
+
+    // scale ticks and labels
+    ctx.strokeStyle = DIM; ctx.lineWidth = 1; ctx.fillStyle = DIM;
+    [0, 0.5, 1].forEach(function (p) {
+      const x = x0 + T * p;
+      ctx.beginPath(); ctx.moveTo(x, barBot + 2); ctx.lineTo(x, barBot + 7); ctx.stroke();
+      ctx.textAlign = p === 0 ? "left" : (p === 1 ? "right" : "center");
+      ctx.fillText("$" + Math.round(m.scaleMax * p), x, scaleY);
+    });
+
+    // segments
+    if (splitX > x0 + 0.5) {
+      ctx.fillStyle = colFixed; ctx.globalAlpha = 0.9;
+      ctx.fillRect(x0, barTop, splitX - x0, barH);
+    }
+    if (endX > splitX + 0.5) {
+      ctx.fillStyle = colVar; ctx.globalAlpha = 0.9;
+      ctx.fillRect(splitX, barTop, endX - splitX, barH);
+    }
+    ctx.globalAlpha = 1;
+    // top highlight
+    if (endX > x0 + 0.5) {
+      ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.22;
+      ctx.fillStyle = INK; ctx.fillRect(x0, barTop, endX - x0, 2); ctx.restore();
+    }
+
+    // divider between the two payers
+    if (endX - splitX > 1 && splitX > x0) {
+      ctx.save(); ctx.globalCompositeOperation = "lighter";
+      ctx.strokeStyle = "rgba(" + RGB + ",0.6)"; ctx.lineWidth = 6; ctx.filter = "blur(4px)";
+      ctx.beginPath(); ctx.moveTo(splitX, barTop - 6); ctx.lineTo(splitX, barBot + 6); ctx.stroke();
+      ctx.restore();
+      ctx.strokeStyle = INK; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(splitX, barTop - 6); ctx.lineTo(splitX, barBot + 6); ctx.stroke();
+    }
+
+    // the fixed amount: dashed marker that never moves with the fee or price
+    ctx.save(); ctx.setLineDash([4, 4]); ctx.strokeStyle = colFixed; ctx.globalAlpha = 0.8; ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.moveTo(capX, barTop - 10); ctx.lineTo(capX, barBot + 10); ctx.stroke();
+    ctx.restore();
+
+    // payer names inside the bar when there is room
+    ctx.font = mono; ctx.fillStyle = BG; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    const lf = m.fixedIsGov ? "MEDICARE" : "PATIENT";
+    const lv = m.fixedIsGov ? "PATIENT" : "PBS";
+    if (ctx.measureText(lf).width + 14 <= splitX - x0) ctx.fillText(lf, (x0 + splitX) / 2, (barTop + barBot) / 2);
+    if (ctx.measureText(lv).width + 14 <= endX - splitX) ctx.fillText(lv, (splitX + endX) / 2, (barTop + barBot) / 2);
+    ctx.textBaseline = "alphabetic";
+
+    // dollar amounts
+    ctx.font = geist; ctx.textAlign = "center";
+    const tF = fmt(m.fixed);
+    const twF = ctx.measureText(tF).width;
+    const cF = Math.max((x0 + splitX) / 2, x0 + twF / 2);
+    ctx.fillStyle = colFixed; ctx.fillText(tF, cF, amtY);
+    const leftEdge = cF + twF / 2;
+    if (m.vari > 0.004) {
+      const tV = fmt(m.vari);
+      const twV = ctx.measureText(tV).width;
+      const cV = placeRight(splitX, endX, twV, leftEdge, x1);
+      ctx.fillStyle = colVar; ctx.fillText(tV, cV, amtY);
+    } else {
+      ctx.font = mono; ctx.fillStyle = DIM; ctx.textAlign = "left";
+      const note = mode === "medicare" ? "FEE UNDER REBATE · NO GAP" : "PRICE UNDER CAP · NO SUBSIDY";
+      const nw = ctx.measureText(note).width;
+      let nx = Math.max(endX + 8, leftEdge + 8);
+      if (nx + nw > x1) nx = Math.max(leftEdge + 8, x1 - nw);
+      ctx.fillText(note, nx, amtY);
+    }
+
+    // legend row
+    ctx.font = mono;
+    const sq = Math.round(f1 * 0.7);
+    const mg = Math.max(8, w * 0.025);
+    let legL = m.fixedIsGov ? "MEDICARE REBATE (FIXED)" : "PATIENT CO-PAY (CAPPED)";
+    const legR = m.fixedIsGov ? "PATIENT GAP" : "PBS SUBSIDY";
+    const needL = ctx.measureText(legL).width + sq + 6;
+    const needR = ctx.measureText(legR).width + sq + 6;
+    if (mg + needL + 12 > w - mg - needR) legL = m.fixedIsGov ? "REBATE (FIXED)" : "CO-PAY (CAPPED)";
+    legend(mg, legY, colFixed, legL, "left", sq);
+    legend(w - mg, legY, colVar, legR, "right", sq);
+
+    // bloom
+    bctx.setTransform(1, 0, 0, 1, 0, 0);
+    bctx.clearRect(0, 0, buf.width, buf.height);
+    if (cv.width && cv.height) bctx.drawImage(cv, 0, 0);
+    ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
+    (buf.width&&buf.height)&&ctx.drawImage(buf, 0, 0, w, h); ctx.restore();
+
+    // vignette
+    const cx = w / 2, cy = h / 2;
+    const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
   }
-  ctx.restore();
 
-  // Bloom
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
+  function buildTicks() {
+    const r = RANGES[mode];
+    ticks.innerHTML = "";
+    r.ticks.forEach(function (t, i) {
+      const s = document.createElement("span");
+      s.textContent = "$" + t;
+      const pct = (t - r.min) / (r.max - r.min) * 100;
+      s.style.left = pct + "%";
+      s.style.transform = i === 0 ? "none" : (i === r.ticks.length - 1 ? "translateX(-100%)" : "translateX(-50%)");
+      ticks.appendChild(s);
+    });
+  }
 
-  // Vignette
-  const cx = w / 2;
-  const cy = h / 2;
-  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
+  function updateUI() {
+    const r = RANGES[mode];
+    const v = vals[mode];
+    const m = model();
+    slider.style.setProperty("--fill", ((v - r.min) / (r.max - r.min) * 100) + "%");
+    sliderLabel.textContent = mode === "medicare" ? "Doctor's fee" : "Medicine price";
+    sliderVal.textContent = "$" + v;
+    statL.textContent = fmt(m.patient);
+    statR.textContent = fmt(m.gov);
+    if (mode === "medicare") {
+      statLLabel.textContent = "Gap · patient pays";
+      statRLabel.textContent = "Medicare rebate";
+      liveTag.textContent = m.vari > 0.004 ? "Gap " + fmt(m.vari) : "No gap";
+      overlay.textContent = "Patient " + fmt(m.patient) + " · Medicare " + fmt(m.gov);
+    } else {
+      statLLabel.textContent = "Patient co-payment";
+      statRLabel.textContent = "PBS subsidy";
+      liveTag.textContent = m.vari > 0.004 ? "Co-payment " + fmt(m.patient) : "No subsidy";
+      overlay.textContent = "Patient " + fmt(m.patient) + " · PBS " + fmt(m.gov);
+    }
+    setTarget();
+  }
 
-  requestAnimationFrame(draw);
-}
+  function setMode(nm) {
+    mode = nm;
+    document.querySelectorAll("[data-mode]").forEach(function (b) {
+      b.setAttribute("aria-pressed", b.dataset.mode === mode ? "true" : "false");
+    });
+    patientBlock.hidden = mode !== "pbs";
+    const r = RANGES[mode];
+    slider.min = r.min; slider.max = r.max; slider.value = vals[mode];
+    slider.setAttribute("aria-label", mode === "medicare" ? "Doctor's fee in dollars" : "Medicine price in dollars");
+    buildTicks();
+    updateUI();
+  }
 
-function updateUI() {
-  coverage = parseInt(slider.value);
-  const fillPercent = coverage + '%';
-  slider.style.setProperty('--fill', fillPercent);
-  
-  liveTag.textContent = coverage + '% covered';
-  
-  const oopAmount = Math.round(totalCost * (1 - coverage / 100));
-  const medAmount = Math.round(totalCost * (coverage / 100));
-  
-  outOfPocket.textContent = '$' + oopAmount;
-  rebate.textContent = '$' + medAmount;
-  
-  canvasOverlay.textContent = `Patient pays $${oopAmount} · Medicare covers $${medAmount}`;
-}
+  document.querySelectorAll("[data-mode]").forEach(function (b) {
+    b.addEventListener("click", function () { setMode(b.dataset.mode); });
+  });
+  document.querySelectorAll("[data-pat]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      patient = b.dataset.pat;
+      document.querySelectorAll("[data-pat]").forEach(function (x) {
+        x.setAttribute("aria-pressed", x.dataset.pat === patient ? "true" : "false");
+      });
+      updateUI();
+    });
+  });
+  slider.addEventListener("input", function () {
+    vals[mode] = parseInt(slider.value, 10);
+    updateUI();
+  });
 
-slider.addEventListener('input', updateUI);
+  // knowdrop
+  const KD = {
+    fund: "Medicare and the PBS are both paid for by the Commonwealth out of general taxation plus the Medicare levy, a percentage of taxable income that most taxpayers pay. Medicare pays a schedule rebate for each listed service, so its cost rises with how many GP visits, tests and public hospital treatments Australians use; the PBS pays the difference between a listed medicine's price and the co-payment, so its cost rises with the price and number of medicines listed. Sustainability means keeping that affordable for future generations, which is why the Pharmaceutical Benefits Advisory Committee recommends a medicine for listing only when it is judged cost-effective and the government negotiates prices with manufacturers. Private health insurance is funded by premiums, with a government rebate and the Medicare levy surcharge nudging higher earners to take it out, and its extras cover is how services outside Medicare, such as dental or remedial massage, are often partly paid for. The NDIS is funded separately by the Commonwealth and the states to pay for disability supports rather than medical treatment. Each scheme pays for a different thing, so the first step in any question is to name the scheme that matches the item.",
+    equity: "Access means being able to get care when you need it, and equity means the people with the greatest need are not the ones left out. Medicare lets anyone see a GP, have tests or be treated in a public hospital, and when the provider bulk bills there is no fee at the counter, which is how most young people first use the system; some allied health sessions, such as physiotherapy or psychology, are rebated when a GP sets up a care plan. The gap is where Medicare is tested: a fixed rebate cannot stop a doctor charging more, so people in areas with few bulk-billing clinics may delay care. The PBS builds equity in directly, charging concession card holders a far lower co-payment and using a safety net that lowers costs again for anyone who fills many scripts in a year, so a chronic condition does not price someone out of their medicine. The NDIS promotes access and equity for people with permanent and significant disability by funding supports the participant chooses. When you explain any of these, link the feature to the person: a capped co-payment is the feature, and someone collecting medicine they could not otherwise afford is the access or equity outcome."
+  };
+  kd.textContent = KD.fund;
+  document.querySelectorAll("[data-kd]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      document.querySelectorAll("[data-kd]").forEach(function (x) {
+        x.setAttribute("aria-pressed", x === b ? "true" : "false");
+      });
+      kd.textContent = KD[b.dataset.kd];
+    });
+  });
 
-btnMedicare.addEventListener('click', () => {
-  btnMedicare.classList.add('active');
-  btnPBS.classList.remove('active');
-  knowdropText.textContent = medicareText;
-});
+  window.addEventListener("resize", resize);
+  if (window.ResizeObserver) new ResizeObserver(resize).observe(wrap);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { if (cur) draw(); });
 
-btnPBS.addEventListener('click', () => {
-  btnPBS.classList.add('active');
-  btnMedicare.classList.remove('active');
-  knowdropText.textContent = pbsText;
-});
-
-window.addEventListener('resize', resize);
-resize();
-updateUI();
+  resize();
+  buildTicks();
+  updateUI();
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'medicare-and-the-pbs'},'*');}catch(e){}}

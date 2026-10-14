@@ -1,0 +1,359 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>The mole — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{
+  --bg:#0B0D0C;--bg2:#12160F;--acc:#3E9AD6;--acc-rgb:62, 154, 214;
+  --ag:rgba(var(--acc-rgb),.7);--ag1:rgba(var(--acc-rgb),.12);--ag2:rgba(var(--acc-rgb),.45);
+  --amb:#FAC775;--ink:#EDEDE8;--ink-dim:#8C9389;--line:#262B26;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+body{background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C 55%);font-family:'Geist',sans-serif;color:var(--ink);min-height:100vh;padding:40px 16px 0;box-sizing:border-box}
+.container{max-width:720px;margin:0 auto}
+h1{font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin-bottom:16px}
+.intro{font-size:15.5px;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin-bottom:28px}
+.card{background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:18px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1)}
+.card-header{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+.card-label{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;color:#fff}
+.live-tag{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--acc);text-align:right}
+.card-hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin-bottom:14px}
+.mo-q{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:8px}
+.mo-pick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.tg{font-family:'JetBrains Mono',monospace;font-size:12px;padding:10px 8px;border-radius:999px;background:#12160F;border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:all .2s}
+.tg[aria-pressed="true"]{background:rgba(var(--acc-rgb),.1);border:1px solid var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.canvas-wrapper{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1);margin-bottom:16px}
+.canvas-wrapper canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.canvas-overlay{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:14px;text-transform:uppercase;color:var(--acc);text-align:center}
+.mo-row{display:flex;justify-content:space-between;align-items:baseline;font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:10px}
+.mo-row b{font-weight:500;color:var(--acc);font-size:12px;text-transform:none}
+.mo-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;outline:none;cursor:pointer;background:linear-gradient(90deg,var(--acc) var(--fill,0%),#23291f var(--fill,0%))}
+.mo-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s}
+.mo-slider::-webkit-slider-thumb:hover{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.mo-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag)}
+.mo-ticks{position:relative;height:16px;margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink-dim)}
+.mo-ticks span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}
+.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;border-top:1px solid var(--line);margin-top:14px;padding-top:14px}
+.stat-label{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:6px}
+.stat-value{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500}
+.stat-value.acc{color:var(--acc)}.stat-value.amb{color:var(--amb)}
+.mo-work{margin-top:14px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.7;color:var(--ink);overflow-wrap:anywhere}
+.mo-work .k{color:var(--ink-dim)}
+.mo-drops{display:flex;gap:10px}
+.mo-drops .tg{flex:1;font-size:12px;padding:12px 6px}
+.knowdrop{border-top:1px solid var(--line);padding-top:16px;margin-top:16px}
+.knowdrop p{font-size:14.5px;line-height:1.65;color:var(--ink)}
+.know-this{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));border-radius:0 12px 12px 0;margin-bottom:0;padding-bottom:16px}
+.know-this-tag{display:flex;align-items:center;gap:9px;margin-bottom:12px}
+.know-this-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:ktp 2.4s ease-in-out infinite}
+@keyframes ktp{0%,100%{opacity:1}50%{opacity:.45}}
+.know-this-label{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.15em;color:var(--acc)}
+.know-this-body{font-size:17.4px;line-height:1.55;color:var(--ink)}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+</style>
+
+<h2 class="sr-only">The mole: weigh a pure sample, then count the moles, the molecules and the atoms inside it</h2>
+
+<div class="container">
+  <h1>Chemists count atoms with a <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">scale</span></h1>
+  <p class="intro">Atoms are far too small and far too many to count one by one, so chemists weigh them instead. One mole is 6.02 × 10²³ particles, and a mole of any substance has a mass in grams equal to its relative mass. Raise the sample mass and watch the moles, molecules and atoms climb together.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Counting by weighing</span>
+      <span class="live-tag" id="moTag">H₂O · M = 18.0 g/mol</span>
+    </div>
+    <div class="card-hint">Pick a substance. Raise the mass. Compare particles with atoms.</div>
+
+    <div class="mo-pick" role="group" aria-label="Choose a pure substance">
+      <button class="tg" data-s="C" aria-pressed="false">C</button>
+      <button class="tg" data-s="Al" aria-pressed="false">Al</button>
+      <button class="tg" data-s="Fe" aria-pressed="false">Fe</button>
+      <button class="tg" data-s="O2" aria-pressed="false">O₂</button>
+      <button class="tg" data-s="H2O" aria-pressed="true">H₂O</button>
+      <button class="tg" data-s="CO2" aria-pressed="false">CO₂</button>
+    </div>
+
+    <div class="canvas-wrapper">
+      <canvas id="moCanvas" role="img" aria-label="A scale weighs a heap of the chosen substance; a close-up shows one particle and its atoms; a mole bar fills as the mass rises, with every whole mole marked at its mass in grams"></canvas>
+      <div class="canvas-overlay" id="moOverlay">1.00 mol · 6.02×10²³ molecules</div>
+    </div>
+
+    <div class="mo-row"><span>Sample mass</span><b id="moV">18.0 g</b></div>
+    <input type="range" class="mo-slider" id="moMass" aria-label="Sample mass in grams" min="0" max="100" step="0.5" value="18">
+    <div class="mo-ticks" id="moTicks"></div>
+
+    <div class="stat-row">
+      <div class="stat"><div class="stat-label">Amount (<span style="text-transform:none">n</span>)</div><div class="stat-value acc" id="moN">1.00 mol</div></div>
+      <div class="stat"><div class="stat-label" id="moPL">Molecules (N)</div><div class="stat-value amb" id="moP">6.02×10²³</div></div>
+    </div>
+    <div class="mo-work" id="moWork" aria-live="polite"></div>
+  </div>
+
+  <div class="card">
+    <div class="mo-q">Take it further</div>
+    <div class="mo-drops" role="group" aria-label="Choose what the paragraph explains">
+      <button class="tg" data-d="why" aria-pressed="true">Why 6.02×10²³</button>
+      <button class="tg" data-d="atoms" aria-pressed="false">Atoms or molecules</button>
+      <button class="tg" data-d="big" aria-pressed="false">How big</button>
+    </div>
+    <div class="knowdrop"><p id="moDrop"></p></div>
+  </div>
+
+  <div class="card know-this">
+    <div class="know-this-tag"><div class="know-this-dot"></div><div class="know-this-label">Know This</div></div>
+    <p class="know-this-body">One <span style="color:var(--acc)">mole</span> is always <span style="color:var(--acc)">6.02 × 10²³ particles</span>, so dividing a weighed mass by molar mass, <span style="color:var(--acc)">n = m/M</span>, tells you how many moles, and so how many atoms or molecules, are in the sample.</p>
+  </div>
+</div>
+
+<script>
+(function(){
+const NA = 6.02e23;
+const AR = { H: 1.0, C: 12.0, O: 16.0, Al: 27.0, Fe: 55.8 };
+const SUBS = {
+  C:   { f: "C",   name: "carbon",         kind: "element", unit: "atoms",     per: 1, parts: [["C", 1]] },
+  Al:  { f: "Al",  name: "aluminium",      kind: "element", unit: "atoms",     per: 1, parts: [["Al", 1]] },
+  Fe:  { f: "Fe",  name: "iron",           kind: "element", unit: "atoms",     per: 1, parts: [["Fe", 1]] },
+  O2:  { f: "O₂",  name: "oxygen gas",     kind: "element", unit: "molecules", per: 2, parts: [["O", 2]] },
+  H2O: { f: "H₂O", name: "water",          kind: "compound", unit: "molecules", per: 3, parts: [["H", 2], ["O", 1]] },
+  CO2: { f: "CO₂", name: "carbon dioxide", kind: "compound", unit: "molecules", per: 3, parts: [["C", 1], ["O", 2]] }
+};
+function molar(s){ let M = 0; for (const p of s.parts) M += AR[p[0]] * p[1]; return M; }
+const SUP = { "0": "⁰", "1": "¹", "2": "²", "3": "³", "4": "⁴", "5": "⁵", "6": "⁶", "7": "⁷", "8": "⁸", "9": "⁹", "-": "⁻" };
+function sci(x){
+  if (x <= 0) return "0";
+  let e = Math.floor(Math.log10(x)); let m = x / Math.pow(10, e);
+  if (Number(m.toFixed(2)) >= 10) { m = m / 10; e += 1; }
+  return m.toFixed(2) + "×10" + String(e).split("").map(c => SUP[c]).join("");
+}
+function fmtN(n){ return n === 0 ? "0" : (n < 0.1 ? n.toFixed(3) : n.toFixed(2)); }
+function fmtM(m){ return m.toFixed(1); }
+
+const cv = document.getElementById("moCanvas"), ctx = cv.getContext("2d");
+const slider = document.getElementById("moMass"), mV = document.getElementById("moV");
+const tag = document.getElementById("moTag"), ovl = document.getElementById("moOverlay");
+const outN = document.getElementById("moN"), outP = document.getElementById("moP"), outPL = document.getElementById("moPL");
+const work = document.getElementById("moWork"), drop = document.getElementById("moDrop");
+const CSS = getComputedStyle(document.documentElement);
+const ACC = CSS.getPropertyValue("--acc").trim();
+const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+const AMB = CSS.getPropertyValue("--amb").trim();
+const INK = CSS.getPropertyValue("--ink").trim();
+const DIM = CSS.getPropertyValue("--ink-dim").trim();
+const LINE = CSS.getPropertyValue("--line").trim();
+const MONO = `"JetBrains Mono", monospace`;
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement("canvas"), bctx = buf.getContext("2d");
+const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+/* atom colours come from the theme: the first element in the formula uses the accent, oxygen amber, hydrogen ink */
+function atomFill(el){ return el === "O" ? AMB : (el === "H" ? INK : ACC); }
+function atomR(el){ return el === "H" ? 0.62 : (el === "Fe" ? 1.15 : (el === "Al" ? 1.08 : 1)); }
+
+let sub = "H2O", dropKey = "why", shown = 18, raf = 0;
+
+/* tick labels sit at their true value: the thumb centre travels from 10px to (width - 10px) */
+(function ticks(){
+  const box = document.getElementById("moTicks"); const mn = +slider.min, mx = +slider.max;
+  [0, 25, 50, 75, 100].forEach(v => { const f = (v - mn) / (mx - mn); const s = document.createElement("span");
+    s.style.left = `calc(10px + (100% - 20px) * ${f})`; s.textContent = v + " g"; box.appendChild(s); });
+})();
+
+function state(){
+  const s = SUBS[sub], M = molar(s), m = +slider.value, n = m / M, N = n * NA;
+  return { s, M, m, n, N, atoms: N * s.per };
+}
+
+function resize(){
+  const r = cv.getBoundingClientRect(); if (!r.width || !r.height) return;
+  cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr);
+  buf.width = cv.width; buf.height = cv.height; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); draw();
+}
+function rr(x, y, w, h, r){ ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+function ball(x, y, r, col){
+  ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fillStyle = col; ctx.fill();
+  ctx.beginPath(); ctx.arc(x - r * 0.3, y - r * 0.3, r * 0.35, 0, Math.PI * 2); ctx.fillStyle = "rgba(255,255,255,0.28)"; ctx.fill();
+}
+/* one particle of the substance, centred on (x, y), atoms of radius r */
+function particle(s, x, y, r){
+  const k = s.f;
+  if (k === "O₂"){ ball(x - r * 0.72, y, r, AMB); ball(x + r * 0.72, y, r, AMB); return; }
+  if (k === "H₂O"){ ball(x - r * 1.05, y + r * 0.75, r * 0.62, INK); ball(x + r * 1.05, y + r * 0.75, r * 0.62, INK); ball(x, y, r, AMB); return; }
+  if (k === "CO₂"){ ball(x - r * 1.45, y, r * 0.95, AMB); ball(x + r * 1.45, y, r * 0.95, AMB); ball(x, y, r * 0.88, ACC); return; }
+  ball(x, y, r * atomR(s.parts[0][0]), ACC);
+}
+
+function draw(){
+  const w = cv.width / dpr, h = cv.height / dpr; if (!w || !h) return;
+  const st = state(), s = st.s, M = st.M;
+  const mShow = shown, nShow = mShow / M;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.globalCompositeOperation = "source-over"; ctx.globalAlpha = 1; ctx.filter = "none";
+  ctx.fillStyle = "#000"; ctx.fillRect(0, 0, w, h);
+  const fs = Math.max(11, Math.min(14, w / 52));
+  const top = h * 0.07, bottom = h - Math.max(40, h * 0.12) - h * 0.03;
+  const H = bottom - top;
+
+  /* ---------- left: the scale, with a heap that grows with every gram ---------- */
+  const L0 = w * 0.04, L1 = w * 0.40, LW = L1 - L0, lc = (L0 + L1) / 2;
+  const bodyH = Math.max(fs * 2.6, H * 0.26);
+  const bodyY = bottom - bodyH;
+  const panY = bodyY - Math.max(8, H * 0.06);
+  const panW = LW * 0.92;
+  /* stem and body */
+  ctx.fillStyle = "rgba(255,255,255,0.08)"; ctx.fillRect(lc - 3, panY, 6, bodyY - panY);
+  rr(lc - LW * 0.42, bodyY, LW * 0.84, bodyH, 8); ctx.fillStyle = "rgba(255,255,255,0.05)"; ctx.fill(); ctx.strokeStyle = LINE; ctx.lineWidth = 1.5; ctx.stroke();
+  /* digital display: always the live mass on the pan */
+  const dW = LW * 0.66, dH = Math.min(bodyH * 0.62, fs * 2.1);
+  rr(lc - dW / 2, bodyY + (bodyH - dH) / 2, dW, dH, 5); ctx.fillStyle = `rgba(${RGB},0.10)`; ctx.fill(); ctx.strokeStyle = `rgba(${RGB},0.6)`; ctx.lineWidth = 1; ctx.stroke();
+  ctx.font = `500 ${Math.min(fs * 1.25, dH * 0.62)}px ${MONO}`; ctx.fillStyle = ACC; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  ctx.fillText(fmtM(mShow) + " g", lc, bodyY + bodyH / 2 + 1);
+  /* pan */
+  ctx.beginPath(); ctx.moveTo(lc - panW / 2, panY); ctx.lineTo(lc + panW / 2, panY);
+  ctx.strokeStyle = INK; ctx.lineWidth = 3; ctx.lineCap = "round"; ctx.stroke(); ctx.lineCap = "butt";
+  /* heap: one dot per gram (half-gram steps shown as a half-bright dot), stacked as a mound */
+  const dots = Math.round(mShow * 2);
+  const heapTop = top + fs * 0.4, heapH = panY - heapTop - 4;
+  /* a full heap (100 g = 200 half-gram dots) is a 20-row triangle that fits the space above the pan */
+  const base = 20;
+  const dr = Math.max(1.6, Math.min(panW / (base * 2.1), heapH / (base * 1.85 + 1)));
+  let placed = 0, row = 0;
+  ctx.fillStyle = `rgba(${RGB},0.85)`;
+  while (placed < dots && row < base){
+    const inRow = Math.min(base - row, dots - placed);
+    const y = panY - dr - 1 - row * dr * 1.85;
+    for (let i = 0; i < inRow; i++){
+      const x = lc + (i - (inRow - 1) / 2) * dr * 2.1;
+      ctx.beginPath(); ctx.arc(x, y, dr, 0, Math.PI * 2); ctx.fill();
+    }
+    placed += inRow; row++;
+  }
+  if (dots === 0){ ctx.font = `400 ${fs}px ${MONO}`; ctx.fillStyle = DIM; ctx.textAlign = "center"; ctx.fillText("empty pan", lc, panY - fs); }
+
+  /* ---------- right top: the close-up of one particle ---------- */
+  const R0 = w * 0.47, R1 = w * 0.96, RW = R1 - R0;
+  const lensR = Math.max(16, Math.min(RW * 0.15, H * 0.2));
+  const lx = R0 + lensR + 4, ly = top + lensR + 2;
+  ctx.beginPath(); ctx.arc(lx, ly, lensR, 0, Math.PI * 2); ctx.fillStyle = `rgba(${RGB},0.07)`; ctx.fill();
+  ctx.strokeStyle = `rgba(${RGB},0.7)`; ctx.lineWidth = 1.5; ctx.stroke();
+  particle(s, lx, ly, lensR * (s.per === 3 ? 0.3 : (s.per === 2 ? 0.36 : 0.45)));
+  ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
+  const tx = lx + lensR + 12, room = w - 6 - tx;
+  ctx.font = `500 ${fs}px ${MONO}`;
+  const one = s.per === 1 ? `1 particle = 1 ${s.f} atom` : `1 ${s.f} molecule = ${s.per} atoms`;
+  const lines = ctx.measureText(one).width <= room ? [one] : (s.per === 1 ? ["1 particle", `= 1 ${s.f} atom`] : [`1 ${s.f} molecule`, `= ${s.per} atoms`]);
+  lines.push(`1 mol = ${fmtM(M)} g`);
+  const lh = fs * 1.35; let yy = ly - (lines.length - 1) * lh / 2 + fs * 0.35;
+  lines.forEach((t, i) => { ctx.font = `${i === lines.length - 1 ? 400 : 500} ${fs}px ${MONO}`; ctx.fillStyle = i === lines.length - 1 ? DIM : INK; ctx.fillText(t, tx, yy); yy += lh; });
+
+  /* ---------- right bottom: the mole bar, every whole mole marked at its mass ---------- */
+  const maxN = Math.max(1, Math.ceil(100 / M - 1e-9));
+  const bx0 = R0 + 4, bx1 = R1 - 4, bW = bx1 - bx0;
+  const barH = Math.max(14, H * 0.11);
+  const barY = ly + lensR + Math.max(fs * 2.6, (bottom - (ly + lensR) - barH) * 0.45);
+  rr(bx0, barY, bW, barH, barH / 2); ctx.fillStyle = "rgba(255,255,255,0.05)"; ctx.fill(); ctx.strokeStyle = LINE; ctx.lineWidth = 1; ctx.stroke();
+  const fw = bW * Math.min(1, nShow / maxN);
+  if (fw > 0.5){
+    ctx.save(); rr(bx0, barY, bW, barH, barH / 2); ctx.clip();
+    const g = ctx.createLinearGradient(bx0, 0, bx0 + fw, 0); g.addColorStop(0, `rgba(${RGB},0.35)`); g.addColorStop(1, `rgba(${RGB},0.95)`);
+    ctx.fillStyle = g; ctx.fillRect(bx0, barY, fw, barH); ctx.restore();
+  }
+  /* whole-mole ticks: label as many as fit */
+  const gap = bW / maxN; const every = Math.max(1, Math.ceil((fs * 5) / gap));
+  ctx.textAlign = "center";
+  for (let k = 0; k <= maxN; k++){
+    const x = bx0 + gap * k;
+    ctx.strokeStyle = k <= nShow + 1e-9 ? INK : DIM; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(x, barY - 4); ctx.lineTo(x, barY + barH + 4); ctx.stroke();
+    if (k % every === 0){
+      ctx.font = `400 ${fs}px ${MONO}`; ctx.fillStyle = k <= nShow + 1e-9 ? INK : DIM;
+      const t1 = k + " mol", t2 = fmtM(k * M) + " g";
+      const half = Math.max(ctx.measureText(t1).width, ctx.measureText(t2).width) / 2;
+      const lxk = Math.min(w - 4 - half, Math.max(half + 4, x));
+      ctx.fillText(t1, lxk, barY - 8);
+      ctx.fillStyle = DIM; ctx.fillText(t2, lxk, barY + barH + fs + 6);
+    }
+  }
+  /* live marker at the current amount */
+  const mx = bx0 + fw;
+  ctx.beginPath(); ctx.arc(mx, barY + barH / 2, barH * 0.42, 0, Math.PI * 2); ctx.fillStyle = AMB; ctx.fill();
+  ctx.textAlign = "left";
+
+  /* bloom */
+  bctx.setTransform(1, 0, 0, 1, 0, 0); bctx.clearRect(0, 0, buf.width, buf.height);
+  if (cv.width && cv.height) bctx.drawImage(cv, 0, 0);
+  ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  /* vignette */
+  const cx = w / 2, cy = h / 2;
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+  ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
+}
+
+function animateTo(target){
+  cancelAnimationFrame(raf);
+  if (reduce) { shown = target; draw(); return; }
+  const from = shown, t0 = performance.now(), dur = 380;
+  const step = now => {
+    const t = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - t, 3);
+    shown = from + (target - from) * e; draw();
+    if (t < 1) raf = requestAnimationFrame(step); else { shown = target; draw(); raf = 0; }
+  };
+  raf = requestAnimationFrame(step);
+}
+
+function dropText(){
+  const st = state(), s = st.s;
+  if (dropKey === "why"){
+    return `The number is not random: it was chosen so that grams and relative masses line up. A carbon-12 atom has a relative mass of exactly 12, and 6.02 × 10²³ of them weigh 12 g, so a mole of any substance weighs its relative mass in grams. That is why one mole of ${s.name} on this scale reads ${fmtM(st.M)} g. Since 2019 the constant has been fixed exactly at 6.022 140 76 × 10²³ per mole; school chemistry rounds it to 6.02 × 10²³. The symbol for amount is n, measured in mol, while N is a number of particles with no unit.`;
+  }
+  if (dropKey === "atoms"){
+    if (s.per === 1){
+      return `${s.name.charAt(0).toUpperCase() + s.name.slice(1)} is made of single atoms, so the particles and the atoms are the same count: ${fmtM(st.m)} g is ${fmtN(st.n)} mol, which is ${sci(st.N)} atoms. Switch to O₂, H₂O or CO₂ and the two counts split apart. A molecule holds several atoms, so atoms = molecules × atoms per molecule. A test question that asks for the number of atoms in a molecular substance needs that extra step.`;
+    }
+    return `${s.f} is made of molecules, and each one holds ${s.per} atoms. So ${fmtM(st.m)} g of ${s.name} is ${fmtN(st.n)} mol of molecules, which is ${sci(st.N)} molecules but ${sci(st.atoms)} atoms in total. Read the question carefully: "how many molecules" stops at N = n × 6.02 × 10²³, while "how many atoms" multiplies by ${s.per} as well. For one element only, multiply by its count in the formula: this sample holds ${s.parts.map(p => sci(st.N * p[1]) + " " + p[0] + " atoms").join(" and ")}.`;
+  }
+  return `6.02 × 10²³ is hard to picture. Counting one particle every second, a single mole would take about 1.9 × 10¹⁶ years, roughly a million times the age of the universe. Yet a mole of water is only 18.0 g, about one large mouthful, because each molecule is so small. That gap is why chemists never count particles directly: they weigh a sample, divide by molar mass to get moles, then multiply by Avogadro’s constant to get the number of particles.`;
+}
+
+function update(animate){
+  const st = state(), s = st.s;
+  const pct = (st.m - slider.min) / (slider.max - slider.min) * 100;
+  slider.style.setProperty("--fill", pct + "%");
+  mV.textContent = fmtM(st.m) + " g";
+  tag.textContent = `${s.f} · M = ${fmtM(st.M)} g/mol`;
+  ovl.textContent = `${fmtN(st.n)} mol · ${sci(st.N)} ${s.unit}`;
+  outN.textContent = fmtN(st.n) + " mol";
+  outPL.textContent = s.unit === "atoms" ? "Atoms (N)" : "Molecules (N)";
+  outP.textContent = sci(st.N);
+  const l1 = `<span class="k">n = m ÷ M</span> = ${fmtM(st.m)} ÷ ${fmtM(st.M)} = ${fmtN(st.n)} mol`;
+  const l2 = `<span class="k">N = n × 6.02×10²³</span> = ${sci(st.N)} ${s.unit}`;
+  const l3 = s.per === 1 ? `<span class="k">atoms</span> = N, one atom per particle` : `<span class="k">atoms = ${s.per} × N</span> = ${sci(st.atoms)} atoms`;
+  work.innerHTML = l1 + "<br>" + l2 + "<br>" + l3;
+  drop.textContent = dropText();
+  if (animate) animateTo(st.m); else { shown = st.m; draw(); }
+}
+
+document.querySelectorAll(".mo-pick .tg").forEach(b => b.addEventListener("click", () => {
+  sub = b.dataset.s;
+  document.querySelectorAll(".mo-pick .tg").forEach(x => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
+  update(false);
+}));
+document.querySelectorAll(".mo-drops .tg").forEach(b => b.addEventListener("click", () => {
+  dropKey = b.dataset.d;
+  document.querySelectorAll(".mo-drops .tg").forEach(x => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
+  drop.textContent = dropText();
+}));
+slider.addEventListener("input", () => update(true));
+window.addEventListener("resize", resize);
+if (window.ResizeObserver) new ResizeObserver(() => resize()).observe(cv.parentElement);
+update(false); resize();
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => draw());
+})();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'the-mole'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

@@ -316,31 +316,36 @@ canvas {
     transition-duration: 0.01ms !important;
   }
 }
+@media (max-width:520px){.canvas-wrapper{aspect-ratio:1/1 !important}}
 </style>
 
 <div class="container">
-  <h2 class="sr-only">Environmental Policy Instruments Interactive Widget</h2>
+  <h2 class="sr-only">Environmental policy instruments: a pollution tax and a legal limit on the same diagram</h2>
 
-  <h1>The best pollution tax doesn't stop at <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">zero</span></h1>
+  <h1>The best level of pollution is not <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">zero</span></h1>
   
-  <p class="intro">Command-and-control regulation forces everyone to the same standard. Market instruments let firms choose their own path to the target—and the most efficient firms do the heavy lifting. Drag the slider to see where the optimal tax lands on the diagram, and why stopping short saves society more than it costs.</p>
+  <p class="intro">Governments can cut pollution two ways. Regulation sets a legal limit on how much pollution is allowed, backed by law. A market instrument, such as a tax, puts a price on each unit of pollution and lets firms choose how much to cut. Pick a tool, set the tax or the limit and see where each one lands on the same diagram, and why the best outcome stops short of cutting every last unit.</p>
 
   <div class="card">
     <div class="card-header">
-      <span class="card-label">Pigouvian Tax Diagram</span>
+      <span class="card-label" id="cardLabel">Pollution tax</span>
       <span class="live-tag" id="taxLabel">Tax: $0/unit</span>
     </div>
-    <div class="card-hint">Marginal social cost must equal marginal benefit of abatement</div>
+    <div class="toggle-section policy-row">
+      <button class="toggle-btn policy-btn active" data-policy="tax" type="button">Tax</button>
+      <button class="toggle-btn policy-btn" data-policy="limit" type="button">Legal limit</button>
+    </div>
+    <div class="card-hint" id="cardHint">Marginal abatement cost must equal marginal benefit of abatement</div>
     
     <div class="canvas-wrapper">
-      <canvas id="taxCanvas"></canvas>
+      <canvas id="taxCanvas" role="img" aria-label="A rising cost of abatement curve (MAC) and a falling benefit of abatement curve (MBA) cross at 50 units abated and $50 per unit. In tax mode a dashed horizontal tax line sets how far firms cut; in legal limit mode a dashed vertical line marks the abatement the law requires. A shaded triangle shows the deadweight loss when the tool misses the crossing."></canvas>
       <div class="canvas-overlay" id="canvasTag">UNTAXED EQUILIBRIUM</div>
     </div>
 
     <div class="slider-row">
-      <label class="slider-label" for="taxSlider">Tax per unit of pollution</label>
+      <label class="slider-label" for="taxSlider" id="sliderLabel">Tax per unit of pollution</label>
       <input type="range" id="taxSlider" class="tax-slider" min="0" max="100" value="0" step="1">
-      <div class="tick-labels">
+      <div class="tick-labels" id="tickLabels">
         <span style="--at:0">$0</span>
         <span style="--at:0.5">Optimal ($50)</span>
         <span style="--at:1">$100</span>
@@ -349,11 +354,11 @@ canvas {
 
     <div class="stat-row">
       <div class="stat">
-        <div class="stat-label">Deadweight Loss</div>
+        <div class="stat-label">Deadweight loss</div>
         <div class="stat-value" id="dwlValue" style="color:var(--acc)">$2,000</div>
       </div>
       <div class="stat">
-        <div class="stat-label">Net Social Benefit</div>
+        <div class="stat-label">Net social benefit</div>
         <div class="stat-value" id="nsbValue" style="color:var(--amb)">$0</div>
       </div>
     </div>
@@ -361,8 +366,8 @@ canvas {
 
   <div class="card">
     <div class="toggle-section">
-      <button class="toggle-btn active" data-mode="market">Market Instruments</button>
-      <button class="toggle-btn" data-mode="command">Command-and-Control</button>
+      <button class="toggle-btn active" data-mode="market">Market instruments</button>
+      <button class="toggle-btn" data-mode="command">Command-and-control</button>
     </div>
     
     <div class="knowdrop" id="knowdropText">
@@ -376,7 +381,7 @@ canvas {
       <div class="know-tag">Know This</div>
     </div>
     <div class="know-body">
-      The <span style="color:var(--acc)">optimal tax</span> equals the marginal external cost at the efficient quantity, which is <span style="color:var(--acc)">never zero pollution</span>—because the last unit of abatement costs more than the damage it prevents, so society is better off tolerating that final increment.
+      <span style="color:var(--acc)">Regulation</span> sets a legal limit on pollution; a <span style="color:var(--acc)">tax</span> puts a price on it. Either way, the best amount of abatement is where the cost of cutting one more unit equals the benefit it brings. The <span style="color:var(--acc)">optimal tax</span> equals the marginal external cost at that efficient quantity, and the optimal limit allows that same amount of pollution, which is <span style="color:var(--acc)">never zero pollution</span>, because the last units of abatement cost more than the damage they prevent.
     </div>
   </div>
 </div>
@@ -401,6 +406,11 @@ const AMB = CSS.getPropertyValue('--amb').trim();
 let animFrame;
 let currentTax = 0;
 const targetTax = () => parseFloat(slider.value);
+let policy = "tax"; /* "tax": slider sets $ per unit; "limit": slider sets how far the law makes firms cut (abatement) */
+const cardLabel = document.getElementById("cardLabel");
+const cardHint = document.getElementById("cardHint");
+const sliderLabel = document.getElementById("sliderLabel");
+const tickLabels = document.getElementById("tickLabels");
 function MSC(q) { return 10 + 0.8 * q; }
 function MBA(q) { return 90 - 0.8 * q; }
 const OPT_Q = 50;                     /* where MSC(q) = MBA(q) */
@@ -472,7 +482,8 @@ function draw() {
      They cross at q* = 50, $50: that is the optimal tax. With a tax t, firms abate until MSC(q) = t. */
   const xq = q => ox + (q / 100) * graphW;
   const yv = v => oy - (v / 100) * graphH;
-  const taxQ = abateAt(currentTax);
+  /* tax: firms abate until MSC = tax. limit: the law fixes abatement, so pollution allowed = 100 - abatement */
+  const taxQ = policy === "tax" ? abateAt(currentTax) : Math.max(0, Math.min(100, currentTax));
   const taxX = xq(taxQ), taxY = yv(MSC(taxQ));
   const optX = xq(OPT_Q), optY = yv(OPT_TAX);
 
@@ -508,8 +519,33 @@ function draw() {
   ctx.stroke();
   ctx.setLineDash([]);
 
+  // Legal limit: a vertical line at the abatement the law requires, and the cost of the last unit cut
+  if (policy === "limit" && taxQ > 0.5) {
+    ctx.strokeStyle = "rgba(" + RGB + ", 0.6)";
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6, 3]);
+    ctx.beginPath();
+    ctx.moveTo(taxX, oy);
+    ctx.lineTo(taxX, oy - graphH);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = ACC;
+    ctx.font = '10px "JetBrains Mono"';
+    const leftSide = taxX > ox + graphW - 110;
+    ctx.textAlign = leftSide ? "right" : "left";
+    ctx.fillText("Limit: " + Math.round(100 - taxQ) + " allowed", taxX + (leftSide ? -6 : 6), oy - graphH + 30);
+    ctx.textAlign = "left";
+    ctx.fillStyle = ACC;
+    ctx.shadowColor = ACC;
+    ctx.shadowBlur = 12;
+    ctx.beginPath();
+    ctx.arc(taxX, taxY, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+
   // Tax line (horizontal at the tax) and the point where firms stop abating
-  if (currentTax > 1) {
+  if (policy === "tax" && currentTax > 1) {
     ctx.strokeStyle = "rgba(" + RGB + ", 0.5)";
     ctx.lineWidth = 2;
     ctx.setLineDash([6, 3]);
@@ -551,7 +587,7 @@ function draw() {
   // Labels
   ctx.fillStyle = AMB;
   ctx.font = '11px "JetBrains Mono"';
-  ctx.fillText("MSC", ox + graphW - 40, yv(MSC(100)) - 8);
+  ctx.fillText("MAC", ox + graphW - 40, yv(MSC(100)) - 8);
 
   ctx.fillStyle = ACC;
   ctx.fillText("MBA", ox + 10, yv(MBA(0)) - 8);
@@ -586,16 +622,21 @@ function draw() {
   dwlValue.textContent = "$" + Math.round(dwl).toLocaleString("en-AU");
   nsbValue.textContent = "$" + Math.round(nsb).toLocaleString("en-AU");
 
-  taxLabel.textContent = "Tax: $" + Math.round(currentTax) + "/unit";
-
-  if (taxQ === 0) {
-    canvasTag.textContent = "UNTAXED EQUILIBRIUM • NO ABATEMENT";
-  } else if (Math.abs(taxQ - OPT_Q) < 2.5) {
-    canvasTag.textContent = "OPTIMAL TAX • MSC = MBA";
-  } else if (taxQ < OPT_Q) {
-    canvasTag.textContent = "UNDER-TAXED • DWL FROM REMAINING EXTERNALITY";
+  if (policy === "tax") {
+    taxLabel.textContent = "Tax: $" + Math.round(currentTax) + "/unit";
+    if (currentTax > 1 && taxQ === 0) canvasTag.textContent = "TAX TOO LOW TO BUY ANY CUT • NO ABATEMENT";
+    else if (taxQ === 0) canvasTag.textContent = "UNTAXED EQUILIBRIUM • NO ABATEMENT";
+    else if (Math.abs(taxQ - OPT_Q) < 2.5) canvasTag.textContent = "OPTIMAL TAX • MAC = MBA";
+    else if (taxQ < OPT_Q) canvasTag.textContent = "UNDER-TAXED • DWL FROM REMAINING EXTERNALITY";
+    else canvasTag.textContent = "OVER-TAXED • DWL FROM EXCESS ABATEMENT";
   } else {
-    canvasTag.textContent = "OVER-TAXED • DWL FROM EXCESS ABATEMENT";
+    const allowed = Math.round(100 - taxQ);
+    taxLabel.textContent = taxQ < 0.5 ? "No limit" : "Limit: " + allowed + " units allowed";
+    if (taxQ < 0.5) canvasTag.textContent = "NO LIMIT • NO ABATEMENT";
+    else if (allowed === 0) canvasTag.textContent = "BAN • 0 ALLOWED • DWL FROM EXCESS ABATEMENT";
+    else if (Math.abs(taxQ - OPT_Q) < 2.5) canvasTag.textContent = "OPTIMAL LIMIT • " + allowed + " ALLOWED • MAC = MBA";
+    else if (taxQ < OPT_Q) canvasTag.textContent = "LIMIT TOO LOOSE • " + allowed + " ALLOWED • DWL FROM REMAINING EXTERNALITY";
+    else canvasTag.textContent = "LIMIT TOO TIGHT • " + allowed + " ALLOWED • DWL FROM EXCESS ABATEMENT";
   }
 
   animFrame = requestAnimationFrame(draw);
@@ -610,7 +651,7 @@ slider.style.setProperty('--fill', '0%');
 draw();
 
 // Toggle functionality
-const toggleBtns = document.querySelectorAll('.toggle-btn');
+const toggleBtns = document.querySelectorAll('.toggle-btn[data-mode]');
 const knowdropText = document.getElementById('knowdropText');
 
 const texts = {
@@ -619,14 +660,45 @@ const texts = {
   command: "Standards and bans treat all firms identically: every factory must install the same scrubbers, every vehicle must meet the same emissions ceiling. The regulator never knows each firm's abatement cost, so the uniform rule forces high costs on some while leaving cheaper opportunities untapped elsewhere. Enforcement is direct—inspectors check compliance—but innovation stalls because exceeding the standard earns no reward. Bans (CFCs, leaded petrol) work when the harm is catastrophic and substitutes exist, but for diffuse problems like CO₂, command-and-control becomes prohibitively expensive. Political resistance grows when voters see the bluntness: small firms shut down while large firms absorb the cost and pass it to consumers."
 };
 
+function showText(mode) {
+  toggleBtns.forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+  knowdropText.textContent = texts[mode];
+}
 toggleBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    toggleBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const mode = btn.dataset.mode;
-    knowdropText.textContent = texts[mode];
-  });
+  btn.addEventListener('click', () => showText(btn.dataset.mode));
 });
+
+/* Tax or legal limit: same diagram, same model, the slider changes meaning */
+const policyBtns = document.querySelectorAll('.policy-btn');
+const TICKS = {
+  tax: [[0, "$0"], [0.5, "Optimal ($50)"], [1, "$100"]],
+  limit: [[0, "No limit"], [0.5, "Optimal (50 allowed)"], [1, "Ban (0)"]]
+};
+function setPolicy(p) {
+  policy = p;
+  policyBtns.forEach(b => b.classList.toggle('active', b.dataset.policy === p));
+  slider.value = 0;
+  slider.style.setProperty('--fill', '0%');
+  currentTax = 0;
+  cardLabel.textContent = p === "tax" ? "Pollution tax" : "Legal limit on pollution";
+  cardHint.textContent = p === "tax"
+    ? "Firms cut pollution until the cost of one more cut equals the tax"
+    : "The law sets the most pollution allowed (out of 100 units); firms must cut the rest. This assumes the cut is shared at least cost. A rule that makes every firm cut the same amount costs more.";
+  sliderLabel.textContent = p === "tax" ? "Tax per unit of pollution" : "Legal limit: tighten it to allow less pollution";
+  slider.setAttribute("aria-label", p === "tax" ? "Tax per unit of pollution, $0 to $100" : "Legal limit, from no limit to a ban");
+  tickLabels.innerHTML = "";
+  TICKS[p].forEach(([at, txt]) => {
+    const sp = document.createElement("span");
+    sp.style.setProperty("--at", at);
+    if (at === 0) sp.style.transform = "translateX(-10px)";
+    if (at === 1) sp.style.transform = "translateX(calc(-100% + 10px))";
+    sp.textContent = txt;
+    tickLabels.appendChild(sp);
+  });
+  showText(p === "tax" ? "market" : "command");
+}
+policyBtns.forEach(btn => btn.addEventListener('click', () => setPolicy(btn.dataset.policy)));
+setPolicy("tax");
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'environmental-policy-instruments-and-their-effectiveness'},'*');}catch(e){}}

@@ -9,23 +9,23 @@ body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body
   --bg: #0B0D0C;
   --bg2: #12160F;
   --acc: #6A60D4;
-  --ag: rgba(106, 96, 212, .7);
-  --ag1: rgba(106, 96, 212, .12);
-  --ag2: rgba(106, 96, 212, .45);
+  --acc-rgb: 106, 96, 212;
+  --ag:  rgba(var(--acc-rgb),.7);
+  --ag1: rgba(var(--acc-rgb),.12);
+  --ag2: rgba(var(--acc-rgb),.45);
   --amb: #FAC775;
   --ink: #EDEDE8;
   --ink-dim: #8C9389;
   --line: #262B26;
 }
 
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+*,*::before,*::after{box-sizing:border-box}
 
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
-@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-
 body{
-  background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C 55%);
+  margin:0;
+  background:radial-gradient(120% 80% at 50% -10%, var(--bg2) 0%, var(--bg) 55%);
   font-family:'Geist',sans-serif;
   color:var(--ink);
   min-height:100vh;
@@ -33,569 +33,540 @@ body{
   line-height:1.5;
 }
 
-.container{max-width:720px;margin:0 auto}
+.cu-wrap{max-width:720px;margin:0 auto}
 
-h1{
+.cu-wrap h1{
   font-size:clamp(26px,6.5vw,44px);
   font-weight:800;
   letter-spacing:-0.03em;
   line-height:1.05;
-  margin-bottom:14px;
+  margin:0 0 14px;
 }
 
-.intro{
+.cu-intro{
   font-size:15.5px;
+  font-weight:400;
   color:var(--ink-dim);
   max-width:58ch;
   line-height:1.55;
-  margin-bottom:32px;
+  margin:0 0 28px;
 }
 
-.card{
-  background:linear-gradient(180deg,#12160F,#0d100b);
+.cu-card{
+  background:linear-gradient(180deg, var(--bg2), var(--bg));
   border:1px solid var(--line);
   border-radius:18px;
   padding:16px;
-  box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);
-  margin-bottom:20px;
+  box-shadow:0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin:0 0 20px;
 }
 
-.card-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:6px;
+.cu-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:6px}
+.cu-label{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;color:var(--ink)}
+.cu-live{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--acc);text-align:right;white-space:nowrap}
+.cu-hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin:0 0 14px;line-height:1.5}
+
+.cu-canvas-wrap{
+  position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;
+  background:black;box-shadow:inset 0 0 0 1px var(--ag1);
+}
+.cu-canvas-wrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.cu-overlay{
+  position:absolute;left:0;right:0;bottom:0;
+  background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);padding:7px 12px;
+  font-family:'JetBrains Mono',monospace;font-size:clamp(11px,3.2vw,14px);text-transform:uppercase;color:var(--acc);text-align:center;
+  line-height:1.3;
 }
 
-.card-label{
-  font-family:'JetBrains Mono',monospace;
-  font-size:13px;
-  text-transform:uppercase;
-  color:var(--ink);
+.cu-play{
+  display:block;width:100%;margin:14px 0 14px;
+  font-family:'JetBrains Mono',monospace;font-size:14px;padding:12px 16px;border-radius:999px;
+  border:1px solid var(--acc);background:rgba(var(--acc-rgb),.1);color:var(--acc);cursor:pointer;
+  box-shadow:0 0 22px rgba(var(--acc-rgb),.18);transition:box-shadow .15s,background .15s;
 }
+.cu-play:hover{background:rgba(var(--acc-rgb),.16);box-shadow:0 0 28px rgba(var(--acc-rgb),.28)}
 
-.live-tag{
-  font-family:'JetBrains Mono',monospace;
-  font-size:11px;
-  text-transform:uppercase;
-  color:var(--acc);
+.cu-row{display:flex;justify-content:space-between;align-items:baseline;font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:8px}
+.cu-row b{font-weight:500;color:var(--ink);font-size:12px}
+
+.cu-slider{width:100%;height:24px;-webkit-appearance:none;appearance:none;background:transparent;cursor:pointer;margin:0 0 6px;--fill:0%}
+.cu-slider::-webkit-slider-runnable-track{height:4px;border-radius:3px;background:linear-gradient(90deg, var(--acc) var(--fill,0%), var(--line) var(--fill,0%))}
+.cu-slider::-moz-range-track{height:4px;border-radius:3px;background:linear-gradient(90deg, var(--acc) var(--fill,0%), var(--line) var(--fill,0%))}
+.cu-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:var(--bg);border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);margin-top:-8px;transition:box-shadow .15s}
+.cu-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--bg);border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s}
+.cu-slider:hover::-webkit-slider-thumb{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.cu-slider:hover::-moz-range-thumb{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+
+.cu-ticks{position:relative;height:14px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink-dim)}
+.cu-ticks span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}
+.cu-ticks span:first-child{transform:none}
+.cu-ticks span:last-child{transform:translateX(-100%)}
+
+.cu-stats{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding-top:16px;margin-top:16px;border-top:1px solid var(--line)}
+.cu-stat{text-align:center}
+.cu-stat-label{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:6px}
+.cu-stat-value{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500}
+.cu-stat-value.acc{color:var(--acc)}
+.cu-stat-value.amb{color:var(--amb)}
+.cu-note{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);text-align:center;margin:12px 0 0;line-height:1.5}
+
+.cu-toggle-title{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--ink-dim);margin:0 0 10px}
+.cu-toggles{display:flex;gap:10px;margin-bottom:16px}
+.cu-pill{
+  flex:1;font-family:'JetBrains Mono',monospace;font-size:13px;padding:12px 8px;border-radius:999px;
+  border:1px solid var(--line);background:var(--bg2);color:var(--ink-dim);cursor:pointer;transition:all .2s;
 }
+.cu-pill[aria-pressed="true"]{background:rgba(var(--acc-rgb),.1);border:1px solid var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
 
-.card-hint{
-  font-family:'JetBrains Mono',monospace;
-  font-size:11px;
-  color:var(--ink-dim);
-  margin-bottom:14px;
+.cu-drop{border-top:1px solid var(--line);padding-top:16px}
+.cu-drop p{margin:0;font-size:14.5px;font-weight:400;line-height:1.65;color:var(--ink)}
+
+.cu-know{
+  border-left:3px solid var(--acc);padding:16px 18px;
+  background:linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius:0 12px 12px 0;margin:0;padding-bottom:16px;
 }
+.cu-know-tag{display:flex;align-items:center;gap:9px;margin-bottom:10px;font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:0.15em;color:var(--acc)}
+.cu-know-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:cuPulse 2.4s ease-in-out infinite}
+@keyframes cuPulse{0%,100%{opacity:1}50%{opacity:.45}}
+.cu-know p{margin:0;font-size:17.4px;font-weight:400;line-height:1.55;color:var(--ink)}
 
-.canvas-wrapper{
-  position:relative;
-  width:100%;
-  aspect-ratio:16/9;
-  border-radius:12px;
-  overflow:hidden;
-  background:#000;
-  box-shadow:inset 0 0 0 1px var(--ag1);
-  margin-bottom:16px;
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
 }
-
-canvas{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  display:block;
-}
-
-.canvas-overlay{
-  position:absolute;
-  left:0;
-  right:0;
-  bottom:0;
-  background:rgba(0,0,0,0.55);
-  backdrop-filter:blur(4px);
-  padding:9px 16px;
-  font-family:'JetBrains Mono',monospace;
-  font-size:14px;
-  text-transform:uppercase;
-  color:var(--acc);
-  text-align:center;
-}
-
-.slider-label{
-  font-family:'JetBrains Mono',monospace;
-  font-size:10.5px;
-  text-transform:uppercase;
-  color:var(--ink-dim);
-  margin-bottom:8px;
-}
-
-.response-slider{
-  width:100%;
-  height:24px;
-  -webkit-appearance:none;
-  appearance:none;
-  background:transparent;
-  cursor:pointer;
-  margin-bottom:10px;
-}
-
-.response-slider::-webkit-slider-runnable-track{
-  height:4px;
-  border-radius:3px;
-  background:linear-gradient(90deg,var(--acc) var(--fill,0%),#23291f var(--fill,0%));
-}
-
-.response-slider::-moz-range-track{
-  height:4px;
-  border-radius:3px;
-  background:linear-gradient(90deg,var(--acc) var(--fill,0%),#23291f var(--fill,0%));
-}
-
-.response-slider::-webkit-slider-thumb{
-  -webkit-appearance:none;
-  appearance:none;
-  width:20px;
-  height:20px;
-  border-radius:50%;
-  background:#0B0D0C;
-  border:2px solid var(--acc);
-  box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);
-  margin-top:-8px;
-  transition:box-shadow .15s;
-}
-
-.response-slider::-moz-range-thumb{
-  width:20px;
-  height:20px;
-  border-radius:50%;
-  background:#0B0D0C;
-  border:2px solid var(--acc);
-  box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);
-  transition:box-shadow .15s;
-}
-
-.response-slider:hover::-webkit-slider-thumb{
-  box-shadow:0 0 24px var(--acc),0 0 8px var(--ag);
-}
-
-.response-slider:hover::-moz-range-thumb{
-  box-shadow:0 0 24px var(--acc),0 0 8px var(--ag);
-}
-
-.tick-labels{
-  display:flex;
-  justify-content:space-between;
-  font-family:'JetBrains Mono',monospace;
-  font-size:9px;
-  color:var(--ink-dim);
-  padding:0 2px;
-}
-
-.stat-row{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:16px;
-  padding-top:16px;
-  border-top:1px solid var(--line);
-}
-
-.stat{
-  text-align:center;
-}
-
-.stat-label{
-  font-family:'JetBrains Mono',monospace;
-  font-size:10.5px;
-  text-transform:uppercase;
-  color:var(--ink-dim);
-  margin-bottom:6px;
-}
-
-.stat-value{
-  font-family:'JetBrains Mono',monospace;
-  font-size:24px;
-  font-weight:500;
-}
-
-.stat-value.purple{color:var(--acc)}
-.stat-value.amber{color:var(--amb)}
-
-.toggle-card{
-  background:linear-gradient(180deg,#12160F,#0d100b);
-  border:1px solid var(--line);
-  border-radius:18px;
-  padding:16px;
-  box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);
-  margin-bottom:20px;
-}
-
-.toggle-buttons{
-  display:flex;
-  gap:10px;
-  margin-bottom:16px;
-}
-
-.toggle-btn{
-  flex:1;
-  font-family:'JetBrains Mono',monospace;
-  font-size:14.5px;
-  padding:12px;
-  border-radius:11px;
-  border:1px solid var(--line);
-  background:#12160F;
-  color:var(--ink-dim);
-  cursor:pointer;
-  transition:all .2s;
-}
-
-.toggle-btn.active{
-  background:rgba(106,96,212,.1);
-  border:1px solid var(--acc);
-  color:var(--acc);
-  box-shadow:0 0 22px rgba(106,96,212,.18);
-}
-
-.knowdrop-divider{
-  border-top:1px solid var(--line);
-  padding-top:16px;
-}
-
-.knowdrop-text{
-  font-size:14.5px;
-  line-height:1.65;
-  color:var(--ink);
-}
-
-.know-this{
-  border-left:3px solid var(--acc);
-  padding:16px 18px;
-  background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));
-  border-radius:0 12px 12px 0;
-  margin-bottom:0;
-}
-
-.know-this-tag{
-  font-family:'JetBrains Mono',monospace;
-  font-size:13px;
-  text-transform:uppercase;
-  letter-spacing:0.15em;
-  color:var(--acc);
-  margin-bottom:10px;
-  display:block;
-}
-
-.know-this-body{
-  font-size:17.4px;
-  line-height:1.55;
-  color:var(--ink);
-}
-
-.acc{color:var(--acc)}
 </style>
 
-<h2 class="sr-only">Conscious and Unconscious Response Pathways — Interactive Neural Routing Visualisation</h2>
+<h2 class="sr-only">Conscious and unconscious responses: a spinal reflex arc and a brain round trip raced on one time axis</h2>
 
-<div class="container">
-  <h1>Your reflexes don't ask your <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">permission</span></h1>
-  
-  <p class="intro">The difference between conscious and unconscious responses isn't about intelligence or awareness — it's pure routing. One takes the scenic route through your cortex for decision-making. The other bypasses your brain entirely and fires at the spinal cord. Drag the slider to change stimulus intensity and watch two neural pathways race.</p>
+<div class="cu-wrap">
+  <h1>Your hand moves before you feel the <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">burn</span></h1>
 
-  <div class="card">
-    <div class="card-header">
-      <div class="card-label">Neural pathway comparison</div>
-      <div class="live-tag" id="pathwayTag">Unconscious active</div>
+  <p class="cu-intro">Touch something hot and one message leaves your skin, but the spinal cord handles it twice. An interneuron hands it straight to a motor neuron, and the arm is already lifting; the same message is also relayed up to the brain, which decides and sends its own command back down the cord. Fire the stimulus, or advance the time since the stimulus yourself, and watch where the amber message is at the moment the purple reflex reaches the muscle.</p>
+
+  <section class="cu-card">
+    <div class="cu-head">
+      <div class="cu-label">One hot touch, two routes</div>
+      <div class="cu-live" id="cuLive">Both pathways shown</div>
     </div>
-    <div class="card-hint">Watch signal propagation speed through both routes</div>
-    
-    <div class="canvas-wrapper">
-      <canvas id="pathwayCanvas"></canvas>
-      <div class="canvas-overlay" id="overlayTag">Unconscious signal: 68ms ahead</div>
-    </div>
+    <p class="cu-hint">Fire the stimulus. Watch which colour reaches the motor neuron first, and where the other one is at that moment.</p>
 
-    <div class="slider-label">Stimulus intensity</div>
-    <input type="range" min="0" max="100" value="45" class="response-slider" id="intensitySlider">
-    <div class="tick-labels">
-      <span>Mild</span>
-      <span>Moderate</span>
-      <span>Intense</span>
+    <div class="cu-canvas-wrap" id="cuWrap">
+      <canvas id="cuCanvas" aria-label="Schematic of a sensory neuron entering the spinal cord, a reflex arc to the muscle and a round trip to the brain and back"></canvas>
+      <div class="cu-overlay" id="cuOverlay" aria-live="polite">0 ms · hot surface touched</div>
     </div>
 
-    <div class="stat-row">
-      <div class="stat">
-        <div class="stat-label">Unconscious time</div>
-        <div class="stat-value purple" id="unconsciousTime">52ms</div>
+    <button type="button" class="cu-play" id="cuPlay">▶ Fire the stimulus</button>
+
+    <div class="cu-row"><span>Time since stimulus</span><b id="cuTimeV">0 ms</b></div>
+    <input type="range" class="cu-slider" id="cuTime" aria-label="Time since stimulus in milliseconds" min="0" max="200" step="1" value="0">
+    <div class="cu-ticks" aria-hidden="true">
+      <span style="left:0">0 ms</span>
+      <span style="left:35%">70 ms</span>
+      <span style="left:50%">100 ms</span>
+      <span style="left:100%">200 ms</span>
+    </div>
+
+    <div class="cu-stats">
+      <div class="cu-stat">
+        <div class="cu-stat-label">Reflex arc progress</div>
+        <div class="cu-stat-value acc" id="cuStatR">0%</div>
       </div>
-      <div class="stat">
-        <div class="stat-label">Conscious time</div>
-        <div class="stat-value amber" id="consciousTime">120ms</div>
+      <div class="cu-stat">
+        <div class="cu-stat-label">Brain round trip progress</div>
+        <div class="cu-stat-value amb" id="cuStatC">0%</div>
       </div>
     </div>
-  </div>
+    <p class="cu-note">Example latencies: reflex ≈ 50–80 ms, conscious ≈ 150–250 ms. This model uses 70 ms and 200 ms.</p>
+  </section>
 
-  <div class="toggle-card">
-    <div class="toggle-buttons">
-      <button class="toggle-btn active" data-mode="unconscious">Unconscious</button>
-      <button class="toggle-btn" data-mode="conscious">Conscious</button>
+  <section class="cu-card">
+    <div class="cu-toggle-title">Highlight a pathway</div>
+    <div class="cu-toggles" role="group" aria-label="Which pathway is highlighted">
+      <button type="button" class="cu-pill" data-mode="both" aria-pressed="true">Both</button>
+      <button type="button" class="cu-pill" data-mode="reflex" aria-pressed="false">Reflex</button>
+      <button type="button" class="cu-pill" data-mode="conscious" aria-pressed="false">Conscious</button>
     </div>
-    
-    <div class="knowdrop-divider">
-      <p class="knowdrop-text" id="knowdropText">An unconscious response (reflex arc) routes directly through the spinal cord without cortical involvement. When you touch something hot, sensory neurons fire to the spinal cord, which immediately activates motor neurons to withdraw your hand — all in 50–80 milliseconds. Your brain learns about the burn after your hand has already moved. This speed advantage is pure survival: the cortex is slow because it deliberates, weighs options, considers context. The reflex arc doesn't think. It just acts. Both pathways use the same neurons, the same action potentials, the same neurotransmitters — the only difference is whether the signal makes a detour through your frontal lobe.</p>
+    <div class="cu-drop">
+      <p id="cuDrop">Both responses begin identically: a receptor in the skin fires and a sensory neuron, part of the somatic nervous system in the peripheral nervous system, carries the message into the spinal cord. Inside the cord the message is handled twice. An interneuron passes it straight to a motor neuron, which contracts the arm muscle: the spinal reflex, complete at about 70 ms in this model. At the same time the message is relayed up the cord to the brain, which registers the heat and sends its own command back down the cord to a motor neuron, finishing at about 200 ms. The spinal cord therefore has two roles here: it initiates the reflex and it relays messages to and from the brain.</p>
     </div>
-  </div>
+  </section>
 
-  <div class="know-this">
-    <span class="know-this-tag">Know This</span>
-    <p class="know-this-body"><span class="acc">Conscious responses</span> are voluntary and deliberate but slower because they route through the brain for decision-making, while <span class="acc">unconscious responses</span> (reflexes) bypass the brain entirely and fire at the spinal cord — the speed difference is the survival advantage.</p>
-  </div>
+  <aside class="cu-know">
+    <div class="cu-know-tag"><span class="cu-know-dot"></span><span>Know This</span></div>
+    <p>A spinal reflex is initiated in the <span style="color:var(--acc)">spinal cord</span> before the brain is involved, while a conscious response is <span style="color:var(--acc)">processed by the brain</span> and still travels through the spinal cord <span style="color:var(--acc)">both ways</span>.</p>
+  </aside>
 </div>
 
 <script>
-const canvas = document.getElementById('pathwayCanvas');
-const ctx = canvas.getContext('2d', { alpha: false });
-const slider = document.getElementById('intensitySlider');
-const pathwayTag = document.getElementById('pathwayTag');
-const overlayTag = document.getElementById('overlayTag');
-const unconsciousTime = document.getElementById('unconsciousTime');
-const consciousTime = document.getElementById('consciousTime');
-const toggleBtns = document.querySelectorAll('.toggle-btn');
-const knowdropText = document.getElementById('knowdropText');
+(function(){
+  const canvas = document.getElementById("cuCanvas");
+  const wrap = document.getElementById("cuWrap");
+  const ctx = canvas.getContext("2d");
+  const overlay = document.getElementById("cuOverlay");
+  const live = document.getElementById("cuLive");
+  const slider = document.getElementById("cuTime");
+  const timeV = document.getElementById("cuTimeV");
+  const statR = document.getElementById("cuStatR");
+  const statC = document.getElementById("cuStatC");
+  const playBtn = document.getElementById("cuPlay");
+  const drop = document.getElementById("cuDrop");
+  const pills = Array.from(document.querySelectorAll(".cu-pill"));
 
-const dpr = Math.min(window.devicePixelRatio || 1, 2);
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d');
+  const CSSv = getComputedStyle(document.documentElement);
+  const ACC = CSSv.getPropertyValue("--acc").trim();
+  const RGB = CSSv.getPropertyValue("--acc-rgb").trim();
+  function hexRgb(hx){
+    hx = hx.trim().replace("#","");
+    if (hx.length === 3) hx = hx.split("").map(c => c + c).join("");
+    return [0,2,4].map(i => parseInt(hx.slice(i, i + 2), 16)).join(",");
+  }
+  const ambRaw = CSSv.getPropertyValue("--amb").trim();
+  const AMB = ambRaw ? hexRgb(ambRaw) : "255,255,255";
+  const inkRaw = CSSv.getPropertyValue("--ink").trim();
+  const INK = inkRaw ? hexRgb(inkRaw) : "255,255,255";
 
-let intensity = 45;
-let time = 0;
-let animFrame;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const buf = document.createElement("canvas");
+  const bctx = buf.getContext("2d");
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-const knowdrops = {
-  unconscious: "An unconscious response (reflex arc) routes directly through the spinal cord without cortical involvement. When you touch something hot, sensory neurons fire to the spinal cord, which immediately activates motor neurons to withdraw your hand — all in 50–80 milliseconds. Your brain learns about the burn after your hand has already moved. This speed advantage is pure survival: the cortex is slow because it deliberates, weighs options, considers context. The reflex arc doesn't think. It just acts. Both pathways use the same neurons, the same action potentials, the same neurotransmitters — the only difference is whether the signal makes a detour through your frontal lobe.",
-  conscious: "A conscious response requires cortical processing: sensory input travels to the thalamus, then to the sensory cortex for interpretation, then to association areas and the frontal lobe for decision-making, and finally motor cortex sends commands down the spinal cord to muscles. This entire loop takes 120–200 milliseconds minimum — and that's just reaction time, not the additional time for complex planning. Conscious responses are slower because they're deliberate: you evaluate the stimulus, consider your options, choose an action, and execute it. This is goal-directed behaviour. You can override a conscious response (choose not to flinch), but you can't override a true reflex — by the time you're aware of the stimulus, the unconscious pathway has already fired and your hand has already moved."
-};
+  // Model timeline in illustrative milliseconds
+  const T1 = 25;   // sensory neuron -> spinal cord (shared)
+  const T2 = 70;   // reflex reaches motor neuron, hand moves
+  const TU = 85;   // message reaches brain
+  const TB = 135;  // brain processing done
+  const TD = 175;  // command back at spinal cord
+  const TC = 200;  // command reaches motor neuron
+  const PLAY_LABEL = "▶ Fire the stimulus";
 
-function resize() {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
+  let t = 0;
+  let mode = "both";
+  let running = false;
+  let raf = null;
+  let last = 0;
 
-slider.addEventListener('input', (e) => {
-  intensity = parseInt(e.target.value);
-  const fill = intensity;
-  slider.style.setProperty('--fill', fill + '%');
-  updateStats();
-});
+  const drops = {
+    both: "Both responses begin identically: a receptor in the skin fires and a sensory neuron, part of the somatic nervous system in the peripheral nervous system, carries the message into the spinal cord. Inside the cord the message is handled twice. An interneuron passes it straight to a motor neuron, which contracts the arm muscle: the spinal reflex, complete at about 70 ms in this model. At the same time the message is relayed up the cord to the brain, which registers the heat and sends its own command back down the cord to a motor neuron, finishing at about 200 ms. The spinal cord therefore has two roles here: it initiates the reflex and it relays messages to and from the brain.",
+    reflex: "A spinal reflex is an unconscious response: involuntary, automatic and initiated in the spinal cord before the brain is involved. The reflex arc is sensory neuron → interneuron → motor neuron, with the interneuron sitting inside the grey matter of the cord. Because no processing by the brain is needed, the hand is already lifting while the sensory message is still travelling up to the brain. The brain is not left out: it is informed a moment later, which is why you feel the heat after the hand has moved. Speed is the adaptive advantage, because tissue damage is limited before awareness arrives.",
+    conscious: "A conscious response is processed by the brain and is voluntary, goal-directed and slower. The sensory message travels up the spinal cord through ascending tracts to the brain, where it is interpreted (you feel the heat and recognise what happened) and a decision is made: pull away, shake the hand, call out. The motor command then travels down the spinal cord through descending tracts to a motor neuron, which carries it out to the muscle. The round trip through the spinal cord to the brain and back is why conscious responses take roughly 150–250 ms rather than 50–80 ms. Conscious responses can be modified or withheld; a true spinal reflex cannot."
+  };
+  const liveText = { both: "Both pathways shown", reflex: "Reflex highlighted", conscious: "Conscious highlighted" };
 
-function updateStats() {
-  const unconsciousMs = Math.round(50 + (100 - intensity) * 0.3);
-  const consciousMs = Math.round(120 + (100 - intensity) * 0.8);
-  const diff = consciousMs - unconsciousMs;
-  
-  unconsciousTime.textContent = unconsciousMs + 'ms';
-  consciousTime.textContent = consciousMs + 'ms';
-  overlayTag.textContent = `Unconscious signal: ${diff}ms ahead`;
-}
+  function lerpP(a, b, k){ return { x: a.x + (b.x - a.x) * k, y: a.y + (b.y - a.y) * k }; }
+  function clamp(v, lo, hi){ return Math.max(lo, Math.min(hi, v)); }
+  function easeOut(k){ return 1 - Math.pow(1 - k, 3); }
+  function perpDown(a, b, d){
+    const dx = b.x - a.x, dy = b.y - a.y, L = Math.hypot(dx, dy) || 1;
+    let px = -dy / L, py = dx / L;
+    if (py < 0) { px = -px; py = -py; }
+    return { x: px * d, y: py * d };
+  }
+  function roundRect(x, y, w, h, r){
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+  }
 
-toggleBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    toggleBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const mode = btn.dataset.mode;
-    knowdropText.textContent = knowdrops[mode];
-    pathwayTag.textContent = mode === 'unconscious' ? 'Unconscious active' : 'Conscious active';
+  function geo(w, h){
+    const lift = h * 0.13 * easeOut(clamp((t - T2) / 15, 0, 1));
+    const palmR = Math.max(7, h * 0.05);
+    const S = { x: w * 0.12, y: h * 0.69 - lift };
+    const N = { x: w * 0.5, y: h * 0.62 };
+    const B = { x: w * 0.5, y: h * 0.18 };
+    const brx = w * 0.075, bry = h * 0.085;
+    const MC = { x: w * 0.88, y: h * 0.69 };
+    const mrx = w * 0.045, mry = h * 0.055;
+    const M = { x: MC.x - mrx - 3, y: MC.y };
+    const cordHalf = w * 0.03;
+    const to = cordHalf * 0.5;
+    const cordTop = B.y + bry - 4;
+    const cordBot = h * 0.80;
+    const plateY = h * 0.69 + palmR + 2;
+    const o1 = perpDown(S, N, 5);
+    const o2 = perpDown(N, M, 5);
+    const S2 = { x: S.x + o1.x, y: S.y + o1.y };
+    const N2 = { x: N.x - to, y: N.y + 5 };
+    const BU = { x: N.x - to, y: B.y };
+    const BD = { x: N.x + to, y: B.y };
+    const ND = { x: N.x + to, y: N.y + 5 };
+    const M2 = { x: M.x + o2.x, y: M.y + o2.y };
+    return { lift, palmR, S, N, B, brx, bry, MC, mrx, mry, M, cordHalf, to, cordTop, cordBot, plateY, S2, N2, BU, BD, ND, M2 };
+  }
+
+  function reflexPos(g, tt){
+    if (tt <= T1) return lerpP(g.S, g.N, tt / T1);
+    if (tt <= T2) return lerpP(g.N, g.M, (tt - T1) / (T2 - T1));
+    return g.M;
+  }
+  function consPos(g, tt){
+    if (tt <= T1) return lerpP(g.S2, g.N2, tt / T1);
+    if (tt <= TU) return lerpP(g.N2, g.BU, (tt - T1) / (TU - T1));
+    if (tt <= TB) return g.B;
+    if (tt <= TD) return lerpP(g.BD, g.ND, (tt - TB) / (TD - TB));
+    if (tt <= TC) return lerpP(g.ND, g.M2, (tt - TD) / (TC - TD));
+    return g.M2;
+  }
+
+  function drawPoly(pts, colour, lw, dashed){
+    ctx.save();
+    if (dashed) ctx.setLineDash([4, 5]);
+    ctx.strokeStyle = colour; ctx.lineWidth = lw; ctx.lineJoin = "round"; ctx.lineCap = "round";
+    ctx.beginPath();
+    pts.forEach((p, i) => { if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
+    ctx.stroke();
+    ctx.restore();
+  }
+  function drawTravelled(g, posFn, tNow, colour, lw){
+    if (tNow <= 0) return;
+    ctx.save();
+    ctx.strokeStyle = colour; ctx.lineWidth = lw; ctx.lineJoin = "round"; ctx.lineCap = "round";
+    ctx.beginPath();
+    const steps = 90;
+    for (let i = 0; i <= steps; i++){
+      const p = posFn(g, tNow * i / steps);
+      if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+    }
+    ctx.stroke();
+    ctx.restore();
+  }
+  function drawHead(g, posFn, tNow, arrive, rgb, alpha){
+    if (tNow <= 0 || tNow >= arrive) return;
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    for (let i = 10; i >= 0; i--){
+      const tt = tNow - i * 2.2;
+      if (tt < 0) continue;
+      const p = posFn(g, tt);
+      const k = 1 - i / 10;
+      ctx.fillStyle = "rgba(" + rgb + "," + (k * 0.75 * alpha) + ")";
+      ctx.beginPath(); ctx.arc(p.x, p.y, 3.5 * k + 1.5, 0, Math.PI * 2); ctx.fill();
+    }
+    const hp = posFn(g, tNow);
+    const gl = ctx.createRadialGradient(hp.x, hp.y, 0, hp.x, hp.y, 14);
+    gl.addColorStop(0, "rgba(" + rgb + "," + (0.55 * alpha) + ")");
+    gl.addColorStop(1, "rgba(" + rgb + ",0)");
+    ctx.fillStyle = gl; ctx.beginPath(); ctx.arc(hp.x, hp.y, 14, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+
+  function status(tt){
+    const ms = Math.round(tt);
+    if (ms <= 0) return "0 ms · hot surface touched";
+    if (ms < T1) return ms + " ms · both on sensory neuron";
+    if (ms < 45) return ms + " ms · reflex at interneuron";
+    if (ms < T2) return ms + " ms · reflex on motor neuron";
+    if (ms < TU) return ms + " ms · hand moved · brain not told";
+    if (ms < TB) return ms + " ms · brain told · you feel it";
+    if (ms < TD) return ms + " ms · command descends the cord";
+    if (ms < TC) return ms + " ms · command on motor neuron";
+    return "200 ms · done · hand moved at 70 ms";
+  }
+
+  function draw(){
+    const w = canvas.width / dpr, h = canvas.height / dpr;
+    if (!w || !h) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.globalCompositeOperation = "source-over";
+    ctx.globalAlpha = 1; ctx.filter = "none";
+    ctx.fillStyle = "rgb(0,0,0)"; ctx.fillRect(0, 0, w, h);
+
+    const g = geo(w, h);
+    const aR = mode === "conscious" ? 0.15 : 1;
+    const aC = mode === "reflex" ? 0.15 : 1;
+
+    // Arms coming in from the edges
+    ctx.lineCap = "round";
+    ctx.strokeStyle = "rgba(" + INK + ",0.10)";
+    ctx.lineWidth = g.palmR * 1.5;
+    ctx.beginPath(); ctx.moveTo(-10, g.S.y + g.palmR * 0.6); ctx.lineTo(g.S.x - g.palmR * 0.5, g.S.y); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(g.MC.x, g.MC.y); ctx.lineTo(w + 10, g.MC.y + g.palmR * 0.6); ctx.stroke();
+
+    // Hot surface and heat
+    ctx.strokeStyle = "rgba(" + AMB + ",0.6)"; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(w * 0.03, g.plateY); ctx.lineTo(w * 0.165, g.plateY); ctx.stroke();
+    ctx.strokeStyle = "rgba(" + AMB + ",0.35)"; ctx.lineWidth = 1.2;
+    [g.S.x - g.palmR * 1.7, g.S.x + g.palmR * 1.7].forEach(x0 => {
+      ctx.beginPath(); ctx.moveTo(x0, g.plateY - 3);
+      ctx.bezierCurveTo(x0 - 4, g.plateY - h * 0.04, x0 + 4, g.plateY - h * 0.07, x0, g.plateY - h * 0.10);
+      ctx.stroke();
+    });
+
+    // Spinal cord
+    roundRect(g.N.x - g.cordHalf, g.cordTop, g.cordHalf * 2, g.cordBot - g.cordTop, g.cordHalf);
+    ctx.fillStyle = "rgba(" + INK + ",0.06)"; ctx.fill();
+    ctx.strokeStyle = "rgba(" + INK + ",0.18)"; ctx.lineWidth = 1; ctx.stroke();
+
+    // Brain
+    ctx.beginPath(); ctx.ellipse(g.B.x, g.B.y, g.brx, g.bry, 0, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(" + INK + ",0.08)"; ctx.fill();
+    ctx.strokeStyle = "rgba(" + INK + ",0.3)"; ctx.lineWidth = 1.2; ctx.stroke();
+    ctx.strokeStyle = "rgba(" + INK + ",0.18)"; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.ellipse(g.B.x - g.brx * 0.3, g.B.y, g.brx * 0.32, g.bry * 0.5, 0, Math.PI * 1.1, Math.PI * 1.95); ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(g.B.x + g.brx * 0.3, g.B.y + g.bry * 0.1, g.brx * 0.3, g.bry * 0.45, 0, Math.PI * 1.05, Math.PI * 1.9); ctx.stroke();
+    if (t >= TU){
+      const pulse = (t < TB) ? 0.5 + 0.5 * Math.sin((t - TU) / (TB - TU) * Math.PI * 4) : 0;
+      const ga = aC * (0.22 + pulse * 0.3);
+      ctx.save(); ctx.globalCompositeOperation = "lighter";
+      const bg = ctx.createRadialGradient(g.B.x, g.B.y, 0, g.B.x, g.B.y, g.brx * 1.8);
+      bg.addColorStop(0, "rgba(" + AMB + "," + ga + ")");
+      bg.addColorStop(1, "rgba(" + AMB + ",0)");
+      ctx.fillStyle = bg; ctx.beginPath(); ctx.arc(g.B.x, g.B.y, g.brx * 1.8, 0, Math.PI * 2); ctx.fill();
+      if (t < TB){
+        ctx.strokeStyle = "rgba(" + AMB + "," + (aC * (0.25 + 0.4 * pulse)) + ")"; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.ellipse(g.B.x, g.B.y, g.brx + 4 + pulse * 5, g.bry + 4 + pulse * 5, 0, 0, Math.PI * 2); ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    // Muscle
+    ctx.beginPath(); ctx.ellipse(g.MC.x, g.MC.y, g.mrx, g.mry, 0, 0, Math.PI * 2);
+    if (t >= T2){
+      ctx.fillStyle = "rgba(" + RGB + "," + (0.45 * aR + 0.08) + ")"; ctx.fill();
+      ctx.strokeStyle = "rgba(" + RGB + "," + (0.9 * aR + 0.1) + ")"; ctx.lineWidth = 1.5; ctx.stroke();
+    } else {
+      ctx.fillStyle = "rgba(" + INK + ",0.08)"; ctx.fill();
+      ctx.strokeStyle = "rgba(" + INK + ",0.3)"; ctx.lineWidth = 1.2; ctx.stroke();
+    }
+    if (t >= TC){
+      ctx.strokeStyle = "rgba(" + AMB + "," + (0.8 * aC) + ")"; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.ellipse(g.MC.x, g.MC.y, g.mrx + 5, g.mry + 5, 0, 0, Math.PI * 2); ctx.stroke();
+    }
+
+    // Full routes, dashed and dim
+    drawPoly([g.S, g.N, g.M], "rgba(" + RGB + "," + (0.3 * aR) + ")", 1.5, true);
+    drawPoly([g.S2, g.N2, g.BU, g.B, g.BD, g.ND, g.M2], "rgba(" + AMB + "," + (0.3 * aC) + ")", 1.5, true);
+
+    // Travelled portions
+    drawTravelled(g, reflexPos, Math.min(t, T2), "rgba(" + RGB + "," + (0.9 * aR) + ")", 2.2);
+    drawTravelled(g, consPos, Math.min(t, TC), "rgba(" + AMB + "," + (0.85 * aC) + ")", 2.2);
+
+    // Nodes
+    ctx.save(); ctx.globalCompositeOperation = "lighter";
+    ctx.fillStyle = "rgba(" + RGB + "," + (0.95 * aR + 0.05) + ")";
+    ctx.beginPath(); ctx.arc(g.N.x, g.N.y, 5, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "rgba(" + INK + ",0.9)";
+    ctx.beginPath(); ctx.arc(g.S.x, g.S.y, 4, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(g.M.x, g.M.y, 3, 0, Math.PI * 2); ctx.fill();
+    if (t < 12){
+      const k = 1 - t / 12;
+      const fl = ctx.createRadialGradient(g.S.x, g.S.y, 0, g.S.x, g.S.y, g.palmR * 2.6);
+      fl.addColorStop(0, "rgba(" + AMB + "," + (0.7 * k) + ")");
+      fl.addColorStop(1, "rgba(" + AMB + ",0)");
+      ctx.fillStyle = fl; ctx.beginPath(); ctx.arc(g.S.x, g.S.y, g.palmR * 2.6, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.restore();
+
+    // Palm outline
+    ctx.beginPath(); ctx.arc(g.S.x, g.S.y, g.palmR, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(" + INK + ",0.35)"; ctx.lineWidth = 1.2; ctx.stroke();
+
+    // Signals
+    drawHead(g, reflexPos, t, T2, RGB, aR);
+    if (!(t >= TU && t < TB)) drawHead(g, consPos, t, TC, AMB, aC);
+
+    // Labels
+    ctx.font = "500 11px 'JetBrains Mono', monospace";
+    ctx.fillStyle = "rgba(" + INK + ",0.85)";
+    ctx.textAlign = "left"; ctx.fillText("BRAIN", g.B.x + g.brx + 8, g.B.y + 4);
+    ctx.textAlign = "right"; ctx.fillText("SPINAL CORD", g.N.x - g.cordHalf - 8, (g.cordTop + g.N.y) / 2 + 4);
+    ctx.textAlign = "left"; ctx.fillText("INTERNEURON", g.N.x + g.cordHalf + 6, g.N.y - 9);
+    ctx.textAlign = "center";
+    ctx.fillText("RECEPTOR", g.S.x, g.S.y - g.palmR - 9);
+    const sm = lerpP(g.S, g.N, 0.55);
+    ctx.fillText("SENSORY NEURON", sm.x, sm.y + 24);
+    const mm = lerpP(g.N, g.M, 0.5);
+    ctx.fillText("MOTOR NEURON", mm.x, mm.y + 24);
+    ctx.fillText("MUSCLE", g.MC.x, g.MC.y - g.mry - 9);
+
+    // Bloom
+    bctx.setTransform(1, 0, 0, 1, 0, 0); bctx.clearRect(0, 0, buf.width, buf.height);
+    if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+    ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
+    (buf.width&&buf.height)&&ctx.drawImage(buf, 0, 0, w, h); ctx.restore();
+
+    // Vignette
+    const cx = w / 2, cy = h / 2;
+    const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
+
+    // Readouts, all from the same t
+    const ms = Math.round(t);
+    overlay.textContent = status(t);
+    timeV.textContent = ms + " ms";
+    slider.value = ms;
+    slider.style.setProperty("--fill", (t / TC * 100) + "%");
+    statR.textContent = Math.round(Math.min(t / T2, 1) * 100) + "%";
+    statC.textContent = Math.round(Math.min(t / TC, 1) * 100) + "%";
+  }
+
+  function resize(){
+    const rect = wrap.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    buf.width = canvas.width; buf.height = canvas.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    draw();
+  }
+
+  function stopRun(){
+    if (raf) cancelAnimationFrame(raf);
+    raf = null; running = false;
+    playBtn.textContent = PLAY_LABEL;
+  }
+  function step(now){
+    const dt = Math.min(now - last, 50);
+    last = now;
+    t += dt / 15;
+    if (t >= TC){
+      t = TC;
+      stopRun();
+      draw();
+      return;
+    }
+    draw();
+    raf = requestAnimationFrame(step);
+  }
+  function startRun(){
+    if (reduce){ t = TC; draw(); return; }
+    if (t >= TC) t = 0;
+    running = true;
+    playBtn.textContent = "Pause";
+    last = performance.now();
+    raf = requestAnimationFrame(step);
+  }
+
+  playBtn.addEventListener("click", () => {
+    if (running) { stopRun(); draw(); } else { startRun(); }
   });
-});
 
-function draw() {
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, w, h);
+  slider.addEventListener("input", (e) => {
+    stopRun();
+    t = parseFloat(e.target.value) || 0;
+    draw();
+  });
 
-  const cx = w * 0.5;
-  const cy = h * 0.5;
+  pills.forEach(btn => {
+    btn.addEventListener("click", () => {
+      mode = btn.dataset.mode;
+      pills.forEach(b => b.setAttribute("aria-pressed", b === btn ? "true" : "false"));
+      drop.textContent = drops[mode];
+      live.textContent = liveText[mode];
+      draw();
+    });
+  });
 
-  // Neuron body positions
-  const sensorY = h * 0.5;
-  const spinalX = w * 0.5;
-  const spinalY = h * 0.7;
-  const brainY = h * 0.2;
-  const motorY = h * 0.5;
-
-  // Unconscious pathway (purple)
-  const unconsciousSpeed = 0.0035 + intensity * 0.00002;
-  const unconsciousProgress = (time * unconsciousSpeed) % 2;
-
-  // Conscious pathway (amber)
-  const consciousSpeed = 0.0015 + intensity * 0.00001;
-  const consciousProgress = (time * consciousSpeed) % 3;
-
-  // Draw pathways
-  ctx.strokeStyle = 'rgba(106,96,212,0.25)';
-  ctx.lineWidth = 2;
-  ctx.setLineDash([4, 4]);
-  
-  // Unconscious: sensor → spinal → motor
-  ctx.beginPath();
-  ctx.moveTo(w * 0.15, sensorY);
-  ctx.lineTo(spinalX, spinalY);
-  ctx.lineTo(w * 0.85, motorY);
-  ctx.stroke();
-  
-  ctx.strokeStyle = 'rgba(250,199,117,0.25)';
-  // Conscious: sensor → brain → motor
-  ctx.beginPath();
-  ctx.moveTo(w * 0.15, sensorY);
-  ctx.lineTo(spinalX, brainY);
-  ctx.lineTo(w * 0.85, motorY);
-  ctx.stroke();
-  
-  ctx.setLineDash([]);
-
-  // Draw neurons (static nodes)
-  function drawNeuron(x, y, r, label, color) {
-    ctx.fillStyle = color;
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.beginPath();
-    ctx.arc(x, y, r, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.globalCompositeOperation = 'source-over';
-    
-    const glow = ctx.createRadialGradient(x, y, 0, x, y, r * 3);
-    glow.addColorStop(0, color.replace('1)', '0.4)'));
-    glow.addColorStop(1, color.replace('1)', '0)'));
-    ctx.fillStyle = glow;
-    ctx.beginPath();
-    ctx.arc(x, y, r * 3, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.fillStyle = 'rgba(237,237,232,0.8)';
-    ctx.font = '9px JetBrains Mono';
-    ctx.textAlign = 'center';
-    ctx.fillText(label, x, y - r - 8);
+  if (window.ResizeObserver){
+    new ResizeObserver(() => resize()).observe(wrap);
   }
-
-  drawNeuron(w * 0.15, sensorY, 6, 'SENSORY', 'rgba(106,96,212,1)');
-  drawNeuron(spinalX, spinalY, 7, 'SPINAL', 'rgba(106,96,212,1)');
-  drawNeuron(spinalX, brainY, 8, 'BRAIN', 'rgba(250,199,117,1)');
-  drawNeuron(w * 0.85, motorY, 6, 'MOTOR', 'rgba(106,96,212,1)');
-
-  // Unconscious signal (two segments)
-  if (unconsciousProgress < 1) {
-    // Sensor to spinal
-    const t = unconsciousProgress;
-    const x = w * 0.15 + (spinalX - w * 0.15) * t;
-    const y = sensorY + (spinalY - sensorY) * t;
-    
-    for (let i = 8; i >= 0; i--) {
-      const offset = i * 0.04;
-      const xt = Math.max(0, t - offset);
-      const xx = w * 0.15 + (spinalX - w * 0.15) * xt;
-      const yy = sensorY + (spinalY - sensorY) * xt;
-      const alpha = (1 - i / 8) * 0.6;
-      ctx.fillStyle = `rgba(106,96,212,${alpha})`;
-      ctx.globalCompositeOperation = 'lighter';
-      ctx.beginPath();
-      ctx.arc(xx, yy, 4 * (1 - i / 8) + 1, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  } else {
-    // Spinal to motor
-    const t = unconsciousProgress - 1;
-    const x = spinalX + (w * 0.85 - spinalX) * t;
-    const y = spinalY + (motorY - spinalY) * t;
-    
-    for (let i = 8; i >= 0; i--) {
-      const offset = i * 0.04;
-      const xt = Math.max(0, t - offset);
-      const xx = spinalX + (w * 0.85 - spinalX) * xt;
-      const yy = spinalY + (motorY - spinalY) * xt;
-      const alpha = (1 - i / 8) * 0.6;
-      ctx.fillStyle = `rgba(106,96,212,${alpha})`;
-      ctx.globalCompositeOperation = 'lighter';
-      ctx.beginPath();
-      ctx.arc(xx, yy, 4 * (1 - i / 8) + 1, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  }
-
-  // Conscious signal (three segments)
-  if (consciousProgress < 1) {
-    // Sensor to brain
-    const t = consciousProgress;
-    for (let i = 8; i >= 0; i--) {
-      const offset = i * 0.04;
-      const xt = Math.max(0, t - offset);
-      const xx = w * 0.15 + (spinalX - w * 0.15) * xt;
-      const yy = sensorY + (brainY - sensorY) * xt;
-      const alpha = (1 - i / 8) * 0.5;
-      ctx.fillStyle = `rgba(250,199,117,${alpha})`;
-      ctx.globalCompositeOperation = 'lighter';
-      ctx.beginPath();
-      ctx.arc(xx, yy, 3.5 * (1 - i / 8) + 1, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  } else if (consciousProgress < 2) {
-    // Brain processing (pause with pulsing)
-    const t = consciousProgress - 1;
-    const pulse = 0.5 + 0.5 * Math.sin(t * Math.PI * 6);
-    ctx.fillStyle = `rgba(250,199,117,${pulse * 0.5})`;
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.beginPath();
-    ctx.arc(spinalX, brainY, 12 + pulse * 4, 0, Math.PI * 2);
-    ctx.fill();
-  } else {
-    // Brain to motor
-    const t = consciousProgress - 2;
-    for (let i = 8; i >= 0; i--) {
-      const offset = i * 0.04;
-      const xt = Math.max(0, t - offset);
-      const xx = spinalX + (w * 0.85 - spinalX) * xt;
-      const yy = brainY + (motorY - brainY) * xt;
-      const alpha = (1 - i / 8) * 0.5;
-      ctx.fillStyle = `rgba(250,199,117,${alpha})`;
-      ctx.globalCompositeOperation = 'lighter';
-      ctx.beginPath();
-      ctx.arc(xx, yy, 3.5 * (1 - i / 8) + 1, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  }
-
-  ctx.globalCompositeOperation = 'source-over';
-
-  // Bloom
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
-
-  // Vignette
-  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-
-  time++;
-  animFrame = requestAnimationFrame(draw);
-}
-
-window.addEventListener('resize', resize);
-resize();
-slider.style.setProperty('--fill', intensity + '%');
-updateStats();
-draw();
+  window.addEventListener("resize", resize);
+  resize();
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'conscious-and-unconscious-responses'},'*');}catch(e){}}

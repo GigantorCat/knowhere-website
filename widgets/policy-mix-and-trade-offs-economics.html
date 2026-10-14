@@ -9,9 +9,10 @@ body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body
   --bg: #0B0D0C;
   --bg2: #12160F;
   --acc: #F187B6;
-  --ag: rgba(241, 135, 182, .7);
-  --ag1: rgba(241, 135, 182, .12);
-  --ag2: rgba(241, 135, 182, .45);
+  --acc-rgb: 241, 135, 182;
+  --ag:  rgba(var(--acc-rgb),.7);
+  --ag1: rgba(var(--acc-rgb),.12);
+  --ag2: rgba(var(--acc-rgb),.45);
   --amb: #FAC775;
   --ink: #EDEDE8;
   --ink-dim: #8C9389;
@@ -24,30 +25,30 @@ body {
   background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
   font-family: 'Geist', sans-serif;
   min-height: 100vh;
-  padding: 40px 16px 72px;
+  padding: 40px 16px 0;
   color: var(--ink);
 }
 
-.container { max-width: 720px; margin: 0 auto; }
+.pm-wrap { max-width: 720px; margin: 0 auto; }
 
-h1 {
-  font-size: clamp(30px, 8vw, 52px);
-  font-weight: 700;
+.pm-wrap h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
   letter-spacing: -0.03em;
-  line-height: 1.02;
+  line-height: 1.05;
   margin-bottom: 14px;
 }
 
-.intro {
+.pm-intro {
   font-size: 15.5px;
   font-weight: 400;
   color: var(--ink-dim);
   line-height: 1.55;
   max-width: 58ch;
-  margin-bottom: 32px;
+  margin-bottom: 28px;
 }
 
-.card {
+.pm-card {
   background: linear-gradient(180deg, #12160F, #0d100b);
   border: 1px solid var(--line);
   border-radius: 18px;
@@ -56,35 +57,72 @@ h1 {
   margin-bottom: 20px;
 }
 
-.card-header {
+.pm-head {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 10px;
   margin-bottom: 6px;
 }
 
-.card-label {
+.pm-label {
   font-family: 'JetBrains Mono', monospace;
   font-size: 13px;
   text-transform: uppercase;
-  color: white;
+  color: #fff;
 }
 
-.live-tag {
+.pm-live {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
   text-transform: uppercase;
   color: var(--acc);
+  text-align: right;
 }
 
-.card-hint {
+.pm-hint {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
   color: var(--ink-dim);
   margin-bottom: 14px;
 }
 
-.canvas-wrapper {
+.pm-gtitle {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+}
+
+.pm-group {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.pm-pill {
+  flex: 1;
+  min-width: 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  padding: 10px 12px;
+  border-radius: 999px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: background .2s, color .2s, border-color .2s, box-shadow .2s;
+}
+
+.pm-pill[aria-pressed="true"] {
+  background: rgba(var(--acc-rgb),.1);
+  border-color: var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(var(--acc-rgb),.18);
+}
+
+.pm-canvas {
   position: relative;
   width: 100%;
   aspect-ratio: 16/9;
@@ -95,7 +133,7 @@ h1 {
   margin-bottom: 16px;
 }
 
-canvas {
+.pm-canvas canvas {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -103,7 +141,7 @@ canvas {
   display: block;
 }
 
-.canvas-overlay {
+.pm-overlay {
   position: absolute;
   left: 0;
   right: 0;
@@ -113,19 +151,30 @@ canvas {
   padding: 9px 16px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 14px;
+  line-height: 1.2;
   text-transform: uppercase;
   color: var(--acc);
   text-align: center;
 }
 
-.slider-wrapper { margin-bottom: 12px; }
+.pm-sl { margin-bottom: 14px; }
 
-.slider-label {
+.pm-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
+  font-size: 11px;
   text-transform: uppercase;
   color: var(--ink-dim);
   margin-bottom: 8px;
+}
+
+.pm-row b {
+  font-weight: 500;
+  color: var(--acc);
+  text-transform: none;
+  font-size: 12px;
 }
 
 .pm-slider {
@@ -137,133 +186,85 @@ canvas {
   background: linear-gradient(90deg, var(--acc) var(--fill, 50%), #23291f var(--fill, 50%));
   outline: none;
   cursor: pointer;
+  display: block;
 }
 
 .pm-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
+  width: 20px; height: 20px; border-radius: 50%;
+  background: #0B0D0C; border: 2px solid var(--acc);
   box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  transition: box-shadow .15s;
-  cursor: pointer;
+  transition: box-shadow .15s; cursor: pointer;
 }
-
 .pm-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
+  width: 20px; height: 20px; border-radius: 50%;
+  background: #0B0D0C; border: 2px solid var(--acc);
   box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  transition: box-shadow .15s;
-  cursor: pointer;
+  transition: box-shadow .15s; cursor: pointer;
 }
+.pm-slider::-webkit-slider-thumb:hover { box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag); }
+.pm-slider::-moz-range-thumb:hover { box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag); }
 
-.pm-slider::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.pm-slider::-moz-range-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.tick-labels {
-  display: flex;
-  justify-content: space-between;
+.pm-ticks {
+  position: relative;
+  height: 16px;
+  margin-top: 6px;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
+  font-size: 11px;
   color: var(--ink-dim);
-  padding: 0 4px;
 }
+.pm-ticks span { position: absolute; top: 0; transform: translateX(-50%); white-space: nowrap; }
+.pm-ticks span:first-child { transform: none; }
+.pm-ticks span:last-child { transform: translateX(-100%); }
 
-.stat-row {
+.pm-stats {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
   padding-top: 16px;
+  margin-top: 4px;
   border-top: 1px solid var(--line);
 }
 
-.stat {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
+.pm-stat { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 
-.stat-label {
+.pm-stat-l {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
+  font-size: 11px;
   text-transform: uppercase;
   color: var(--ink-dim);
+  white-space: nowrap;
 }
 
-.stat-value {
+.pm-stat-v {
   font-family: 'JetBrains Mono', monospace;
   font-size: 24px;
   font-weight: 500;
 }
 
-.toggle-card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 20px;
-}
-
-.toggle-buttons {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.toggle-btn {
-  flex: 1;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14.5px;
-  padding: 12px;
-  border-radius: 11px;
-  background: #12160F;
-  border: 1px solid var(--line);
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: all .2s;
-}
-
-.toggle-btn.active {
-  background: rgba(241,135,182,.1);
-  border: 1px solid var(--acc);
-  color: var(--acc);
-  box-shadow: 0 0 22px rgba(241,135,182,.18);
-}
-
-.knowdrop-divider {
+.pm-drop {
   border-top: 1px solid var(--line);
-  margin-bottom: 16px;
-}
-
-.knowdrop-text {
+  padding-top: 16px;
   font-family: 'Geist', sans-serif;
   font-size: 14.5px;
-  font-weight: 400;
   line-height: 1.65;
   color: var(--ink);
 }
 
-.know-this {
+.pm-know {
   border-left: 3px solid var(--acc);
   padding: 16px 18px;
   background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
   border-radius: 0 12px 12px 0;
-  margin-bottom: 34px;
+  margin-bottom: 0;
+  padding-bottom: 16px;
 }
 
-.know-this-tag {
+.pm-know-tag {
+  display: flex;
+  align-items: center;
+  gap: 9px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 13px;
   text-transform: uppercase;
@@ -272,315 +273,421 @@ canvas {
   margin-bottom: 8px;
 }
 
-.know-this-body {
+.pm-know-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 8px var(--acc);
+  animation: pmKnow 2.4s ease-in-out infinite;
+}
+
+@keyframes pmKnow { 0%,100% { opacity: 1; } 50% { opacity: .45; } }
+
+.pm-know-body {
   font-family: 'Geist', sans-serif;
   font-size: 17.4px;
-  font-weight: 400;
   line-height: 1.55;
   color: var(--ink);
 }
 
-.footer {
-  margin-top: 34px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.pulse-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--acc);
-  box-shadow: 0 0 10px var(--acc);
-  animation: pmPulse 2.4s ease-in-out infinite;
-}
-
-@keyframes pmPulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: .35; transform: scale(.6); }
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
-}
 </style>
 
-<div class="container">
-  <h2 class="sr-only">Policy Mix and Trade-offs Interactive Widget</h2>
-  
-  <h1>Opposite policies can solve more problems than <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">identical</span> ones</h1>
-  
-  <p class="intro">Running tight monetary policy alongside loose fiscal policy prevents overheating while still funding infrastructure—but creates surprising currency side effects. Drag the slider to explore different policy combinations and watch how unemployment, inflation, and exchange rates respond.</p>
+<div class="pm-wrap">
+  <h2 class="sr-only">Policy mix and trade-offs: fiscal and monetary stance controls driving a labelled Phillips curve or aggregate demand and supply diagram, with a short-run and long-run view</h2>
 
-  <div class="card">
-    <div class="card-header">
-      <div class="card-label">Policy Mix Simulation</div>
-      <div class="live-tag" id="mixTag">Balanced Mix</div>
+  <h1>Two tools pulling in opposite directions can be the smartest <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">mix</span></h1>
+
+  <p class="pm-intro">Fiscal and monetary policy each shift aggregate demand, so what matters is the combined stance, not either tool on its own. Opposite stances can keep spending programs alive without overheating the economy, at a price paid through the currency (the dollar index reads 100 for a neutral mix). Set fiscal policy loose and monetary policy tight, then watch where the dot lands and which way the dollar index moves.</p>
+
+  <section class="pm-card">
+    <div class="pm-head">
+      <div class="pm-label">Policy mix model</div>
+      <div class="pm-live" id="liveTag">Phillips curve · short run</div>
     </div>
-    <div class="card-hint">Fiscal left / Monetary right controls economy</div>
-    
-    <div class="canvas-wrapper">
-      <canvas id="mixCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasTag">Balanced Mix</div>
+    <div class="pm-hint">Set each stance. Watch the dot, the curve and the three readouts.</div>
+
+    <div class="pm-gtitle">View</div>
+    <div class="pm-group" role="group" aria-label="Diagram shown">
+      <button type="button" class="pm-pill pm-view" data-view="ph" aria-pressed="true">Phillips curve</button>
+      <button type="button" class="pm-pill pm-view" data-view="as" aria-pressed="false">AD and AS</button>
     </div>
 
-    <div class="slider-wrapper">
-      <div class="slider-label">Policy Combination</div>
-      <input type="range" min="0" max="100" value="50" class="pm-slider" id="mixSlider">
-      <div class="tick-labels">
-        <span>Loose Both</span>
-        <span>Tight Both</span>
+    <div class="pm-canvas" id="pmWrap">
+      <canvas id="pmCanvas"></canvas>
+      <div class="pm-overlay" id="overlayTag" aria-live="polite">Both neutral</div>
+    </div>
+
+    <div class="pm-sl">
+      <div class="pm-row"><span>Fiscal stance</span><b id="fisV">Neutral</b></div>
+      <input type="range" class="pm-slider" id="fisS" aria-label="Fiscal stance" min="0" max="100" step="1" value="50">
+      <div class="pm-ticks"><span style="left:0%">Loose</span><span style="left:50%">Neutral</span><span style="left:100%">Tight</span></div>
+    </div>
+
+    <div class="pm-sl">
+      <div class="pm-row"><span>Monetary stance</span><b id="monV">Neutral</b></div>
+      <input type="range" class="pm-slider" id="monS" aria-label="Monetary stance" min="0" max="100" step="1" value="50">
+      <div class="pm-ticks"><span style="left:0%">Loose</span><span style="left:50%">Neutral</span><span style="left:100%">Tight</span></div>
+    </div>
+
+    <div class="pm-stats">
+      <div class="pm-stat">
+        <div class="pm-stat-l">Inflation</div>
+        <div class="pm-stat-v" style="color:var(--acc)" id="statInf">2.5%</div>
+      </div>
+      <div class="pm-stat">
+        <div class="pm-stat-l">Unemployment</div>
+        <div class="pm-stat-v" style="color:var(--ink)" id="statUn">4.5%</div>
+      </div>
+      <div class="pm-stat">
+        <div class="pm-stat-l">Dollar index</div>
+        <div class="pm-stat-v" style="color:var(--amb)" id="statFx">100</div>
       </div>
     </div>
+  </section>
 
-    <div class="stat-row">
-      <div class="stat">
-        <div class="stat-label">Unemployment</div>
-        <div class="stat-value" style="color:var(--acc)" id="unempStat">5.2%</div>
-      </div>
-      <div class="stat">
-        <div class="stat-label">Exchange Rate</div>
-        <div class="stat-value" style="color:var(--amb)" id="exStat">1.00</div>
-      </div>
+  <section class="pm-card">
+    <div class="pm-gtitle">Time horizon</div>
+    <div class="pm-group" role="group" aria-label="Short run or long run">
+      <button type="button" class="pm-pill pm-run" data-run="sr" aria-pressed="true">Short run</button>
+      <button type="button" class="pm-pill pm-run" data-run="lr" aria-pressed="false">Long run</button>
     </div>
-  </div>
+    <div class="pm-drop" id="knowdrop">In the short run the two tools add up to one shift of aggregate demand. A loose budget and a low cash rate both push spending up, so output climbs above potential, unemployment falls and inflation rises: the economy moves up and to the left along the short-run Phillips curve. Pull both tools tight and it slides down and to the right. Mixing them is where the trade-offs get interesting: loose fiscal with tight monetary keeps the big spending programs but holds total demand steady, while high interest rates pull in foreign capital and push the dollar up, which hurts exporters. Fiscal policy can aim at particular sectors but widens the deficit and takes time to pass; monetary policy reaches the whole economy quickly but loses power near the zero lower bound.</div>
+  </section>
 
-  <div class="toggle-card">
-    <div class="toggle-buttons">
-      <button class="toggle-btn active" id="btnShort">Short-Run</button>
-      <button class="toggle-btn" id="btnLong">Long-Run</button>
-    </div>
-    <div class="knowdrop-divider"></div>
-    <div class="knowdrop-text" id="knowdropText">
-      The Phillips Curve forces immediate trade-offs: reduce unemployment and inflation rises, control inflation and unemployment climbs. Fiscal policy targets specific sectors like infrastructure or education but crowds out private investment through higher interest rates. Monetary policy affects the entire economy uniformly—every business faces the same rate change—but loses power at zero rates when liquidity traps emerge. Mixing opposite stances (loose fiscal, tight monetary) funds projects while preventing overheating, though capital inflows from high rates appreciate currency and hurt exports.
-    </div>
-  </div>
-
-  <div class="know-this">
-    <div class="know-this-tag">Know This</div>
-    <div class="know-this-body">
-      <span style="color:var(--acc)">Supply-side policies</span> solve trade-offs permanently by shifting LRAS right rather than managing demand—<span style="color:var(--acc)">time inconsistency</span> problems arise when political pressures override stability.
-    </div>
-  </div>
-
-  <div class="footer">
-    <div class="pulse-dot"></div>
-  </div>
+  <aside class="pm-know">
+    <div class="pm-know-tag"><span class="pm-know-dot"></span><span>Know This</span></div>
+    <div class="pm-know-body">The <span style="color:var(--acc)">policy mix</span> shifts aggregate demand along a <span style="color:var(--acc)">short-run Phillips curve</span>, but in the long run the curve is <span style="color:var(--acc)">vertical</span> and only inflation moves.</div>
+  </aside>
 </div>
 
 <script>
-const canvas = document.getElementById('mixCanvas');
-const ctx = canvas.getContext('2d');
-const slider = document.getElementById('mixSlider');
-const mixTag = document.getElementById('mixTag');
-const canvasTag = document.getElementById('canvasTag');
-const unempStat = document.getElementById('unempStat');
-const exStat = document.getElementById('exStat');
-const btnShort = document.getElementById('btnShort');
-const btnLong = document.getElementById('btnLong');
-const knowdropText = document.getElementById('knowdropText');
+(function(){
+  const CSS = getComputedStyle(document.documentElement);
+  const ACC = CSS.getPropertyValue("--acc").trim();
+  const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+  const AMB = CSS.getPropertyValue("--amb").trim();
+  const INK = CSS.getPropertyValue("--ink").trim();
+  const DIM = CSS.getPropertyValue("--ink-dim").trim();
+  const RM = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const MONO = "11px 'JetBrains Mono', monospace";
 
-const dpr = Math.min(window.devicePixelRatio || 1, 2);
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d');
+  const canvas = document.getElementById("pmCanvas");
+  const wrap = document.getElementById("pmWrap");
+  const ctx = canvas.getContext("2d");
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const buf = document.createElement("canvas");
+  const bctx = buf.getContext("2d");
 
-let mixVal = 50;
-let isShortRun = true;
-let time = 0;
+  const fisS = document.getElementById("fisS");
+  const monS = document.getElementById("monS");
+  const fisV = document.getElementById("fisV");
+  const monV = document.getElementById("monV");
+  const overlay = document.getElementById("overlayTag");
+  const liveTag = document.getElementById("liveTag");
+  const statInf = document.getElementById("statInf");
+  const statUn = document.getElementById("statUn");
+  const statFx = document.getElementById("statFx");
+  const knowdrop = document.getElementById("knowdrop");
+  const viewBtns = Array.from(document.querySelectorAll(".pm-view"));
+  const runBtns = Array.from(document.querySelectorAll(".pm-run"));
 
-const shortText = "The Phillips Curve forces immediate trade-offs: reduce unemployment and inflation rises, control inflation and unemployment climbs. Fiscal policy targets specific sectors like infrastructure or education but crowds out private investment through higher interest rates. Monetary policy affects the entire economy uniformly—every business faces the same rate change—but loses power at zero rates when liquidity traps emerge. Mixing opposite stances (loose fiscal, tight monetary) funds projects while preventing overheating, though capital inflows from high rates appreciate currency and hurt exports.";
+  const TEXT = {
+    sr: "In the short run the two tools add up to one shift of aggregate demand. A loose budget and a low cash rate both push spending up, so output climbs above potential, unemployment falls and inflation rises: the economy moves up and to the left along the short-run Phillips curve. Pull both tools tight and it slides down and to the right. Mixing them is where the trade-offs get interesting: loose fiscal with tight monetary keeps the big spending programs but holds total demand steady, while high interest rates pull in foreign capital and push the dollar up, which hurts exporters. Fiscal policy can aim at particular sectors but widens the deficit and takes time to pass; monetary policy reaches the whole economy quickly but loses power near the zero lower bound.",
+    lr: "Hold the stimulus and watch the trade-off vanish. Wages and prices catch up, expected inflation rises, and the short-run Phillips curve shifts up until it passes through the natural rate at the new inflation rate. Unemployment drifts back to around the natural rate, so the only lasting effect of a looser mix is higher inflation: the long-run Phillips curve is vertical. In the AD and AS view the same story is a short-run supply curve shifting up to meet the new aggregate demand at potential output. That is why demand policy is for stabilisation around potential, and why lifting potential itself needs supply-side policy that shifts long-run supply to the right."
+  };
 
-const longText = "Supply-side policies shift LRAS right permanently, expanding potential output without inflationary pressure—education raises human capital, deregulation improves efficiency, infrastructure reduces transport costs. Unlike demand management which moves along existing curves, supply-side reforms change the curves themselves, solving trade-offs rather than managing them. Time inconsistency creates problems: governments promise long-term stability but face short-term political pressure to stimulate before elections, undermining credibility. Independent central banks help by removing monetary policy from political cycles, though fiscal policy remains vulnerable to electoral incentives that prioritize visible spending over structural reform.";
-
-function resize() {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
-
-function updateUI() {
-  const fiscal = (100 - mixVal) / 100;
-  const monetary = mixVal / 100;
-  
-  let label = '';
-  if (mixVal < 20) label = 'Loose Both';
-  else if (mixVal < 40) label = 'Loose Fiscal, Neutral Monetary';
-  else if (mixVal < 60) label = 'Balanced Mix';
-  else if (mixVal < 80) label = 'Tight Fiscal, Loose Monetary';
-  else label = 'Tight Both';
-  
-  mixTag.textContent = label;
-  canvasTag.textContent = label;
-  
-  const unemp = (4.2 + (monetary - 0.5) * 3 - (fiscal - 0.5) * 2).toFixed(1);
-  unempStat.textContent = unemp + '%';
-  
-  const exRate = (0.92 + monetary * 0.25 - fiscal * 0.10).toFixed(2);
-  exStat.textContent = exRate;
-  
-  slider.style.setProperty('--fill', mixVal + '%');
-}
-
-function drawPhillipsCurve(w, h, t) {
-  ctx.clearRect(0, 0, w, h);
-  
-  const cx = w * 0.5;
-  const cy = h * 0.5;
-  
-  ctx.strokeStyle = '#23291f';
-  ctx.lineWidth = 1;
-  for (let i = 0; i <= 10; i++) {
-    const x = (i / 10) * w;
-    ctx.beginPath();
-    ctx.moveTo(x, 0);
-    ctx.lineTo(x, h);
-    ctx.stroke();
-    
-    const y = (i / 10) * h;
-    ctx.beginPath();
-    ctx.moveTo(0, y);
-    ctx.lineTo(w, y);
-    ctx.stroke();
+  /* Model (illustrative numbers): natural rate 4.5%, anchored inflation 2.5% */
+  const UN = 4.5, PIE = 2.5, CC = 7.5;
+  function srpc(u, base){ return (base === undefined ? PIE : base) + CC * (UN / u - 1); }
+  function model(f, m, lr){
+    const d = -(f + m) / 2;                 /* demand pressure: + expansionary */
+    const uSR = UN - 1.4 * d;
+    const piSR = srpc(uSR);
+    const u = uSR + (UN - uSR) * lr;        /* long run: back to natural rate */
+    return { d: d, uSR: uSR, piSR: piSR, u: u, pi: piSR, er: 100 + 12 * m - 3 * f, gap: 2.8 * d * (1 - lr), shift: 0.35 * d };
   }
-  
-  ctx.strokeStyle = 'rgba(250,199,117,0.6)';
-  ctx.lineWidth = 2.5;
-  ctx.beginPath();
-  for (let i = 0; i <= 100; i++) {
-    const u = (i / 100) * 0.9;
-    const inf = 8 * Math.exp(-u * 4);
-    const x = w * 0.1 + u * w * 0.8;
-    const y = h * 0.9 - (inf / 10) * h * 0.8;
-    if (i === 0) ctx.moveTo(x, y);
-    else ctx.lineTo(x, y);
+
+  function stance(v){ return (v - 50) / 50; }
+  function stanceText(s){ const p = Math.round(Math.abs(s) * 100); if (p < 5) return "Neutral"; return (s < 0 ? "Loose " : "Tight ") + p + "%"; }
+  function word(s){ return s < -0.2 ? "loose" : (s > 0.2 ? "tight" : "neutral"); }
+  function combo(f, m){
+    const a = word(f), b = word(m);
+    if (a === b) return "Both " + a;
+    return a.charAt(0).toUpperCase() + a.slice(1) + " fiscal, " + b + " monetary";
   }
-  ctx.stroke();
-  
-  const fiscal = (100 - mixVal) / 100;
-  const monetary = mixVal / 100;
-  
-  const targetU = 0.35 + (monetary - 0.5) * 0.4 - (fiscal - 0.5) * 0.25;
-  const targetInf = 8 * Math.exp(-targetU * 4);
-  
-  const px = w * 0.1 + targetU * w * 0.8;
-  const py = h * 0.9 - (targetInf / 10) * h * 0.8;
-  
-  const glow = ctx.createRadialGradient(px, py, 0, px, py, 35);
-  glow.addColorStop(0, 'rgba(241,135,182,0.7)');
-  glow.addColorStop(0.4, 'rgba(241,135,182,0.3)');
-  glow.addColorStop(1, 'rgba(241,135,182,0)');
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.fillStyle = glow;
-  ctx.beginPath();
-  ctx.arc(px, py, 35, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
-  
-  ctx.fillStyle = '#F187B6';
-  ctx.beginPath();
-  ctx.arc(px, py, 5, 0, Math.PI * 2);
-  ctx.fill();
-  
-  ctx.strokeStyle = 'rgba(241,135,182,0.3)';
-  ctx.lineWidth = 1;
-  ctx.setLineDash([4, 4]);
-  ctx.beginPath();
-  ctx.moveTo(px, 0);
-  ctx.lineTo(px, h);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(0, py);
-  ctx.lineTo(w, py);
-  ctx.stroke();
-  ctx.setLineDash([]);
-  
-  for (let i = 0; i < 5; i++) {
-    const angle = t * 0.5 + i * Math.PI * 0.4;
-    const r = 12 + i * 8;
-    const x = px + Math.cos(angle) * r;
-    const y = py + Math.sin(angle) * r;
-    ctx.fillStyle = 'rgba(241,135,182,' + (0.4 - i * 0.06) + ')';
-    ctx.beginPath();
-    ctx.arc(x, y, 2.5, 0, Math.PI * 2);
-    ctx.fill();
+
+  let view = "ph";
+  let tgt = { f: 0, m: 0, lr: 0 };
+  let cur = { f: 0, m: 0, lr: 0 };
+  let raf = null, last = 0;
+
+  function resize(){
+    const rect = wrap.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    buf.width = canvas.width; buf.height = canvas.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    render();
   }
-  
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
-  
-  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-}
 
-function draw() {
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  
-  drawPhillipsCurve(w, h, time);
-  
-  time += 0.03;
-  requestAnimationFrame(draw);
-}
-
-slider.addEventListener('input', (e) => {
-  mixVal = parseInt(e.target.value);
-  updateUI();
-});
-
-btnShort.addEventListener('click', () => {
-  if (!isShortRun) {
-    isShortRun = true;
-    btnShort.classList.add('active');
-    btnLong.classList.remove('active');
-    knowdropText.textContent = shortText;
+  function updateReadouts(){
+    const r = model(tgt.f, tgt.m, tgt.lr);
+    statInf.textContent = r.pi.toFixed(1) + "%";
+    statUn.textContent = r.u.toFixed(1) + "%";
+    statFx.textContent = String(Math.round(r.er));
+    overlay.textContent = combo(tgt.f, tgt.m);
+    liveTag.textContent = (view === "ph" ? "Phillips curve" : "AD and AS") + " · " + (tgt.lr > 0.5 ? "long run" : "short run");
   }
-});
 
-btnLong.addEventListener('click', () => {
-  if (isShortRun) {
-    isShortRun = false;
-    btnLong.classList.add('active');
-    btnShort.classList.remove('active');
-    knowdropText.textContent = longText;
+  function kick(){
+    if (RM){ cur = { f: tgt.f, m: tgt.m, lr: tgt.lr }; render(); return; }
+    if (raf === null){ last = performance.now(); raf = requestAnimationFrame(step); }
   }
-});
+  function step(now){
+    const dt = Math.min(now - last, 50); last = now;
+    const k = 1 - Math.exp(-dt / 110);
+    let done = true;
+    ["f", "m", "lr"].forEach(function(key){
+      const diff = tgt[key] - cur[key];
+      if (Math.abs(diff) < 0.002){ cur[key] = tgt[key]; }
+      else { cur[key] += diff * k; done = false; }
+    });
+    render();
+    if (done){ raf = null; } else { raf = requestAnimationFrame(step); }
+  }
 
-window.addEventListener('resize', resize);
+  function dot(px, py, P){
+    ctx.save();
+    ctx.setLineDash([4, 4]); ctx.strokeStyle = "rgba(" + RGB + ",0.4)"; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(P.L, py); ctx.moveTo(px, py); ctx.lineTo(px, P.B); ctx.stroke();
+    ctx.restore();
+    ctx.save(); ctx.globalCompositeOperation = "lighter";
+    const g = ctx.createRadialGradient(px, py, 0, px, py, 30);
+    g.addColorStop(0, "rgba(" + RGB + ",0.6)");
+    g.addColorStop(0.4, "rgba(" + RGB + ",0.2)");
+    g.addColorStop(1, "rgba(" + RGB + ",0)");
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(px, py, 30, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+    ctx.fillStyle = ACC; ctx.beginPath(); ctx.arc(px, py, 5.5, 0, Math.PI * 2); ctx.fill();
+  }
 
-resize();
-updateUI();
-draw();
+  function axes(P){
+    ctx.strokeStyle = "rgba(255,255,255,0.38)"; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(P.L, P.T); ctx.lineTo(P.L, P.B); ctx.lineTo(P.R, P.B); ctx.stroke();
+  }
+
+  function yTitle(P, text){
+    ctx.save(); ctx.translate(14, (P.T + P.B) / 2); ctx.rotate(-Math.PI / 2);
+    ctx.font = MONO; ctx.fillStyle = DIM; ctx.textAlign = "center"; ctx.fillText(text, 0, 0); ctx.restore();
+  }
+
+  /* ---------- Phillips curve view ---------- */
+  function drawPh(P, r, lr){
+    const X = function(u){ return P.L + (u - 2) / 5 * (P.R - P.L); };
+    const Y = function(p){ return P.B - (p / 8) * (P.B - P.T); };
+    ctx.strokeStyle = "rgba(255,255,255,0.06)"; ctx.lineWidth = 1;
+    for (let u = 2; u <= 7; u++){ ctx.beginPath(); ctx.moveTo(X(u), P.T); ctx.lineTo(X(u), P.B); ctx.stroke(); }
+    for (let p = 0; p <= 8; p += 2){ ctx.beginPath(); ctx.moveTo(P.L, Y(p)); ctx.lineTo(P.R, Y(p)); ctx.stroke(); }
+    axes(P);
+
+    const shiftAmt = (r.piSR - PIE) * lr;
+    const twin = Math.abs(shiftAmt) > 0.12;
+    function curve(base, alpha, dash){
+      ctx.save(); ctx.globalAlpha = alpha; ctx.strokeStyle = AMB; ctx.lineWidth = 2.5;
+      if (dash) ctx.setLineDash([5, 5]);
+      ctx.beginPath(); let pen = false;
+      for (let u = 2.6; u <= 7.0001; u += 0.02){
+        const p = srpc(u, base);
+        if (p < 0 || p > 8){ pen = false; continue; }
+        const x = X(u), y = Y(p);
+        if (!pen){ ctx.moveTo(x, y); pen = true; } else ctx.lineTo(x, y);
+      }
+      ctx.stroke(); ctx.restore();
+    }
+    curve(PIE, twin ? 0.4 : 1, twin);
+    if (twin) curve(PIE + shiftAmt, 1, false);
+
+    if (lr > 0.01){
+      ctx.save(); ctx.globalAlpha = lr; ctx.strokeStyle = INK; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(X(UN), P.T); ctx.lineTo(X(UN), P.B); ctx.stroke(); ctx.restore();
+    }
+
+    const px = X(r.u), py = Y(r.pi);
+    dot(px, py, P);
+
+    return function(){
+      ctx.font = MONO; ctx.textBaseline = "alphabetic";
+      ctx.textAlign = "center"; ctx.fillStyle = DIM;
+      for (let u = 2; u <= 7; u++){ if (Math.abs(X(u) - px) > 16) ctx.fillText(String(u), X(u), P.B + 14); }
+      ctx.fillStyle = ACC; ctx.fillText(r.u.toFixed(1), px, P.B + 14);
+      ctx.fillStyle = DIM; ctx.fillText("Unemployment rate (%)", (P.L + P.R) / 2, P.B + 29);
+      ctx.textAlign = "right";
+      for (let p = 0; p <= 8; p += 2){ if (Math.abs(Y(p) - py) > 9) ctx.fillText(String(p), P.L - 6, Y(p) + 4); }
+      ctx.fillStyle = ACC; ctx.fillText(r.pi.toFixed(1), P.L - 6, py + 4);
+      yTitle(P, "Inflation (%)");
+
+      ctx.font = MONO; ctx.textAlign = "left"; ctx.fillStyle = AMB;
+      ctx.save(); ctx.globalAlpha = twin ? 0.55 : 1;
+      ctx.fillText(twin ? "SRPC0" : "SRPC", X(2.8) + 9, Y(srpc(2.8)) + 4);
+      ctx.restore();
+      if (twin){
+        const base1 = PIE + shiftAmt;
+        let u1 = UN / (1 + (7.7 - base1) / CC);
+        if (u1 < 2.65) u1 = 2.65;
+        const p1 = Math.min(7.9, srpc(u1, base1));
+        ctx.fillText("SRPC1", X(u1) + 9, Y(p1) + 4);
+      }
+      if (lr > 0.01){
+        ctx.save(); ctx.globalAlpha = lr; ctx.fillStyle = INK;
+        ctx.fillText("LRPC", X(UN) + 6, P.T + 12); ctx.restore();
+      }
+    };
+  }
+
+  /* ---------- AD and AS view ---------- */
+  function drawAS(P, r, lr){
+    const X = function(x){ return P.L + x * (P.R - P.L); };
+    const Y = function(y){ return P.B - y * (P.B - P.T); };
+    ctx.strokeStyle = "rgba(255,255,255,0.06)"; ctx.lineWidth = 1;
+    [0.25, 0.5, 0.75].forEach(function(t){
+      ctx.beginPath(); ctx.moveTo(X(t), P.T); ctx.lineTo(X(t), P.B); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(P.L, Y(t)); ctx.lineTo(P.R, Y(t)); ctx.stroke();
+    });
+    axes(P);
+
+    const shift = r.shift, sAS = shift * lr;
+    const twinAS = Math.abs(sAS) > 0.05;
+    const twinAD = Math.abs(shift) > 0.06;
+
+    function line(a, b, color, alpha, dash, width){
+      ctx.save(); ctx.beginPath(); ctx.rect(P.L, P.T, P.R - P.L, P.B - P.T); ctx.clip();
+      ctx.globalAlpha = alpha; ctx.strokeStyle = color; ctx.lineWidth = width || 2.5;
+      if (dash) ctx.setLineDash([5, 5]);
+      ctx.beginPath(); ctx.moveTo(X(0), Y(a)); ctx.lineTo(X(1), Y(a + b)); ctx.stroke();
+      ctx.restore();
+    }
+
+    /* potential output marker, becomes LRAS in the long run */
+    ctx.save(); ctx.setLineDash([3, 5]); ctx.strokeStyle = "rgba(255,255,255," + (0.3 * (1 - lr) + 0.05) + ")"; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(X(0.5), P.T); ctx.lineTo(X(0.5), P.B); ctx.stroke(); ctx.restore();
+    if (lr > 0.01){
+      ctx.save(); ctx.globalAlpha = lr; ctx.strokeStyle = INK; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(X(0.5), P.T); ctx.lineTo(X(0.5), P.B); ctx.stroke(); ctx.restore();
+    }
+
+    line(0, 1, AMB, twinAS ? 0.4 : 1, twinAS);
+    if (twinAS) line(sAS, 1, AMB, 1, false);
+    if (twinAD) line(1, -1, DIM, 0.6, true, 1.5);
+    line(1 + shift, -1, ACC, 1, false);
+
+    const ex = 0.5 + (shift - sAS) / 2, ey = 0.5 + (shift + sAS) / 2;
+    const px = X(ex), py = Y(ey);
+    dot(px, py, P);
+
+    function lineLabel(a, b, text, color, alpha, above, yMin, yMax){
+      let x = 0.9, y = a + b * x;
+      if (y > yMax){ y = yMax; x = (y - a) / b; }
+      if (y < yMin){ y = yMin; x = (y - a) / b; }
+      ctx.save(); ctx.globalAlpha = alpha; ctx.fillStyle = color; ctx.textAlign = "center";
+      ctx.fillText(text, X(x), Y(y) + (above ? -14 : Math.min(21, P.B - Y(y) - 4))); ctx.restore();
+    }
+
+    return function(){
+      ctx.font = MONO; ctx.textBaseline = "alphabetic";
+      ctx.textAlign = "center"; ctx.fillStyle = ACC;
+      ctx.fillText((r.gap >= 0 ? "+" : "") + r.gap.toFixed(1) + "%", px, P.B + 14);
+      ctx.fillStyle = DIM; ctx.fillText("Real output (gap from potential, %)", (P.L + P.R) / 2, P.B + 29);
+      ctx.textAlign = "right"; ctx.fillStyle = ACC; ctx.fillText(r.pi.toFixed(1) + "%", P.L - 6, py + 4);
+      yTitle(P, "Prices (% change)");
+
+      ctx.font = MONO; ctx.textAlign = "left"; ctx.fillStyle = DIM;
+      ctx.fillText("Yp", X(0.5) + 5, P.B - 6);
+      if (lr > 0.01){ ctx.save(); ctx.globalAlpha = lr; ctx.fillStyle = INK; ctx.fillText("LRAS", X(0.5) + 5, P.T + 12); ctx.restore(); }
+
+      const bothAS = Math.abs(sAS) > 0.14;
+      if (bothAS){
+        lineLabel(0, 1, "SRAS0", AMB, 0.55, true, 0.22, 0.78);
+        lineLabel(sAS, 1, "SRAS1", AMB, 1, true, 0.22, 0.78);
+      } else {
+        lineLabel(sAS, 1, "SRAS", AMB, 1, true, 0.22, 0.78);
+      }
+      const bothAD = Math.abs(shift) > 0.14;
+      if (bothAD){
+        lineLabel(1, -1, "AD0", DIM, 0.8, false, 0.22, 0.78);
+        lineLabel(1 + shift, -1, "AD1", ACC, 1, false, 0.22, 0.78);
+      } else {
+        lineLabel(1 + shift, -1, "AD", ACC, 1, false, 0.22, 0.78);
+      }
+    };
+  }
+
+  function render(){
+    const w = canvas.width / dpr, h = canvas.height / dpr;
+    if (!w || !h) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    const P = { L: 58, R: w - 16, T: Math.max(16, h * 0.08), B: h - 68 };
+    const r = model(cur.f, cur.m, cur.lr);
+    const text = view === "ph" ? drawPh(P, r, cur.lr) : drawAS(P, r, cur.lr);
+
+    /* bloom */
+    bctx.setTransform(1, 0, 0, 1, 0, 0); bctx.clearRect(0, 0, buf.width, buf.height);
+    if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+    ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
+    (buf.width&&buf.height)&&ctx.drawImage(buf, 0, 0, w, h); ctx.restore();
+
+    /* vignette */
+    const cx = w / 2, cy = h / 2;
+    const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
+
+    /* crisp labels on top */
+    text();
+  }
+
+  function onSlide(){
+    tgt.f = stance(+fisS.value); tgt.m = stance(+monS.value);
+    fisV.textContent = stanceText(tgt.f); monV.textContent = stanceText(tgt.m);
+    fisS.style.setProperty("--fill", fisS.value + "%");
+    monS.style.setProperty("--fill", monS.value + "%");
+    updateReadouts(); kick();
+  }
+  fisS.addEventListener("input", onSlide);
+  monS.addEventListener("input", onSlide);
+
+  viewBtns.forEach(function(b){
+    b.addEventListener("click", function(){
+      view = b.dataset.view;
+      viewBtns.forEach(function(x){ x.setAttribute("aria-pressed", String(x === b)); });
+      updateReadouts(); render();
+    });
+  });
+
+  runBtns.forEach(function(b){
+    b.addEventListener("click", function(){
+      tgt.lr = b.dataset.run === "lr" ? 1 : 0;
+      runBtns.forEach(function(x){ x.setAttribute("aria-pressed", String(x === b)); });
+      knowdrop.textContent = TEXT[b.dataset.run];
+      updateReadouts(); kick();
+    });
+  });
+
+  if (window.ResizeObserver){ new ResizeObserver(resize).observe(wrap); }
+  window.addEventListener("resize", resize);
+  fisS.style.setProperty("--fill", "50%");
+  monS.style.setProperty("--fill", "50%");
+  updateReadouts();
+  resize();
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'policy-mix-and-trade-offs'},'*');}catch(e){}}

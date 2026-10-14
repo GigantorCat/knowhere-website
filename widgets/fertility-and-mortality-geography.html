@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Fertility and Mortality — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Fertility and mortality — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -9,9 +9,10 @@ body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body
   --bg: #0B0D0C;
   --bg2: #12160F;
   --acc: #7870C0;
-  --ag: rgba(120, 112, 192, .7);
-  --ag1: rgba(120, 112, 192, .12);
-  --ag2: rgba(120, 112, 192, .45);
+  --acc-rgb: 120, 112, 192;
+  --ag:  rgba(var(--acc-rgb),.7);
+  --ag1: rgba(var(--acc-rgb),.12);
+  --ag2: rgba(var(--acc-rgb),.45);
   --amb: #FAC775;
   --ink: #EDEDE8;
   --ink-dim: #8C9389;
@@ -21,15 +22,8 @@ body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 .sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
 }
 
 body {
@@ -49,10 +43,7 @@ body {
   }
 }
 
-.container {
-  max-width: 720px;
-  margin: 0 auto;
-}
+.fm-wrap { max-width: 720px; margin: 0 auto; }
 
 h1 {
   font-size: clamp(26px, 6.5vw, 44px);
@@ -68,7 +59,7 @@ h1 {
   color: var(--ink-dim);
   max-width: 58ch;
   line-height: 1.55;
-  margin-bottom: 32px;
+  margin-bottom: 30px;
 }
 
 .card {
@@ -80,227 +71,107 @@ h1 {
   margin-bottom: 18px;
 }
 
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
+.card-head {
+  display: flex; justify-content: space-between; align-items: center; gap: 10px;
+  margin-bottom: 6px; flex-wrap: wrap;
 }
-
 .card-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  color: var(--ink);
+  font-family: 'JetBrains Mono', monospace; font-size: 13px; text-transform: uppercase; color: #fff;
 }
-
 .live-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--acc);
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; color: var(--acc);
 }
-
 .card-hint {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-dim); margin-bottom: 14px; line-height: 1.5;
+}
+
+.type-title {
+  font-family: 'JetBrains Mono', monospace; font-size: 10.5px; text-transform: uppercase;
+  color: var(--ink-dim); margin-bottom: 8px; letter-spacing: 0.06em;
+}
+
+.pills { display: flex; flex-wrap: wrap; gap: 8px; }
+.pill {
+  flex: 1 1 auto;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--ink-dim);
-  margin-bottom: 14px;
-}
-
-.canvas-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16/9;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
-  box-shadow: inset 0 0 0 1px var(--ag1);
-  margin-bottom: 16px;
-}
-
-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.canvas-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(4px);
-  padding: 9px 16px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  text-transform: uppercase;
-  color: var(--acc);
-  text-align: center;
-}
-
-.slider-control {
-  margin-bottom: 8px;
-}
-
-.slider-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 10px;
-  display: block;
-}
-
-.pop-slider {
-  width: 100%;
-  height: 4px;
-  border-radius: 3px;
-  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
-  appearance: none;
-  outline: none;
-  cursor: pointer;
-}
-
-.pop-slider::-webkit-slider-thumb {
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  transition: box-shadow .15s;
-  cursor: pointer;
-}
-
-.pop-slider::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.pop-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  transition: box-shadow .15s;
-  cursor: pointer;
-}
-
-.pop-slider::-moz-range-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.tick-labels {
-  position: relative;
-  height: 12px;
-  line-height: 12px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--ink-dim);
-  margin-top: 6px;
-}
-.tick-labels .tk {
-  position: absolute;
-  top: 0;
-  white-space: nowrap;
-  transform: translateX(-50%);
-}
-.tick-labels .tk-min {
-  left: 0;
-  transform: none;
-}
-.tick-labels .tk-max {
-  right: 0;
-  transform: none;
-}
-
-.stat-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  border-top: 1px solid var(--line);
-  padding-top: 16px;
-  margin-top: 16px;
-}
-
-.stat {
-  text-align: center;
-}
-
-.stat-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 6px;
-}
-
-.stat-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 24px;
-  font-weight: 500;
-}
-
-.stat:first-child .stat-value {
-  color: var(--acc);
-}
-
-.stat:last-child .stat-value {
-  color: var(--amb);
-}
-
-.toggle-card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 18px;
-}
-
-.toggle-buttons {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.toggle-btn {
-  flex: 1;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14.5px;
-  padding: 12px;
-  border-radius: 11px;
+  font-size: 12px;
+  padding: 10px 14px;
+  border-radius: 999px;
   background: #12160F;
   border: 1px solid var(--line);
   color: var(--ink-dim);
   cursor: pointer;
   transition: all .2s;
+  line-height: 1.2;
 }
-
-.toggle-btn.active {
-  background: rgba(120,112,192,.1);
+.pill[aria-pressed="true"] {
+  background: rgba(var(--acc-rgb),.1);
   border: 1px solid var(--acc);
   color: var(--acc);
-  box-shadow: 0 0 22px rgba(120,112,192,.18);
+  box-shadow: 0 0 22px rgba(var(--acc-rgb),.18);
+}
+.type-cap {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-dim);
+  margin: 10px 0 12px; line-height: 1.5;
 }
 
-.knowdrop-divider {
-  border-top: 1px solid var(--line);
-  padding-top: 16px;
+.canvas-wrap {
+  position: relative; width: 100%; aspect-ratio: 16/9; border-radius: 12px; overflow: hidden;
+  background: #000; box-shadow: inset 0 0 0 1px var(--ag1); margin-bottom: 16px;
+}
+.canvas-wrap canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.overlay {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.55); backdrop-filter: blur(4px); padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace; font-size: 14px; text-transform: uppercase;
+  color: var(--acc); text-align: center;
 }
 
-.knowdrop-text {
-  font-size: 14.5px;
-  font-weight: 400;
-  line-height: 1.65;
-  color: var(--ink);
+.fm-row {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 10px;
+  font-family: 'JetBrains Mono', monospace; font-size: 10.5px; text-transform: uppercase;
+  color: var(--ink-dim); margin-bottom: 10px;
 }
+.fm-row b { font-weight: 500; color: var(--ink); font-size: 12px; text-transform: none; }
+
+.fm-slider {
+  width: 100%; height: 4px; border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill,0%), #23291f var(--fill,0%));
+  appearance: none; -webkit-appearance: none; outline: none; cursor: pointer; display: block;
+}
+.fm-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%;
+  background: #0B0D0C; border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag); transition: box-shadow .15s; cursor: pointer;
+}
+.fm-slider::-webkit-slider-thumb:hover { box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag); }
+.fm-slider::-moz-range-thumb {
+  width: 20px; height: 20px; border-radius: 50%; background: #0B0D0C; border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag); transition: box-shadow .15s; cursor: pointer;
+}
+.fm-slider::-moz-range-thumb:hover { box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag); }
+
+.ticks {
+  position: relative; height: 14px; margin-top: 8px;
+  font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-dim);
+}
+.ticks span { position: absolute; top: 0; white-space: nowrap; line-height: 14px; }
+
+.stats {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  border-top: 1px solid var(--line); padding-top: 16px; margin-top: 16px;
+}
+.stat { text-align: center; }
+.stat-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 10.5px; text-transform: uppercase;
+  color: var(--ink-dim); margin-bottom: 6px;
+}
+.stat-value { font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 500; }
+.stat:first-child .stat-value { color: var(--acc); }
+.stat:last-child .stat-value { color: var(--amb); }
+
+.kd-body { border-top: 1px solid var(--line); padding-top: 16px; margin-top: 16px; }
+.kd-body p { font-size: 14.5px; font-weight: 400; line-height: 1.65; color: var(--ink); }
 
 .know-this {
   border-left: 3px solid var(--acc);
@@ -308,265 +179,280 @@ canvas {
   background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
   border-radius: 0 12px 12px 0;
   margin-bottom: 0;
+  padding-bottom: 16px;
 }
-
-.know-this-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--acc);
-  margin-bottom: 10px;
-  display: block;
+.kt-tag { display: flex; align-items: center; gap: 9px; margin-bottom: 10px; }
+.kt-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--acc);
+  box-shadow: 0 0 8px var(--acc); animation: ktpulse 2.4s ease-in-out infinite;
 }
-
-.know-this-body {
-  font-size: 17.4px;
-  font-weight: 400;
-  line-height: 1.55;
-  color: var(--ink);
+@keyframes ktpulse { 0%,100% { opacity: 1; } 50% { opacity: .45; } }
+.kt-text {
+  font-family: 'JetBrains Mono', monospace; font-size: 13px; text-transform: uppercase;
+  letter-spacing: 0.15em; color: var(--acc);
 }
-
-.know-this-body .highlight {
-  color: var(--acc);
-}
+.kt-body { font-size: 17.4px; font-weight: 400; line-height: 1.55; color: var(--ink); }
 </style>
 
-<div class="container">
-  <h2 class="sr-only">Population Dynamics: Fertility and Mortality Interactive Widget</h2>
-  
-  <h1>A growing population doesn't need more <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">babies</span></h1>
-  
-  <p class="intro">When fertility drops below replacement level (~2.1 births per woman), a population can still grow for decades — momentum from a young age structure keeps births outpacing deaths. Drag the slider to adjust fertility rate and watch natural increase respond.</p>
+<div class="fm-wrap">
+  <h2 class="sr-only">Fertility and mortality: five population indicators compared across youthful, transitional and aged populations</h2>
+
+  <h1>The longest-lived population has the higher death <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">rate</span></h1>
+
+  <p class="intro">Crude death rate counts deaths per thousand people a year, and a population full of old people has many people near the end of life, however long those lives have been. Infant mortality and life expectancy tell the health story the crude rate hides, and births minus deaths tells the growth story the birth rate hides. Pick a population type, then change the fertility rate and watch the gap between births and deaths.</p>
 
   <div class="card">
-    <div class="card-header">
-      <span class="card-label">Population simulator</span>
-      <span class="live-tag" id="liveTag">TFR 2.1 • Near stable</span>
+    <div class="card-head">
+      <span class="card-label">Five population indicators</span>
+      <span class="live-tag" id="liveTag">Youthful · TFR 5.0</span>
     </div>
-    <div class="card-hint">Drag to change total fertility rate. The readout is the long-run rate, once momentum from today's age structure has faded.</div>
-    
-    <div class="canvas-wrapper">
-      <canvas id="popCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">Long-run natural increase: 0.0% per year</div>
+    <div class="card-hint">Pick a population type, then change the fertility rate. Watch the gap between the births bar and the deaths bar. Values are typical of each type, not of any one country.</div>
+
+    <div class="type-title">Population type</div>
+    <div class="pills" role="group" aria-label="Population type">
+      <button class="pill" data-type="youthful" aria-pressed="true">Youthful</button>
+      <button class="pill" data-type="transitional" aria-pressed="false">Transitional</button>
+      <button class="pill" data-type="aged" aria-pressed="false">Aged</button>
+    </div>
+    <div class="type-cap" id="typeCap">Youthful: most people under 30, fertility high for generations</div>
+
+    <div class="canvas-wrap">
+      <canvas id="fmCanvas" aria-label="Bars for crude birth rate, crude death rate, infant mortality rate, total fertility rate and life expectancy, with natural increase shaded as the gap between births and deaths"></canvas>
+      <div class="overlay" id="overlay" aria-live="polite">Natural increase +2.5% a year</div>
     </div>
 
-    <div class="slider-control">
-      <label class="slider-label" for="tfrSlider">Total Fertility Rate</label>
-      <input type="range" id="tfrSlider" class="pop-slider" min="0.8" max="4.5" step="0.1" value="2.1">
-      <div class="tick-labels">
-        <span class="tk tk-min">0.8</span>
-        <span class="tk" style="left: calc(10px + (100% - 20px) * 0.3514)">2.1</span>
-        <span class="tk tk-max">4.5</span>
-      </div>
+    <div class="fm-row"><span>Total fertility rate</span><b id="tfrV">5.0 births/woman</b></div>
+    <input type="range" class="fm-slider" id="tfr" aria-label="Total fertility rate" min="1" max="7" step="0.1" value="5">
+    <div class="ticks">
+      <span style="left:0">1.0</span>
+      <span style="left:18.33%;transform:translateX(-4px)">▴ 2.1 replacement</span>
+      <span style="right:0">7.0</span>
     </div>
 
-    <div class="stat-row">
+    <div class="stats">
       <div class="stat">
-        <div class="stat-label">Births/woman</div>
-        <div class="stat-value" id="birthStat">2.1</div>
+        <div class="stat-label">Natural increase a year</div>
+        <div class="stat-value" id="niStat">+2.5%</div>
       </div>
       <div class="stat">
-        <div class="stat-label">Long-run change</div>
-        <div class="stat-value" id="changeStat">0.0%</div>
+        <div class="stat-label" id="dblLabel">Doubling time</div>
+        <div class="stat-value" id="dblStat">27 yrs</div>
       </div>
     </div>
   </div>
 
-  <div class="toggle-card">
-    <div class="toggle-buttons">
-      <button class="toggle-btn active" data-mode="developed">Developed</button>
-      <button class="toggle-btn" data-mode="developing">Developing</button>
+  <div class="card">
+    <div class="pills" role="group" aria-label="Knowdrop topic">
+      <button class="pill" data-kd="rates" aria-pressed="true">Reading rates</button>
+      <button class="pill" data-kd="pattern" aria-pressed="false">World pattern</button>
     </div>
-    
-    <div class="knowdrop-divider">
-      <p class="knowdrop-text" id="knowdropText">
-        In developed nations like Japan and Italy, fertility has fallen to about 1.2 births per woman — well below replacement. Deaths now far outnumber births: in 2024 Japan recorded about 1.6 million deaths but fewer than 0.7 million births, and Italy about 651,000 deaths to 370,000 births. These populations are old: decades of low fertility have aged the structure, so large older cohorts push deaths up while ever-smaller generations of parents mean fewer births. This natural decrease grows year after year, even without any rise in death rates.
-      </p>
+    <div class="kd-body">
+      <p id="kdText"></p>
     </div>
   </div>
 
   <div class="know-this">
-    <span class="know-this-tag">Know This</span>
-    <p class="know-this-body">
-      <span class="highlight">Natural increase</span> equals births minus deaths; <span class="highlight">replacement fertility</span> (~2.1) keeps population stable long-term, but momentum from age structure means growth or decline lags behind fertility changes by decades.
-    </p>
+    <div class="kt-tag"><span class="kt-dot"></span><span class="kt-text">Know This</span></div>
+    <p class="kt-body"><span style="color:var(--acc)">Natural increase</span> is the gap between <span style="color:var(--acc)">crude birth rate</span> and <span style="color:var(--acc)">crude death rate</span>, and an aged population can have the higher death rate even though its people live far longer.</p>
   </div>
 </div>
 
 <script>
-const canvas = document.getElementById('popCanvas');
-const ctx = canvas.getContext('2d', { alpha: false });
-const slider = document.getElementById('tfrSlider');
-const liveTag = document.getElementById('liveTag');
-const canvasOverlay = document.getElementById('canvasOverlay');
-const birthStat = document.getElementById('birthStat');
-const changeStat = document.getElementById('changeStat');
-const knowdropText = document.getElementById('knowdropText');
-const toggleBtns = document.querySelectorAll('.toggle-btn');
+const canvas = document.getElementById("fmCanvas");
+const ctx = canvas.getContext("2d");
+const wrap = canvas.parentElement;
+const overlay = document.getElementById("overlay");
+const liveTag = document.getElementById("liveTag");
+const tfrV = document.getElementById("tfrV");
+const slider = document.getElementById("tfr");
+const niStat = document.getElementById("niStat");
+const dblLabel = document.getElementById("dblLabel");
+const dblStat = document.getElementById("dblStat");
+const typeCap = document.getElementById("typeCap");
+const kdText = document.getElementById("kdText");
+
+const CSS = getComputedStyle(document.documentElement);
+const ACC = CSS.getPropertyValue("--acc").trim();
+const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+const AMB = CSS.getPropertyValue("--amb").trim();
+const INK = CSS.getPropertyValue("--ink").trim();
+const DIM = CSS.getPropertyValue("--ink-dim").trim();
+const AMB_RGB = "250,199,117";
+const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 const dpr = Math.min(window.devicePixelRatio || 1, 2);
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d', { alpha: false });
+const buf = document.createElement("canvas");
+const bctx = buf.getContext("2d");
 
-let tfr = 2.1;
-let particles = [];
-let time = 0;
-
-const knowdropContent = {
-  developed: "In developed nations like Japan and Italy, fertility has fallen to about 1.2 births per woman — well below replacement. Deaths now far outnumber births: in 2024 Japan recorded about 1.6 million deaths but fewer than 0.7 million births, and Italy about 651,000 deaths to 370,000 births. These populations are old: decades of low fertility have aged the structure, so large older cohorts push deaths up while ever-smaller generations of parents mean fewer births. This natural decrease grows year after year, even without any rise in death rates.",
-  developing: "In developing nations like Niger and Mali, fertility remains above 5 births per woman. Young populations mean births vastly outnumber deaths — mortality rates are low simply because few people have reached old age yet. Natural increase exceeds 3% annually, doubling the population every 23 years. This momentum is locked in: even if fertility dropped tomorrow to replacement level, decades of growth are already baked into the age pyramid."
+/* Illustrative profiles. k converts births per woman into births per thousand people:
+   it is highest where many adults are of child-bearing age and lowest in an aged population. */
+const TYPES = {
+  youthful:     { name: "Youthful",     cap: "Youthful: most people under 30, fertility high for generations", k: 6.9, cdr: 9,  imr: 48, e0: 62, tfr: 5.0 },
+  transitional: { name: "Transitional", cap: "Transitional: fertility falling, a bulge of working-age adults", k: 7.6, cdr: 7,  imr: 22, e0: 72, tfr: 2.4 },
+  aged:         { name: "Aged",         cap: "Aged: fertility low for decades, many people over 65",           k: 5.3, cdr: 12, imr: 3,  e0: 84, tfr: 1.3 }
 };
+const KEYS = ["cbr", "cdr", "imr", "tfr", "e0"];
+
+let type = "youthful";
+let tfr = 5.0;
+
+function model() {
+  const T = TYPES[type];
+  const cbr = tfr * T.k;
+  return { cbr: cbr, cdr: T.cdr, imr: T.imr, tfr: tfr, e0: T.e0, ni: (cbr - T.cdr) / 10 };
+}
+
+const m0 = model();
+const cur = { cbr: m0.cbr, cdr: m0.cdr, imr: m0.imr, tfr: m0.tfr, e0: m0.e0 };
+const tgt = { cbr: m0.cbr, cdr: m0.cdr, imr: m0.imr, tfr: m0.tfr, e0: m0.e0 };
+
+function rrect(x, y, w, h, r) {
+  r = Math.min(r, h / 2, w / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.arcTo(x + w, y, x + w, y + r, r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+  ctx.lineTo(x + r, y + h);
+  ctx.arcTo(x, y + h, x, y + h - r, r);
+  ctx.lineTo(x, y + r);
+  ctx.arcTo(x, y, x + r, y, r);
+  ctx.closePath();
+}
 
 function resize() {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
+  const r = wrap.getBoundingClientRect();
+  if (!r.width || !r.height) return;
+  canvas.width = Math.round(r.width * dpr);
+  canvas.height = Math.round(r.height * dpr);
   buf.width = canvas.width;
   buf.height = canvas.height;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  initParticles();
-}
-
-function initParticles() {
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  particles = [];
-  
-  for (let i = 0; i < 120; i++) {
-    particles.push({
-      x: Math.random() * w,
-      y: Math.random() * h,
-      vx: (Math.random() - 0.5) * 0.3,
-      vy: (Math.random() - 0.5) * 0.3,
-      r: Math.random() * 2.5 + 1,
-      birth: Math.random() < 0.5,
-      age: Math.random()
-    });
-  }
+  draw();
 }
 
 function draw() {
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  const cx = w / 2;
-  const cy = h / 2;
-
-  ctx.fillStyle = '#000';
+  const w = canvas.width / dpr, h = canvas.height / dpr;
+  if (!w || !h) return;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.globalCompositeOperation = "source-over";
+  ctx.globalAlpha = 1;
+  ctx.filter = "none";
+  ctx.fillStyle = "#000";
   ctx.fillRect(0, 0, w, h);
 
-  // Long-run natural increase from the same model as the readout
-  const naturalIncrease = longRunIncrease(tfr);
+  const ovH = overlay.offsetHeight || 36;
+  const top = h * 0.07;
+  const avail = h - ovH - top - h * 0.04;
+  const rowH = avail / 5;
+  const barH = Math.max(6, Math.min(14, rowH * 0.38));
+  const compact = w < 520;
+  const labels = compact
+    ? ["BIRTH RATE", "DEATH RATE", "INFANT MORT.", "FERTILITY", "LIFE EXP."]
+    : ["CRUDE BIRTH RATE", "CRUDE DEATH RATE", "INFANT MORTALITY", "TOTAL FERTILITY", "LIFE EXPECTANCY"];
 
-  // Update particles
-  const targetCount = Math.floor(80 + tfr * 15);
-  
-  while (particles.length < targetCount) {
-    particles.push({
-      x: Math.random() * w,
-      y: Math.random() * h,
-      vx: (Math.random() - 0.5) * 0.3,
-      vy: (Math.random() - 0.5) * 0.3,
-      r: Math.random() * 2.5 + 1,
-      birth: Math.random() < (tfr / 4.5),
-      age: 0
-    });
-  }
+  ctx.font = "11px 'JetBrains Mono', monospace";
+  ctx.textBaseline = "middle";
+  ctx.textAlign = "left";
+  let labelW = 0;
+  labels.forEach(l => { labelW = Math.max(labelW, ctx.measureText(l).width); });
+  const mL = w * 0.04, mR = w * 0.04;
+  const barX = mL + labelW + 12;
+  const barMax = w - mR - barX;
 
-  while (particles.length > targetCount) {
-    const oldestIndex = particles.reduce((oldest, p, i) => 
-      p.age > particles[oldest].age ? i : oldest, 0);
-    particles.splice(oldestIndex, 1);
-  }
+  const c = cur;
+  const rows = [
+    { l: labels[0], f: c.cbr / 60, col: ACC, v: c.cbr.toFixed(1) + " /1000" },
+    { l: labels[1], f: c.cdr / 60, col: AMB, v: c.cdr.toFixed(1) + " /1000" },
+    { l: labels[2], f: c.imr / 80, col: AMB, v: Math.round(c.imr) + " /1000 births" },
+    { l: labels[3], f: c.tfr / 7,  col: ACC, v: c.tfr.toFixed(1) + " /woman" },
+    { l: labels[4], f: c.e0 / 90,  col: INK, v: Math.round(c.e0) + " years" }
+  ];
+  const yc = i => top + rowH * (i + 0.5);
 
-  particles.forEach(p => {
-    p.x += p.vx;
-    p.y += p.vy;
-    p.age += 0.002;
+  // Natural increase: the gap between the births bar end and the deaths bar end
+  const xB = barX + Math.min(1, rows[0].f) * barMax;
+  const xD = barX + Math.min(1, rows[1].f) * barMax;
+  const pos = xB >= xD;
+  const gRGB = pos ? RGB : AMB_RGB;
+  const y0 = yc(0) - barH / 2 - 3, y1 = yc(1) + barH / 2 + 3;
+  ctx.save();
+  ctx.globalCompositeOperation = "lighter";
+  ctx.fillStyle = "rgba(" + gRGB + ",0.16)";
+  ctx.fillRect(Math.min(xB, xD), y0, Math.abs(xB - xD), y1 - y0);
+  ctx.strokeStyle = "rgba(" + gRGB + ",0.7)";
+  ctx.lineWidth = 1;
+  ctx.setLineDash([3, 3]);
+  [xB, xD].forEach(x => { ctx.beginPath(); ctx.moveTo(x, y0 - 2); ctx.lineTo(x, y1 + 2); ctx.stroke(); });
+  ctx.setLineDash([]);
+  ctx.restore();
 
-    if (p.x < 0 || p.x > w) p.vx *= -1;
-    if (p.y < 0 || p.y > h) p.vy *= -1;
-    p.x = Math.max(0, Math.min(w, p.x));
-    p.y = Math.max(0, Math.min(h, p.y));
+  // Divider between the per-thousand-people pair and the other indicators
+  ctx.fillStyle = "rgba(255,255,255,0.08)";
+  ctx.fillRect(mL, top + rowH * 2, w - mL - mR, 1);
 
-    // Attraction to center (population cohesion)
-    const dx = cx - p.x;
-    const dy = cy - p.y;
-    const dist = Math.hypot(dx, dy);
-    if (dist > 5) {
-      p.vx += dx / dist * 0.01;
-      p.vy += dy / dist * 0.01;
+  rows.forEach((r, i) => {
+    const y = yc(i);
+    ctx.textAlign = "left";
+    ctx.fillStyle = DIM;
+    ctx.fillText(r.l, mL, y);
+
+    ctx.fillStyle = "rgba(255,255,255,0.06)";
+    rrect(barX, y - barH / 2, barMax, barH, barH / 2);
+    ctx.fill();
+
+    const len = Math.max(barH, Math.min(1, r.f) * barMax);
+    ctx.fillStyle = r.col;
+    rrect(barX, y - barH / 2, len, barH, barH / 2);
+    ctx.fill();
+
+    const rx = barX + (2.1 / 7) * barMax;
+    const tw = ctx.measureText(r.v).width;
+    let tx = barX + len + 8, inL = Infinity;
+    if (i === 3 && tx < rx + 6 && tx + tw > rx - 6) tx = rx + 8;
+    if (tx + tw <= barX + barMax) {
+      ctx.fillStyle = r.col;
+      ctx.fillText(r.v, tx, y);
+    } else {
+      inL = barX + len - 8 - tw;
+      ctx.fillStyle = "rgba(0,0,0,0.92)";
+      ctx.textAlign = "right";
+      ctx.fillText(r.v, barX + len - 8, y);
+      ctx.textAlign = "left";
     }
 
-    const speed = Math.hypot(p.vx, p.vy);
-    if (speed > 1.5) {
-      p.vx = (p.vx / speed) * 1.5;
-      p.vy = (p.vy / speed) * 1.5;
-    }
-  });
-
-  // Draw connection lines (weak)
-  ctx.strokeStyle = 'rgba(120,112,192,0.06)';
-  ctx.lineWidth = 0.5;
-  for (let i = 0; i < particles.length; i++) {
-    for (let j = i + 1; j < particles.length; j++) {
-      const dx = particles[i].x - particles[j].x;
-      const dy = particles[i].y - particles[j].y;
-      const dist = Math.hypot(dx, dy);
-      if (dist < 80) {
-        ctx.globalAlpha = (1 - dist / 80) * 0.3;
-        ctx.beginPath();
-        ctx.moveTo(particles[i].x, particles[i].y);
-        ctx.lineTo(particles[j].x, particles[j].y);
-        ctx.stroke();
+    if (i === 3) {
+      // replacement marker at 2.1 births per woman
+      ctx.strokeStyle = "rgba(255,255,255,0.8)";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      if (inL <= rx + 4) {
+        ctx.moveTo(rx, y - barH / 2 - 5); ctx.lineTo(rx, y - barH / 2 - 1);
+        ctx.moveTo(rx, y + barH / 2 + 1); ctx.lineTo(rx, y + barH / 2 + 5);
+      } else {
+        ctx.moveTo(rx, y - barH / 2 - 4);
+        ctx.lineTo(rx, y + barH / 2 + 4);
       }
+      ctx.stroke();
     }
-  }
-  ctx.globalAlpha = 1;
-
-  // Draw particles
-  particles.forEach(p => {
-    const color = p.birth ? [120,112,192] : [250, 199, 117];
-    const alpha = Math.max(0.3, 1 - p.age * 0.5);
-    
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    
-    // Core
-    ctx.fillStyle = `rgba(${color[0]},${color[1]},${color[2]},${alpha})`;
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Glow
-    const glow = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 4);
-    glow.addColorStop(0, `rgba(${color[0]},${color[1]},${color[2]},${alpha * 0.4})`);
-    glow.addColorStop(1, `rgba(${color[0]},${color[1]},${color[2]},0)`);
-    ctx.fillStyle = glow;
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.r * 4, 0, Math.PI * 2);
-    ctx.fill();
-    
-    ctx.restore();
   });
 
-  // Central glow based on natural increase
-  if (naturalIncrease > 0) {
-    const intensity = Math.min(naturalIncrease / 3, 1);
-    const glowRad = 60 + intensity * 40;
-    const centralGlow = ctx.createRadialGradient(cx, cy, 0, cx, cy, glowRad);
-    centralGlow.addColorStop(0, `rgba(120,112,192,${intensity * 0.3})`);
-    centralGlow.addColorStop(0.5, `rgba(120,112,192,${intensity * 0.15})`);
-    centralGlow.addColorStop(1, 'rgba(120,112,192,0)');
-    
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.fillStyle = centralGlow;
-    ctx.beginPath();
-    ctx.arc(cx, cy, glowRad, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
+  // Gap label, only where there is room for it
+  const gap = c.cbr - c.cdr;
+  const gl = (gap >= 0 ? "+" : "−") + Math.abs(gap).toFixed(1) + " /1000";
+  const gw = ctx.measureText(gl).width;
+  const gy = (yc(0) + yc(1)) / 2;
+  if (rowH >= 30) {
+    ctx.fillStyle = "rgba(" + gRGB + ",0.95)";
+    if (Math.abs(xB - xD) >= gw + 12) {
+      ctx.textAlign = "center";
+      ctx.fillText(gl, (xB + xD) / 2, gy);
+    } else if (Math.max(xB, xD) + 10 + gw <= barX + barMax) {
+      ctx.textAlign = "left";
+      ctx.fillText(gl, Math.max(xB, xD) + 10, gy);
+    }
+    ctx.textAlign = "left";
   }
 
   // Bloom
@@ -574,69 +460,97 @@ function draw() {
   bctx.clearRect(0, 0, buf.width, buf.height);
   if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
   ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalCompositeOperation = "lighter";
   ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
+  ctx.filter = "blur(7px)";
   if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
   ctx.restore();
 
   // Vignette
+  const cx = w / 2, cy = h / 2;
   const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  vig.addColorStop(0, "rgba(0,0,0,0)");
+  vig.addColorStop(1, "rgba(0,0,0,0.52)");
   ctx.fillStyle = vig;
   ctx.fillRect(0, 0, w, h);
-
-  time += 0.016;
-  requestAnimationFrame(draw);
 }
 
-/* Long-run (stable-population) natural increase, % per year, once age-structure momentum has faded.
-   Lotka: r = ln(NRR) / T, with NRR = TFR / 2.1 (replacement in a low-mortality population)
-   and T = mean generation length, about 29 years. Death rate is held at low-mortality levels. */
-const REPLACEMENT = 2.1, GENERATION = 29;
-function longRunIncrease(t) {
-  return 100 * Math.log(t / REPLACEMENT) / GENERATION;
+let raf = null, last = 0;
+function step(now) {
+  const dt = Math.min(now - last, 50);
+  last = now;
+  const a = 1 - Math.exp(-dt / 110);
+  let done = true;
+  KEYS.forEach(k => {
+    const d = tgt[k] - cur[k];
+    if (Math.abs(d) > 0.02) { cur[k] += d * a; done = false; }
+    else cur[k] = tgt[k];
+  });
+  draw();
+  if (done) raf = null;
+  else raf = requestAnimationFrame(step);
 }
 
-function updateUI() {
-  const fillPercent = ((tfr - 0.8) / (4.5 - 0.8)) * 100;
-  slider.style.setProperty('--fill', fillPercent + '%');
+function readouts(m) {
+  const T = TYPES[type];
+  tfrV.textContent = tfr.toFixed(1) + " births/woman";
+  slider.style.setProperty("--fill", ((tfr - 1) / 6 * 100) + "%");
+  liveTag.textContent = T.name + " · TFR " + tfr.toFixed(1);
+  typeCap.textContent = T.cap;
 
-  birthStat.textContent = tfr.toFixed(1);
-
-  const naturalIncrease = longRunIncrease(tfr);
-  const shown = Math.abs(naturalIncrease) < 0.05 ? 0 : naturalIncrease;
-  
-  const sign = shown > 0 ? "+" : (shown < 0 ? "−" : "");
-  changeStat.textContent = sign + Math.abs(shown).toFixed(1) + "%";
-  canvasOverlay.textContent = `Long-run natural increase: ${sign}${Math.abs(shown).toFixed(1)}% per year`;
-
-  let status = "Near stable";
-  if (naturalIncrease < -0.2) status = "Declining";
-  else if (naturalIncrease > 0.2) status = "Growing";
-  
-  liveTag.textContent = `TFR ${tfr.toFixed(1)} • ${status}`;
+  const ni = m.ni;
+  const near = Math.abs(ni) < 0.05;
+  const sign = ni > 0 ? "+" : (ni < 0 ? "−" : "");
+  const niStr = near ? "0.0%" : sign + Math.abs(ni).toFixed(1) + "%";
+  overlay.textContent = near ? "Natural increase 0.0% a year" : "Natural increase " + niStr + " a year";
+  niStat.textContent = niStr;
+  if (ni > 0.05) { dblLabel.textContent = "Doubling time"; dblStat.textContent = Math.round(70 / ni) + " yrs"; }
+  else if (ni < -0.05) { dblLabel.textContent = "Halving time"; dblStat.textContent = Math.round(70 / Math.abs(ni)) + " yrs"; }
+  else { dblLabel.textContent = "Doubling time"; dblStat.textContent = "—"; }
 }
 
-slider.addEventListener('input', (e) => {
+function apply() {
+  const m = model();
+  KEYS.forEach(k => { tgt[k] = m[k]; });
+  readouts(m);
+  if (reduced) { KEYS.forEach(k => { cur[k] = tgt[k]; }); draw(); return; }
+  if (!raf) { last = performance.now(); raf = requestAnimationFrame(step); }
+}
+
+slider.addEventListener("input", e => {
   tfr = parseFloat(e.target.value);
-  updateUI();
+  apply();
 });
 
-toggleBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    toggleBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const mode = btn.dataset.mode;
-    knowdropText.textContent = knowdropContent[mode];
+const typeBtns = document.querySelectorAll("[data-type]");
+typeBtns.forEach(btn => {
+  btn.addEventListener("click", () => {
+    typeBtns.forEach(b => b.setAttribute("aria-pressed", b === btn ? "true" : "false"));
+    type = btn.dataset.type;
+    tfr = TYPES[type].tfr;
+    slider.value = tfr;
+    apply();
   });
 });
 
-window.addEventListener('resize', resize);
+const KD = {
+  rates: "Crude rates divide by the whole population, so they depend on who is in it. A youthful population has few old people, so its crude death rate can sit below that of an aged population whose people live far longer. That is why geographers read infant mortality rate and life expectancy for health: both are poor where fertility is high and improve as it falls. Total fertility rate counts births per woman over a lifetime and does not depend on age structure; crude birth rate does, which is why the same fertility gives more births per thousand in a youthful population than in an aged one. Natural increase is the gap between crude birth rate and crude death rate, and at replacement fertility that gap is still positive in a youthful population and still negative in an aged one, because age structure keeps working for decades after fertility changes.",
+  pattern: "The five indicators travel together across the map, which is what spatial association means. High fertility, high infant mortality and short life expectancy cluster in sub-Saharan Africa, where natural increase still runs above 2 per cent a year. Low fertility, very low infant mortality and the longest lives cluster in Europe and East Asia, where several populations now record more deaths than births. Most of Asia, Latin America and North Africa sit in the transitional band, with fertility near or just above replacement, falling infant mortality and life expectancy in the seventies. The world trend runs one way: fertility has fallen from around five births per woman in the 1960s to a little over two today, so global growth continues at a slowing rate, carried by the regions still in the youthful stage. Density tells a different story again: the most crowded places, such as the river deltas of South and East Asia, are not the fastest growing."
+};
+const kdBtns = document.querySelectorAll("[data-kd]");
+kdBtns.forEach(btn => {
+  btn.addEventListener("click", () => {
+    kdBtns.forEach(b => b.setAttribute("aria-pressed", b === btn ? "true" : "false"));
+    kdText.textContent = KD[btn.dataset.kd];
+  });
+});
+kdText.textContent = KD.rates;
+
+window.addEventListener("resize", resize);
+if (window.ResizeObserver) { new ResizeObserver(() => resize()).observe(wrap); }
+if (document.fonts && document.fonts.ready) { document.fonts.ready.then(() => draw()); }
+readouts(model());
 resize();
-updateUI();
-requestAnimationFrame(draw);
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'fertility-and-mortality'},'*');}catch(e){}}

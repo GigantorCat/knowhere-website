@@ -326,9 +326,9 @@ canvas {
 <h2 class="sr-only">Interactive liquidity ratio calculator showing current and quick ratios with visual indicators</h2>
 
 <div class="container">
-  <h1>Too much cash sitting idle is just as dangerous as <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">insolvency</span></h1>
+  <h1>A liquidity ratio can be too <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">high</span> as well as too low</h1>
   
-  <p class="intro">Liquidity ratios measure whether a business can pay its debts within twelve months—but the ideal range is not "as high as possible." A current ratio above 2× suggests inefficient capital allocation, while below 1× signals danger. Drag the slider to adjust current assets and watch both ratios respond in real time.</p>
+  <p class="intro">Liquidity ratios measure whether a business can pay its debts within twelve months—but the ideal range is not "as high as possible." A current ratio above 2× suggests inefficient capital allocation, while below 1× signals danger. Raise or lower current assets and watch both ratios respond.</p>
 
   <div class="card">
     <div class="card-header">
@@ -339,7 +339,7 @@ canvas {
     
     <div class="canvas-wrapper">
       <canvas id="ratioCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasTag">Current: 1.8× · Quick: 1.2×</div>
+      <div class="canvas-overlay" id="canvasTag">Current: 1.8× · Quick: 1.4×</div>
     </div>
 
     <div class="slider-container">
@@ -354,12 +354,12 @@ canvas {
 
     <div class="stat-row">
       <div class="stat">
-        <div class="stat-label">Current Ratio</div>
+        <div class="stat-label">Current Ratio (working capital ratio)</div>
         <div class="stat-value" id="currentRatio">1.8×</div>
       </div>
       <div class="stat">
-        <div class="stat-label">Quick Ratio</div>
-        <div class="stat-value" id="quickRatio">1.2×</div>
+        <div class="stat-label">Quick Ratio (quick asset ratio)</div>
+        <div class="stat-value" id="quickRatio">1.4×</div>
       </div>
     </div>
   </div>
@@ -443,6 +443,8 @@ function updateValues() {
     statusTag.textContent = 'Insolvency Risk';
   } else if (currentRatio > 2) {
     statusTag.textContent = 'Inefficient Capital';
+  } else if (currentRatio < 1.5 || quickRatio > 1.5) {
+    statusTag.textContent = "Outside Ideal Range";
   } else {
     statusTag.textContent = 'Healthy Range';
   }
@@ -476,7 +478,7 @@ function draw() {
   ctx.globalAlpha = 0.08;
   ctx.fillStyle = `rgb(${accRgb.r},${accRgb.g},${accRgb.b})`;
   ctx.fillRect(margin, h - 60 - ideal20, barWidth, ideal20 - ideal15);
-  ctx.fillRect(margin + barWidth + 40, h - 60 - ideal20, barWidth, ideal20 - ideal10);
+  ctx.fillRect(margin + barWidth + 40, h - 60 - ideal15, barWidth, ideal15 - ideal10);
   ctx.restore();
   
   // Draw gridlines

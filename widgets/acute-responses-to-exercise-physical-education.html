@@ -9,32 +9,19 @@ body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body
   --bg: #0B0D0C;
   --bg2: #12160F;
   --acc: #E86A32;
-  --ag: rgba(232, 106, 50, .7);
-  --ag1: rgba(232, 106, 50, .12);
-  --ag2: rgba(232, 106, 50, .45);
+  --acc-rgb: 232, 106, 50;
+  --ag:  rgba(var(--acc-rgb),.7);
+  --ag1: rgba(var(--acc-rgb),.12);
+  --ag2: rgba(var(--acc-rgb),.45);
   --amb: #FAC775;
   --ink: #EDEDE8;
   --ink-dim: #8C9389;
   --line: #262B26;
 }
 
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
-}
+.sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+* { margin:0; padding:0; box-sizing:border-box; }
 
 body {
   background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
@@ -44,20 +31,17 @@ body {
   padding: 40px 16px 0;
 }
 
-.container {
-  max-width: 720px;
-  margin: 0 auto;
-}
+.ar-wrap { max-width:720px; margin:0 auto; }
 
 h1 {
-  font-size: clamp(26px, 6.5vw, 44px);
+  font-size: clamp(26px,6.5vw,44px);
   font-weight: 800;
   letter-spacing: -0.03em;
   line-height: 1.05;
   margin-bottom: 14px;
 }
 
-.intro {
+.ar-intro {
   font-size: 15.5px;
   font-weight: 400;
   color: var(--ink-dim);
@@ -66,8 +50,8 @@ h1 {
   margin-bottom: 28px;
 }
 
-.card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
+.ar-card {
+  background: linear-gradient(180deg,#12160F,#0d100b);
   border: 1px solid var(--line);
   border-radius: 18px;
   padding: 16px;
@@ -75,595 +59,447 @@ h1 {
   margin-bottom: 18px;
 }
 
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
+.ar-head { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:6px; }
+.ar-label { font-family:'JetBrains Mono',monospace; font-size:13px; text-transform:uppercase; color:var(--ink); }
+.ar-live { font-family:'JetBrains Mono',monospace; font-size:11px; text-transform:uppercase; color:var(--acc); white-space:nowrap; }
+.ar-hint { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-dim); margin-bottom:14px; }
+
+.ar-canvas-wrap {
+  position:relative; width:100%; aspect-ratio:16/9; border-radius:12px; overflow:hidden;
+  background:#000; box-shadow:inset 0 0 0 1px var(--ag1); margin-bottom:16px;
+}
+.ar-canvas-wrap canvas { position:absolute; inset:0; width:100%; height:100%; display:block; }
+.ar-overlay {
+  position:absolute; left:0; right:0; bottom:0;
+  background:rgba(0,0,0,0.55); backdrop-filter:blur(4px); padding:9px 16px;
+  font-family:'JetBrains Mono',monospace; font-size:14px; text-transform:uppercase; color:var(--acc); text-align:center;
 }
 
-.card-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  color: var(--ink);
+.ar-row {
+  display:flex; justify-content:space-between; align-items:baseline;
+  font-family:'JetBrains Mono',monospace; font-size:10.5px; text-transform:uppercase; color:var(--ink-dim);
+  margin-bottom:10px;
 }
+.ar-row b { font-weight:500; color:var(--ink); font-size:12px; }
 
-.live-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--acc);
+.ar-slider {
+  -webkit-appearance:none; appearance:none; width:100%; height:4px; border-radius:3px;
+  background:linear-gradient(90deg, var(--acc) var(--fill,0%), #23291f var(--fill,0%));
+  outline:none; margin:4px 0 8px; display:block;
 }
+.ar-slider::-webkit-slider-thumb {
+  -webkit-appearance:none; appearance:none; width:20px; height:20px; border-radius:50%;
+  background:#0B0D0C; border:2px solid var(--acc);
+  box-shadow:0 0 16px var(--ag), 0 0 4px var(--ag); cursor:pointer; transition:box-shadow .15s;
+}
+.ar-slider::-webkit-slider-thumb:hover { box-shadow:0 0 24px var(--acc), 0 0 8px var(--ag); }
+.ar-slider::-moz-range-thumb {
+  width:20px; height:20px; border-radius:50%; background:#0B0D0C; border:2px solid var(--acc);
+  box-shadow:0 0 16px var(--ag), 0 0 4px var(--ag); cursor:pointer; transition:box-shadow .15s;
+}
+.ar-slider::-moz-range-thumb:hover { box-shadow:0 0 24px var(--acc), 0 0 8px var(--ag); }
 
-.card-hint {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--ink-dim);
-  margin-bottom: 14px;
-}
+.ar-ticks { position:relative; height:14px; font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--ink-dim); margin-bottom:14px; }
+.ar-ticks span { position:absolute; top:0; transform:translateX(-50%); white-space:nowrap; }
+.ar-ticks span:first-child { transform:none; }
+.ar-ticks span:last-child { transform:translateX(-100%); }
 
-.canvas-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16/9;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
-  box-shadow: inset 0 0 0 1px var(--ag1);
-  margin-bottom: 16px;
-}
+.ar-stats { display:grid; grid-template-columns:1fr 1fr; gap:14px 16px; padding-top:16px; border-top:1px solid var(--line); }
+.ar-stat { text-align:center; }
+.ar-stat-label { font-family:'JetBrains Mono',monospace; font-size:10.5px; text-transform:uppercase; color:var(--ink-dim); margin-bottom:6px; }
+.ar-stat-value { font-family:'JetBrains Mono',monospace; font-size:24px; font-weight:500; }
+.ar-stat-value.acc { color:var(--acc); }
+.ar-stat-value.amb { color:var(--amb); }
 
-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
+.ar-toggle-title { font-family:'JetBrains Mono',monospace; font-size:11px; text-transform:uppercase; color:var(--ink-dim); margin-bottom:10px; }
+.ar-pills { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:16px; }
+.ar-pill {
+  flex:1 1 auto; font-family:'JetBrains Mono',monospace; font-size:12px; padding:12px 14px; border-radius:999px;
+  border:1px solid var(--line); background:#12160F; color:var(--ink-dim); cursor:pointer; transition:all .2s;
 }
+.ar-pill[aria-pressed="true"] {
+  background:rgba(var(--acc-rgb),.1); border:1px solid var(--acc); color:var(--acc);
+  box-shadow:0 0 22px rgba(var(--acc-rgb),.18);
+}
+.ar-drop { border-top:1px solid var(--line); padding-top:16px; }
+.ar-drop p { font-size:14.5px; font-weight:400; line-height:1.65; color:var(--ink); }
 
-.canvas-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(4px);
-  padding: 9px 16px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  text-transform: uppercase;
-  color: var(--acc);
-  text-align: center;
+.ar-know {
+  border-left:3px solid var(--acc); padding:16px 18px;
+  background:linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius:0 12px 12px 0; margin-bottom:0; padding-bottom:16px;
 }
-
-.slider-wrapper {
-  margin-bottom: 12px;
-}
-
-.slider-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 10px;
-  display: block;
-}
-
-.ex-slider {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  height: 4px;
-  border-radius: 3px;
-  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
-  outline: none;
-  margin-bottom: 8px;
-}
-
-.ex-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow .15s;
-}
-
-.ex-slider::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.ex-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow .15s;
-}
-
-.ex-slider::-moz-range-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.tick-labels {
-  display: flex;
-  justify-content: space-between;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--ink-dim);
-}
-
-.stat-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-}
-
-.stat {
-  text-align: center;
-}
-
-.stat-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 6px;
-}
-
-.stat-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 24px;
-  font-weight: 500;
-}
-
-.toggle-card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 18px;
-}
-
-.toggle-buttons {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.toggle-btn {
-  flex: 1;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14.5px;
-  padding: 12px;
-  border-radius: 11px;
-  border: 1px solid var(--line);
-  background: #12160F;
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: all .2s;
-}
-
-.toggle-btn.active {
-  background: rgba(232,106,50,.1);
-  border: 1px solid var(--acc);
-  color: var(--acc);
-  box-shadow: 0 0 22px rgba(232,106,50,.18);
-}
-
-.knowdrop-divider {
-  border-top: 1px solid var(--line);
-  padding-top: 16px;
-}
-
-.knowdrop {
-  font-size: 14.5px;
-  font-weight: 400;
-  line-height: 1.65;
-  color: var(--ink);
-}
-
-.know-this {
-  border-left: 3px solid var(--acc);
-  padding: 16px 18px;
-  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
-  border-radius: 0 12px 12px 0;
-  margin-bottom: 0;
-}
-
-.know-this-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--acc);
-  margin-bottom: 10px;
-}
-
-.know-this-body {
-  font-size: 17.4px;
-  font-weight: 400;
-  line-height: 1.55;
-  color: var(--ink);
-}
+.ar-know-tag { display:flex; align-items:center; gap:9px; margin-bottom:10px; font-family:'JetBrains Mono',monospace; font-size:13px; text-transform:uppercase; letter-spacing:0.15em; color:var(--acc); }
+.ar-know-dot { width:6px; height:6px; border-radius:50%; background:var(--acc); box-shadow:0 0 8px var(--acc); animation:arPulse 2.4s ease-in-out infinite; }
+.ar-know p { font-size:17.4px; font-weight:400; line-height:1.55; color:var(--ink); }
+@keyframes arPulse { 0%,100%{opacity:1} 50%{opacity:.45} }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
+  *, *::before, *::after { animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; }
 }
-
-@media (max-width: 360px) {
-  body {
-    padding: 32px 12px 0;
-  }
-  .card, .toggle-card {
-    padding: 14px;
-  }
+@media (max-width:360px) {
+  body { padding:32px 12px 0; }
+  .ar-card { padding:14px; }
 }
 </style>
 
-<div class="container">
-  <h2 class="sr-only">Interactive visualisation of acute physiological responses to exercise</h2>
-  
-  <h1>Your body shifts into exercise mode <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">immediately</span></h1>
-  
-  <p class="intro">The cardiovascular, respiratory and muscular systems don't wait to respond — they react in the first seconds of movement, ramping up delivery and clearance before you've even noticed you're working. Slide the intensity slider to see the heart and lungs respond: heart rate, stroke volume, cardiac output, and breathing rate and depth.</p>
+<div class="ar-wrap">
+  <h2 class="sr-only">Interactive picture of acute responses to exercise in the cardiovascular, respiratory and muscular systems, driven by one exercise intensity control</h2>
 
-  <div class="card">
-    <div class="card-header">
-      <span class="card-label">Acute Response Cascade</span>
-      <span class="live-tag" id="intensity-tag">Resting</span>
-    </div>
-    <div class="card-hint">Drag to simulate exercise intensity (rest → moderate → vigorous)</div>
-    
-    <div class="canvas-wrapper">
-      <canvas id="canvas"></canvas>
-      <div class="canvas-overlay" id="overlay-tag">Systems at baseline</div>
-    </div>
+  <h1>Stroke volume stops rising halfway, but cardiac output keeps <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">climbing</span></h1>
 
-    <div class="slider-wrapper">
-      <label class="slider-label" for="intensity-slider">Exercise Intensity</label>
-      <input type="range" id="intensity-slider" class="ex-slider" min="0" max="100" value="0" style="--fill: 0%">
-      <div class="tick-labels">
-        <span>Rest</span>
-        <span>Moderate</span>
-        <span>Vigorous</span>
-      </div>
+  <p class="ar-intro">Exercise does not wait for a warm-up. In the first seconds the lungs, the heart and the working muscle all shift together, and they keep shifting as the effort grows. Raise the intensity and watch the lungs breathe faster and deeper, the heart beat faster and harder, and the muscle warm as it draws a growing share of the blood.</p>
+
+  <div class="ar-card">
+    <div class="ar-head">
+      <span class="ar-label">Lungs → heart → working muscle</span>
+      <span class="ar-live" id="arLive">Resting</span>
+    </div>
+    <div class="ar-hint">Raise the intensity. Watch the heart, lungs and muscle respond.</div>
+
+    <div class="ar-canvas-wrap" id="arWrap">
+      <canvas id="arCanvas" aria-label="Lungs, heart and working muscle responding to exercise intensity"></canvas>
+      <div class="ar-overlay" id="arOverlay">Resting · lactate 1.0 mmol/L</div>
     </div>
 
-    <div class="stat-row">
-      <div class="stat">
-        <div class="stat-label">Heart rate (bpm)</div>
-        <div class="stat-value" id="hr-stat" style="color:var(--acc)">72</div>
-      </div>
-      <div class="stat">
-        <div class="stat-label">Stroke volume (mL)</div>
-        <div class="stat-value" id="sv-stat" style="color:var(--acc)">70</div>
-      </div>
-      <div class="stat">
-        <div class="stat-label">Cardiac output (L/min)</div>
-        <div class="stat-value" id="co-stat" style="color:var(--amb)">5.0</div>
-      </div>
-      <div class="stat">
-        <div class="stat-label">Breaths/min · depth (L)</div>
-        <div class="stat-value" id="br-stat" style="color:var(--amb)">12 · 0.5</div>
-      </div>
+    <div class="ar-row"><span>Exercise intensity</span><b id="arVal">0%</b></div>
+    <input type="range" class="ar-slider" id="arSlider" aria-label="Exercise intensity" min="0" max="100" step="1" value="0" style="--fill:0%">
+    <div class="ar-ticks">
+      <span style="left:0%">Rest</span>
+      <span style="left:50%">Moderate</span>
+      <span style="left:100%">Maximal</span>
+    </div>
+
+    <div class="ar-stats">
+      <div class="ar-stat"><div class="ar-stat-label">Heart rate (bpm)</div><div class="ar-stat-value acc" id="stHr">72</div></div>
+      <div class="ar-stat"><div class="ar-stat-label">Stroke volume (mL)</div><div class="ar-stat-value amb" id="stSv">70</div></div>
+      <div class="ar-stat"><div class="ar-stat-label">Cardiac output (L/min)</div><div class="ar-stat-value acc" id="stCo">5.0</div></div>
+      <div class="ar-stat"><div class="ar-stat-label">Ventilation (L/min)</div><div class="ar-stat-value amb" id="stVe">6</div></div>
+      <div class="ar-stat"><div class="ar-stat-label">Muscle temperature</div><div class="ar-stat-value acc" id="stTemp">37.0 °C</div></div>
+      <div class="ar-stat"><div class="ar-stat-label">Blood to muscle</div><div class="ar-stat-value amb" id="stFlow">20%</div></div>
     </div>
   </div>
 
-  <div class="toggle-card">
-    <div class="toggle-buttons">
-      <button class="toggle-btn active" data-system="cardio">Cardiovascular</button>
-      <button class="toggle-btn" data-system="resp">Respiratory</button>
+  <div class="ar-card">
+    <div class="ar-toggle-title">Which system?</div>
+    <div class="ar-pills" role="group" aria-label="Choose the body system to read about">
+      <button class="ar-pill" data-sys="cardio" aria-pressed="true">Cardiovascular</button>
+      <button class="ar-pill" data-sys="resp" aria-pressed="false">Respiratory</button>
+      <button class="ar-pill" data-sys="muscle" aria-pressed="false">Muscular</button>
     </div>
-    
-    <div class="knowdrop-divider">
-      <p class="knowdrop" id="knowdrop-text">
-        When you start moving, the heart immediately increases its rate and the volume of blood pumped per beat (stroke volume). Heart rate can climb from around 70 bpm at rest to 180+ bpm during vigorous exercise. Stroke volume rises as the heart contracts more forcefully. Together, these two changes drive cardiac output up — sometimes to five times resting levels — flooding working muscles with oxygen-rich blood and clearing carbon dioxide and metabolic waste faster.
-      </p>
-    </div>
+    <div class="ar-drop"><p id="arDrop"></p></div>
   </div>
 
-  <div class="know-this">
-    <div class="know-this-tag">Know This</div>
-    <p class="know-this-body">
-      Acute responses — <span style="color:var(--acc)">heart rate</span>, <span style="color:var(--acc)">stroke volume</span>, <span style="color:var(--acc)">breathing rate and depth</span> — happen within seconds of starting exercise and return to baseline soon after you stop.
-    </p>
+  <div class="ar-know">
+    <div class="ar-know-tag"><span class="ar-know-dot"></span><span>Know This</span></div>
+    <p>Within seconds of starting, <span style="color:var(--acc)">heart rate, stroke volume</span> lift cardiac output, <span style="color:var(--acc)">breathing rate and depth</span> lift ventilation, and <span style="color:var(--acc)">muscle temperature, blood flow</span> rise, then all of them return to baseline once you stop.</p>
   </div>
 </div>
 
 <script>
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d', { alpha: false });
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d', { alpha: false });
+(function(){
+  const CSS = getComputedStyle(document.documentElement);
+  const ACC = CSS.getPropertyValue("--acc").trim();
+  const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+  const AMB = CSS.getPropertyValue("--amb").trim();
+  const INK = CSS.getPropertyValue("--ink").trim();
+  const DIM = CSS.getPropertyValue("--ink-dim").trim();
+  function hexToRgb(hex){
+    const m = hex.replace("#","");
+    const n = parseInt(m.length === 3 ? m.split("").map(c => c + c).join("") : m, 16);
+    return ((n >> 16) & 255) + "," + ((n >> 8) & 255) + "," + (n & 255);
+  }
+  const AMB_RGB = hexToRgb(AMB);
+  const reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-const slider = document.getElementById('intensity-slider');
-const intensityTag = document.getElementById('intensity-tag');
-const overlayTag = document.getElementById('overlay-tag');
-const hrStat = document.getElementById('hr-stat');
-const coStat = document.getElementById('co-stat');
-const svStat = document.getElementById('sv-stat');
-const brStat = document.getElementById('br-stat');
-
-/* one model drives the drawing and every readout */
-function model(i) {
-  const hr = 72 + 108 * i;                          /* 72 to 180 bpm */
-  const sv = 70 + 50 * Math.min(1, i / 0.5);        /* mL per beat, plateaus near half intensity */
-  const co = hr * sv / 1000;                        /* L/min */
-  const rr = 12 + 33 * i;                           /* breaths per minute */
-  const tv = 0.5 + 2.0 * (1 - Math.exp(-3 * i)) / (1 - Math.exp(-3)); /* litres per breath */
-  return { hr, sv, co, rr, tv };
-}
-const toggleBtns = document.querySelectorAll('.toggle-btn');
-const knowdropText = document.getElementById('knowdrop-text');
-
-let intensity = 0;
-let time = 0;
-let animFrame;
-
-const knowdrops = {
-  cardio: "When you start moving, the heart immediately increases its rate and the volume of blood pumped per beat (stroke volume). Heart rate can climb from around 70 bpm at rest to 180+ bpm during vigorous exercise. Stroke volume rises as the heart contracts more forcefully. Together, these two changes drive cardiac output up — sometimes to five times resting levels — flooding working muscles with oxygen-rich blood and clearing carbon dioxide and metabolic waste faster.",
-  resp: "Breathing rate and depth both increase within seconds of exercise onset. At rest, you might breathe 12–15 times per minute, taking shallow breaths. During vigorous exercise, breathing rate can double or triple, and each breath becomes much deeper as the diaphragm and intercostal muscles work harder. This delivers more oxygen to the lungs and expels carbon dioxide faster. The respiratory system is immediately responsive — no delay, no warm-up needed."
-};
-
-function resize() {
+  const canvas = document.getElementById("arCanvas");
+  const wrap = document.getElementById("arWrap");
+  const ctx = canvas.getContext("2d");
+  const buf = document.createElement("canvas");
+  const bctx = buf.getContext("2d");
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  bctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
 
-window.addEventListener('resize', resize);
-resize();
+  const slider = document.getElementById("arSlider");
+  const valEl = document.getElementById("arVal");
+  const liveEl = document.getElementById("arLive");
+  const overlayEl = document.getElementById("arOverlay");
+  const stHr = document.getElementById("stHr");
+  const stSv = document.getElementById("stSv");
+  const stCo = document.getElementById("stCo");
+  const stVe = document.getElementById("stVe");
+  const stTemp = document.getElementById("stTemp");
+  const stFlow = document.getElementById("stFlow");
 
-// Particles representing oxygen/blood flow
-const particles = Array.from({ length: 80 }, () => ({
-  x: Math.random(),
-  y: Math.random(),
-  vx: (Math.random() - 0.5) * 0.3,
-  vy: (Math.random() - 0.5) * 0.3,
-  r: Math.random() * 1.5 + 0.8,
-  phase: Math.random() * Math.PI * 2
-}));
+  let intensity = 0;
 
-function draw() {
-  const w = canvas.width / Math.min(window.devicePixelRatio || 1, 2);
-  const h = canvas.height / Math.min(window.devicePixelRatio || 1, 2);
-  const cx = w * 0.32;
-  const cy = h * 0.4;
-  const m = model(intensity);
+  /* one model drives the drawing and every readout */
+  function model(i){
+    const hr = 72 + 108 * i;                                   /* bpm */
+    const sv = 70 + 50 * Math.min(1, i / 0.5);                 /* mL per beat, plateaus near half intensity */
+    const co = hr * sv / 1000;                                 /* L/min */
+    const rr = 12 + 33 * i;                                    /* breaths per minute */
+    const curve = (1 - Math.exp(-3 * i)) / (1 - Math.exp(-3));
+    const tv = 0.5 + 2.0 * curve;                              /* litres per breath */
+    const ve = rr * tv;                                        /* L/min */
+    const temp = 37 + 2.5 * i;                                 /* muscle temperature */
+    const flow = 0.20 + 0.65 * curve;                          /* share of cardiac output to working muscle */
+    const lac = 1 + 11 * Math.pow(i, 2.8);                     /* mmol/L, climbs past moderate intensity */
+    return { hr, sv, co, rr, tv, ve, temp, flow, lac };
+  }
+  function stage(i){
+    if (i < 0.1) return "Resting";
+    if (i < 0.35) return "Light";
+    if (i < 0.7) return "Moderate";
+    if (i < 0.95) return "Vigorous";
+    return "Maximal";
+  }
 
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, w, h);
+  function resize(){
+    const rect = wrap.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    buf.width = canvas.width;
+    buf.height = canvas.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  window.addEventListener("resize", () => { resize(); if (reduced) draw(); });
+  if (window.ResizeObserver) new ResizeObserver(() => { resize(); if (reduced) draw(); }).observe(wrap);
+  resize();
 
-  time += 0.016;
-  
-  // Base flow speed on intensity
-  const flowSpeed = 0.2 + intensity * 1.5;
-  
-  // Update and draw particles
-  particles.forEach(p => {
-    // Move particles
-    p.x += p.vx * flowSpeed * 0.01;
-    p.y += p.vy * flowSpeed * 0.01;
-    
-    // Wrap around
-    if (p.x < 0) p.x = 1;
-    if (p.x > 1) p.x = 0;
-    if (p.y < 0) p.y = 1;
-    if (p.y > 1) p.y = 0;
-    
-    const px = p.x * w;
-    const py = p.y * h;
-    
-    // Pulsing alpha
-    const alpha = 0.4 + 0.3 * Math.sin(time * 2 + p.phase) * intensity;
-    
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    
-    // Particle glow
-    const grad = ctx.createRadialGradient(px, py, 0, px, py, p.r * 4);
-    grad.addColorStop(0, `rgba(232,106,50,${alpha})`);
-    grad.addColorStop(0.5, `rgba(232,106,50,${alpha * 0.3})`);
-    grad.addColorStop(1, 'rgba(232,106,50,0)');
-    
-    ctx.fillStyle = grad;
+  /* particles: air from lungs to heart (amber), blood from heart to muscle (accent) */
+  const air = Array.from({ length: 60 }, () => ({ t: Math.random(), off: (Math.random() - 0.5) * 2, r: 1 + Math.random() * 1.2 }));
+  const blood = Array.from({ length: 70 }, () => ({ t: Math.random(), off: (Math.random() - 0.5) * 2, r: 1 + Math.random() * 1.4 }));
+
+  let heartPhase = 0.25;
+  let breathPhase = 0.25;
+
+  function step(dt){
+    const m = model(intensity);
+    heartPhase = (heartPhase + dt * m.hr / 60) % 1;
+    breathPhase = (breathPhase + dt * m.rr / 60) % 1;
+    const bloodFrac = (m.co * m.flow) / (21.6 * 0.85);
+    const airFrac = (m.ve - 6) / (112.5 - 6);
+    const bloodN = Math.round(6 + 54 * bloodFrac);
+    const airN = Math.round(5 + 45 * airFrac);
+    const bloodSpeed = (0.15 + 0.85 * bloodFrac) * 0.6;
+    const airSpeed = (0.15 + 0.85 * Math.max(0, airFrac)) * 0.55;
+    for (let k = 0; k < bloodN && k < blood.length; k++){ blood[k].t += bloodSpeed * dt; if (blood[k].t > 1) blood[k].t -= 1; }
+    for (let k = 0; k < airN && k < air.length; k++){ air[k].t += airSpeed * dt; if (air[k].t > 1) air[k].t -= 1; }
+    return { m, bloodN, airN };
+  }
+
+  function quad(p0, p1, p2, t){
+    const a = (1 - t) * (1 - t), b = 2 * (1 - t) * t, c = t * t;
+    return { x: a * p0.x + b * p1.x + c * p2.x, y: a * p0.y + b * p1.y + c * p2.y };
+  }
+  function roundRect(x, y, w, h, r){
     ctx.beginPath();
-    ctx.arc(px, py, p.r * 4, 0, Math.PI * 2);
-    ctx.fill();
-    
-    // Core particle
-    ctx.fillStyle = `rgba(237,237,232,${0.6 + alpha * 0.4})`;
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+  }
+  function heartPath(x, y, s){
     ctx.beginPath();
-    ctx.arc(px, py, p.r, 0, Math.PI * 2);
-    ctx.fill();
-    
-    ctx.restore();
-  });
+    ctx.moveTo(x, y + s);
+    ctx.bezierCurveTo(x - s * 1.4, y - s * 0.1, x - s * 0.6, y - s * 1.1, x, y - s * 0.4);
+    ctx.bezierCurveTo(x + s * 0.6, y - s * 1.1, x + s * 1.4, y - s * 0.1, x, y + s);
+    ctx.closePath();
+  }
 
-  // Central heart pulse visualization
-  const heartbeat = Math.sin(time * 2 * Math.PI * m.hr / 60) * 0.5 + 0.5;
-  const baseR = Math.min(w, h) * 0.1;
-  const pulseR = baseR * (1 + heartbeat * intensity * 0.4);
-  
-  // Heart glow rings
-  for (let i = 3; i >= 1; i--) {
+  function draw(){
+    const w = canvas.width / dpr;
+    const h = canvas.height / dpr;
+    if (!w || !h) return;
+    const m = model(intensity);
+    const i = intensity;
+    const u = Math.min(w * 0.22, h * 0.42);
+    const cy = h * 0.47;
+    const xL = w * 0.18, xH = w * 0.5, xM = w * 0.82;
+
+    ctx.fillStyle = "rgba(0,0,0,1)";
+    ctx.fillRect(0, 0, w, h);
+
+    /* ---- lungs: rate sets rhythm, depth sets how far they fill ---- */
+    const breath = 0.5 - 0.5 * Math.cos(breathPhase * Math.PI * 2);
+    const fill = (m.tv * breath) / 2.5;
+    const lr = u * (0.36 + 0.2 * fill);
     ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.strokeStyle = `rgba(232,106,50,${(1 - i/4) * intensity * 0.3})`;
+    ctx.strokeStyle = "rgba(" + AMB_RGB + ",0.6)";
     ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.arc(cx, cy, pulseR + i * 15 * intensity, 0, Math.PI * 2);
-    ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(xL, cy - lr * 1.25); ctx.lineTo(xL, cy - lr * 0.7); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(xL, cy - lr * 0.7); ctx.lineTo(xL - lr * 0.5, cy - lr * 0.35); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(xL, cy - lr * 0.7); ctx.lineTo(xL + lr * 0.5, cy - lr * 0.35); ctx.stroke();
+    for (const side of [-1, 1]){
+      const lx = xL + side * lr * 0.62;
+      const g = ctx.createRadialGradient(lx, cy, 0, lx, cy, lr * 1.1);
+      g.addColorStop(0, "rgba(" + AMB_RGB + "," + (0.2 + 0.5 * fill) + ")");
+      g.addColorStop(1, "rgba(" + AMB_RGB + ",0.04)");
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.ellipse(lx, cy, lr * 0.5, lr * 0.95, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = "rgba(" + AMB_RGB + ",0.85)";
+      ctx.lineWidth = 1.5; ctx.stroke();
+    }
     ctx.restore();
-  }
-  
-  // Heart core
-  const coreGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, pulseR * 2);
-  coreGrad.addColorStop(0, `rgba(232,106,50,${0.5 + intensity * 0.3})`);
-  coreGrad.addColorStop(0.4, `rgba(232,106,50,${0.2 + intensity * 0.2})`);
-  coreGrad.addColorStop(1, 'rgba(232,106,50,0)');
-  
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.fillStyle = coreGrad;
-  ctx.beginPath();
-  ctx.arc(cx, cy, pulseR * 2, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
-  
-  // Solid heart
-  ctx.fillStyle = `rgba(232,106,50,${0.8 + intensity * 0.2})`;
-  ctx.beginPath();
-  ctx.arc(cx, cy, pulseR * 0.6, 0, Math.PI * 2);
-  ctx.fill();
 
-  // Flow lines radiating from center
-  const lineCount = Math.floor(8 + intensity * 16);
-  for (let i = 0; i < lineCount; i++) {
-    const angle = (i / lineCount) * Math.PI * 2 + time * 0.3;
-    const dist = pulseR * 2 + Math.sin(time * 2 + i) * 10;
-    const endDist = dist + 20 + intensity * 30;
-    
-    const sx = cx + Math.cos(angle) * dist;
-    const sy = cy + Math.sin(angle) * dist;
-    const ex = cx + Math.cos(angle) * endDist;
-    const ey = cy + Math.sin(angle) * endDist;
-    
+    /* ---- heart: rate sets rhythm, stroke volume sets how hard it glows ---- */
+    const hb = Math.pow(0.5 + 0.5 * Math.sin(heartPhase * Math.PI * 2), 3);
+    const pulse = 1 + hb * (0.08 + i * 0.32);
+    const s = u * 0.36 * pulse;
+    const hy = cy - s * 0.1;
+    const svFrac = (m.sv - 70) / 50;
     ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    const lineGrad = ctx.createLinearGradient(sx, sy, ex, ey);
-    lineGrad.addColorStop(0, `rgba(232,106,50,${0.4 * intensity})`);
-    lineGrad.addColorStop(1, 'rgba(232,106,50,0)');
-    ctx.strokeStyle = lineGrad;
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(sx, sy);
-    ctx.lineTo(ex, ey);
-    ctx.stroke();
+    ctx.globalCompositeOperation = "lighter";
+    const corona = ctx.createRadialGradient(xH, hy, 0, xH, hy, s * 2.6);
+    corona.addColorStop(0, "rgba(" + RGB + "," + (0.25 + 0.35 * svFrac + 0.15 * hb) + ")");
+    corona.addColorStop(0.45, "rgba(" + RGB + "," + (0.08 + 0.14 * svFrac) + ")");
+    corona.addColorStop(1, "rgba(" + RGB + ",0)");
+    ctx.fillStyle = corona;
+    ctx.beginPath(); ctx.arc(xH, hy, s * 2.6, 0, Math.PI * 2); ctx.fill();
     ctx.restore();
-  }
-
-  // Lungs: breathing rate sets the rhythm, depth sets the size
-  const lx = w * 0.72;
-  const ly = h * 0.4;
-  const breath = 0.5 - 0.5 * Math.cos(time * 2 * Math.PI * m.rr / 60);
-  const fill = (0.5 + (m.tv - 0.5) * breath) / 2.5;
-  const lr = Math.min(w, h) * (0.13 + 0.11 * fill);
-  ctx.save();
-  ctx.strokeStyle = 'rgba(237,237,232,0.55)';
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(lx, ly - lr * 1.6);
-  ctx.lineTo(lx, ly - lr * 0.6);
-  ctx.stroke();
-  for (const side of [-1, 1]) {
-    const g = ctx.createRadialGradient(lx + side * lr * 0.6, ly, 0, lx + side * lr * 0.6, ly, lr * 1.2);
-    g.addColorStop(0, `rgba(250,199,117,${0.25 + 0.45 * fill})`);
-    g.addColorStop(1, 'rgba(250,199,117,0.05)');
-    ctx.fillStyle = g;
-    ctx.beginPath();
-    ctx.ellipse(lx + side * lr * 0.62, ly, lr * 0.5, lr * 0.95, 0, 0, Math.PI * 2);
+    heartPath(xH, hy, s);
+    ctx.fillStyle = "rgba(" + RGB + "," + (0.55 + 0.3 * svFrac + 0.15 * hb) + ")";
     ctx.fill();
-    ctx.strokeStyle = 'rgba(250,199,117,0.8)';
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
+    ctx.strokeStyle = ACC; ctx.lineWidth = 1.5; ctx.stroke();
+
+    /* ---- working muscle: warmth and glow scale with temperature ---- */
+    const bw = u * 1.25, bh = u * 0.85;
+    const mx = xM - bw / 2, my = cy - bh / 2;
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    const heat = ctx.createRadialGradient(xM, cy, bh * 0.2, xM, cy, bw * 0.95);
+    heat.addColorStop(0, "rgba(" + RGB + "," + (0.08 + 0.42 * i) + ")");
+    heat.addColorStop(1, "rgba(" + RGB + ",0)");
+    ctx.fillStyle = heat;
+    ctx.beginPath(); ctx.arc(xM, cy, bw * 0.95, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+    roundRect(mx, my, bw, bh, bh * 0.35);
+    ctx.fillStyle = "rgba(" + RGB + "," + (0.12 + 0.45 * i) + ")";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(" + RGB + "," + (0.5 + 0.5 * i) + ")";
+    ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.save();
+    roundRect(mx, my, bw, bh, bh * 0.35); ctx.clip();
+    ctx.strokeStyle = "rgba(" + RGB + "," + (0.25 + 0.55 * i) + ")";
+    ctx.lineWidth = 1.2;
+    for (let k = 1; k <= 5; k++){
+      const yy = my + bh * k / 6;
+      ctx.beginPath(); ctx.moveTo(mx, yy); ctx.lineTo(mx + bw, yy); ctx.stroke();
+    }
+    ctx.restore();
+
+    /* ---- vessels: air to the heart, blood to the muscle ---- */
+    const aP0 = { x: xL + u * 0.64, y: cy }, aP1 = { x: (xL + xH) / 2, y: cy - u * 0.4 }, aP2 = { x: xH - u * 0.45, y: cy - u * 0.08 };
+    const bP0 = { x: xH + u * 0.45, y: cy }, bP1 = { x: (xH + xM) / 2, y: cy + u * 0.4 }, bP2 = { x: mx, y: cy + u * 0.05 };
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = "rgba(" + AMB_RGB + ",0.18)";
+    ctx.beginPath(); ctx.moveTo(aP0.x, aP0.y); ctx.quadraticCurveTo(aP1.x, aP1.y, aP2.x, aP2.y); ctx.stroke();
+    ctx.strokeStyle = "rgba(" + RGB + ",0.18)";
+    ctx.beginPath(); ctx.moveTo(bP0.x, bP0.y); ctx.quadraticCurveTo(bP1.x, bP1.y, bP2.x, bP2.y); ctx.stroke();
+
+    const bloodFrac = (m.co * m.flow) / (21.6 * 0.85);
+    const airFrac = Math.max(0, (m.ve - 6) / (112.5 - 6));
+    const bloodN = Math.round(6 + 54 * bloodFrac);
+    const airN = Math.round(5 + 45 * airFrac);
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    for (let k = 0; k < airN && k < air.length; k++){
+      const p = air[k]; const q = quad(aP0, aP1, aP2, p.t);
+      const px = q.x, py = q.y + p.off * u * 0.07;
+      const g = ctx.createRadialGradient(px, py, 0, px, py, p.r * 3.5);
+      g.addColorStop(0, "rgba(" + AMB_RGB + ",0.7)"); g.addColorStop(1, "rgba(" + AMB_RGB + ",0)");
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(px, py, p.r * 3.5, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = INK; ctx.globalAlpha = 0.8; ctx.beginPath(); ctx.arc(px, py, p.r * 0.7, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1;
+    }
+    for (let k = 0; k < bloodN && k < blood.length; k++){
+      const p = blood[k]; const q = quad(bP0, bP1, bP2, p.t);
+      const px = q.x, py = q.y + p.off * u * 0.08;
+      const g = ctx.createRadialGradient(px, py, 0, px, py, p.r * 3.5);
+      g.addColorStop(0, "rgba(" + RGB + ",0.75)"); g.addColorStop(1, "rgba(" + RGB + ",0)");
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(px, py, p.r * 3.5, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = INK; ctx.globalAlpha = 0.8; ctx.beginPath(); ctx.arc(px, py, p.r * 0.7, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1;
+    }
+    ctx.restore();
+
+    /* bloom */
+    bctx.setTransform(1, 0, 0, 1, 0, 0); bctx.clearRect(0, 0, buf.width, buf.height);
+    if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+    ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
+    (buf.width&&buf.height)&&ctx.drawImage(buf, 0, 0, w, h); ctx.restore();
+
+    /* vignette */
+    const vig = ctx.createRadialGradient(w / 2, h / 2, h * 0.28, w / 2, h / 2, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
+
+    /* labels: name above, live value below, each organ its own column */
+    ctx.font = "11px 'JetBrains Mono', monospace";
+    ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
+    ctx.fillStyle = DIM;
+    ctx.fillText("LUNGS", xL, h * 0.12);
+    ctx.fillText("HEART", xH, h * 0.12);
+    ctx.fillText("WORKING MUSCLE", xM, h * 0.12);
+    ctx.fillStyle = AMB;
+    ctx.fillText(Math.round(m.rr) + "/min · " + m.tv.toFixed(1) + " L", xL, h * 0.78);
+    ctx.fillStyle = ACC;
+    ctx.fillText(Math.round(m.hr) + " bpm", xH, h * 0.78);
+    ctx.fillText(m.temp.toFixed(1) + " °C", xM, h * 0.78);
   }
-  ctx.restore();
-  ctx.font = '10px "JetBrains Mono", monospace';
-  ctx.textAlign = 'center';
-  ctx.fillStyle = '#8C9389';
-  ctx.fillText("HEART", cx, h * 0.74);
-  ctx.fillText("LUNGS", lx, h * 0.74);
 
-  // Bloom effect
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
-
-  // Vignette
-  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-
-  animFrame = requestAnimationFrame(draw);
-}
-
-slider.addEventListener('input', (e) => {
-  const val = parseFloat(e.target.value);
-  slider.style.setProperty('--fill', val + '%');
-  intensity = val / 100;
-  
-  updateReadouts();
-});
-
-function updateReadouts() {
-  const m = model(intensity);
-  let tag, overlay;
-  if (m.hr < 80) {
-    tag = "Resting";
-    overlay = "Systems at baseline";
-  } else if (intensity < 0.35) {
-    tag = "Light";
-    overlay = "Systems responding";
-  } else if (intensity < 0.7) {
-    tag = "Moderate";
-    overlay = "Systems ramping";
-  } else if (intensity < 0.95) {
-    tag = "Vigorous";
-    overlay = "Working hard";
-  } else {
-    tag = "Maximal";
-    overlay = "Near maximum output";
+  function updateReadouts(){
+    const m = model(intensity);
+    const st = stage(intensity);
+    liveEl.textContent = st;
+    overlayEl.textContent = st + " · lactate " + m.lac.toFixed(1) + " mmol/L";
+    stHr.textContent = Math.round(m.hr);
+    stSv.textContent = Math.round(m.sv);
+    stCo.textContent = m.co.toFixed(1);
+    stVe.textContent = Math.round(m.ve);
+    stTemp.textContent = m.temp.toFixed(1) + " °C";
+    stFlow.textContent = Math.round(m.flow * 100) + "%";
   }
-  intensityTag.textContent = tag;
-  overlayTag.textContent = overlay;
-  hrStat.textContent = Math.round(m.hr);
-  svStat.textContent = Math.round(m.sv);
-  coStat.textContent = m.co.toFixed(1);
-  brStat.textContent = Math.round(m.rr) + ' · ' + m.tv.toFixed(1);
-}
 
-toggleBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    toggleBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const system = btn.dataset.system;
-    knowdropText.textContent = knowdrops[system];
+  slider.addEventListener("input", (e) => {
+    const v = parseFloat(e.target.value);
+    slider.style.setProperty("--fill", v + "%");
+    valEl.textContent = v + "%";
+    intensity = v / 100;
+    updateReadouts();
+    if (reduced) draw();
   });
-});
 
-updateReadouts();
-draw();
+  /* heart rate, breathing rate and flow are rates, so the loop runs while the card is open */
+  let last = performance.now();
+  function frame(now){
+    const dt = Math.min(now - last, 50) / 1000;
+    last = now;
+    step(dt);
+    draw();
+    requestAnimationFrame(frame);
+  }
+
+  /* knowdrops */
+  const drops = {
+    cardio: "Within the first seconds of exercise, heart rate climbs from about 72 bpm towards a maximum near 180 bpm, driven by the sympathetic nervous system. Stroke volume also rises because more blood returns to the heart and the ventricle contracts more forcefully, but it plateaus at roughly half of maximal intensity, at about 120 mL per beat. Cardiac output is heart rate multiplied by stroke volume, so once stroke volume levels off, every further rise in cardiac output comes from heart rate alone. This pushes cardiac output from about 5 L/min at rest to over 20 L/min, and systolic blood pressure rises with it while diastolic stays roughly steady. These are acute responses: they appear immediately and reverse within minutes of stopping.",
+    resp: "Breathing rate rises from around 12 breaths per minute at rest to 40 or more, and the depth of each breath (tidal volume) grows from about 0.5 L to 2.5 L as the diaphragm and intercostal muscles work harder. Ventilation is rate multiplied by depth, so it can climb from about 6 L/min to more than 100 L/min. Early in exercise the depth of breathing does most of the work; at higher intensities the rate takes over. More air moving through the lungs raises oxygen diffusion into the blood and clears the extra carbon dioxide the working muscle produces. Like the cardiovascular changes, this begins within seconds and settles back once exercise stops.",
+    muscle: "Working muscle needs more oxygen and fuel, so the arterioles feeding it dilate while vessels to the gut and kidneys constrict, redistributing blood. At rest about 20 percent of cardiac output goes to muscle; in hard exercise that share rises to 80 percent or more of a much larger output. Muscle temperature rises by around 2 to 3 degrees as contraction releases heat, which speeds enzyme activity and helps oxygen unload from haemoglobin. More motor units are recruited, energy substrate use increases, and above a moderate intensity lactate accumulates faster than it can be cleared. All of these changes are immediate and temporary, which is what separates an acute response from a chronic adaptation built over weeks of training."
+  };
+  const dropEl = document.getElementById("arDrop");
+  const pills = Array.from(document.querySelectorAll(".ar-pill"));
+  pills.forEach(btn => {
+    btn.addEventListener("click", () => {
+      pills.forEach(b => b.setAttribute("aria-pressed", b === btn ? "true" : "false"));
+      dropEl.textContent = drops[btn.dataset.sys];
+    });
+  });
+  dropEl.textContent = drops.cardio;
+
+  updateReadouts();
+  if (reduced) { draw(); } else { requestAnimationFrame(frame); }
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'acute-responses-to-exercise'},'*');}catch(e){}}

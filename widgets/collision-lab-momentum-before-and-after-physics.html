@@ -1,0 +1,384 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Collision lab: momentum before and after — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap");
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #3A6FC8;
+  --acc-rgb: 58, 111, 200;
+  --ag:  rgba(var(--acc-rgb),.7);
+  --ag1: rgba(var(--acc-rgb),.12);
+  --ag2: rgba(var(--acc-rgb),.45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+  --bg-top: #11160F;
+  --card-end: #0d100b;
+  --track: #23291f;
+  --black: #000;
+}
+body{margin:0;background:radial-gradient(120% 80% at 50% -10%,var(--bg-top) 0%,var(--bg) 55%);font-family:"Geist",sans-serif;color:var(--ink);min-height:100vh;padding:40px 16px 0;box-sizing:border-box}
+.clm{max-width:720px;margin:0 auto}
+.clm *{box-sizing:border-box}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.clm h1{font-family:"Geist",sans-serif;font-weight:800;font-size:clamp(26px,6.5vw,44px);letter-spacing:-0.03em;line-height:1.05;margin:0 0 14px}
+.clm .intro{font-size:15.5px;font-weight:400;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin:0 0 26px}
+.clm .card{background:linear-gradient(180deg,var(--bg2),var(--card-end));border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);margin-bottom:22px}
+.clm .card.sec{border-radius:14px}
+.clm .head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.clm .lbl{font-family:"JetBrains Mono",monospace;font-size:13px;text-transform:uppercase;color:var(--ink);letter-spacing:.04em}
+.clm .live{font-family:"JetBrains Mono",monospace;font-size:11px;text-transform:uppercase;color:var(--acc)}
+.clm .hint{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--ink-dim);margin:6px 0 12px}
+.clm .cv-wrap{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:var(--black);box-shadow:inset 0 0 0 1px var(--ag1)}
+.clm .cv-wrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.clm .ov{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);padding:9px 16px;font-family:"JetBrains Mono",monospace;font-size:14px;text-transform:uppercase;color:var(--acc);text-align:center;line-height:1.3}
+.clm .bump{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0 4px}
+.clm .tg{font-family:"JetBrains Mono",monospace;font-size:14.5px;padding:12px;border-radius:11px;background:var(--bg2);border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:all .2s;line-height:1.2}
+.clm .bump .tg{font-size:12.5px;padding:10px 6px}
+.clm .tg.on{background:rgba(var(--acc-rgb),.1);border:1px solid var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.clm .tg:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.clm .srow{display:flex;justify-content:space-between;align-items:baseline;margin:14px 0 8px}
+.clm .slbl{font-family:"JetBrains Mono",monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);letter-spacing:.06em}
+.clm .sval{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--amb)}
+.clm-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;background:linear-gradient(90deg,var(--acc) var(--fill,0%),var(--track) var(--fill,0%));outline:none;margin:6px 0}
+.clm-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:var(--bg);border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.clm-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--bg);border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.clm-slider:hover::-webkit-slider-thumb{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.clm-slider:hover::-moz-range-thumb{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.clm .ticks{display:flex;justify-content:space-between;font-family:"JetBrains Mono",monospace;font-size:9px;color:var(--ink-dim);margin-top:6px}
+.clm .stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;border-top:1px solid var(--line);margin-top:16px;padding-top:14px}
+.clm .stat .v{font-family:"JetBrains Mono",monospace;font-size:24px;font-weight:500;margin-top:4px}
+.clm .stat.a .v{color:var(--acc)}
+.clm .stat.b .v{color:var(--amb)}
+.clm .stat .s{font-family:"JetBrains Mono",monospace;font-size:10.5px;color:var(--ink-dim);margin-top:2px;line-height:1.4}
+.clm .tgl{display:flex;gap:10px}
+.clm .tgl .tg{flex:1}
+.clm .kd{border-top:1px solid var(--line);padding-top:16px;margin-top:16px;font-size:14.5px;font-weight:400;line-height:1.65;color:var(--ink);margin-bottom:0}
+.clm .know{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));border-radius:0 12px 12px 0;margin:0}
+.clm .ktag{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.clm .kdot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:clmk 2.4s ease-in-out infinite}
+.clm .ktxt{font-family:"JetBrains Mono",monospace;font-size:13px;text-transform:uppercase;letter-spacing:0.15em;color:var(--acc)}
+.clm .kbody{font-family:"Geist",sans-serif;font-size:17.4px;font-weight:400;line-height:1.55;color:var(--ink);margin:0}
+@keyframes clmk{0%,100%{opacity:1}50%{opacity:.45}}
+@media (prefers-reduced-motion:reduce){.clm .kdot{animation:none}.clm .tg{transition:none}}
+@media (max-width:420px){.clm .ov{font-size:11.5px;padding:7px 10px}.clm .stat .v{font-size:20px}.clm .tgl .tg{font-size:13px;padding:11px 8px}.clm .bump .tg{font-size:11.5px;padding:10px 4px}}
+</style>
+<div class="clm">
+  <h2 class="sr-only">Interactive collision lab: cart A rolls into cart B on a track, with ticker-tape dots and momentum arrows comparing total momentum before and after the collision</h2>
+  <h1>Bounce, stick or stall: the momentum total never <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">budges</span></h1>
+  <p class="intro">Roll a 0.50 kg cart into a second cart on a track and almost everything changes: speeds, directions, even how much kinetic energy survives. One number does not. Load cart B with masses, pick a bumper type, and compare the momentum arrows before and after.</p>
+
+  <div class="card">
+    <div class="head"><span class="lbl">Collision lab</span><span class="live" id="clmLive">Stick · m<sub>B</sub> 0.75 kg</span></div>
+    <div class="hint">Set the mass of cart B · pick a bumper · each run replays the crash</div>
+    <div class="cv-wrap">
+      <canvas id="clmCv" aria-label="Two carts on a track with ticker-tape dots every 0.1 seconds, and momentum arrows for before and after the collision"></canvas>
+      <div class="ov" id="clmOv">p before 0.300 · p after 0.300 kg m/s</div>
+    </div>
+    <div class="bump" role="group" aria-label="Bumper type">
+      <button class="tg" data-e="1" type="button">Magnets: bounce</button>
+      <button class="tg" data-e="0.5" type="button">Spring: partial</button>
+      <button class="tg on" data-e="0" type="button">Velcro: stick</button>
+    </div>
+    <div class="srow"><span class="slbl">Mass of cart B</span><span class="sval" id="clmMv">0.75 kg</span></div>
+    <input class="clm-slider" id="clmM" type="range" min="0.25" max="1.5" step="0.25" value="0.75" aria-label="Mass of cart B in kilograms">
+    <div class="ticks"><span>0.25 kg</span><span>0.50</span><span>0.75</span><span>1.00</span><span>1.25</span><span>1.50 kg</span></div>
+    <div class="stats">
+      <div class="stat a"><div class="slbl">Total p before</div><div class="v" id="clmPb">0.300</div><div class="s" id="clmPbS">kg m/s · KE 0.090 J</div></div>
+      <div class="stat b"><div class="slbl">Total p after</div><div class="v" id="clmPa">0.300</div><div class="s" id="clmPaS">kg m/s · KE 0.036 J</div></div>
+    </div>
+  </div>
+
+  <div class="card sec">
+    <div class="tgl">
+      <button class="tg on" id="clmTr" type="button">Run the lab</button>
+      <button class="tg" id="clmTd" type="button">Check the data</button>
+    </div>
+    <p class="kd" id="clmKd"></p>
+  </div>
+
+  <div class="know">
+    <div class="ktag"><span class="kdot"></span><span class="ktxt">Know This</span></div>
+    <p class="kbody">With no external net force, <span style="color:var(--acc)">total momentum before</span> equals <span style="color:var(--acc)">total momentum after</span> in every collision, even when <span style="color:var(--acc)">kinetic energy</span> is lost.</p>
+  </div>
+</div>
+<script>
+(function(){
+  const CSS = getComputedStyle(document.documentElement);
+  const ACC = CSS.getPropertyValue("--acc").trim();
+  const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+  const AMB = CSS.getPropertyValue("--amb").trim();
+  const INK = CSS.getPropertyValue("--ink").trim();
+  const DIM = CSS.getPropertyValue("--ink-dim").trim();
+  const LINE = CSS.getPropertyValue("--line").trim();
+  function rgbOf(hex){ const m = hex.replace("#", ""); const n = parseInt(m.length === 3 ? m.split("").map(c => c + c).join("") : m, 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255].join(","); }
+  const AMBR = rgbOf(AMB), INKR = rgbOf(INK);
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const canvas = document.getElementById("clmCv");
+  const ctx = canvas.getContext("2d");
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const buf = document.createElement("canvas"); const bctx = buf.getContext("2d");
+  const ov = document.getElementById("clmOv");
+  const slider = document.getElementById("clmM");
+
+  /* lab set-up, SI units */
+  const MA = 0.50, UA = 0.60, CW = 0.16, TRACK = 1.6, XA0 = 0.10, XB0 = 0.75, AFTER = 0.85, SPEED = 1.3, DOT = 0.1;
+  const NAMES = { "1": "bounce", "0.5": "partial", "0": "stick" };
+  let MB = 0.75, E = 0, focus = "run";
+  let simT = 99, raf = 0, last = 0;
+
+  function solve(){
+    const tc = (XB0 - (XA0 + CW)) / UA;
+    const tot = MA + MB;
+    const vA = (MA * UA - MB * E * UA) / tot;
+    const vB = (MA * UA + MA * E * UA) / tot;
+    const pBefore = MA * UA, pA = MA * vA, pB = MB * vB;
+    const keB = 0.5 * MA * UA * UA, keA = 0.5 * MA * vA * vA + 0.5 * MB * vB * vB;
+    return { tc, vA, vB, pBefore, pA, pB, pAfter: pA + pB, keB, keA, tEnd: tc + AFTER };
+  }
+  function posAt(s, t){
+    if (t <= s.tc) return { a: XA0 + UA * t, b: XB0, va: UA, vb: 0 };
+    const d = t - s.tc;
+    return { a: XA0 + UA * s.tc + s.vA * d, b: XB0 + s.vB * d, va: s.vA, vb: s.vB };
+  }
+
+  function resize(){
+    const rect = canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return; /* f27c: refuse a zero measurement, keep the last good size */
+    canvas.width = Math.round(rect.width * dpr); canvas.height = Math.round(rect.height * dpr);
+    buf.width = canvas.width; buf.height = canvas.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    draw();
+  }
+
+  function arrow(x1, y1, x2, y2, col, lw, head){
+    const ang = Math.atan2(y2 - y1, x2 - x1), len = Math.hypot(x2 - x1, y2 - y1);
+    if (len < 2) return;
+    const hd = Math.min(head, len * 0.6);
+    ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = lw; ctx.lineCap = "round";
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2 - Math.cos(ang) * hd * 0.7, y2 - Math.sin(ang) * hd * 0.7); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - Math.cos(ang - 0.45) * hd, y2 - Math.sin(ang - 0.45) * hd);
+    ctx.lineTo(x2 - Math.cos(ang + 0.45) * hd, y2 - Math.sin(ang + 0.45) * hd);
+    ctx.closePath(); ctx.fill();
+  }
+
+  function cart(x, y, cw, ch, mass, rgb, solid, label, fs){
+    const bh = ch * 0.42, bw = cw * 0.3;
+    const blocks = Math.round((mass - 0.25) / 0.25);
+    /* body */
+    const g = ctx.createLinearGradient(x, y - ch, x, y);
+    g.addColorStop(0, "rgba(" + rgb + ",0.55)"); g.addColorStop(1, "rgba(" + rgb + ",0.2)");
+    ctx.fillStyle = g; ctx.fillRect(x, y - ch, cw, ch);
+    ctx.strokeStyle = solid; ctx.lineWidth = 1.8; ctx.strokeRect(x, y - ch, cw, ch);
+    /* wheels */
+    ctx.fillStyle = solid;
+    ctx.beginPath(); ctx.arc(x + cw * 0.22, y + ch * 0.12, ch * 0.13, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(x + cw * 0.78, y + ch * 0.12, ch * 0.13, 0, Math.PI * 2); ctx.fill();
+    /* slotted masses, three per row */
+    for (let i = 0; i < blocks; i++){
+      const col = i % 3, row = Math.floor(i / 3);
+      const bx = x + cw * 0.05 + col * (bw + cw * 0.025), by = y - ch - (row + 1) * (bh + 1.5);
+      ctx.fillStyle = "rgba(" + rgb + ",0.38)"; ctx.fillRect(bx, by, bw, bh);
+      ctx.strokeStyle = solid; ctx.lineWidth = 1; ctx.strokeRect(bx, by, bw, bh);
+    }
+    ctx.fillStyle = INK; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.font = "500 " + fs + "px JetBrains Mono, monospace";
+    ctx.fillText(label, x + cw / 2, y - ch / 2);
+    return y - ch - (blocks > 3 ? 2 : blocks > 0 ? 1 : 0) * (bh + 1.5);
+  }
+
+  function draw(){
+    const w = canvas.width / dpr, h = canvas.height / dpr;
+    if (!w || !h) return;
+    const s = solve();
+    const t = Math.min(simT, s.tEnd);
+    const P = posAt(s, t);
+    ctx.clearRect(0, 0, w, h);
+    const ovH = ov.offsetHeight || 36;
+    const top = h * 0.08, bot = h - ovH - Math.max(8, h * 0.04);
+    const H = bot - top;
+    const fs = Math.max(9, Math.min(13, w * 0.018));
+    const narrow = w < 520;
+    ctx.font = fs + "px JetBrains Mono, monospace";
+    ctx.textBaseline = "middle";
+
+    /* ---------- the track ---------- */
+    const x0 = w * 0.05, x1 = w * 0.95;
+    const X = m => x0 + (m / TRACK) * (x1 - x0);
+    const railY = top + H * (narrow ? 0.40 : 0.45);
+    const cw = X(CW) - X(0), ch = Math.min(H * 0.13, cw * 0.55);
+    ctx.strokeStyle = "rgba(" + RGB + ",0.6)"; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(x0, railY + ch * 0.25); ctx.lineTo(x1, railY + ch * 0.25); ctx.stroke();
+    ctx.fillStyle = "rgba(" + RGB + ",0.08)"; ctx.fillRect(x0, railY + ch * 0.25, x1 - x0, ch * 0.2);
+    /* end stops */
+    ctx.fillStyle = DIM; ctx.fillRect(x0 - 3, railY - ch * 0.6, 3, ch * 0.85); ctx.fillRect(x1, railY - ch * 0.6, 3, ch * 0.85);
+
+    /* ticker-tape dots every 0.1 s */
+    const tapeA = railY + ch * 0.25 + fs * 1.35, tapeB = tapeA + fs * 1.25;
+    ctx.fillStyle = DIM; ctx.textAlign = "left"; ctx.font = (fs * 0.85) + "px JetBrains Mono, monospace";
+    if (!narrow){
+      ctx.fillText("A", x0 - fs * 0.1, tapeA); ctx.fillText("B", x0 - fs * 0.1, tapeB);
+      ctx.textAlign = "right"; ctx.fillText("dots every 0.1 s", x1, tapeB + fs * 1.15);
+    }
+    ctx.save(); ctx.globalCompositeOperation = "lighter";
+    for (let k = 0; k * DOT <= t + 1e-9; k++){
+      const q = posAt(s, k * DOT), after = k * DOT > s.tc;
+      ctx.fillStyle = after ? "rgba(" + RGB + ",0.55)" : ACC;
+      ctx.beginPath(); ctx.arc(X(q.a + CW / 2), tapeA + (after && s.vA < 0 ? 3 : 0), after ? 2.2 : 2.6, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = after ? AMB : "rgba(" + AMBR + ",0.45)";
+      ctx.beginPath(); ctx.arc(X(q.b + CW / 2), tapeB, after ? 2.6 : 2, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.restore();
+
+    /* collision flash */
+    const since = t - s.tc;
+    if (since >= 0 && since < 0.35){
+      const cx = X(XB0), cy = railY - ch * 0.5, life = 1 - since / 0.35;
+      ctx.save(); ctx.globalCompositeOperation = "lighter";
+      const fl = ctx.createRadialGradient(cx, cy, 0, cx, cy, ch * 2.2);
+      fl.addColorStop(0, "rgba(" + INKR + "," + (0.6 * life) + ")"); fl.addColorStop(1, "rgba(" + INKR + ",0)");
+      ctx.fillStyle = fl; ctx.beginPath(); ctx.arc(cx, cy, ch * 2.2, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+    }
+
+    /* carts */
+    const lfs = Math.max(8, fs * 0.85);
+    const topA = cart(X(P.a), railY, cw, ch, MA, RGB, ACC, "A", lfs);
+    const topB = cart(X(P.b), railY, cw, ch, MB, AMBR, AMB, "B", lfs);
+
+    /* velocity arrows above carts */
+    const vs = (x1 - x0) * 0.16 / UA;
+    const vy = Math.min(topA, topB) - fs * 1.1;
+    ctx.font = fs + "px JetBrains Mono, monospace";
+    function vArrow(xm, v, col, name, side){
+      const cx = X(xm + CW / 2);
+      if (Math.abs(v) < 0.005){ ctx.fillStyle = col; ctx.textAlign = "center"; ctx.fillText(name + " at rest", cx, vy - fs * 0.2); return; }
+      arrow(cx, vy, cx + v * vs, vy, col, 2.2, 7);
+      ctx.fillStyle = col; ctx.textAlign = "center";
+      ctx.fillText(narrow ? v.toFixed(3) : name + " " + v.toFixed(3) + " m/s", cx + v * vs * 0.5, vy - fs * (side ? 2.1 : 1.0));
+    }
+    const close = Math.abs(X(P.b) - X(P.a)) < cw * 2.6;
+    vArrow(P.a, P.va, ACC, "vA", false);
+    vArrow(P.b, P.vb, AMB, "vB", close);
+
+    /* phase label */
+    if (!narrow){
+      ctx.fillStyle = INK; ctx.textAlign = "left"; ctx.font = "500 " + fs + "px JetBrains Mono, monospace";
+      ctx.fillText(t < s.tc ? "BEFORE" : "AFTER", x0, top + fs * 0.4);
+      ctx.fillStyle = DIM; ctx.textAlign = "right"; ctx.font = fs + "px JetBrains Mono, monospace";
+      ctx.fillText("t = " + t.toFixed(1) + " s", x1, top + fs * 0.4);
+    }
+
+    /* ---------- momentum arrows, tip to tail ---------- */
+    const gTop = tapeB + fs * (narrow ? 1.2 : 2.0);
+    const lx = x0, gx0 = x0 + (narrow ? fs * 4.4 : Math.max(fs * 5.6, w * 0.14)), gx1 = x1;
+    const PMIN = -0.18, PMAX = 0.34;
+    const PX = p => gx0 + ((p - PMIN) / (PMAX - PMIN)) * (gx1 - gx0);
+    const rowH = (bot - gTop) / 2;
+    const yB = gTop + rowH * 0.5, yA = gTop + rowH * 1.45;
+    const lw = Math.max(3, Math.min(7, rowH * 0.22));
+    /* zero line */
+    ctx.strokeStyle = LINE; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(PX(0), gTop); ctx.lineTo(PX(0), bot); ctx.stroke();
+    ctx.fillStyle = DIM; ctx.textAlign = "center"; ctx.font = (fs * 0.85) + "px JetBrains Mono, monospace";
+    ctx.fillText("0", PX(0), gTop - fs * 0.2);
+    ctx.font = fs + "px JetBrains Mono, monospace"; ctx.textAlign = "left";
+    ctx.fillStyle = INK; ctx.fillText(narrow ? "before" : "p before", lx, yB);
+    ctx.fillText(narrow ? "after" : "p after", lx, yA);
+
+    ctx.save(); ctx.globalCompositeOperation = "lighter";
+    arrow(PX(0), yB, PX(s.pBefore), yB, ACC, lw, lw * 2.4);
+    const fade = reduce ? 1 : Math.max(0, Math.min(1, (t - s.tc) / 0.25));
+    ctx.globalAlpha = 0.25 + 0.75 * fade;
+    arrow(PX(0), yA - lw * 0.7, PX(s.pA), yA - lw * 0.7, ACC, lw, lw * 2.4);
+    arrow(PX(s.pA), yA + lw * 0.7, PX(s.pA + s.pB), yA + lw * 0.7, AMB, lw, lw * 2.4);
+    ctx.restore();
+    /* dashed total line */
+    const xt = PX(s.pBefore);
+    ctx.strokeStyle = "rgba(" + INKR + ",0.45)"; ctx.setLineDash([3, 4]); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(xt, gTop); ctx.lineTo(xt, bot); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = INK; ctx.textAlign = "right";
+    ctx.fillText(s.pBefore.toFixed(3), xt - 6, yB - lw - fs * 0.55);
+    ctx.textAlign = "left"; ctx.font = (fs * 0.9) + "px JetBrains Mono, monospace";
+    if (!narrow){
+    const legY = yA + lw * 0.7 + fs * 1.0;
+    ctx.fillStyle = ACC; ctx.fillText("A " + s.pA.toFixed(3), Math.max(gx0, Math.min(PX(0), PX(s.pA)) ), Math.min(bot - fs * 0.3, legY));
+    ctx.fillStyle = AMB; ctx.textAlign = "right"; ctx.fillText("B " + s.pB.toFixed(3), xt - 4, Math.min(bot - fs * 0.3, legY));
+    }
+
+    /* bloom */
+    bctx.setTransform(1, 0, 0, 1, 0, 0); bctx.clearRect(0, 0, buf.width, buf.height);
+    if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+    ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
+    (buf.width&&buf.height)&&ctx.drawImage(buf, 0, 0, w, h); ctx.restore();
+    /* vignette */
+    const cx = w / 2, cy = h / 2;
+    const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
+  }
+
+  function tick(now){
+    const dt = Math.min(now - (last || now), 50) / 1000; last = now;
+    const s = solve();
+    simT += dt * SPEED;
+    draw();
+    if (simT < s.tEnd) raf = requestAnimationFrame(tick); else { simT = s.tEnd; draw(); raf = 0; last = 0; }
+  }
+  function replay(){
+    if (reduce){ simT = 99; draw(); return; }
+    simT = 0;
+    if (!raf){ last = 0; raf = requestAnimationFrame(tick); }
+  }
+
+  function f3(n){ return (Math.abs(n) < 0.0005 ? 0 : n).toFixed(3); }
+  function f4(n){ return (Math.abs(n) < 0.00005 ? 0 : n).toFixed(4); }
+  function knowdrop(){
+    const s = solve();
+    const p = document.getElementById("clmKd");
+    const kept = Math.round((s.keA / s.keB) * 100);
+    if (focus === "run"){
+      p.textContent = `To investigate a collision, put two dynamics carts on a level track and measure each mass on an electronic balance first: here cart A is ${MA.toFixed(2)} kg and cart B is ${MB.toFixed(2)} kg. Push cart A so it rolls at a steady speed into cart B, which starts at rest. Measure each velocity just before and just after the impact with light gates, a ticker timer or a phone video played frame by frame: velocity is the distance between dots divided by the time between them. Keep the track level or tilt it slightly to cancel friction, so no outside force acts along the track. Change one variable at a time, such as the mass of cart B or the bumper type, and repeat each run at least three times.`;
+    } else {
+      p.textContent = `Momentum is a vector, so choose right as positive and give any cart moving left a negative velocity. Before: p = ${MA.toFixed(2)} × ${UA.toFixed(2)} = ${f3(s.pBefore)} kg m/s. After: p = ${MA.toFixed(2)} × (${f4(s.vA)}) + ${MB.toFixed(2)} × ${f4(s.vB)} = ${f3(s.pAfter)} kg m/s, the same total. ${E === 1 ? `Kinetic energy survives too: all of it is kept in this bounce collision, which is what makes it elastic. Momentum is conserved in every collision, but kinetic energy is conserved only in an elastic one like this.` : `Kinetic energy is a different story: only ${kept}% of it survives this ${NAMES[String(E)]} collision, because momentum is conserved in every collision but kinetic energy is conserved only in an elastic one.`} Real data rarely match exactly, so report the percentage difference between the totals; friction usually makes p after a few per cent smaller, and timing uncertainty scatters the results either way.`;
+    }
+  }
+
+  function update(){
+    const s = solve();
+    slider.style.setProperty("--fill", ((MB - 0.25) / 1.25) * 100 + "%");
+    document.getElementById("clmMv").textContent = MB.toFixed(2) + " kg";
+    document.getElementById("clmLive").innerHTML = NAMES[String(E)] + " · m<sub>B</sub> " + MB.toFixed(2) + " kg";
+    document.getElementById("clmPb").textContent = f3(s.pBefore);
+    document.getElementById("clmPa").textContent = f3(s.pAfter);
+    document.getElementById("clmPbS").textContent = "kg m/s · KE " + s.keB.toFixed(3) + " J";
+    document.getElementById("clmPaS").textContent = "kg m/s · KE " + s.keA.toFixed(3) + " J (" + Math.round((s.keA / s.keB) * 100) + "% kept)";
+    ov.textContent = "p before " + f3(s.pBefore) + " · p after " + f3(s.pAfter) + " kg m/s";
+    knowdrop();
+  }
+
+  slider.addEventListener("input", () => { MB = parseFloat(slider.value); update(); replay(); });
+  document.querySelectorAll(".clm .bump .tg").forEach(b => b.addEventListener("click", () => {
+    document.querySelectorAll(".clm .bump .tg").forEach(x => x.classList.remove("on"));
+    b.classList.add("on"); E = parseFloat(b.dataset.e); update(); replay();
+  }));
+  const tr = document.getElementById("clmTr"), td = document.getElementById("clmTd");
+  tr.addEventListener("click", () => { focus = "run"; tr.classList.add("on"); td.classList.remove("on"); knowdrop(); });
+  td.addEventListener("click", () => { focus = "data"; td.classList.add("on"); tr.classList.remove("on"); knowdrop(); });
+
+  window.addEventListener("resize", resize);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => draw()).catch(() => {});
+  update();
+  resize();
+  replay();
+})();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'collision-lab-momentum-before-and-after'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

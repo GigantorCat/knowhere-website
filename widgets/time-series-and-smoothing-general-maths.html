@@ -9,9 +9,10 @@ body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body
   --bg: #0B0D0C;
   --bg2: #12160F;
   --acc: #4FC65A;
-  --ag: rgba(79, 198, 90, .7);
-  --ag1: rgba(79, 198, 90, .12);
-  --ag2: rgba(79, 198, 90, .45);
+  --acc-rgb: 79, 198, 90;
+  --ag:  rgba(var(--acc-rgb),.7);
+  --ag1: rgba(var(--acc-rgb),.12);
+  --ag2: rgba(var(--acc-rgb),.45);
   --amb: #FAC775;
   --ink: #EDEDE8;
   --ink-dim: #8C9389;
@@ -30,7 +31,7 @@ body{
   color:var(--ink);
 }
 
-.container{max-width:720px;margin:0 auto}
+.ts-container{max-width:720px;margin:0 auto}
 
 h1{
   font-size:clamp(26px,6.5vw,44px);
@@ -40,7 +41,7 @@ h1{
   margin-bottom:14px;
 }
 
-.intro{
+.ts-intro{
   font-size:15.5px;
   font-weight:400;
   color:var(--ink-dim);
@@ -49,7 +50,7 @@ h1{
   margin-bottom:32px;
 }
 
-.card{
+.ts-card{
   background:linear-gradient(180deg,#12160F,#0d100b);
   border:1px solid var(--line);
   border-radius:18px;
@@ -58,532 +59,491 @@ h1{
   margin-bottom:20px;
 }
 
-.card-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:6px;
+.ts-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+.ts-label{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;color:var(--ink)}
+.ts-live{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--acc);text-align:right}
+.ts-hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin-bottom:14px}
+
+.ts-wrap{
+  position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;
+  background:#000;box-shadow:inset 0 0 0 1px var(--ag1);
+}
+.ts-wrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.ts-overlay{
+  position:absolute;left:0;right:0;bottom:0;
+  background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);padding:9px 12px;
+  font-family:'JetBrains Mono',monospace;font-size:14px;text-transform:uppercase;
+  color:var(--acc);text-align:center;line-height:1.25;
 }
 
-.card-label{
-  font-family:'JetBrains Mono',monospace;
-  font-size:13px;
-  text-transform:uppercase;
-  color:var(--ink);
+.ts-tog-title{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin:16px 0 8px}
+.ts-togs{display:flex;flex-wrap:wrap;gap:10px}
+.ts-pill{
+  flex:1 1 auto;font-family:'JetBrains Mono',monospace;font-size:12.5px;padding:11px 14px;border-radius:999px;
+  border:1px solid var(--line);background:#12160F;color:var(--ink-dim);cursor:pointer;transition:all .2s;white-space:nowrap;
+}
+.ts-pill[aria-pressed="true"]{
+  background:rgba(var(--acc-rgb),.1);border:1px solid var(--acc);color:var(--acc);
+  box-shadow:0 0 22px rgba(var(--acc-rgb),.18);
 }
 
-.live-tag{
-  font-family:'JetBrains Mono',monospace;
-  font-size:11px;
-  text-transform:uppercase;
-  color:var(--acc);
-}
-
-.card-hint{
-  font-family:'JetBrains Mono',monospace;
-  font-size:11px;
-  color:var(--ink-dim);
-  margin-bottom:14px;
-}
-
-.canvas-wrapper{
-  position:relative;
-  width:100%;
-  aspect-ratio:16/9;
-  border-radius:12px;
-  overflow:hidden;
-  background:#000;
-  box-shadow:inset 0 0 0 1px var(--ag1);
-  margin-bottom:16px;
-}
-
-canvas{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  display:block;
-}
-
-.canvas-overlay{
-  position:absolute;
-  left:0;
-  right:0;
-  bottom:0;
-  background:rgba(0,0,0,0.55);
-  backdrop-filter:blur(4px);
-  padding:9px 16px;
-  font-family:'JetBrains Mono',monospace;
-  font-size:14px;
-  text-transform:uppercase;
-  color:var(--acc);
-  text-align:center;
-}
-
-.slider-section{
-  margin-top:16px;
-}
-
-.slider-label{
-  font-family:'JetBrains Mono',monospace;
-  font-size:10.5px;
-  text-transform:uppercase;
-  color:var(--ink-dim);
-  margin-bottom:8px;
-}
+.ts-slide{margin-top:16px}
+.ts-row{display:flex;justify-content:space-between;align-items:baseline;font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:8px}
+.ts-row b{font-weight:500;color:var(--ink);font-size:12px}
 
 .ts-slider{
-  -webkit-appearance:none;
-  appearance:none;
-  width:100%;
-  height:4px;
-  border-radius:3px;
-  background:linear-gradient(90deg,var(--acc) var(--fill,0%),#23291f var(--fill,0%));
-  outline:none;
-  margin-bottom:8px;
+  -webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;
+  background:linear-gradient(90deg,var(--acc) var(--fill,0%),#23291f var(--fill,0%));outline:none;display:block;
 }
-
 .ts-slider::-webkit-slider-thumb{
-  -webkit-appearance:none;
-  appearance:none;
-  width:20px;
-  height:20px;
-  border-radius:50%;
-  background:#0B0D0C;
-  border:2px solid var(--acc);
-  box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);
-  cursor:pointer;
-  transition:box-shadow .15s;
+  -webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;
+  background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);cursor:pointer;transition:box-shadow .15s;
 }
-
 .ts-slider::-moz-range-thumb{
-  width:20px;
-  height:20px;
-  border-radius:50%;
-  background:#0B0D0C;
-  border:2px solid var(--acc);
-  box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);
-  cursor:pointer;
-  transition:box-shadow .15s;
+  width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);
+  box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);cursor:pointer;transition:box-shadow .15s;
 }
+.ts-slider::-webkit-slider-thumb:hover{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.ts-slider::-moz-range-thumb:hover{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
 
-.ts-slider::-webkit-slider-thumb:hover{
-  box-shadow:0 0 24px var(--acc),0 0 8px var(--ag);
+.ts-ticks{position:relative;height:14px;margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-dim)}
+.ts-ticks span{position:absolute;top:0;transform:translateX(-50%)}
+.ts-ticks span:first-child{transform:none}
+.ts-ticks span:last-child{transform:translateX(-100%)}
+
+.ts-stats{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding-top:16px;border-top:1px solid var(--line);margin-top:16px}
+.ts-stat{text-align:center}
+.ts-stat-l{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:6px}
+.ts-stat-v{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500}
+.ts-stat-v.acc{color:var(--acc)}
+.ts-stat-v.amb{color:var(--amb)}
+
+.ts-kd-div{border-top:1px solid var(--line);margin:16px 0}
+.ts-kd{font-size:14.5px;font-weight:400;line-height:1.65;color:var(--ink)}
+
+.ts-know{
+  border-left:3px solid var(--acc);padding:16px 18px;
+  background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));border-radius:0 12px 12px 0;margin-bottom:0;padding-bottom:16px;
 }
-
-.ts-slider::-moz-range-thumb:hover{
-  box-shadow:0 0 24px var(--acc),0 0 8px var(--ag);
-}
-
-.tick-labels{
-  display:flex;
-  justify-content:space-between;
-  font-family:'JetBrains Mono',monospace;
-  font-size:9px;
-  color:var(--ink-dim);
-}
-
-.stat-row{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:16px;
-  padding-top:16px;
-  border-top:1px solid var(--line);
-  margin-top:16px;
-}
-
-.stat{
-  text-align:center;
-}
-
-.stat-label{
-  font-family:'JetBrains Mono',monospace;
-  font-size:10.5px;
-  text-transform:uppercase;
-  color:var(--ink-dim);
-  margin-bottom:6px;
-}
-
-.stat-value{
-  font-family:'JetBrains Mono',monospace;
-  font-size:24px;
-  font-weight:500;
-}
-
-.stat-value.acc{color:var(--acc)}
-.stat-value.amb{color:var(--amb)}
-
-.toggle-card{
-  background:linear-gradient(180deg,#12160F,#0d100b);
-  border:1px solid var(--line);
-  border-radius:18px;
-  padding:16px;
-  box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);
-  margin-bottom:20px;
-}
-
-.toggle-buttons{
-  display:flex;
-  gap:10px;
-  margin-bottom:16px;
-}
-
-.toggle-btn{
-  flex:1;
-  font-family:'JetBrains Mono',monospace;
-  font-size:14.5px;
-  padding:12px;
-  border-radius:11px;
-  border:1px solid var(--line);
-  background:#12160F;
-  color:var(--ink-dim);
-  cursor:pointer;
-  transition:all .2s;
-}
-
-.toggle-btn.active{
-  background:rgba(79, 198, 90,.1);
-  border:1px solid var(--acc);
-  color:var(--acc);
-  box-shadow:0 0 22px rgba(79, 198, 90,.18);
-}
-
-.knowdrop-divider{
-  border-top:1px solid var(--line);
-  margin-bottom:16px;
-}
-
-.knowdrop-text{
-  font-size:14.5px;
-  font-weight:400;
-  line-height:1.65;
-  color:var(--ink);
-}
-
-.know-this{
-  border-left:3px solid var(--acc);
-  padding:16px 18px;
-  background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));
-  border-radius:0 12px 12px 0;
-  margin-bottom:0;
-}
-
-.know-this-tag{
-  font-family:'JetBrains Mono',monospace;
-  font-size:13px;
-  text-transform:uppercase;
-  letter-spacing:0.15em;
-  color:var(--acc);
-  margin-bottom:10px;
-}
-
-.know-this-body{
-  font-size:17.4px;
-  font-weight:400;
-  line-height:1.55;
-  color:var(--ink);
-}
+.ts-know-tag{display:flex;align-items:center;gap:9px;margin-bottom:10px;font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:0.15em;color:var(--acc)}
+.ts-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:tsPulse 2.4s ease-in-out infinite}
+@keyframes tsPulse{0%,100%{opacity:1}50%{opacity:.45}}
+.ts-know-body{font-size:17.4px;font-weight:400;line-height:1.55;color:var(--ink)}
 
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important}
 }
 </style>
 
-<h2 class="sr-only">Time Series and Smoothing Interactive Widget</h2>
+<h2 class="sr-only">Interactive time series plot: change the moving mean window, add an outlier or a structural change, or deseasonalise the data, and read trend, seasonality and irregular fluctuation from the labelled plot</h2>
 
-<div class="container">
-  <h1>The trend is invisible until you <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">erase</span></h1>
-  
-  <p class="intro">Real data screams with noise—seasonal spikes, random wobbles, cycles. Your job isn't to listen to all of it. It's to subtract the predictable patterns (seasonality, cycles) and smooth the chaos so the underlying trend emerges clean. Drag the slider to increase the smoothing window and watch noise collapse into clarity.</p>
+<div class="ts-container">
+  <h1>A wider window is not a smoother line unless it matches the <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">season</span></h1>
 
-  <div class="card">
-    <div class="card-header">
-      <div class="card-label">Raw Time Series + Smoothing</div>
-      <div class="live-tag" id="windowTag">Window: 1 period</div>
+  <p class="ts-intro">A time series is three things stacked on top of each other: a long-term trend, a seasonal swing that repeats on the calendar, and short irregular wobble. A moving mean is meant to peel away the swing and the wobble, but it only cancels the season when its window matches the season length. Widen the window from 6 to 9 to 12 and watch the smoothed line; then add an outlier or a structural change and watch what survives the smoothing.</p>
+
+  <div class="ts-card">
+    <div class="ts-head">
+      <div class="ts-label">Time series · season of 6</div>
+      <div class="ts-live" id="tsLive">Window 1 · raw</div>
     </div>
-    <div class="card-hint">Drag slider to change moving average window size</div>
-    
-    <div class="canvas-wrapper">
-      <canvas id="tsCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">Noise dominates • No trend visible</div>
+    <div class="ts-hint">Change the window. Watch the smoothed line between periods 6 and 42. Then change the data.</div>
+
+    <div class="ts-wrap" id="tsWrap">
+      <canvas id="tsCanvas" aria-label="Time series plot with raw values, moving mean and labelled features"></canvas>
+      <div class="ts-overlay" id="tsOverlay">No smoothing • everything mixed</div>
     </div>
 
-    <div class="slider-section">
-      <div class="slider-label">Smoothing Window</div>
-      <input type="range" min="1" max="12" value="1" class="ts-slider" id="windowSlider">
-      <div class="tick-labels">
-        <span>1</span>
-        <span>6</span>
-        <span>12</span>
+    <div class="ts-tog-title">Change the data</div>
+    <div class="ts-togs" role="group" aria-label="Change the data" data-kw-multi>
+      <button class="ts-pill" data-key="outlier" aria-pressed="false">Add outlier</button>
+      <button class="ts-pill" data-key="brk" aria-pressed="false">Structural change</button>
+      <button class="ts-pill" data-key="deseason" aria-pressed="false">Deseasonalise</button>
+    </div>
+
+    <div class="ts-slide">
+      <div class="ts-row"><span>Moving mean window</span><b id="winV">1 period</b></div>
+      <input type="range" class="ts-slider" id="tsSlider" aria-label="Moving mean window" min="1" max="12" step="1" value="1">
+      <div class="ts-ticks">
+        <span style="left:0%">1</span>
+        <span style="left:18.18%">3</span>
+        <span style="left:45.45%">6</span>
+        <span style="left:72.73%">9</span>
+        <span style="left:100%">12</span>
       </div>
     </div>
 
-    <div class="stat-row">
-      <div class="stat">
-        <div class="stat-label">Window Size</div>
-        <div class="stat-value acc" id="windowStat">1</div>
+    <div class="ts-stats">
+      <div class="ts-stat">
+        <div class="ts-stat-l" id="winStatL">Window</div>
+        <div class="ts-stat-v acc" id="winStat">1</div>
       </div>
-      <div class="stat">
-        <div class="stat-label">Noise Reduction</div>
-        <div class="stat-value amb" id="noiseStat">0%</div>
+      <div class="ts-stat">
+        <div class="ts-stat-l">Wobble removed</div>
+        <div class="ts-stat-v amb" id="remStat">0%</div>
       </div>
     </div>
   </div>
 
-  <div class="toggle-card">
-    <div class="toggle-buttons">
-      <button class="toggle-btn active" data-mode="components">Components</button>
-      <button class="toggle-btn" data-mode="deseason">Deseasonalise</button>
+  <div class="ts-card">
+    <div class="ts-tog-title" style="margin-top:0">Read more</div>
+    <div class="ts-togs" role="group" aria-label="Choose the explanation">
+      <button class="ts-pill" data-kd="features" aria-pressed="true">Features</button>
+      <button class="ts-pill" data-kd="indices" aria-pressed="false">Seasonal indices</button>
     </div>
-    <div class="knowdrop-divider"></div>
-    <div class="knowdrop-text" id="knowdropText">
-      Time series data has four components: <strong>trend</strong> (the long-term direction), <strong>seasonality</strong> (predictable repeating patterns like summer spikes), <strong>cycles</strong> (longer waves tied to economic or environmental forces), and <strong>irregular</strong> variation (random noise). None of these sit still—they overlap, obscure each other. To forecast anything, you must separate them. Moving averages smooth out the irregular bumps; the longer the window, the more noise disappears, revealing the trend beneath.
-    </div>
+    <div class="ts-kd-div"></div>
+    <p class="ts-kd" id="tsKd"></p>
   </div>
 
-  <div class="know-this">
-    <div class="know-this-tag">Know This</div>
-    <div class="know-this-body">
-      <span style="color:var(--acc)">Moving mean/median smoothing</span> strips irregular noise to reveal the <span style="color:var(--acc)">trend</span>; <span style="color:var(--acc)">seasonal indices</span> measure each season's typical effect so you can <span style="color:var(--acc)">deseasonalise</span> the data and forecast the clean underlying pattern.
+  <div class="ts-know">
+    <div class="ts-know-tag"><span class="ts-dot"></span><span>Know This</span></div>
+    <div class="ts-know-body">
+      A moving mean cancels <span style="color:var(--acc)">seasonality</span> only when its window equals the <span style="color:var(--acc)">seasonal period</span>; it smears an outlier and blurs a <span style="color:var(--acc)">structural change</span> rather than removing them.
     </div>
   </div>
 </div>
 
 <script>
-const canvas = document.getElementById('tsCanvas');
-const ctx = canvas.getContext('2d', { alpha: false });
-const windowSlider = document.getElementById('windowSlider');
-const windowTag = document.getElementById('windowTag');
-const canvasOverlay = document.getElementById('canvasOverlay');
-const windowStat = document.getElementById('windowStat');
-const noiseStat = document.getElementById('noiseStat');
-const knowdropText = document.getElementById('knowdropText');
-const toggleBtns = document.querySelectorAll('.toggle-btn');
+(function(){
+  const CSS = getComputedStyle(document.documentElement);
+  const ACC = CSS.getPropertyValue("--acc").trim();
+  const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+  const AMB = CSS.getPropertyValue("--amb").trim();
+  const reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-const dpr = Math.min(window.devicePixelRatio || 1, 2);
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d', { alpha: false });
+  const wrap = document.getElementById("tsWrap");
+  const canvas = document.getElementById("tsCanvas");
+  const ctx = canvas.getContext("2d");
+  const overlay = document.getElementById("tsOverlay");
+  const live = document.getElementById("tsLive");
+  const slider = document.getElementById("tsSlider");
+  const winV = document.getElementById("winV");
+  const winStat = document.getElementById("winStat");
+  const winStatL = document.getElementById("winStatL");
+  const remStat = document.getElementById("remStat");
+  const kd = document.getElementById("tsKd");
 
-let windowSize = 1;
-let animFrame;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const buf = document.createElement("canvas");
+  const bctx = buf.getContext("2d");
+  let W = 0, H = 0;
 
-// Generate synthetic time series: trend + seasonality + noise
-const periods = 48;
-const rawData = [];
-const trend = [];
-const seasonal = [];
+  // ---------- model ----------
+  const N = 48;
+  const OUT = 20;          // index of the possible outlier
+  const BRK = 30;          // first index of the structural change
+  const IDX = [1.00, 1.24, 1.24, 1.00, 0.76, 0.76]; // seasonal indices, average 1
+  function rng(seed){ let s = seed >>> 0; return function(){ s = (Math.imul(s, 1664525) + 1013904223) >>> 0; return s / 4294967296; }; }
+  const r = rng(7);
+  const baseTrend = [], noise = [];
+  for (let i = 0; i < N; i++){
+    baseTrend.push(30 + 25 * i / (N - 1));
+    noise.push((r() + r() + r() - 1.5) * 7);
+  }
 
-for (let i = 0; i < periods; i++) {
-  const t = i / periods;
-  const trendVal = 30 + 25 * t; // upward trend
-  const seasonVal = 15 * Math.sin((i / 6) * Math.PI * 2); // 6-period seasonality
-  const noise = (Math.random() - 0.5) * 12;
-  
-  trend.push(trendVal);
-  seasonal.push(seasonVal);
-  rawData.push(trendVal + seasonVal + noise);
-}
+  const st = { outlier: false, brk: false, deseason: false };
+  let win = 1;
 
-function movingAverage(data, window) {
-  const result = [];
-  for (let i = 0; i < data.length; i++) {
-    const start = Math.max(0, i - Math.floor(window / 2));
-    const end = Math.min(data.length, i + Math.ceil(window / 2));
-    let sum = 0;
-    let count = 0;
-    for (let j = start; j < end; j++) {
-      sum += data[j];
-      count++;
+  function buildSeries(){
+    const trend = baseTrend.map((v, i) => v + (st.brk && i >= BRK ? 20 : 0));
+    const raw = trend.map((v, i) => v * IDX[i % 6] + noise[i]);
+    if (st.outlier) raw[OUT] += 40;
+    const plotted = st.deseason ? raw.map((v, i) => v / IDX[i % 6]) : raw;
+    return { plotted, trend };
+  }
+
+  function movingMean(d, k){
+    const n = d.length, out = new Array(n).fill(NaN);
+    if (k <= 1) return d.slice();
+    if (k % 2 === 1){
+      const half = (k - 1) / 2;
+      for (let i = half; i < n - half; i++){
+        let s = 0; for (let j = i - half; j <= i + half; j++) s += d[j];
+        out[i] = s / k;
+      }
+    } else {
+      const half = k / 2; // even window: centre two adjacent uncentred means
+      for (let i = half; i < n - half; i++){
+        let a = 0, b = 0;
+        for (let j = i - half; j <= i + half - 1; j++) a += d[j];
+        for (let j = i - half + 1; j <= i + half; j++) b += d[j];
+        out[i] = (a / k + b / k) / 2;
+      }
     }
-    result.push(sum / count);
-  }
-  return result;
-}
-
-function resize() {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  draw();
-}
-
-function draw() {
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, w, h);
-
-  const pad = 40;
-  const plotW = w - pad * 2;
-  const plotH = h - pad * 2;
-  const plotX = pad;
-  const plotY = pad;
-
-  const minVal = Math.min(...rawData) - 5;
-  const maxVal = Math.max(...rawData) + 5;
-
-  function mapY(val) {
-    return plotY + plotH - ((val - minVal) / (maxVal - minVal)) * plotH;
+    return out;
   }
 
-  function mapX(i) {
-    return plotX + (i / (periods - 1)) * plotW;
+  function sd(arr){
+    if (!arr.length) return 0;
+    const m = arr.reduce((a, b) => a + b, 0) / arr.length;
+    return Math.sqrt(arr.reduce((a, b) => a + (b - m) * (b - m), 0) / arr.length);
   }
 
-  // Grid
-  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
-  ctx.lineWidth = 1;
-  for (let i = 0; i <= 4; i++) {
-    const y = plotY + (i / 4) * plotH;
+  // ---------- state for drawing ----------
+  let targetRaw = [], targetSm = [], dispRaw = null, dispSm = null;
+  let raf = null, animFrom = null, animEl = 0, last = 0;
+
+  function lerp(a, b, e){ if (!isFinite(b)) return NaN; if (!isFinite(a)) return b; return a + (b - a) * e; }
+
+  function startAnim(){
+    if (reduced || !dispRaw){ dispRaw = targetRaw.slice(); dispSm = targetSm.slice(); draw(); return; }
+    animFrom = { raw: dispRaw.slice(), sm: dispSm.slice() };
+    animEl = 0; last = performance.now();
+    if (raf) cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(step);
+  }
+  function step(now){
+    const dt = Math.min(now - last, 50); last = now; animEl += dt;
+    const p = Math.min(animEl / 360, 1);
+    const e = 1 - Math.pow(1 - p, 3);
+    for (let i = 0; i < N; i++){
+      dispRaw[i] = lerp(animFrom.raw[i], targetRaw[i], e);
+      dispSm[i] = lerp(animFrom.sm[i], targetSm[i], e);
+    }
+    draw();
+    if (p < 1) raf = requestAnimationFrame(step); else raf = null;
+  }
+
+  function update(){
+    const model = buildSeries();
+    targetRaw = model.plotted;
+    targetSm = movingMean(model.plotted, win);
+    // readouts, all from the model
+    const resS = [], resR = [];
+    for (let i = 0; i < N; i++){
+      if (isFinite(targetSm[i])){ resS.push(targetSm[i] - model.trend[i]); resR.push(targetRaw[i] - model.trend[i]); }
+    }
+    const den = sd(resR), num = sd(resS);
+    const removed = den > 0 ? Math.max(0, 1 - num / den) : 0;
+    remStat.textContent = Math.round(removed * 100) + "%";
+    winStat.textContent = String(win);
+    winStatL.textContent = win % 2 === 0 ? "Window · centred" : "Window";
+    winV.textContent = win + (win === 1 ? " period" : " periods");
+    live.textContent = win === 1 ? "Window 1 · raw" : ("Window " + win + (win % 2 === 0 ? " · centred" : " · odd"));
+    slider.style.setProperty("--fill", ((win - 1) / 11 * 100) + "%");
+    if (st.deseason){
+      overlay.textContent = win === 1 ? "Deseasonalised • season gone" : "Deseasonalised • wobble smoothed";
+    } else if (win === 1){
+      overlay.textContent = "No smoothing • everything mixed";
+    } else if (win % 6 === 0){
+      overlay.textContent = "Window = season • trend alone";
+    } else {
+      overlay.textContent = "Season of 6 leaks • wobble stays";
+    }
+    startAnim();
+  }
+
+  // ---------- drawing ----------
+  function label(text, x, y, align, color){
+    ctx.font = "11px 'JetBrains Mono', monospace";
+    ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
+    const tw = ctx.measureText(text).width;
+    let lx = x;
+    if (align === "right") lx = x - tw; else if (align === "center") lx = x - tw / 2;
+    lx = Math.max(3, Math.min(W - 3 - tw, lx));
+    ctx.fillStyle = "rgba(0,0,0,0.68)";
+    ctx.fillRect(lx - 3, y - 10, tw + 6, 14);
+    ctx.fillStyle = color;
+    ctx.fillText(text, lx, y);
+  }
+
+  function polyline(arr, mapX, mapY){
+    let pen = false;
     ctx.beginPath();
-    ctx.moveTo(plotX, y);
-    ctx.lineTo(plotX + plotW, y);
+    for (let i = 0; i < N; i++){
+      const v = arr[i];
+      if (!isFinite(v)){ pen = false; continue; }
+      const x = mapX(i), y = mapY(v);
+      if (!pen){ ctx.moveTo(x, y); pen = true; } else ctx.lineTo(x, y);
+    }
     ctx.stroke();
   }
 
-  // Raw data (faint grey line)
-  ctx.strokeStyle = 'rgba(255,255,255,0.25)';
-  ctx.lineWidth = 1.5;
-  ctx.beginPath();
-  for (let i = 0; i < rawData.length; i++) {
-    const x = mapX(i);
-    const y = mapY(rawData[i]);
-    if (i === 0) ctx.moveTo(x, y);
-    else ctx.lineTo(x, y);
-  }
-  ctx.stroke();
+  function draw(){
+    const w = W, h = H;
+    if (!w || !h || !dispRaw) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.globalAlpha = 1; ctx.globalCompositeOperation = "source-over"; ctx.filter = "none";
+    ctx.fillStyle = "rgba(0,0,0,1)"; ctx.fillRect(0, 0, w, h);
 
-  // Smoothed data
-  const smoothed = movingAverage(rawData, windowSize);
-  
-  // Glow line
-  ctx.save();
-  ctx.strokeStyle = 'rgba(79, 198, 90,0.6)';
-  ctx.lineWidth = 3;
-  ctx.shadowColor = 'rgba(79, 198, 90,0.8)';
-  ctx.shadowBlur = 12;
-  ctx.beginPath();
-  for (let i = 0; i < smoothed.length; i++) {
-    const x = mapX(i);
-    const y = mapY(smoothed[i]);
-    if (i === 0) ctx.moveTo(x, y);
-    else ctx.lineTo(x, y);
-  }
-  ctx.stroke();
-  ctx.restore();
+    const padL = 36, padR = 14, plotT = Math.max(14, h * 0.08), plotB = h - 62;
+    const PW = w - padL - padR, PH = plotB - plotT;
 
-  // Core line
-  ctx.strokeStyle = '#4FC65A';
-  ctx.lineWidth = 2.5;
-  ctx.beginPath();
-  for (let i = 0; i < smoothed.length; i++) {
-    const x = mapX(i);
-    const y = mapY(smoothed[i]);
-    if (i === 0) ctx.moveTo(x, y);
-    else ctx.lineTo(x, y);
-  }
-  ctx.stroke();
-
-  // Moving dots along smoothed line
-  const numDots = 8;
-  const time = Date.now() * 0.0004;
-  for (let d = 0; d < numDots; d++) {
-    const phase = (time + d / numDots) % 1;
-    const idx = Math.floor(phase * (smoothed.length - 1));
-    const x = mapX(idx);
-    const y = mapY(smoothed[idx]);
-    
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    const grad = ctx.createRadialGradient(x, y, 0, x, y, 6);
-    grad.addColorStop(0, 'rgba(79, 198, 90,0.9)');
-    grad.addColorStop(1, 'rgba(79, 198, 90,0)');
-    ctx.fillStyle = grad;
-    ctx.beginPath();
-    ctx.arc(x, y, 6, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-  }
-
-  // Bloom
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
-
-  // Vignette
-  const cx = w / 2;
-  const cy = h / 2;
-  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-
-  if (!document.hidden) {
-    animFrame = requestAnimationFrame(draw);
-  }
-}
-
-function updateUI() {
-  windowSize = parseInt(windowSlider.value);
-  const fillPct = ((windowSize - 1) / 11) * 100;
-  windowSlider.style.setProperty('--fill', fillPct + '%');
-  
-  windowTag.textContent = `Window: ${windowSize} period${windowSize > 1 ? 's' : ''}`;
-  windowStat.textContent = windowSize;
-  
-  const noiseReduction = Math.round(((windowSize - 1) / 11) * 85);
-  noiseStat.textContent = noiseReduction + '%';
-  
-  if (windowSize === 1) {
-    canvasOverlay.textContent = 'Noise dominates • No trend visible';
-  } else if (windowSize <= 4) {
-    canvasOverlay.textContent = 'Partial smoothing • Trend emerging';
-  } else if (windowSize <= 8) {
-    canvasOverlay.textContent = 'Strong smoothing • Trend clear';
-  } else {
-    canvasOverlay.textContent = 'Maximum smoothing • Pure trend revealed';
-  }
-}
-
-windowSlider.addEventListener('input', updateUI);
-
-toggleBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    toggleBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    
-    const mode = btn.dataset.mode;
-    if (mode === 'components') {
-      knowdropText.innerHTML = `Time series data has four components: <strong>trend</strong> (the long-term direction), <strong>seasonality</strong> (predictable repeating patterns like summer spikes), <strong>cycles</strong> (longer waves tied to economic or environmental forces), and <strong>irregular</strong> variation (random noise). None of these sit still—they overlap, obscure each other. To forecast anything, you must separate them. Moving averages smooth out the irregular bumps; the longer the window, the more noise disappears, revealing the trend beneath.`;
-    } else {
-      knowdropText.innerHTML = `<strong>Deseasonalising</strong> means calculating a seasonal index for each period (e.g., each month) showing how much that period typically deviates from the average. Divide your raw data by these indices and the seasonal swings vanish—you're left with trend plus irregular noise. Now smooth that with a moving average and you have a clean trend line. Use this trend to forecast forward, then multiply back by the seasonal indices to restore realistic seasonal variation to your predictions. This two-step process (remove seasonality, forecast trend, restore seasonality) is how real-world time series forecasting works.`;
+    let mn = Infinity, mx = -Infinity;
+    for (let i = 0; i < N; i++){
+      if (isFinite(dispRaw[i])){ mn = Math.min(mn, dispRaw[i]); mx = Math.max(mx, dispRaw[i]); }
+      if (isFinite(dispSm[i])){ mn = Math.min(mn, dispSm[i]); mx = Math.max(mx, dispSm[i]); }
     }
-  });
-});
+    mn = Math.floor((mn - 4) / 5) * 5; mx = Math.ceil((mx + 6) / 5) * 5;
+    const mapX = i => padL + i / (N - 1) * PW;
+    const mapY = v => plotB - (v - mn) / (mx - mn) * PH;
 
-window.addEventListener('resize', resize);
-document.addEventListener('visibilitychange', () => {
-  if (!document.hidden) {
-    draw();
-  } else {
-    cancelAnimationFrame(animFrame);
+    // y grid
+    const stepY = (mx - mn) > 70 ? 20 : 10;
+    ctx.lineWidth = 1;
+    for (let v = Math.ceil(mn / stepY) * stepY; v <= mx; v += stepY){
+      const y = mapY(v);
+      ctx.strokeStyle = "rgba(255,255,255,0.07)";
+      ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(w - padR, y); ctx.stroke();
+      ctx.font = "11px 'JetBrains Mono', monospace"; ctx.fillStyle = "rgba(140,147,137,0.9)";
+      ctx.textAlign = "right"; ctx.textBaseline = "middle"; ctx.fillText(String(v), padL - 6, y);
+    }
+    // x grid every 6 periods
+    for (let i = 0; i < N; i += 6){
+      const x = mapX(i);
+      ctx.strokeStyle = "rgba(255,255,255,0.09)";
+      ctx.beginPath(); ctx.moveTo(x, plotT); ctx.lineTo(x, plotB); ctx.stroke();
+      ctx.font = "11px 'JetBrains Mono', monospace"; ctx.fillStyle = "rgba(140,147,137,0.9)";
+      ctx.textAlign = i === 0 ? "left" : "center"; ctx.textBaseline = "alphabetic";
+      ctx.fillText(String(i), x, plotB + 16);
+    }
+    ctx.strokeStyle = "rgba(255,255,255,0.22)";
+    ctx.beginPath(); ctx.moveTo(padL, plotB); ctx.lineTo(w - padR, plotB); ctx.stroke();
+    ctx.font = "11px 'JetBrains Mono', monospace"; ctx.fillStyle = "rgba(140,147,137,0.9)";
+    ctx.textAlign = "right"; ctx.textBaseline = "alphabetic";
+    ctx.fillText("period", w - padR, plotB - 6);
+
+    // structural change
+    if (st.brk){
+      const x = mapX(BRK - 0.5);
+      ctx.save(); ctx.setLineDash([5, 5]); ctx.strokeStyle = AMB; ctx.globalAlpha = 0.85; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(x, plotT); ctx.lineTo(x, plotB); ctx.stroke(); ctx.restore();
+      label("structural change", x - 6, plotB - 8, "right", AMB);
+    }
+
+    // raw series
+    ctx.strokeStyle = "rgba(255,255,255,0.42)"; ctx.lineWidth = 1.5;
+    polyline(dispRaw, mapX, mapY);
+    ctx.fillStyle = "rgba(255,255,255,0.6)";
+    for (let i = 0; i < N; i++){
+      if (!isFinite(dispRaw[i])) continue;
+      ctx.beginPath(); ctx.arc(mapX(i), mapY(dispRaw[i]), 1.8, 0, Math.PI * 2); ctx.fill();
+    }
+
+    // smoothed line or trend guide
+    let lastIdx = -1;
+    if (win > 1){
+      ctx.save(); ctx.globalCompositeOperation = "lighter";
+      ctx.strokeStyle = "rgba(" + RGB + ",0.45)"; ctx.lineWidth = 7; polyline(dispSm, mapX, mapY);
+      ctx.restore();
+      ctx.strokeStyle = ACC; ctx.lineWidth = 2.5; polyline(dispSm, mapX, mapY);
+      for (let i = N - 1; i >= 0; i--){ if (isFinite(dispSm[i])){ lastIdx = i; break; } }
+      if (lastIdx >= 0){
+        label("trend · moving mean", mapX(lastIdx) + 4, mapY(dispSm[lastIdx]) + 20, "right", ACC);
+      }
+    } else {
+      let a = 0, b = 0;
+      for (let i = 0; i < 6; i++){ a += dispRaw[i]; b += dispRaw[N - 1 - i]; }
+      a /= 6; b /= 6;
+      const x1 = mapX(2.5), y1 = mapY(a), x2 = mapX(N - 3.5), y2 = mapY(b);
+      ctx.save(); ctx.setLineDash([6, 5]); ctx.strokeStyle = ACC; ctx.lineWidth = 1.8; ctx.globalAlpha = 0.9;
+      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); ctx.restore();
+      const ang = Math.atan2(y2 - y1, x2 - x1);
+      ctx.fillStyle = ACC; ctx.beginPath();
+      ctx.moveTo(x2, y2);
+      ctx.lineTo(x2 - 9 * Math.cos(ang - 0.4), y2 - 9 * Math.sin(ang - 0.4));
+      ctx.lineTo(x2 - 9 * Math.cos(ang + 0.4), y2 - 9 * Math.sin(ang + 0.4));
+      ctx.closePath(); ctx.fill();
+      label("trend · long-term direction", x2 + 4, y2 + 20, "right", ACC);
+    }
+
+    // seasonality bracket over one swing (periods 0 to 6)
+    let top = Infinity;
+    for (let i = 0; i <= 6; i++) if (isFinite(dispRaw[i])) top = Math.min(top, mapY(dispRaw[i]));
+    if (isFinite(top)){
+      const by = top - 12, bx1 = mapX(0), bx2 = mapX(6);
+      ctx.strokeStyle = AMB; ctx.lineWidth = 1.5; ctx.globalAlpha = 0.9;
+      ctx.beginPath(); ctx.moveTo(bx1, by + 5); ctx.lineTo(bx1, by); ctx.lineTo(bx2, by); ctx.lineTo(bx2, by + 5); ctx.stroke();
+      ctx.globalAlpha = 1;
+      label(st.deseason ? "season removed · ÷ index" : "seasonality · repeats every 6", bx1, by - 7, "left", AMB);
+    }
+
+    // irregular fluctuation
+    let j = -1, best = -1;
+    for (let i = 8; i <= 27; i++){
+      if (Math.abs(i - OUT) <= 2) continue;
+      let d;
+      if (win > 1){ if (!isFinite(dispSm[i])) continue; d = Math.abs(dispRaw[i] - dispSm[i]); }
+      else d = Math.abs(noise[i]);
+      if (d > best){ best = d; j = i; }
+    }
+    if (j >= 0){
+      const x = mapX(j), y1 = mapY(dispRaw[j]);
+      ctx.strokeStyle = "rgba(237,237,232,0.9)"; ctx.lineWidth = 1.5;
+      if (win > 1){
+        const y2 = mapY(dispSm[j]);
+        ctx.beginPath(); ctx.moveTo(x, y1); ctx.lineTo(x, y2); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(x - 4, y1); ctx.lineTo(x + 4, y1); ctx.moveTo(x - 4, y2); ctx.lineTo(x + 4, y2); ctx.stroke();
+        label("irregular", x + 9, (y1 + y2) / 2 + 4, "left", "rgba(237,237,232,0.95)");
+      } else {
+        ctx.beginPath(); ctx.moveTo(x, y1); ctx.lineTo(x + 7, y1); ctx.stroke();
+        label("irregular wobble", x + 10, y1 + 4, "left", "rgba(237,237,232,0.95)");
+      }
+    }
+
+    // outlier marker
+    if (st.outlier){
+      const x = mapX(OUT), y = mapY(dispRaw[OUT]);
+      ctx.save(); ctx.globalCompositeOperation = "lighter";
+      ctx.strokeStyle = "rgba(237,237,232,0.95)"; ctx.lineWidth = 1.6;
+      ctx.beginPath(); ctx.arc(x, y, 7, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+      label("outlier · one-off", x + 12, y + 4, "left", "rgba(237,237,232,0.95)");
+    }
+
+    // bloom
+    bctx.setTransform(1, 0, 0, 1, 0, 0); bctx.clearRect(0, 0, buf.width, buf.height);
+    if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+    ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
+    (buf.width&&buf.height)&&ctx.drawImage(buf, 0, 0, w, h); ctx.restore();
+
+    // vignette
+    const cx = w / 2, cy = h / 2;
+    const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
   }
-});
 
-resize();
-updateUI();
+  function resize(){
+    const rect = wrap.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    W = rect.width; H = rect.height;
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+    buf.width = canvas.width; buf.height = canvas.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    draw();
+  }
+
+  // ---------- controls ----------
+  slider.addEventListener("input", () => { win = parseInt(slider.value, 10); update(); });
+
+  document.querySelectorAll(".ts-pill[data-key]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const key = btn.getAttribute("data-key");
+      st[key] = !st[key];
+      btn.setAttribute("aria-pressed", st[key] ? "true" : "false");
+      update();
+    });
+  });
+
+  const KD = {
+    features: `Reading a time series plot is a qualitative skill before it is a calculation. Trend is the long-term direction: ask where the series sits after many periods compared with where it began. Seasonality is a systematic, calendar-related swing, the same shape every 6 periods here and every 4 quarters or 12 months in most course data. Irregular fluctuations are the short, unsystematic wobbles that remain once trend and season are accounted for. A possible outlier is one point far from the pattern, and an answer usually names a plausible one-off source such as a strike, a flood or a product recall. Structural change is a discontinuity where the whole level shifts and stays shifted, so a single trend line no longer describes the series.`,
+    indices: `A seasonal index measures how a season compares with an average season: an index of 1.24 means that season runs 24% above average, 0.76 means 24% below, and the indices always average to 1. Deseasonalising divides each value by the index for its season, which is exactly what the Deseasonalise option does to the plot, leaving trend plus irregular wobble. A least squares line fitted to the deseasonalised data gives the trend, and a forecast is that trend value multiplied back by the index of the season being forecast. If the data has a different number of seasons, the moving mean window changes to match: 4 for quarterly, 12 for monthly, and an even window is always centred.`
+  };
+  const kdBtns = document.querySelectorAll(".ts-pill[data-kd]");
+  kdBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      kdBtns.forEach(b => b.setAttribute("aria-pressed", b === btn ? "true" : "false"));
+      kd.textContent = KD[btn.getAttribute("data-kd")];
+    });
+  });
+  kd.textContent = KD.features;
+
+  if (window.ResizeObserver){ new ResizeObserver(() => resize()).observe(wrap); }
+  window.addEventListener("resize", resize);
+
+  update();
+  resize();
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'time-series-and-smoothing'},'*');}catch(e){}}

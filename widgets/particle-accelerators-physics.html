@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Particle Accelerators — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Particle accelerators — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -331,11 +331,11 @@ h1 {
   
   <h1>After 99.9% the speed of light, you stop getting <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">faster</span></h1>
   
-  <p class="intro">A particle accelerator is a microscope made of energy: electric fields kick charged particles faster each lap, magnetic fields steer them in a ring, and the collision energy becomes new matter by E = mc². As particles near light speed, relativity wins - energy climbs while speed flatlines. Drag the collision energy slider to slam beams together and watch which particles the energy can afford to create.</p>
+  <p class="intro">A particle accelerator is a microscope made of energy: electric fields kick charged particles faster each lap, magnetic fields steer them in a ring, and the collision energy becomes new matter by E = mc². As particles near light speed, relativity wins - energy climbs while speed flatlines. Raise the collision energy to slam beams together and watch which particles the energy can afford to create.</p>
 
   <div class="card">
     <div class="card-header">
-      <div class="card-label">Accelerator Ring</div>
+      <div class="card-label">Accelerator ring</div>
       <div class="live-tag" id="ringStatus">Lap 0 • 10 GeV</div>
     </div>
     <div class="sub-hint">Log energy scale. Speed is for a proton beam carrying half the collision energy; the ladder lights each particle once the collision can pay its mass-energy (E = mc²).</div>
@@ -346,7 +346,7 @@ h1 {
     </div>
 
     <div class="slider-group">
-      <div class="slider-label">Collision Energy</div>
+      <div class="slider-label">Collision energy</div>
       <input type="range" min="0" max="100" value="38.9" step="0.1" class="acc-slider" id="energySlider" style="--fill: 38.9%">
       <div class="tick-labels">
         <span style="position:absolute;left:calc(10px + 0.0000 * (100% - 20px));transform:translateX(0);white-space:nowrap">0.1 GeV</span>
@@ -358,11 +358,11 @@ h1 {
 
     <div class="stat-row">
       <div class="stat">
-        <div class="stat-label">Beam Speed</div>
+        <div class="stat-label">Beam speed</div>
         <div class="stat-value" id="speedStat" style="color:var(--acc);font-size:clamp(15px,4.6vw,24px)">0.988c</div>
       </div>
       <div class="stat">
-        <div class="stat-label">Heaviest Particle</div>
+        <div class="stat-label">Heaviest particle</div>
         <div class="stat-value" id="particleStat" style="color:var(--amb)">bottom</div>
       </div>
     </div>
@@ -370,8 +370,8 @@ h1 {
 
   <div class="toggle-card">
     <div class="toggle-buttons">
-      <button class="toggle-btn active" data-mode="electric">Electric Fields</button>
-      <button class="toggle-btn" data-mode="magnetic">Magnetic Fields</button>
+      <button class="toggle-btn active" data-mode="electric">Electric fields</button>
+      <button class="toggle-btn" data-mode="magnetic">Magnetic fields</button>
     </div>
     <div class="knowdrop" id="knowdropText">
       Electric fields accelerate - each pass through an RF cavity adds energy. The particle crosses a gap where the electric field oscillates at radio frequency; if it arrives at the right phase, the field kicks it forward and it leaves faster than it entered. Lap after lap, the energy compounds. The field does work on the particle, converting electrical potential energy into kinetic energy, and the particle gains speed - until relativity takes over and most of the added energy becomes mass-energy instead of velocity. Magnetic fields cannot do this: they deflect but never accelerate, because the Lorentz force is always perpendicular to motion.
@@ -401,7 +401,7 @@ const dpr = Math.min(window.devicePixelRatio || 1, 2);
 const buf = document.createElement("canvas");
 const bctx = buf.getContext("2d");
 
-let w, h, cx, cy;
+let w, h, cx, cy, ovH = 0;
 
 function resize() {
   const rect = canvas.getBoundingClientRect();
@@ -415,6 +415,8 @@ function resize() {
   h = canvas.height / dpr;
   cx = w / 2;
   cy = h / 2;
+  const ov = document.getElementById("canvasOverlay");
+  ovH = ov ? ov.offsetHeight : 0; /* the ladder must stay above the caption bar */
 }
 
 resize();
@@ -428,7 +430,7 @@ let animFrame = null;
 let lastTime = Date.now();
 
 /* Slider 0-100 is a LOG scale of collision energy, 0.1 GeV to 14 TeV. threshold = the minimum collision energy
-   (GeV) that pays the mass-energy: one particle (pi0, W or Z, Higgs) or a particle-antiparticle pair (2m). PDG masses. */
+   (GeV) that pays the mass-energy: one particle (pi0, W, Z, Higgs) or a particle-antiparticle pair (2m). PDG masses: W 80.4 GeV, Z 91.2 GeV, so they get separate rungs. */
 const E_MIN = 0.1, E_MAX = 14000;
 function collisionGeV(v) { return E_MIN * Math.pow(E_MAX / E_MIN, v / 100); }
 function fmtGeV(g) {
@@ -444,7 +446,8 @@ const particles = [
   { name: "charm", threshold: 2.54 },
   { name: "τ⁺τ⁻", threshold: 3.55 },
   { name: "bottom", threshold: 8.36 },
-  { name: "W/Z", threshold: 80.4 },
+  { name: "W", threshold: 80.4 },
+  { name: "Z", threshold: 91.2 },
   { name: "Higgs", threshold: 125.2 },
   { name: "top", threshold: 345 }
 ];
@@ -565,8 +568,8 @@ function draw() {
   ctx.fill();
   
   const ladderX = w * 0.82;
-  const ladderTop = h * 0.15;
-  const ladderBot = h * 0.85;
+  const ladderBot = Math.min(h * 0.85, h - ovH - 8);
+  const ladderTop = Math.max(10, Math.min(h * 0.15, ladderBot - 13 * (particles.length - 1)));
   const ladderH = ladderBot - ladderTop;
   const step = ladderH / (particles.length - 1);
   
@@ -677,8 +680,10 @@ slider.addEventListener("input", function() {
     document.getElementById("canvasOverlay").textContent = "Enough energy for top quark pairs";
   } else if (heaviest === "Higgs") {
     document.getElementById("canvasOverlay").textContent = "Enough energy for a Higgs boson";
-  } else if (heaviest === "W/Z") {
+  } else if (heaviest === "Z") {
     document.getElementById("canvasOverlay").textContent = "Enough energy for W and Z bosons";
+  } else if (heaviest === "W") {
+    document.getElementById("canvasOverlay").textContent = "Enough energy for a W boson";
   } else if (heaviest !== "—") {
     document.getElementById("canvasOverlay").textContent = heaviest + " threshold reached";
   } else {

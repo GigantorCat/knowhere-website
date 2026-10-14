@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Validity and Reliability — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Validity and reliability — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -331,18 +331,18 @@ canvas {
 </style>
 
 <div class="container">
-  <h2 class="sr-only">Validity and Reliability Interactive Widget</h2>
+  <h2 class="sr-only">Validity and reliability interactive widget</h2>
   
-  <h1>Perfect Precision Can Still Miss the <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">Truth</span></h1>
+  <h1>Perfect precision can still miss the <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">truth</span></h1>
   
-  <p class="intro">You can measure something consistently wrong every single time—that's reliable but invalid. Or you can hit the true value once in a scattered pattern—that's valid but unreliable. Psychology research demands both, but they're independent properties that need separate assessment. Drag the slider to see how confounding variables erode internal validity even when measurements stay reliable.</p>
+  <p class="intro">You can measure something consistently wrong every single time—that's reliable but invalid. Or your results can scatter widely and land on the true value only by luck—that's unreliable, and an unreliable measure can't be valid either. So reliable but invalid is possible; valid but unreliable is not. Psychology research demands both, and each needs its own check. Raise the confounding strength to see how confounding variables erode internal validity even when measurements stay reliable.</p>
 
   <div class="card">
     <div class="card-header">
-      <span class="card-label">Internal Validity</span>
-      <span class="live-tag" id="liveTag">Confounds: Low</span>
+      <span class="card-label">Internal validity</span>
+      <span class="live-tag" id="liveTag">Confounds: low</span>
     </div>
-    <div class="card-hint">Drag to introduce confounding variables</div>
+    <div class="card-hint">Raise the confounding strength. Watch both numbers.</div>
     
     <div class="canvas-wrapper">
       <canvas id="validityCanvas"></canvas>
@@ -350,7 +350,7 @@ canvas {
     </div>
 
     <div class="slider-row">
-      <div class="slider-label">Confounding Variable Strength</div>
+      <div class="slider-label">Confounding variable strength</div>
       <input type="range" min="0" max="100" value="20" class="vr-slider" id="confoundSlider">
       <div class="tick-labels">
         <span>None</span>
@@ -361,7 +361,7 @@ canvas {
 
     <div class="stat-row">
       <div class="stat">
-        <div class="stat-label">Internal Validity</div>
+        <div class="stat-label">Internal validity</div>
         <div class="stat-value" style="color:var(--acc)" id="validityStat">85%</div>
       </div>
       <div class="stat">
@@ -373,8 +373,8 @@ canvas {
 
   <div class="toggle-card">
     <div class="toggle-buttons">
-      <button class="toggle-btn active" data-mode="external">External Validity</button>
-      <button class="toggle-btn" data-mode="reliability">Reliability Types</button>
+      <button class="toggle-btn active" data-mode="external">External validity</button>
+      <button class="toggle-btn" data-mode="reliability">Reliability types</button>
     </div>
     
     <div class="knowdrop-divider">
@@ -435,13 +435,13 @@ function updateSlider() {
   validityStat.textContent = validity + '%';
   
   if (pct < 0.33) {
-    liveTag.textContent = 'Confounds: Low';
+    liveTag.textContent = 'Confounds: low';
     canvasOverlay.textContent = 'IV → DV causal link: Strong';
   } else if (pct < 0.67) {
-    liveTag.textContent = 'Confounds: Moderate';
+    liveTag.textContent = 'Confounds: moderate';
     canvasOverlay.textContent = 'IV → DV causal link: Weakening';
   } else {
-    liveTag.textContent = 'Confounds: High';
+    liveTag.textContent = 'Confounds: high';
     canvasOverlay.textContent = 'Alternative explanations dominate';
   }
 }
@@ -464,7 +464,8 @@ for (let i = 0; i < 40; i++) {
     phase: Math.random(),
     speed: 0.4 + Math.random() * 0.6,
     offset: (Math.random() - 0.5) * 0.15,
-    isMain: Math.random() < 0.6
+    isMain: Math.random() < 0.6,
+    branch: Math.random() < 0.5
   });
 }
 
@@ -580,12 +581,12 @@ function draw() {
       // Confound paths (only visible when confound strong)
       if (confoundStrength < 0.15) return;
       const confY = cy - h * 0.28;
-      if (Math.random() < 0.5) {
-        // IV→C
-        startX = ivX + (cx - ivX) * 0.2;
-        startY = cy;
-        endX = cx;
-        endY = confY;
+      if (p.branch) {
+        // C→IV
+        startX = cx;
+        startY = confY;
+        endX = ivX + (cx - ivX) * 0.2;
+        endY = cy;
       } else {
         // C→DV
         startX = cx;

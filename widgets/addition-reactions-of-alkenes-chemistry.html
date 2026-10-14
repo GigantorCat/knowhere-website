@@ -90,7 +90,7 @@ h1 {
 .live-tag {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
-  text-transform: uppercase;
+  text-transform: none;
   color: var(--acc);
 }
 
@@ -130,7 +130,7 @@ canvas {
   padding: 9px 16px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 14px;
-  text-transform: uppercase;
+  text-transform: none;
   color: var(--acc);
   text-align: center;
 }
@@ -326,7 +326,7 @@ canvas {
   <h1>The double bond is an <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">invitation</span></h1>
   
   <p class="intro">
-    Alkenes have a pi bond waiting to break — drag in a reagent and watch both atoms add across the two carbons, one molecule in, one product out. Alkanes do not invite anything: force bromine onto ethane and you need ultraviolet light, a hydrogen gets swapped, and hydrogen bromide leaves. Drag the slider to control the reagent approaching the molecule.
+    Alkenes have a pi bond waiting to break — add a reagent and watch both atoms add across the two carbons, one molecule in, one product out. Alkanes do not invite anything: force bromine onto ethane and you need ultraviolet light, a hydrogen gets swapped, and hydrogen bromide leaves. Move the reagent closer to the molecule and watch what happens to the bonds.
   </p>
 
   <div class="card">
@@ -334,7 +334,7 @@ canvas {
       <span class="card-label">Interactive Addition</span>
       <span class="live-tag" id="liveTag">Ethene • Waiting</span>
     </div>
-    <div class="card-hint">Select a reagent and drag to watch the reaction unfold</div>
+    <div class="card-hint">Pick a reagent and move it closer to watch the reaction unfold</div>
     
     <div class="canvas-wrapper">
       <canvas id="reactionCanvas"></canvas>
@@ -619,10 +619,14 @@ function draw() {
 
   /* captions + UV wash live OUTSIDE the scale transform */
   if (mode === "alkane" && reagent !== "br2") {
-    ctx.fillStyle = "#8C9389";
-    ctx.font = "13px JetBrains Mono";
+    const cap = "(No reaction — alkanes are saturated: no π bond to open)";
+    ctx.font = Math.max(10, Math.min(13, Math.round(w * 0.031))) + "px JetBrains Mono";
     ctx.textAlign = "center";
-    ctx.fillText("(No reaction — alkanes are saturated: no π bond to open)", cx, h - 16);
+    const capW = ctx.measureText(cap).width;
+    ctx.fillStyle = "rgba(0,0,0,0.6)";
+    ctx.fillRect(cx - capW / 2 - 6, 8, capW + 12, 22);
+    ctx.fillStyle = "#8C9389";
+    ctx.fillText(cap, cx, 24);
   }
   if (mode === "alkane" && reagent === "br2" && progress > 0.1 && progress < 0.5) {
     ctx.save();
@@ -633,7 +637,10 @@ function draw() {
     ctx.fillStyle = AMB;
     ctx.font = "11px JetBrains Mono";
     ctx.textAlign = "left";
-    ctx.fillText("UV ON — radicals loose", 12, h - 16);
+    ctx.fillStyle = "rgba(0,0,0,0.6)";
+    ctx.fillRect(6, 8, ctx.measureText("UV ON — radicals loose").width + 12, 20);
+    ctx.fillStyle = AMB;
+    ctx.fillText("UV ON — radicals loose", 12, 22);
   }
 
   bctx.setTransform(1, 0, 0, 1, 0, 0);

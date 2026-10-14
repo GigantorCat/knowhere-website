@@ -295,14 +295,14 @@ canvas {
 <div class="container">
   <h1>Living longer doesn't mean living <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">well</span></h1>
   
-  <p class="intro">Australia's life expectancy is 83 years, but the average person only lives 72 years in full health. The 11-year gap reveals the hidden burden of non-fatal disease. Drag the slider to explore how illness steals healthy years without reducing total lifespan.</p>
+  <p class="intro">Australia's life expectancy is 83 years, but the average person only lives 72 years in full health. The 11-year gap reveals the hidden burden of non-fatal disease. Lower HALE and watch the grey band of years with illness grow while total lifespan stays fixed.</p>
 
   <div class="card">
     <div class="card-header">
       <span class="card-label">Lifespan Visualisation</span>
       <span class="live-tag" id="liveTag">72 healthy years</span>
     </div>
-    <p class="card-hint">Drag to adjust HALE • Orange = healthy years • Dim = years with illness</p>
+    <p class="card-hint">Adjust HALE • Orange = healthy years • Dim = years with illness</p>
     
     <div class="canvas-wrapper">
       <canvas id="canvas"></canvas>
@@ -372,12 +372,13 @@ const dpr = Math.min(window.devicePixelRatio || 1, 2);
 const buf = document.createElement('canvas');
 const bctx = buf.getContext('2d', { alpha: false });
 
-const lifeExpectancy = 83;
+let lifeExpectancy = 83;
 let hale = 72;
+let scenarioLabel = btnAustralia.textContent.toUpperCase();
 
 const australiaText = "Australia's HALE of 72 years sits well above the global average, reflecting strong healthcare access and lower rates of preventable disease. However, chronic conditions like cardiovascular disease, diabetes, and mental health disorders still account for the 11-year gap between total life expectancy and healthy life expectancy. HALE allows policymakers to identify which diseases create the greatest burden without causing immediate death, revealing where prevention and early intervention could deliver the most impact. Unlike life expectancy alone, HALE captures the lived experience of health across a population's lifespan.";
 
-const comparisonText = "Comparing HALE across countries reveals stark inequalities in health system performance. Japan leads with HALE of 75 years, while many low-income countries struggle to reach 55 years despite similar genetic potential for longevity. The gap between rich and poor nations isn't just about living longer—it's about living healthier. Countries with universal healthcare, strong primary care systems, and investment in prevention consistently show smaller gaps between life expectancy and HALE. This metric exposes where healthcare systems fail to deliver quality alongside quantity, making HALE a more honest measure of population health than life expectancy alone.";
+const comparisonText = "Comparing HALE across countries reveals stark inequalities in health system performance. Japan leads with HALE of 75 years, while many low-income countries struggle to reach 55 years despite similar genetic potential for longevity. The gap between rich and poor nations isn't just about living longer—it's about living healthier. Countries with universal healthcare, strong primary care systems, and investment in prevention consistently show smaller gaps between life expectancy and HALE. This metric exposes where healthcare systems fail to deliver quality alongside quantity, making HALE a more honest measure of population health than life expectancy alone. The world average is a life expectancy of about 73 years with a HALE of about 63 years, which is where the bar above starts in this view.";
 
 function resize() {
   const rect = canvas.getBoundingClientRect();
@@ -449,11 +450,11 @@ function draw() {
   
   // HALE
   ctx.fillStyle = 'rgba(240,160,78,0.9)';
-  ctx.fillText(hale.toString(), startX + haleWidth, markerY);
+  ctx.fillText(hale.toString(), Math.min(startX + haleWidth, endX - 16), markerY);
   
   // Life expectancy
   ctx.fillStyle = 'rgba(237,237,232,0.5)';
-  ctx.fillText('83', endX, markerY);
+  ctx.fillText(String(lifeExpectancy), endX, markerY);
   
   // Labels
   ctx.font = '10px "JetBrains Mono"';
@@ -465,22 +466,10 @@ function draw() {
   ctx.textAlign = 'right';
   ctx.fillText('YEARS WITH ILLNESS', endX, barY - barHeight/2 - h * 0.06);
   
-  // Floating particles in healthy zone
-  const time = Date.now() * 0.0005;
-  for (let i = 0; i < 8; i++) {
-    const px = startX + (i / 7) * haleWidth;
-    const py = barY + Math.sin(time + i * 0.8) * (barHeight * 0.3);
-    const pr = 2.5 + Math.sin(time * 1.5 + i) * 0.8;
-    const alpha = 0.3 + Math.sin(time * 2 + i * 1.2) * 0.2;
-    
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.fillStyle = `rgba(240,160,78,${alpha})`;
-    ctx.beginPath();
-    ctx.arc(px, py, pr, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-  }
+  // Scenario caption
+  ctx.textAlign = 'center';
+  ctx.fillStyle = 'rgba(237,237,232,0.5)';
+  ctx.fillText(scenarioLabel, w * 0.5, h * 0.14);
   
   // Bloom
   bctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -517,31 +506,35 @@ function updateUI() {
 }
 
 slider.addEventListener('input', (e) => {
-  hale = parseInt(e.target.value);
+  hale = Math.min(parseInt(e.target.value), lifeExpectancy);
+  slider.value = hale;
   updateUI();
 });
 
 btnAustralia.addEventListener('click', () => {
   btnAustralia.classList.add('active');
   btnComparison.classList.remove('active');
+  lifeExpectancy = 83;
+  hale = 72;
+  slider.value = 72;
+  scenarioLabel = btnAustralia.textContent.toUpperCase();
   knowdrop.textContent = australiaText;
+  updateUI();
 });
 
 btnComparison.addEventListener('click', () => {
   btnComparison.classList.add('active');
   btnAustralia.classList.remove('active');
+  lifeExpectancy = 73;
+  hale = 63;
+  slider.value = 63;
+  scenarioLabel = "WORLD AVERAGE";
   knowdrop.textContent = comparisonText;
+  updateUI();
 });
 
 window.addEventListener('resize', resize);
 resize();
-
-let animFrame;
-function animate() {
-  draw();
-  animFrame = requestAnimationFrame(animate);
-}
-animate();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'health-adjusted-life-expectancy'},'*');}catch(e){}}

@@ -347,14 +347,14 @@ canvas {
 
   <h1>One constant k controls both <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">halving and doubling</span></h1>
   
-  <p class="intro">Whether a population explodes or a substance decays, the mathematics is identical — only the sign of k changes. The same size, ln(2)/|k|, gives you the half-life for decay (k &lt; 0) and the doubling time for growth (k &gt; 0). Drag the slider to change k and watch how exponential behaviour unfolds in real-time.</p>
+  <p class="intro">Whether a population explodes or a substance decays, the mathematics is identical — only the sign of k changes. The same size, ln(2)/|k|, gives you the half-life for decay (k &lt; 0) and the doubling time for growth (k &gt; 0). Change k and watch where the curve doubles or halves.</p>
 
   <div class="card">
     <div class="card-header">
-      <div class="card-label">Exponential Solution</div>
+      <div class="card-label">Exponential solution</div>
       <div class="live-tag" id="liveTag">k = +0.50</div>
     </div>
-    <div class="card-hint">Drag to adjust the rate constant k</div>
+    <div class="card-hint">Set k. Find where y reaches 2 (or 0.5).</div>
     
     <div class="canvas-wrapper">
       <canvas id="canvas"></canvas>
@@ -373,7 +373,7 @@ canvas {
 
     <div class="stat-row">
       <div class="stat">
-        <div class="stat-label">Current y-value</div>
+        <div class="stat-label">y at x = 1</div>
         <div class="stat-value" style="color:var(--acc)" id="yValue">1.65</div>
       </div>
       <div class="stat">
@@ -434,7 +434,7 @@ function resize() {
 }
 
 resize();
-window.addEventListener('resize', resize);
+window.addEventListener('resize', () => { resize(); draw(); });
 
 kSlider.addEventListener('input', (e) => {
   const val = parseFloat(e.target.value);
@@ -442,6 +442,7 @@ kSlider.addEventListener('input', (e) => {
   const fillPct = ((val + 100) / 200) * 100;
   kSlider.style.setProperty('--fill', fillPct + '%');
   updateUI();
+  draw();
 });
 
 function updateUI() {
@@ -459,7 +460,7 @@ function updateUI() {
     canvasOverlay.textContent = `Equilibrium: No growth or decay`;
   }
   
-  const xCurrent = 3;
+  const xCurrent = 1;
   const yCurrent = Math.exp(k * xCurrent);
   yValue.textContent = yCurrent.toFixed(2);
   timeConstant.textContent = tConstStr;
@@ -489,9 +490,9 @@ function draw() {
   ctx.fillRect(0, 0, w, h);
   
   const cx = w / 2;
-  const cy = h / 2;
+  const cy = h - canvasOverlay.offsetHeight - 10;
   const xScale = w / 10;
-  const yScale = h / 6;
+  const yScale = (cy - 16) / 4;
   
   // Grid
   ctx.strokeStyle = 'rgba(255,255,255,0.08)';
@@ -502,7 +503,7 @@ function draw() {
     ctx.lineTo(cx + gx * xScale, h);
     ctx.stroke();
   }
-  for (let gy = -3; gy <= 3; gy++) {
+  for (let gy = 0; gy <= 4; gy++) {
     ctx.beginPath();
     ctx.moveTo(0, cy - gy * yScale);
     ctx.lineTo(w, cy - gy * yScale);
@@ -566,8 +567,34 @@ function draw() {
   ctx.stroke();
   ctx.restore();
   
-  // Moving dot along curve
-  const xDot = 3 + 1.5 * Math.sin(time * 0.4);
+  // Doubling / halving marker at x = ln(2)/|k|
+  if (k !== 0) {
+    const tHalf = Math.log(2) / Math.abs(k);
+    if (tHalf <= 5) {
+      const yMark = k > 0 ? 2 : 0.5;
+      const pxMark = cx + tHalf * xScale;
+      const pyMark = cy - yMark * yScale;
+      ctx.save();
+      ctx.strokeStyle = 'rgba(237,237,232,0.6)';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([5, 5]);
+      ctx.beginPath();
+      ctx.moveTo(pxMark, cy);
+      ctx.lineTo(pxMark, pyMark);
+      ctx.lineTo(cx, pyMark);
+      ctx.stroke();
+      ctx.restore();
+      ctx.fillStyle = '#EDEDE8';
+      ctx.font = '12px JetBrains Mono, monospace';
+      const flipLabel = pxMark > w - 110;
+      ctx.textAlign = flipLabel ? 'right' : 'left';
+      const labelX = flipLabel ? pxMark - 8 : pxMark + 8;
+      ctx.fillText(k > 0 ? `×2 at x = ${tHalf.toFixed(2)}` : `½ at x = ${tHalf.toFixed(2)}`, labelX, pyMark - 8);
+    }
+  }
+  
+  // Dot on curve at x = 1
+  const xDot = 1;
   const yDot = Math.exp(k * xDot);
   const pxDot = cx + xDot * xScale;
   const pyDot = cy - yDot * yScale;
@@ -609,8 +636,6 @@ function draw() {
   ctx.fillStyle = vig;
   ctx.fillRect(0, 0, w, h);
   
-  time += 0.016;
-  animFrame = requestAnimationFrame(draw);
 }
 
 draw();

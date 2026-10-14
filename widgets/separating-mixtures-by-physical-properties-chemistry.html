@@ -1,0 +1,473 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Separating mixtures by physical properties — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap");
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #3E9AD6;
+  --acc-rgb: 62, 154, 214;
+  --ag:  rgba(var(--acc-rgb),.7);
+  --ag1: rgba(var(--acc-rgb),.12);
+  --ag2: rgba(var(--acc-rgb),.45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+body{margin:0;background:radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);font-family:"Geist",sans-serif;min-height:100vh;padding:40px 16px 0;box-sizing:border-box;color:var(--ink)}
+.sp-wrap{max-width:720px;margin:0 auto}
+.sp-wrap *{box-sizing:border-box}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.sp-h1{font-family:"Geist",sans-serif;font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin:0 0 14px;color:var(--ink)}
+.sp-intro{font-size:15.5px;font-weight:400;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin:0 0 24px}
+.sp-card{background:linear-gradient(180deg,var(--bg2),#0d100b);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);margin-bottom:18px}
+.sp-card.sp-sec{border-radius:14px}
+.sp-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.sp-label{font-family:"JetBrains Mono",monospace;font-size:13px;text-transform:uppercase;color:var(--ink);letter-spacing:0.04em}
+.sp-live{font-family:"JetBrains Mono",monospace;font-size:11px;text-transform:uppercase;color:var(--acc);letter-spacing:0.06em}
+.sp-hint{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--ink-dim);margin:6px 0 12px}
+.sp-samples{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:12px}
+.sp-btn{font-family:"JetBrains Mono",monospace;font-size:14.5px;padding:12px;border-radius:11px;background:var(--bg2);border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:background .2s,border-color .2s,color .2s,box-shadow .2s;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sp-btn small{display:block;font-size:10.5px;opacity:.8;margin-top:3px}
+.sp-btn.on{background:rgba(var(--acc-rgb),.1);border:1px solid var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.sp-btn:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.sp-samples .sp-btn{padding:10px 6px}
+.sp-canvas-wrap{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1)}
+.sp-canvas-wrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.sp-overlay{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);padding:9px 16px;font-family:"JetBrains Mono",monospace;font-size:14px;text-transform:uppercase;color:var(--acc);text-align:center;letter-spacing:0.04em}
+.sp-slabel{display:flex;justify-content:space-between;margin:16px 0 8px;font-family:"JetBrains Mono",monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);letter-spacing:0.06em}
+.sp-slabel b{color:var(--acc);font-weight:500}
+.sp-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;background:linear-gradient(90deg,var(--acc) var(--fill,0%),#23291f var(--fill,0%));outline:none;margin:6px 0 10px;cursor:pointer}
+.sp-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:var(--bg);border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s}
+.sp-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--bg);border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s}
+.sp-slider:hover::-webkit-slider-thumb{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.sp-slider:hover::-moz-range-thumb{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.sp-ticks{display:flex;justify-content:space-between;font-family:"JetBrains Mono",monospace;font-size:9px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:0.05em}
+.sp-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;border-top:1px solid var(--line);margin-top:16px;padding-top:14px}
+.sp-stat-l{font-family:"JetBrains Mono",monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);letter-spacing:0.06em;margin-bottom:4px}
+.sp-stat-v{font-family:"JetBrains Mono",monospace;font-size:24px;font-weight:500}
+.sp-stat-v small{font-size:11px;color:var(--ink-dim);font-weight:400;margin-left:4px}
+.sp-a{color:var(--acc)}
+.sp-b{color:var(--amb)}
+.sp-toggles{display:flex;gap:10px}
+.sp-toggles .sp-btn{flex:1}
+.sp-drop{border-top:1px solid var(--line);padding-top:16px;margin-top:16px;font-family:"Geist",sans-serif;font-size:14.5px;font-weight:400;line-height:1.65;color:var(--ink);margin-bottom:0}
+.sp-know{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));border-radius:0 12px 12px 0;margin-top:26px;margin-bottom:0}
+.sp-know-tag{display:flex;align-items:center;gap:9px;font-family:"JetBrains Mono",monospace;font-size:13px;text-transform:uppercase;letter-spacing:0.15em;color:var(--acc);margin-bottom:10px}
+.sp-know-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:spdot 2.4s ease-in-out infinite;flex:none}
+@keyframes spdot{0%,100%{opacity:1}50%{opacity:.45}}
+.sp-know p{font-family:"Geist",sans-serif;font-size:17.4px;font-weight:400;line-height:1.55;color:var(--ink);margin:0}
+@media (prefers-reduced-motion: reduce){.sp-know-dot{animation:none}.sp-btn,.sp-slider::-webkit-slider-thumb{transition:none}}
+@media (max-width:420px){.sp-samples .sp-btn{font-size:13px}}
+</style>
+
+<div class="sp-wrap">
+  <h2 class="sr-only">Separating mixtures by physical properties: an interactive model where a mixture of sand, salt and iron filings is separated by a magnet, filtration and evaporation, and each component's percentage composition by mass is calculated.</h2>
+
+  <h1 class="sp-h1">To separate a mixture you make nothing new — you exploit its <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">differences</span></h1>
+  <p class="sp-intro">Stir sand, salt and iron filings together and they are still three separate substances, each keeping its own physical properties. Pull them apart one property at a time, weigh what you recover, and the percentage composition of the mixture falls out. Pick a sample, then step the separation forward to run the magnet, the filter and the evaporating basin.</p>
+
+  <div class="sp-card">
+    <div class="sp-head">
+      <span class="sp-label">One mixture · three separations</span>
+      <span class="sp-live" id="spLive">Start · nothing separated</span>
+    </div>
+    <div class="sp-hint">Choose a sample, then move the separation forward step by step.</div>
+
+    <div class="sp-samples" role="group" aria-label="Choose a mixture sample">
+      <button type="button" class="sp-btn on" data-sample="0" aria-pressed="true">Sample A<small>20.0 g</small></button>
+      <button type="button" class="sp-btn" data-sample="1" aria-pressed="false">Sample B<small>25.0 g</small></button>
+      <button type="button" class="sp-btn" data-sample="2" aria-pressed="false">Sample C<small>12.5 g</small></button>
+    </div>
+
+    <div class="sp-canvas-wrap" id="spWrap">
+      <canvas id="spCanvas" aria-label="A beaker of sand, salt and iron filings. A magnet, a filter funnel and an evaporating basin move each component into its own weighed dish." role="img"></canvas>
+      <div class="sp-overlay" id="spOverlay">Start · one 20.0 g mixture</div>
+    </div>
+
+    <div class="sp-slabel"><span>Separation progress</span><b id="spPct">0%</b></div>
+    <input type="range" class="sp-slider" id="spSlider" min="0" max="100" step="0.5" value="0" aria-label="Separation progress from start to all three components recovered">
+    <div class="sp-ticks"><span>Start</span><span>Magnet</span><span>Filter</span><span>Evaporate</span></div>
+
+    <div class="sp-stats">
+      <div>
+        <div class="sp-stat-l">Mass recovered</div>
+        <div class="sp-stat-v sp-a"><span id="spRec">0.0 g</span><small id="spTot">of 20.0 g</small></div>
+      </div>
+      <div>
+        <div class="sp-stat-l" id="spPctLabel">% iron by mass</div>
+        <div class="sp-stat-v sp-b" id="spPctVal">0.0%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sp-card sp-sec">
+    <div class="sp-toggles" role="group" aria-label="Type of mixture">
+      <button type="button" class="sp-btn on" data-mode="het" aria-pressed="true">Heterogeneous</button>
+      <button type="button" class="sp-btn" data-mode="hom" aria-pressed="false">Homogeneous</button>
+    </div>
+    <p class="sp-drop" id="spDrop"></p>
+  </div>
+
+  <div class="sp-know">
+    <div class="sp-know-tag"><span class="sp-know-dot"></span><span>Know This</span></div>
+    <p>Every separation exploits one <span style="color:var(--acc)">physical property</span> the components differ in, and each component's <span style="color:var(--acc)">percentage by mass</span> is its mass divided by the <span style="color:var(--acc)">original sample mass</span>, times 100.</p>
+  </div>
+</div>
+
+<script>
+(function(){
+  const CSS = getComputedStyle(document.documentElement);
+  const ACC = CSS.getPropertyValue("--acc").trim();
+  const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+  const AMB = CSS.getPropertyValue("--amb").trim();
+  const INK = CSS.getPropertyValue("--ink").trim();
+  const DIM = CSS.getPropertyValue("--ink-dim").trim();
+  const accA = a => "rgba(" + RGB + "," + a + ")";
+
+  const canvas = document.getElementById("spCanvas");
+  const ctx = canvas.getContext("2d");
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const buf = document.createElement("canvas");
+  const bctx = buf.getContext("2d");
+  const reduce = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+
+  const slider = document.getElementById("spSlider");
+  const liveEl = document.getElementById("spLive");
+  const overlay = document.getElementById("spOverlay");
+  const pctEl = document.getElementById("spPct");
+  const recEl = document.getElementById("spRec");
+  const totEl = document.getElementById("spTot");
+  const pctLabel = document.getElementById("spPctLabel");
+  const pctVal = document.getElementById("spPctVal");
+  const drop = document.getElementById("spDrop");
+
+  const SAMPLES = [
+    { name: "A", m: [4.0, 10.0, 6.0] },
+    { name: "B", m: [2.5, 8.0, 14.5] },
+    { name: "C", m: [5.0, 3.5, 4.0] }
+  ];
+  const NAMES = ["Iron", "Sand", "Salt"];
+  const STEP = 100 / 3;
+  let sample = SAMPLES[0];
+  let parts = [];
+  let target = 0, shown = 0, raf = 0, last = 0;
+
+  function total(){ return sample.m[0] + sample.m[1] + sample.m[2]; }
+  function clamp(v){ return v < 0 ? 0 : v > 1 ? 1 : v; }
+  function ease(u){ return 1 - Math.pow(1 - u, 3); }
+  function lerp(a, b, u){ return a + (b - a) * u; }
+
+  function build(){
+    let seed = 7 + SAMPLES.indexOf(sample) * 131;
+    const rnd = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+    const N = 96, T = total();
+    parts = [];
+    for (let c = 0; c < 3; c++){
+      const n = Math.max(2, Math.round(sample.m[c] / T * N));
+      for (let k = 0; k < n; k++){
+        parts.push({ c: c, k: k, rx: 0.1 + rnd() * 0.8, ry: 0.42 + rnd() * 0.52, s: rnd() * 0.5,
+          a: rnd() * Math.PI, jx: rnd() - 0.5, jy: rnd() - 0.5, bx: rnd() - 0.5, by: rnd() });
+      }
+    }
+  }
+
+  function resize(){
+    const rect = canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    canvas.width = Math.round(rect.width * dpr); canvas.height = Math.round(rect.height * dpr);
+    buf.width = canvas.width; buf.height = canvas.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    draw();
+  }
+
+  function stageT(i, D){ return clamp((D - i * STEP) / STEP); }
+  function stageOf(D){ if (D <= 0.01) return -1; if (D >= 99.99) return 3; return Math.min(2, Math.floor(D / STEP)); }
+
+  function geo(w, h){
+    return {
+      bx0: w * 0.05, bx1: w * 0.28, by0: h * 0.17, by1: h * 0.74,
+      sx: w * 0.455, sy: h * 0.34,
+      cx: w * 0.455, cy: h * 0.6, rw: w * 0.075, dep: h * 0.09,
+      dx: [w * 0.665, w * 0.78, w * 0.895], dw: w * 0.085, dTop: h * 0.3, dBot: h * 0.74
+    };
+  }
+
+  function pileXY(G, c, k, r){
+    const per = 7, sp = G.dw / per;
+    const col = k % per, row = Math.floor(k / per);
+    return { x: G.dx[c] - G.dw / 2 + sp * (col + 0.5), y: G.dBot - sp * (row + 0.5) - r * 0.2 };
+  }
+
+  function via(p0, p1, p2, u, lift){
+    if (u < 0.5){ const v = ease(u * 2); return { x: lerp(p0.x, p1.x, v), y: lerp(p0.y, p1.y, v) - Math.sin(v * Math.PI) * lift }; }
+    const v = ease((u - 0.5) * 2); return { x: lerp(p1.x, p2.x, v), y: lerp(p1.y, p2.y, v) - Math.sin(v * Math.PI) * lift };
+  }
+
+  function drawBeaker(G, lw, D){
+    const rad = (G.bx1 - G.bx0) * 0.12;
+    ctx.save();
+    ctx.strokeStyle = INK; ctx.globalAlpha = 0.55; ctx.lineWidth = lw;
+    ctx.beginPath();
+    ctx.moveTo(G.bx0, G.by0); ctx.lineTo(G.bx0, G.by1 - rad);
+    ctx.quadraticCurveTo(G.bx0, G.by1, G.bx0 + rad, G.by1);
+    ctx.lineTo(G.bx1 - rad, G.by1); ctx.quadraticCurveTo(G.bx1, G.by1, G.bx1, G.by1 - rad);
+    ctx.lineTo(G.bx1, G.by0); ctx.stroke();
+    ctx.restore();
+    const t2 = stageT(1, D);
+    let wl = 0;
+    if (t2 > 0 && t2 < 1) wl = t2 < 0.12 ? t2 / 0.12 : Math.max(0, 1 - (t2 - 0.12) / 0.8);
+    if (wl > 0){
+      const top = G.by1 - (G.by1 - G.by0) * 0.66 * wl;
+      ctx.fillStyle = accA(0.16);
+      ctx.fillRect(G.bx0 + lw, top, G.bx1 - G.bx0 - lw * 2, G.by1 - top - lw);
+      ctx.strokeStyle = accA(0.5); ctx.lineWidth = lw * 0.8;
+      ctx.beginPath(); ctx.moveTo(G.bx0 + lw, top); ctx.lineTo(G.bx1 - lw, top); ctx.stroke();
+    }
+  }
+
+  function drawMagnet(G, w, h, alpha){
+    const r = w * 0.032, top = G.sy - h * 0.1;
+    ctx.save(); ctx.globalAlpha = alpha;
+    ctx.strokeStyle = ACC; ctx.lineWidth = w * 0.014; ctx.lineCap = "butt";
+    ctx.shadowColor = ACC; ctx.shadowBlur = 14;
+    ctx.beginPath(); ctx.moveTo(G.sx - r, G.sy - h * 0.01); ctx.lineTo(G.sx - r, top); ctx.arc(G.sx, top, r, Math.PI, 0); ctx.lineTo(G.sx + r, G.sy - h * 0.01); ctx.stroke();
+    ctx.shadowBlur = 0; ctx.strokeStyle = INK;
+    ctx.beginPath(); ctx.moveTo(G.sx - r, G.sy - h * 0.035); ctx.lineTo(G.sx - r, G.sy - h * 0.005); ctx.moveTo(G.sx + r, G.sy - h * 0.035); ctx.lineTo(G.sx + r, G.sy - h * 0.005); ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawFunnel(G, w, h, alpha){
+    const hw = w * 0.06, top = G.sy - h * 0.08, apex = G.sy + h * 0.07;
+    ctx.save(); ctx.globalAlpha = alpha; ctx.lineWidth = Math.max(1, w * 0.0028);
+    ctx.fillStyle = accA(0.06); ctx.strokeStyle = INK;
+    ctx.beginPath(); ctx.moveTo(G.sx - hw, top); ctx.lineTo(G.sx, apex); ctx.lineTo(G.sx + hw, top); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.strokeStyle = DIM; ctx.setLineDash([3, 3]);
+    ctx.beginPath(); ctx.moveTo(G.sx - hw * 0.8, top + h * 0.01); ctx.lineTo(G.sx, apex - h * 0.02); ctx.lineTo(G.sx + hw * 0.8, top + h * 0.01); ctx.stroke();
+    ctx.setLineDash([]); ctx.strokeStyle = INK;
+    ctx.beginPath(); ctx.moveTo(G.sx, apex); ctx.lineTo(G.sx, G.cy - G.dep * 0.9); ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawBasin(G, w, h, D, alpha){
+    const t2 = stageT(1, D), t3 = stageT(2, D);
+    const lw = Math.max(1, w * 0.0028);
+    ctx.save(); ctx.globalAlpha = alpha;
+    const fill = clamp((t2 - 0.12) / 0.8) * (1 - clamp(t3 / 0.85));
+    if (fill > 0){
+      ctx.save();
+      ctx.beginPath(); ctx.ellipse(G.cx, G.cy, G.rw, G.dep, 0, 0, Math.PI); ctx.clip();
+      const top = G.cy + G.dep * (1 - fill);
+      ctx.fillStyle = accA(0.22); ctx.fillRect(G.cx - G.rw, top, G.rw * 2, G.dep * 2);
+      ctx.restore();
+    }
+    ctx.strokeStyle = INK; ctx.lineWidth = lw;
+    ctx.beginPath(); ctx.ellipse(G.cx, G.cy, G.rw, G.dep, 0, 0, Math.PI); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(G.cx - G.rw * 1.1, G.cy); ctx.lineTo(G.cx + G.rw * 1.1, G.cy); ctx.stroke();
+    const heat = D > 2 * STEP && D < 99.99 ? 1 : (D >= 99.99 ? 0.25 : 0);
+    if (heat > 0){
+      const fy = G.cy + G.dep + h * 0.02, fh = h * 0.07;
+      ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = alpha * heat;
+      ctx.fillStyle = AMB;
+      for (let i = -1; i <= 1; i++){
+        const fx = G.cx + i * G.rw * 0.35, s = i === 0 ? 1 : 0.7;
+        ctx.beginPath(); ctx.moveTo(fx - w * 0.012 * s, fy + fh); ctx.quadraticCurveTo(fx, fy + fh * (1 - s), fx, fy + fh * (1 - s)); ctx.quadraticCurveTo(fx, fy + fh * 0.4, fx + w * 0.012 * s, fy + fh); ctx.closePath(); ctx.fill();
+      }
+      ctx.restore();
+      const vap = Math.sin(Math.PI * clamp(t3)) * alpha;
+      if (vap > 0.02){
+        ctx.save(); ctx.strokeStyle = INK; ctx.globalAlpha = vap * 0.6; ctx.lineWidth = lw;
+        for (let i = -1; i <= 1; i++){
+          const vx = G.cx + i * G.rw * 0.5;
+          ctx.beginPath();
+          for (let j = 0; j <= 12; j++){
+            const y = G.cy - h * 0.03 - j * h * 0.012;
+            const x = vx + Math.sin(j * 0.9 + i) * w * 0.006;
+            if (j) ctx.lineTo(x, y); else ctx.moveTo(x, y);
+          }
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+    }
+    ctx.restore();
+  }
+
+  function draw(){
+    const w = canvas.width / dpr, h = canvas.height / dpr;
+    if (!w || !h) return;
+    const D = shown, G = geo(w, h), T = total(), st = stageOf(D);
+    const lw = Math.max(1, w * 0.0028), r = Math.max(1.3, w * 0.0045);
+    const fs = Math.max(8, w * 0.016);
+    ctx.clearRect(0, 0, w, h);
+    const bg = ctx.createRadialGradient(w * 0.5, h * 0.45, 0, w * 0.5, h * 0.45, w * 0.6);
+    bg.addColorStop(0, accA(0.07)); bg.addColorStop(1, accA(0));
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, w, h);
+
+    ctx.save(); ctx.strokeStyle = accA(0.22); ctx.lineWidth = lw; ctx.setLineDash([4, 5]);
+    ctx.beginPath(); ctx.moveTo(G.bx1 + w * 0.015, G.sy); ctx.lineTo(G.sx - w * 0.07, G.sy);
+    ctx.moveTo(G.sx + w * 0.07, G.sy); ctx.lineTo(G.dx[0] - G.dw * 0.7, G.sy); ctx.stroke(); ctx.restore();
+
+    drawBeaker(G, lw, D);
+    const magA = st <= 0 ? 1 : 0.14, funA = st === 1 ? 1 : 0.14;
+    const basA = st >= 1 ? 1 : 0.14;
+    if (st <= 0 || st === 3) drawMagnet(G, w, h, magA);
+    if (st === 1 || st === 2) drawFunnel(G, w, h, funA);
+    drawBasin(G, w, h, D, basA);
+
+    for (let c = 0; c < 3; c++){
+      const active = st === c;
+      const x = G.dx[c], x0 = x - G.dw / 2, x1 = x + G.dw / 2;
+      ctx.save();
+      ctx.strokeStyle = active ? ACC : DIM; ctx.globalAlpha = active ? 1 : 0.7; ctx.lineWidth = lw;
+      if (active){ ctx.shadowColor = ACC; ctx.shadowBlur = 12; }
+      ctx.beginPath(); ctx.moveTo(x0, G.dTop); ctx.lineTo(x0, G.dBot); ctx.lineTo(x1, G.dBot); ctx.lineTo(x1, G.dTop); ctx.stroke();
+      ctx.restore();
+      const rec = sample.m[c] * stageT(c, D);
+      ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
+      ctx.font = "500 " + fs + "px \"JetBrains Mono\", monospace";
+      ctx.fillStyle = active ? ACC : INK; ctx.fillText(NAMES[c].toUpperCase(), x, G.dTop - h * 0.14);
+      ctx.fillStyle = rec > 0 ? INK : DIM; ctx.fillText(rec.toFixed(1) + " g", x, G.dTop - h * 0.08);
+      ctx.fillStyle = rec > 0 ? AMB : DIM; ctx.fillText((rec / T * 100).toFixed(1) + "%", x, G.dTop - h * 0.025);
+    }
+
+    ctx.font = fs + "px \"JetBrains Mono\", monospace"; ctx.textAlign = "center";
+    ctx.fillStyle = DIM; ctx.fillText("% = m ÷ " + T.toFixed(1) + " g × 100", G.dx[1], h * 0.075);
+    ctx.fillStyle = INK; ctx.fillText("MIXTURE", (G.bx0 + G.bx1) / 2, h * 0.075);
+    ctx.fillStyle = DIM; ctx.fillText(T.toFixed(1) + " g", (G.bx0 + G.bx1) / 2, h * 0.075 + fs * 1.3);
+    const stLabel = st <= 0 ? "MAGNET" : st === 1 ? "FILTER" : st === 2 ? "EVAPORATE" : "DONE";
+    ctx.fillStyle = st === 3 ? DIM : ACC; ctx.fillText(stLabel, G.sx, h * 0.075);
+
+    const mag = { x: G.sx, y: G.sy + h * 0.005 };
+    const fun = { x: G.sx, y: G.sy - h * 0.02 };
+    const t1 = stageT(0, D), t2 = stageT(1, D), t3 = stageT(2, D);
+    for (const p of parts){
+      const home = { x: G.bx0 + (G.bx1 - G.bx0) * p.rx, y: G.by0 + (G.by1 - G.by0) * p.ry };
+      const pile = pileXY(G, p.c, p.k, r);
+      let pos = home, moving = false, dissolved = false;
+      if (p.c === 0){
+        const u = clamp((t1 - p.s) / 0.5);
+        const m = { x: mag.x + p.jx * w * 0.05, y: mag.y + p.jy * h * 0.03 };
+        pos = via(home, m, pile, u, h * 0.06); moving = u > 0 && u < 1;
+      } else if (p.c === 1){
+        const u = clamp((t2 - 0.1 - p.s * 0.8) / 0.5);
+        const f = { x: fun.x + p.jx * w * 0.05, y: fun.y + p.by * h * 0.05 };
+        pos = via(home, f, pile, u, h * 0.05); moving = u > 0 && u < 1;
+      } else {
+        const u2 = clamp((t2 - 0.1 - p.s * 0.8) / 0.5);
+        const u3 = clamp((t3 - p.s) / 0.5);
+        const b = { x: G.cx + p.bx * G.rw * 1.5, y: G.cy + G.dep * (0.25 + p.by * 0.55) };
+        if (u3 > 0){ const v = ease(u3); pos = { x: lerp(b.x, pile.x, v), y: lerp(b.y, pile.y, v) - Math.sin(v * Math.PI) * h * 0.1 }; moving = u3 < 1; }
+        else pos = via(home, { x: fun.x + p.jx * w * 0.02, y: fun.y + h * 0.04 }, b, u2, h * 0.04);
+        if (u2 > 0 && u3 < 0.5) moving = moving || (u2 > 0 && u2 < 1);
+        dissolved = t2 > 0.05 && u3 < 0.5;
+      }
+      ctx.save();
+      if (moving){ ctx.shadowColor = ACC; ctx.shadowBlur = 8; }
+      if (p.c === 0){
+        ctx.strokeStyle = moving ? ACC : DIM; ctx.lineWidth = r * 0.75; ctx.lineCap = "round";
+        const dx = Math.cos(p.a) * r * 1.5, dy = Math.sin(p.a) * r * 1.5;
+        ctx.beginPath(); ctx.moveTo(pos.x - dx, pos.y - dy); ctx.lineTo(pos.x + dx, pos.y + dy); ctx.stroke();
+      } else if (p.c === 1){
+        ctx.fillStyle = AMB; ctx.globalAlpha = 0.9;
+        ctx.beginPath(); ctx.arc(pos.x, pos.y, r, 0, Math.PI * 2); ctx.fill();
+      } else if (dissolved){
+        ctx.fillStyle = INK; ctx.globalAlpha = 0.7;
+        ctx.beginPath(); ctx.arc(pos.x, pos.y, r * 0.42, 0, Math.PI * 2); ctx.fill();
+      } else {
+        ctx.fillStyle = INK; ctx.globalAlpha = 0.95;
+        ctx.fillRect(pos.x - r * 0.85, pos.y - r * 0.85, r * 1.7, r * 1.7);
+      }
+      ctx.restore();
+    }
+
+    bctx.setTransform(1, 0, 0, 1, 0, 0); bctx.clearRect(0, 0, buf.width, buf.height);
+    if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+    ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
+    (buf.width&&buf.height)&&ctx.drawImage(buf, 0, 0, w, h); ctx.restore();
+
+    const cx = w / 2, cy = h / 2;
+    const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
+
+    updateText(D);
+  }
+
+  function updateText(D){
+    const T = total(), st = stageOf(D);
+    let rec = 0;
+    for (let c = 0; c < 3; c++) rec += sample.m[c] * stageT(c, D);
+    recEl.textContent = rec.toFixed(1) + " g";
+    totEl.textContent = "of " + T.toFixed(1) + " g";
+    const focus = st < 0 ? 0 : st > 2 ? 2 : st;
+    const fr = sample.m[focus] * stageT(focus, D);
+    pctLabel.textContent = "% " + NAMES[focus].toLowerCase() + " by mass";
+    pctVal.textContent = (fr / T * 100).toFixed(1) + "%";
+    const tags = [
+      ["Start · nothing separated", "Start · one " + T.toFixed(1) + " g mixture"],
+      ["Step 1 of 3 · magnetism", "Magnetism · iron lifts out"],
+      ["Step 2 of 3 · solubility", "Solubility · sand is filtered"],
+      ["Step 3 of 3 · boiling point", "Boiling point · salt is left"],
+      ["Done · 100% accounted for", "Done · three pure solids"]
+    ];
+    const tg = tags[st + 1];
+    liveEl.textContent = tg[0];
+    overlay.textContent = tg[1];
+  }
+
+  function tick(now){
+    const dt = Math.min(now - last, 50); last = now;
+    const k = 1 - Math.exp(-dt / 170);
+    shown += (target - shown) * k;
+    if (Math.abs(target - shown) < 0.05){ shown = target; draw(); raf = 0; return; }
+    draw();
+    raf = requestAnimationFrame(tick);
+  }
+  function go(){
+    if (reduce){ shown = target; draw(); return; }
+    if (!raf){ last = performance.now(); raf = requestAnimationFrame(tick); }
+  }
+
+  function setFill(){
+    const f = (slider.value - slider.min) / (slider.max - slider.min) * 100;
+    slider.style.setProperty("--fill", f + "%");
+    pctEl.textContent = Math.round(f) + "%";
+  }
+  slider.addEventListener("input", () => { target = parseFloat(slider.value) || 0; setFill(); go(); });
+  slider.addEventListener("change", () => { target = parseFloat(slider.value) || 0; setFill(); go(); });
+
+  const sampleBtns = document.querySelectorAll("[data-sample]");
+  sampleBtns.forEach(b => b.addEventListener("click", () => {
+    sample = SAMPLES[parseInt(b.getAttribute("data-sample"), 10)];
+    sampleBtns.forEach(x => { const on = x === b; x.classList.toggle("on", on); x.setAttribute("aria-pressed", on ? "true" : "false"); });
+    build(); draw();
+  }));
+
+  const DROPS = {
+    het: "A heterogeneous mixture does not have a uniform composition: you can see or pick out separate parts, like the sand grains, salt crystals and iron filings in this sample. Each part keeps its own physical properties, so each technique targets one difference. A magnet lifts out iron because only iron is magnetic; after water is added, filtration traps the insoluble sand by particle size while the dissolved salt passes through as filtrate. Other techniques for heterogeneous mixtures include sieving (particle size), decanting and centrifuging (density), and a separating funnel for immiscible liquids such as oil and water. No new substance forms at any step, so the recovered masses should add back to the original sample and can be turned into percentage composition by mass.",
+    hom: "A homogeneous mixture has a uniform composition throughout: salt water looks like one clear liquid, and every drop has the same ratio of salt to water. Filtration cannot split it, because dissolved particles are far smaller than the pores in filter paper. Instead you exploit a difference in boiling point: evaporation drives off the water and leaves the salt behind, while distillation does the same but condenses the water so it is kept too. Liquids with different boiling points, such as ethanol and water, are separated by fractional distillation, and dissolved dyes can be separated by chromatography. Because the water leaves during evaporation, weigh the dry salt, not the solution, when you calculate its percentage by mass."
+  };
+  const modeBtns = document.querySelectorAll("[data-mode]");
+  modeBtns.forEach(b => b.addEventListener("click", () => {
+    const m = b.getAttribute("data-mode");
+    modeBtns.forEach(x => { const on = x === b; x.classList.toggle("on", on); x.setAttribute("aria-pressed", on ? "true" : "false"); });
+    drop.textContent = DROPS[m];
+  }));
+  drop.textContent = DROPS.het;
+
+  build();
+  setFill();
+  resize();
+  window.addEventListener("resize", resize);
+  if (typeof ResizeObserver !== "undefined"){
+    try { new ResizeObserver(() => resize()).observe(document.getElementById("spWrap")); } catch (e) {}
+  }
+})();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'separating-mixtures-by-physical-properties'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

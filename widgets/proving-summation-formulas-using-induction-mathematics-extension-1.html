@@ -9,64 +9,48 @@ body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body
   --bg: #0B0D0C;
   --bg2: #12160F;
   --acc: #2E9C4C;
-  --ag: rgba(46, 156, 76, .7);
-  --ag1: rgba(46, 156, 76, .12);
-  --ag2: rgba(46, 156, 76, .45);
+  --acc-rgb: 46, 156, 76;
+  --ag:  rgba(var(--acc-rgb),.7);
+  --ag1: rgba(var(--acc-rgb),.12);
+  --ag2: rgba(var(--acc-rgb),.45);
   --amb: #FAC775;
   --ink: #EDEDE8;
   --ink-dim: #8C9389;
   --line: #262B26;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
-}
+.sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
 
 body {
   background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
   font-family: 'Geist', sans-serif;
   min-height: 100vh;
-  padding: 40px 16px 72px;
+  padding: 40px 16px 0;
   color: var(--ink);
 }
 
-.container {
-  max-width: 720px;
-  margin: 0 auto;
-}
+.si-wrap { max-width: 720px; margin: 0 auto; }
 
 h1 {
-  font-size: clamp(30px, 8vw, 52px);
-  font-weight: 700;
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
   letter-spacing: -0.03em;
-  line-height: 1.02;
-  margin-bottom: 16px;
+  line-height: 1.05;
+  margin-bottom: 14px;
 }
 
-.intro {
+.si-intro {
   font-size: 15.5px;
   font-weight: 400;
   color: var(--ink-dim);
   max-width: 58ch;
   line-height: 1.55;
-  margin-bottom: 32px;
+  margin-bottom: 28px;
 }
 
-.card {
+.si-card {
   background: linear-gradient(180deg, #12160F, #0d100b);
   border: 1px solid var(--line);
   border-radius: 18px;
@@ -75,541 +59,544 @@ h1 {
   margin-bottom: 20px;
 }
 
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
+.si-head { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:6px; }
+.si-label { font-family:'JetBrains Mono', monospace; font-size:13px; text-transform:none; color:#fff; }
+.si-live { font-family:'JetBrains Mono', monospace; font-size:11px; text-transform:uppercase; color:var(--acc); text-align:right; }
+.si-hint { font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--ink-dim); margin-bottom:14px; line-height:1.5; }
+
+.si-q { font-family:'JetBrains Mono', monospace; font-size:10.5px; text-transform:uppercase; color:var(--ink-dim); margin-bottom:8px; letter-spacing:.06em; }
+
+.si-pills { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
+.si-pill {
+  flex:1 1 0; min-width: 0;
+  font-family:'JetBrains Mono', monospace; font-size:12px; padding:11px 12px;
+  border-radius:999px; background:#12160F; border:1px solid var(--line); color:var(--ink-dim);
+  cursor:pointer; transition: background .2s, color .2s, border-color .2s, box-shadow .2s;
+}
+.si-pill[aria-pressed="true"] {
+  background: rgba(var(--acc-rgb),.1); border:1px solid var(--acc); color:var(--acc);
+  box-shadow: 0 0 22px rgba(var(--acc-rgb),.18);
 }
 
-.card-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  color: white;
+.si-canvas {
+  position:relative; width:100%; aspect-ratio:16/9; border-radius:12px; overflow:hidden;
+  background:#000; box-shadow: inset 0 0 0 1px var(--ag1);
+}
+.si-canvas canvas { position:absolute; inset:0; width:100%; height:100%; display:block; }
+.si-overlay {
+  position:absolute; left:0; right:0; bottom:0;
+  background: rgba(0,0,0,0.55); backdrop-filter: blur(4px); padding:9px 16px;
+  font-family:'JetBrains Mono', monospace; font-size:14px; color:var(--acc); text-align:center;
+  /* maths: k and K mean different things, so this tag keeps its case */
+  text-transform:none;
 }
 
-.live-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--acc);
+.si-ledger { margin-top:14px; display:grid; gap:8px; }
+.si-line {
+  padding:9px 12px; border:1px solid var(--line); border-radius:10px;
+  background: rgba(0,0,0,.25); transition: border-color .2s;
 }
+.si-line small { display:block; font-family:'JetBrains Mono', monospace; font-size:10.5px; text-transform:none; color:var(--ink-dim); margin-bottom:3px; letter-spacing:.04em; }
+.si-line .si-eq { font-family:'Geist', sans-serif; font-size:15px; line-height:1.45; color:var(--ink); overflow-wrap:anywhere; }
+.si-line.si-hid .si-eq { color:var(--ink-dim); }
+.si-line.si-key { border-color: rgba(var(--acc-rgb),.5); }
+.si-line.si-key .si-eq { color:var(--acc); }
+.si-line.si-dim .si-eq { color:var(--ink-dim); font-size:14px; }
 
-.card-hint {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--ink-dim);
-  margin-bottom: 14px;
+.si-reveal {
+  margin-top:12px; width:100%;
+  font-family:'JetBrains Mono', monospace; font-size:13px; padding:12px 14px; border-radius:11px;
+  background: rgba(var(--acc-rgb),.08); border:1px solid rgba(var(--acc-rgb),.45); color:var(--acc);
+  cursor:pointer; transition: box-shadow .2s, background .2s;
 }
+.si-reveal:hover { box-shadow: 0 0 22px rgba(var(--acc-rgb),.2); }
+.si-reveal[hidden] { display:none; }
 
-.canvas-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16/9;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
-  box-shadow: inset 0 0 0 1px var(--ag1);
-  margin-bottom: 16px;
+.si-row {
+  display:flex; justify-content:space-between; align-items:baseline; gap:10px;
+  margin-top:18px; margin-bottom:8px;
+  font-family:'JetBrains Mono', monospace; font-size:10.5px; text-transform:uppercase; color:var(--ink-dim);
 }
+.si-row b { font-weight:500; color:var(--ink); text-transform:none; font-size:12px; }
 
-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
+.si-slider {
+  width:100%; height:4px; border-radius:3px; appearance:none; -webkit-appearance:none; outline:none; display:block;
+  background: linear-gradient(90deg, var(--acc) var(--fill,0%), #23291f var(--fill,0%));
 }
-
-.canvas-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(4px);
-  padding: 9px 16px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  text-transform: uppercase;
-  color: var(--acc);
-  text-align: center;
+.si-slider:disabled { opacity:.4; }
+.si-slider::-webkit-slider-thumb {
+  -webkit-appearance:none; appearance:none; width:20px; height:20px; border-radius:50%;
+  background:#0B0D0C; border:2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag); transition: box-shadow .15s; cursor:pointer;
 }
-
-.slider-wrapper {
-  margin-top: 16px;
+.si-slider::-moz-range-thumb {
+  width:20px; height:20px; border-radius:50%; background:#0B0D0C; border:2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag); transition: box-shadow .15s; cursor:pointer;
 }
+.si-slider::-webkit-slider-thumb:hover { box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag); }
+.si-slider::-moz-range-thumb:hover { box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag); }
 
-.slider-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 8px;
-  display: block;
-}
+.si-ticks { position:relative; height:14px; margin:6px 10px 0; font-family:'JetBrains Mono', monospace; font-size:10px; color:var(--ink-dim); }
+.si-ticks span { position:absolute; top:0; transform:translateX(-50%); white-space:nowrap; }
 
-.ind-slider {
-  width: 100%;
-  height: 4px;
-  border-radius: 3px;
-  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
-  appearance: none;
-  outline: none;
-  margin-bottom: 8px;
-}
+.si-note { font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--ink-dim); margin-top:8px; line-height:1.5; }
 
-.ind-slider::-webkit-slider-thumb {
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow .15s;
-}
+.si-stats { display:grid; grid-template-columns:1fr 1fr; gap:16px; padding-top:16px; border-top:1px solid var(--line); margin-top:16px; }
+.si-stat { display:flex; flex-direction:column; gap:4px; min-width:0; }
+.si-stat-l { font-family:'JetBrains Mono', monospace; font-size:10.5px; text-transform:none; color:var(--ink-dim); line-height:1.4; }
+.si-stat-v { font-family:'JetBrains Mono', monospace; font-size:24px; font-weight:500; }
+.si-stat:first-child .si-stat-v { color:var(--acc); }
+.si-stat:last-child .si-stat-v { color:var(--amb); }
 
-.ind-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow .15s;
-}
+.si-drop { border-top:1px solid var(--line); padding-top:16px; font-family:'Geist', sans-serif; font-size:14.5px; line-height:1.65; color:var(--ink); }
 
-.ind-slider::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.ind-slider::-moz-range-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.tick-labels {
-  display: flex;
-  justify-content: space-between;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--ink-dim);
-}
-
-.stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-  margin-top: 16px;
-}
-
-.stat {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.stat-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-}
-
-.stat-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 24px;
-  font-weight: 500;
-}
-
-.stat:first-child .stat-value {
-  color: var(--acc);
-}
-
-.stat:last-child .stat-value {
-  color: var(--amb);
-}
-
-.toggle-section {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 20px;
-}
-
-.toggle-buttons {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.toggle-btn {
-  flex: 1;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14.5px;
-  padding: 12px;
-  border-radius: 11px;
-  background: #12160F;
-  border: 1px solid var(--line);
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: all .2s;
-}
-
-.toggle-btn.active {
-  background: rgba(46, 156, 76,.1);
-  border: 1px solid var(--acc);
-  color: var(--acc);
-  box-shadow: 0 0 22px rgba(46, 156, 76,.18);
-}
-
-.knowdrop-divider {
-  border-top: 1px solid var(--line);
-  margin-bottom: 16px;
-}
-
-.knowdrop-text {
-  font-family: 'Geist', sans-serif;
-  font-size: 14.5px;
-  font-weight: 400;
-  line-height: 1.65;
-  color: var(--ink);
-}
-
-.know-this {
-  border-left: 3px solid var(--acc);
-  padding: 16px 18px;
+.si-kt {
+  border-left:3px solid var(--acc); padding:16px 18px;
   background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
-  border-radius: 0 12px 12px 0;
-  margin-bottom: 34px;
+  border-radius: 0 12px 12px 0; margin-bottom:0; padding-bottom:16px;
 }
+.si-kt-tag { display:flex; align-items:center; gap:9px; margin-bottom:8px; }
+.si-kt-dot { width:6px; height:6px; border-radius:50%; background:var(--acc); box-shadow:0 0 8px var(--acc); animation: siPulse 2.4s ease-in-out infinite; }
+.si-kt-txt { font-family:'JetBrains Mono', monospace; font-size:13px; text-transform:uppercase; letter-spacing:0.15em; color:var(--acc); }
+.si-kt-body { font-family:'Geist', sans-serif; font-size:17.4px; font-weight:400; line-height:1.55; color:var(--ink); margin-bottom:0; }
 
-.know-this-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--acc);
-  margin-bottom: 8px;
-  display: block;
-}
-
-.know-this-body {
-  font-family: 'Geist', sans-serif;
-  font-size: 17.4px;
-  font-weight: 400;
-  line-height: 1.55;
-  color: var(--ink);
-}
-
-.footer {
-  margin-top: 34px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.pulse-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--acc);
-  box-shadow: 0 0 10px var(--acc);
-  animation: indPulse 2.4s ease-in-out infinite;
-}
-
-@keyframes indPulse {
-  0%, 100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.35;
-    transform: scale(0.6);
-  }
-}
+@keyframes siPulse { 0%,100% { opacity:1; } 50% { opacity:.45; } }
 
 @media (prefers-reduced-motion: reduce) {
-  .pulse-dot {
-    animation: none;
-  }
-  * {
-    transition: none !important;
-  }
+  .si-kt-dot { animation:none; }
+  * { transition:none !important; }
 }
 </style>
 
-<div class="container">
-  <h2 class="sr-only">Interactive demonstration of mathematical induction for summation formulas showing how each step builds proof from n=1 through n=5</h2>
+<div class="si-wrap">
+  <h2 class="sr-only">Interactive picture of proof by induction for the sum 1 + 2 + … + n = n(n+1)/2, with a base case view that substitutes n = 1 and an inductive step view where the term k + 1 joins the assumed sum</h2>
 
-  <h1>You already know the formula is true — induction just shows the <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">mechanism</span></h1>
+  <h1>Checking n = 1 to 5 proves five cases. One line of algebra proves them <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">all</span></h1>
 
-  <p class="intro">Most students think induction proves a formula from scratch. Actually, you verify it holds at the starting point, then demonstrate the algebraic machinery that carries truth forward one step at a time. Drag the slider to watch each case build on the previous one.</p>
+  <p class="si-intro">Testing a formula on a handful of values is not a proof: the next value could still break it. Induction verifies n = 1 once, then takes an unspecified k, assumes the formula there, and shows the next term carries it to k + 1. Switch to the inductive step and watch the term k + 1 join the assumed sum; then change k and notice the algebra never changes.</p>
 
-  <div class="card">
-    <div class="card-header">
-      <span class="card-label">Proof Visualisation</span>
-      <span class="live-tag" id="liveTag">Base Case n=1</span>
+  <section class="si-card">
+    <div class="si-head">
+      <span class="si-label">Sum 1 to n = n(n+1)/2</span>
+      <span class="si-live" id="liveTag">Base case</span>
     </div>
-    <div class="card-hint">Each step assumes the previous case is true</div>
-    
-    <div class="canvas-wrapper">
-      <canvas id="canvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">Base: 1 = 1×2÷2 ✓</div>
+    <div class="si-hint">Switch to the inductive step and watch the next term join the assumed sum.</div>
+
+    <div class="si-q">Which part of the proof</div>
+    <div class="si-pills" role="group" aria-label="Which part of the proof to show" id="modeGroup">
+      <button class="si-pill" type="button" data-mode="base" aria-pressed="true">Base case</button>
+      <button class="si-pill" type="button" data-mode="step" aria-pressed="false">Inductive step</button>
     </div>
 
-    <div class="slider-wrapper">
-      <label class="slider-label" for="nSlider">Proof Step (n)</label>
-      <input type="range" id="nSlider" class="ind-slider" min="1" max="5" value="1" step="1">
-      <div class="tick-labels">
-        <span>n=1</span>
-        <span>n=2</span>
-        <span>n=3</span>
-        <span>n=4</span>
-        <span>n=5</span>
+    <div class="si-canvas" id="canvasWrap">
+      <canvas id="siCanvas"></canvas>
+      <div class="si-overlay" id="overlay" aria-live="polite">n = 1: both sides equal 1 ✓</div>
+    </div>
+
+    <div class="si-ledger" aria-live="polite">
+      <div class="si-line" id="L1"><small id="L1s"></small><div class="si-eq" id="L1e"></div></div>
+      <div class="si-line" id="L2"><small id="L2s"></small><div class="si-eq" id="L2e"></div></div>
+      <div class="si-line" id="L3"><small id="L3s"></small><div class="si-eq" id="L3e"></div></div>
+      <div class="si-line si-dim" id="L4"><small id="L4s"></small><div class="si-eq" id="L4e"></div></div>
+    </div>
+
+    <button class="si-reveal" type="button" id="revealBtn" aria-expanded="false" hidden>Reveal the factorised form</button>
+
+    <div class="si-row"><span style="text-transform:none">Illustrative k (any k)</span><b id="kV">k = 4</b></div>
+    <input type="range" class="si-slider" id="kSlider" aria-label="Illustrative k" min="1" max="10" step="1" value="4">
+    <div class="si-ticks">
+      <span style="left:0%">1</span>
+      <span style="left:33.333%">4</span>
+      <span style="left:66.667%">7</span>
+      <span style="left:100%">10</span>
+    </div>
+    <div class="si-note" id="kNote"></div>
+
+    <div class="si-stats">
+      <div class="si-stat">
+        <span class="si-stat-l" id="leftL">Left side at n = 1, added up</span>
+        <div class="si-stat-v" id="leftV">1</div>
+      </div>
+      <div class="si-stat">
+        <span class="si-stat-l" id="rightL">Right side 1×2/2 from formula</span>
+        <div class="si-stat-v" id="rightV">1</div>
       </div>
     </div>
+  </section>
 
-    <div class="stats">
-      <div class="stat">
-        <span class="stat-label">Left Side Sum</span>
-        <div class="stat-value" id="leftSum">1</div>
-      </div>
-      <div class="stat">
-        <span class="stat-label">Formula Result</span>
-        <div class="stat-value" id="rightSum">1</div>
-      </div>
+  <section class="si-card">
+    <div class="si-q">Go deeper</div>
+    <div class="si-pills" role="group" aria-label="Which note to read" id="dropGroup">
+      <button class="si-pill" type="button" data-drop="why" aria-pressed="true">Why it works</button>
+      <button class="si-pill" type="button" data-drop="write" aria-pressed="false">Write it up</button>
+      <button class="si-pill" type="button" data-drop="fail" aria-pressed="false">Where it fails</button>
     </div>
-  </div>
+    <div class="si-drop" id="dropText"></div>
+  </section>
 
-  <div class="toggle-section">
-    <div class="toggle-buttons">
-      <button class="toggle-btn active" id="btnBase">Base Case</button>
-      <button class="toggle-btn" id="btnInductive">Inductive Step</button>
-    </div>
-    <div class="knowdrop-divider"></div>
-    <div class="knowdrop-text" id="knowdropText">
-      The base case is where you verify the formula works for the smallest value in your domain — typically n equals 1. For the sum 1 plus 2 plus 3 plus dot dot dot plus n equals n times the quantity n plus 1 divided by 2, you substitute n equals 1 into both sides: left side gives 1, right side gives 1 times 2 divided by 2 which equals 1. Both sides match, so the base case holds. This single verification is the foundation — without it, the entire inductive argument collapses because you need a valid starting point to build from.
-    </div>
-  </div>
-
-  <div class="know-this">
-    <span class="know-this-tag">Know This</span>
-    <p class="know-this-body">Mathematical induction works like <span style="color:var(--acc)">dominoes</span>: the <span style="color:var(--acc)">base case</span> tips the first domino, and the <span style="color:var(--acc)">inductive step</span> ensures each fallen domino knocks over the next, proving the formula holds for all positive integers.</p>
-  </div>
-
-  <div class="footer">
-    <div class="pulse-dot"></div>
-  </div>
+  <aside class="si-kt">
+    <div class="si-kt-tag"><span class="si-kt-dot"></span><span class="si-kt-txt">Know This</span></div>
+    <p class="si-kt-body">The inductive step is one argument about an <span style="color:var(--acc)">arbitrary k</span>: write the sum to k + 1 as the <span style="color:var(--acc)">assumed sum</span> plus the <span style="color:var(--acc)">next term</span>, then factorise to the formula with k + 1 in place of k.</p>
+  </aside>
 </div>
 
 <script>
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-const liveTag = document.getElementById('liveTag');
-const canvasOverlay = document.getElementById('canvasOverlay');
-const slider = document.getElementById('nSlider');
-const leftSum = document.getElementById('leftSum');
-const rightSum = document.getElementById('rightSum');
-const btnBase = document.getElementById('btnBase');
-const btnInductive = document.getElementById('btnInductive');
-const knowdropText = document.getElementById('knowdropText');
+(function(){
+  const CSS = getComputedStyle(document.documentElement);
+  const ACC = CSS.getPropertyValue("--acc").trim();
+  const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+  const AMB = CSS.getPropertyValue("--amb").trim();
+  const INK = CSS.getPropertyValue("--ink").trim();
+  const DIM = CSS.getPropertyValue("--ink-dim").trim();
+  const REDUCE = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-const dpr = Math.min(window.devicePixelRatio || 1, 2);
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d');
+  const canvas = document.getElementById("siCanvas");
+  const wrap = document.getElementById("canvasWrap");
+  const ctx = canvas.getContext("2d");
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const buf = document.createElement("canvas");
+  const bctx = buf.getContext("2d");
+  const OV = 38;
 
-let n = 1;
-let animTime = 0;
+  const liveTag = document.getElementById("liveTag");
+  const overlay = document.getElementById("overlay");
+  const slider = document.getElementById("kSlider");
+  const kV = document.getElementById("kV");
+  const kNote = document.getElementById("kNote");
+  const revealBtn = document.getElementById("revealBtn");
+  const leftL = document.getElementById("leftL");
+  const leftV = document.getElementById("leftV");
+  const rightL = document.getElementById("rightL");
+  const rightV = document.getElementById("rightV");
+  const L = {};
+  ["L1","L2","L3","L4"].forEach(id => { L[id] = { box: document.getElementById(id), s: document.getElementById(id + "s"), e: document.getElementById(id + "e") }; });
+  const dropText = document.getElementById("dropText");
 
-const baseText = "The base case is where you verify the formula works for the smallest value in your domain — typically n equals 1. For the sum 1 plus 2 plus 3 plus dot dot dot plus n equals n times the quantity n plus 1 divided by 2, you substitute n equals 1 into both sides: left side gives 1, right side gives 1 times 2 divided by 2 which equals 1. Both sides match, so the base case holds. This single verification is the foundation — without it, the entire inductive argument collapses because you need a valid starting point to build from.";
+  let mode = "base";
+  let k = 4;
+  let revealed = false;
 
-const inductiveText = "The inductive step assumes the formula is true for some arbitrary value n equals k, then proves it must also be true for n equals k plus 1. You write the hypothesis explicitly: assume 1 plus 2 plus dot dot dot plus k equals k times the quantity k plus 1 divided by 2. Then for the next case, you add the term k plus 1 to both sides and simplify algebraically. The left becomes 1 plus 2 plus dot dot dot plus k plus the quantity k plus 1, and the right becomes k times the quantity k plus 1 divided by 2 plus the quantity k plus 1, which factors to the quantity k plus 1 times the quantity k plus 2 divided by 2 — exactly the formula for n equals k plus 1. This algebraic bridge is the mechanism that carries truth forward infinitely.";
+  const drops = {
+    why: "A proof by induction has two parts and neither one is a list of examples. The base case shows the formula holds at the first value, n = 1, by direct substitution. The inductive step takes an arbitrary k, assumes the formula for that k, and shows the formula must then hold for k + 1. Because k was never specified, the step is a single argument that works at every k at once: 1 passes it to 2, 2 passes it to 3, and so on without end. Checking n = 1 to 5 by hand would only ever tell you about those five numbers.",
+    write: "Name the statement P(n) you are proving, then write the base case with both sides evaluated. State the inductive hypothesis explicitly: assume 1 + 2 + … + k = k(k+1)/2 for some positive integer k. Start the inductive step from the left side for k + 1, split it as the sum to k plus the term (k+1), and replace the sum to k using the hypothesis. Factorise k(k+1)/2 + (k+1) to (k+1)(k+2)/2 and say in words that this is P(k+1). Finish with a sentence: since P(1) is true and P(k) implies P(k+1), P(n) is true for all positive integers n.",
+    fail: "The step must use the hypothesis; writing the formula for k + 1 and simplifying both sides until they match is not a proof, because it never connects k to k + 1. Starting from (k+1)(k+2)/2 and working backwards to the sum is accepted only if every line is reversible and you say so. Forgetting the base case leaves a chain with no first link: the statement 1 + 2 + … + n = n(n+1)/2 + 7 passes the inductive step perfectly yet is false for every n. Finally, k is an arbitrary positive integer, not a particular number, so substituting k = 4 anywhere in the step turns the proof back into a check."
+  };
+  dropText.textContent = drops.why;
 
-function resize() {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
+  // ---------- geometry state (eased, then still) ----------
+  let cur = { x: 0, g: 0, a: 0 };
+  let tgt = { x: 0, g: 0, a: 0 };
+  let raf = null;
+  let last = 0;
 
-function draw() {
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, w, h);
-  
-  const margin = 40;
-  const barW = (w - margin * 2) / n;
-  const maxH = h - 80;
-  const total = (n * (n + 1)) / 2;
-  
-  // Draw grid
-  ctx.strokeStyle = 'rgba(46, 156, 76,0.08)';
-  ctx.lineWidth = 0.5;
-  for (let i = 0; i <= 5; i++) {
-    const y = h - 40 - (i / 5) * maxH;
-    ctx.beginPath();
-    ctx.moveTo(margin - 10, y);
-    ctx.lineTo(w - margin, y);
-    ctx.stroke();
+  function resize(){
+    const rect = wrap.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    buf.width = canvas.width;
+    buf.height = canvas.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
-  
-  // Draw bars representing 1, 2, 3, ..., n
-  for (let i = 1; i <= n; i++) {
-    const x = margin + (i - 1) * barW;
-    const barHeight = (i / total) * maxH;
-    const y = h - 40 - barHeight;
-    
-    // Gradient fill
-    const grad = ctx.createLinearGradient(x, y, x, h - 40);
-    grad.addColorStop(0, 'rgba(46, 156, 76,0.7)');
-    grad.addColorStop(1, 'rgba(46, 156, 76,0.2)');
-    
+
+  function setTargets(){
+    const w = canvas.width / dpr;
+    const mx = w * 0.06;
+    if (mode === "base") {
+      tgt.g = w * 0.22;
+      tgt.x = (w - tgt.g) / 2;
+      tgt.a = 0;
+    } else {
+      const total = (k + 1) * (k + 2) / 2;
+      const unit = (w - 2 * mx) / total;
+      tgt.x = mx;
+      tgt.g = unit * k * (k + 1) / 2;
+      tgt.a = unit * (k + 1);
+    }
+  }
+
+  function go(snap){
+    setTargets();
+    if (snap || REDUCE) {
+      cur = { x: tgt.x, g: tgt.g, a: tgt.a };
+      if (raf) { cancelAnimationFrame(raf); raf = null; }
+      draw();
+      return;
+    }
+    if (!raf) { last = performance.now(); raf = requestAnimationFrame(step); }
+  }
+
+  function step(now){
+    const dt = Math.min(now - last, 50);
+    last = now;
+    const f = 1 - Math.exp(-dt / 110);
+    let done = true;
+    ["x","g","a"].forEach(key => {
+      const d = tgt[key] - cur[key];
+      if (Math.abs(d) < 0.4) { cur[key] = tgt[key]; }
+      else { cur[key] += d * f; done = false; }
+    });
+    draw();
+    if (done) { raf = null; return; }
+    raf = requestAnimationFrame(step);
+  }
+
+  // ---------- drawing ----------
+  function draw(){
+    const w = canvas.width / dpr, h = canvas.height / dpr;
+    if (w < 10 || h < 10) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.globalCompositeOperation = "source-over";
+    ctx.globalAlpha = 1;
+    ctx.filter = "none";
+    ctx.fillStyle = "rgba(0,0,0,1)";
+    ctx.fillRect(0, 0, w, h);
+
+    const uh = Math.max(90, h - OV);
+    const fs = Math.max(11, Math.min(14, uh * 0.085, w / 22));
+    const barTop = uh * 0.33;
+    const barH = Math.max(24, uh * 0.27);
+    const barBot = barTop + barH;
+    const x0 = cur.x, g = cur.g, a = cur.a;
+    const end = x0 + g + a;
+
+    // faint grid
+    ctx.strokeStyle = "rgba(" + RGB + ",0.07)";
+    ctx.lineWidth = 1;
+    for (let i = 0; i <= 12; i++) {
+      const gx = Math.round(i * w / 12) + 0.5;
+      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke();
+    }
+
+    ctx.textBaseline = "middle";
+
+    // title
+    ctx.font = "400 " + fs + "px 'JetBrains Mono', monospace";
+    ctx.fillStyle = DIM;
+    ctx.textAlign = "center";
+    ctx.fillText(mode === "base" ? "Base case: substitute n = 1" : "Assume n = k, show n = k + 1", w / 2, uh * 0.1);
+
+    // assumed block (green)
+    const grad = ctx.createLinearGradient(0, barTop, 0, barBot);
+    grad.addColorStop(0, "rgba(" + RGB + ",0.78)");
+    grad.addColorStop(1, "rgba(" + RGB + ",0.3)");
     ctx.fillStyle = grad;
-    ctx.fillRect(x + 2, y, barW - 4, barHeight);
-    
-    // Glow
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.strokeStyle = 'rgba(46, 156, 76,0.5)';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(x + 2, y, barW - 4, barHeight);
-    ctx.restore();
-    
-    // Label
-    ctx.fillStyle = '#EDEDE8';
-    ctx.font = '11px "JetBrains Mono"';
-    ctx.textAlign = 'center';
-    ctx.fillText(i, x + barW / 2, h - 22);
-  }
-  
-  // Draw connection curve showing accumulation
-  if (n > 1) {
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.strokeStyle = 'rgba(250,199,117,0.6)';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    
-    for (let i = 1; i <= n; i++) {
-      const x = margin + (i - 0.5) * barW;
-      const cumSum = (i * (i + 1)) / 2;
-      const y = h - 40 - (cumSum / total) * maxH * 0.8;
-      
-      if (i === 1) {
-        ctx.moveTo(x, y);
-      } else {
-        ctx.lineTo(x, y);
+    ctx.fillRect(x0, barTop, g, barH);
+
+    if (mode === "step" && k > 1 && g > 0) {
+      const unit = g / (k * (k + 1) / 2);
+      ctx.strokeStyle = "rgba(0,0,0,0.45)";
+      ctx.lineWidth = 1;
+      for (let j = 1; j < k; j++) {
+        const dx = x0 + unit * j * (j + 1) / 2;
+        ctx.beginPath(); ctx.moveTo(dx, barTop); ctx.lineTo(dx, barBot); ctx.stroke();
       }
     }
-    ctx.stroke();
-    ctx.restore();
-  }
-  
-  // Assumption arrow (inductive step visualization)
-  if (n > 1) {
-    const prevX = margin + (n - 1.5) * barW;
-    const currX = margin + (n - 0.5) * barW;
-    const arrowY = h - 40 - maxH * 0.5;
-    
+
     ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.strokeStyle = 'rgba(46, 156, 76,0.4)';
+    ctx.globalCompositeOperation = "lighter";
+    ctx.strokeStyle = "rgba(" + RGB + ",0.6)";
     ctx.lineWidth = 1.5;
-    ctx.setLineDash([4, 4]);
-    ctx.beginPath();
-    ctx.moveTo(prevX, arrowY);
-    ctx.lineTo(currX, arrowY);
-    ctx.stroke();
-    
-    // Arrowhead
-    ctx.setLineDash([]);
-    ctx.beginPath();
-    ctx.moveTo(currX, arrowY);
-    ctx.lineTo(currX - 6, arrowY - 4);
-    ctx.lineTo(currX - 6, arrowY + 4);
-    ctx.closePath();
-    ctx.fillStyle = 'rgba(46, 156, 76,0.6)';
-    ctx.fill();
+    ctx.strokeRect(x0 + 0.5, barTop + 0.5, Math.max(0, g - 1), barH - 1);
     ctx.restore();
+
+    // next-term block (amber)
+    if (a > 0.5) {
+      ctx.save();
+      ctx.globalAlpha = 0.72;
+      ctx.fillStyle = AMB;
+      ctx.fillRect(x0 + g, barTop, a, barH);
+      ctx.restore();
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      ctx.globalAlpha = 0.6;
+      ctx.strokeStyle = AMB;
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(x0 + g + 0.5, barTop + 0.5, a - 1, barH - 1);
+      ctx.restore();
+    }
+
+    // labels above the blocks
+    const labY = barTop - fs * 0.95;
+    ctx.font = "500 " + fs + "px 'JetBrains Mono', monospace";
+    if (mode === "base") {
+      ctx.fillStyle = ACC;
+      ctx.textAlign = "center";
+      ctx.fillText("Left side: 1", x0 + g / 2, labY);
+    } else {
+      ctx.fillStyle = ACC;
+      ctx.textAlign = "left";
+      ctx.fillText("S_k = k(k+1)/2 (assumed)", x0, labY);
+      ctx.fillStyle = AMB;
+      ctx.textAlign = "right";
+      ctx.fillText("+ (k+1)", end, labY);
+    }
+
+    // text inside the blocks
+    ctx.textAlign = "center";
+    const midY = barTop + barH / 2;
+    if (mode === "base") {
+      ctx.fillStyle = INK;
+      ctx.fillText("1", x0 + g / 2, midY);
+    } else {
+      ctx.fillStyle = INK;
+      if (g >= fs * 9) ctx.fillText("1 + 2 + … + k", x0 + g / 2, midY);
+      else if (g >= fs * 2.6) ctx.fillText("S_k", x0 + g / 2, midY);
+      if (a >= fs * 3.6) {
+        ctx.fillStyle = "rgba(0,0,0,0.85)";
+        ctx.fillText("k + 1", x0 + g + a / 2, midY);
+      }
+    }
+
+    // bracket under the whole bar
+    const by = barBot + 8;
+    ctx.save();
+    ctx.globalAlpha = 0.55;
+    ctx.strokeStyle = INK;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x0, by - 5); ctx.lineTo(x0, by); ctx.lineTo(end, by); ctx.lineTo(end, by - 5);
+    ctx.moveTo((x0 + end) / 2, by); ctx.lineTo((x0 + end) / 2, by + 4);
+    ctx.stroke();
+    ctx.restore();
+
+    // bridge equation
+    const capY = Math.max(uh * 0.78, by + 10 + fs);
+    ctx.font = "500 " + fs + "px 'JetBrains Mono', monospace";
+    ctx.fillStyle = INK;
+    ctx.textAlign = "center";
+    let cap, sub;
+    if (mode === "base") {
+      cap = "Right side: 1(1+1)/2 = 1 ✓";
+      sub = "the formula holds at the first value";
+    } else if (revealed) {
+      cap = "k(k+1)/2 + (k+1) = (k+1)(k+2)/2";
+      sub = "the formula with k + 1 in place of k";
+    } else {
+      cap = "k(k+1)/2 + (k+1) = ?";
+      sub = "predict the factorised form";
+    }
+    ctx.fillText(cap, w / 2, capY);
+    if (uh >= 190) {
+      ctx.font = "400 " + Math.max(11, fs - 1) + "px 'JetBrains Mono', monospace";
+      ctx.fillStyle = DIM;
+      ctx.fillText(sub, w / 2, capY + fs * 1.7);
+    }
+
+    // bloom
+    bctx.setTransform(1, 0, 0, 1, 0, 0);
+    bctx.clearRect(0, 0, buf.width, buf.height);
+    if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    ctx.globalAlpha = 0.38;
+    ctx.filter = "blur(7px)";
+    if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+    ctx.restore();
+
+    // vignette
+    const vig = ctx.createRadialGradient(w / 2, h / 2, h * 0.28, w / 2, h / 2, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)");
+    vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig;
+    ctx.fillRect(0, 0, w, h);
   }
-  
-  // Bloom effect
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
-  
-  // Vignette
-  const vig = ctx.createRadialGradient(w / 2, h / 2, h * 0.28, w / 2, h / 2, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-  
-  animTime += 0.016;
-  requestAnimationFrame(draw);
-}
 
-function updateUI() {
-  const left = (n * (n + 1)) / 2;
-  const right = (n * (n + 1)) / 2;
-  
-  leftSum.textContent = left;
-  rightSum.textContent = right;
-  
-  if (n === 1) {
-    liveTag.textContent = 'Base Case n=1';
-    canvasOverlay.textContent = 'Base: 1 = 1×2÷2 ✓';
-  } else {
-    liveTag.textContent = `Step n=${n}`;
-    canvasOverlay.textContent = `Assume n=${n-1} true → Prove n=${n}`;
+  // ---------- readouts, all computed from the model ----------
+  function setLine(id, small, eq, cls){
+    L[id].s.textContent = small;
+    L[id].e.textContent = eq;
+    L[id].box.className = "si-line" + (cls ? " " + cls : "");
   }
-  
-  const fillPercent = ((n - 1) / 4) * 100;
-  slider.style.setProperty('--fill', fillPercent + '%');
-}
 
-slider.addEventListener('input', (e) => {
-  n = parseInt(e.target.value);
-  updateUI();
-});
+  function update(){
+    let Sk = 0; for (let i = 1; i <= k; i++) Sk += i;            // real loop sum to k
+    let Sk1 = 0; for (let i = 1; i <= k + 1; i++) Sk1 += i;      // real loop sum to k + 1
+    const formulaK1 = (k + 1) * (k + 2) / 2;
 
-btnBase.addEventListener('click', () => {
-  btnBase.classList.add('active');
-  btnInductive.classList.remove('active');
-  knowdropText.textContent = baseText;
-});
+    kV.textContent = "k = " + k;
+    slider.style.setProperty("--fill", ((k - 1) / 9 * 100) + "%");
 
-btnInductive.addEventListener('click', () => {
-  btnInductive.classList.add('active');
-  btnBase.classList.remove('active');
-  knowdropText.textContent = inductiveText;
-});
+    if (mode === "base") {
+      liveTag.textContent = "Base case";
+      overlay.textContent = "n = 1: both sides equal 1 ✓";
+      leftL.textContent = "Left side at n = 1, added up";
+      leftV.textContent = "1";
+      rightL.textContent = "Right side 1×2/2 from formula";
+      rightV.textContent = String(1 * 2 / 2);
+      setLine("L1", "Left side at n = 1", "1", "");
+      setLine("L2", "Right side at n = 1", "1(1+1)/2 = 1", "");
+      setLine("L3", "Conclusion", "Both sides equal 1, so the formula holds for n = 1. ✓", "si-key");
+      setLine("L4", "What this does not show", "Nothing yet about n = 2 or beyond: that is the job of the inductive step.", "si-dim");
+      revealBtn.hidden = true;
+      slider.disabled = true;
+      slider.setAttribute("aria-disabled", "true");
+      kNote.textContent = "No k in the base case: n = 1 is substituted directly.";
+    } else {
+      liveTag.textContent = "Inductive step";
+      overlay.textContent = revealed ? "S_k + (k+1) = (k+1)(k+2)/2 for any k" : "S_k + (k+1) = ? for any k";
+      leftL.textContent = "Sum 1 to " + (k + 1) + ", term by term";
+      leftV.textContent = String(Sk1);
+      rightL.textContent = (k + 1) + "×" + (k + 2) + "/2 from formula";
+      rightV.textContent = String(formulaK1);
+      setLine("L1", "Inductive hypothesis (any k ≥ 1)", "Assume 1 + 2 + … + k = k(k+1)/2", "");
+      setLine("L2", "Add the next term, k + 1", "1 + 2 + … + k + (k+1) = k(k+1)/2 + (k+1)", "");
+      if (revealed) {
+        setLine("L3", "Factorise", "= (k+1)(k/2 + 1) = (k+1)(k+2)/2, which is the formula with k + 1 in place of k.", "si-key");
+      } else {
+        setLine("L3", "Factorise", "= ?  Predict the factorised form, then reveal it.", "si-hid");
+      }
+      setLine("L4", "Illustration only, k = " + k,
+        Sk + " + " + (k + 1) + " = " + (Sk + k + 1) + " and " + (k + 1) + "×" + (k + 2) + "/2 = " + formulaK1 + ". The algebra above never used the " + k + ".", "si-dim");
+      revealBtn.hidden = false;
+      revealBtn.textContent = revealed ? "Hide the factorised form" : "Reveal the factorised form";
+      revealBtn.setAttribute("aria-expanded", revealed ? "true" : "false");
+      slider.disabled = false;
+      slider.setAttribute("aria-disabled", "false");
+      kNote.textContent = "k is any positive integer; the number is only an illustration.";
+    }
+  }
 
-window.addEventListener('resize', resize);
-resize();
-updateUI();
-draw();
+  // ---------- controls ----------
+  const modeGroup = document.getElementById("modeGroup");
+  modeGroup.querySelectorAll("button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      mode = btn.getAttribute("data-mode");
+      modeGroup.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b === btn ? "true" : "false"));
+      update();
+      go(false);
+    });
+  });
+
+  slider.addEventListener("input", e => {
+    k = parseInt(e.target.value, 10);
+    update();
+    go(false);
+  });
+
+  revealBtn.addEventListener("click", () => {
+    revealed = !revealed;
+    update();
+    draw();
+  });
+
+  const dropGroup = document.getElementById("dropGroup");
+  dropGroup.querySelectorAll("button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      dropGroup.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b === btn ? "true" : "false"));
+      dropText.textContent = drops[btn.getAttribute("data-drop")];
+    });
+  });
+
+  function onResize(){ resize(); go(true); }
+  window.addEventListener("resize", onResize);
+  if (window.ResizeObserver) { new ResizeObserver(onResize).observe(wrap); }
+
+  update();
+  resize();
+  go(true);
+  if (document.fonts && document.fonts.ready) { document.fonts.ready.then(() => draw()); }
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'proving-summation-formulas-using-induction'},'*');}catch(e){}}

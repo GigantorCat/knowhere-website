@@ -143,6 +143,8 @@ canvas {
 }
 
 .slider-label {
+  display: flex;
+  justify-content: space-between;
   font-family: 'JetBrains Mono', monospace;
   font-size: 10.5px;
   text-transform: uppercase;
@@ -254,6 +256,14 @@ canvas {
   box-shadow: 0 0 22px rgba(var(--acc-rgb), 0.18);
 }
 
+.reflux-row {
+  margin-bottom: 8px;
+}
+
+.reflux-note {
+  text-align: center;
+}
+
 .knowdrop {
   border-top: 1px solid var(--line);
   padding-top: 16px;
@@ -319,9 +329,9 @@ canvas {
 <h2 class="sr-only">Interactive esterification reaction simulator showing equilibrium and reflux conditions</h2>
 
 <div class="container">
-  <h1>Fruit smells aren't gifts from nature—they're <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">equilibrium traps</span></h1>
+  <h1>Fruit smells are esters, and making them in a flask hits an <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">equilibrium trap</span></h1>
   
-  <p class="intro">Esters give bananas, pineapples, and strawberries their signature scents, but the reaction that makes them sits stubbornly in the middle, never fully finishing. Esterification is a reversible condensation: acid meets alcohol, a sulfuric acid catalyst speeds it up, heat gets it to equilibrium sooner, and a reflux apparatus stops the reactants and product evaporating before equilibrium is reached. Drag the slider to add heat and watch the mixture reach the same roughly two-thirds yield faster.</p>
+  <p class="intro">Esters give bananas, pineapples, and strawberries their signature scents, but the lab reaction that makes them sits stubbornly in the middle, never fully finishing. Esterification is a reversible condensation: acid meets alcohol, a sulfuric acid catalyst speeds it up, heat gets it to equilibrium sooner, and a reflux apparatus stops the reactants and product evaporating before equilibrium is reached. Turn up the heat and watch the mixture reach the same roughly two-thirds yield faster, then choose Excess Alcohol to start a batch with three times as much alcohol and watch the yield settle higher.</p>
 
   <div class="card">
     <div class="card-header">
@@ -332,11 +342,11 @@ canvas {
     
     <div class="canvas-wrapper">
       <canvas id="ester-canvas"></canvas>
-      <div class="canvas-overlay-tag" id="yield-tag">Equilibrium Yield: 0%</div>
+      <div class="canvas-overlay-tag" id="yield-tag">Ester Yield: 0%</div>
     </div>
 
     <div class="slider-row">
-      <div class="slider-label">Reaction Temperature</div>
+      <div class="slider-label"><span>Reaction Temperature</span><span class="slider-val" id="temp-val">25°C</span></div>
       <input type="range" min="0" max="100" value="0" class="ester-slider" id="temp-slider" style="--fill:0%">
       <div class="tick-labels">
         <span>25°C</span>
@@ -345,6 +355,11 @@ canvas {
         <span>100°C</span>
       </div>
     </div>
+
+    <div class="toggle-buttons reflux-row">
+      <button class="toggle-btn active" id="refluxToggle" aria-pressed="true">Reflux condenser: On</button>
+    </div>
+    <div class="card-hint reflux-note" id="reflux-note">Vapour condenses and drips back into the flask</div>
 
     <div class="stat-row">
       <div class="stat">
@@ -364,7 +379,7 @@ canvas {
       <button class="toggle-btn" id="btn-excess">Excess Alcohol</button>
     </div>
     <div class="knowdrop" id="knowdrop-text">
-      Reflux is the esterification lifeline: the condenser above the flask captures evaporating alcohol and ester vapour, cooling them back to liquid before they escape. Without it, you'd lose reactants and products to the air before equilibrium could even establish. The technique lets you heat the mixture vigorously for hours without losing mass, giving the slow reversible reaction time to creep toward a useful yield. Heat does not shift the equilibrium position, though: esterification is almost thermoneutral, so heating speeds up the forward and reverse reactions by the same factor and simply gets you to the same roughly 67% yield sooner, and because the reverse reaction keeps operating you never get 100% conversion.
+      Reflux is the esterification lifeline: the condenser above the flask captures evaporating alcohol and ester vapour, cooling them back to liquid before they escape. Without it, you would lose reactants and products to the air before equilibrium could even establish. The technique lets you heat the mixture vigorously for hours without losing mass, giving the slow reversible reaction time to creep toward a useful yield. Heat does not shift the equilibrium position, though: esterification is almost thermoneutral, so heating speeds up the forward and reverse reactions by the same factor and simply gets you to the same roughly 67% yield sooner, and because the reverse reaction keeps operating you never get 100% conversion.
     </div>
   </div>
 
@@ -384,12 +399,15 @@ const canvas = document.getElementById('ester-canvas');
 const ctx = canvas.getContext('2d');
 const slider = document.getElementById('temp-slider');
 const tempTag = document.getElementById('temp-tag');
+const tempVal = document.getElementById('temp-val');
 const yieldTag = document.getElementById('yield-tag');
 const esterCount = document.getElementById('ester-count');
 const waterCount = document.getElementById('water-count');
 const btnReflux = document.getElementById('btn-reflux');
 const btnExcess = document.getElementById('btn-excess');
 const knowdropText = document.getElementById('knowdrop-text');
+const refluxToggle = document.getElementById('refluxToggle');
+const refluxNote = document.getElementById('reflux-note');
 
 const CSS = getComputedStyle(document.documentElement);
 const ACC = CSS.getPropertyValue('--acc').trim();
@@ -400,16 +418,30 @@ const dpr = window.devicePixelRatio || 1;
 let w, h;
 let molecules = [];
 let time = 0;
+/* The batch: 25 acid molecules with 25 alcohol (1:1, Reflux) or 75 alcohol (1:3, Excess Alcohol).
+   The acid is the limiting reactant, so yield = ester made / acid put in. */
+const ACID_START = 25;
+let alcoholStart = 25;
+/* Reflux condenser. On (default): vapour condenses and runs back, nothing is ever lost.
+   Off: above 60 C the volatile alcohol and ester boil off out of the top of the flask
+   and are gone for good; the readouts count only what is still in the flask. */
+let refluxOn = true;
+const BOIL_FROM = 60;          /* degrees C: at or below this nothing escapes */
+const ESCAPE_RATE = 0.002;     /* chance per frame an alcohol starts to escape at 100 C (ester: half) */
+let lostAlcohol = 0, lostEster = 0;
 
 function resize() {
   const rect = canvas.getBoundingClientRect();
   if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  const oldW = w, oldH = h;
   w = rect.width;
   h = rect.height;
   canvas.width = w * dpr;
   canvas.height = h * dpr;
-  ctx.scale(dpr, dpr);
-  initMolecules();
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  if (!molecules.length || !oldW) { initMolecules(); return; }
+  /* keep the running batch on a resize, just stretch it to the new box */
+  molecules.forEach(m => { m.x = m.x / oldW * w; m.y = m.y / oldH * h; });
 }
 
 class Molecule {
@@ -425,6 +457,11 @@ class Molecule {
 
   update(temp) {
     const speed = 0.4 + temp * 0.02;
+    if (this.escaping) { /* vapour: rises straight out of the open top, no bounce */
+      this.x += this.vx;
+      this.y += this.vy * (0.6 + speed * 0.5);
+      return;
+    }
     this.x += this.vx * speed;
     this.y += this.vy * speed;
     
@@ -435,12 +472,32 @@ class Molecule {
   }
 
   draw(t) {
+    if (this.escaping) {
+      /* a faint trail below the dot shows it heading up and out */
+      ctx.save();
+      ctx.globalAlpha = Math.max(0.25, Math.min(1, this.y / (h * 0.5)));
+      const trail = ctx.createLinearGradient(this.x, this.y, this.x, this.y + 26);
+      trail.addColorStop(0, this.type === 'ester' ? 'rgba(62,154,214,0.7)' : 'rgba(196,165,232,0.7)');
+      trail.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.strokeStyle = trail;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(this.x, this.y);
+      ctx.lineTo(this.x - this.vx * 8, this.y + 26);
+      ctx.stroke();
+      ctx.restore();
+      ctx.save();
+      ctx.globalAlpha = Math.max(0.25, Math.min(1, this.y / (h * 0.5)));
+    }
     const glow = 0.5 + 0.5 * Math.sin(t * 3 + this.phase);
     let color, glowColor;
     
-    if (this.type === 'acid' || this.type === 'alcohol') {
+    if (this.type === 'acid') {
       color = '#8C9389';
       glowColor = 'rgba(140,147,137,';
+    } else if (this.type === 'alcohol') {
+      color = '#C4A5E8';
+      glowColor = 'rgba(196,165,232,';
     } else if (this.type === 'ester') {
       color = ACC;
       glowColor = 'rgba(62,154,214,';
@@ -469,20 +526,45 @@ class Molecule {
     ctx.strokeStyle = 'rgba(255,255,255,0.3)';
     ctx.lineWidth = 1;
     ctx.stroke();
+    if (this.escaping) ctx.restore();
   }
 }
 
 function initMolecules() {
   molecules = [];
-  const count = 50;
-  for (let i = 0; i < count / 2; i++) {
-    molecules.push(new Molecule('acid', Math.random() * w, Math.random() * h));
-    molecules.push(new Molecule('alcohol', Math.random() * w, Math.random() * h));
-  }
+  lostAlcohol = 0;
+  lostEster = 0;
+  for (let i = 0; i < ACID_START; i++) molecules.push(new Molecule('acid', Math.random() * w, Math.random() * h));
+  for (let i = 0; i < alcoholStart; i++) molecules.push(new Molecule('alcohol', Math.random() * w, Math.random() * h));
+}
+
+/* Key on the canvas: what each colour is, and the acid : alcohol ratio of this batch */
+function drawLegend() {
+  const items = [["acid", "#8C9389"], ["alcohol", "#C4A5E8"], ["ester", ACC], ["water", AMB]];
+  ctx.save();
+  ctx.font = "11px JetBrains Mono";
+  ctx.textBaseline = "middle";
+  ctx.fillStyle = "rgba(0,0,0,0.55)";
+  ctx.fillRect(0, 0, w, 46);
+  let x = 10, y = 14;
+  items.forEach(([label, col]) => {
+    const tw = ctx.measureText(label).width;
+    if (x + tw + 22 > w - 6) { x = 10; y += 18; }
+    ctx.fillStyle = col;
+    ctx.beginPath();
+    ctx.arc(x + 4, y, 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "rgba(237,237,232,0.85)";
+    ctx.fillText(label, x + 12, y);
+    x += tw + 26;
+  });
+  ctx.fillStyle = "rgba(237,237,232,0.6)";
+  ctx.fillText("acid : alcohol = 1 : " + (alcoholStart / ACID_START), 10, y + 18);
+  ctx.restore();
 }
 
 function updateReaction(temp) {
-  /* `temp` arrives as the slider's 0-100, while the card shows 25-100 C, so
+  /* `temp` arrives as the slider value 0-100, while the card shows 25-100 C, so
      slider-zero used to make BOTH rates exactly zero: the mixture froze and
      nothing reversed. Work in the temperature the student is actually being
      shown, so the cold end is a slow equilibrium rather than a still picture. */
@@ -493,13 +575,17 @@ function updateReaction(temp) {
      factor: the slider changes how fast equilibrium is reached, not where it
      sits. A 4:1 ratio gives K about 4, which for a 1:1 mixture settles at
      roughly 67% ester, cold or hot. */
-  const reactionProb = celsius / 8000;
-  const reverseProb  = celsius / 32000;
+  /* A big canvas spreads the molecules thinner, so they meet less often: scale both
+     probabilities by the same area factor so every screen size settles in a similar time. */
+  const area = Math.max(1, (w * h) / (360 * 300));
+  const reactionProb = Math.min(0.4, (celsius / 2500) * area);
+  const reverseProb  = reactionProb / 4;
 
   for (let i = 0; i < molecules.length; i++) {
     for (let j = i + 1; j < molecules.length; j++) {
       const m1 = molecules[i];
       const m2 = molecules[j];
+      if (m1.escaping || m2.escaping) continue; /* vapour on its way out no longer reacts */
       const dist = Math.hypot(m1.x - m2.x, m1.y - m2.y);
 
       if (dist < 25) {
@@ -519,6 +605,27 @@ function updateReaction(temp) {
   }
 }
 
+/* Condenser off and hotter than 60 C: alcohol (and, more slowly, ester) can boil off.
+   With the condenser on this does nothing at all, so the batch runs exactly as before. */
+function boilOff(temp) {
+  if (refluxOn) return;
+  const celsius = 25 + temp * 0.75;
+  if (Math.round(celsius) <= BOIL_FROM) return; /* same rounding as the temperature readout */
+  const p = ESCAPE_RATE * (celsius - BOIL_FROM) / (100 - BOIL_FROM);
+  molecules.forEach(m => {
+    if (m.escaping) return;
+    let chance = 0;
+    if (m.type === 'alcohol') chance = p;
+    else if (m.type === 'ester') chance = p * 0.5;
+    if (chance && Math.random() < chance) {
+      m.escaping = true;
+      m.vx = (Math.random() - 0.5) * 0.6;
+      m.vy = -(1.4 + Math.random() * 0.8);
+      if (m.type === 'alcohol') lostAlcohol++; else lostEster++;
+    }
+  });
+}
+
 function draw() {
   time += 0.016;
   const temp = parseFloat(slider.value);
@@ -527,8 +634,10 @@ function draw() {
   ctx.fillRect(0, 0, w, h);
 
   updateReaction(temp);
+  boilOff(temp);
   molecules.forEach(m => m.update(temp));
-  molecules.forEach(m => m.draw(time));
+  molecules = molecules.filter(m => !(m.escaping && m.y < -30)); /* gone out of the top */
+  molecules.forEach(m => { if (!m.escaping) m.draw(time); });
 
   const cx = w / 2;
   const cy = h / 2;
@@ -537,6 +646,8 @@ function draw() {
   vig.addColorStop(1, 'rgba(0,0,0,0.6)');
   ctx.fillStyle = vig;
   ctx.fillRect(0, 0, w, h);
+  drawLegend();
+  molecules.forEach(m => { if (m.escaping) m.draw(time); }); /* drawn over the key so you see them leave */
 
   requestAnimationFrame(draw);
 }
@@ -548,16 +659,32 @@ function updateUI() {
   
   slider.style.setProperty('--fill', fillPercent + '%');
   tempTag.textContent = Math.round(temp) + '°C';
+  tempVal.textContent = Math.round(temp) + '°C'; /* the slider runs 0-100 but means 25-100 °C: show the real temperature */
 
-  const esterMols = molecules.filter(m => m.type === 'ester').length;
-  const waterMols = molecules.filter(m => m.type === 'water').length;
-  const totalPossible = molecules.length / 2;
-  const yieldPercent = Math.round((esterMols / totalPossible) * 100);
+  /* count only what is still in the flask: escaping vapour is already lost */
+  const esterMols = molecules.filter(m => m.type === 'ester' && !m.escaping).length;
+  const waterMols = molecules.filter(m => m.type === 'water' && !m.escaping).length;
+  const yieldPercent = Math.round((esterMols / ACID_START) * 100); /* acid is the limiting reactant */
 
   esterCount.textContent = esterMols;
   waterCount.textContent = waterMols;
-  yieldTag.textContent = 'Equilibrium Yield: ' + yieldPercent + '%';
+  yieldTag.textContent = "Ester Yield: " + yieldPercent + "%";
+
+  if (refluxOn) refluxNote.textContent = "Vapour condenses and drips back into the flask";
+  else if (lostAlcohol + lostEster > 0) refluxNote.textContent = "Lost to the air: " + lostAlcohol + " alcohol, " + lostEster + " ester";
+  else if (Math.round(temp) <= BOIL_FROM) refluxNote.textContent = "Open flask: nothing boils off at 60°C or below";
+  else refluxNote.textContent = "Open flask: alcohol and ester boiling off";
 }
+
+function setReflux(on) {
+  refluxOn = on;
+  refluxToggle.classList.toggle('active', on);
+  refluxToggle.setAttribute('aria-pressed', on ? 'true' : 'false');
+  refluxToggle.textContent = "Reflux condenser: " + (on ? "On" : "Off");
+  updateUI();
+}
+
+refluxToggle.addEventListener('click', () => setReflux(!refluxOn));
 
 slider.addEventListener('input', updateUI);
 setInterval(updateUI, 200);
@@ -565,13 +692,20 @@ setInterval(updateUI, 200);
 btnReflux.addEventListener('click', () => {
   btnReflux.classList.add('active');
   btnExcess.classList.remove('active');
-  knowdropText.textContent = "Reflux is the esterification lifeline: the condenser above the flask captures evaporating alcohol and ester vapour, cooling them back to liquid before they escape. Without it, you'd lose reactants and products to the air before equilibrium could even establish. The technique lets you heat the mixture vigorously for hours without losing mass, giving the slow reversible reaction time to creep toward a useful yield. Heat does not shift the equilibrium position, though: esterification is almost thermoneutral, so heating speeds up the forward and reverse reactions by the same factor and simply gets you to the same roughly 67% yield sooner, and because the reverse reaction keeps operating you never get 100% conversion.";
+  alcoholStart = ACID_START; /* fresh 1:1 batch under reflux */
+  initMolecules();
+  setReflux(true); /* this button is a batch under reflux, so it puts the condenser back on */
+  updateUI();
+  knowdropText.textContent = "Reflux is the esterification lifeline: the condenser above the flask captures evaporating alcohol and ester vapour, cooling them back to liquid before they escape. Without it, you would lose reactants and products to the air before equilibrium could even establish. The technique lets you heat the mixture vigorously for hours without losing mass, giving the slow reversible reaction time to creep toward a useful yield. Heat does not shift the equilibrium position, though: esterification is almost thermoneutral, so heating speeds up the forward and reverse reactions by the same factor and simply gets you to the same roughly 67% yield sooner, and because the reverse reaction keeps operating you never get 100% conversion.";
 });
 
 btnExcess.addEventListener('click', () => {
   btnExcess.classList.add('active');
   btnReflux.classList.remove('active');
-  knowdropText.textContent = "Adding excess alcohol is the other yield trick: if you flood the equilibrium with one reactant, Le Chatelier's principle drives the position toward products to consume the surplus. A 3:1 or 5:1 alcohol-to-acid ratio is common in lab esterifications, pushing yield from around 65% to 85% or higher without changing the equilibrium constant itself. You're not making the reaction more favourable thermodynamically—you're just forcing more of the limiting reagent (the acid) to convert before equilibrium locks in. The downside is separation: you have to distil off all that extra alcohol at the end, but the yield gain is worth the extra step in industrial fragrance and flavour synthesis.";
+  alcoholStart = ACID_START * 3; /* fresh 1:3 batch: three alcohol for every acid */
+  initMolecules();
+  updateUI();
+  knowdropText.textContent = "Adding excess alcohol is the other yield trick: if you flood the equilibrium with one reactant, Le Chatelier’s principle drives the position toward products to use up the surplus. This batch has three alcohol molecules for every acid: with K about 4, the yield (based on the acid) rises from about 67% to about 90%, without changing the equilibrium constant itself. You are not making the reaction more favourable, just converting more of the limiting reactant (the acid) before the balance settles. Removing water as it forms works the same way. The downside is separation: you have to distil off all that extra alcohol at the end, but the yield gain is worth the extra step in industrial fragrance and flavour synthesis.";
 });
 
 window.addEventListener('resize', resize);

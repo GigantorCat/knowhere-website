@@ -4,733 +4,507 @@ body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
-
-:root {
-  --bg: #0B0D0C;
-  --bg2: #12160F;
-  --acc: #5AADD4;
-  --acc-rgb: 90, 173, 212;
-  --ag: rgba(var(--acc-rgb), .7);
-  --ag1: rgba(var(--acc-rgb), .12);
-  --ag2: rgba(var(--acc-rgb), .45);
-  --amb: #FAC775;
-  --ink: #EDEDE8;
-  --ink-dim: #8C9389;
-  --line: #262B26;
+:root{
+  --bg:#0B0D0C;
+  --bg2:#12160F;
+  --acc:#5AADD4;
+  --acc-rgb:90, 173, 212;
+  --ag:rgba(var(--acc-rgb),.7);
+  --ag1:rgba(var(--acc-rgb),.12);
+  --ag2:rgba(var(--acc-rgb),.45);
+  --amb:#FAC775;
+  --ink:#EDEDE8;
+  --ink-dim:#8C9389;
+  --line:#262B26;
 }
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
-}
-
-body {
-  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
-  font-family: 'Geist', sans-serif;
-  color: var(--ink);
-  min-height: 100vh;
-  padding: 40px 16px 0;
-}
-
-.container {
-  max-width: 720px;
-  margin: 0 auto;
-}
-
-h1 {
-  font-size: clamp(26px, 6.5vw, 44px);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
-  margin-bottom: 18px;
-}
-
-.intro {
-  font-size: 15.5px;
-  font-weight: 400;
-  color: var(--ink-dim);
-  max-width: 58ch;
-  line-height: 1.55;
-  margin-bottom: 32px;
-}
-
-.card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 20px;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
-}
-
-.card-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  color: var(--ink);
-}
-
-.live-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--acc);
-}
-
-.card-hint {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--ink-dim);
-  margin-bottom: 14px;
-}
-
-.canvas-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16/9;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
-  box-shadow: inset 0 0 0 1px var(--ag1);
-  margin-bottom: 16px;
-}
-
-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.canvas-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(4px);
-  padding: 9px 16px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  text-transform: uppercase;
-  color: var(--acc);
-  text-align: center;
-}
-
-.slider-container {
-  margin-bottom: 10px;
-}
-
-.slider-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 8px;
-  display: block;
-}
-
-.def-slider {
-  width: 100%;
-  height: 4px;
-  border-radius: 3px;
-  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
-  outline: none;
-  -webkit-appearance: none;
-  appearance: none;
-  cursor: pointer;
-}
-
-.def-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  transition: box-shadow .15s;
-  cursor: pointer;
-}
-
-.def-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  transition: box-shadow .15s;
-  cursor: pointer;
-}
-
-.def-slider:hover::-webkit-slider-thumb {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.def-slider:hover::-moz-range-thumb {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.tick-labels {
-  display: flex;
-  justify-content: space-between;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--ink-dim);
-  margin-top: 4px;
-}
-
-.stat-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-}
-
-.stat {
-  text-align: center;
-}
-
-.stat-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 6px;
-}
-
-.stat-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 24px;
-  font-weight: 500;
-}
-
-.stat-value.acc { color: var(--acc); }
-.stat-value.amb { color: var(--amb); }
-
-.toggle-section {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.toggle-btn {
-  flex: 1;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14.5px;
-  padding: 12px;
-  border-radius: 11px;
-  background: #12160F;
-  border: 1px solid var(--line);
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: all .2s;
-}
-
-.toggle-btn.active {
-  background: rgba(var(--acc-rgb), .1);
-  border: 1px solid var(--acc);
-  color: var(--acc);
-  box-shadow: 0 0 22px rgba(var(--acc-rgb), .18);
-}
-
-.knowdrop {
-  border-top: 1px solid var(--line);
-  padding-top: 16px;
-  font-size: 14.5px;
-  font-weight: 400;
-  line-height: 1.65;
-  color: var(--ink);
-}
-
-.know-this {
-  border-left: 3px solid var(--acc);
-  padding: 16px 18px;
-  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
-  border-radius: 0 12px 12px 0;
-  margin-bottom: 0;
-}
-
-.know-tag {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  margin-bottom: 12px;
-}
-
-.know-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--acc);
-  box-shadow: 0 0 8px var(--acc);
-  animation: pulse 2.4s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.45; }
-}
-
-.know-tag-text {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--acc);
-}
-
-.know-body {
-  font-size: 17.4px;
-  font-weight: 400;
-  line-height: 1.55;
-  color: var(--ink);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C 55%);font-family:'Geist',sans-serif;color:var(--ink);min-height:100vh;padding:40px 16px 0}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.pd-wrap{max-width:720px;margin:0 auto}
+.pd-wrap h1{font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin:0 0 18px}
+.pd-intro{font-size:15.5px;font-weight:400;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin:0 0 30px}
+.pd-card{background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);margin-bottom:20px}
+.pd-head{display:flex;justify-content:space-between;align-items:center;gap:8px 14px;flex-wrap:wrap;margin-bottom:6px}
+.pd-label{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;color:var(--ink)}
+.pd-live{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--acc)}
+.pd-hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin:0 0 14px;line-height:1.5}
+.pd-ttl{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin:0 0 8px}
+.pd-pills{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.pd-pill{flex:1 1 auto;font-family:'JetBrains Mono',monospace;font-size:12.5px;padding:10px 14px;border-radius:999px;background:#12160F;border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:all .2s}
+.pd-pill[aria-pressed="true"]{background:rgba(var(--acc-rgb),.1);border-color:var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.pd-canvas{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1)}
+.pd-canvas canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.pd-overlay{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:14px;text-transform:uppercase;color:var(--acc);text-align:center}
+.pd-row{display:flex;justify-content:space-between;align-items:baseline;font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin:16px 0 8px}
+.pd-row b{color:var(--ink);font-weight:500;font-size:12px}
+.pd-slider{width:100%;height:4px;border-radius:3px;background:linear-gradient(90deg,var(--acc) var(--fill,0%),#23291f var(--fill,0%));outline:none;-webkit-appearance:none;appearance:none;cursor:pointer;margin:0;display:block}
+.pd-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s}
+.pd-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s}
+.pd-slider:hover::-webkit-slider-thumb{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.pd-slider:hover::-moz-range-thumb{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.pd-ticks{position:relative;height:14px;margin-top:6px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink-dim)}
+.pd-ticks span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}
+.pd-ticks span:first-child{transform:none}
+.pd-ticks span:last-child{transform:translateX(-100%)}
+.pd-stats{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}
+.pd-stat{text-align:center}
+.pd-stat-l{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:6px}
+.pd-stat-v{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500}
+.pd-stat-v.acc{color:var(--acc)}
+.pd-stat-v.amb{color:var(--amb)}
+.pd-drop{border-top:1px solid var(--line);padding-top:16px;margin-top:2px;font-size:14.5px;line-height:1.65;color:var(--ink)}
+.pd-know{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));border-radius:0 12px 12px 0;margin-bottom:0;padding-bottom:16px}
+.pd-know-tag{display:flex;align-items:center;gap:9px;margin-bottom:12px}
+.pd-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:pdPulse 2.4s ease-in-out infinite}
+@keyframes pdPulse{0%,100%{opacity:1}50%{opacity:.45}}
+.pd-know-txt{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.15em;color:var(--acc)}
+.pd-know-body{font-size:17.4px;font-weight:400;line-height:1.55;color:var(--ink);margin:0}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
 
-<div class="container">
-  <h2 class="sr-only">Interactive visualisation of plant defence responses to pathogens</h2>
+<div class="pd-wrap">
+  <h2 class="sr-only">Interactive model of a young paperbark leaf responding to myrtle rust over fourteen days, comparing a resistant and a susceptible genotype</h2>
 
-  <h1>Plants kill their own cells to <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">starve</span> invaders</h1>
-  
-  <p class="intro">No antibodies, no bloodstream, no movement — yet plants repel most pathogens most of the time. From waxy shields to chemical warfare to sacrificial cell suicide, plant immunity is a coordinated defence system that can even warn neighbouring plants. Drag the slider to escalate the plant's immune response from passive barriers to full hypersensitive shutdown.</p>
+  <h1>A resistant paperbark beats myrtle rust by killing its own <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">cells</span></h1>
 
-  <div class="card">
-    <div class="card-header">
-      <div class="card-label">Defence Escalation</div>
-      <div class="live-tag" id="liveTag">Passive barriers</div>
+  <p class="pd-intro">Myrtle rust (<em>Austropuccinia psidii</em>) reached Australia in 2010 and attacks the soft new leaves of broad-leaved paperbark, <em>Melaleuca quinquenervia</em>. A susceptible tree grows yellow spore pustules within about a fortnight; a resistant tree carries receptors that trigger a ring of deliberate cell death around each spore that breaks in. Advance the days after the spores land and watch where the dead cells appear, then switch genotype and watch what the same spores do in a susceptible leaf.</p>
+
+  <section class="pd-card">
+    <div class="pd-head">
+      <div class="pd-label">Myrtle rust on a paperbark leaf</div>
+      <div class="pd-live" id="pdLive" aria-live="polite">Spores on the cuticle</div>
     </div>
-    <div class="card-hint">Slide to activate progressively stronger defences</div>
+    <p class="pd-hint">Advance the days after the spores land. Watch what happens around each spore, then switch genotype.</p>
 
-    <div class="canvas-wrapper">
-      <canvas id="defenceCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">Waxy cuticle active</div>
+    <div class="pd-ttl">Paperbark genotype</div>
+    <div class="pd-pills" id="pdGeno" role="group" aria-label="Paperbark genotype">
+      <button class="pd-pill" type="button" data-plant="resistant" aria-pressed="true">Resistant</button>
+      <button class="pd-pill" type="button" data-plant="susceptible" aria-pressed="false">Susceptible</button>
     </div>
 
-    <div class="slider-container">
-      <label class="slider-label" for="defSlider">Defence intensity</label>
-      <input type="range" min="0" max="100" value="0" class="def-slider" id="defSlider">
-      <div class="tick-labels">
-        <span>Barriers</span>
-        <span>Chemical</span>
-        <span>Cell death</span>
-        <span>Systemic</span>
+    <div class="pd-canvas" id="pdWrap">
+      <canvas id="pdCanvas" aria-label="Leaf cross-section with rust spores on the cuticle and leaf cells beneath"></canvas>
+      <div class="pd-overlay" id="pdOverlay" aria-live="polite">Day 0 · Spores sit on the waxy cuticle</div>
+    </div>
+
+    <div class="pd-row"><span>Days after spores land</span><b id="pdDayV">Day 0</b></div>
+    <input type="range" class="pd-slider" id="pdDay" aria-label="Days after spores land" min="0" max="14" step="1" value="0">
+    <div class="pd-ticks" aria-hidden="true">
+      <span style="left:0%">Day 0</span>
+      <span style="left:21.43%">Day 3</span>
+      <span style="left:50%">Day 7</span>
+      <span style="left:100%">Day 14</span>
+    </div>
+
+    <div class="pd-stats">
+      <div class="pd-stat">
+        <div class="pd-stat-l">Infection sites stopped</div>
+        <div class="pd-stat-v acc" id="pdStop">0 / 5</div>
+      </div>
+      <div class="pd-stat">
+        <div class="pd-stat-l">Cells with live hyphae</div>
+        <div class="pd-stat-v amb" id="pdCol">0</div>
       </div>
     </div>
+  </section>
 
-    <div class="stat-row">
-      <div class="stat">
-        <div class="stat-label">Active defences</div>
-        <div class="stat-value acc" id="activeDefences">1</div>
-      </div>
-      <div class="stat">
-        <div class="stat-label">Pathogen spread</div>
-        <div class="stat-value amb" id="pathogenSpread">High</div>
-      </div>
+  <section class="pd-card">
+    <div class="pd-ttl">Which layer of the defence?</div>
+    <div class="pd-pills" id="pdLens" role="group" aria-label="Layer of the plant defence to read about">
+      <button class="pd-pill" type="button" data-lens="barriers" aria-pressed="true">Barriers</button>
+      <button class="pd-pill" type="button" data-lens="recognition" aria-pressed="false">Recognition</button>
+      <button class="pd-pill" type="button" data-lens="hr" aria-pressed="false">Cell death</button>
+      <button class="pd-pill" type="button" data-lens="sar" aria-pressed="false">Systemic alert</button>
     </div>
-  </div>
+    <div class="pd-drop" id="pdDrop"></div>
+  </section>
 
-  <div class="card">
-    <div class="toggle-section">
-      <button class="toggle-btn active" data-mode="physical">Physical</button>
-      <button class="toggle-btn" data-mode="chemical">Chemical</button>
-    </div>
-
-    <div class="knowdrop" id="knowdropText">
-      Plants deploy physical barriers as a first line of defence. The waxy cuticle coating leaf surfaces repels water and blocks pathogen entry points. Cell walls provide structural resistance, while bark creates a thick protective layer on stems. When threatened, stomata — the pores through which plants breathe — can close within minutes, sealing potential invasion routes. These passive barriers work constantly, requiring no energy investment beyond their initial construction, making them the most economical defence strategy in the plant's arsenal.
-    </div>
-  </div>
-
-  <div class="know-this">
-    <div class="know-tag">
-      <div class="know-dot"></div>
-      <div class="know-tag-text">Know This</div>
-    </div>
-    <div class="know-body">
-      The <span style="color:var(--acc)">hypersensitive response</span> sacrifices infected cells to create a dead zone that starves the pathogen, while <span style="color:var(--acc)">systemic acquired resistance</span> puts the entire plant on alert, priming distant tissues to resist future attacks.
-    </div>
-  </div>
+  <aside class="pd-know">
+    <div class="pd-know-tag"><div class="pd-dot"></div><div class="pd-know-txt">Know This</div></div>
+    <p class="pd-know-body">In a resistant paperbark the <span style="color:var(--acc)">hypersensitive response</span> kills cells only around each <span style="color:var(--acc)">myrtle rust</span> entry point, starving the fungus, while <span style="color:var(--acc)">systemic acquired resistance</span> primes the rest of the leaf without sterilising it.</p>
+  </aside>
 </div>
 
 <script>
-const canvas = document.getElementById('defenceCanvas');
-const ctx = canvas.getContext('2d');
-const slider = document.getElementById('defSlider');
-const liveTag = document.getElementById('liveTag');
-const canvasOverlay = document.getElementById('canvasOverlay');
-const activeDefences = document.getElementById('activeDefences');
-const pathogenSpread = document.getElementById('pathogenSpread');
-const toggleBtns = document.querySelectorAll('.toggle-btn');
-const knowdropText = document.getElementById('knowdropText');
+(function(){
+  const canvas=document.getElementById("pdCanvas");
+  const ctx=canvas.getContext("2d");
+  const wrapEl=document.getElementById("pdWrap");
+  const slider=document.getElementById("pdDay");
+  const dayV=document.getElementById("pdDayV");
+  const liveTag=document.getElementById("pdLive");
+  const overlay=document.getElementById("pdOverlay");
+  const statStop=document.getElementById("pdStop");
+  const statCol=document.getElementById("pdCol");
+  const genoBtns=Array.from(document.querySelectorAll("#pdGeno button"));
+  const lensBtns=Array.from(document.querySelectorAll("#pdLens button"));
+  const drop=document.getElementById("pdDrop");
 
-const CSS = getComputedStyle(document.documentElement);
-const ACC = CSS.getPropertyValue('--acc').trim();
-const RGB = CSS.getPropertyValue('--acc-rgb').trim();
-
-const dpr = Math.min(window.devicePixelRatio || 1, 2);
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d');
-
-let defenceLevel = 0;
-let time = 0;
-let particles = [];
-let deadCells = [];
-
-// Pathogen particles
-for (let i = 0; i < 35; i++) {
-  particles.push({
-    x: Math.random(),
-    y: Math.random(),
-    vx: (Math.random() - 0.5) * 0.3,
-    vy: (Math.random() - 0.5) * 0.3,
-    r: Math.random() * 3 + 2,
-    phase: Math.random() * Math.PI * 2
-  });
-}
-
-function resize() {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
-
-function updateStats() {
-  const level = defenceLevel / 100;
-  
-  let count = 1;
-  let spread = 'High';
-  let tag = 'Passive barriers';
-  let overlay = 'Waxy cuticle active';
-  
-  if (level < 0.25) {
-    count = 1;
-    spread = 'High';
-    tag = 'Passive barriers';
-    overlay = 'Waxy cuticle active';
-  } else if (level < 0.5) {
-    count = 2;
-    spread = 'Medium';
-    tag = 'Chemical warfare';
-    overlay = 'Toxins deployed';
-  } else if (level < 0.75) {
-    count = 3;
-    spread = 'Low';
-    tag = 'Hypersensitive response';
-    overlay = 'Cells sacrificed';
-  } else {
-    count = 4;
-    spread = 'None';
-    tag = 'Systemic alert';
-    overlay = 'Whole-plant immunity';
+  const CSS=getComputedStyle(document.documentElement);
+  const ACC=CSS.getPropertyValue("--acc").trim();
+  const RGB=CSS.getPropertyValue("--acc-rgb").trim();
+  function hexRgb(v){
+    v=v.trim().replace("#","");
+    if(v.length===3) v=v.split("").map(c=>c+c).join("");
+    const n=parseInt(v,16);
+    return ((n>>16)&255)+","+((n>>8)&255)+","+(n&255);
   }
-  
-  activeDefences.textContent = count;
-  pathogenSpread.textContent = spread;
-  liveTag.textContent = tag;
-  canvasOverlay.textContent = overlay;
-}
+  const AMB=hexRgb(CSS.getPropertyValue("--amb"));
+  const DIM=hexRgb(CSS.getPropertyValue("--ink-dim"));
+  const INK=hexRgb(CSS.getPropertyValue("--ink"));
+  const MONO=`"JetBrains Mono", monospace`;
+  const reduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-function draw() {
-  time += 0.016;
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  const cx = w / 2;
-  const cy = h / 2;
-  
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, w, h);
-  
-  const level = defenceLevel / 100;
-  
-  // Draw plant cell structure (background grid)
-  ctx.strokeStyle = 'rgba(' + RGB + ', 0.08)';
-  ctx.lineWidth = 1;
-  const cellSize = 35;
-  for (let x = 0; x < w; x += cellSize) {
-    ctx.beginPath();
-    ctx.moveTo(x, 0);
-    ctx.lineTo(x, h);
-    ctx.stroke();
+  const dpr=Math.min(window.devicePixelRatio||1,2);
+  const buf=document.createElement("canvas");
+  const bctx=buf.getContext("2d");
+
+  const NCOLS=15, ROWS=3, SITES=[1,4,7,10,13];
+  const state={plant:"resistant"};
+  let shown=0, target=0, raf=0, lastT=0;
+
+  const clamp01=v=>v<0?0:v>1?1:v;
+  function hash(n){ const s=Math.sin(n*12.9898+78.233)*43758.5453; return s-Math.floor(s); }
+  function outcome(i,plant){
+    if(i===1) return "cuticle";
+    if(plant==="resistant") return i===3?"papilla":"hr";
+    return "spread";
   }
-  for (let y = 0; y < h; y += cellSize) {
-    ctx.beginPath();
-    ctx.moveTo(0, y);
-    ctx.lineTo(w, y);
-    ctx.stroke();
-  }
-  
-  // Physical barrier (cuticle layer)
-  if (level >= 0) {
-    const barrierAlpha = Math.min(0.4, 0.4 * (1 - level * 0.6));
-    ctx.strokeStyle = 'rgba(' + RGB + ', ' + barrierAlpha + ')';
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    for (let i = 0; i <= 40; i++) {
-      const x = (i / 40) * w;
-      const wave = Math.sin(x * 0.05 + time * 2) * 8;
-      const y = 25 + wave;
-      if (i === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
+  function walk(pts,len,fn){
+    let rem=len;
+    for(let i=1;i<pts.length&&rem>0;i++){
+      const x0=pts[i-1][0],y0=pts[i-1][1],x1=pts[i][0],y1=pts[i][1];
+      const d=Math.hypot(x1-x0,y1-y0);
+      const f=Math.min(1,rem/d);
+      fn(x0,y0,x0+(x1-x0)*f,y0+(y1-y0)*f);
+      rem-=d;
     }
-    ctx.stroke();
-    
-    // Cuticle glow
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.strokeStyle = 'rgba(' + RGB + ', ' + (barrierAlpha * 0.3) + ')';
-    ctx.lineWidth = 8;
-    ctx.filter = 'blur(4px)';
-    ctx.stroke();
-    ctx.restore();
   }
-  
-  // Chemical defences (toxin clouds)
-  if (level >= 0.25) {
-    const chemIntensity = Math.min(1, (level - 0.25) * 4);
-    for (let i = 0; i < 8; i++) {
-      const angle = (i / 8) * Math.PI * 2 + time * 0.5;
-      const radius = 80 + Math.sin(time * 2 + i) * 15;
-      const tx = cx + Math.cos(angle) * radius;
-      const ty = cy + Math.sin(angle) * radius;
-      
-      const grad = ctx.createRadialGradient(tx, ty, 0, tx, ty, 25);
-      grad.addColorStop(0, 'rgba(250, 199, 117, ' + (chemIntensity * 0.3) + ')');
-      grad.addColorStop(1, 'rgba(250, 199, 117, 0)');
-      
-      ctx.save();
-      ctx.globalCompositeOperation = 'lighter';
-      ctx.fillStyle = grad;
-      ctx.beginPath();
-      ctx.arc(tx, ty, 25, 0, Math.PI * 2);
-      ctx.fill();
+  function rr(x,y,w,h,r){
+    r=Math.min(r,w/2,h/2);
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.arcTo(x+w,y,x+w,y+h,r);
+    ctx.arcTo(x+w,y+h,x,y+h,r);
+    ctx.arcTo(x,y+h,x,y,r);
+    ctx.arcTo(x,y,x+w,y,r);
+    ctx.closePath();
+  }
+
+  function model(t,plant,w,h){
+    const ySurf=h*0.28, yBot=h*0.78, cw=w/NCOLS, tot=yBot-ySurf;
+    const ys=[ySurf,ySurf+tot*0.3,ySurf+tot*0.65,yBot];
+    const T=ys[1]-ySurf;
+    const branches=(x)=>{
+      const mk=(s)=>[[x,ys[1]],[x+s*0.5*cw,ys[1]],[x+s*0.5*cw,ys[2]],[x+s*2*cw,ys[2]],[x+s*2*cw,ys[3]],[x+s*3.5*cw,ys[3]]];
+      const mk2=(s)=>[[x,ys[1]],[x+s*1.5*cw,ys[1]],[x+s*1.5*cw,ys[2]],[x+s*3*cw,ys[2]]];
+      return [mk(-1),mk(1),mk2(-1),mk2(1)];
+    };
+    const sites=SITES.map((c,i)=>{
+      const x=(c+0.5)*cw;
+      const o=outcome(i,plant);
+      const s={i,c,x,o,pen:0,lb:0,alpha:1,germ:0,stopped:false,papilla:0,hr:0,pust:0,status:"",lines:[]};
+      if(o==="cuticle"){
+        s.germ=clamp01(t/0.6);
+        s.alpha=1-clamp01((t-0.8)/1.0);
+        s.stopped=t>=1.5;
+        s.status=t>=1.2?"dried":"";
+      }else if(o==="papilla"){
+        s.pen=clamp01((t-0.5)/0.6)*0.55;
+        s.papilla=clamp01((t-0.9)/0.6);
+        s.alpha=1-0.9*clamp01((t-1.5)/1.5);
+        s.stopped=t>=1.5;
+        s.status=t>=1.2?"walled":"";
+      }else if(o==="hr"){
+        s.pen=clamp01((t-0.5)/1.0);
+        s.lb=clamp01((t-1.5)/0.5)*0.6*cw;
+        s.hr=clamp01((t-2)/2);
+        s.alpha=1-0.9*clamp01((t-2.5)/2.5);
+        s.status=t>=2.3?"HR":(t>=1.0?"breach":"");
+      }else{
+        s.pen=clamp01((t-0.5)/1.0);
+        s.lb=Math.max(0,t-1.5)/12.5*5.2*cw;
+        s.pust=clamp01((t-7)/4);
+        s.status=t>=8?"pustule":(t>=1.5?"spread":"");
+      }
+      s.trunk=s.pen*T;
+      if(s.pen>0) s.lines.push([[[x,ySurf],[x,ys[1]]],s.trunk]);
+      if(s.pen>=1&&s.lb>0) branches(x).forEach(b=>s.lines.push([b,s.lb]));
+      return s;
+    });
+
+    const dead=new Float32Array(ROWS*NCOLS);
+    const order=[[0,0],[1,0],[0,-1],[0,1],[1,-1],[1,1]];
+    sites.forEach(s=>{
+      if(s.o!=="hr"||s.hr<=0) return;
+      let all=true;
+      order.forEach((o,k)=>{
+        const a=clamp01((s.hr-k*0.14)/0.2);
+        const idx=o[0]*NCOLS+(s.c+o[1]);
+        dead[idx]=Math.max(dead[idx],a);
+        if(a<0.5) all=false;
+      });
+      s.stopped=all;
+    });
+    let deadCount=0;
+    for(let k=0;k<dead.length;k++) if(dead[k]>=0.5) deadCount++;
+
+    const col=new Uint8Array(ROWS*NCOLS);
+    const thr=0.3*Math.min(cw,tot*0.3);
+    function markNear(px,py){
+      const c0=Math.floor(px/cw);
+      for(let r=0;r<ROWS;r++){
+        for(let c=c0-1;c<=c0+1;c++){
+          if(c<0||c>=NCOLS) continue;
+          const idx=r*NCOLS+c;
+          if(dead[idx]>=0.5) continue;
+          const x0=c*cw,x1=x0+cw,y0=ys[r],y1=ys[r+1];
+          const dx=Math.max(x0-px,0,px-x1), dy=Math.max(y0-py,0,py-y1);
+          if(Math.hypot(dx,dy)<=thr) col[idx]=1;
+        }
+      }
+    }
+    sites.forEach(s=>{
+      if(s.alpha<=0.35) return;
+      s.lines.forEach(ln=>{
+        walk(ln[0],ln[1],(x0,y0,x1,y1)=>{
+          const d=Math.hypot(x1-x0,y1-y0);
+          const n=Math.max(1,Math.ceil(d/4));
+          for(let k=0;k<=n;k++) markNear(x0+(x1-x0)*k/n,y0+(y1-y0)*k/n);
+        });
+      });
+    });
+    let colonised=0;
+    for(let k=0;k<col.length;k++) colonised+=col[k];
+
+    const q=plant==="resistant"?clamp01((t-3)/5):0;
+    const primed=new Float32Array(ROWS*NCOLS);
+    let primedCount=0;
+    if(q>0){
+      const hrCols=sites.filter(s=>s.o==="hr").map(s=>s.c);
+      for(let r=0;r<ROWS;r++) for(let c=0;c<NCOLS;c++){
+        const idx=r*NCOLS+c;
+        if(dead[idx]>=0.5) continue;
+        let d=1e9;
+        hrCols.forEach(hc=>{ d=Math.min(d,Math.abs(c-hc)+r*0.5); });
+        const p=clamp01((q*5.5-d)/1.5);
+        primed[idx]=p;
+        if(p>0.5) primedCount++;
+      }
+    }
+
+    return {
+      cw,ys,ySurf,yBot,T,sites,dead,col,primed,q,
+      deadCount,colonised,primedCount,
+      stoppedCount:sites.filter(s=>s.stopped).length,
+      breach:sites.filter(s=>s.pen>0).length,
+      hrSites:sites.filter(s=>s.o==="hr").length,
+      spreadSites:sites.filter(s=>s.o==="spread").length
+    };
+  }
+
+  function render(){
+    const w=canvas.width/dpr, h=canvas.height/dpr;
+    if(!w||!h) return;
+    const t=shown, plant=state.plant;
+    const m=model(t,plant,w,h);
+    const {cw,ys,ySurf,yBot}=m;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,w,h);
+    ctx.lineJoin="round"; ctx.lineCap="round";
+
+    for(let r=0;r<ROWS;r++) for(let c=0;c<NCOLS;c++){
+      const idx=r*NCOLS+c;
+      const x0=c*cw+1.2, y0=ys[r]+1.2, ww=cw-2.4, hh=ys[r+1]-ys[r]-2.4;
+      const pr=m.primed[idx], dd=m.dead[idx], co=m.col[idx];
+      rr(x0,y0,ww,hh,3);
+      ctx.fillStyle=`rgba(${RGB},${0.05+0.18*pr})`; ctx.fill();
+      if(co){ ctx.fillStyle=`rgba(${AMB},0.16)`; ctx.fill(); }
+      ctx.strokeStyle=`rgba(${RGB},${0.28+0.5*pr})`; ctx.lineWidth=1; ctx.stroke();
+      if(dd>0){
+        ctx.fillStyle=`rgba(0,0,0,${0.85*dd})`; ctx.fill();
+        ctx.strokeStyle=`rgba(${DIM},${0.75*dd})`; ctx.stroke();
+        rr(x0+3,y0+3,Math.max(1,ww-6),Math.max(1,hh-6),2);
+        ctx.fillStyle=`rgba(${DIM},${0.14*dd})`; ctx.fill();
+      }
+    }
+
+    ctx.save(); ctx.globalCompositeOperation="lighter";
+    ctx.strokeStyle=`rgba(${RGB},0.25)`; ctx.lineWidth=6;
+    ctx.beginPath(); ctx.moveTo(0,ySurf); ctx.lineTo(w,ySurf); ctx.stroke();
+    ctx.restore();
+    ctx.strokeStyle=`rgba(${RGB},0.9)`; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(0,ySurf); ctx.lineTo(w,ySurf); ctx.stroke();
+    ctx.strokeStyle=`rgba(${RGB},0.4)`; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(0,yBot); ctx.lineTo(w,yBot); ctx.stroke();
+
+    const sr=Math.max(3.5,cw*0.2);
+    m.sites.forEach(s=>{
+      if(s.lines.length){
+        ctx.strokeStyle=`rgba(${AMB},${0.95*s.alpha})`; ctx.lineWidth=1.6;
+        ctx.beginPath();
+        s.lines.forEach(ln=>{ walk(ln[0],ln[1],(x0,y0,x1,y1)=>{ ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); }); });
+        ctx.stroke();
+      }
+      if(s.o==="cuticle"&&s.germ>0&&s.alpha>0){
+        ctx.strokeStyle=`rgba(${AMB},${0.9*s.alpha})`; ctx.lineWidth=1.4;
+        ctx.beginPath(); ctx.moveTo(s.x+sr*0.8,ySurf-1.5); ctx.lineTo(s.x+sr*0.8+s.germ*0.9*cw,ySurf-1.5); ctx.stroke();
+      }
+      if(s.o==="papilla"&&s.papilla>0){
+        ctx.save(); ctx.globalCompositeOperation="lighter";
+        ctx.strokeStyle=`rgba(${RGB},${0.95*s.papilla})`; ctx.lineWidth=3;
+        ctx.beginPath(); ctx.arc(s.x,ySurf+s.trunk-0.1*cw,0.3*cw,Math.PI*0.15,Math.PI*0.85); ctx.stroke();
+        ctx.restore();
+      }
+      const sy=ySurf-sr-1;
+      let sa=1;
+      if(s.o==="cuticle") sa=1-0.5*clamp01(t-0.8);
+      ctx.save(); ctx.globalCompositeOperation="lighter";
+      const g=ctx.createRadialGradient(s.x,sy,0,s.x,sy,sr*2.6);
+      g.addColorStop(0,`rgba(${AMB},${0.35*sa})`); g.addColorStop(1,`rgba(${AMB},0)`);
+      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(s.x,sy,sr*2.6,0,Math.PI*2); ctx.fill();
       ctx.restore();
-    }
-  }
-  
-  // Hypersensitive response (dead cell zones)
-  if (level >= 0.5) {
-    const hrIntensity = Math.min(1, (level - 0.5) * 4);
-    
-    // Create dead zones if we don't have enough
-    if (deadCells.length < 12 * hrIntensity) {
-      deadCells.push({
-        x: Math.random() * w,
-        y: Math.random() * h,
-        size: Math.random() * 30 + 20,
-        alpha: 0,
-        targetAlpha: hrIntensity * 0.6
-      });
-    }
-    
-    // Draw dead cells
-    deadCells.forEach(cell => {
-      cell.alpha += (cell.targetAlpha - cell.alpha) * 0.05;
-      
-      ctx.fillStyle = 'rgba(120, 40, 40, ' + cell.alpha + ')';
-      ctx.beginPath();
-      ctx.arc(cell.x, cell.y, cell.size, 0, Math.PI * 2);
-      ctx.fill();
-      
-      // Border
-      ctx.strokeStyle = 'rgba(200, 80, 80, ' + (cell.alpha * 1.5) + ')';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-    });
-  } else {
-    deadCells = [];
-  }
-  
-  // Systemic acquired resistance (network pulses)
-  if (level >= 0.75) {
-    const sarIntensity = (level - 0.75) * 4;
-    
-    // Draw network connections
-    const nodes = [
-      {x: w * 0.2, y: h * 0.2},
-      {x: w * 0.8, y: h * 0.2},
-      {x: w * 0.2, y: h * 0.8},
-      {x: w * 0.8, y: h * 0.8},
-      {x: cx, y: cy}
-    ];
-    
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    
-    nodes.forEach((n1, i) => {
-      nodes.forEach((n2, j) => {
-        if (i < j) {
-          const pulse = 0.5 + 0.5 * Math.sin(time * 3 + i + j);
-          ctx.strokeStyle = 'rgba(' + RGB + ', ' + (sarIntensity * pulse * 0.4) + ')';
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          ctx.moveTo(n1.x, n1.y);
-          ctx.lineTo(n2.x, n2.y);
-          ctx.stroke();
+      ctx.beginPath(); ctx.arc(s.x,sy,sr,0,Math.PI*2);
+      if(s.pen>0){
+        ctx.fillStyle=`rgba(${AMB},${0.25*(1-s.pen)+0.1})`; ctx.fill();
+        ctx.strokeStyle=`rgba(${AMB},0.8)`; ctx.lineWidth=1.2; ctx.stroke();
+      }else{
+        ctx.fillStyle=`rgba(${AMB},${0.95*sa})`; ctx.fill();
+      }
+      if(s.pust>0){
+        const rx=s.pust*cw, ry=s.pust*0.55*cw;
+        ctx.save(); ctx.globalCompositeOperation="lighter";
+        const pg=ctx.createRadialGradient(s.x,ySurf,0,s.x,ySurf,rx*1.8);
+        pg.addColorStop(0,`rgba(${AMB},0.45)`); pg.addColorStop(1,`rgba(${AMB},0)`);
+        ctx.fillStyle=pg; ctx.beginPath(); ctx.arc(s.x,ySurf,rx*1.8,0,Math.PI*2); ctx.fill();
+        ctx.restore();
+        ctx.fillStyle=`rgba(${AMB},0.9)`;
+        ctx.beginPath(); ctx.ellipse(s.x,ySurf,rx,ry,0,Math.PI,Math.PI*2); ctx.fill();
+        if(t>11){
+          const n=Math.floor(clamp01((t-11)/3)*7);
+          ctx.fillStyle=`rgba(${AMB},0.85)`;
+          for(let k=0;k<n;k++){
+            const hx=hash(s.i*7+k), hy=hash(s.i*7+k+100);
+            const px=s.x+(hx-0.5)*3*cw, py=ySurf-ry-2-hy*3;
+            ctx.beginPath(); ctx.arc(px,py,1.6,0,Math.PI*2); ctx.fill();
+          }
         }
-      });
-      
-      // Node glow
-      const nodeGrad = ctx.createRadialGradient(n1.x, n1.y, 0, n1.x, n1.y, 15);
-      nodeGrad.addColorStop(0, 'rgba(' + RGB + ', ' + (sarIntensity * 0.8) + ')');
-      nodeGrad.addColorStop(1, 'rgba(' + RGB + ', 0)');
-      ctx.fillStyle = nodeGrad;
-      ctx.beginPath();
-      ctx.arc(n1.x, n1.y, 15, 0, Math.PI * 2);
-      ctx.fill();
+      }
     });
-    
-    ctx.restore();
-  }
-  
-  // Update and draw pathogens
-  const suppressionFactor = 1 - (level * 0.85);
-  particles = particles.filter(p => {
-    // Move pathogen
-    p.x += p.vx * 0.01 * suppressionFactor;
-    p.y += p.vy * 0.01 * suppressionFactor;
-    
-    // Wrap around
-    if (p.x < 0) p.x = 1;
-    if (p.x > 1) p.x = 0;
-    if (p.y < 0) p.y = 1;
-    if (p.y > 1) p.y = 0;
-    
-    // Check if pathogen is killed by dead cells
-    let alive = true;
-    if (level >= 0.5) {
-      deadCells.forEach(cell => {
-        const dx = p.x * w - cell.x;
-        const dy = p.y * h - cell.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < cell.size && Math.random() < 0.02) {
-          alive = false;
-        }
-      });
-    }
-    
-    if (!alive) return false;
-    
-    // Draw pathogen
-    const pulse = 0.7 + 0.3 * Math.sin(time * 4 + p.phase);
-    const px = p.x * w;
-    const py = p.y * h;
-    
-    // Red pathogen body
-    ctx.fillStyle = 'rgba(220, 80, 80, ' + (pulse * suppressionFactor) + ')';
-    ctx.beginPath();
-    ctx.arc(px, py, p.r, 0, Math.PI * 2);
-    ctx.fill();
-    
-    // Glow
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    const pGrad = ctx.createRadialGradient(px, py, 0, px, py, p.r * 2);
-    pGrad.addColorStop(0, 'rgba(220, 80, 80, ' + (pulse * 0.4 * suppressionFactor) + ')');
-    pGrad.addColorStop(1, 'rgba(220, 80, 80, 0)');
-    ctx.fillStyle = pGrad;
-    ctx.beginPath();
-    ctx.arc(px, py, p.r * 2, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-    
-    return true;
-  });
-  
-  // Replenish pathogens if suppression is low
-  if (particles.length < 35 * suppressionFactor && Math.random() < 0.1) {
-    particles.push({
-      x: Math.random(),
-      y: Math.random(),
-      vx: (Math.random() - 0.5) * 0.3,
-      vy: (Math.random() - 0.5) * 0.3,
-      r: Math.random() * 3 + 2,
-      phase: Math.random() * Math.PI * 2
+
+    ctx.font=`11px ${MONO}`; ctx.textBaseline="alphabetic";
+    ctx.textAlign="center";
+    const labY=ySurf-0.55*cw-10;
+    m.sites.forEach(s=>{
+      if(!s.status) return;
+      const tw=ctx.measureText(s.status).width;
+      if(tw>3*cw-4) return;
+      const amber=(s.o==="spread"||s.status==="breach");
+      ctx.fillStyle=amber?`rgba(${AMB},0.95)`:`rgba(${RGB},0.95)`;
+      ctx.fillText(s.status,s.x,labY);
     });
-  }
-  
-  // Bloom
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
-  
-  // Vignette
-  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-  
-  requestAnimationFrame(draw);
-}
-
-slider.addEventListener('input', (e) => {
-  defenceLevel = parseFloat(e.target.value);
-  const fillPercent = (defenceLevel / 100) * 100;
-  slider.style.setProperty('--fill', fillPercent + '%');
-  updateStats();
-});
-
-toggleBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    toggleBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    
-    const mode = btn.dataset.mode;
-    
-    if (mode === 'physical') {
-      knowdropText.textContent = "Plants deploy physical barriers as a first line of defence. The waxy cuticle coating leaf surfaces repels water and blocks pathogen entry points. Cell walls provide structural resistance, while bark creates a thick protective layer on stems. When threatened, stomata — the pores through which plants breathe — can close within minutes, sealing potential invasion routes. These passive barriers work constantly, requiring no energy investment beyond their initial construction, making them the most economical defence strategy in the plant's arsenal.";
-    } else {
-      knowdropText.textContent = "Chemical defences are the plant's active weapons. Toxins like alkaloids and phenolics directly poison invading pathogens, while antimicrobial peptides rupture microbial cell membranes. Enzymes such as chitinases break down fungal cell walls. Some plants release volatile organic compounds that act as airborne distress signals, warning neighbouring plants to pre-emptively activate their own defences. These chemical arsenals are energetically expensive but highly effective, often synthesised on-demand within hours of detecting an attack, allowing plants to concentrate resources only where threats emerge.";
+    ctx.textAlign="left"; ctx.fillStyle=`rgba(${DIM},1)`;
+    let top="Myrtle rust spores on the leaf cuticle";
+    if(ctx.measureText(top).width>w-20) top="Myrtle rust spores";
+    ctx.fillText(top,10,h*0.08);
+    if(w>=560){
+      ctx.textAlign="right";
+      ctx.fillText("Melaleuca quinquenervia leaf, cross-section",w-10,h*0.08);
     }
-  });
-});
 
-window.addEventListener('resize', resize);
-resize();
-updateStats();
-draw();
+    bctx.setTransform(1,0,0,1,0,0); bctx.clearRect(0,0,buf.width,buf.height);
+    if (canvas.width && canvas.height) bctx.drawImage(canvas,0,0);
+    ctx.save(); ctx.globalCompositeOperation="lighter"; ctx.globalAlpha=0.38; ctx.filter="blur(7px)";
+    (buf.width&&buf.height)&&ctx.drawImage(buf,0,0,w,h); ctx.restore();
+
+    const cx=w/2, cy=h/2;
+    const vig=ctx.createRadialGradient(cx,cy,h*0.28,cx,cy,w*0.72);
+    vig.addColorStop(0,"rgba(0,0,0,0)"); vig.addColorStop(1,"rgba(0,0,0,0.52)");
+    ctx.fillStyle=vig; ctx.fillRect(0,0,w,h);
+
+    readouts(m,t,plant);
+  }
+
+  function readouts(m,t,plant){
+    const d=Math.round(t);
+    let stage, msg;
+    if(t<0.5){ stage="Spores on the cuticle"; msg="Spores sit on the waxy cuticle"; }
+    else if(plant==="resistant"){
+      if(t<1.5){ stage="Barrier: cuticle and wall"; msg=`${m.breach} of 5 spores break in`; }
+      else if(t<2.5){ stage="Recognition: receptors fire"; msg="Rust detected, walls thicken"; }
+      else if(t<5){ stage="Hypersensitive response"; msg=`HR: ${m.deadCount} cells die at ${m.hrSites} sites`; }
+      else { stage="Systemic acquired resistance"; msg=`Walled off · ${m.primedCount} cells primed`; }
+    }else{
+      if(t<1.5){ stage="Barrier: cuticle and wall"; msg=`${m.breach} of 5 spores break in`; }
+      else if(t<8){ stage="Effectors silence the alarm"; msg=`Hyphae live in ${m.colonised} cells`; }
+      else if(t<12){ stage="Pustules erupt"; msg=`Pustules at ${m.spreadSites} sites`; }
+      else { stage="New spores released"; msg=`${m.spreadSites} pustules shed spores`; }
+    }
+    overlay.textContent=`Day ${d} · ${msg}`;
+    liveTag.textContent=stage;
+    statStop.textContent=`${m.stoppedCount} / 5`;
+    statCol.textContent=String(m.colonised);
+  }
+
+  function tick(now){
+    const dt=Math.min(now-(lastT||now),50); lastT=now;
+    const d=target-shown;
+    if(Math.abs(d)<0.005){ shown=target; render(); raf=0; lastT=0; return; }
+    shown+=d*(1-Math.exp(-dt/90));
+    render();
+    raf=requestAnimationFrame(tick);
+  }
+  function kick(){
+    if(reduced){ shown=target; render(); return; }
+    if(!raf){ lastT=0; raf=requestAnimationFrame(tick); }
+  }
+
+  function setFill(){
+    const v=parseFloat(slider.value);
+    slider.style.setProperty("--fill",(v/14*100)+"%");
+    dayV.textContent=`Day ${v}`;
+  }
+  slider.addEventListener("input",()=>{
+    target=parseFloat(slider.value);
+    setFill();
+    kick();
+  });
+
+  genoBtns.forEach(b=>{
+    b.addEventListener("click",()=>{
+      state.plant=b.dataset.plant;
+      genoBtns.forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false"));
+      render();
+    });
+  });
+
+  const drops={
+    barriers:"The first defence costs nothing at the moment of attack because it is already built. A waxy cuticle makes the leaf surface dry and slippery, so many rust germ tubes dry out before they find a way in, and thick cellulose walls stand behind it. Older, hardened paperbark leaves are rarely infected: myrtle rust only takes hold on soft new growth where the cuticle is still thin. Behind the barrier sit pre-formed chemicals such as phenolics and tannins, which Myrtaceae pack into their leaves. Stomata can also close when a plant senses microbes, shutting a common entry route for bacteria.",
+    recognition:"A plant cell has no immune cells to call, so every cell carries its own detectors. Pattern recognition receptors on the membrane bind molecules every fungus has, such as chitin from the cell wall, and that trigger sets off wall thickening, callose papillae under the penetration point and a burst of antimicrobial compounds. Successful pathogens inject effector proteins that switch this first alarm off, which is what happens in a susceptible paperbark. A resistant genotype carries a second class of receptor, a resistance protein, that recognises the effector itself. Recognition of the effector is what unlocks the hypersensitive response, so the difference between the two leaves in the picture is a difference in receptors, not in barriers.",
+    hr:"The hypersensitive response is programmed cell death aimed at the infection site. Cells touched by the fungus, and a ring of their neighbours, produce reactive oxygen species, shut down and die within a day or two, leaving the small brown flecks that pathologists record on resistant paperbark leaves. A biotrophic fungus like Austropuccinia psidii feeds only on living cells through haustoria, so a dead ring is a wall of starvation: the hyphae inside stop growing and no pustule ever forms. The cost is a few dozen cells; the alternative is a leaf covered in spore masses. In the picture the dead cells appear only around the spores that broke in, never in untouched tissue.",
+    sar:"Once a hypersensitive response fires, the plant does not stop at the lesion. Salicylic acid builds up at the site and a mobile signal travels through the phloem, switching on pathogenesis-related genes in tissue that was never infected. This systemic acquired resistance primes distant cells to respond faster and harder to the next spore, but it is not sterilising immunity and there are no memory cells or antibodies involved. Volatile compounds released from damaged tissue can even prime neighbouring plants. In the picture the primed glow spreads outward from the lesions from about day 5, while the susceptible leaf, which never fired a hypersensitive response, has nothing to spread."
+  };
+  function setLens(key){
+    drop.textContent=drops[key];
+    lensBtns.forEach(x=>x.setAttribute("aria-pressed",x.dataset.lens===key?"true":"false"));
+  }
+  lensBtns.forEach(b=>b.addEventListener("click",()=>setLens(b.dataset.lens)));
+  setLens("barriers");
+
+  function resize(){
+    const r=wrapEl.getBoundingClientRect();
+    if(!r.width||!r.height) return;
+    canvas.width=Math.round(r.width*dpr);
+    canvas.height=Math.round(r.height*dpr);
+    buf.width=canvas.width; buf.height=canvas.height;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    render();
+  }
+  window.addEventListener("resize",resize);
+  if(window.ResizeObserver){ new ResizeObserver(()=>resize()).observe(wrapEl); }
+  setFill();
+  resize();
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'plant-defence-responses-to-pathogens'},'*');}catch(e){}}

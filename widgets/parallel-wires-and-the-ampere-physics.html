@@ -93,7 +93,7 @@ h1 {
 .live-tag {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
-  text-transform: uppercase;
+  text-transform: none;
   color: var(--acc);
 }
 
@@ -133,7 +133,7 @@ canvas {
   padding: 9px 16px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 14px;
-  text-transform: uppercase;
+  text-transform: none;
   color: var(--acc);
   text-align: center;
 }
@@ -152,7 +152,7 @@ canvas {
 .control-label {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10.5px;
-  text-transform: uppercase;
+  text-transform: none;
   color: var(--ink-dim);
   margin-bottom: 8px;
 }
@@ -363,22 +363,22 @@ canvas {
 <div class="container">
   <h1>Two wires push each other without <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">touching</span></h1>
   
-  <p class="intro">Each wire creates a magnetic field; the other wire is a current-carrying conductor sitting inside it—the motor effect applied twice. Same-direction currents attract, opposite currents repel. Adjust each current and direction, then drag the separation slider to watch F/l = (μ₀/2π) I₁I₂/r respond live.</p>
+  <p class="intro">Each wire creates a magnetic field; the other wire is a current-carrying conductor sitting inside it—the motor effect applied twice. Same-direction currents attract, opposite currents repel. Adjust each current and direction, then change the separation and watch F/l = (μ₀/2π) I₁I₂/r respond live.</p>
 
   <div class="card">
     <div class="card-header">
       <div class="card-label">Parallel Wire Forces</div>
-      <div class="live-tag" id="liveTag">Attract • 2.00×10⁻⁵ N/m</div>
+      <div class="live-tag" id="liveTag">Attract • 1.00×10⁻⁵ N/m</div>
     </div>
-    <div class="card-hint">Adjust currents & directions — drag separation to see force change</div>
+    <div class="card-hint">Adjust currents & directions — change the separation and watch the force respond</div>
     
     <div class="canvas-wrapper">
       <canvas id="canvas"></canvas>
-      <div class="canvas-overlay" id="overlayTag">Attract • F/l = 2.00×10⁻⁵ N/m</div>
+      <div class="canvas-overlay" id="overlayTag">Attract • F/l = 1.00×10⁻⁵ N/m</div>
     </div>
 
     <div class="control-group">
-      <div class="control-label">Wire 1 Current: <span id="i1-val">5.0</span> A</div>
+      <div class="control-label">Wire 1 current: <span id="i1-val">5.0</span> A</div>
       <div class="control-row">
         <input type="range" class="wire-slider" id="i1-slider" min="0" max="100" value="50" step="1">
         <button class="dir-btn active" id="i1-up" data-dir="up">↑ Up</button>
@@ -387,7 +387,7 @@ canvas {
     </div>
 
     <div class="control-group">
-      <div class="control-label">Wire 2 Current: <span id="i2-val">5.0</span> A</div>
+      <div class="control-label">Wire 2 current: <span id="i2-val">5.0</span> A</div>
       <div class="control-row">
         <input type="range" class="wire-slider" id="i2-slider" min="0" max="100" value="50" step="1">
         <button class="dir-btn active" id="i2-up" data-dir="up">↑ Up</button>
@@ -403,11 +403,11 @@ canvas {
     <div class="stats">
       <div class="stat">
         <div class="stat-label">Force per Metre</div>
-        <div class="stat-value" id="force-stat">2.00×10⁻⁵</div>
+        <div class="stat-value" id="force-stat">1.00×10⁻⁵</div>
       </div>
       <div class="stat">
         <div class="stat-label">Field Strength</div>
-        <div class="stat-value" id="field-stat">10.0 μT</div>
+        <div class="stat-value" id="field-stat">2.0 μT</div>
       </div>
     </div>
   </div>
@@ -461,6 +461,8 @@ let I2 = 5.0;
 let sep = 0.5;
 let dir1 = 1;
 let dir2 = 1;
+let pick1 = 1;   /* the directions the student chose, kept while Ampere Definition forces both Up */
+let pick2 = 1;
 let mode = "variable";
 
 const MU0 = 4 * Math.PI * 1e-7;
@@ -527,7 +529,15 @@ function update() {
     I1 = parseFloat(i1Slider.value) / 10;
     I2 = parseFloat(i2Slider.value) / 10;
     sep = parseFloat(sepSlider.value) / 100;
+    dir1 = pick1;
+    dir2 = pick2;
   }
+
+  /* the lit button always matches the current drawn on the wire */
+  i1Up.classList.toggle("active", dir1 === 1);
+  i1Down.classList.toggle("active", dir1 === -1);
+  i2Up.classList.toggle("active", dir2 === 1);
+  i2Down.classList.toggle("active", dir2 === -1);
 
   i1Val.textContent = I1.toFixed(1);
   i2Val.textContent = I2.toFixed(1);
@@ -555,6 +565,7 @@ sepSlider.addEventListener("input", update);
 
 i1Up.addEventListener("click", () => {
   dir1 = 1;
+  pick1 = 1;
   i1Up.classList.add("active");
   i1Down.classList.remove("active");
   update();
@@ -562,6 +573,7 @@ i1Up.addEventListener("click", () => {
 
 i1Down.addEventListener("click", () => {
   dir1 = -1;
+  pick1 = -1;
   i1Down.classList.add("active");
   i1Up.classList.remove("active");
   update();
@@ -569,6 +581,7 @@ i1Down.addEventListener("click", () => {
 
 i2Up.addEventListener("click", () => {
   dir2 = 1;
+  pick2 = 1;
   i2Up.classList.add("active");
   i2Down.classList.remove("active");
   update();
@@ -576,6 +589,7 @@ i2Up.addEventListener("click", () => {
 
 i2Down.addEventListener("click", () => {
   dir2 = -1;
+  pick2 = -1;
   i2Down.classList.add("active");
   i2Up.classList.remove("active");
   update();
@@ -655,6 +669,7 @@ function draw() {
   // Glow behind each wire, breathing with the current
   const pulse = 0.55 + 0.45 * Math.sin(t * 4);
   [[wire1X, I1], [wire2X, I2]].forEach(([wx, amps]) => {
+    if (!(amps > 0)) return;   /* no current: no field, so no glow and no rings */
     const R = wireRadius * (2.4 + amps * 0.14);
     const gr = ctx.createRadialGradient(wx, wireY, wireRadius * 0.4, wx, wireY, R);
     gr.addColorStop(0, "rgba(" + RGB + "," + (0.30 + 0.25 * pulse * Math.min(1, amps / 6)).toFixed(3) + ")");

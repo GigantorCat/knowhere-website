@@ -4,568 +4,481 @@ body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
-
-:root {
-  --bg: #0B0D0C;
-  --bg2: #12160F;
-  --acc: #E86A32;
-  --ag: rgba(232, 106, 50, .7);
-  --ag1: rgba(232, 106, 50, .12);
-  --ag2: rgba(232, 106, 50, .45);
-  --amb: #FAC775;
-  --ink: #EDEDE8;
-  --ink-dim: #8C9389;
-  --line: #262B26;
+:root{
+  --bg:#0B0D0C;
+  --bg2:#12160F;
+  --acc:#E86A32;
+  --acc-rgb:232, 106, 50;
+  --ag:rgba(var(--acc-rgb),.7);
+  --ag1:rgba(var(--acc-rgb),.12);
+  --ag2:rgba(var(--acc-rgb),.45);
+  --amb:#FAC775;
+  --amb-rgb:250,199,117;
+  --ink:#EDEDE8;
+  --ink-dim:#8C9389;
+  --line:#262B26;
 }
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
-  font-family: 'Geist', sans-serif;
-  min-height: 100vh;
-  padding: 40px 16px 0;
-  color: var(--ink);
-}
-
-.container { max-width: 720px; margin: 0 auto; }
-
-h1 {
-  font-size: clamp(26px, 6.5vw, 44px);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
-  margin-bottom: 14px;
-}
-
-.intro {
-  font-size: 15.5px;
-  font-weight: 400;
-  color: var(--ink-dim);
-  max-width: 58ch;
-  line-height: 1.55;
-  margin-bottom: 28px;
-}
-
-.card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 18px;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
-}
-
-.card-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  color: white;
-}
-
-.live-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--acc);
-}
-
-.card-hint {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--ink-dim);
-  margin-bottom: 14px;
-}
-
-.canvas-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16/9;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
-  box-shadow: inset 0 0 0 1px var(--ag1);
-  margin-bottom: 16px;
-}
-
-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.canvas-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(4px);
-  padding: 9px 16px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  text-transform: uppercase;
-  color: var(--acc);
-  text-align: center;
-}
-
-.slider-wrapper { margin-bottom: 12px; }
-
-.slider-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 8px;
-  display: block;
-}
-
-.segment-slider {
-  width: 100%;
-  height: 4px;
-  border-radius: 3px;
-  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
-  -webkit-appearance: none;
-  appearance: none;
-  outline: none;
-  cursor: pointer;
-}
-
-.segment-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  transition: box-shadow .15s;
-  cursor: pointer;
-}
-
-.segment-slider::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.segment-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  transition: box-shadow .15s;
-  cursor: pointer;
-}
-
-.segment-slider::-moz-range-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.tick-labels {
-  display: flex;
-  justify-content: space-between;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--ink-dim);
-  margin-top: 6px;
-}
-
-.stat-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  border-top: 1px solid var(--line);
-  padding-top: 14px;
-  margin-top: 14px;
-}
-
-.stat {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.stat-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-}
-
-.stat-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 24px;
-  font-weight: 500;
-}
-
-.toggle-card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 18px;
-}
-
-.toggle-buttons {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.toggle-btn {
-  flex: 1;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14.5px;
-  padding: 12px;
-  border-radius: 11px;
-  border: 1px solid var(--line);
-  background: #12160F;
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: all .2s;
-}
-
-.toggle-btn.active {
-  background: rgba(232,106,50,.1);
-  border: 1px solid var(--acc);
-  color: var(--acc);
-  box-shadow: 0 0 22px rgba(232,106,50,.18);
-}
-
-.knowdrop-divider {
-  border: 0;
-  border-top: 1px solid var(--line);
-  margin: 0 0 16px 0;
-}
-
-.knowdrop-text {
-  font-family: 'Geist', sans-serif;
-  font-size: 14.5px;
-  font-weight: 400;
-  line-height: 1.65;
-  color: var(--ink);
-}
-
-.know-this {
-  border-left: 3px solid var(--acc);
-  padding: 16px 18px;
-  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
-  border-radius: 0 12px 12px 0;
-  margin-bottom: 0;
-}
-
-.know-this-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--acc);
-  margin-bottom: 10px;
-  display: block;
-}
-
-.know-this-body {
-  font-family: 'Geist', sans-serif;
-  font-size: 17.4px;
-  font-weight: 400;
-  line-height: 1.55;
-  color: var(--ink);
-}
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C 55%);font-family:'Geist',sans-serif;min-height:100vh;padding:40px 16px 0;color:var(--ink)}
+.kc-container{max-width:720px;margin:0 auto}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+h1{font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin-bottom:14px}
+.kc-intro{font-size:15.5px;font-weight:400;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin-bottom:28px}
+.kc-card{background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);margin-bottom:18px}
+.kc-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+.kc-label{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;color:#fff}
+.kc-live{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--acc);text-align:right}
+.kc-hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin-bottom:14px;line-height:1.5}
+.kc-wrap{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1);margin-bottom:16px}
+.kc-wrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.kc-overlay{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:14px;text-transform:uppercase;color:var(--acc);text-align:center}
+.kc-row{display:flex;justify-content:space-between;align-items:center;font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:8px}
+.kc-row b{font-weight:500;color:var(--ink)}
+.kc-slider{width:100%;height:4px;border-radius:3px;background:linear-gradient(90deg,var(--acc) var(--fill,0%),#23291f var(--fill,0%));-webkit-appearance:none;appearance:none;outline:none;cursor:pointer;display:block}
+.kc-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.kc-slider::-webkit-slider-thumb:hover{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.kc-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.kc-slider::-moz-range-thumb:hover{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.kc-ticks{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin-top:8px}
+.kc-ticks span{min-width:0}
+.kc-cap{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin-top:16px;line-height:1.5}
+.kc-tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:8px}
+@media (max-width:430px){.kc-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kc-tile{background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:10px;padding:9px 10px;min-width:0;transition:border-color .25s}
+.kc-tile.on{border-color:rgba(var(--acc-rgb),.5);box-shadow:0 0 18px rgba(var(--acc-rgb),.1)}
+.kc-tile .n{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--ink-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kc-tile .v{font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:500;color:var(--ink-dim);margin:4px 0 2px}
+.kc-tile.on .v{color:var(--acc)}
+.kc-tile .s{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);line-height:1.4}
+.kc-stats{display:grid;grid-template-columns:1fr 1fr;gap:16px;border-top:1px solid var(--line);padding-top:14px;margin-top:14px}
+.kc-stat{display:flex;flex-direction:column;gap:4px;min-width:0}
+.kc-stat-l{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--ink-dim);line-height:1.4}
+.kc-stat-v{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500}
+.kc-ttl{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:10px}
+.kc-group{display:flex;gap:10px;margin-bottom:16px}
+.kc-pill{flex:1;font-family:'JetBrains Mono',monospace;font-size:13px;padding:12px;border-radius:999px;border:1px solid var(--line);background:#12160F;color:var(--ink-dim);cursor:pointer;transition:all .2s}
+.kc-pill[aria-pressed="true"]{background:rgba(var(--acc-rgb),.1);border:1px solid var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.kc-divider{border:0;border-top:1px solid var(--line);margin:0 0 16px}
+.kc-drop{font-family:'Geist',sans-serif;font-size:14.5px;font-weight:400;line-height:1.65;color:var(--ink)}
+.kc-know{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));border-radius:0 12px 12px 0;margin-bottom:0;padding-bottom:16px}
+.kc-know-tag{display:flex;align-items:center;gap:9px;margin-bottom:10px;font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:0.15em;color:var(--acc)}
+.kc-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:kcPulse 2.4s ease-in-out infinite;flex:none}
+@keyframes kcPulse{0%,100%{opacity:1}50%{opacity:.45}}
+.kc-know-body{font-family:'Geist',sans-serif;font-size:17.4px;font-weight:400;line-height:1.55;color:var(--ink)}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
 
-<div class="container">
-  <h2 class="sr-only">Interactive biomechanics lever and force summation demonstration</h2>
-  
-  <h1>Your biggest muscles move <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">last</span></h1>
-  
-  <p class="intro">In fast movements like throwing or kicking, the sequence goes big to small: hips rotate first, then shoulders, then arm, then wrist. Each segment stacks momentum onto the next. Drag the slider to fire segments in sequence.</p>
+<div class="kc-container">
+  <h2 class="sr-only">Interactive kinetic chain: four lever segments fire in sequence from large proximal to small distal, with the tip speed of each segment shown</h2>
 
-  <div class="card">
-    <div class="card-header">
-      <span class="card-label">Summation Sequence</span>
-      <span class="live-tag" id="liveTag">0 segments active</span>
+  <h1>Your biggest muscles move <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">first</span></h1>
+
+  <p class="kc-intro">A throw or a kick is a train of levers. The heavy, slow hips start the chain, and each lighter segment inherits that speed before adding its own rotation, so the end of the chain moves fastest of all. Fire the segments in order and watch the tip speed climb with every link.</p>
+
+  <section class="kc-card">
+    <div class="kc-head">
+      <span class="kc-label">Kinetic chain</span>
+      <span class="kc-live" id="kcLive" aria-live="polite">0 of 4 fired</span>
     </div>
-    <div class="card-hint">Sequential activation from proximal to distal</div>
-    
-    <div class="canvas-wrapper">
-      <canvas id="canvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">Hips ready</div>
+    <div class="kc-hint">Fire the segments one at a time, in order. Watch which link rotates fastest and which tip ends fastest.</div>
+
+    <div class="kc-wrap" id="kcWrap">
+      <canvas id="kcCanvas" role="img" aria-label="Side view of a chain of four body segments firing in sequence, with tip speed labels"></canvas>
+      <div class="kc-overlay" id="kcOverlay">At rest · fire the hips to start</div>
     </div>
 
-    <div class="slider-wrapper">
-      <label class="slider-label" for="segmentSlider">Activation sequence</label>
-      <input type="range" id="segmentSlider" class="segment-slider" min="0" max="4" step="1" value="0">
-      <div class="tick-labels">
-        <span>Rest</span>
-        <span>Hips</span>
-        <span>Torso</span>
-        <span>Arm</span>
-        <span>Hand</span>
+    <div class="kc-row"><span>Segments fired</span><b id="kcVal">0 of 4</b></div>
+    <input type="range" class="kc-slider" id="kcSlider" aria-label="Segments fired" min="0" max="4" step="1" value="0">
+    <div class="kc-ticks" id="kcTicks">
+      <span>Rest</span><span>Hips</span><span>Torso</span><span>Arm</span><span>Hand</span>
+    </div>
+
+    <div class="kc-cap">Each lever: rotation ω, lever arm r. Tip speed v = previous tip speed + ω × r</div>
+    <div class="kc-tiles" id="kcTiles"></div>
+
+    <div class="kc-stats">
+      <div class="kc-stat">
+        <span class="kc-stat-l">Tip speed at end of chain</span>
+        <span class="kc-stat-v" style="color:var(--acc)" id="kcStatV">0.0 m/s</span>
+      </div>
+      <div class="kc-stat">
+        <span class="kc-stat-l">Rotation of last segment fired</span>
+        <span class="kc-stat-v" style="color:var(--amb)" id="kcStatW">0 rad/s</span>
       </div>
     </div>
+  </section>
 
-    <div class="stat-row">
-      <div class="stat">
-        <span class="stat-label">Final velocity</span>
-        <span class="stat-value" style="color:var(--acc)" id="velocityStat">0 m/s</span>
-      </div>
-      <div class="stat">
-        <span class="stat-label">Energy transfer</span>
-        <span class="stat-value" style="color:var(--amb)" id="efficiencyStat">0%</span>
-      </div>
+  <section class="kc-card">
+    <div class="kc-ttl">Choose the skill</div>
+    <div class="kc-group" role="group" aria-label="Skill shown in the picture">
+      <button class="kc-pill" data-mode="throw" aria-pressed="true">Throwing</button>
+      <button class="kc-pill" data-mode="kick" aria-pressed="false">Kicking</button>
     </div>
-  </div>
+    <hr class="kc-divider">
+    <p class="kc-drop" id="kcDrop"></p>
+  </section>
 
-  <div class="toggle-card">
-    <div class="toggle-buttons">
-      <button class="toggle-btn active" data-mode="throw">Throwing</button>
-      <button class="toggle-btn" data-mode="kick">Kicking</button>
-    </div>
-    <hr class="knowdrop-divider">
-    <p class="knowdrop-text" id="knowdropText">In throwing, the kinetic chain begins with hip rotation generating torque in the transverse plane. This angular momentum transfers to the torso, which adds frontal plane flexion and further rotation. The shoulder joint then accelerates the upper arm using the deltoids and rotator cuff muscles. Finally, elbow extension and wrist snap add the terminal velocity. Each segment contributes roughly 20-30% additional velocity, compounding to create release speeds exceeding 40 m/s in elite cricket fast bowlers. The principle is universal: larger, slower-moving proximal segments create a foundation for smaller, faster distal segments.</p>
-  </div>
-
-  <div class="know-this">
-    <span class="know-this-tag">Know This</span>
-    <p class="know-this-body"><span style="color:var(--acc)">Summation of momentum</span> sequences body segments from <span style="color:var(--acc)">large to small</span>, with each link in the chain adding velocity to maximise speed at <span style="color:var(--acc)">release or impact</span>.</p>
-  </div>
+  <aside class="kc-know">
+    <div class="kc-know-tag"><span class="kc-dot"></span><span>Know This</span></div>
+    <p class="kc-know-body"><span style="color:var(--acc)">Summation of momentum</span> fires body segments from <span style="color:var(--acc)">large and slow</span> to <span style="color:var(--acc)">small and fast</span>, each link starting from the speed the one before it already reached.</p>
+  </aside>
 </div>
 
 <script>
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-const slider = document.getElementById('segmentSlider');
-const liveTag = document.getElementById('liveTag');
-const canvasOverlay = document.getElementById('canvasOverlay');
-const velocityStat = document.getElementById('velocityStat');
-const efficiencyStat = document.getElementById('efficiencyStat');
-const knowdropText = document.getElementById('knowdropText');
-const toggleBtns = document.querySelectorAll('.toggle-btn');
+(function(){
+  const CSSR = getComputedStyle(document.documentElement);
+  const ACC = CSSR.getPropertyValue("--acc").trim();
+  const RGB = CSSR.getPropertyValue("--acc-rgb").trim();
+  const AMBRGB = CSSR.getPropertyValue("--amb-rgb").trim();
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-const dpr = Math.min(window.devicePixelRatio || 1, 2);
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d');
+  const canvas = document.getElementById("kcCanvas");
+  const ctx = canvas.getContext("2d");
+  const wrap = document.getElementById("kcWrap");
+  const overlay = document.getElementById("kcOverlay");
+  const liveTag = document.getElementById("kcLive");
+  const slider = document.getElementById("kcSlider");
+  const valEl = document.getElementById("kcVal");
+  const ticks = document.getElementById("kcTicks");
+  const tilesEl = document.getElementById("kcTiles");
+  const statV = document.getElementById("kcStatV");
+  const statW = document.getElementById("kcStatW");
+  const dropEl = document.getElementById("kcDrop");
+  const pills = Array.from(document.querySelectorAll(".kc-pill"));
 
-let mode = 'throw';
-let segmentCount = 0;
-let time = 0;
-let animFrame;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const buf = document.createElement("canvas");
+  const bctx = buf.getContext("2d");
 
-const segments = [
-  { name: 'Hips', color: 'rgba(232,106,50,', baseAngle: 0, length: 60, width: 50 },
-  { name: 'Torso', color: 'rgba(232,106,50,', baseAngle: 0, length: 70, width: 40 },
-  { name: 'Arm', color: 'rgba(232,106,50,', baseAngle: 0, length: 55, width: 15 },
-  { name: 'Hand', color: 'rgba(250,199,117,', baseAngle: 0, length: 30, width: 8 }
-];
+  // Angles in degrees: 0 = forward (right), negative = up. L in metres, w in rad/s.
+  const MODES = {
+    throw: {
+      ticks: ["Rest", "Hips", "Torso", "Arm", "Hand"],
+      base: [0.28, 0.70], groundY: 0.80, launchDeg: -12,
+      segs: [
+        { name: "Hips", L: 0.30, w: 6, rest: -95, fired: -80, dur: 0.7, width: 14, mass: "heaviest", lab: { at: "mid", dx: -14, dy: 0, al: "right" } },
+        { name: "Torso", L: 0.45, w: 8, rest: -115, fired: -65, dur: 0.6, width: 12, mass: "heavy", lab: { at: "mid", dx: -14, dy: 0, al: "right" } },
+        { name: "Arm", L: 0.30, w: 20, rest: -165, fired: -30, dur: 0.45, width: 8, mass: "light", lab: { at: "mid", dx: -8, dy: -14, al: "right" } },
+        { name: "Hand", L: 0.35, w: 40, rest: -100, fired: -10, dur: 0.35, width: 5, mass: "lightest", lab: { at: "mid", dx: 0, dy: -20, al: "center" } }
+      ]
+    },
+    kick: {
+      ticks: ["Rest", "Hip", "Thigh", "Lower leg", "Foot"],
+      base: [0.34, 0.24], groundY: 0.76, launchDeg: -30,
+      segs: [
+        { name: "Hip", L: 0.15, w: 8, rest: 110, fired: 70, dur: 0.6, width: 14, mass: "heaviest", lab: { at: "mid", dx: 14, dy: 0, al: "left" } },
+        { name: "Thigh", L: 0.42, w: 12, rest: 120, fired: 60, dur: 0.55, width: 12, mass: "heavy", lab: { at: "mid", dx: 16, dy: 0, al: "left" } },
+        { name: "Lower leg", L: 0.40, w: 30, rest: 150, fired: 70, dur: 0.4, width: 8, mass: "light", lab: { at: "mid", dx: 14, dy: -14, al: "left" } },
+        { name: "Foot", L: 0.20, w: 40, rest: 120, fired: 30, dur: 0.3, width: 5, mass: "lightest", lab: { at: "tip", dx: 14, dy: -24, al: "left" } }
+      ]
+    }
+  };
 
-const knowdrops = {
-  throw: "In throwing, the kinetic chain begins with hip rotation generating torque in the transverse plane. This angular momentum transfers to the torso, which adds frontal plane flexion and further rotation. The shoulder joint then accelerates the upper arm using the deltoids and rotator cuff muscles. Finally, elbow extension and wrist snap add the terminal velocity. Each segment contributes roughly 20-30% additional velocity, compounding to create release speeds exceeding 40 m/s in elite cricket fast bowlers. The principle is universal: larger, slower-moving proximal segments create a foundation for smaller, faster distal segments.",
-  kick: "In kicking, summation begins with hip flexion and rotation, driven by the iliopsoas and gluteal muscles. The femur (thigh) accelerates forward, reaching peak angular velocity mid-swing. As the knee extends, the quadriceps transfer energy to the lower leg, which moves significantly faster than the thigh due to its lighter mass and smaller moment of inertia. The final segment — the foot — contacts the ball at maximum velocity. Elite footballers achieve foot speeds exceeding 30 m/s. Poor sequencing (firing distal segments too early) dissipates energy and reduces power output. Coaching cues emphasise 'lag': allowing each segment to reach peak velocity before the next fires."
-};
+  const DROPS = {
+    throw: "In a throw the chain starts low: the legs drive and the hips rotate in the transverse plane, then the trunk adds rotation plus sagittal plane flexion. The shoulder accelerates the upper arm, and only then do elbow extension and wrist flexion fire. Each distal segment is lighter and shorter than the one before, so it can be swung at a far higher angular velocity, and because it starts from the speed the previous link already reached, its tip speed stacks on top. Timing is the skill: a segment that fires early moves off a slow base and wastes the momentum behind it, while one that fires late lets the chain decelerate before it adds anything. The numbers in the model are illustrative, but the pattern is the one to name in the VCE Units 3 and 4 exam: large and heavy first, small and light last, with each link peaking in turn.",
+    kick: "In a kick the first link is the pelvis and hip: the kicking leg is swung forward from the hip while the trunk and support leg stabilise the body. The thigh reaches its peak angular velocity around mid-swing, then slows as the knee extends and the lower leg takes over at a far higher angular velocity. The foot is the smallest, lightest lever and fires last, so it carries the sum of everything behind it and meets the ball at the highest speed in the chain. The hip is slowest and the foot is fastest for the same reason a whip cracks at its tip: each lighter link starts from the speed the heavier one handed it. Coaches cue this as segmental lag, letting each link peak before the next one fires, and that is the sequencing an exam question on force summation is asking you to describe."
+  };
 
-function resize() {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
+  let mode = "throw";
+  let target = 0;
+  let p = [0, 0, 0, 0];
+  let ball = null;
+  let raf = 0;
+  let last = 0;
 
-function updateUI() {
-  const labels = ['0 segments active', '1 segment: Hips', '2 segments: Hips → Torso', '3 segments: Hips → Torso → Arm', '4 segments: Full chain'];
-  const overlays = ['Hips ready', 'Hips rotating', 'Torso engaged', 'Arm accelerating', 'Hand releasing'];
-  const velocities = [0, 8, 15, 22, 28];
-  const efficiencies = [0, 25, 50, 75, 100];
+  const ease = (t) => 1 - Math.pow(1 - t, 3);
+  const W = () => canvas.width / dpr;
+  const H = () => canvas.height / dpr;
 
-  liveTag.textContent = labels[segmentCount];
-  canvasOverlay.textContent = overlays[segmentCount];
-  velocityStat.textContent = velocities[segmentCount] + ' m/s';
-  efficiencyStat.textContent = efficiencies[segmentCount] + '%';
-  
-  slider.style.setProperty('--fill', (segmentCount / 4 * 100) + '%');
-}
-
-function draw() {
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, w, h);
-
-  const cx = w * 0.25;
-  const cy = h * 0.6;
-  
-  // Base anchor point
-  ctx.save();
-  ctx.fillStyle = 'rgba(232,106,50,0.2)';
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.beginPath();
-  ctx.arc(cx, cy, 8, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
-
-  let x = cx;
-  let y = cy;
-  let cumulativeAngle = 0;
-
-  for (let i = 0; i < segmentCount; i++) {
-    const seg = segments[i];
-    const phase = Math.sin(time * (1.2 + i * 0.3)) * 0.15;
-    const angle = seg.baseAngle + phase + cumulativeAngle;
-    
-    const endX = x + Math.cos(angle) * seg.length;
-    const endY = y - Math.sin(angle) * seg.length;
-
-    // Draw segment
-    ctx.save();
-    ctx.strokeStyle = seg.color + '0.8)';
-    ctx.lineWidth = seg.width;
-    ctx.lineCap = 'round';
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.lineTo(endX, endY);
-    ctx.stroke();
-    ctx.restore();
-
-    // Glow
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.strokeStyle = seg.color + '0.3)';
-    ctx.lineWidth = seg.width + 6;
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.lineTo(endX, endY);
-    ctx.stroke();
-    ctx.restore();
-
-    // Joint glow
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    const jointGrad = ctx.createRadialGradient(endX, endY, 0, endX, endY, 16);
-    jointGrad.addColorStop(0, seg.color + '0.6)');
-    jointGrad.addColorStop(0.5, seg.color + '0.2)');
-    jointGrad.addColorStop(1, seg.color + '0)');
-    ctx.fillStyle = jointGrad;
-    ctx.beginPath();
-    ctx.arc(endX, endY, 16, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-
-    x = endX;
-    y = endY;
-    cumulativeAngle += 0.2;
+  function speeds(m) {
+    let v = 0;
+    return m.segs.map((s) => { v += s.w * s.L; return v; });
   }
 
-  // Projectile trail if full sequence
-  if (segmentCount === 4) {
-    const projectileX = x + Math.cos(time * 2) * (w * 0.4);
-    const projectileY = y - Math.abs(Math.sin(time * 2)) * (h * 0.25);
-    
-    for (let t = 15; t >= 0; t--) {
-      const px = x + Math.cos(time * 2 - t * 0.08) * (w * 0.4);
-      const py = y - Math.abs(Math.sin(time * 2 - t * 0.08)) * (h * 0.25);
-      const alpha = (1 - t / 15) * 0.5;
-      
+  function geom(pArr) {
+    const w = W(), h = H(), m = MODES[mode];
+    const s = Math.min(h, w * 1.1) * 0.5;
+    let x = w * m.base[0], y = h * m.base[1];
+    const pts = [{ x, y }], angs = [];
+    m.segs.forEach((sg, i) => {
+      const a = (sg.rest + (sg.fired - sg.rest) * ease(pArr[i])) * Math.PI / 180;
+      angs.push(a);
+      x += Math.cos(a) * sg.L * s;
+      y += Math.sin(a) * sg.L * s;
+      pts.push({ x, y });
+    });
+    return { pts, angs, s, ground: h * m.groundY, w, h, m };
+  }
+
+  function restingBall(g) {
+    if (mode === "throw") {
+      const tip = g.pts[4];
+      return { x: tip.x, y: tip.y, r: 8 };
+    }
+    const full = geom([1, 1, 1, 1]);
+    const tip = full.pts[4];
+    return { x: tip.x + 24, y: g.ground - 9, r: 9 };
+  }
+
+  function launch() {
+    const g = geom(p);
+    const b = restingBall(g);
+    const v = speeds(g.m)[3];
+    const k = 0.15;
+    const speed = v * g.s * k;
+    const a = g.m.launchDeg * Math.PI / 180;
+    ball = { x: b.x, y: b.y, r: b.r, vx: Math.cos(a) * speed, vy: Math.sin(a) * speed, g: g.h * 0.6, trail: [], done: false };
+  }
+
+  function resize() {
+    const rect = wrap.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    buf.width = canvas.width;
+    buf.height = canvas.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    draw();
+  }
+
+  function draw() {
+    const w = W(), h = H();
+    if (!w || !h) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.fillStyle = "rgb(0,0,0)";
+    ctx.fillRect(0, 0, w, h);
+
+    const g = geom(p);
+    const m = g.m, pts = g.pts, angs = g.angs, s = g.s;
+    const cx = w / 2, cy = h / 2;
+
+    // Ground
+    ctx.strokeStyle = "rgba(255,255,255,0.14)";
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(0, g.ground + 0.5); ctx.lineTo(w, g.ground + 0.5); ctx.stroke();
+
+    // Dim context body
+    ctx.strokeStyle = "rgba(255,255,255,0.18)";
+    ctx.lineWidth = 3; ctx.lineCap = "round";
+    const b0 = pts[0];
+    if (mode === "throw") {
+      ctx.beginPath(); ctx.moveTo(b0.x, b0.y); ctx.lineTo(w * 0.25, g.ground); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(b0.x, b0.y); ctx.lineTo(w * 0.32, g.ground); ctx.stroke();
+    } else {
+      ctx.beginPath(); ctx.moveTo(b0.x, b0.y); ctx.lineTo(w * 0.33, h * 0.08); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(b0.x, b0.y); ctx.lineTo(w * 0.36, g.ground); ctx.stroke();
+    }
+
+    // Sweep arcs for firing segments
+    m.segs.forEach((sg, i) => {
+      if (p[i] <= 0) return;
+      const j = pts[i], r = sg.L * s;
+      const a0 = sg.rest * Math.PI / 180, a1 = angs[i];
       ctx.save();
-      ctx.globalCompositeOperation = 'lighter';
-      ctx.fillStyle = 'rgba(250,199,117,' + alpha + ')';
-      ctx.beginPath();
-      ctx.arc(px, py, 4 * (1 - t / 15) + 1, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.globalCompositeOperation = "lighter";
+      ctx.strokeStyle = "rgba(" + RGB + "," + (0.22 * p[i]) + ")";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(j.x, j.y, r, a0, a1, a1 < a0); ctx.stroke();
+      ctx.restore();
+    });
+
+    // Segments
+    m.segs.forEach((sg, i) => {
+      const a = pts[i], b = pts[i + 1];
+      const fired = p[i] > 0;
+      ctx.save();
+      ctx.lineCap = "round";
+      if (fired) {
+        ctx.globalCompositeOperation = "lighter";
+        ctx.strokeStyle = "rgba(" + RGB + "," + (0.2 * p[i]) + ")";
+        ctx.lineWidth = sg.width + 8;
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+        ctx.globalCompositeOperation = "source-over";
+        ctx.strokeStyle = "rgba(" + RGB + "," + (0.45 + 0.55 * p[i]) + ")";
+      } else {
+        ctx.strokeStyle = "rgba(255,255,255,0.28)";
+      }
+      ctx.lineWidth = sg.width;
+      ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+      ctx.restore();
+    });
+
+    // Joints
+    pts.forEach((pt, i) => {
+      const lit = i === 0 ? target > 0 : p[i - 1] > 0;
+      ctx.save();
+      if (lit) {
+        ctx.globalCompositeOperation = "lighter";
+        const gr = ctx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, 14);
+        gr.addColorStop(0, "rgba(" + RGB + ",0.6)");
+        gr.addColorStop(1, "rgba(" + RGB + ",0)");
+        ctx.fillStyle = gr;
+        ctx.beginPath(); ctx.arc(pt.x, pt.y, 14, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.globalCompositeOperation = "source-over";
+      ctx.fillStyle = lit ? "rgb(255,255,255)" : "rgba(255,255,255,0.5)";
+      ctx.beginPath(); ctx.arc(pt.x, pt.y, 3, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+    });
+
+    // Ball
+    let bx, by, br;
+    if (ball) {
+      if (!ball.done) { bx = ball.x; by = ball.y; br = ball.r; }
+      ball.trail.forEach((t, i) => {
+        const al = (i + 1) / ball.trail.length * 0.5;
+        ctx.save(); ctx.globalCompositeOperation = "lighter";
+        ctx.fillStyle = "rgba(" + AMBRGB + "," + al + ")";
+        ctx.beginPath(); ctx.arc(t.x, t.y, 2 + 3 * (i / ball.trail.length), 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+      });
+    } else {
+      const rb = restingBall(g); bx = rb.x; by = rb.y; br = rb.r;
+    }
+    if (bx !== undefined) {
+      ctx.save(); ctx.globalCompositeOperation = "lighter";
+      const gr = ctx.createRadialGradient(bx, by, 0, bx, by, br * 1.8);
+      gr.addColorStop(0, "rgba(" + AMBRGB + ",1)");
+      gr.addColorStop(0.55, "rgba(" + AMBRGB + ",0.45)");
+      gr.addColorStop(1, "rgba(" + AMBRGB + ",0)");
+      ctx.fillStyle = gr;
+      ctx.beginPath(); ctx.arc(bx, by, br * 1.8, 0, Math.PI * 2); ctx.fill();
       ctx.restore();
     }
 
-    // Projectile
+    // Bloom
+    bctx.setTransform(1, 0, 0, 1, 0, 0);
+    bctx.clearRect(0, 0, buf.width, buf.height);
+    if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
     ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    const projGrad = ctx.createRadialGradient(projectileX, projectileY, 0, projectileX, projectileY, 12);
-    projGrad.addColorStop(0, 'rgba(250,199,117,1)');
-    projGrad.addColorStop(0.6, 'rgba(250,199,117,0.4)');
-    projGrad.addColorStop(1, 'rgba(250,199,117,0)');
-    ctx.fillStyle = projGrad;
-    ctx.beginPath();
-    ctx.arc(projectileX, projectileY, 12, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.globalCompositeOperation = "lighter";
+    ctx.globalAlpha = 0.38;
+    ctx.filter = "blur(7px)";
+    if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
     ctx.restore();
+
+    // Vignette
+    const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)");
+    vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig;
+    ctx.fillRect(0, 0, w, h);
+
+    // Crisp labels (after bloom)
+    ctx.font = "500 11px 'JetBrains Mono', monospace";
+    ctx.textBaseline = "middle";
+    ctx.textAlign = "left";
+    ctx.fillStyle = "rgba(237,237,232,0.6)";
+    ctx.fillText("tip speed, m/s", 12, h - 12);
+    const v = speeds(m);
+    m.segs.forEach((sg, i) => {
+      if (p[i] <= 0) return;
+      const a = pts[i], b = pts[i + 1];
+      const base = sg.lab.at === "tip" ? b : { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+      ctx.textAlign = sg.lab.al;
+      ctx.fillStyle = "rgba(237,237,232," + (0.35 + 0.65 * p[i]) + ")";
+      ctx.fillText(v[i].toFixed(1), base.x + sg.lab.dx, base.y + sg.lab.dy);
+    });
   }
 
-  // Bloom
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
+  function tick(now) {
+    const dt = Math.min(now - last, 50) / 1000;
+    last = now;
+    const m = MODES[mode];
+    let active = false;
+    for (let i = 0; i < 4; i++) {
+      if (i < target && p[i] < 1) {
+        if (i === 0 || p[i - 1] >= 0.85) {
+          p[i] = Math.min(1, p[i] + dt / (reduce ? 0.01 : m.segs[i].dur));
+        }
+        active = true;
+      }
+    }
+    if (target === 4 && p[3] >= 1 && !ball) launch();
+    if (ball && !ball.done) {
+      ball.trail.push({ x: ball.x, y: ball.y });
+      if (ball.trail.length > 14) ball.trail.shift();
+      ball.x += ball.vx * dt;
+      ball.vy += ball.g * dt;
+      ball.y += ball.vy * dt;
+      if (ball.x > W() + 30 || ball.y > H() + 30 || ball.y < -30) { ball.done = true; ball.trail = []; }
+      else active = true;
+    }
+    draw();
+    updateText();
+    if (active) raf = requestAnimationFrame(tick); else raf = 0;
+  }
 
-  // Vignette
-  const vig = ctx.createRadialGradient(w / 2, cy, h * 0.28, w / 2, cy, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-}
+  function start() {
+    if (raf) return;
+    last = performance.now();
+    raf = requestAnimationFrame(tick);
+  }
 
-function animate() {
-  time += 0.03;
-  draw();
-  animFrame = requestAnimationFrame(animate);
-}
+  function buildTiles() {
+    const m = MODES[mode];
+    tilesEl.innerHTML = m.segs.map((sg, i) =>
+      "<div class=\"kc-tile\" id=\"kcTile" + i + "\"><div class=\"n\">" + (i + 1) + " · " + sg.name + "</div><div class=\"v\">0.0 m/s</div><div class=\"s\">ω " + sg.w + " rad/s · r " + sg.L.toFixed(2) + " m</div></div>"
+    ).join("");
+    ticks.innerHTML = m.ticks.map((t) => "<span>" + t + "</span>").join("");
+  }
 
-slider.addEventListener('input', (e) => {
-  segmentCount = parseInt(e.target.value);
-  updateUI();
-});
+  function updateText() {
+    const m = MODES[mode], v = speeds(m), n = target;
+    const firing = p.findIndex((q, i) => i < n && q < 1);
+    liveTag.textContent = n + " of 4 fired";
+    valEl.textContent = n + " of 4";
+    statV.textContent = (n ? v[n - 1] : 0).toFixed(1) + " m/s";
+    statW.textContent = (n ? m.segs[n - 1].w : 0) + " rad/s";
+    const lastName = n ? m.segs[n - 1].name.toLowerCase() : "";
+    let ov;
+    if (n === 0) ov = "At rest · fire the " + m.segs[0].name.toLowerCase() + " to start";
+    else if (firing >= 0) ov = m.segs[firing].name + " firing · tip " + v[firing].toFixed(1) + " m/s";
+    else if (n === 4 && ball) ov = "Complete · " + lastName + " " + v[3].toFixed(1) + " m/s · ball away";
+    else ov = n + " of 4 fired · " + lastName + " tip " + v[n - 1].toFixed(1) + " m/s";
+    overlay.textContent = ov;
+    m.segs.forEach((sg, i) => {
+      const t = document.getElementById("kcTile" + i);
+      if (!t) return;
+      const on = i < n;
+      t.classList.toggle("on", on);
+      t.querySelector(".v").textContent = (on ? v[i] : 0).toFixed(1) + " m/s";
+    });
+  }
 
-toggleBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    toggleBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    mode = btn.dataset.mode;
-    knowdropText.textContent = knowdrops[mode];
+  slider.addEventListener("input", (e) => {
+    target = parseInt(e.target.value, 10) || 0;
+    for (let i = target; i < 4; i++) p[i] = 0;
+    ball = null;
+    slider.style.setProperty("--fill", (target / 4 * 100) + "%");
+    updateText();
+    draw();
+    start();
   });
-});
 
-window.addEventListener('resize', resize);
-resize();
-updateUI();
-animate();
+  pills.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      mode = btn.dataset.mode;
+      pills.forEach((b) => b.setAttribute("aria-pressed", b === btn ? "true" : "false"));
+      p = [0, 0, 0, 0];
+      ball = null;
+      buildTiles();
+      dropEl.textContent = DROPS[mode];
+      updateText();
+      draw();
+      start();
+    });
+  });
+
+  window.addEventListener("resize", resize);
+  if (window.ResizeObserver) new ResizeObserver(resize).observe(wrap);
+
+  buildTiles();
+  dropEl.textContent = DROPS[mode];
+  slider.style.setProperty("--fill", "0%");
+  resize();
+  updateText();
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'levers-and-force-summation'},'*');}catch(e){}}

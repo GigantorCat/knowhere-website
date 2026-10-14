@@ -345,23 +345,23 @@ canvas {
   
   <h1>Regulation doesn't slow down capital — it makes <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">trust</span></h1>
   
-  <p class="intro">Every business finance decision happens inside a supervised network. Banks, finance companies, super funds and insurers supply funds; the ASX is the marketplace where investors buy shares so companies can raise equity; ASIC and company law enforce the rules. Add institutions with the slider, then switch ASIC off to see what is left unpoliced.</p>
+  <p class="intro">Every business finance decision happens inside a supervised network. Banks (including investment banks), finance companies, super funds, unit trusts and life insurers supply funds; the ASX is the marketplace where investors buy shares so companies can raise equity; ASIC and company law enforce the rules. Add institutions one group at a time, then switch ASIC off to see what is left unpoliced.</p>
 
   <div class="card">
     <div class="card-header">
       <div class="card-label">Institutional network</div>
-      <div class="live-tag" id="networkTag">5 institution types</div>
+      <div class="live-tag" id="networkTag">5 institution groups</div>
     </div>
-    <div class="card-hint">Drag to add each type of institution; switch ASIC on and off on its own</div>
+    <div class="card-hint">Add each group of institutions; switch ASIC on and off on its own</div>
     
     <div class="canvas-wrapper">
       <canvas id="networkCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">All five types · ASIC on</div>
+      <div class="canvas-overlay" id="canvasOverlay">All 7 institutions · ASIC on</div>
     </div>
 
     <div class="slider-container">
       <div class="switch-row"><button class="toggle-btn active" id="btnAsicSwitch" aria-pressed="true">ASIC oversight: on</button></div>
-      <div class="slider-label">Institution types</div>
+      <div class="slider-label">Institution groups</div>
       <input type="range" min="0" max="5" value="5" step="1" class="fin-slider" id="layerSlider" style="--fill:100%" aria-label="Institution types">
       <div class="tick-labels">
         <span class="tk tk-min">None</span>
@@ -432,10 +432,10 @@ let particles = [];
 let asicOn = true;
 const btnAsicSwitch = document.getElementById('btnAsicSwitch');
 const layers = [
-  { name: 'Banks', color: ACC, nodes: 3 },
+  { name: 'Banks', sub: 'investment banks', color: ACC, nodes: 3 },
   { name: 'Finance co.', color: ACC, nodes: 2 },
-  { name: 'Super funds', color: ACC, nodes: 3 },
-  { name: 'Insurers', color: ACC, nodes: 2 },
+  { name: 'Super funds', sub: '& unit trusts', color: ACC, nodes: 3 },
+  { name: 'Life insurers', color: ACC, nodes: 2 },
   { name: 'ASX market', color: AMB, nodes: 1 }
 ];
 const LAYER_Y = [0.13, 0.28, 0.43, 0.58, 0.73];
@@ -491,7 +491,7 @@ function draw() {
     ctx.setLineDash([]);
     ctx.strokeRect(w * 0.2, h * 0.03, w * 0.6, h * 0.78);
     ctx.fillStyle = ACC;
-    ctx.font = '8px JetBrains Mono';
+    ctx.font = '11px JetBrains Mono';
     ctx.textAlign = 'right';
     ctx.fillText('ASIC OVERSIGHT', w * 0.8 - 4, h * 0.03 + 10);
     ctx.restore();
@@ -529,9 +529,10 @@ function draw() {
       ctx.beginPath(); ctx.arc(nx, ly, 4, 0, Math.PI * 2); ctx.fill();
     }
     ctx.fillStyle = layer.color;
-    ctx.font = '8px JetBrains Mono';
+    ctx.font = '11px JetBrains Mono';
     ctx.textAlign = 'right';
     ctx.fillText(layer.name.toUpperCase(), w * 0.33, ly + 3);
+    if (layer.sub) { ctx.font = '9px JetBrains Mono'; ctx.fillText(layer.sub.toUpperCase(), w * 0.33, ly + 15); }
   }
   // end points
   [[investorX, investorY, 'SAVERS'], [businessX, businessY, 'BUSINESS']].forEach(function (e) {
@@ -541,8 +542,8 @@ function draw() {
     ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.fillStyle = g;
     ctx.beginPath(); ctx.arc(e[0], e[1], 18, 0, Math.PI * 2); ctx.fill(); ctx.restore();
     ctx.fillStyle = ACC; ctx.beginPath(); ctx.arc(e[0], e[1], 5, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = '#fff'; ctx.font = '9px JetBrains Mono'; ctx.textAlign = 'center';
-    ctx.fillText(e[2], e[0], e[1] - 24);
+    ctx.fillStyle = '#fff'; ctx.font = '11px JetBrains Mono'; ctx.textAlign = 'center';
+    ctx.fillText(e[2], Math.max(30, Math.min(w - 30, e[0])), e[1] - 11);
   });
 
   // Draw ambient particles
@@ -577,8 +578,8 @@ function draw() {
 
 function updateUI() {
   const routes = countRoutes();
-  const names = ["No institutions", "Banks only", "Banks, finance co.", "+ super funds", "+ insurers", "All five types"];
-  networkTag.textContent = layerCount === 1 ? "1 institution type" : layerCount + " institution types";
+  const names = ["No institutions", "Banks only", "Banks, finance co.", "+ super funds", "+ life insurers", "All 7 institutions"];
+  networkTag.textContent = layerCount === 1 ? "1 institution group" : layerCount + " institution groups";
   let cap = names[layerCount];
   if (layerCount > 0) cap += asicOn ? " · ASIC on" : " · ASIC off: unpoliced";
   canvasOverlay.textContent = cap;
@@ -607,7 +608,7 @@ btnASX.addEventListener('click', () => {
 btnASIC.addEventListener('click', () => {
   btnASIC.classList.add('active');
   btnASX.classList.remove('active');
-  knowdropText.textContent = "ASIC (Australian Securities and Investments Commission) enforces corporate conduct, disclosure rules and investor protection laws across the financial system. It monitors ASX-listed companies, investigates insider trading, polices misleading advertising and prosecutes directors who breach their duties. Without that enforcement, insiders could exploit ordinary investors through hidden conflicts, false forecasts and rigged markets. Markets work only when participants believe the rules apply to everyone, and ASIC is the mechanism that makes that belief credible. Alongside ASIC, APRA supervises banks, insurers and super funds, and the Reserve Bank of Australia sets the cash rate that shapes what banks charge to lend. Tax law also shapes finance decisions: the company tax rate (30% for most large companies, 25% for smaller companies with turnover under $50 million) and the franking credit system influence dividend policy, the debt-equity mix and reinvestment versus distribution choices.";
+  knowdropText.textContent = "ASIC (Australian Securities and Investments Commission) enforces corporate conduct, disclosure rules and investor protection laws across the financial system. It monitors ASX-listed companies, investigates insider trading, polices misleading advertising and prosecutes directors who breach their duties. Without that enforcement, insiders could exploit ordinary investors through hidden conflicts, false forecasts and rigged markets. Markets work only when participants believe the rules apply to everyone, and ASIC is the mechanism that makes that belief credible. Alongside ASIC, APRA supervises banks, insurers and super funds, and the Reserve Bank of Australia sets the cash rate that shapes what banks charge to lend. Tax law also shapes finance decisions: the company tax rate (for example, in 2024–25: 30% for larger companies, 25% for smaller companies with aggregated turnover under $50 million) and the franking credit system influence dividend policy, the debt-equity mix and reinvestment versus distribution choices.";
 });
 
 resize();

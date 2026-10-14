@@ -94,7 +94,7 @@ h1 {
 .live-tag {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
-  text-transform: uppercase;
+  text-transform: none;
   color: var(--acc);
 }
 
@@ -133,8 +133,8 @@ canvas {
   backdrop-filter: blur(4px);
   padding: 9px 16px;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  text-transform: uppercase;
+  font-size: 12px;
+  text-transform: none;
   color: var(--acc);
   text-align: center;
 }
@@ -384,18 +384,18 @@ canvas {
 <div class="container">
   <h1>The 3.6 factor isn't magic — it's just <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">conversion</span></h1>
   
-  <p class="intro">Every physics answer marked wrong for being off by 3.6 is a rate conversion error. Speed in km/h becomes m/s by dividing by 3.6, but the real skill is knowing why. Drag the slider to see any speed convert live — watch both units update simultaneously.</p>
+  <p class="intro">Every physics answer marked wrong for being off by 3.6 is a rate conversion error. Speed in km/h becomes m/s by dividing by 3.6, but the real skill is knowing why. Set any speed to see it convert live — watch both units update simultaneously.</p>
 
   <div class="card">
     <div class="card-header">
       <div class="card-label">Speed converter</div>
       <div class="live-tag" id="liveTag">50 km/h → 13.89 m/s</div>
     </div>
-    <div class="card-hint">Drag to convert: km/h automatically becomes m/s</div>
+    <div class="card-hint">Set a speed in km/h and read the same speed in m/s</div>
     
     <div class="canvas-wrapper">
       <canvas id="canvas"></canvas>
-      <div class="canvas-overlay" id="overlay">÷3.6 conversion active</div>
+      <div class="canvas-overlay" id="overlay">50 km/h = 50000 m per 3600 s = 13.89 m/s</div>
     </div>
 
     <div class="slider-row">
@@ -597,10 +597,10 @@ function draw(time) {
   // Tick marks
   ctx.strokeStyle = 'rgba(250, 199, 117, 0.4)';
   ctx.lineWidth = 1.5;
-  for (let i = 0; i <= Math.ceil(maxMs); i += Math.ceil(maxMs / 12)) {
+  for (let i = 0; i <= Math.ceil(maxMs); i += 5) {
     const angle = Math.PI * 0.75 + (i / maxMs) * Math.PI * 1.5;
     const startR = radius - 8;
-    const endR = i % Math.ceil(maxMs / 4) === 0 ? radius - 18 : radius - 12;
+    const endR = i % 10 === 0 ? radius - 18 : radius - 12;
     const x1 = rightX + Math.cos(angle) * startR;
     const y1 = gaugeY + Math.sin(angle) * startR;
     const x2 = rightX + Math.cos(angle) * endR;
@@ -674,16 +674,20 @@ function draw(time) {
   ctx.fill();
   ctx.restore();
 
-  // ÷3.6 label on arrow
+  // Conversion labels on arrow: the two unit steps, then the combined factor at the arrowhead
   ctx.save();
   ctx.fillStyle = '#fff';
-  ctx.font = '700 16px "JetBrains Mono"';
+  ctx.font = '500 11px "JetBrains Mono"';
   ctx.textAlign = 'center';
-  ctx.fillText('÷ 3.6', cx, arrowY - 12);
+  ctx.fillText('× 1000 (km → m)', cx, arrowY - 8);
+  ctx.fillText('÷ 3600 (h → s)', cx, arrowY + 16);
+  ctx.font = '700 16px "JetBrains Mono"';
+  ctx.textAlign = 'left';
+  ctx.fillText('÷ 3.6', rightX - radius * 0.6 + 10, arrowY + 6);
   ctx.restore();
 
   // Flowing particles along arrow
-  animProgress += 0.004;
+  animProgress += 0.004 * (kmh / 120);
   if (animProgress > 1) animProgress = 0;
   
   for (let i = 0; i < 5; i++) {
@@ -728,7 +732,7 @@ function updateDisplay() {
   const ms = kmh / 3.6;
   
   liveTag.textContent = `${kmh} km/h → ${ms.toFixed(2)} m/s`;
-  overlay.textContent = `÷3.6 conversion active`;
+  overlay.textContent = `${kmh} km/h = ${kmh * 1000} m per 3600 s = ${ms.toFixed(2)} m/s`;
   kmhStat.textContent = kmh.toFixed(0);
   msStat.textContent = ms.toFixed(2);
   

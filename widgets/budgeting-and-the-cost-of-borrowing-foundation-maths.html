@@ -4,578 +4,479 @@ body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
-
-:root {
-  --bg: #0B0D0C;
-  --bg2: #12160F;
-  --acc: #7ED97A;
-  --ag: rgba(126, 217, 122, .7);
-  --ag1: rgba(126, 217, 122, .12);
-  --ag2: rgba(126, 217, 122, .45);
-  --amb: #FAC775;
-  --ink: #EDEDE8;
-  --ink-dim: #8C9389;
-  --line: #262B26;
+:root{
+  --bg:#0B0D0C;
+  --bg2:#12160F;
+  --acc:#7ED97A;
+  --acc-rgb:126, 217, 122;
+  --ag:rgba(var(--acc-rgb),.7);
+  --ag1:rgba(var(--acc-rgb),.12);
+  --ag2:rgba(var(--acc-rgb),.45);
+  --amb:#FAC775;
+  --ink:#EDEDE8;
+  --ink-dim:#8C9389;
+  --line:#262B26;
 }
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
-  font-family: 'Geist', sans-serif;
-  color: var(--ink);
-  min-height: 100vh;
-  padding: 40px 16px 0;
-  -webkit-font-smoothing: antialiased;
-}
-
-.container { max-width: 720px; margin: 0 auto; }
-
-h1 {
-  font-size: clamp(26px, 6.5vw, 44px);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
-  margin-bottom: 14px;
-}
-
-.intro {
-  font-size: 15.5px;
-  font-weight: 400;
-  color: var(--ink-dim);
-  line-height: 1.55;
-  max-width: 58ch;
-  margin-bottom: 28px;
-}
-
-.card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 18px;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.card-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  color: var(--ink);
-}
-
-.live-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--acc);
-}
-
-.card-hint {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--ink-dim);
-  margin-bottom: 14px;
-}
-
-.canvas-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16/9;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
-  box-shadow: inset 0 0 0 1px var(--ag1);
-  margin-bottom: 16px;
-}
-
-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.canvas-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(4px);
-  padding: 9px 16px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  text-transform: uppercase;
-  color: var(--acc);
-  text-align: center;
-}
-
-.slider-container {
-  margin-bottom: 10px;
-}
-
-.slider-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 8px;
-  display: block;
-}
-
-.budget-slider {
-  width: 100%;
-  height: 4px;
-  -webkit-appearance: none;
-  appearance: none;
-  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
-  border-radius: 3px;
-  outline: none;
-  cursor: pointer;
-}
-
-.budget-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  transition: box-shadow .15s;
-  cursor: pointer;
-}
-
-.budget-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  transition: box-shadow .15s;
-  cursor: pointer;
-}
-
-.budget-slider:hover::-webkit-slider-thumb {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.budget-slider:hover::-moz-range-thumb {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.tick-labels {
-  display: flex;
-  justify-content: space-between;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--ink-dim);
-  margin-bottom: 14px;
-}
-
-.stat-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  border-top: 1px solid var(--line);
-  padding-top: 14px;
-}
-
-.stat {
-  text-align: center;
-}
-
-.stat-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 6px;
-  display: block;
-}
-
-.stat-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 24px;
-  font-weight: 500;
-  display: block;
-}
-
-.stat-value.acc { color: var(--acc); }
-.stat-value.amb { color: var(--amb); }
-
-.toggle-card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 18px;
-}
-
-.toggle-buttons {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.toggle-btn {
-  flex: 1;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14.5px;
-  padding: 12px;
-  border-radius: 11px;
-  border: 1px solid var(--line);
-  background: #12160F;
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: all .2s;
-}
-
-.toggle-btn.active {
-  background: rgba(126, 217, 122,.1);
-  border: 1px solid var(--acc);
-  color: var(--acc);
-  box-shadow: 0 0 22px rgba(126, 217, 122,.18);
-}
-
-.knowdrop-divider {
-  border-top: 1px solid var(--line);
-  margin-bottom: 16px;
-}
-
-.knowdrop-text {
-  font-size: 14.5px;
-  font-weight: 400;
-  line-height: 1.65;
-  color: var(--ink);
-}
-
-.know-this {
-  border-left: 3px solid var(--acc);
-  padding: 16px 18px;
-  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
-  border-radius: 0 12px 12px 0;
-  margin-bottom: 0;
-}
-
-.know-this-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--acc);
-  margin-bottom: 10px;
-  display: block;
-}
-
-.know-this-body {
-  font-size: 17.4px;
-  font-weight: 400;
-  line-height: 1.55;
-  color: var(--ink);
-}
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C 55%);font-family:'Geist',sans-serif;color:var(--ink);min-height:100vh;padding:40px 16px 0;-webkit-font-smoothing:antialiased}
+.kw{max-width:720px;margin:0 auto}
+h1{font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin:0 0 14px}
+.intro{font-size:15.5px;font-weight:400;color:var(--ink-dim);line-height:1.55;max-width:58ch;margin:0 0 28px}
+.card{background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);margin-bottom:18px}
+.hdr{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:6px}
+.lbl{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;color:var(--ink)}
+.live{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--acc);text-align:right;white-space:nowrap}
+.hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);line-height:1.5;margin-bottom:12px}
+.ptitle{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin:0 0 8px}
+.pills{display:flex;gap:8px;margin:0 0 14px}
+.pill{flex:1 1 0;min-width:0;font-family:'JetBrains Mono',monospace;font-size:12px;padding:10px 4px;border-radius:999px;border:1px solid var(--line);background:#12160F;color:var(--ink-dim);cursor:pointer;white-space:nowrap;transition:background .2s,color .2s,box-shadow .2s,border-color .2s}
+.pill[aria-pressed="true"]{background:rgba(var(--acc-rgb),.1);border-color:var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.cwrap{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1);margin-bottom:4px}
+.cwrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.ovl{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:14px;text-transform:uppercase;color:var(--acc);text-align:center}
+.panel[hidden]{display:none}
+.bc-row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin:14px 0 8px}
+.bc-row b{color:var(--ink);font-weight:500;white-space:nowrap}
+.bc-slider{width:100%;height:4px;-webkit-appearance:none;appearance:none;border-radius:3px;outline:none;cursor:pointer;margin:6px 0;display:block;background:linear-gradient(90deg,var(--acc) var(--fill,0%),#23291f var(--fill,0%))}
+.bc-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.bc-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.bc-slider:hover::-webkit-slider-thumb{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.bc-slider:hover::-moz-range-thumb{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.ticks{position:relative;height:14px;margin-top:4px}
+.ticks span{position:absolute;top:0;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink-dim);transform:translateX(-50%);white-space:nowrap}
+.ticks span:first-child{transform:translateX(0)}
+.ticks span:last-child{transform:translateX(-100%)}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:16px;border-top:1px solid var(--line);margin-top:16px;padding-top:14px}
+.stat{text-align:center;min-width:0}
+.sl{display:block;font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:6px}
+.sv{display:block;font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500;white-space:nowrap}
+.sv.acc{color:var(--acc)}
+.sv.amb{color:var(--amb)}
+.divider{border-top:1px solid var(--line);margin:2px 0 14px}
+.kd-text{font-size:14.5px;font-weight:400;line-height:1.65;color:var(--ink);margin:0}
+.know{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));border-radius:0 12px 12px 0;margin:0}
+.know-tag{display:flex;align-items:center;gap:9px;margin-bottom:10px;font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.15em;color:var(--acc)}
+.know-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:kdot 2.4s ease-in-out infinite;flex:0 0 auto}
+@keyframes kdot{0%,100%{opacity:1}50%{opacity:.45}}
+.know p{font-size:17.4px;font-weight:400;line-height:1.55;color:var(--ink);margin:0}
+.know p span{color:var(--acc)}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
 
-<div class="container">
-  <h2 class="sr-only">Interactive budget and borrowing cost calculator showing how variable costs and interest add up</h2>
-  
-  <h1>Your monthly bills are a ticking clock that never <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">stops</span></h1>
-  
-  <p class="intro">Most people think they know where their money goes — until they actually track it. Fixed costs are locked in, variable costs creep up, and borrowing quietly multiplies everything. Drag the slider to watch your monthly outflow grow in real time.</p>
+<div class="kw">
+  <h2 class="sr-only">Interactive budget and borrowing model: budget bars that can tip into deficit, a loan repayment stream split into principal, interest and fees, and a mortgage compared with rent</h2>
+
+  <h1>The smallest monthly repayment can be the most expensive <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">loan</span></h1>
+
+  <p class="intro">A budget sorts your pay into fixed costs you cannot dodge, discretionary spending you can, and whatever is left. Borrowing then adds a second price to anything you buy: interest and fees on top of the amount you took. Raise the variable spending until the household tips into deficit, then switch to the loan, stretch the term and watch what happens to the total repayable.</p>
 
   <div class="card">
-    <div class="card-header">
-      <span class="card-label">Monthly Budget Breakdown</span>
-      <span class="live-tag" id="budgetTag">Balance: +$0</span>
+    <div class="hdr">
+      <span class="lbl">Money in, money out</span>
+      <span class="live" id="liveTag">Variable $800</span>
     </div>
-    <div class="card-hint">Slide to increase variable spending (food, transport, extras)</div>
-    
-    <div class="canvas-wrapper">
-      <canvas id="budgetCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">Total Outflow: $0/month</div>
+    <div class="hint" id="hint">Income $3000 a month after tax, fixed costs $1400. Raise the variable spending past the income line and watch the total bar.</div>
+
+    <div class="ptitle">What the picture shows</div>
+    <div class="pills" id="modeGroup" role="group" aria-label="Scene shown in the picture">
+      <button class="pill" data-mode="budget" aria-pressed="true">Budget</button>
+      <button class="pill" data-mode="loan" aria-pressed="false">Loan</button>
+      <button class="pill" data-mode="home" aria-pressed="false">Buy or rent</button>
     </div>
 
-    <div class="slider-container">
-      <label class="slider-label" for="budgetSlider">Variable Costs (Per Month)</label>
-      <input type="range" id="budgetSlider" class="budget-slider" min="200" max="1200" value="400" step="50">
-    </div>
-    <div class="tick-labels">
-      <span>$200</span>
-      <span>$700</span>
-      <span>$1200</span>
+    <div class="cwrap" id="wrap">
+      <canvas id="cv"></canvas>
+      <div class="ovl" id="ovl">$800 left · 73% spent</div>
     </div>
 
-    <div class="stat-row">
-      <div class="stat">
-        <span class="stat-label">Money Left</span>
-        <span class="stat-value acc" id="leftoverStat">$1200</span>
-      </div>
-      <div class="stat">
-        <span class="stat-label">% of Income</span>
-        <span class="stat-value amb" id="percentStat">40%</span>
-      </div>
+    <div class="panel" id="p-budget"></div>
+    <div class="panel" id="p-loan" hidden></div>
+    <div class="panel" id="p-home" hidden></div>
+
+    <div class="stats">
+      <div class="stat"><span class="sl" id="s1l">Money left</span><b class="sv acc" id="s1v">$800</b></div>
+      <div class="stat"><span class="sl" id="s2l">% of income spent</span><b class="sv amb" id="s2v">73%</b></div>
     </div>
   </div>
 
-  <div class="toggle-card">
-    <div class="toggle-buttons">
-      <button class="toggle-btn active" data-mode="credit">Credit Card</button>
-      <button class="toggle-btn" data-mode="loan">Personal Loan</button>
+  <div class="card">
+    <div class="ptitle">Borrowing in real life</div>
+    <div class="pills" id="kdGroup" role="group" aria-label="Topic of the paragraph below">
+      <button class="pill" data-kd="credit" aria-pressed="true">Credit vs debit</button>
+      <button class="pill" data-kd="consol" aria-pressed="false">Consolidation</button>
+      <button class="pill" data-kd="hecs" aria-pressed="false">HECS-HELP</button>
     </div>
-    <div class="knowdrop-divider"></div>
-    <div class="knowdrop-text" id="knowdropText">
-      You buy a $1200 laptop on a credit card with 19% annual interest. If you only pay the minimum ($50/month), you'll take over two years to pay it off — and you'll pay around $300 extra in interest alone. That laptop actually cost you $1500. Credit cards are designed for convenience, but the interest compounds daily, turning small purchases into long-term debt traps if you don't clear the balance fast.
-    </div>
+    <div class="divider"></div>
+    <p class="kd-text" id="kdText"></p>
   </div>
 
-  <div class="know-this">
-    <span class="know-this-tag">Know This</span>
-    <p class="know-this-body">A <span style="color:var(--acc)">budget</span> tracks income against <span style="color:var(--acc)">fixed costs</span> (rent, insurance) and <span style="color:var(--acc)">variable costs</span> (food, petrol) — borrowing usually adds <span style="color:var(--acc)">interest</span> or fees on top of the original amount, so compare the total repayable before you borrow.</p>
+  <div class="know">
+    <div class="know-tag"><span class="know-dot"></span><span>Know This</span></div>
+    <p>A <span>budget</span> splits income into fixed and discretionary costs, and every loan adds <span>interest and fees</span> on top, so compare the <span>total repayable</span> before you borrow.</p>
   </div>
 </div>
 
 <script>
-const canvas = document.getElementById('budgetCanvas');
-const ctx = canvas.getContext('2d', { alpha: false });
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d', { alpha: false });
+(function(){
+  const CSS = getComputedStyle(document.documentElement);
+  const ACC = CSS.getPropertyValue("--acc").trim();
+  const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+  const AMB = CSS.getPropertyValue("--amb").trim();
+  const INK = CSS.getPropertyValue("--ink").trim();
+  const DIM = CSS.getPropertyValue("--ink-dim").trim();
+  const MONO = "'JetBrains Mono', monospace";
+  const REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-const slider = document.getElementById('budgetSlider');
-const budgetTag = document.getElementById('budgetTag');
-const canvasOverlay = document.getElementById('canvasOverlay');
-const leftoverStat = document.getElementById('leftoverStat');
-const percentStat = document.getElementById('percentStat');
+  const INCOME = 3000, FIXED = 1400;
+  const vals = { vcost: 800, amt: 10000, rate: 12, term: 36, fee: 0, hamt: 500000, hrate: 6, hterm: 30, rent: 550 };
+  const shown = Object.assign({}, vals);
+  let mode = "budget";
 
-const toggleButtons = document.querySelectorAll('.toggle-btn');
-const knowdropText = document.getElementById('knowdropText');
-
-const income = 3000;
-const fixedCosts = 1400;
-
-let variableCosts = parseInt(slider.value);
-let time = 0;
-let animFrame;
-
-const knowdrops = {
-  credit: "You buy a $1200 laptop on a credit card with 19% annual interest. If you only pay the minimum ($50/month), you'll take over two years to pay it off — and you'll pay around $300 extra in interest alone. That laptop actually cost you $1500. Credit cards are designed for convenience, but the interest compounds daily, turning small purchases into long-term debt traps if you don't clear the balance fast.",
-  loan: "A $10,000 personal loan at 12% interest over 3 years means monthly repayments of around $330. But you won't just pay back $10,000 — you'll pay nearly $12,000 total. That extra $2000 is the real cost of borrowing. Compare loan offers carefully: a 2% difference in the interest rate can save you hundreds. Always check the total amount repayable, not just the monthly figure."
-};
-
-function resize() {
+  const cv = document.getElementById("cv");
+  const wrap = document.getElementById("wrap");
+  const ctx = cv.getContext("2d");
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
+  const buf = document.createElement("canvas");
+  const bctx = buf.getContext("2d");
 
-function updateUI() {
-  const total = fixedCosts + variableCosts;
-  const leftover = income - total;
-  const percentSpent = Math.round((total / income) * 100);
-  
-  budgetTag.textContent = leftover >= 0 ? `Balance: +$${leftover}` : `Deficit: −$${Math.abs(leftover)}`;
-  canvasOverlay.textContent = `Total Outflow: $${total}/month`;
-  leftoverStat.textContent = leftover >= 0 ? `$${leftover}` : `−$${Math.abs(leftover)}`;
-  percentStat.textContent = `${percentSpent}%`;
-  
-  const fillPercent = ((variableCosts - 200) / (1200 - 200)) * 100;
-  slider.style.setProperty('--fill', fillPercent + '%');
-}
+  const liveTag = document.getElementById("liveTag");
+  const ovl = document.getElementById("ovl");
+  const hint = document.getElementById("hint");
+  const s1l = document.getElementById("s1l"), s1v = document.getElementById("s1v");
+  const s2l = document.getElementById("s2l"), s2v = document.getElementById("s2v");
 
-function draw() {
-  const w = canvas.width / (Math.min(window.devicePixelRatio || 1, 2));
-  const h = canvas.height / (Math.min(window.devicePixelRatio || 1, 2));
-  
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, w, h);
-  
-  const barWidth = w * 0.18;
-  const gap = w * 0.08;
-  const maxHeight = h * 0.7;
-  const baseY = h * 0.82;
-  
-  const incomeHeight = maxHeight;
-  const fixedHeight = (fixedCosts / income) * maxHeight;
-  const variableHeight = (variableCosts / income) * maxHeight;
-  const totalSpent = fixedCosts + variableCosts;
-  const totalHeight = (totalSpent / income) * maxHeight;
-  
-  const pulse = 0.85 + 0.15 * Math.sin(time * 1.2);
-  
-  // Income bar (left)
-  const incomeX = w * 0.15;
-  const incomeGrad = ctx.createLinearGradient(0, baseY - incomeHeight, 0, baseY);
-  incomeGrad.addColorStop(0, 'rgba(126, 217, 122,0.9)');
-  incomeGrad.addColorStop(1, 'rgba(126, 217, 122,0.4)');
-  ctx.fillStyle = incomeGrad;
-  ctx.fillRect(incomeX, baseY - incomeHeight, barWidth, incomeHeight);
-  
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.shadowColor = 'rgba(126, 217, 122,0.6)';
-  ctx.shadowBlur = 20;
-  ctx.fillRect(incomeX, baseY - incomeHeight, barWidth, incomeHeight);
-  ctx.restore();
-  
-  ctx.fillStyle = 'rgba(126, 217, 122,0.9)';
-  ctx.font = '500 11px "JetBrains Mono"';
-  ctx.textAlign = 'center';
-  ctx.fillText('INCOME', incomeX + barWidth / 2, baseY + 18);
-  ctx.font = '600 16px "JetBrains Mono"';
-  ctx.fillText('$' + income, incomeX + barWidth / 2, baseY - incomeHeight - 10);
-  
-  // Fixed costs (middle-left)
-  const fixedX = incomeX + barWidth + gap;
-  ctx.fillStyle = '#FAC775';
-  ctx.fillRect(fixedX, baseY - fixedHeight, barWidth, fixedHeight);
-  
-  ctx.fillStyle = '#FAC775';
-  ctx.font = '500 11px "JetBrains Mono"';
-  ctx.fillText('FIXED', fixedX + barWidth / 2, baseY + 18);
-  ctx.font = '600 14px "JetBrains Mono"';
-  ctx.fillText('$' + fixedCosts, fixedX + barWidth / 2, baseY - fixedHeight - 8);
-  
-  // Variable costs (middle-right)
-  const varX = fixedX + barWidth + gap * 0.5;
-  const varGrad = ctx.createLinearGradient(0, baseY - variableHeight, 0, baseY);
-  varGrad.addColorStop(0, 'rgba(250,199,117,1)');
-  varGrad.addColorStop(1, 'rgba(250,199,117,0.5)');
-  ctx.fillStyle = varGrad;
-  ctx.fillRect(varX, baseY - variableHeight, barWidth, variableHeight);
-  
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.shadowColor = 'rgba(250,199,117,' + pulse * 0.5 + ')';
-  ctx.shadowBlur = 18;
-  ctx.fillRect(varX, baseY - variableHeight, barWidth, variableHeight);
-  ctx.restore();
-  
-  ctx.fillStyle = 'rgba(250,199,117,1)';
-  ctx.font = '500 11px "JetBrains Mono"';
-  ctx.textAlign = 'center';
-  ctx.fillText('VARIABLE', varX + barWidth / 2, baseY + 18);
-  ctx.font = '600 14px "JetBrains Mono"';
-  ctx.fillText('$' + variableCosts, varX + barWidth / 2, baseY - variableHeight - 8);
-  
-  // Total spent bar (right)
-  const totalX = w * 0.77;
-  const totalGrad = ctx.createLinearGradient(0, baseY - totalHeight, 0, baseY);
-  if (totalSpent > income) {
-    totalGrad.addColorStop(0, 'rgba(255,80,80,0.95)');
-    totalGrad.addColorStop(1, 'rgba(255,80,80,0.5)');
-  } else {
-    totalGrad.addColorStop(0, 'rgba(126, 217, 122,0.75)');
-    totalGrad.addColorStop(1, 'rgba(126, 217, 122,0.35)');
+  function money(v){ return "$" + Math.round(v).toLocaleString("en-AU"); }
+  function short(v){
+    v = Math.round(v);
+    if (v >= 1e6) return "$" + (v / 1e6).toFixed(2) + "m";
+    if (v >= 10000) return "$" + Math.round(v / 1000) + "k";
+    return "$" + v.toLocaleString("en-AU");
   }
-  ctx.fillStyle = totalGrad;
-  ctx.fillRect(totalX, baseY - totalHeight, barWidth, totalHeight);
-  
-  if (totalSpent > income) {
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.shadowColor = 'rgba(255,80,80,0.5)';
-    ctx.shadowBlur = 22;
-    ctx.fillRect(totalX, baseY - totalHeight, barWidth, totalHeight);
+  function pay(P, annual, n){
+    const r = annual / 1200;
+    if (r < 1e-9) return P / n;
+    return P * r / (1 - Math.pow(1 + r, -n));
+  }
+
+  const CFG = {
+    budget: [
+      { id: "vcost", label: "Variable spending", min: 200, max: 2200, step: 50, val: 800, fmt: v => "$" + v + "/mo", ticks: [200, 700, 1200, 1700, 2200], tf: v => "$" + v }
+    ],
+    loan: [
+      { id: "amt", label: "Amount borrowed", min: 500, max: 30000, step: 100, val: 10000, fmt: money, ticks: [500, 10000, 20000, 30000], tf: short },
+      { id: "rate", label: "Annual interest rate", min: 0, max: 25, step: 0.5, val: 12, fmt: v => v + "% p.a.", ticks: [0, 5, 10, 15, 20, 25], tf: v => v + "%" },
+      { id: "term", label: "Term", min: 6, max: 84, step: 6, val: 36, fmt: v => v + " mo", ticks: [6, 24, 48, 84], tf: v => v + " mo" },
+      { id: "fee", label: "Monthly account fee", min: 0, max: 20, step: 5, val: 0, fmt: v => "$" + v + "/mo", ticks: [0, 5, 10, 15, 20], tf: v => "$" + v }
+    ],
+    home: [
+      { id: "hamt", label: "Home loan", min: 200000, max: 800000, step: 10000, val: 500000, fmt: money, ticks: [200000, 400000, 600000, 800000], tf: short },
+      { id: "hrate", label: "Annual interest rate", min: 3, max: 9, step: 0.25, val: 6, fmt: v => v + "% p.a.", ticks: [3, 5, 7, 9], tf: v => v + "%" },
+      { id: "hterm", label: "Term", min: 15, max: 30, step: 5, val: 30, fmt: v => v + " yr", ticks: [15, 20, 25, 30], tf: v => v + " yr" },
+      { id: "rent", label: "Weekly rent", min: 300, max: 900, step: 10, val: 550, fmt: v => "$" + v + "/wk", ticks: [300, 500, 700, 900], tf: v => "$" + v }
+    ]
+  };
+
+  const HINT = {
+    budget: "Income $3000 a month after tax, fixed costs $1400. Raise the variable spending past the income line and watch the total bar.",
+    loan: "Stretch the term, then lift the rate or the fee. Watch the amber interest and the total repayable.",
+    home: "Change the rate, the term or the rent. Watch the monthly pair first, then the totals over the whole term."
+  };
+
+  const KD = {
+    credit: "A debit card spends money you already have, so the price on the tag is the price you pay. A credit card borrows from the bank for every purchase: clear the whole balance by the due date and it costs nothing, but carry a balance and interest of around 20% a year is charged on what is left owing, month after month. Paying only the minimum keeps the debt alive for years. A $1200 laptop at 19% repaid at about $50 a month takes around 30 months and adds roughly $320 in interest; set the loan picture to $1200, 19% and 30 months to see that interest segment appear. Annual card fees and late fees sit on top of all of this, which is why the total repayable, not the sticker price, is the honest cost.",
+    consol: "Debt consolidation rolls several debts, often credit cards charging 20% or more, into one loan at a lower rate with a single repayment. The catch is the term: a smaller monthly figure usually means more months, and interest is charged for every one of them. Test it in the loan picture. Borrowing $15,000 at 9% over 60 months costs about $311 a month and around $3700 in interest; the same $15,000 over 36 months costs about $477 a month but only around $2200 in interest. Before signing, compare the total repayable across the whole term and add any establishment fee and monthly account fee, because a lower rate with a longer term can still cost more.",
+    hecs: "Not every debt works like a bank loan. A HECS-HELP debt for university study is not charged interest; instead the balance is indexed once a year so it keeps pace with the cost of living, and repayments only begin once your income passes a set threshold, taken through the tax system as a percentage of what you earn. On the other side of the budget, child-care subsidy, youth allowance and other government payments count as income. A life-stage plan lists current commitments such as rent, phone and transport beside future ones such as a car, study debt or a home deposit, and checks that the budget can service all of them without tipping into deficit."
+  };
+
+  function refresh(c){
+    const v = vals[c.id];
+    c.out.textContent = c.fmt(v);
+    c.inp.style.setProperty("--fill", ((v - c.min) / (c.max - c.min) * 100) + "%");
+  }
+  function buildPanel(el, cfgs){
+    cfgs.forEach(c => {
+      const row = document.createElement("div"); row.className = "bc-row";
+      const s = document.createElement("span"); s.textContent = c.label;
+      const b = document.createElement("b"); b.id = c.id + "V";
+      row.append(s, b);
+      const inp = document.createElement("input");
+      inp.type = "range"; inp.className = "bc-slider"; inp.id = c.id;
+      inp.setAttribute("aria-label", c.label);
+      inp.min = c.min; inp.max = c.max; inp.step = c.step; inp.value = c.val;
+      const ticks = document.createElement("div"); ticks.className = "ticks";
+      c.ticks.forEach(t => {
+        const sp = document.createElement("span");
+        sp.style.left = ((t - c.min) / (c.max - c.min) * 100) + "%";
+        sp.textContent = c.tf(t);
+        ticks.appendChild(sp);
+      });
+      el.append(row, inp, ticks);
+      c.inp = inp; c.out = b;
+      inp.addEventListener("input", () => { vals[c.id] = parseFloat(inp.value); refresh(c); update(); });
+      refresh(c);
+    });
+  }
+  buildPanel(document.getElementById("p-budget"), CFG.budget);
+  buildPanel(document.getElementById("p-loan"), CFG.loan);
+  buildPanel(document.getElementById("p-home"), CFG.home);
+
+  function budgetModel(v){ const total = FIXED + v.vcost; return { vc: v.vcost, total, left: INCOME - total, pct: Math.round(total / INCOME * 100) }; }
+  function loanModel(v){
+    const n = Math.round(v.term); const M = pay(v.amt, v.rate, n); const fees = v.fee * n;
+    return { P: v.amt, rate: v.rate, n, M, fees, interest: M * n - v.amt, total: M * n + fees };
+  }
+  function homeModel(v){
+    const yrs = Math.round(v.hterm), n = yrs * 12; const M = pay(v.hamt, v.hrate, n); const rentM = v.rent * 52 / 12;
+    return { P: v.hamt, rate: v.hrate, yrs, n, M, interest: M * n - v.hamt, mort: M * n, rentM, rentTot: rentM * n };
+  }
+
+  function setTexts(){
+    if (mode === "budget"){
+      const m = budgetModel(vals);
+      liveTag.textContent = "Variable " + money(m.vc);
+      ovl.textContent = m.left >= 0 ? money(m.left) + " left · " + m.pct + "% spent" : "Deficit " + money(-m.left) + " · " + m.pct + "% spent";
+      s1l.textContent = "Money left"; s1v.textContent = m.left >= 0 ? money(m.left) : "−" + money(-m.left);
+      s2l.textContent = "% of income spent"; s2v.textContent = m.pct + "%";
+    } else if (mode === "loan"){
+      const m = loanModel(vals);
+      liveTag.textContent = m.rate + "% · " + m.n + " mo";
+      ovl.textContent = money(m.interest) + " interest · " + money(m.fees) + " fees";
+      s1l.textContent = "Monthly repayment"; s1v.textContent = money(m.M);
+      s2l.textContent = "Total repayable"; s2v.textContent = money(m.total);
+    } else {
+      const m = homeModel(vals);
+      liveTag.textContent = m.rate + "% · " + m.yrs + " yr";
+      ovl.textContent = m.yrs + " yr: buy " + short(m.mort) + " · rent " + short(m.rentTot);
+      s1l.textContent = "Buy per month"; s1v.textContent = money(m.M);
+      s2l.textContent = "Rent per month"; s2v.textContent = money(m.rentM);
+    }
+  }
+
+  function txt(s, x, y, o){
+    o = o || {};
+    ctx.font = (o.wt || 500) + " " + (o.sz || 11) + "px " + MONO;
+    ctx.fillStyle = o.c || DIM;
+    ctx.textAlign = o.al || "left";
+    ctx.textBaseline = o.bl || "alphabetic";
+    ctx.globalAlpha = o.a == null ? 1 : o.a;
+    ctx.fillText(s, x, y);
+    ctx.globalAlpha = 1;
+  }
+  function rect(x, y, wd, ht, c, a){
+    if (ht <= 0 || wd <= 0) return;
+    ctx.globalAlpha = a == null ? 1 : a; ctx.fillStyle = c; ctx.fillRect(x, y, wd, ht); ctx.globalAlpha = 1;
+  }
+  function hline(x0, y, x1, c, a, dash){
+    ctx.save(); ctx.strokeStyle = c; ctx.globalAlpha = a; ctx.lineWidth = 1; if (dash) ctx.setLineDash(dash);
+    ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x1, y); ctx.stroke(); ctx.restore();
+  }
+  function hatch(x, y, wd, ht, c){
+    if (ht <= 0) return;
+    ctx.save(); ctx.beginPath(); ctx.rect(x, y, wd, ht); ctx.clip();
+    ctx.strokeStyle = c; ctx.globalAlpha = .9; ctx.lineWidth = 1.5;
+    for (let d = -ht; d < wd + ht; d += 6){ ctx.beginPath(); ctx.moveTo(x + d, y + ht); ctx.lineTo(x + d + ht, y); ctx.stroke(); }
     ctx.restore();
   }
-  
-  ctx.fillStyle = totalSpent > income ? '#FF5050' : 'rgba(126, 217, 122,0.9)';
-  ctx.font = '500 11px "JetBrains Mono"';
-  ctx.textAlign = 'center';
-  ctx.fillText('TOTAL', totalX + barWidth / 2, baseY + 18);
-  ctx.font = '600 16px "JetBrains Mono"';
-  ctx.fillText('$' + totalSpent, totalX + barWidth / 2, baseY - totalHeight - 10);
-  
-  // Baseline
-  ctx.strokeStyle = 'rgba(126, 217, 122,0.2)';
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(0, baseY);
-  ctx.lineTo(w, baseY);
-  ctx.stroke();
-  
-  // Bloom
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
-  
-  // Vignette
-  const cx = w / 2;
-  const cy = h / 2;
-  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-}
+  function legendItem(x, y, c, label, a){
+    rect(x, y - 8, 8, 8, c, a == null ? .9 : a);
+    txt(label, x + 13, y, { c: DIM });
+    ctx.font = "500 11px " + MONO;
+    return x + 13 + ctx.measureText(label).width + 14;
+  }
 
-function animate() {
-  time += 0.016;
-  draw();
-  animFrame = requestAnimationFrame(animate);
-}
+  function drawBudget(w, h){
+    const m = budgetModel(shown);
+    const top = h * 0.14, bot = h - Math.max(56, h * 0.2);
+    const scale = (bot - top) / 3800;
+    const slot = w / 4, barW = Math.min(slot * 0.56, 96);
+    const xs = [0, 1, 2, 3].map(i => slot * i + slot / 2);
+    const yInc = bot - INCOME * scale;
 
-slider.addEventListener('input', (e) => {
-  variableCosts = parseInt(e.target.value);
-  updateUI();
-});
+    hline(0, bot, w, INK, .25);
+    hline(xs[0] - barW / 2, yInc, xs[3] + barW / 2, ACC, .55, [4, 4]);
 
-toggleButtons.forEach(btn => {
-  btn.addEventListener('click', () => {
-    toggleButtons.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const mode = btn.dataset.mode;
-    knowdropText.textContent = knowdrops[mode];
-  });
-});
+    // income
+    rect(xs[0] - barW / 2, yInc, barW, INCOME * scale, ACC, .85);
+    txt("INCOME", xs[0], bot + 14, { c: ACC, al: "center" });
+    txt(money(INCOME), xs[0], yInc - 7, { c: INK, al: "center", sz: 12 });
 
-resize();
-updateUI();
-animate();
+    // fixed
+    const hF = FIXED * scale;
+    rect(xs[1] - barW / 2, bot - hF, barW, hF, AMB, .9);
+    txt("FIXED", xs[1], bot + 14, { c: AMB, al: "center" });
+    txt(money(FIXED), xs[1], bot - hF - 7, { c: INK, al: "center", sz: 12 });
 
-window.addEventListener('resize', resize);
+    // variable
+    const hV = m.vc * scale;
+    rect(xs[2] - barW / 2, bot - hV, barW, hV, AMB, .5);
+    txt("VARIABLE", xs[2], bot + 14, { c: AMB, al: "center" });
+    txt(money(m.vc), xs[2], bot - hV - 7, { c: INK, al: "center", sz: 12 });
+
+    // total stacked
+    const x3 = xs[3] - barW / 2;
+    rect(x3, bot - hF, barW, hF, AMB, .9);
+    rect(x3, bot - hF - hV, barW, hV, AMB, .5);
+    const yTop = bot - m.total * scale;
+    if (m.left < 0){
+      rect(x3, yTop, barW, yInc - yTop, AMB, .35);
+      hatch(x3, yTop, barW, yInc - yTop, INK);
+    } else {
+      const gh = yTop - yInc;
+      ctx.save(); ctx.strokeStyle = ACC; ctx.globalAlpha = .6; ctx.setLineDash([3, 3]); ctx.lineWidth = 1;
+      ctx.strokeRect(x3 + .5, yInc + .5, barW - 1, Math.max(0, gh - 1)); ctx.restore();
+      if (gh >= 46) txt("LEFT " + money(m.left), xs[3], yInc + 14, { c: ACC, al: "center" });
+    }
+    txt("TOTAL OUT", xs[3], bot + 14, { c: m.left < 0 ? AMB : ACC, al: "center" });
+    txt(money(m.total), xs[3], yTop - 7, { c: INK, al: "center", sz: 12 });
+  }
+
+  function drawLoan(w, h){
+    const m = loanModel(shown);
+    const x0 = w * 0.06, x1 = w * 0.94, bw = x1 - x0;
+    const top = h * 0.08, bot = h - Math.max(56, h * 0.2);
+    const barY = top + 16, barH = Math.max(16, (bot - top) * 0.16);
+
+    txt("BORROWED " + money(m.P), x0, top + 9, { c: ACC });
+    txt("REPAY " + money(m.total), x1, top + 9, { c: INK, al: "right" });
+
+    const segs = [[m.P, ACC, .9], [m.interest, AMB, .9], [m.fees, DIM, .9]];
+    let x = x0;
+    segs.forEach(s => { const sw = s[0] / m.total * bw; if (sw > 0){ rect(x, barY, sw, barH, s[1], s[2]); x += sw; } });
+
+    const legY = barY + barH + 16;
+    let lx = x0;
+    lx = legendItem(lx, legY, ACC, "PRINCIPAL");
+    lx = legendItem(lx, legY, AMB, "INTEREST");
+    legendItem(lx, legY, DIM, "FEES");
+
+    const pipTop = legY + 10, pipH = bot - pipTop;
+    const n = m.n, r = m.rate / 1200, colW = bw / n;
+    const g = colW > 5 ? colW * 0.25 : Math.min(0.6, colW * 0.2);
+    const sc = pipH / (m.M + shown.fee);
+    let bal = m.P;
+    for (let i = 0; i < n; i++){
+      const it = bal * r, pr = m.M - it; bal -= pr;
+      const px = x0 + i * colW; let y = bot;
+      const hi = it * sc; rect(px, y - hi, colW - g, hi, AMB, .9); y -= hi;
+      const hp = pr * sc; rect(px, y - hp, colW - g, hp, ACC, .9); y -= hp;
+      const hf = shown.fee * sc; if (hf > 0) rect(px, y - hf, colW - g, hf, DIM, .9);
+    }
+    hline(x0, bot, x1, INK, .25);
+    txt("MONTH 1", x0, bot + 14, { c: DIM });
+    txt(n + " × " + money(m.M), (x0 + x1) / 2, bot + 14, { c: INK, al: "center" });
+    txt("MONTH " + n, x1, bot + 14, { c: DIM, al: "right" });
+  }
+
+  function drawHome(w, h){
+    const m = homeModel(shown);
+    const top = h * 0.08, bot = h - Math.max(56, h * 0.2);
+    const Y = t => top + t * (bot - top);
+    const x0 = w * 0.17, x1 = w * 0.94, maxW = (x1 - x0) - 56;
+
+    txt("PER MONTH", x0, top + 10, { c: DIM });
+    const scA = maxW / Math.max(m.M, m.rentM);
+    let y0 = Y(0.16), y1 = Y(0.30);
+    rect(x0, y0, m.M * scA, y1 - y0, ACC, .9);
+    txt("BUY", x0 - 8, (y0 + y1) / 2, { c: ACC, al: "right", bl: "middle" });
+    txt(money(m.M), x0 + m.M * scA + 8, (y0 + y1) / 2, { c: INK, bl: "middle" });
+    y0 = Y(0.36); y1 = Y(0.50);
+    rect(x0, y0, m.rentM * scA, y1 - y0, INK, .55);
+    txt("RENT", x0 - 8, (y0 + y1) / 2, { c: INK, al: "right", bl: "middle" });
+    txt(money(m.rentM), x0 + m.rentM * scA + 8, (y0 + y1) / 2, { c: INK, bl: "middle" });
+
+    txt("OVER " + m.yrs + " YEARS · RENT HELD FLAT", x0, Y(0.62), { c: DIM });
+    const scB = maxW / Math.max(m.mort, m.rentTot);
+    y0 = Y(0.70); y1 = Y(0.84);
+    rect(x0, y0, m.P * scB, y1 - y0, ACC, .9);
+    rect(x0 + m.P * scB, y0, m.interest * scB, y1 - y0, AMB, .9);
+    txt("BUY", x0 - 8, (y0 + y1) / 2, { c: ACC, al: "right", bl: "middle" });
+    txt(short(m.mort), x0 + m.mort * scB + 8, (y0 + y1) / 2, { c: INK, bl: "middle" });
+    y0 = Y(0.88); y1 = Y(1.0);
+    rect(x0, y0, m.rentTot * scB, y1 - y0, INK, .55);
+    txt("RENT", x0 - 8, (y0 + y1) / 2, { c: INK, al: "right", bl: "middle" });
+    txt(short(m.rentTot), x0 + m.rentTot * scB + 8, (y0 + y1) / 2, { c: INK, bl: "middle" });
+
+    let lx = x0;
+    lx = legendItem(lx, bot + 14, ACC, "PRINCIPAL");
+    lx = legendItem(lx, bot + 14, AMB, "INTEREST");
+    legendItem(lx, bot + 14, INK, "RENT", .55);
+  }
+
+  function draw(){
+    const w = cv.width / dpr, h = cv.height / dpr;
+    if (!w || !h) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = "rgba(0,0,0,1)"; ctx.fillRect(0, 0, w, h);
+    if (mode === "budget") drawBudget(w, h); else if (mode === "loan") drawLoan(w, h); else drawHome(w, h);
+
+    // bloom
+    bctx.setTransform(1, 0, 0, 1, 0, 0); bctx.clearRect(0, 0, buf.width, buf.height);
+    if (cv.width && cv.height) bctx.drawImage(cv, 0, 0);
+    ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
+    if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+    ctx.restore();
+
+    // vignette
+    const cx = w / 2, cy = h / 2;
+    const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
+  }
+
+  let raf = 0, last = 0;
+  function step(now){
+    const dt = Math.min(now - last, 50); last = now;
+    const k = 1 - Math.exp(-dt / 110);
+    let moving = false;
+    for (const key in vals){
+      if (key === "term" || key === "hterm"){ shown[key] = vals[key]; continue; }
+      const d = vals[key] - shown[key];
+      const tol = Math.max(Math.abs(vals[key]) * 0.0005, 0.01);
+      if (Math.abs(d) > tol){ shown[key] += d * k; moving = true; } else shown[key] = vals[key];
+    }
+    draw();
+    raf = moving ? requestAnimationFrame(step) : 0;
+  }
+  function startAnim(){
+    if (REDUCED){ Object.assign(shown, vals); draw(); return; }
+    if (!raf){ last = performance.now(); raf = requestAnimationFrame(step); }
+  }
+  function update(){ setTexts(); startAnim(); }
+
+  function resize(){
+    const r = wrap.getBoundingClientRect();
+    if (!r.width || !r.height) return;
+    cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr);
+    buf.width = cv.width; buf.height = cv.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    draw();
+  }
+
+  const modeBtns = document.querySelectorAll("#modeGroup .pill");
+  modeBtns.forEach(b => b.addEventListener("click", () => {
+    mode = b.dataset.mode;
+    modeBtns.forEach(x => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
+    ["budget", "loan", "home"].forEach(k => { document.getElementById("p-" + k).hidden = (k !== mode); });
+    hint.textContent = HINT[mode];
+    setTexts(); draw();
+  }));
+
+  const kdBtns = document.querySelectorAll("#kdGroup .pill");
+  const kdText = document.getElementById("kdText");
+  kdBtns.forEach(b => b.addEventListener("click", () => {
+    kdBtns.forEach(x => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
+    kdText.textContent = KD[b.dataset.kd];
+  }));
+  kdText.textContent = KD.credit;
+
+  window.addEventListener("resize", resize);
+  if (window.ResizeObserver) new ResizeObserver(resize).observe(wrap);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(draw);
+  setTexts();
+  resize();
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'budgeting-and-the-cost-of-borrowing'},'*');}catch(e){}}

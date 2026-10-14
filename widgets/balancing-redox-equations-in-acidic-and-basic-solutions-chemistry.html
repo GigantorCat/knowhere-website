@@ -311,45 +311,110 @@ canvas {
     transition-duration: 0.01ms !important;
   }
 }
+
+.tick-labels { position: relative; display: block; height: 14px; font-size: 10.5px; }
+.tick-labels span { position: absolute; top: 0; white-space: nowrap; }
+.tick-labels span:nth-child(1) { left: 0; }
+.tick-labels span:nth-child(2) { left: 50%; transform: translateX(-50%); }
+.tick-labels span:nth-child(3) { right: 0; }
+.canvas-overlay, .stat-label.case { text-transform: none; }
+
+.ladder-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.ladder-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--ink);
+}
+.step-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--acc);
+}
+.ladder { list-style: none; margin-bottom: 14px; }
+.ladder li {
+  border-left: 2px solid var(--line);
+  padding: 8px 0 8px 12px;
+  opacity: .55;
+}
+.ladder li.now { border-left-color: var(--acc); opacity: 1; }
+.ladder li.ext { border-left-style: dashed; }
+.ladder .st {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--ink-dim);
+  margin-bottom: 4px;
+}
+.ladder li.now .st { color: var(--acc); }
+.ladder .eq {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  color: var(--ink);
+  line-height: 1.5;
+}
+.ladder .nt {
+  font-size: 13.5px;
+  color: var(--ink-dim);
+  line-height: 1.5;
+  margin-top: 4px;
+}
+.step-row { display: flex; gap: 10px; margin-bottom: 16px; }
+.step-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  padding: 11px;
+  border-radius: 11px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink);
+  cursor: pointer;
+}
+.step-btn:disabled { opacity: .4; cursor: default; }
 </style>
 
 <div class="container">
-  <h2 class="sr-only">Interactive redox balancing visualisation showing electron transfer between half-equations in acidic and basic conditions</h2>
+  <h2 class="sr-only">Interactive redox balancing: iron and oxygen half-equations built step by step in acidic and basic solution, with electrons lost always equal to electrons gained</h2>
 
-  <h1>You Never Balance The Whole Equation — You Split It Into <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">Halves</span></h1>
+  <h1>You never balance the whole equation — you split it into <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">halves</span></h1>
   
-  <p class="intro">Redox reactions look chaotic until you realise the secret: oxidation and reduction happen independently, each in their own half-equation. Balance atoms and charge separately, then merge them back together. Drag the slider below to watch electrons flow from one half to the other.</p>
+  <p class="intro">A redox equation hides two jobs: one species loses electrons (oxidation) while another gains them (reduction). You write and balance each half on its own, then scale them so the electrons lost equal the electrons gained, and add. Here the example is rusting steel: iron gives up electrons at a paint chip and oxygen takes them at a wet patch nearby.</p>
 
   <div class="card">
     <div class="card-header">
-      <div class="card-label">Electron Transfer</div>
-      <div class="live-tag" id="liveTag">Steady transfer</div>
+      <div class="card-label">Electron transfer</div>
+      <div class="live-tag" id="liveTag">Balanced</div>
     </div>
-    <div class="card-hint">Drag to change how fast electrons move; the number transferred never changes</div>
+    <div class="card-hint">Move electrons from iron to oxygen through the steel and watch: every electron one side loses, the other side gains.</div>
     
     <div class="canvas-wrapper">
       <canvas id="rxCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">2e⁻ lost = 2e⁻ gained at every speed</div>
+      <div class="canvas-overlay" id="canvasOverlay">4 e⁻ lost = 4 e⁻ gained</div>
     </div>
 
     <div class="slider-row">
-      <div class="slider-label">Transfer speed</div>
+      <div class="slider-label">Electron flow</div>
       <input type="range" min="0" max="100" value="50" class="rx-slider" id="flowSlider">
       <div class="tick-labels">
-        <span>Paused</span>
-        <span>Steady</span>
-        <span>Fast</span>
+        <span>Zero flow</span>
+        <span>Balanced</span>
+        <span>Twice over</span>
       </div>
     </div>
 
     <div class="stat-row">
       <div class="stat">
-        <div class="stat-label">Oxidation e⁻ lost</div>
-        <div class="stat-value" style="color:var(--amb)" id="oxidationStat">2</div>
+        <div class="stat-label case">Oxidation e⁻ lost</div>
+        <div class="stat-value" style="color:var(--amb)" id="oxidationStat">4</div>
       </div>
       <div class="stat">
-        <div class="stat-label">Reduction e⁻ gained</div>
-        <div class="stat-value" style="color:var(--acc)" id="reductionStat">2</div>
+        <div class="stat-label case">Reduction e⁻ gained</div>
+        <div class="stat-value" style="color:var(--acc)" id="reductionStat">4</div>
       </div>
     </div>
   </div>
@@ -359,15 +424,25 @@ canvas {
       <button class="toggle-btn active" id="acidBtn">Acidic</button>
       <button class="toggle-btn" id="baseBtn">Basic</button>
     </div>
+
+    <div class="ladder-head">
+      <div class="ladder-title">Build the equation</div>
+      <div class="step-num" id="stepNum">Step 1 of 6</div>
+    </div>
+    <ol class="ladder" id="ladder"></ol>
+    <div class="step-row">
+      <button class="step-btn" id="stepBack">Back</button>
+      <button class="step-btn" id="stepNext">Next step</button>
+    </div>
     
     <div class="knowdrop-divider">
-      <p class="knowdrop-text" id="knowdropText">In acidic solution, you balance oxygen atoms by adding water molecules to the side that needs oxygen, then balance hydrogen by adding H⁺ ions to the opposite side. The acid provides an unlimited supply of hydrogen ions, so you can add as many as needed to balance each half-equation. After balancing atoms, you add electrons to balance charge — the side with more positive charge gets electrons. This works because the acidic environment naturally contains excess H⁺ ions that participate in the reaction mechanism.</p>
+      <p class="knowdrop-text" id="knowdropText">In acidic solution, balance each half in order: atoms other than O and H first, then oxygen by adding H₂O, then hydrogen by adding H⁺, then charge by adding electrons to the more positive side. Next multiply the halves so the electrons lost equal the electrons gained, add them, and cancel anything that appears on both sides. Finish with a check: every atom and the total charge must match on each side.</p>
     </div>
   </div>
 
   <div class="know-this">
     <div class="know-this-tag">Know This</div>
-    <div class="know-this-body">Redox balancing succeeds when you <span style="color:var(--acc)">split the overall equation into oxidation and reduction half-equations</span>, balance atoms (non-H/O first, then O with H₂O, then H with H⁺; in basic solution, add OH⁻ to both sides to turn that H⁺ into water), balance charge by adding electrons, then multiply so <span style="color:var(--acc)">electrons cancel when you add them together</span>.</div>
+    <div class="know-this-body">Redox balancing succeeds when you <span style="color:var(--acc)">split the overall equation into oxidation and reduction half-equations</span>, balance atoms (non-H/O first, then O with H₂O, then H with H⁺; extension: in basic solution, add OH⁻ to both sides to turn that H⁺ into water), balance charge by adding electrons, then multiply so <span style="color:var(--acc)">electrons cancel when you add them together</span>.</div>
   </div>
 
   <div class="footer">
@@ -376,236 +451,290 @@ canvas {
 </div>
 
 <script>
-const canvas = document.getElementById('rxCanvas');
-const ctx = canvas.getContext('2d', { alpha: false });
-const slider = document.getElementById('flowSlider');
-const liveTag = document.getElementById('liveTag');
-const canvasOverlay = document.getElementById('canvasOverlay');
-const oxidationStat = document.getElementById('oxidationStat');
-const reductionStat = document.getElementById('reductionStat');
-const acidBtn = document.getElementById('acidBtn');
-const baseBtn = document.getElementById('baseBtn');
-const knowdropText = document.getElementById('knowdropText');
+const canvas = document.getElementById("rxCanvas");
+const ctx = canvas.getContext("2d", { alpha: false });
+const slider = document.getElementById("flowSlider");
+const liveTag = document.getElementById("liveTag");
+const canvasOverlay = document.getElementById("canvasOverlay");
+const oxidationStat = document.getElementById("oxidationStat");
+const reductionStat = document.getElementById("reductionStat");
+const acidBtn = document.getElementById("acidBtn");
+const baseBtn = document.getElementById("baseBtn");
+const knowdropText = document.getElementById("knowdropText");
+const ladderEl = document.getElementById("ladder");
+const stepNum = document.getElementById("stepNum");
+const stepBack = document.getElementById("stepBack");
+const stepNext = document.getElementById("stepNext");
 
 const dpr = Math.min(window.devicePixelRatio || 1, 2);
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d', { alpha: false });
 
-let flowRate = 0.5;
-let electrons = [];
-let time = 0;
+/* Model: 2Fe + O2 + 4H+ -> 2Fe2+ + 2H2O (acid) or 2Fe + O2 + 2H2O -> 2Fe2+ + 4OH- (base).
+   Each Fe gives 2 e-, each O2 takes 4 e-. The slider is how many electrons have moved so far:
+   0 to 8, one at a time. 4 electrons (the middle) is exactly one balanced equation: 2 Fe and 1 O2. */
+const FE_ATOMS = 4, O2_MOLS = 2, E_MAX = 8;
+let flowVal = 50;
 let isAcidic = true;
+let step = 0;
+let bursts = [];
+let lastN = null;
+let time = 0;
 
-// Half-equations shown: Zn(s) → Zn²⁺(aq) + 2e⁻ and Cu²⁺(aq) + 2e⁻ → Cu(s)
-const E_COUNT = 2; // set by the species, not by speed
-const HALF_SUMMARY = `${E_COUNT}e⁻ lost = ${E_COUNT}e⁻ gained at every speed`;
+const acidText = "In acidic solution, balance each half in order: atoms other than O and H first, then oxygen by adding H₂O, then hydrogen by adding H⁺, then charge by adding electrons to the more positive side. Next multiply the halves so the electrons lost equal the electrons gained, add them, and cancel anything that appears on both sides. Finish with a check: every atom and the total charge must match on each side.";
 
-const acidText = "In acidic solution, you balance oxygen atoms by adding water molecules to the side that needs oxygen, then balance hydrogen by adding H⁺ ions to the opposite side. The acid provides an unlimited supply of hydrogen ions, so you can add as many as needed to balance each half-equation. After balancing atoms, you add electrons to balance charge — the side with more positive charge gets electrons. This works because the acidic environment naturally contains excess H⁺ ions that participate in the reaction mechanism.";
+const baseText = "Extension (not every course asks for this): to balance in basic solution, first balance exactly as in acid, with H₂O for oxygen and H⁺ for hydrogen. Then add as many OH⁻ ions to both sides as there are H⁺ ions, so each H⁺ + OH⁻ pair becomes one H₂O. Finally cancel any water molecules that appear on both sides. The electrons are untouched: the same number are lost and gained as in acid.";
 
-const baseText = "Extension (not every course asks for this): to balance in basic solution, first balance exactly as in acid, with H₂O for oxygen and H⁺ for hydrogen. Then add as many OH⁻ ions to both sides as there are H⁺ ions, so each H⁺ + OH⁻ pair becomes one H₂O. Finally cancel any water molecules that appear on both sides. The finished equation has OH⁻ and H₂O but no H⁺, which matches a basic solution.";
+const STEPS_ACID = [
+  { t: "Split into two halves", eq: ["Oxidation:  Fe → Fe²⁺", "Reduction:  O₂ → H₂O"], nt: "Each half holds only its own species. Iron needs no O or H work." },
+  { t: "Balance O with H₂O", eq: ["O₂ → 2H₂O"], nt: "Two O atoms on the left, so two waters on the right." },
+  { t: "Balance H with H⁺", eq: ["O₂ + 4H⁺ → 2H₂O"], nt: "2H₂O holds 4 H, so add 4H⁺ to the left." },
+  { t: "Balance charge with e⁻", eq: ["Fe → Fe²⁺ + 2e⁻", "O₂ + 4H⁺ + 4e⁻ → 2H₂O"], nt: "Iron: 0 on the left, +2 on the right, so 2e⁻ go on the right. Oxygen: +4 on the left, 0 on the right, so 4e⁻ go on the left." },
+  { t: "Multiply so e⁻ lost = e⁻ gained", eq: ["2Fe → 2Fe²⁺ + 4e⁻   (×2)", "O₂ + 4H⁺ + 4e⁻ → 2H₂O   (×1)"], nt: "Each Fe loses 2e⁻ and each O₂ gains 4e⁻, so two Fe for every O₂." },
+  { t: "Add the halves: the 4e⁻ cancel", eq: ["2Fe + O₂ + 4H⁺ → 2Fe²⁺ + 2H₂O"], nt: "Check: 2 Fe, 2 O and 4 H on each side, and a charge of +4 on each side." }
+];
+const STEPS_BASE = [
+  { t: "Extension: add 4OH⁻ to both sides", eq: ["2Fe + O₂ + 4H⁺ + 4OH⁻ → 2Fe²⁺ + 2H₂O + 4OH⁻", "2Fe + O₂ + 4H₂O → 2Fe²⁺ + 2H₂O + 4OH⁻"], nt: "One OH⁻ for each H⁺. Each H⁺ + OH⁻ pair becomes one H₂O.", ext: true },
+  { t: "Cancel water on both sides", eq: ["2Fe + O₂ + 2H₂O → 2Fe²⁺ + 4OH⁻"], nt: "Check: 2 Fe, 4 O and 4 H on each side, and a charge of 0 on each side. Still 4e⁻ lost and 4e⁻ gained.", ext: true }
+];
+function steps() { return isAcidic ? STEPS_ACID : STEPS_ACID.concat(STEPS_BASE); }
+
+function renderLadder() {
+  const all = steps();
+  if (step > all.length - 1) step = all.length - 1;
+  ladderEl.innerHTML = "";
+  for (let i = 0; i <= step; i++) {
+    const s = all[i];
+    const li = document.createElement("li");
+    if (i === step) li.classList.add("now");
+    if (s.ext) li.classList.add("ext");
+    const st = document.createElement("div"); st.className = "st"; st.textContent = (i + 1) + ". " + s.t; li.appendChild(st);
+    s.eq.forEach(e => { const d = document.createElement("div"); d.className = "eq"; d.textContent = e; li.appendChild(d); });
+    const nt = document.createElement("div"); nt.className = "nt"; nt.textContent = s.nt; li.appendChild(nt);
+    ladderEl.appendChild(li);
+  }
+  stepNum.textContent = "Step " + (step + 1) + " of " + all.length;
+  stepBack.disabled = step === 0;
+  stepNext.disabled = step === all.length - 1;
+}
+stepBack.addEventListener("click", () => { if (step > 0) { step--; renderLadder(); } });
+stepNext.addEventListener("click", () => { if (step < steps().length - 1) { step++; renderLadder(); } });
+
+function electronsMoved() { return Math.round(flowVal * E_MAX / 100); }
+
+function updateReadouts() {
+  const n = electronsMoved();
+  oxidationStat.textContent = n;
+  reductionStat.textContent = n;
+  canvasOverlay.textContent = n + " e⁻ lost = " + n + " e⁻ gained";
+  if (n === 0) liveTag.textContent = "Zero flow";
+  else if (n === 4) liveTag.textContent = "Balanced";
+  else if (n === E_MAX) liveTag.textContent = "Twice over";
+  else liveTag.textContent = "Transferring";
+}
 
 function resize() {
   const rect = canvas.getBoundingClientRect();
   if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
   canvas.width = Math.round(rect.width * dpr);
   canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
-
 resize();
-window.addEventListener('resize', resize);
+window.addEventListener("resize", resize);
 
-slider.addEventListener('input', (e) => {
-  flowRate = e.target.value / 100;
-  slider.style.setProperty('--fill', e.target.value + '%');
-  
-  // The slider sets speed only: electrons lost always equal electrons gained
-  if (flowRate < 0.05) {
-    liveTag.textContent = 'Paused';
-  } else if (flowRate < 0.35) {
-    liveTag.textContent = 'Slow transfer';
-  } else if (flowRate < 0.7) {
-    liveTag.textContent = 'Steady transfer';
-  } else {
-    liveTag.textContent = 'Fast transfer';
-  }
-  canvasOverlay.textContent = HALF_SUMMARY;
-  oxidationStat.textContent = E_COUNT;
-  reductionStat.textContent = E_COUNT;
+slider.addEventListener("input", (e) => {
+  flowVal = parseFloat(e.target.value);
+  slider.style.setProperty("--fill", e.target.value + "%");
+  updateReadouts();
 });
+slider.style.setProperty("--fill", "50%");
 
-slider.style.setProperty('--fill', '50%');
-
-acidBtn.addEventListener('click', () => {
+acidBtn.addEventListener("click", () => {
   if (!isAcidic) {
     isAcidic = true;
-    acidBtn.classList.add('active');
-    baseBtn.classList.remove('active');
+    acidBtn.classList.add("active");
+    baseBtn.classList.remove("active");
     knowdropText.textContent = acidText;
+    renderLadder();
   }
 });
-
-baseBtn.addEventListener('click', () => {
+baseBtn.addEventListener("click", () => {
   if (isAcidic) {
     isAcidic = false;
-    baseBtn.classList.add('active');
-    acidBtn.classList.remove('active');
+    baseBtn.classList.add("active");
+    acidBtn.classList.remove("active");
     knowdropText.textContent = baseText;
+    if (step === STEPS_ACID.length - 1) step = STEPS_ACID.length;
+    renderLadder();
   }
 });
 
-class Electron {
-  constructor() {
-    this.reset();
-  }
-  
-  reset() {
-    this.x = 0.15 + Math.random() * 0.15;
-    this.y = Math.random();
-    this.speed = 0.008 + Math.random() * 0.012;
-    this.phase = Math.random() * Math.PI * 2;
-    this.wobbleSpeed = 1.5 + Math.random() * 2;
-  }
-  
-  update(w, h) {
-    this.x += this.speed * flowRate;
-    if (this.x > 0.85) this.reset();
-  }
+function txt(s, x, y, size, col, align, weight) {
+  ctx.font = (weight || 500) + " " + size + "px JetBrains Mono, monospace";
+  ctx.fillStyle = col;
+  ctx.textAlign = align || "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(s, x, y);
 }
-
-for (let i = 0; i < 24; i++) {
-  electrons.push(new Electron());
+function ball(x, y, r, fill, stroke) {
+  ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+  ctx.fillStyle = fill; ctx.fill();
+  if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = 1.5; ctx.stroke(); }
 }
 
 function draw() {
   time += 0.016;
   const w = canvas.width / dpr;
   const h = canvas.height / dpr;
-  
-  ctx.fillStyle = '#000';
+  if (!w || !h) { requestAnimationFrame(draw); return; }
+  const n = electronsMoved();
+  const ovIn = getComputedStyle(canvasOverlay).position === "absolute" ? canvasOverlay.getBoundingClientRect().height : 0;
+  const top = 10, bot = h - ovIn - 8, H = bot - top;
+  const fs = Math.max(11, Math.min(15, Math.round(Math.min(w / 30, H / 20))));
+
+  ctx.fillStyle = "#000";
   ctx.fillRect(0, 0, w, h);
-  
-  // Oxidation zone (left)
-  const oxGrad = ctx.createRadialGradient(w * 0.22, h * 0.5, 0, w * 0.22, h * 0.5, w * 0.25);
-  oxGrad.addColorStop(0, 'rgba(250,199,117,0.35)');
-  oxGrad.addColorStop(0.5, 'rgba(250,199,117,0.12)');
-  oxGrad.addColorStop(1, 'rgba(250,199,117,0)');
-  ctx.fillStyle = oxGrad;
-  ctx.fillRect(0, 0, w * 0.45, h);
-  
-  // Reduction zone (right)
-  const redGrad = ctx.createRadialGradient(w * 0.78, h * 0.5, 0, w * 0.78, h * 0.5, w * 0.25);
-  redGrad.addColorStop(0, 'rgba(62, 154, 214,0.35)');
-  redGrad.addColorStop(0.5, 'rgba(62, 154, 214,0.12)');
-  redGrad.addColorStop(1, 'rgba(62, 154, 214,0)');
-  ctx.fillStyle = redGrad;
-  ctx.fillRect(w * 0.55, 0, w * 0.45, h);
-  
-  // Oxidation label
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.font = '700 15px "Geist"';
-  ctx.fillStyle = 'rgba(250,199,117,0.9)';
-  ctx.textAlign = 'center';
-  ctx.fillText('OXIDATION', w * 0.22, h * 0.2);
-  ctx.font = '400 12px "JetBrains Mono"';
-  ctx.fillStyle = 'rgba(250,199,117,0.6)';
-  ctx.font = '400 11px "JetBrains Mono"';
-  ctx.fillText('Zn → Zn²⁺ + 2e⁻', w * 0.22, h * 0.29);
-  ctx.restore();
-  
-  // Reduction label
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.font = '700 15px "Geist"';
-  ctx.fillStyle = 'rgba(62, 154, 214,0.9)';
-  ctx.textAlign = 'center';
-  ctx.fillText('REDUCTION', w * 0.78, h * 0.2);
-  ctx.font = '400 12px "JetBrains Mono"';
-  ctx.fillStyle = 'rgba(62, 154, 214,0.6)';
-  ctx.font = '400 11px "JetBrains Mono"';
-  ctx.fillText('Cu²⁺ + 2e⁻ → Cu', w * 0.78, h * 0.29);
-  ctx.restore();
-  
-  // Transfer beam
-  if (flowRate > 0.1) {
-    const beamAlpha = Math.min(flowRate * 0.7, 0.5);
-    const beamGrad = ctx.createLinearGradient(w * 0.3, h * 0.5, w * 0.7, h * 0.5);
-    beamGrad.addColorStop(0, `rgba(250,199,117,0)`);
-    beamGrad.addColorStop(0.3, `rgba(62, 154, 214,${beamAlpha * 0.3})`);
-    beamGrad.addColorStop(0.7, `rgba(62, 154, 214,${beamAlpha * 0.6})`);
-    beamGrad.addColorStop(1, `rgba(62, 154, 214,${beamAlpha})`);
-    
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.fillStyle = beamGrad;
-    ctx.fillRect(w * 0.3, h * 0.45, w * 0.4, h * 0.1);
-    ctx.restore();
+
+  /* half-equation headings, shrunk to fit their column */
+  const xL = w * 0.25, xR = w * 0.73, colW = w * 0.46;
+  function fit(str, size, weight) {
+    let f = size;
+    ctx.font = (weight || 500) + " " + f + "px JetBrains Mono, monospace";
+    while (f > 11 && ctx.measureText(str).width > colW) { f--; ctx.font = (weight || 500) + " " + f + "px JetBrains Mono, monospace"; }
+    return f;
   }
-  
-  // Electrons
-  electrons.forEach(e => {
-    e.update(w, h);
-    const wobble = Math.sin(time * e.wobbleSpeed + e.phase) * h * 0.08;
-    const px = e.x * w;
-    const py = h * 0.5 + wobble;
-    
-    // Electron glow
-    const eGrad = ctx.createRadialGradient(px, py, 0, px, py, 8);
-    eGrad.addColorStop(0, 'rgba(62, 154, 214,0.9)');
-    eGrad.addColorStop(0.4, 'rgba(62, 154, 214,0.4)');
-    eGrad.addColorStop(1, 'rgba(62, 154, 214,0)');
-    
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.fillStyle = eGrad;
-    ctx.beginPath();
-    ctx.arc(px, py, 8, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-    
-    // Electron core
-    ctx.fillStyle = '#3E9AD6';
-    ctx.beginPath();
-    ctx.arc(px, py, 2.5, 0, Math.PI * 2);
-    ctx.fill();
-    
-    // Electron trail
-    for (let i = 1; i <= 4; i++) {
-      const trailX = px - i * 6 * flowRate;
-      const trailAlpha = (1 - i / 4) * 0.4;
-      ctx.fillStyle = `rgba(62, 154, 214,${trailAlpha})`;
-      ctx.beginPath();
-      ctx.arc(trailX, py, 2 * (1 - i / 5), 0, Math.PI * 2);
-      ctx.fill();
+  const redEq = isAcidic ? "O₂ + 4H⁺ + 4e⁻ → 2H₂O" : "O₂ + 2H₂O + 4e⁻ → 4OH⁻";
+  const eqF = Math.min(fit("Fe → Fe²⁺ + 2e⁻", fs), fit(redEq, fs));
+  txt("OXIDATION", xL, top + fs * 0.9, fs, "rgba(250,199,117,0.95)", "center", 700);
+  txt("Fe → Fe²⁺ + 2e⁻", xL, top + fs * 2.3, eqF, "rgba(250,199,117,0.85)");
+  txt("REDUCTION", xR, top + fs * 0.9, fs, "rgba(62, 154, 214,1)", "center", 700);
+  txt(redEq, xR, top + fs * 2.3, eqF, "rgba(62, 154, 214,0.9)");
+
+  /* steel plate along the bottom of the scene */
+  const tallyH = fs * (w < 560 ? 3.2 : 2.6);
+  const plateH = Math.max(28, H * 0.16);
+  const plateY = bot - tallyH - plateH;
+  const pl = w * 0.03, pr = w * 0.97;
+  ctx.fillStyle = "#2a2f33";
+  ctx.fillRect(pl, plateY, pr - pl, plateH);
+  ctx.strokeStyle = "#4a5258"; ctx.lineWidth = 1; ctx.strokeRect(pl, plateY, pr - pl, plateH);
+  txt("steel: electrons travel through the metal", (pl + pr) / 2, plateY + plateH * 0.62, Math.max(11, fs - 2), "rgba(237,237,232,0.7)");
+  /* paint everywhere except the chip (left) and the wet patch (right) */
+  const chipL = w * 0.07, chipR = w * 0.43, wetL = w * 0.5, wetR = w * 0.95;
+  ctx.fillStyle = "#5b6b72";
+  ctx.fillRect(pl, plateY - 5, chipL - pl, 5);
+  ctx.fillRect(chipR, plateY - 5, wetL - chipR, 5);
+  ctx.fillRect(wetR, plateY - 5, pr - wetR, 5);
+
+  /* scene band between headings and plate */
+  const bandTop = top + fs * 3.4;
+  const bandH = plateY - bandTop;
+
+  /* water film over the chip and the drop on the wet patch */
+  const filmH = bandH * 0.6;
+  ctx.fillStyle = "rgba(90,150,200,0.13)";
+  ctx.beginPath();
+  ctx.moveTo(chipL - 6, plateY);
+  ctx.bezierCurveTo(chipL, plateY - filmH, chipR, plateY - filmH, chipR + 6, plateY);
+  ctx.fill();
+  ctx.strokeStyle = "rgba(120,180,230,0.35)"; ctx.lineWidth = 1.2; ctx.stroke();
+  txt("paint chip", (chipL + chipR) / 2, plateY - filmH * 0.86, Math.max(11, fs - 2), "rgba(237,237,232,0.6)");
+  const dropCx = (wetL + wetR) / 2, dropRx = (wetR - wetL) / 2, dropRy = bandH * 0.9;
+  ctx.beginPath();
+  ctx.ellipse(dropCx, plateY, dropRx, dropRy, 0, Math.PI, 2 * Math.PI);
+  ctx.fillStyle = "rgba(90,150,200,0.16)"; ctx.fill();
+  ctx.strokeStyle = "rgba(120,180,230,0.45)"; ctx.lineWidth = 1.5; ctx.stroke();
+  txt("wet patch", dropCx, plateY - dropRy - fs * 0.6 > bandTop ? plateY - dropRy - fs * 0.6 : plateY - dropRy * 0.88, Math.max(11, fs - 2), "rgba(237,237,232,0.6)");
+
+  /* iron atoms at the chip: each starts with 2 electrons to give */
+  const r = Math.max(10, Math.min(bandH * 0.11, w * 0.03));
+  const ionised = Math.floor(n / 2), half = n % 2;
+  for (let i = 0; i < FE_ATOMS; i++) {
+    const x = chipL + (chipR - chipL) * (i + 0.5) / FE_ATOMS;
+    const left = i < ionised ? 0 : (i === ionised ? 2 - half : 2);
+    if (left === 0) {
+      const y = plateY - r - filmH * 0.4 + Math.sin(time * 1.5 + i) * 3;
+      ball(x, y, r * 1.25, "rgba(250,199,117,0.3)", "rgba(250,199,117,0.95)");
+      txt("Fe²⁺", x, y, Math.max(11, Math.round(r * 0.72)), "#FAC775", "center", 700);
+    } else {
+      const y = plateY - r - 1;
+      ball(x, y, r * 1.1, "#6d7a80", "#9aa7ad");
+      txt("Fe", x, y, Math.max(11, Math.round(r * 0.85)), "#0B0D0C", "center", 700);
+      for (let k = 0; k < left; k++) ball(x - r * 0.75 + k * r * 1.5, y - r * 1.45, Math.max(3, r * 0.26), "#3E9AD6");
     }
+  }
+
+  /* the drop: two O2 molecules, each needs 4 electrons */
+  const full = Math.floor(n / 4), part = n % 4;
+  const mx = [dropCx - dropRx * 0.45, dropCx + dropRx * 0.45];
+  const my = plateY - dropRy * 0.5;
+  for (let j = 0; j < O2_MOLS; j++) {
+    const got = j < full ? 4 : (j === full ? part : 0);
+    const x = mx[j], y = my + Math.sin(time * 1.2 + j * 2) * 3;
+    if (got === 4) {
+      if (isAcidic) {
+        txt("2H₂O", x, y, Math.max(12, Math.round(r * 1.0)), "#7fd4c9", "center", 700);
+      } else {
+        txt("4OH⁻", x, y, Math.max(12, Math.round(r * 1.0)), "#7fd4c9", "center", 700);
+      }
+      txt("made", x, y + r * 1.3, Math.max(11, Math.round(r * 0.75)), "rgba(237,237,232,0.6)");
+    } else {
+      ball(x - r * 0.55, y, r * 0.9, "#c94f4f", "#e57b7b");
+      ball(x + r * 0.55, y, r * 0.9, "#c94f4f", "#e57b7b");
+      txt("O₂", x, y, Math.max(11, Math.round(r * 0.8)), "#fff", "center", 700);
+      for (let k = 0; k < 4; k++) {
+        const fx = x - r * 1.35 + k * r * 0.9, fy = y - r * 1.6;
+        ctx.beginPath(); ctx.arc(fx, fy, Math.max(3, r * 0.26), 0, Math.PI * 2);
+        if (k < got) { ctx.fillStyle = "#3E9AD6"; ctx.fill(); }
+        else { ctx.strokeStyle = "rgba(62, 154, 214,0.6)"; ctx.lineWidth = 1.2; ctx.stroke(); }
+      }
+    }
+  }
+  /* the other reactant in the drop: H+ (acid) or H2O (base), used up as each O2 is reduced */
+  const left2 = isAcidic ? 8 - 4 * full : 4 - 2 * full;
+  const lab = isAcidic ? "H⁺" : "H₂O";
+  const cols = 4;
+  for (let k = 0; k < left2; k++) {
+    const cx = dropCx + (k % cols - (cols - 1) / 2) * dropRx * 0.36;
+    const cy = plateY - dropRy * 0.15 - Math.floor(k / cols) * fs * 1.25 + Math.sin(time + k) * 1.5;
+    txt(lab, cx, cy, Math.max(11, fs - 1), "rgba(160,200,240,0.85)");
+  }
+
+  /* electrons in transit: a burst whenever the slider moves electrons */
+  if (lastN === null) lastN = n;
+  if (n > lastN) for (let k = 0; k < n - lastN; k++) bursts.push({ p: -k * 0.18 });
+  lastN = n;
+  bursts.forEach(b => { b.p += 0.022; });
+  bursts = bursts.filter(b => b.p < 1);
+  const ey = plateY + plateH * 0.3;
+  bursts.forEach(b => {
+    if (b.p < 0) return;
+    const x = (chipL + chipR) / 2 + (dropCx - (chipL + chipR) / 2) * b.p;
+    const g = ctx.createRadialGradient(x, ey, 0, x, ey, 9);
+    g.addColorStop(0, "rgba(62, 154, 214,1)"); g.addColorStop(1, "rgba(62, 154, 214,0)");
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, ey, 9, 0, Math.PI * 2); ctx.fill();
   });
+
+  /* tally under the plate, from the same count as the readouts */
+  const feDone = Math.floor(n / 2), oDone = Math.floor(n / 4);
+  let tally = feDone + " Fe²⁺ formed  ·  " + oDone + " O₂ fully reduced";
   
-  // Bloom
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
-  
-  // Vignette
-  const vig = ctx.createRadialGradient(w * 0.5, h * 0.5, h * 0.28, w * 0.5, h * 0.5, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-  
+  const done = n === 4 ? "= one balanced equation" : n === 8 ? "= two balanced equations" : "";
+  const tc = n % 4 === 0 && n > 0 ? "#3E9AD6" : "rgba(237,237,232,0.75)";
+  if (done && w < 560) {
+    txt(tally, w / 2, bot - tallyH * 0.62, Math.max(11, fs - 1), tc);
+    txt(done, w / 2, bot - tallyH * 0.18, Math.max(11, fs - 1), tc);
+  } else {
+    txt(done ? tally + "  " + done : tally, w / 2, bot - tallyH * 0.45, Math.max(11, fs - 1), tc);
+  }
+
   requestAnimationFrame(draw);
 }
 
+renderLadder();
+updateReadouts();
 draw();
 </script>
+
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'balancing-redox-equations-in-acidic-and-basic-solutions'},'*');}catch(e){}}
 if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

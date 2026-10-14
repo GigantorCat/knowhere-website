@@ -9,28 +9,22 @@ body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body
   --bg: #0B0D0C;
   --bg2: #12160F;
   --acc: #7870C0;
-  --ag: rgba(120, 112, 192, .7);
-  --ag1: rgba(120, 112, 192, .12);
-  --ag2: rgba(120, 112, 192, .45);
+  --acc-rgb: 120, 112, 192;
+  --ag:  rgba(var(--acc-rgb),.7);
+  --ag1: rgba(var(--acc-rgb),.12);
+  --ag2: rgba(var(--acc-rgb),.45);
   --amb: #FAC775;
+  --amb-rgb: 250, 199, 117;
   --ink: #EDEDE8;
+  --ink-rgb: 237, 237, 232;
   --ink-dim: #8C9389;
+  --dim-rgb: 140, 147, 137;
   --line: #262B26;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
-}
+.sr-only { position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0; }
 
 body {
   background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
@@ -40,10 +34,7 @@ body {
   color: var(--ink);
 }
 
-.container {
-  max-width: 720px;
-  margin: 0 auto;
-}
+.luc-container { max-width: 720px; margin: 0 auto; }
 
 h1 {
   font-size: clamp(26px, 6.5vw, 44px);
@@ -53,7 +44,7 @@ h1 {
   margin-bottom: 14px;
 }
 
-.intro {
+.luc-intro {
   font-size: 15.5px;
   font-weight: 400;
   color: var(--ink-dim);
@@ -62,7 +53,7 @@ h1 {
   margin-bottom: 28px;
 }
 
-.card {
+.luc-card {
   background: linear-gradient(180deg, #12160F, #0d100b);
   border: 1px solid var(--line);
   border-radius: 18px;
@@ -71,598 +62,468 @@ h1 {
   margin-bottom: 18px;
 }
 
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
+.luc-head { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:6px; }
+.luc-label { font-family:'JetBrains Mono',monospace; font-size:13px; text-transform:uppercase; color:#fff; }
+.luc-live { font-family:'JetBrains Mono',monospace; font-size:11px; text-transform:uppercase; color:var(--acc); text-align:right; }
+.luc-hint { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-dim); margin-bottom:14px; line-height:1.5; }
+
+.luc-wrap {
+  position:relative; width:100%; aspect-ratio:16/9; border-radius:12px; overflow:hidden;
+  background:#000; box-shadow:inset 0 0 0 1px var(--ag1);
+}
+.luc-wrap canvas { position:absolute; inset:0; width:100%; height:100%; display:block; }
+.luc-overlay {
+  position:absolute; left:0; right:0; bottom:0;
+  background:rgba(0,0,0,0.55); backdrop-filter:blur(4px); padding:9px 16px;
+  font-family:'JetBrains Mono',monospace; font-size:14px; text-transform:uppercase;
+  color:var(--acc); text-align:center; line-height:1.3;
 }
 
-.card-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  color: white;
+.luc-legend { display:flex; gap:16px; flex-wrap:wrap; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-dim); margin:10px 0 14px; }
+.luc-legend span { display:inline-flex; align-items:center; gap:6px; }
+.luc-sw { width:11px; height:11px; border-radius:3px; display:inline-block; }
+.luc-sw.farm { background:rgba(var(--acc-rgb),.5); }
+.luc-sw.house { background:var(--amb); }
+.luc-sw.press { background:rgba(var(--amb-rgb),.3); }
+
+.luc-title { font-family:'JetBrains Mono',monospace; font-size:10.5px; text-transform:uppercase; color:var(--ink-dim); margin:14px 0 8px; letter-spacing:.04em; }
+.luc-pills { display:flex; flex-wrap:wrap; gap:8px; }
+.luc-pill {
+  font-family:'JetBrains Mono',monospace; font-size:12px; line-height:1.25;
+  padding:8px 13px; border-radius:999px; cursor:pointer;
+  background:#12160F; border:1px solid var(--line); color:var(--ink-dim);
+  display:flex; flex-direction:column; align-items:center; transition:all .2s;
+}
+.luc-pill small { display:block; font-size:11px; opacity:.8; margin-top:2px; }
+.luc-pill[aria-pressed="true"] {
+  background:rgba(var(--acc-rgb),.1); border-color:var(--acc); color:var(--acc);
+  box-shadow:0 0 22px rgba(var(--acc-rgb),.18);
 }
 
-.live-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--acc);
-}
-
-.card-hint {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--ink-dim);
-  margin-bottom: 14px;
-}
-
-.canvas-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16/9;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
-  box-shadow: inset 0 0 0 1px var(--ag1);
-  margin-bottom: 16px;
-}
-
-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.canvas-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(4px);
-  padding: 9px 16px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  text-transform: uppercase;
-  color: var(--acc);
-  text-align: center;
-}
-
-.driver-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.driver-btn {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14.5px;
-  padding: 12px;
-  border-radius: 11px;
-  border: 1px solid var(--line);
-  background: #12160F;
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.driver-btn.active {
-  background: rgba(120,112,192,.1);
-  border-color: var(--acc);
-  color: var(--acc);
-  box-shadow: 0 0 22px rgba(120,112,192,.18);
-}
-
-.slider-container {
-  margin-top: 16px;
-}
-
-.slider-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 10px;
-}
+.luc-row { display:flex; justify-content:space-between; align-items:baseline; font-family:'JetBrains Mono',monospace; font-size:10.5px; text-transform:uppercase; color:var(--ink-dim); margin:14px 0 8px; }
+.luc-row b { font-weight:500; color:var(--ink); font-size:12px; }
 
 .luc-slider {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  height: 4px;
-  border-radius: 3px;
-  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
-  outline: none;
-  margin-bottom: 8px;
+  -webkit-appearance:none; appearance:none; width:100%; height:4px; border-radius:3px;
+  background:linear-gradient(90deg, var(--acc) var(--fill,0%), #23291f var(--fill,0%));
+  outline:none; display:block;
 }
-
 .luc-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow 0.15s;
+  -webkit-appearance:none; appearance:none; width:20px; height:20px; border-radius:50%;
+  background:#0B0D0C; border:2px solid var(--acc);
+  box-shadow:0 0 16px var(--ag), 0 0 4px var(--ag); cursor:pointer; transition:box-shadow .15s;
 }
-
-.luc-slider::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
+.luc-slider::-webkit-slider-thumb:hover { box-shadow:0 0 24px var(--acc), 0 0 8px var(--ag); }
 .luc-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow 0.15s;
+  width:20px; height:20px; border-radius:50%; background:#0B0D0C; border:2px solid var(--acc);
+  box-shadow:0 0 16px var(--ag), 0 0 4px var(--ag); cursor:pointer; transition:box-shadow .15s;
 }
+.luc-slider::-moz-range-thumb:hover { box-shadow:0 0 24px var(--acc), 0 0 8px var(--ag); }
 
-.luc-slider::-moz-range-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
+.luc-ticks { display:flex; justify-content:space-between; font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--ink-dim); margin-top:6px; }
+.luc-ticks-abs { position:relative; height:14px; margin-top:6px; font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--ink-dim); }
+.luc-ticks-abs span { position:absolute; top:0; }
 
-.tick-labels {
-  display: flex;
-  justify-content: space-between;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--ink-dim);
-}
+.luc-stats { display:grid; grid-template-columns:1fr 1fr; gap:16px; padding-top:16px; margin-top:18px; border-top:1px solid var(--line); }
+.luc-stat { display:flex; flex-direction:column; gap:6px; }
+.luc-stat-l { font-family:'JetBrains Mono',monospace; font-size:10.5px; text-transform:uppercase; color:var(--ink-dim); }
+.luc-stat-v { font-family:'JetBrains Mono',monospace; font-size:24px; font-weight:500; }
 
-.stat-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
+.luc-toggles { display:flex; gap:10px; }
+.luc-toggle {
+  flex:1; font-family:'JetBrains Mono',monospace; font-size:14.5px; padding:12px; border-radius:999px;
+  border:1px solid var(--line); background:#12160F; color:var(--ink-dim); cursor:pointer; transition:all .2s;
 }
+.luc-toggle[aria-pressed="true"] {
+  background:rgba(var(--acc-rgb),.1); border-color:var(--acc); color:var(--acc);
+  box-shadow:0 0 22px rgba(var(--acc-rgb),.18);
+}
+.luc-drop { border-top:1px solid var(--line); padding-top:16px; margin-top:16px; }
+.luc-drop p { font-size:14.5px; font-weight:400; line-height:1.65; color:var(--ink); }
 
-.stat {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+.luc-know {
+  border-left:3px solid var(--acc); padding:16px 18px;
+  background:linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius:0 12px 12px 0; margin-bottom:0; padding-bottom:16px;
 }
-
-.stat-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-}
-
-.stat-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 24px;
-  font-weight: 500;
-}
-
-.toggle-card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 18px;
-}
-
-.toggle-buttons {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.toggle-btn {
-  flex: 1;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14.5px;
-  padding: 12px;
-  border-radius: 11px;
-  border: 1px solid var(--line);
-  background: #12160F;
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.toggle-btn.active {
-  background: rgba(120,112,192,.1);
-  border-color: var(--acc);
-  color: var(--acc);
-  box-shadow: 0 0 22px rgba(120,112,192,.18);
-}
-
-.knowdrop-divider {
-  border-top: 1px solid var(--line);
-  margin-bottom: 16px;
-}
-
-.knowdrop-text {
-  font-size: 14.5px;
-  font-weight: 400;
-  line-height: 1.65;
-  color: var(--ink);
-}
-
-.know-this {
-  border-left: 3px solid var(--acc);
-  padding: 16px 18px;
-  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
-  border-radius: 0 12px 12px 0;
-  margin-bottom: 0;
-}
-
-.know-this-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--acc);
-  margin-bottom: 10px;
-}
-
-.know-this-body {
-  font-size: 17.4px;
-  font-weight: 400;
-  line-height: 1.55;
-  color: var(--ink);
-}
+.luc-know-tag { display:flex; align-items:center; gap:9px; margin-bottom:10px; font-family:'JetBrains Mono',monospace; font-size:13px; text-transform:uppercase; letter-spacing:.15em; color:var(--acc); }
+.luc-dot { width:6px; height:6px; border-radius:50%; background:var(--acc); box-shadow:0 0 8px var(--acc); animation:lucPulse 2.4s ease-in-out infinite; }
+@keyframes lucPulse { 0%,100%{opacity:1} 50%{opacity:.45} }
+.luc-know-body { font-size:17.4px; font-weight:400; line-height:1.55; color:var(--ink); }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
+  *, *::before, *::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
 }
-
+@media (max-width: 560px) {
+  .luc-overlay { font-size:12px; padding:8px 12px; }
+}
 @media (max-width: 360px) {
-  body { padding: 24px 12px 0; }
-  .card, .toggle-card { padding: 12px; }
+  body { padding:24px 12px 0; }
+  .luc-card { padding:12px; }
 }
 </style>
 
-<div class="container">
-  <h2 class="sr-only">Interactive visualisation: Drivers of Land Use Change</h2>
-  
-  <h1>No single cause changes a <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">landscape</span></h1>
-  
-  <p class="intro">When farmland becomes housing estates or factories become parks, it's never just economics or policy or population alone — land use shifts through the combined pressure of multiple drivers acting together. Activate drivers below to see how forces stack and intensify the pressure for change.</p>
+<div class="luc-container">
+  <h2 class="sr-only">Interactive model of a fringe farmland parcel converting to housing under land value, population growth, a transport link, terrain and a planning strategy</h2>
 
-  <div class="card">
-    <div class="card-header">
-      <div class="card-label">Driver Interaction</div>
-      <div class="live-tag" id="activeCount">0 active</div>
+  <h1>Drivers push on farmland. Terrain and planners push <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">back</span></h1>
+
+  <p class="luc-intro">A parcel on the edge of a growing town does not change for one reason. Rising land value, new households and a new transport link each push cells from farmland to housing, while the hill behind the parcel and the planning strategy decide how far that push gets. Add years, switch the drivers on one at a time, and watch which cells convert first and which ones never do.</p>
+
+  <div class="luc-card">
+    <div class="luc-head">
+      <div class="luc-label">Fringe parcel model</div>
+      <div class="luc-live" id="lucLive">0 drivers · no strategy</div>
     </div>
-    <div class="card-hint">Tap drivers to activate — watch pressure build on the landscape</div>
-    
-    <div class="driver-grid">
-      <button class="driver-btn" data-driver="economic">Economic</button>
-      <button class="driver-btn" data-driver="social">Social</button>
-      <button class="driver-btn" data-driver="tech">Technology</button>
-      <button class="driver-btn" data-driver="policy">Policy</button>
+    <div class="luc-hint">Add years. Switch a driver on. Choose a planning strategy and watch what happens beyond the dashed line.</div>
+
+    <div class="luc-wrap" id="lucWrap">
+      <canvas id="lucCanvas" aria-label="Grid of farmland cells beside a town, a road and a hill, showing which cells convert to housing"></canvas>
+      <div class="luc-overlay" id="lucOverlay">Today: all 144 cells are farmland</div>
     </div>
-    
-    <div class="canvas-wrapper">
-      <canvas id="canvas"></canvas>
-      <div class="canvas-overlay" id="canvasTag">Baseline land use — low change pressure</div>
+    <div class="luc-legend">
+      <span><i class="luc-sw farm"></i>farmland</span>
+      <span><i class="luc-sw press"></i>pressure building</span>
+      <span><i class="luc-sw house"></i>converted to housing</span>
     </div>
 
-    <div class="slider-container">
-      <div class="slider-label">Time progression</div>
-      <input type="range" min="0" max="100" value="0" class="luc-slider" id="timeSlider">
-      <div class="tick-labels">
-        <span>Now</span>
-        <span>5 years</span>
-        <span>10 years</span>
+    <div class="luc-title">Drivers (several can be on)</div>
+    <div class="luc-pills" role="group" aria-label="Drivers of change" data-kw-multi id="lucDrivers">
+      <button class="luc-pill" type="button" data-key="econ" aria-pressed="false">Land value<small>developers, landholders</small></button>
+      <button class="luc-pill" type="button" data-key="pop" aria-pressed="false">Population growth<small>new households</small></button>
+      <button class="luc-pill" type="button" data-key="transport" aria-pressed="false">Transport link<small>state investment</small></button>
+    </div>
+
+    <div class="luc-title">Planning strategy (council and state minister)</div>
+    <div class="luc-pills" role="group" aria-label="Planning strategy" id="lucPlans">
+      <button class="luc-pill" type="button" data-plan="none" aria-pressed="true">No strategy</button>
+      <button class="luc-pill" type="button" data-plan="release" aria-pressed="false">Release land<small>rezoning</small></button>
+      <button class="luc-pill" type="button" data-plan="boundary" aria-pressed="false">Growth boundary<small>green wedge beyond</small></button>
+    </div>
+
+    <div class="luc-row"><span>Years ahead</span><b id="lucYearsV">0 yrs</b></div>
+    <input type="range" class="luc-slider" id="lucYears" aria-label="Years ahead" min="0" max="30" step="1" value="0">
+    <div class="luc-ticks"><span>0</span><span>10</span><span>20</span><span>30</span></div>
+
+    <div class="luc-row"><span>Hill gradient (top rows)</span><b id="lucSteepV">10°</b></div>
+    <input type="range" class="luc-slider" id="lucSteep" aria-label="Hill gradient on the top rows" min="0" max="100" step="1" value="40">
+    <div class="luc-ticks-abs"><span style="left:0">0° flat</span><span style="left:40%;transform:translateX(-50%)">10°</span><span style="left:100%;transform:translateX(-100%)">25° steep</span></div>
+
+    <div class="luc-stats">
+      <div class="luc-stat">
+        <div class="luc-stat-l">Farmland remaining</div>
+        <div class="luc-stat-v" style="color:var(--acc)" id="lucFarm">100%</div>
       </div>
-    </div>
-
-    <div class="stat-row">
-      <div class="stat">
-        <div class="stat-label">Change pressure</div>
-        <div class="stat-value" style="color:var(--acc)" id="pressureStat">Low</div>
-      </div>
-      <div class="stat">
-        <div class="stat-label">Conversion likelihood</div>
-        <div class="stat-value" style="color:var(--amb)" id="likelihoodStat">12%</div>
+      <div class="luc-stat">
+        <div class="luc-stat-l">Cells converted</div>
+        <div class="luc-stat-v" style="color:var(--amb)" id="lucConv">0 / 144</div>
       </div>
     </div>
   </div>
 
-  <div class="toggle-card">
-    <div class="toggle-buttons">
-      <button class="toggle-btn active" data-scenario="single">Single driver</button>
-      <button class="toggle-btn" data-scenario="multiple">Multiple drivers</button>
+  <div class="luc-card">
+    <div class="luc-toggles" role="group" aria-label="Which part of the reason for change to read about">
+      <button class="luc-toggle" type="button" data-drop="where" aria-pressed="true">Why here</button>
+      <button class="luc-toggle" type="button" data-drop="who" aria-pressed="false">Who decides</button>
     </div>
-    <div class="knowdrop-divider"></div>
-    <div class="knowdrop-text" id="knowdropText">
-      When only one driver pushes for land use change — say, rising land values in isolation — the conversion often stalls. Landowners face uncertainty, planners resist without broader justification, and communities mobilise opposition. Single-factor pressure rarely overcomes the inertia of existing land use, even when that factor is strong. This is why economic booms don't automatically trigger mass development, and why policy changes alone rarely reshape landscapes without accompanying social or technological shifts.
-    </div>
+    <div class="luc-drop"><p id="lucDrop"></p></div>
   </div>
 
-  <div class="know-this">
-    <div class="know-this-tag">Know This</div>
-    <div class="know-this-body">Land use change almost always results from <span style="color:var(--acc)">several drivers acting together</span> — <span style="color:var(--acc)">economic pressure</span> (land value, development demand), <span style="color:var(--acc)">social drivers</span> (population growth, changing needs), and <span style="color:var(--acc)">technological and political forces</span> combine to overcome the inertia of existing land use patterns.</div>
+  <div class="luc-know">
+    <div class="luc-know-tag"><span class="luc-dot"></span><span>Know this</span></div>
+    <div class="luc-know-body">Drivers such as land value and population growth create <span style="color:var(--acc)">pressure for change</span>, but the <span style="color:var(--acc)">geographical characteristics</span> of the area and region and the <span style="color:var(--acc)">planning strategy</span> decide where, how fast and whether it happens.</div>
   </div>
 </div>
 
 <script>
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d', { alpha: false });
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d', { alpha: false });
+(function(){
+  const canvas = document.getElementById("lucCanvas");
+  const wrap = document.getElementById("lucWrap");
+  const ctx = canvas.getContext("2d");
+  const buf = document.createElement("canvas");
+  const bctx = buf.getContext("2d");
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
-const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const CSSV = getComputedStyle(document.documentElement);
+  const ACC = CSSV.getPropertyValue("--acc").trim();
+  const RGB = CSSV.getPropertyValue("--acc-rgb").trim();
+  const AMB = CSSV.getPropertyValue("--amb").trim();
+  const AMBRGB = CSSV.getPropertyValue("--amb-rgb").trim();
+  const INKRGB = CSSV.getPropertyValue("--ink-rgb").trim();
+  const DIMRGB = CSSV.getPropertyValue("--dim-rgb").trim();
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-let activeDrivers = new Set();
-let time = 0;
-let animFrame;
+  const COLS = 16, ROWS = 9, CORR = 5, BCOL = 7, TOTAL = COLS * ROWS;
+  const S = { econ:false, pop:false, transport:false, plan:"none", years:0, steep:0.4 };
+  const PLAN_LABEL = { none:"no strategy", release:"land released", boundary:"growth boundary" };
 
-const drivers = {
-  economic: { x: 0.25, y: 0.25, color: '#7870C0' },
-  social: { x: 0.75, y: 0.25, color: '#7870C0' },
-  tech: { x: 0.25, y: 0.75, color: '#7870C0' },
-  policy: { x: 0.75, y: 0.75, color: '#5AAA7E' }
-};
+  const cells = [];
+  for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) cells.push({ c:c, r:r, vis:0, target:0, ratio:0 });
 
-const particles = Array.from({ length: 80 }, () => ({
-  x: Math.random(),
-  y: Math.random(),
-  vx: (Math.random() - 0.5) * 0.0003,
-  vy: (Math.random() - 0.5) * 0.0003,
-  size: Math.random() * 1.2 + 0.4
-}));
-
-function resize() {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
-
-function draw() {
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  const cx = w / 2;
-  const cy = h / 2;
-
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, w, h);
-
-  // Base grid (stable land use)
-  ctx.strokeStyle = 'rgba(120,112,192,0.08)';
-  ctx.lineWidth = 0.8;
-  const gridSize = 30;
-  for (let x = 0; x < w; x += gridSize) {
-    ctx.beginPath();
-    ctx.moveTo(x, 0);
-    ctx.lineTo(x, h);
-    ctx.stroke();
+  // model: top rows are the hillside, the town sits at column 0, the road runs along row CORR
+  function hill(r){ return Math.max(0, (ROWS * 0.4 - r) / (ROWS * 0.4)); }
+  function pressure(c, r){
+    const dist = c / (COLS - 1);
+    const prox = Math.exp(-Math.abs(r - CORR) / 1.2);
+    let P = 0.3;                                   // slow edge creep even with no driver
+    if (S.econ) P += 1.0 * (1 - 0.7 * dist);       // land value: strongest at the town edge
+    if (S.pop) P += 0.8;                           // regional population growth: whole fringe
+    if (S.transport) P += 1.2 * prox;              // new link: ribbon along the corridor
+    if (S.plan === "release") P *= 1.6;            // rezoning speeds everything
+    if (S.plan === "boundary") P *= (c >= BCOL ? 0.08 : 1.1); // boundary holds beyond, directs inside
+    return P;
   }
-  for (let y = 0; y < h; y += gridSize) {
-    ctx.beginPath();
-    ctx.moveTo(0, y);
-    ctx.lineTo(w, y);
-    ctx.stroke();
+  function cost(c, r){
+    return 8 + 20 * (c / (COLS - 1)) + 40 * S.steep * hill(r);
   }
-
-  // Particles (ambient land parcels)
-  particles.forEach(p => {
-    p.x += p.vx;
-    p.y += p.vy;
-    if (p.x < 0 || p.x > 1) p.vx *= -1;
-    if (p.y < 0 || p.y > 1) p.vy *= -1;
-    p.x = Math.max(0, Math.min(1, p.x));
-    p.y = Math.max(0, Math.min(1, p.y));
-
-    const px = p.x * w;
-    const py = p.y * h;
-    
-    ctx.fillStyle = 'rgba(237,237,232,0.15)';
-    ctx.beginPath();
-    ctx.arc(px, py, p.size, 0, Math.PI * 2);
-    ctx.fill();
-  });
-
-  // Driver force fields
-  const count = activeDrivers.size;
-  activeDrivers.forEach(key => {
-    const d = drivers[key];
-    const dx = d.x * w;
-    const dy = d.y * h;
-
-    // Pulsing core
-    const pulse = 0.7 + 0.3 * Math.sin(time * 0.003);
-    const coreGrad = ctx.createRadialGradient(dx, dy, 0, dx, dy, 35 * pulse);
-    coreGrad.addColorStop(0, d.color);
-    coreGrad.addColorStop(0.5, 'rgba(120,112,192,0.4)');
-    coreGrad.addColorStop(1, 'rgba(120,112,192,0)');
-    
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.fillStyle = coreGrad;
-    ctx.beginPath();
-    ctx.arc(dx, dy, 35 * pulse, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-
-    // Radiating waves
-    const wavePhase = (time * 0.002) % 1;
-    for (let i = 0; i < 3; i++) {
-      const wave = (wavePhase + i * 0.33) % 1;
-      const radius = 20 + wave * 80;
-      const alpha = (1 - wave) * 0.25;
-      
-      ctx.strokeStyle = `rgba(120,112,192,${alpha})`;
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.arc(dx, dy, radius, 0, Math.PI * 2);
-      ctx.stroke();
+  function compute(){
+    let conv = 0;
+    for (const cell of cells){
+      const P = pressure(cell.c, cell.r), C = cost(cell.c, cell.r);
+      cell.ratio = Math.min(1, P * S.years / C);
+      cell.target = P * S.years >= C ? 1 : 0;
+      if (cell.target) conv++;
     }
-  });
+    return conv;
+  }
 
-  // Convergence lines when multiple drivers active
-  if (count >= 2) {
-    const driversArray = Array.from(activeDrivers).map(k => drivers[k]);
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    
-    for (let i = 0; i < driversArray.length; i++) {
-      for (let j = i + 1; j < driversArray.length; j++) {
-        const d1 = driversArray[i];
-        const d2 = driversArray[j];
-        
-        const grad = ctx.createLinearGradient(d1.x * w, d1.y * h, d2.x * w, d2.y * h);
-        grad.addColorStop(0, 'rgba(120,112,192,0)');
-        grad.addColorStop(0.5, 'rgba(120,112,192,0.35)');
-        grad.addColorStop(1, 'rgba(120,112,192,0)');
-        
-        ctx.strokeStyle = grad;
-        ctx.lineWidth = 2;
+  function resize(){
+    const rect = wrap.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    buf.width = canvas.width; buf.height = canvas.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    draw();
+  }
+
+  function draw(){
+    const w = canvas.width / dpr, h = canvas.height / dpr;
+    if (!w || !h) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.fillStyle = "rgb(0,0,0)";
+    ctx.fillRect(0, 0, w, h);
+
+    const gridLeft = w * 0.17, gridRight = w * 0.965, gridTop = h * 0.17, gridBottom = h * 0.80;
+    const townLeft = w * 0.025, townRight = w * 0.135;
+    const cellW = (gridRight - gridLeft) / COLS, cellH = (gridBottom - gridTop) / ROWS;
+    const gap = Math.max(1, Math.min(cellW, cellH) * 0.12);
+    const mono = "11px 'JetBrains Mono', monospace";
+
+    // ground
+    ctx.fillStyle = "rgba(" + RGB + ",0.05)";
+    ctx.fillRect(0, gridTop - h * 0.04, w, h);
+
+    // cells
+    for (const cell of cells){
+      const x = gridLeft + cell.c * cellW, y = gridTop + cell.r * cellH;
+      const hs = S.steep * hill(cell.r);
+      const ix = x + gap / 2, iy = y + gap / 2, iw = cellW - gap, ih = cellH - gap;
+      // farmland base, darker on the steep rows
+      ctx.fillStyle = "rgba(" + RGB + "," + (0.42 - 0.2 * hs) + ")";
+      ctx.fillRect(ix, iy, iw, ih);
+      // slope hatch
+      if (hs > 0.02){
+        ctx.strokeStyle = "rgba(" + DIMRGB + "," + (0.55 * hs) + ")";
+        ctx.lineWidth = 1;
         ctx.beginPath();
-        ctx.moveTo(d1.x * w, d1.y * h);
-        ctx.lineTo(d2.x * w, d2.y * h);
+        ctx.moveTo(ix, iy + ih); ctx.lineTo(ix + iw, iy);
+        ctx.moveTo(ix, iy + ih * 0.5); ctx.lineTo(ix + iw * 0.5, iy);
         ctx.stroke();
       }
+      // pressure building (not yet converted)
+      const pa = 0.32 * cell.ratio * (1 - cell.vis);
+      if (pa > 0.01){
+        ctx.fillStyle = "rgba(" + AMBRGB + "," + pa + ")";
+        ctx.fillRect(ix, iy, iw, ih);
+      }
+      // converted to housing
+      if (cell.vis > 0.01){
+        ctx.fillStyle = "rgba(" + AMBRGB + "," + (0.88 * cell.vis) + ")";
+        ctx.fillRect(ix, iy, iw, ih);
+        ctx.fillStyle = "rgba(0,0,0," + (0.42 * cell.vis) + ")";
+        const bw = iw * 0.28, bh = ih * 0.3;
+        ctx.fillRect(ix + iw * 0.14, iy + ih * 0.18, bw, bh);
+        ctx.fillRect(ix + iw * 0.58, iy + ih * 0.18, bw, bh);
+        ctx.fillRect(ix + iw * 0.14, iy + ih * 0.56, bw, bh);
+        ctx.fillRect(ix + iw * 0.58, iy + ih * 0.56, bw, bh);
+      }
     }
-    ctx.restore();
-  }
 
-  // Central convergence glow (stronger with more drivers)
-  if (count >= 2) {
-    const intensity = Math.min(count / 4, 1);
-    const centralGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 120);
-    centralGrad.addColorStop(0, `rgba(120,112,192,${0.6 * intensity})`);
-    centralGrad.addColorStop(0.4, `rgba(120,112,192,${0.25 * intensity})`);
-    centralGrad.addColorStop(1, 'rgba(120,112,192,0)');
-    
+    // road or new link along row CORR
+    const roadY = gridTop + (CORR + 0.5) * cellH;
     ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.fillStyle = centralGrad;
-    ctx.beginPath();
-    ctx.arc(cx, cy, 120, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-  }
-
-  // Bloom
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
-
-  // Vignette
-  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-
-  time++;
-  animFrame = requestAnimationFrame(draw);
-}
-
-function updateUI() {
-  const count = activeDrivers.size;
-  const timeVal = parseInt(document.getElementById('timeSlider').value);
-  
-  document.getElementById('activeCount').textContent = count === 0 ? '0 active' : 
-    count === 1 ? '1 active driver' : `${count} active drivers`;
-  
-  let pressure = 'Low';
-  let likelihood = 12;
-  let canvasText = 'Baseline land use — low change pressure';
-  
-  if (count === 0) {
-    pressure = 'Low';
-    likelihood = 12;
-    canvasText = 'Baseline land use — low change pressure';
-  } else if (count === 1) {
-    pressure = 'Moderate';
-    likelihood = 28 + Math.floor(timeVal * 0.15);
-    canvasText = 'Single driver — limited conversion potential';
-  } else if (count === 2) {
-    pressure = 'High';
-    likelihood = 52 + Math.floor(timeVal * 0.3);
-    canvasText = 'Two drivers converging — rising pressure';
-  } else if (count === 3) {
-    pressure = 'Very High';
-    likelihood = 74 + Math.floor(timeVal * 0.22);
-    canvasText = 'Three drivers active — strong conversion force';
-  } else {
-    pressure = 'Critical';
-    likelihood = Math.min(94 + Math.floor(timeVal * 0.06), 99);
-    canvasText = 'All drivers aligned — major transformation likely';
-  }
-  
-  document.getElementById('pressureStat').textContent = pressure;
-  document.getElementById('likelihoodStat').textContent = likelihood + '%';
-  document.getElementById('canvasTag').textContent = canvasText;
-}
-
-// Driver buttons
-document.querySelectorAll('.driver-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const driver = btn.dataset.driver;
-    if (activeDrivers.has(driver)) {
-      activeDrivers.delete(driver);
-      btn.classList.remove('active');
+    if (S.transport){
+      ctx.globalCompositeOperation = "lighter";
+      ctx.strokeStyle = "rgba(" + INKRGB + ",0.9)";
+      ctx.lineWidth = 3;
+      ctx.setLineDash([cellW * 0.4, cellW * 0.25]);
     } else {
-      activeDrivers.add(driver);
-      btn.classList.add('active');
+      ctx.strokeStyle = "rgba(" + DIMRGB + ",0.55)";
+      ctx.lineWidth = 2;
     }
-    updateUI();
+    ctx.beginPath(); ctx.moveTo(townRight, roadY); ctx.lineTo(gridRight, roadY); ctx.stroke();
+    ctx.restore();
+    const roadTxt = S.transport ? "New rail link" : "Local road";
+    ctx.font = mono; ctx.textAlign = "right"; ctx.textBaseline = "bottom";
+    const rtw = ctx.measureText(roadTxt).width;
+    ctx.fillStyle = "rgba(0,0,0,0.6)";
+    ctx.fillRect(gridRight - rtw - 8, roadY - 20, rtw + 6, 15);
+    ctx.fillStyle = S.transport ? "rgba(" + INKRGB + ",0.95)" : "rgba(" + DIMRGB + ",0.95)";
+    ctx.fillText(roadTxt, gridRight - 5, roadY - 6);
+
+    // town (grows taller when population growth is on)
+    const townTop = S.pop ? gridTop : gridTop + cellH * 2.5;
+    const tcols = 3, bw2 = (townRight - townLeft) / tcols;
+    const bh2 = cellH * 0.62;
+    let bi = 0;
+    for (let yy = gridBottom - bh2; yy >= townTop; yy -= bh2 + 3){
+      for (let i = 0; i < tcols; i++){
+        const a = 0.35 + ((bi * 7 + i * 3) % 5) / 5 * 0.4;
+        ctx.fillStyle = "rgba(" + AMBRGB + "," + a + ")";
+        ctx.fillRect(townLeft + i * bw2 + 1.5, yy, bw2 - 3, bh2 - 1);
+        bi++;
+      }
+    }
+
+    // growth boundary
+    if (S.plan === "boundary"){
+      const bx = gridLeft + BCOL * cellW;
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      ctx.strokeStyle = ACC; ctx.lineWidth = 2; ctx.setLineDash([6, 5]);
+      ctx.shadowColor = ACC; ctx.shadowBlur = 10;
+      ctx.beginPath(); ctx.moveTo(bx, gridTop - 4); ctx.lineTo(bx, gridBottom + 4); ctx.stroke();
+      ctx.setLineDash([3, 4]); ctx.lineWidth = 1; ctx.shadowBlur = 0;
+      ctx.strokeStyle = "rgba(" + RGB + ",0.7)";
+      ctx.strokeRect(bx + 2, gridTop + 1, gridRight - bx - 3, gridBottom - gridTop - 2);
+      ctx.restore();
+      ctx.font = mono; ctx.textAlign = "left"; ctx.textBaseline = "bottom";
+      ctx.fillStyle = ACC;
+      ctx.fillText("Growth boundary", bx + 4, gridTop - 7);
+    }
+
+    // top strip labels
+    ctx.font = mono; ctx.textAlign = "left"; ctx.textBaseline = "bottom";
+    ctx.fillStyle = "rgba(" + AMBRGB + ",0.95)";
+    ctx.fillText("Town", townLeft, gridTop - 7);
+    ctx.fillStyle = "rgba(" + DIMRGB + ",0.95)";
+    ctx.fillText(S.steep > 0.04 ? "Steep slopes" : "Flat land", gridLeft, gridTop - 7);
+
+    // bloom
+    bctx.setTransform(1, 0, 0, 1, 0, 0);
+    bctx.clearRect(0, 0, buf.width, buf.height);
+    if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
+    if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+    ctx.restore();
+
+    // vignette
+    const cx = w / 2, cy = h / 2;
+    const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
+  }
+
+  // one eased transition per change, then still
+  let raf = null, last = 0;
+  function tick(now){
+    const dt = Math.min(now - last, 50); last = now;
+    const k = Math.min(1, dt / 180);
+    let maxd = 0;
+    for (const cell of cells){
+      const d = cell.target - cell.vis;
+      if (Math.abs(d) < 0.006) cell.vis = cell.target;
+      else { cell.vis += d * k; maxd = Math.max(maxd, Math.abs(d)); }
+    }
+    draw();
+    if (maxd > 0) raf = requestAnimationFrame(tick); else raf = null;
+  }
+  function kick(){
+    if (reduce){ for (const cell of cells) cell.vis = cell.target; draw(); return; }
+    if (!raf){ last = performance.now(); raf = requestAnimationFrame(tick); }
+  }
+
+  const liveEl = document.getElementById("lucLive");
+  const overlayEl = document.getElementById("lucOverlay");
+  const farmEl = document.getElementById("lucFarm");
+  const convEl = document.getElementById("lucConv");
+
+  function update(){
+    const conv = compute();
+    const pct = Math.round(conv / TOTAL * 100);
+    farmEl.textContent = (100 - pct) + "%";
+    convEl.textContent = conv + " / " + TOTAL;
+    const n = [S.econ, S.pop, S.transport].filter(Boolean).length;
+    liveEl.textContent = n + (n === 1 ? " driver" : " drivers") + " · " + PLAN_LABEL[S.plan];
+    let tag;
+    if (S.years === 0) tag = "Today: all " + TOTAL + " cells are farmland";
+    else if (conv === 0) tag = S.years + " yrs: no cell has converted";
+    else tag = S.years + " yrs: " + pct + "% converted";
+    if (S.plan === "boundary" && S.years > 0) tag += " · boundary holds";
+    overlayEl.textContent = tag;
+    kick();
+  }
+
+  // driver pills (multi-select)
+  document.querySelectorAll("#lucDrivers .luc-pill").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const key = btn.dataset.key;
+      S[key] = !S[key];
+      btn.setAttribute("aria-pressed", S[key] ? "true" : "false");
+      update();
+    });
   });
-});
-
-// Time slider
-const timeSlider = document.getElementById('timeSlider');
-timeSlider.addEventListener('input', (e) => {
-  const val = parseInt(e.target.value);
-  timeSlider.style.setProperty('--fill', val + '%');
-  updateUI();
-});
-timeSlider.style.setProperty('--fill', '0%');
-
-// Toggle scenario
-const knowdropTexts = {
-  single: "When only one driver pushes for land use change — say, rising land values in isolation — the conversion often stalls. Landowners face uncertainty, planners resist without broader justification, and communities mobilise opposition. Single-factor pressure rarely overcomes the inertia of existing land use, even when that factor is strong. This is why economic booms don't automatically trigger mass development, and why policy changes alone rarely reshape landscapes without accompanying social or technological shifts.",
-  
-  multiple: "Multiple drivers create reinforcing feedback loops that accelerate land use change. Economic pressure justifies policy rezoning; population growth validates infrastructure investment; new technology makes previously marginal land viable. Each driver legitimises the others, weakening resistance and creating momentum. A developer citing rising land values plus population forecasts plus new transport links faces far less opposition than one citing economics alone. This synergy explains why land use change often appears sudden despite gradual driver accumulation."
-};
-
-document.querySelectorAll('.toggle-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('knowdropText').textContent = knowdropTexts[btn.dataset.scenario];
+  // planning strategy (single choice)
+  const planBtns = document.querySelectorAll("#lucPlans .luc-pill");
+  planBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      S.plan = btn.dataset.plan;
+      planBtns.forEach(b => b.setAttribute("aria-pressed", b === btn ? "true" : "false"));
+      update();
+    });
   });
-});
 
-window.addEventListener('resize', resize);
-resize();
-draw();
+  // sliders
+  const yearsEl = document.getElementById("lucYears");
+  const yearsV = document.getElementById("lucYearsV");
+  function setFill(el){ el.style.setProperty("--fill", ((el.value - el.min) / (el.max - el.min) * 100) + "%"); }
+  yearsEl.addEventListener("input", () => {
+    S.years = parseInt(yearsEl.value, 10);
+    yearsV.textContent = S.years + " yrs";
+    setFill(yearsEl);
+    update();
+  });
+  const steepEl = document.getElementById("lucSteep");
+  const steepV = document.getElementById("lucSteepV");
+  steepEl.addEventListener("input", () => {
+    S.steep = parseInt(steepEl.value, 10) / 100;
+    steepV.textContent = Math.round(S.steep * 25) + "°";
+    setFill(steepEl);
+    update();
+  });
+  setFill(yearsEl); setFill(steepEl);
+
+  // knowdrop
+  const drops = {
+    where: "Flat land on the edge of a growing town is the cheapest place to build, so the drivers bite there first. Each cell further out costs more to service and sells for less, which is why conversion spreads outwards from the town rather than appearing at random. A road or rail link cuts that cost along one line, producing a ribbon of housing that reaches further than the general spread. Steep slopes raise the cost of earthworks and drainage, so hillsides are converted last or stay as farmland, bushland or lifestyle blocks. The surrounding region matters too: a parcel near a growing regional city with a housing shortage is under far more pressure than the same land beside a shrinking town. An answer that names these characteristics of the area and region explains why the change happened here and not somewhere else.",
+    who: "Pressure only becomes change when someone acts on it. Individual landholders decide to sell when the price makes farming the least profitable use of their land, and some hold out for as long as they can. Organisations such as developers, infrastructure agencies and lobby groups assemble land, build the transport link or campaign for rezoning. Local councils and the state planning minister then set the strategy: releasing land through rezoning speeds conversion, while an urban growth boundary, a green wedge or a heritage overlay holds farmland in place even when economic pressure is strong. In the model, no cell beyond the dashed line converts within 30 years however many drivers are on, although in reality a boundary can be moved by the government that set it, as Melbourne's has been more than once. Strong case-study answers name the person or organisation and the strategy, not just the driver."
+  };
+  const dropEl = document.getElementById("lucDrop");
+  const dropBtns = document.querySelectorAll(".luc-toggle");
+  dropBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      dropBtns.forEach(b => b.setAttribute("aria-pressed", b === btn ? "true" : "false"));
+      dropEl.textContent = drops[btn.dataset.drop];
+    });
+  });
+  dropEl.textContent = drops.where;
+
+  window.addEventListener("resize", resize);
+  resize();
+  update();
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'drivers-of-land-use-change'},'*');}catch(e){}}

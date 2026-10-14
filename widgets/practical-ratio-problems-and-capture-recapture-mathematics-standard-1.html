@@ -324,39 +324,42 @@ canvas {
     transition-duration: 0.01ms !important;
   }
 }
+.again-btn { margin-top: 12px; width: 100%; flex: none; }
+.canvas-wrapper { min-height: 320px; }
 </style>
 
 <h2 class="sr-only">Interactive capture-recapture population estimation widget</h2>
 
 <div class="container">
-  <h1>Two Small Samples Reveal the <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">Whole</span></h1>
+  <h1>Two small samples reveal the <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">whole</span></h1>
   
-  <p class="intro">A biologist catches 20 fish, tags them, and releases them back into a lake. A week later, they catch 30 fish and find 5 are tagged. Somehow, this tells us there are roughly 120 fish in the entire lake — no need to drain it. Adjust the recapture sample size below and watch the population estimate shift as the proportion reveals what's hidden beneath the surface.</p>
+  <p class="intro">A biologist catches 20 fish, tags them, and releases them back into a lake. A week later, they catch 30 fish and find 5 are tagged. Somehow, this tells us there are roughly 120 fish in the entire lake — no need to drain it. Here the lake really is hidden: set the size of the second catch, or catch again, and the estimate is worked out only from the tagged fish that actually turn up in your net.</p>
 
   <div class="card">
     <div class="card-header">
-      <div class="card-label">Population Estimator</div>
+      <div class="card-label">Population estimator</div>
       <div class="live-tag" id="liveTag">Recapture: 30 fish</div>
     </div>
-    <div class="card-hint">Drag to change how many fish we catch in the second sample</div>
+    <div class="card-hint">Set the size of the second catch. Each catch is a fresh random net from the lake.</div>
     
     <div class="canvas-wrapper">
       <canvas id="crCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">Estimated Population: 120 fish</div>
+      <div class="canvas-overlay" id="canvasOverlay">Estimated population: 120 fish</div>
     </div>
 
     <div class="slider-row">
-      <div class="slider-label">Recapture Sample Size</div>
+      <div class="slider-label">Recapture sample size</div>
       <input type="range" class="cr-slider" id="recaptureSlider" min="10" max="80" value="30" step="1">
       <div class="tick-labels">
         <span>10</span>
         <span>80</span>
       </div>
+      <button class="toggle-btn again-btn" id="btnAgain">Catch again</button>
     </div>
 
     <div class="stat-row">
       <div class="stat">
-        <div class="stat-label">Tagged Found</div>
+        <div class="stat-label">Tagged in the net</div>
         <div class="stat-value" id="taggedFound">5</div>
       </div>
       <div class="stat">
@@ -368,8 +371,8 @@ canvas {
 
   <div class="toggle-card">
     <div class="toggle-buttons">
-      <button class="toggle-btn active" id="btnMethod">The Method</button>
-      <button class="toggle-btn" id="btnLimits">When It Fails</button>
+      <button class="toggle-btn active" id="btnMethod">The method</button>
+      <button class="toggle-btn" id="btnLimits">When it fails</button>
     </div>
     
     <div class="knowdrop-divider">
@@ -507,56 +510,16 @@ function draw() {
   ctx.strokeRect(lakeX - lakeW/2, lakeY - lakeH/2, lakeW, lakeH);
   ctx.restore();
   
-  // Draw all fish swimming
-  fish.forEach(f => {
-    const fx = lakeX - lakeW/2 + f.x * lakeW;
-    const fy = lakeY - lakeH/2 + f.y * lakeH;
-    
-    ctx.save();
-    
-    if (f.tagged) {
-      // Tagged fish with green pulse
-      const pulse = 0.6 + Math.sin(time * 3 + f.wobble) * 0.4;
-      const glowSize = f.size * 5 * pulse;
-      const glow = ctx.createRadialGradient(fx, fy, 0, fx, fy, glowSize);
-      glow.addColorStop(0, `rgba(${RGB}, ${pulse * 0.8})`);
-      glow.addColorStop(0.4, `rgba(${RGB}, ${pulse * 0.3})`);
-      glow.addColorStop(1, `rgba(${RGB}, 0)`);
-      ctx.fillStyle = glow;
-      ctx.beginPath();
-      ctx.arc(fx, fy, glowSize, 0, Math.PI * 2);
-      ctx.fill();
-      
-      // Tag marker
-      ctx.fillStyle = ACC;
-      ctx.shadowColor = ACC;
-      ctx.shadowBlur = 8;
-      ctx.beginPath();
-      ctx.arc(fx, fy, f.size, 0, Math.PI * 2);
-      ctx.fill();
-      
-      // Inner bright core
-      ctx.fillStyle = '#fff';
-      ctx.shadowBlur = 4;
-      ctx.beginPath();
-      ctx.arc(fx, fy, f.size * 0.4, 0, Math.PI * 2);
-      ctx.fill();
-    } else {
-      // Untagged fish
-      ctx.fillStyle = 'rgba(180, 200, 220, 0.5)';
-      ctx.shadowBlur = 0;
-      ctx.beginPath();
-      ctx.arc(fx, fy, f.size, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    
-    ctx.restore();
-  });
-  
+  // The lake is murky: its total is what we are trying to estimate, so it is never drawn or counted
+  ctx.font = "12px \"JetBrains Mono\", monospace";
+  ctx.fillStyle = "rgba(237, 237, 232, 0.35)";
+  ctx.textAlign = "center";
+  ctx.fillText("Lake: how many fish? (hidden)", lakeX, (2 * Math.min(65, w * 0.16) + 30 + h - 94) / 2);
+
   // Step 1: Initial capture zone (top left)
-  const cap1X = w * 0.22;
-  const cap1Y = h * 0.28;
-  const cap1R = 65;
+  const cap1R = Math.min(65, w * 0.16);
+  const cap1X = w * 0.2;
+  const cap1Y = cap1R + 30;
   
   ctx.save();
   ctx.strokeStyle = `rgba(${RGB}, 0.6)`;
@@ -577,25 +540,26 @@ function draw() {
   ctx.restore();
   
   // Label
-  ctx.font = '11px "JetBrains Mono"';
+  ctx.font = (w < 500 ? "9px" : "11px") + " \"JetBrains Mono\"";
   ctx.fillStyle = ACC;
   ctx.textAlign = 'center';
   ctx.shadowColor = 'rgba(0,0,0,0.8)';
   ctx.shadowBlur = 4;
   ctx.fillText('STEP 1: CAPTURE', cap1X, cap1Y - cap1R - 10);
-  ctx.font = '9px "JetBrains Mono"';
+  ctx.font = (w < 500 ? "8px" : "9px") + " \"JetBrains Mono\"";
   ctx.fillStyle = `rgba(${RGB}, 0.8)`;
   ctx.fillText(`Tag ${firstCatch} fish`, cap1X, cap1Y - cap1R + 4);
+  drawDots(cap1X, cap1Y + 6, cap1R - 18, Array(firstCatch).fill(true));
   ctx.shadowBlur = 0;
   
   // Step 2: Release (middle)
   const relX = w * 0.5;
-  const relY = h * 0.28;
+  const relY = cap1Y;
   
   // Animated particles showing release
   for (let i = 0; i < 12; i++) {
     const angle = (i / 12) * Math.PI * 2 + time * 2;
-    const dist = 40 + Math.sin(time * 3 + i) * 15;
+    const dist = Math.min(40, w * 0.07) + Math.sin(time * 3 + i) * Math.min(15, w * 0.03);
     const px = relX + Math.cos(angle) * dist;
     const py = relY + Math.sin(angle) * dist;
     const alpha = 0.3 + Math.sin(time * 4 + i) * 0.3;
@@ -606,15 +570,15 @@ function draw() {
     ctx.fill();
   }
   
-  ctx.font = '11px "JetBrains Mono"';
+  ctx.font = (w < 500 ? "9px" : "11px") + " \"JetBrains Mono\"";
   ctx.fillStyle = ACC;
   ctx.textAlign = 'center';
   ctx.shadowColor = 'rgba(0,0,0,0.8)';
   ctx.shadowBlur = 4;
-  ctx.fillText('STEP 2: RELEASE', relX, relY - 50);
-  ctx.font = '9px "JetBrains Mono"';
+  ctx.fillText('STEP 2: RELEASE', relX, cap1Y - cap1R - 10);
+  ctx.font = (w < 500 ? "8px" : "9px") + " \"JetBrains Mono\"";
   ctx.fillStyle = `rgba(${RGB}, 0.8)`;
-  ctx.fillText('Tagged fish mix back', relX, relY - 36);
+  ctx.fillText('Tagged fish mix back', relX, cap1Y - cap1R + 4);
   ctx.shadowBlur = 0;
   
   // Arrow from capture to release
@@ -626,14 +590,14 @@ function draw() {
   ctx.lineDashOffset = -arrowDash;
   ctx.beginPath();
   ctx.moveTo(cap1X + cap1R, cap1Y);
-  ctx.lineTo(relX - 50, relY);
+  ctx.lineTo(relX - Math.min(50, w * 0.1), relY);
   ctx.stroke();
   ctx.restore();
   
   // Step 3: Recapture zone (top right)
-  const cap2X = w * 0.78;
-  const cap2Y = h * 0.28;
-  const cap2R = 65;
+  const cap2R = cap1R;
+  const cap2X = w * 0.8;
+  const cap2Y = cap1Y;
   
   ctx.save();
   ctx.strokeStyle = `rgba(250, 199, 117, 0.6)`;
@@ -654,15 +618,16 @@ function draw() {
   ctx.restore();
   
   // Label
-  ctx.font = '11px "JetBrains Mono"';
+  ctx.font = (w < 500 ? "9px" : "11px") + " \"JetBrains Mono\"";
   ctx.fillStyle = AMB;
   ctx.textAlign = 'center';
   ctx.shadowColor = 'rgba(0,0,0,0.8)';
   ctx.shadowBlur = 4;
   ctx.fillText('STEP 3: RECAPTURE', cap2X, cap2Y - cap2R - 10);
-  ctx.font = '9px "JetBrains Mono"';
+  ctx.font = (w < 500 ? "8px" : "9px") + " \"JetBrains Mono\"";
   ctx.fillStyle = 'rgba(250, 199, 117, 0.8)';
   ctx.fillText(`Catch ${recapture} fish`, cap2X, cap2Y - cap2R + 4);
+  drawDots(cap2X, cap2Y + 6, cap2R - 18, net);
   ctx.shadowBlur = 0;
   
   // Arrow from release to recapture
@@ -672,16 +637,16 @@ function draw() {
   ctx.setLineDash([4, 4]);
   ctx.lineDashOffset = -arrowDash;
   ctx.beginPath();
-  ctx.moveTo(relX + 50, relY);
+  ctx.moveTo(relX + Math.min(50, w * 0.1), relY);
   ctx.lineTo(cap2X - cap2R, cap2Y);
   ctx.stroke();
   ctx.restore();
   
   // Visual proportion display at bottom
   const propX = w * 0.5;
-  const propY = h * 0.82;
+  const propY = h - 44 - 22 - 28;
   const barW = w * 0.7;
-  const barH = 32;
+  const barH = 28;
   
   // Background bar
   ctx.fillStyle = 'rgba(50, 60, 70, 0.4)';
@@ -713,12 +678,12 @@ function draw() {
   ctx.fillText(`${recapture - tagged} Untagged`, propX + barW/2 - 8, propY + barH/2 + 4);
   
   // Proportion equation visualization
-  const eqY = propY + barH + 24;
+  const eqY = propY + barH + 16;
   ctx.font = '12px "JetBrains Mono"';
   ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
   ctx.textAlign = 'center';
   const proportion = (taggedProp * 100).toFixed(1);
-  ctx.fillText(`${tagged}/${recapture} = ${proportion}% → Estimate: ${Math.round((firstCatch * recapture) / tagged)} total fish`, propX, eqY);
+  ctx.fillText(tagged ? `${firstCatch} × ${recapture} ÷ ${tagged} = ${Math.round((firstCatch * recapture) / tagged)} fish (estimate)` : "No tagged fish in this net: no estimate yet", propX, eqY);
   
   // Bloom effect
   bctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -742,28 +707,38 @@ function draw() {
   requestAnimationFrame(draw);
 }
 
+/* the net: a random catch of recapture fish from the hidden lake, drawn without replacement */
+let net = [];
+function catchFish() {
+  const pool = fish.slice();
+  for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = pool[i]; pool[i] = pool[j]; pool[j] = t; }
+  net = pool.slice(0, recapture).map(f => f.tagged);
+  tagged = net.filter(Boolean).length;
+}
+function drawDots(cx, cy, R, list) {
+  const n = list.length, r = Math.max(1.6, Math.min(3.2, R / Math.sqrt(n + 1) * 0.55));
+  list.forEach((isTagged, i) => {
+    const rad = R * Math.sqrt((i + 0.5) / n), ang = i * 2.39996;
+    ctx.beginPath();
+    ctx.arc(cx + rad * Math.cos(ang), cy + rad * Math.sin(ang) * 0.8, r, 0, Math.PI * 2);
+    ctx.fillStyle = isTagged ? ACC : "rgba(180, 200, 220, 0.6)";
+    ctx.fill();
+  });
+}
 function update() {
-  recapture = parseInt(slider.value);
-  
-  // Calculate expected tagged based on true proportion
-  tagged = Math.max(1, Math.round((firstCatch / totalPop) * recapture));
-  
-  // Calculate estimated population
-  const estimatedPop = Math.round((firstCatch * recapture) / tagged);
-  
-  // Update proportion
+  recapture = parseInt(slider.value, 10);
+  catchFish();
   const prop = (tagged / recapture * 100).toFixed(1);
-  
-  // Update UI
   liveTag.textContent = `Recapture: ${recapture} fish`;
-  canvasOverlay.textContent = `Estimated Population: ${estimatedPop} fish`;
+  canvasOverlay.textContent = tagged
+    ? `Estimated population: ${Math.round((firstCatch * recapture) / tagged)} fish`
+    : "No tagged fish caught: catch again or catch more";
   taggedFoundEl.textContent = tagged;
   proportionEl.textContent = `${prop}%`;
-  
-  // Update slider fill
   const percent = ((recapture - 10) / (80 - 10)) * 100;
-  slider.style.setProperty('--fill', percent + '%');
+  slider.style.setProperty("--fill", percent + "%");
 }
+document.getElementById("btnAgain").addEventListener("click", update);
 
 slider.addEventListener('input', update);
 

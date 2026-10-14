@@ -297,14 +297,14 @@ canvas {
   
   <h1>Your brain learns some things <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">passively</span></h1>
   
-  <p class="intro">Not all learning requires effort or awareness. Classical conditioning shows how your nervous system can create entirely new reflexes just by experiencing two things together repeatedly. Drag the slider to see how a neutral stimulus becomes a conditioned trigger.</p>
+  <p class="intro">Not all learning requires effort or awareness. Classical conditioning shows how your nervous system can create entirely new reflexes just by experiencing two things together repeatedly. Move through the three phases to see how a neutral stimulus becomes a conditioned trigger.</p>
 
   <div class="card">
     <div class="card-header">
       <span class="card-label">Conditioning Timeline</span>
       <span class="live-tag" id="phase-tag">Before</span>
     </div>
-    <p class="card-hint">Drag to move through the three phases of conditioning</p>
+    <p class="card-hint">Move through the three phases of conditioning</p>
     
     <div class="canvas-wrapper">
       <canvas id="conditioning-canvas"></canvas>
@@ -359,13 +359,14 @@ const toggleBtns = document.querySelectorAll('.toggle-btn');
 const dpr = Math.min(window.devicePixelRatio || 1, 2);
 const buf = document.createElement('canvas');
 const bctx = buf.getContext('2d', { alpha: false });
+const ACC = getComputedStyle(document.documentElement).getPropertyValue('--acc').trim() || '#6A60D4';
 
 let animFrame;
 let currentMode = 'pavlov';
 
 const knowdrops = {
   pavlov: "Pavlov discovered classical conditioning by accident while studying digestion in dogs. He noticed dogs began salivating before food arrived — just at the sound of his footsteps. He systematically paired a bell (NS) with meat powder (UCS) that naturally caused salivation (UCR). After repeated pairings, the bell alone (now CS) triggered salivation (CR). The dogs had no control over this response — their autonomic nervous system had formed a new association automatically. This demonstrated that reflexive responses could be transferred to previously neutral stimuli through temporal pairing, a process that happens without conscious awareness or voluntary behaviour.",
-  phobia: "Little Albert was an 11-month-old infant conditioned to fear a white rat through classical conditioning. Initially, Albert showed no fear of the rat (NS). Watson paired the rat's presentation with a loud frightening noise (UCS) that naturally caused fear (UCR). After seven pairings over several weeks, Albert began crying and trying to escape whenever he saw the rat alone (CS → CR). The fear response generalised to similar white furry objects. This demonstrated that emotional responses like fear and anxiety can be classically conditioned, explaining how phobias may develop through traumatic associations. The conditioning occurred automatically through Albert's autonomic nervous system without conscious processing or decision-making."
+  phobia: "Little Albert was an 11-month-old infant conditioned to fear a white rat through classical conditioning. Initially, Albert showed no fear of the rat (NS). Watson paired the rat's presentation with a loud frightening noise (UCS) that naturally caused fear (UCR). After seven pairings over about a week, Albert began crying and trying to escape whenever he saw the rat alone (CS → CR). The fear response generalised to similar white furry objects. This demonstrated that emotional responses like fear and anxiety can be classically conditioned, explaining how phobias may develop through traumatic associations. The conditioning occurred automatically through Albert's autonomic nervous system without conscious processing or decision-making."
 };
 
 toggleBtns.forEach(btn => {
@@ -475,22 +476,24 @@ function draw() {
 
   // Draw UCS node (food simplified as circle)
   ctx.save();
-  ctx.fillStyle = 'rgba(250,199,117,0.85)';
+  ctx.fillStyle = phase === 2 ? 'rgba(250,199,117,0.25)' : 'rgba(250,199,117,0.85)';
   ctx.beginPath();
   ctx.arc(ucsX, ucsY, 28, 0, Math.PI * 2);
   ctx.fill();
 
-  const ucsGlow = ctx.createRadialGradient(ucsX, ucsY, 0, ucsX, ucsY, 60);
-  ucsGlow.addColorStop(0, 'rgba(250,199,117,0.3)');
-  ucsGlow.addColorStop(1, 'rgba(250,199,117,0)');
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.fillStyle = ucsGlow;
-  ctx.beginPath();
-  ctx.arc(ucsX, ucsY, 60, 0, Math.PI * 2);
-  ctx.fill();
+  if (phase !== 2) {
+    const ucsGlow = ctx.createRadialGradient(ucsX, ucsY, 0, ucsX, ucsY, 60);
+    ucsGlow.addColorStop(0, 'rgba(250,199,117,0.3)');
+    ucsGlow.addColorStop(1, 'rgba(250,199,117,0)');
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.fillStyle = ucsGlow;
+    ctx.beginPath();
+    ctx.arc(ucsX, ucsY, 60, 0, Math.PI * 2);
+    ctx.fill();
+  }
   ctx.restore();
 
-  ctx.fillStyle = '#000';
+  ctx.fillStyle = phase === 2 ? 'rgba(237,237,232,0.6)' : '#000';
   ctx.fillText('UCS', ucsX, ucsY);
 
   // Draw response zone
@@ -506,7 +509,7 @@ function draw() {
   ctx.stroke();
   ctx.restore();
 
-  ctx.fillStyle = responseActive ? 'var(--acc)' : 'rgba(237,237,232,0.4)';
+  ctx.fillStyle = responseActive ? ACC : 'rgba(237,237,232,0.4)';
   ctx.font = '600 13px JetBrains Mono';
   ctx.textAlign = 'center';
   ctx.fillText(phase === 2 ? 'CR' : 'UCR', cx, responseY);

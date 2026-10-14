@@ -1,0 +1,529 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Vectors adding tip to tail — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap");
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #3A6FC8;
+  --acc-rgb: 58, 111, 200;
+  --ag:  rgba(var(--acc-rgb),.7);
+  --ag1: rgba(var(--acc-rgb),.12);
+  --ag2: rgba(var(--acc-rgb),.45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+body{background:radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);font-family:"Geist",sans-serif;min-height:100vh;padding:40px 16px 0;box-sizing:border-box;margin:0;color:var(--ink)}
+.tt-wrap{max-width:720px;margin:0 auto;padding-bottom:0}
+.tt-wrap *{box-sizing:border-box}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.tt-h1{font-family:"Geist",sans-serif;font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin:0 0 14px;color:var(--ink)}
+.tt-intro{font-size:15.5px;font-weight:400;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin:0 0 26px}
+.tt-card{background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);margin-bottom:18px}
+.tt-card.sec{border-radius:14px}
+.tt-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.tt-label{font-family:"JetBrains Mono",monospace;font-size:13px;text-transform:uppercase;color:var(--ink);letter-spacing:0.04em}
+.tt-live{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--acc);letter-spacing:0.08em}
+.tt-hint{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--ink-dim);margin:6px 0 12px;line-height:1.5}
+.tt-canvas{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1)}
+.tt-canvas canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:default}
+.tt-tag{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);padding:9px 16px;font-family:"JetBrains Mono",monospace;font-size:14px;color:var(--acc);text-align:center;letter-spacing:0.04em;pointer-events:none}
+.tt-sl-row{margin-top:18px}
+.tt-sl-label{display:flex;justify-content:space-between;font-family:"JetBrains Mono",monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);letter-spacing:0.08em;margin-bottom:10px;gap:8px}
+.tt-sl-label b{color:var(--acc);font-weight:500}
+.tt-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;background:linear-gradient(90deg, var(--acc) var(--fill,0%), #23291f var(--fill,0%));outline:none;margin:6px 0}
+.tt-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag), 0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.tt-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag), 0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.tt-slider:hover::-webkit-slider-thumb{box-shadow:0 0 24px var(--acc), 0 0 8px var(--ag)}
+.tt-slider:hover::-moz-range-thumb{box-shadow:0 0 24px var(--acc), 0 0 8px var(--ag)}
+.tt-slider:focus-visible{outline:2px solid var(--ag2);outline-offset:6px}
+.tt-ticks{display:flex;justify-content:space-between;font-family:"JetBrains Mono",monospace;font-size:9px;color:var(--ink-dim);margin-top:6px}
+.tt-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;border-top:1px solid var(--line);margin-top:18px;padding-top:14px}
+.tt-stat{min-width:0}
+.tt-stat-l{font-family:"JetBrains Mono",monospace;font-size:10.5px;color:var(--ink-dim);letter-spacing:0.08em;margin-bottom:6px}
+.tt-stat-v{font-family:"JetBrains Mono",monospace;font-size:24px;font-weight:500;line-height:1.15}
+.tt-stat-v small{font-size:13px;color:var(--ink-dim);font-weight:400}
+.tt-stat-v.acc{color:var(--acc)}
+.tt-stat-v.amb{color:var(--amb)}
+.tt-btns{display:flex;gap:10px}
+.tt-btn{flex:1;min-width:0;font-family:"JetBrains Mono",monospace;font-size:14.5px;padding:12px;border-radius:11px;background:#12160F;border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:background .2s,border-color .2s,color .2s,box-shadow .2s}
+.tt-btn.on{background:rgba(var(--acc-rgb),.1);border:1px solid var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.tt-btn:focus-visible{outline:2px solid var(--ag2);outline-offset:2px}
+.tt-drop{border-top:1px solid var(--line);padding-top:16px;margin-top:16px;font-family:"Geist",sans-serif;font-size:14.5px;font-weight:400;line-height:1.65;color:var(--ink);margin-bottom:0}
+.tt-know{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));border-radius:0 12px 12px 0;margin-top:26px;margin-bottom:0}
+.tt-know-tag{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.tt-know-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:ttDot 2.4s ease-in-out infinite;flex:none}
+.tt-know-t{font-family:"JetBrains Mono",monospace;font-size:13px;text-transform:uppercase;letter-spacing:0.15em;color:var(--acc)}
+.tt-know p{font-family:"Geist",sans-serif;font-size:17.4px;font-weight:400;line-height:1.55;color:var(--ink);margin:0}
+@keyframes ttDot{0%,100%{opacity:1}50%{opacity:.45}}
+@media (prefers-reduced-motion: reduce){.tt-know-dot{animation:none}.tt-btn,.tt-slider::-webkit-slider-thumb{transition:none}}
+</style>
+<div class="tt-wrap">
+  <h2 class="sr-only">Interactive diagram: vectors adding tip to tail. Two arrows, A and B, are joined tip to tail and the resultant R runs from the start of A to the end of B. Move an arrowhead or set the angle of B, and switch between adding and subtracting B.</h2>
+  <h1 class="tt-h1">3 + 4 can make 1, 5 or 7. It depends on the <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">angle.</span></h1>
+  <p class="tt-intro">Velocities of 4 m/s and 3 m/s only add to 7 m/s when they point the same way. Turn one and the total shrinks, because a vector carries a direction as well as a size. Move either arrowhead or change the angle of B, then switch to subtract and watch B flip before it joins.</p>
+
+  <div class="tt-card">
+    <div class="tt-head">
+      <span class="tt-label">Tip-to-tail board</span>
+      <span class="tt-live" id="ttLive">A + B · adding</span>
+    </div>
+    <div class="tt-hint">Move the white or amber arrowhead · the blue resultant R redraws from first tail to last tip</div>
+    <div class="tt-canvas">
+      <canvas id="ttCanvas" aria-label="Vector A in white, vector B in amber joined tip to tail, and the resultant R in blue from the start of A to the tip of B"></canvas>
+      <div class="tt-tag" id="ttTag">A + B = 5.0 m/s, 37° N of E</div>
+    </div>
+    <div class="tt-sl-row">
+      <div class="tt-sl-label"><span>Angle of B, measured from A</span><b id="ttAngV">90°</b></div>
+      <input class="tt-slider" id="ttSlider" type="range" min="0" max="360" step="1" value="90" aria-label="Angle of vector B measured anticlockwise from vector A, in degrees">
+      <div class="tt-ticks"><span>0°</span><span>90°</span><span>180°</span><span>270°</span><span>360°</span></div>
+    </div>
+    <div class="tt-stats">
+      <div class="tt-stat"><div class="tt-stat-l">Resultant size |R|</div><div class="tt-stat-v acc" id="ttMag">5.0<small> m/s</small></div></div>
+      <div class="tt-stat"><div class="tt-stat-l">Direction of R</div><div class="tt-stat-v amb" id="ttDir">37° N of E</div></div>
+    </div>
+  </div>
+
+  <div class="tt-card sec">
+    <div class="tt-btns">
+      <button class="tt-btn on" id="ttAdd" type="button" aria-pressed="true">+ Add</button>
+      <button class="tt-btn" id="ttSub" type="button" aria-pressed="false">− Subtract</button>
+    </div>
+    <p class="tt-drop" id="ttDrop">To add vectors, draw the first arrow, then start the second arrow at the tip of the first: tip to tail. The resultant runs from the very first tail to the very last tip, and it is the one vector that does the same job as both together. Its size is almost never the sum of the sizes: 4 m/s and 3 m/s at right angles give 5 m/s by Pythagoras, and the direction comes from tan θ = opposite ÷ adjacent. A boat heading east at 4 m/s across a river flowing north at 3 m/s really moves at 5 m/s, 37° N of E, as seen from the bank. Order does not matter either: A + B and B + A finish on the same tip.</p>
+  </div>
+
+  <div class="tt-know">
+    <div class="tt-know-tag"><span class="tt-know-dot"></span><span class="tt-know-t">Know This</span></div>
+    <p>Add vectors <span style="color:var(--acc)">tip to tail</span>: the <span style="color:var(--acc)">resultant</span> runs from the first tail to the last tip, and subtracting means adding the <span style="color:var(--acc)">reversed vector</span>.</p>
+  </div>
+</div>
+<script>
+(function(){
+  const canvas = document.getElementById("ttCanvas");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  const wrap = canvas.parentElement;
+  const tagEl = document.getElementById("ttTag");
+  const liveEl = document.getElementById("ttLive");
+  const slider = document.getElementById("ttSlider");
+  const angEl = document.getElementById("ttAngV");
+  const magEl = document.getElementById("ttMag");
+  const dirEl = document.getElementById("ttDir");
+  const dropEl = document.getElementById("ttDrop");
+  const btnAdd = document.getElementById("ttAdd");
+  const btnSub = document.getElementById("ttSub");
+
+  const CSS = getComputedStyle(document.documentElement);
+  const ACC = CSS.getPropertyValue("--acc").trim();
+  const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+  const AMB = CSS.getPropertyValue("--amb").trim();
+  const INK = CSS.getPropertyValue("--ink").trim();
+  const DIM = CSS.getPropertyValue("--ink-dim").trim();
+  const reduce = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const buf = document.createElement("canvas"); const bctx = buf.getContext("2d");
+
+  const MAXM = 6, MINM = 0.5, DUR = 420;
+  const DROP = {
+    add: "To add vectors, draw the first arrow, then start the second arrow at the tip of the first: tip to tail. The resultant runs from the very first tail to the very last tip, and it is the one vector that does the same job as both together. Its size is almost never the sum of the sizes: 4 m/s and 3 m/s at right angles give 5 m/s by Pythagoras, and the direction comes from tan θ = opposite ÷ adjacent. A boat heading east at 4 m/s across a river flowing north at 3 m/s really moves at 5 m/s, 37° N of E, as seen from the bank. Order does not matter either: A + B and B + A finish on the same tip.",
+    sub: "Subtracting a vector means adding its opposite: A − B is A + (−B), where −B has the same length as B but points the other way. So flip B end for end, then join it tip to tail exactly as before. This is how a change in velocity is found: Δv = v − u, the final velocity minus the initial one. A ball that hits a wall at 4 m/s and bounces straight back at 3 m/s has a change in velocity of 7 m/s, not 1 m/s, because reversing the direction makes the sizes add. When A and B are at right angles, A − B is exactly as long as A + B; only its direction changes."
+  };
+
+  const st = { a: { x: 4, y: 0 }, b: { x: 0, y: 3 }, mode: "add" };
+  let shown = { a: { x: 4, y: 0 }, s: { x: 0, y: 3 } };
+  let view = { cx: 0, cy: 0, s: 40 };
+  let tw = null, raf = 0, last = 0, drag = null, hover = null;
+
+  const neg = v => ({ x: -v.x, y: -v.y });
+  const second = () => (st.mode === "add" ? { x: st.b.x, y: st.b.y } : neg(st.b));
+  const mag = v => Math.hypot(v.x, v.y);
+  const wrapPi = d => { while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; return d; };
+
+  function clampMag(v) {
+    const m = mag(v);
+    if (m < 1e-6) return { x: MINM, y: 0 };
+    const k = Math.max(MINM, Math.min(MAXM, m)) / m;
+    return { x: Math.round(v.x * k * 10) / 10, y: Math.round(v.y * k * 10) / 10 };
+  }
+  function lerpVec(p, q, k) {
+    const pm = mag(p), qm = mag(q), pt = Math.atan2(p.y, p.x), qt = Math.atan2(q.y, q.x);
+    const d = wrapPi(qt - pt), m = pm + (qm - pm) * k, t = pt + d * k;
+    return { x: m * Math.cos(t), y: m * Math.sin(t) };
+  }
+  function dims() { return { w: canvas.width / dpr, h: canvas.height / dpr }; }
+  function tagH() { return tagEl ? (tagEl.offsetHeight || 36) : 36; }
+
+  function fit(a, s) {
+    const d = dims(); const w = d.w || 640, h = d.h || 360;
+    const g = st.mode === "add" ? s : neg(s);
+    const xs = [0, a.x, a.x + s.x, g.x], ys = [0, a.y, a.y + s.y, g.y];
+    const minx = Math.min.apply(null, xs), maxx = Math.max.apply(null, xs);
+    const miny = Math.min.apply(null, ys), maxy = Math.max.apply(null, ys);
+    const bw = Math.max(maxx - minx, 1.5), bh = Math.max(maxy - miny, 1.5);
+    const top = h * 0.1, bottom = h - tagH() - h * 0.06;
+    const availH = Math.max(40, bottom - top), availW = w * 0.8;
+    const sc = Math.min(availW / bw, availH / bh, availH / 2.2) * 0.9;
+    return { cx: w / 2 - ((minx + maxx) / 2) * sc, cy: (top + bottom) / 2 + ((miny + maxy) / 2) * sc, s: sc };
+  }
+
+  function dirText(v) {
+    if (mag(v) < 0.05) return "no direction";
+    const ns = v.y >= 0 ? "N" : "S", ew = v.x >= 0 ? "E" : "W";
+    const off = Math.round(Math.atan2(Math.abs(v.y), Math.abs(v.x)) * 180 / Math.PI);
+    if (off === 0) return ew === "E" ? "due east" : "due west";
+    if (off === 90) return ns === "N" ? "due north" : "due south";
+    return off + "° " + ns + " of " + ew;
+  }
+
+  function relDeg() {
+    let d = (Math.atan2(st.b.y, st.b.x) - Math.atan2(st.a.y, st.a.x)) * 180 / Math.PI;
+    d = ((d % 360) + 360) % 360; return Math.round(d) % 360;
+  }
+  function setFill() { slider.style.setProperty("--fill", (slider.value / 360 * 100) + "%"); angEl.textContent = slider.value + "°"; }
+  function syncSlider() { slider.value = String(relDeg()); setFill(); }
+
+  function updateText() {
+    const s = second(); const R = { x: st.a.x + s.x, y: st.a.y + s.y }; const m = mag(R);
+    const op = st.mode === "add" ? "A + B" : "A − B";
+    magEl.innerHTML = m.toFixed(1) + "<small> m/s</small>";
+    dirEl.textContent = dirText(R);
+    tagEl.textContent = op + " = " + m.toFixed(1) + " m/s, " + dirText(R);
+    liveEl.textContent = st.mode === "add" ? "A + B · adding" : "A − B · subtracting";
+  }
+
+  function go() {
+    const tA = { x: st.a.x, y: st.a.y }, tS = second(), tV = fit(tA, tS);
+    updateText();
+    if (reduce) { shown = { a: tA, s: tS }; view = tV; draw(); return; }
+    tw = { el: 0, a0: shown.a, s0: shown.s, v0: { cx: view.cx, cy: view.cy, s: view.s }, a1: tA, s1: tS, v1: tV };
+    if (!raf) { last = performance.now(); raf = requestAnimationFrame(step); }
+  }
+  function step(now) {
+    const dt = Math.min(now - last, 50); last = now;
+    if (!tw) { raf = 0; return; }
+    tw.el += dt;
+    const k = Math.min(1, tw.el / DUR), e = 1 - Math.pow(1 - k, 3);
+    shown = { a: lerpVec(tw.a0, tw.a1, e), s: lerpVec(tw.s0, tw.s1, e) };
+    view = { cx: tw.v0.cx + (tw.v1.cx - tw.v0.cx) * e, cy: tw.v0.cy + (tw.v1.cy - tw.v0.cy) * e, s: tw.v0.s + (tw.v1.s - tw.v0.s) * e };
+    draw();
+    if (k < 1) raf = requestAnimationFrame(step);
+    else { raf = 0; shown = { a: tw.a1, s: tw.s1 }; view = tw.v1; tw = null; draw(); }
+  }
+  function settleNow() {
+    if (raf) cancelAnimationFrame(raf);
+    raf = 0;
+    if (tw) { shown = { a: tw.a1, s: tw.s1 }; view = tw.v1; tw = null; }
+  }
+
+  function arrow(x0, y0, x1, y1, col, lw, glow) {
+    const L = Math.hypot(x1 - x0, y1 - y0); if (L < 1) return;
+    const ux = (x1 - x0) / L, uy = (y1 - y0) / L, px = -uy, py = ux;
+    const head = Math.min(12 + lw * 1.4, L * 0.45);
+    ctx.save();
+    if (glow) { ctx.shadowColor = glow; ctx.shadowBlur = 16; }
+    ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = lw; ctx.lineCap = "round";
+    ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1 - ux * head * 0.8, y1 - uy * head * 0.8); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x1, y1);
+    ctx.lineTo(x1 - ux * head + px * head * 0.48, y1 - uy * head + py * head * 0.48);
+    ctx.lineTo(x1 - ux * head - px * head * 0.48, y1 - uy * head - py * head * 0.48);
+    ctx.closePath(); ctx.fill();
+    ctx.restore();
+  }
+  function label(txt, x, y, col, w, h, size) {
+    ctx.save();
+    ctx.font = "600 " + (size || 13) + "px \"JetBrains Mono\", monospace";
+    const tw2 = ctx.measureText(txt).width;
+    const lx = Math.max(tw2 / 2 + 8, Math.min(w - tw2 / 2 - 8, x));
+    const ly = Math.max(16, Math.min(h - tagH() - 12, y));
+    ctx.fillStyle = "rgba(0,0,0,0.62)";
+    ctx.fillRect(lx - tw2 / 2 - 5, ly - 10, tw2 + 10, 20);
+    note(lx - tw2 / 2 - 5, ly - 10, lx + tw2 / 2 + 5, ly + 10);
+    ctx.fillStyle = col; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText(txt, lx, ly);
+    ctx.restore();
+  }
+  /* tall phone stage only: the triangle draws at about half the desktop scale, so the x and y component labels and the
+     turn angle at the joint would land on the A and B tags. There, every tag, angle and ring is noted as it is drawn, the
+     two component labels go last, each to the first nearby spot that misses the others and the arrows (crossing a line
+     costs less than covering a label), and the turn angle moves only when a spot clear of the tags exists. Desktop keeps
+     the original order and spots. */
+  let boxes = null, pend = [];
+  function note(x0, y0, x1, y1) { if (boxes) boxes.push([x0, y0, x1, y1]); }
+  function noteText(txt, x, y, align) {
+    if (!boxes) return;
+    const tw3 = ctx.measureText(txt).width, x0 = align === "right" ? x - tw3 : align === "left" ? x : x - tw3 / 2;
+    note(x0 - 2, y - 7, x0 + tw3 + 2, y + 7);
+  }
+  const over = (a, b) => a[0] < b[2] && b[0] < a[2] && a[1] < b[3] && b[1] < a[3];
+  const onSeg = (b, sg) => {
+    const n = Math.max(2, Math.ceil(Math.hypot(sg[1].x - sg[0].x, sg[1].y - sg[0].y) / 3)), m = sg[2];
+    for (let i = 0; i <= n; i++) { const x = sg[0].x + (sg[1].x - sg[0].x) * i / n, y = sg[0].y + (sg[1].y - sg[0].y) * i / n; if (x > b[0] - m && x < b[2] + m && y > b[1] - m && y < b[3] + m) return true; }
+    return false;
+  };
+  function sideSpot(txt, p0, p1, cen, w, h, off) {   /* the pill box sideLabel will draw, without drawing it */
+    const mx = (p0.x + p1.x) / 2, my = (p0.y + p1.y) / 2;
+    const L = Math.hypot(p1.x - p0.x, p1.y - p0.y) || 1;
+    let nx = -(p1.y - p0.y) / L, ny = (p1.x - p0.x) / L;
+    if ((mx + nx - cen.x) * nx + (my + ny - cen.y) * ny < 0) { nx = -nx; ny = -ny; }
+    ctx.save(); ctx.font = "600 13px \"JetBrains Mono\", monospace"; const tw2 = ctx.measureText(txt).width; ctx.restore();
+    const lx = Math.max(tw2 / 2 + 8, Math.min(w - tw2 / 2 - 8, mx + nx * off)), ly = Math.max(16, Math.min(h - tagH() - 12, my + ny * off));
+    return [lx - tw2 / 2 - 5, ly - 10, lx + tw2 / 2 + 5, ly + 10];
+  }
+  function placeComponents(segs, w, h) {
+    ctx.save();
+    ctx.font = "500 11px \"JetBrains Mono\", monospace"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    pend.forEach(pc => {
+      const tw3 = ctx.measureText(pc.t).width;
+      let best = null, bestHits = 1e9;
+      pc.c.forEach(c => {
+        const b = [c.x - tw3 / 2 - 2, c.y - 7, c.x + tw3 / 2 + 2, c.y + 7];
+        let hits = (b[0] < 2 || b[2] > w - 2 || b[1] < 2 || b[3] > h - 2) ? 5 : 0;
+        boxes.forEach(o => { if (over(b, o)) hits += 3; });
+        segs.forEach(sg => { if (onSeg(b, sg)) hits++; });
+        if (hits < bestHits) { best = c; bestHits = hits; }
+      });
+      ctx.fillStyle = pc.col; ctx.fillText(pc.t, best.x, best.y); noteText(pc.t, best.x, best.y, "center");
+    });
+    ctx.restore();
+    pend = [];
+  }
+  function sideLabel(txt, p0, p1, cen, col, w, h, off) {
+    const mx = (p0.x + p1.x) / 2, my = (p0.y + p1.y) / 2;
+    const L = Math.hypot(p1.x - p0.x, p1.y - p0.y) || 1;
+    let nx = -(p1.y - p0.y) / L, ny = (p1.x - p0.x) / L;
+    if ((mx + nx - cen.x) * nx + (my + ny - cen.y) * ny < 0) { nx = -nx; ny = -ny; }
+    label(txt, mx + nx * off, my + ny * off, col, w, h);
+  }
+
+  function draw() {
+    const w = canvas.width / dpr, h = canvas.height / dpr;
+    if (!w || !h) return;
+    boxes = h > w * 0.8 ? [] : null; pend = [];
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    const X = x => view.cx + x * view.s, Y = y => view.cy - y * view.s;
+    const s = view.s;
+
+    /* grid, 1 m/s squares */
+    ctx.lineWidth = 1; ctx.strokeStyle = "rgba(255,255,255,0.055)";
+    ctx.beginPath();
+    for (let i = Math.floor(-view.cx / s); i <= Math.ceil((w - view.cx) / s); i++) { const gx = Math.round(X(i)) + 0.5; ctx.moveTo(gx, 0); ctx.lineTo(gx, h); }
+    for (let j = Math.floor((view.cy - h) / s); j <= Math.ceil(view.cy / s); j++) { const gy = Math.round(Y(j)) + 0.5; ctx.moveTo(0, gy); ctx.lineTo(w, gy); }
+    ctx.stroke();
+
+    /* reference axes through the start point */
+    const O = { x: X(0), y: Y(0) };
+    ctx.strokeStyle = "rgba(255,255,255,0.17)";
+    ctx.beginPath(); ctx.moveTo(0, O.y); ctx.lineTo(w, O.y); ctx.moveTo(O.x, 0); ctx.lineTo(O.x, h); ctx.stroke();
+    ctx.save();
+    ctx.font = "500 11px \"JetBrains Mono\", monospace"; ctx.fillStyle = DIM; ctx.textBaseline = "middle";
+    ctx.textAlign = "right"; ctx.fillText("E", w - 10, Math.max(12, Math.min(h - tagH() - 12, O.y - 10)));
+    ctx.textAlign = "left"; ctx.fillText("N", Math.max(8, Math.min(w - 20, O.x + 8)), 14);
+    noteText("E", w - 10, Math.max(12, Math.min(h - tagH() - 12, O.y - 10)), "right"); noteText("N", Math.max(8, Math.min(w - 20, O.x + 8)), 14, "left");
+    ctx.restore();
+
+    const a = shown.a, sv = shown.s;
+    const A = { x: X(a.x), y: Y(a.y) };
+    const T = { x: X(a.x + sv.x), y: Y(a.y + sv.y) };
+    const R = { x: a.x + sv.x, y: a.y + sv.y };
+    const cen = { x: (O.x + A.x + T.x) / 3, y: (O.y + A.y + T.y) / 3 };
+
+    /* ghost of B drawn from the start: same vector, slid across */
+    const gB = st.mode === "add" ? sv : neg(sv);
+    ctx.save();
+    ctx.setLineDash([5, 6]); ctx.globalAlpha = 0.32; ctx.strokeStyle = AMB; ctx.lineWidth = 1.6;
+    ctx.beginPath(); ctx.moveTo(O.x, O.y); ctx.lineTo(X(gB.x), Y(gB.y)); ctx.stroke();
+    ctx.setLineDash([]); ctx.beginPath(); ctx.arc(X(gB.x), Y(gB.y), 3, 0, Math.PI * 2); ctx.fillStyle = AMB; ctx.fill();
+    ctx.restore();
+    if (st.mode === "sub") label("B", X(gB.x) + 12, Y(gB.y) - 12, DIM, w, h, 11);
+
+    /* components of R, the right-angled triangle for Pythagoras */
+    const legsAreArrows = (Math.abs(a.y) < 0.15 && Math.abs(sv.x) < 0.15) || (Math.abs(a.x) < 0.15 && Math.abs(sv.y) < 0.15);
+    if (Math.abs(R.x) > 0.3 && Math.abs(R.y) > 0.3 && !legsAreArrows) {
+      ctx.save();
+      ctx.setLineDash([3, 5]); ctx.strokeStyle = "rgba(255,255,255,0.3)"; ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.moveTo(O.x, O.y); ctx.lineTo(T.x, O.y); ctx.lineTo(T.x, T.y); ctx.stroke();
+      ctx.restore();
+      ctx.save();
+      ctx.font = "500 11px \"JetBrains Mono\", monospace"; ctx.fillStyle = DIM; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      const hy = O.y + (R.y > 0 ? 13 : -13);
+      const vx = T.x + (R.x > 0 ? 26 : -26);
+      if (boxes) {
+        /* tall phone stage: the drawn spot first, then the other side of the leg, then one row further out */
+        const cy = v => Math.max(12, Math.min(h - tagH() - 10, v)), cx = v => Math.max(24, Math.min(w - 24, v));
+        const hx = (O.x + T.x) / 2, sy = R.y > 0 ? 1 : -1, vy = (O.y + T.y) / 2, sx = R.x > 0 ? 1 : -1;
+        pend.push({ t: "x " + Math.abs(R.x).toFixed(1), col: DIM, c: [{ x: hx, y: cy(hy) }, { x: hx, y: cy(O.y - sy * 13) }, { x: hx, y: cy(O.y + sy * 34) }, { x: hx, y: cy(O.y - sy * 34) }, { x: hx, y: cy(O.y + sy * 52) }, { x: hx, y: cy(O.y - sy * 52) }] });
+        pend.push({ t: "y " + Math.abs(R.y).toFixed(1), col: DIM, c: [{ x: cx(vx), y: vy }, { x: cx(T.x - sx * 26), y: vy }, { x: cx(vx), y: vy - 18 }, { x: cx(vx), y: vy + 18 }, { x: cx(T.x - sx * 26), y: vy - 18 }, { x: cx(T.x - sx * 26), y: vy + 18 }, { x: cx(T.x + sx * 50), y: vy }, { x: cx(T.x - sx * 50), y: vy }, { x: cx(vx), y: vy - 36 }, { x: cx(vx), y: vy + 36 }] });
+      } else {
+        ctx.fillText("x " + Math.abs(R.x).toFixed(1), (O.x + T.x) / 2, Math.max(12, Math.min(h - tagH() - 10, hy)));
+        ctx.fillText("y " + Math.abs(R.y).toFixed(1), Math.max(24, Math.min(w - 24, vx)), (O.y + T.y) / 2);
+      }
+      ctx.restore();
+    }
+
+    /* angle of R from the east-west line */
+    const mR = mag(R);
+    if (mR > 0.2) {
+      const ang = Math.atan2(R.y, R.x), ref = R.x >= 0 ? 0 : Math.PI;
+      const cs = -ref, dl = wrapPi(-ang - cs);
+      const off = Math.round(Math.atan2(Math.abs(R.y), Math.abs(R.x)) * 180 / Math.PI);
+      if (off > 2 && off < 88) {
+        const rr = Math.min(34, mR * s * 0.4);
+        ctx.save(); ctx.strokeStyle = "rgba(" + RGB + ",0.75)"; ctx.lineWidth = 1.6;
+        ctx.beginPath(); ctx.arc(O.x, O.y, rr, cs, cs + dl, dl < 0); ctx.stroke(); ctx.restore();
+        const mid = cs + dl / 2;
+        ctx.save(); ctx.font = "500 11px \"JetBrains Mono\", monospace"; ctx.fillStyle = ACC; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+        ctx.fillText(off + "°", O.x + Math.cos(mid) * (rr + 16), O.y + Math.sin(mid) * (rr + 16)); noteText(off + "°", O.x + Math.cos(mid) * (rr + 16), O.y + Math.sin(mid) * (rr + 16), "center"); ctx.restore();
+      }
+    }
+
+    /* the joint: dashed run-on of A and the angle the second arrow turns through */
+    const La = Math.hypot(A.x - O.x, A.y - O.y) || 1;
+    const ux = (A.x - O.x) / La, uy = (A.y - O.y) / La;
+    ctx.save(); ctx.setLineDash([4, 5]); ctx.strokeStyle = "rgba(255,255,255,0.28)"; ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(A.x + ux * 46, A.y + uy * 46); ctx.stroke(); ctx.restore();
+    const turn = wrapPi(Math.atan2(sv.y, sv.x) - Math.atan2(a.y, a.x));
+    const turnDeg = Math.round(Math.abs(turn) * 180 / Math.PI);
+    if (turnDeg > 2 && turnDeg < 178) {
+      const c0 = Math.atan2(uy, ux), c1 = c0 - turn;
+      ctx.save(); ctx.strokeStyle = AMB; ctx.globalAlpha = 0.7; ctx.lineWidth = 1.4;
+      ctx.beginPath(); ctx.arc(A.x, A.y, 20, c0, c1, turn > 0); ctx.stroke(); ctx.restore();
+      const cm = (c0 + c1) / 2;
+      ctx.save(); ctx.font = "500 11px \"JetBrains Mono\", monospace"; ctx.fillStyle = AMB; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      let tx = A.x + Math.cos(cm) * 36, ty = A.y + Math.sin(cm) * 36;
+      if (boxes) {
+        /* tall: if the B (or A, R) tag will cover the drawn spot, try further out along the arc, then just across the run-on line */
+        const tags = [sideSpot("A " + mag(a).toFixed(1), O, A, cen, w, h, 16), sideSpot((st.mode === "add" ? "B " : "−B ") + mag(sv).toFixed(1), A, T, cen, w, h, 16)];
+        if (mR > 0.3) tags.push(sideSpot("R " + mR.toFixed(1), O, T, cen, w, h, 16));
+        const tw3 = ctx.measureText(turnDeg + "°").width, sg = turn > 0 ? 1 : -1;
+        const clear = (x, y) => { const b = [x - tw3 / 2 - 2, y - 7, x + tw3 / 2 + 2, y + 7];
+          return b[0] > 2 && b[2] < w - 2 && b[1] > 2 && b[3] < h - 2 && !tags.concat(boxes).some(o => over(b, o)) && ![[O, A, 3], [A, T, 3], [O, T, 4]].some(q => onSeg(b, q)); };
+        if (!clear(tx, ty)) {
+          const c = [[cm, 46], [cm, 58], [c0 + sg * 0.45, 36], [c0 + sg * 0.35, 48]].map(q => ({ x: A.x + Math.cos(q[0]) * q[1], y: A.y + Math.sin(q[0]) * q[1] })).find(q => clear(q.x, q.y));
+          if (c) { tx = c.x; ty = c.y; }
+        }
+        noteText(turnDeg + "°", tx, ty, "center");
+      }
+      ctx.fillText(turnDeg + "°", tx, ty);
+      ctx.restore();
+    }
+
+    /* the three arrows */
+    arrow(O.x, O.y, T.x, T.y, ACC, 4.5, "rgba(" + RGB + ",0.9)");
+    arrow(O.x, O.y, A.x, A.y, INK, 3.4, null);
+    arrow(A.x, A.y, T.x, T.y, AMB, 3.4, null);
+
+    /* tail dot and drag rings */
+    ctx.save(); ctx.fillStyle = INK; ctx.beginPath(); ctx.arc(O.x, O.y, 4, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+    [["a", A, INK], ["s", T, AMB]].forEach(r => {
+      const hot = drag === r[0] || hover === r[0];
+      ctx.save(); ctx.strokeStyle = r[2]; ctx.globalAlpha = hot ? 0.95 : 0.45; ctx.lineWidth = hot ? 2 : 1.3;
+      if (hot) { ctx.shadowColor = r[2]; ctx.shadowBlur = 12; }
+      ctx.beginPath(); ctx.arc(r[1].x, r[1].y, hot ? 15 : 12, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+    });
+
+    /* labels beside each arrow, pushed away from the triangle */
+    sideLabel("A " + mag(a).toFixed(1), O, A, cen, INK, w, h, 16);
+    sideLabel((st.mode === "add" ? "B " : "−B ") + mag(sv).toFixed(1), A, T, cen, AMB, w, h, 16);
+    let rOff = 16;
+    if (boxes && mR > 0.3) {
+      /* tall: when R lies along A or B (0° adding, 180° subtracting) its tag would sit on theirs, so it takes the other side */
+      const hit = b => boxes.filter(o => over(b, o)).length;
+      const r0 = hit(sideSpot("R " + mR.toFixed(1), O, T, cen, w, h, 16));
+      if (r0 && hit(sideSpot("R " + mR.toFixed(1), O, T, cen, w, h, -16)) < r0) rOff = -16;
+    }
+    if (mR > 0.3) sideLabel("R " + mR.toFixed(1), O, T, cen, ACC, w, h, rOff);
+    else label("R = 0", O.x + 26, O.y - 18, ACC, w, h);
+    if (w > 460) label("tip to tail", A.x + (A.x - cen.x > 0 ? 1 : -1) * 48, A.y + (A.y - cen.y > 0 ? 1 : -1) * 20, DIM, w, h, 10);
+    if (boxes && pend.length) {
+      note(A.x - 15, A.y - 15, A.x + 15, A.y + 15); note(T.x - 15, T.y - 15, T.x + 15, T.y + 15); note(O.x - 5, O.y - 5, O.x + 5, O.y + 5);
+      placeComponents([[O, A, 3], [A, T, 3], [O, T, 4], [O, { x: T.x, y: O.y }, 1], [{ x: T.x, y: O.y }, T, 1]], w, h);
+    }
+
+    /* bloom */
+    bctx.setTransform(1, 0, 0, 1, 0, 0); bctx.clearRect(0, 0, buf.width, buf.height);
+    if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+    ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
+    if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+    ctx.restore();
+
+    /* vignette */
+    const vig = ctx.createRadialGradient(w / 2, h / 2, h * 0.28, w / 2, h / 2, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
+  }
+
+  function resize() {
+    const rect = canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return; /* f27c: refuse a zero measurement, keep the last good size */
+    canvas.width = Math.round(rect.width * dpr); canvas.height = Math.round(rect.height * dpr);
+    buf.width = canvas.width; buf.height = canvas.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    settleNow();
+    view = fit(shown.a, shown.s);
+    draw();
+  }
+
+  /* pointer dragging of either arrowhead */
+  function local(e) { const r = canvas.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
+  function pick(p) {
+    const A = { x: view.cx + shown.a.x * view.s, y: view.cy - shown.a.y * view.s };
+    const T = { x: view.cx + (shown.a.x + shown.s.x) * view.s, y: view.cy - (shown.a.y + shown.s.y) * view.s };
+    const da = Math.hypot(p.x - A.x, p.y - A.y), dt = Math.hypot(p.x - T.x, p.y - T.y);
+    if (dt < 28 && dt <= da) return "s";
+    if (da < 28) return "a";
+    return null;
+  }
+  canvas.addEventListener("pointerdown", e => {
+    const which = pick(local(e)); if (!which) return;
+    settleNow(); drag = which;
+    try { canvas.setPointerCapture(e.pointerId); } catch (err) {}
+    e.preventDefault(); draw();
+  });
+  canvas.addEventListener("pointermove", e => {
+    const p = local(e);
+    if (!drag) { const hv = pick(p); if (hv !== hover) { hover = hv; canvas.style.cursor = hv ? "grab" : "default"; draw(); } return; }
+    canvas.style.cursor = "grabbing";
+    const wpt = { x: (p.x - view.cx) / view.s, y: (view.cy - p.y) / view.s };
+    if (drag === "a") st.a = clampMag(wpt);
+    else { const sv = clampMag({ x: wpt.x - st.a.x, y: wpt.y - st.a.y }); st.b = st.mode === "add" ? sv : neg(sv); }
+    shown = { a: { x: st.a.x, y: st.a.y }, s: second() };
+    syncSlider(); updateText(); draw();
+  });
+  function endDrag() { if (!drag) return; drag = null; canvas.style.cursor = hover ? "grab" : "default"; go(); }
+  canvas.addEventListener("pointerup", endDrag);
+  canvas.addEventListener("pointercancel", endDrag);
+  canvas.addEventListener("pointerleave", () => { if (!drag && hover) { hover = null; draw(); } });
+
+  slider.addEventListener("input", () => {
+    setFill();
+    const rel = parseFloat(slider.value) * Math.PI / 180, base = Math.atan2(st.a.y, st.a.x), m = mag(st.b);
+    st.b = { x: m * Math.cos(base + rel), y: m * Math.sin(base + rel) };
+    go();
+  });
+
+  function setMode(m) {
+    if (st.mode === m) return;
+    st.mode = m;
+    btnAdd.classList.toggle("on", m === "add"); btnAdd.setAttribute("aria-pressed", m === "add" ? "true" : "false");
+    btnSub.classList.toggle("on", m === "sub"); btnSub.setAttribute("aria-pressed", m === "sub" ? "true" : "false");
+    dropEl.textContent = DROP[m];
+    go();
+  }
+  btnAdd.addEventListener("click", () => setMode("add"));
+  btnSub.addEventListener("click", () => setMode("sub"));
+
+  window.addEventListener("resize", resize);
+  if (window.ResizeObserver) { new ResizeObserver(() => resize()).observe(wrap); }
+  setFill(); updateText(); resize();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => draw());
+})();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'vectors-adding-tip-to-tail'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

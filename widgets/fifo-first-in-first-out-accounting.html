@@ -9,9 +9,10 @@ body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body
   --bg: #0B0D0C;
   --bg2: #12160F;
   --acc: #CE4480;
-  --ag: rgba(206, 68, 128, .7);
-  --ag1: rgba(206, 68, 128, .12);
-  --ag2: rgba(206, 68, 128, .45);
+  --acc-rgb: 206, 68, 128;
+  --ag:  rgba(var(--acc-rgb),.7);
+  --ag1: rgba(var(--acc-rgb),.12);
+  --ag2: rgba(var(--acc-rgb),.45);
   --amb: #FAC775;
   --ink: #EDEDE8;
   --ink-dim: #8C9389;
@@ -24,30 +25,32 @@ body {
   background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
   font-family: 'Geist', sans-serif;
   min-height: 100vh;
-  padding: 40px 16px 72px;
+  padding: 40px 16px 0;
   color: var(--ink);
 }
 
-.container { max-width: 720px; margin: 0 auto; }
+.fi-wrap { max-width: 720px; margin: 0 auto; }
+
+.sr-only { position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0; }
 
 h1 {
-  font-size: clamp(30px, 8vw, 52px);
-  font-weight: 700;
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
   letter-spacing: -0.03em;
-  line-height: 1.02;
-  margin-bottom: 16px;
+  line-height: 1.05;
+  margin-bottom: 14px;
 }
 
-.intro {
+.fi-intro {
   font-size: 15.5px;
   font-weight: 400;
   color: var(--ink-dim);
   line-height: 1.55;
   max-width: 58ch;
-  margin-bottom: 32px;
+  margin-bottom: 28px;
 }
 
-.card {
+.fi-card {
   background: linear-gradient(180deg, #12160F, #0d100b);
   border: 1px solid var(--line);
   border-radius: 18px;
@@ -56,552 +59,370 @@ h1 {
   margin-bottom: 18px;
 }
 
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.fi-head { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:6px; }
+.fi-label { font-family:'JetBrains Mono', monospace; font-size:13px; text-transform:uppercase; color:#fff; }
+.fi-live { font-family:'JetBrains Mono', monospace; font-size:11px; text-transform:uppercase; color:var(--acc); text-align:right; }
+.fi-hint { font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--ink-dim); margin-bottom:14px; }
+
+.fi-canvas-wrap {
+  position:relative; width:100%; aspect-ratio:16/9; border-radius:12px; overflow:hidden;
+  background:#000; box-shadow: inset 0 0 0 1px var(--ag1); margin-bottom:16px;
+}
+.fi-canvas-wrap canvas { position:absolute; inset:0; width:100%; height:100%; display:block; }
+.fi-overlay {
+  position:absolute; left:0; right:0; bottom:0;
+  background:rgba(0,0,0,0.55); backdrop-filter:blur(4px); padding:9px 16px;
+  font-family:'JetBrains Mono', monospace; font-size:14px; text-transform:uppercase;
+  color:var(--acc); text-align:center;
+}
+
+.fi-ctl { margin-bottom: 14px; }
+.fi-row {
+  display:flex; justify-content:space-between; align-items:baseline;
+  font-family:'JetBrains Mono', monospace; font-size:10.5px; text-transform:uppercase; color:var(--ink-dim);
   margin-bottom: 6px;
 }
+.fi-row b { font-weight:500; font-size:12px; color:var(--ink); text-transform:none; }
 
-.card-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  color: var(--ink);
+.fi-slider {
+  -webkit-appearance:none; appearance:none; width:100%; height:4px; border-radius:3px; outline:none; display:block;
+  background: linear-gradient(90deg, var(--acc) var(--fill,0%), #23291f var(--fill,0%));
+  margin: 8px 0 8px;
 }
-
-.live-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--acc);
+.fi-slider::-webkit-slider-thumb {
+  -webkit-appearance:none; appearance:none; width:20px; height:20px; border-radius:50%;
+  background:#0B0D0C; border:2px solid var(--acc);
+  box-shadow:0 0 16px var(--ag), 0 0 4px var(--ag); transition:box-shadow .15s; cursor:pointer;
 }
-
-.card-hint {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--ink-dim);
-  margin-bottom: 14px;
+.fi-slider::-moz-range-thumb {
+  width:20px; height:20px; border-radius:50%; background:#0B0D0C; border:2px solid var(--acc);
+  box-shadow:0 0 16px var(--ag), 0 0 4px var(--ag); transition:box-shadow .15s; cursor:pointer;
 }
+.fi-slider::-webkit-slider-thumb:hover { box-shadow:0 0 24px var(--acc), 0 0 8px var(--ag); }
+.fi-slider::-moz-range-thumb:hover { box-shadow:0 0 24px var(--acc), 0 0 8px var(--ag); }
 
-.canvas-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16/9;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
-  box-shadow: inset 0 0 0 1px var(--ag1);
-  margin-bottom: 18px;
+.fi-ticks { display:flex; justify-content:space-between; font-family:'JetBrains Mono', monospace; font-size:10px; color:var(--ink-dim); }
+
+.fi-stats {
+  display:grid; grid-template-columns:1fr 1fr; gap:14px 16px;
+  padding-top:16px; border-top:1px solid var(--line); margin-top:4px;
 }
+.fi-stat { display:flex; flex-direction:column; gap:3px; }
+.fi-stat-l { font-family:'JetBrains Mono', monospace; font-size:10.5px; text-transform:uppercase; color:var(--ink-dim); }
+.fi-stat-v { font-family:'JetBrains Mono', monospace; font-size:24px; font-weight:500; }
+.fi-stat-v.acc { color:var(--acc); }
+.fi-stat-v.amb { color:var(--amb); }
 
-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
+.fi-tq { font-family:'JetBrains Mono', monospace; font-size:11px; text-transform:uppercase; color:var(--ink-dim); margin-bottom:10px; }
+.fi-toggles { display:flex; gap:10px; margin-bottom:16px; }
+.fi-tog {
+  flex:1; font-family:'JetBrains Mono', monospace; font-size:12px; padding:12px 10px; border-radius:999px;
+  background:#12160F; border:1px solid var(--line); color:var(--ink-dim); cursor:pointer; transition:all .2s;
 }
-
-.canvas-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(4px);
-  padding: 9px 16px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  text-transform: uppercase;
-  color: var(--acc);
-  text-align: center;
+.fi-tog[aria-pressed="true"] {
+  background:rgba(var(--acc-rgb),.1); border-color:var(--acc); color:var(--acc);
+  box-shadow:0 0 22px rgba(var(--acc-rgb),.18);
 }
+.fi-drop { border-top:1px solid var(--line); padding-top:16px; font-size:14.5px; line-height:1.65; color:var(--ink); }
 
-.slider-container { margin-bottom: 12px; }
-
-.fifo-slider {
-  width: 100%;
-  height: 4px;
-  -webkit-appearance: none;
-  appearance: none;
-  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
-  border-radius: 3px;
-  outline: none;
-  margin: 18px 0 10px;
+.fi-know {
+  border-left:3px solid var(--acc); padding:16px 18px;
+  background:linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius:0 12px 12px 0; margin-bottom:0; padding-bottom:16px;
 }
+.fi-know-tag { display:flex; align-items:center; gap:9px; margin-bottom:10px; }
+.fi-know-dot { width:6px; height:6px; border-radius:50%; background:var(--acc); box-shadow:0 0 8px var(--acc); animation:fiPulse 2.4s ease-in-out infinite; }
+.fi-know-txt { font-family:'JetBrains Mono', monospace; font-size:13px; text-transform:uppercase; letter-spacing:0.15em; color:var(--acc); }
+.fi-know-body { font-size:17.4px; line-height:1.55; color:var(--ink); }
 
-.fifo-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow .15s;
-}
-
-.fifo-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow .15s;
-}
-
-.fifo-slider::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.fifo-slider::-moz-range-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.tick-labels {
-  display: flex;
-  justify-content: space-between;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--ink-dim);
-}
-
-.stat-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-}
-
-.stat {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.stat-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-}
-
-.stat-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 24px;
-  font-weight: 500;
-}
-
-.toggle-card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 18px;
-}
-
-.toggle-buttons {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.toggle-btn {
-  flex: 1;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14.5px;
-  padding: 12px;
-  border-radius: 11px;
-  border: 1px solid var(--line);
-  background: #12160F;
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: all .2s;
-}
-
-.toggle-btn.active {
-  background: rgba(206,68,128,.1);
-  border-color: var(--acc);
-  color: var(--acc);
-  box-shadow: 0 0 22px rgba(206,68,128,.18);
-}
-
-.knowdrop-divider {
-  border-top: 1px solid var(--line);
-  margin-bottom: 16px;
-}
-
-.knowdrop {
-  font-size: 14.5px;
-  font-weight: 400;
-  line-height: 1.65;
-  color: var(--ink);
-}
-
-.know-this {
-  border-left: 3px solid var(--acc);
-  padding: 16px 18px;
-  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
-  border-radius: 0 12px 12px 0;
-  margin-bottom: 34px;
-}
-
-.know-this-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--acc);
-  margin-bottom: 10px;
-}
-
-.know-this-body {
-  font-size: 17.4px;
-  font-weight: 400;
-  line-height: 1.55;
-  color: var(--ink);
-}
-
-.footer {
-  margin-top: 34px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.pulse-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--acc);
-  box-shadow: 0 0 10px var(--acc);
-  animation: fifoPulse 2.4s ease-in-out infinite;
-}
-
-@keyframes fifoPulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: .35; transform: scale(.6); }
-}
+@keyframes fiPulse { 0%,100%{opacity:1} 50%{opacity:.45} }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
+  .fi-know-dot { animation:none; }
+  .fi-tog { transition:none; }
 }
 </style>
 
-<div class="container">
-  <h2 class="sr-only">FIFO Inventory Costing Interactive Widget</h2>
-  
-  <h1>Your Balance Sheet Lies About Cost — But FIFO Makes It <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">Truthful</span></h1>
-  
-  <p class="intro">In most accounting methods, your balance sheet shows what you paid historically, not what inventory is actually worth today. FIFO breaks this pattern by keeping your newest purchases in ending inventory, showing values close to current replacement cost. Drag the slider to see how rising or falling purchase prices affect your financial statements.</p>
+<div class="fi-wrap">
+  <h2 class="sr-only">FIFO cost layers: how units sold split purchase costs between Cost of Sales and Inventory</h2>
 
-  <div class="card">
-    <div class="card-header">
-      <div class="card-label">Purchase Price Trend</div>
-      <div class="live-tag" id="trendTag">RISING +15%</div>
-    </div>
-    <div class="card-hint">Drag to simulate price inflation or deflation</div>
-    
-    <div class="canvas-wrapper">
-      <canvas id="fifoCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">NEWEST UNITS IN INVENTORY · OLDEST TO COGS</div>
-    </div>
+  <h1>FIFO sells the oldest cost, not the oldest <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">box</span></h1>
+  <p class="fi-intro">FIFO does not track which carton actually left the shelf. It is a cost-flow assumption: the first cost in is the first cost out, so Cost of Sales takes the oldest purchase layer and Inventory keeps the newest, each at the price actually paid. Raise the units sold past 50 and watch which cost layer starts leaving next, then change the later purchase cost and watch where it lands.</p>
 
-    <div class="slider-container">
-      <input aria-label="Purchase price change (%)" type="range" min="-30" max="30" value="15" class="fifo-slider" id="priceSlider">
-      <div class="tick-labels">
-        <span>FALLING −30%</span>
-        <span>STABLE 0%</span>
-        <span>RISING +30%</span>
-      </div>
+  <div class="fi-card">
+    <div class="fi-head">
+      <div class="fi-label">FIFO cost layers</div>
+      <div class="fi-live" id="fiLive">Cost +15% · 100 sold</div>
+    </div>
+    <div class="fi-hint">Change the units sold and the later purchase cost. Watch which layer leaves first.</div>
+
+    <div class="fi-canvas-wrap" id="fiWrap">
+      <canvas id="fiCanvas"></canvas>
+      <div class="fi-overlay" id="fiOverlay">100 sold: 50@$20 + 50@$23</div>
     </div>
 
-    <div class="stat-row">
-      <div class="stat">
-        <div class="stat-label">Ending Inventory</div>
-        <div class="stat-value" id="invValue" style="color:var(--acc)">$5,750</div>
-      </div>
-      <div class="stat">
-        <div class="stat-label">Gross Profit</div>
-        <div class="stat-value" id="profitValue" style="color:var(--amb)">$3,250</div>
-      </div>
+    <div class="fi-ctl">
+      <div class="fi-row"><span>Units sold</span><b id="fiQV">100 units</b></div>
+      <input type="range" class="fi-slider" id="fiQ" aria-label="Units sold" min="0" max="150" step="10" value="100">
+      <div class="fi-ticks"><span>0</span><span>50</span><span>100</span><span>150</span></div>
+    </div>
+
+    <div class="fi-ctl">
+      <div class="fi-row"><span>Second purchase cost vs $20</span><b id="fiCV">+15%</b></div>
+      <input type="range" class="fi-slider" id="fiC" aria-label="Change in second purchase cost compared with twenty dollars" min="-30" max="30" step="5" value="15">
+      <div class="fi-ticks"><span>−30%</span><span>0%</span><span>+30%</span></div>
+    </div>
+
+    <div class="fi-stats">
+      <div class="fi-stat"><div class="fi-stat-l">Revenue ($50 a unit)</div><div class="fi-stat-v acc" id="fiRev">$5,000</div></div>
+      <div class="fi-stat"><div class="fi-stat-l">Cost of Sales</div><div class="fi-stat-v amb" id="fiCos">$2,150</div></div>
+      <div class="fi-stat"><div class="fi-stat-l">Gross profit</div><div class="fi-stat-v acc" id="fiGp">$2,850</div></div>
+      <div class="fi-stat"><div class="fi-stat-l">Inventory (balance sheet)</div><div class="fi-stat-v amb" id="fiInv">$1,150</div></div>
     </div>
   </div>
 
-  <div class="toggle-card">
-    <div class="toggle-buttons">
-      <button class="toggle-btn active" id="btnRising">Rising Prices</button>
-      <button class="toggle-btn" id="btnFalling">Falling Prices</button>
+  <div class="fi-card">
+    <div class="fi-tq">Which way is the second purchase cost moving?</div>
+    <div class="fi-toggles" role="group" aria-label="Direction of purchase costs">
+      <button class="fi-tog" id="fiRise" aria-pressed="true">Rising costs</button>
+      <button class="fi-tog" id="fiFall" aria-pressed="false">Falling costs</button>
     </div>
-    <div class="knowdrop-divider"></div>
-    <p class="knowdrop" id="knowdropText">When purchase prices rise over time, FIFO allocates your oldest, cheapest costs to Cost of Goods Sold first, leaving your newest, most expensive purchases in ending inventory. This produces the highest ending inventory value on the balance sheet and the highest gross profit on the income statement. Because your ending inventory consists of recent purchases, the balance sheet figure closely approximates current replacement cost, making it economically relevant for decision-making. The physical flow assumption matches real business practices in sectors like grocery retail where older stock must move first to prevent spoilage or obsolescence.</p>
+    <p class="fi-drop" id="fiDrop"></p>
   </div>
 
-  <div class="know-this">
-    <div class="know-this-tag">Know This</div>
-    <div class="know-this-body">Under FIFO, your <span style="color:var(--acc)">ending inventory</span> always consists of the most recently purchased units at their most recent costs, keeping your balance sheet close to <span style="color:var(--acc)">current replacement cost</span> and making it more economically relevant than historical cost methods.</div>
-  </div>
-
-  <div class="footer">
-    <div class="pulse-dot"></div>
+  <div class="fi-know">
+    <div class="fi-know-tag"><span class="fi-know-dot"></span><span class="fi-know-txt">Know This</span></div>
+    <div class="fi-know-body">Under FIFO, <span style="color:var(--acc)">Cost of Sales</span> takes the oldest purchase costs first, so <span style="color:var(--acc)">Inventory</span> is left carrying the <span style="color:var(--acc)">most recent costs</span>, still historical cost, just the latest layer bought.</div>
   </div>
 </div>
 
 <script>
-const canvas = document.getElementById('fifoCanvas');
-const ctx = canvas.getContext('2d');
-const slider = document.getElementById('priceSlider');
-const trendTag = document.getElementById('trendTag');
-const canvasOverlay = document.getElementById('canvasOverlay');
-const invValue = document.getElementById('invValue');
-const profitValue = document.getElementById('profitValue');
-const btnRising = document.getElementById('btnRising');
-const btnFalling = document.getElementById('btnFalling');
-const knowdropText = document.getElementById('knowdropText');
+(function(){
+  const CSS = getComputedStyle(document.documentElement);
+  const ACC = CSS.getPropertyValue("--acc").trim();
+  const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+  const AMB = CSS.getPropertyValue("--amb").trim();
+  const INK = CSS.getPropertyValue("--ink").trim();
+  const DIM = CSS.getPropertyValue("--ink-dim").trim();
+  function hexRgb(hx){
+    let v = hx.replace("#","");
+    if (v.length === 3) v = v.split("").map(function(c){ return c + c; }).join("");
+    const n = parseInt(v, 16);
+    return ((n >> 16) & 255) + "," + ((n >> 8) & 255) + "," + (n & 255);
+  }
+  const AMB_RGB = hexRgb(AMB);
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-const dpr = Math.min(window.devicePixelRatio || 1, 2);
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d');
+  const wrap = document.getElementById("fiWrap");
+  const canvas = document.getElementById("fiCanvas");
+  const ctx = canvas.getContext("2d");
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const buf = document.createElement("canvas");
+  const bctx = buf.getContext("2d");
 
-let priceChange = 15;
-let animTime = 0;
+  const qS = document.getElementById("fiQ");
+  const cS = document.getElementById("fiC");
+  const qV = document.getElementById("fiQV");
+  const cV = document.getElementById("fiCV");
+  const live = document.getElementById("fiLive");
+  const overlay = document.getElementById("fiOverlay");
+  const revEl = document.getElementById("fiRev");
+  const cosEl = document.getElementById("fiCos");
+  const gpEl = document.getElementById("fiGp");
+  const invEl = document.getElementById("fiInv");
+  const riseBtn = document.getElementById("fiRise");
+  const fallBtn = document.getElementById("fiFall");
+  const drop = document.getElementById("fiDrop");
 
-const risingText = "When purchase prices rise over time, FIFO allocates your oldest, cheapest costs to Cost of Goods Sold first, leaving your newest, most expensive purchases in ending inventory. This produces the highest ending inventory value on the balance sheet and the highest gross profit on the income statement. Because your ending inventory consists of recent purchases, the balance sheet figure closely approximates current replacement cost, making it economically relevant for decision-making. The physical flow assumption matches real business practices in sectors like grocery retail where older stock must move first to prevent spoilage or obsolescence.";
+  const riseText = "With purchase costs rising, the first layer bought (50 units at $20) is cheaper than the second. FIFO sends that $20 layer to Cost of Sales first, and only when it is used up does the second layer start leaving at its own, higher cost. Whatever is left in Inventory is valued at the cost it was actually bought for, which under FIFO means the most recent, higher purchase price. That is still historical cost: nothing is revalued to what it would cost to replace today. Before you switch to falling costs, predict: will the Inventory figure go up or down, and will gross profit go up or down?";
+  const fallText = "With purchase costs falling, the $20 layer is now the dear one, and FIFO still sends it to Cost of Sales first. Inventory keeps the newest, cheaper units at their own lower cost, so the Inventory figure drops. Compared with the rising case, gross profit only changes once more than 50 units are sold, because up to that point every unit sold carries the same $20 cost; past 50, the cheaper second layer starts leaving and gross profit is higher. Compared with a method that sent the newest cost out first, FIFO still reports the higher Cost of Sales and lower profit in a falling market. Check both figures against your prediction, then notice why the cheaper purchases did nothing for Cost of Sales until the $20 layer was gone.";
 
-const fallingText = "When purchase prices fall over time, FIFO allocates your oldest, most expensive costs to Cost of Goods Sold first, leaving your newest, cheapest purchases in ending inventory. This produces the lowest ending inventory value on the balance sheet and the lowest gross profit on the income statement among costing methods. While profit appears reduced, your balance sheet still shows inventory at close to current replacement cost because ending inventory consists of recent lower-priced purchases. This scenario occurs in technology sectors or during economic downturns where input costs decline over the reporting period.";
+  let q = 100, c = 15;
 
-function resize() {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  draw();
-}
-
-function updateUI() {
-  const change = priceChange;
-  const absChange = Math.abs(change);
-  
-  if (change > 0) {
-    trendTag.textContent = `RISING +${absChange}%`;
-  } else if (change < 0) {
-    trendTag.textContent = `FALLING −${absChange}%`;
-  } else {
-    trendTag.textContent = 'STABLE 0%';
+  function fmt(n){ return "$" + Math.round(n).toLocaleString("en-AU"); }
+  function model(qq, cc){
+    const c1 = 20;
+    const c2 = Math.round(20 * (1 + cc / 100));
+    const s1 = Math.min(qq, 50), k1 = 50 - s1;
+    const s2 = Math.max(0, qq - 50), k2 = 100 - s2;
+    return { c1:c1, c2:c2, s1:s1, k1:k1, s2:s2, k2:k2,
+      cos: s1*c1 + s2*c2, inv: k1*c1 + k2*c2, rev: qq*50, gp: qq*50 - (s1*c1 + s2*c2), tot: 50*c1 + 100*c2 };
+  }
+  function targets(m){
+    return [
+      { col:1, off:0,    units:m.s1, cost:m.c1, layer:0 },
+      { col:2, off:0,    units:m.k1, cost:m.c1, layer:0 },
+      { col:1, off:m.s1, units:m.s2, cost:m.c2, layer:1 },
+      { col:2, off:m.k1, units:m.k2, cost:m.c2, layer:1 }
+    ];
   }
 
-  // Calculate values
-  // Base scenario: 100 units sold at $50 each = $5000 revenue
-  // Started with 50 units at $20 = $1000
-  // Purchased 100 units during period
-  // Ending inventory: 50 units (newest)
-  
-  const baseOldCost = 20;
-  const baseNewCost = 25;
-  
-  const oldCost = baseOldCost * (1 - change / 100);
-  const newCost = baseNewCost * (1 + change / 100);
-  
-  // FIFO: oldest go to COGS first
-  // Sold 100 units: 50 old @ oldCost + 50 newer @ midpoint
-  const midCost = (oldCost + newCost) / 2;
-  const cogs = 50 * oldCost + 50 * midCost;
-  
-  // Ending inventory: 50 newest @ newCost
-  const endInv = 50 * newCost;
-  
-  // Revenue: 100 units @ $50
-  const revenue = 5000;
-  const grossProfit = revenue - cogs;
-  
-  invValue.textContent = `$${Math.round(endInv).toLocaleString()}`;
-  profitValue.textContent = `$${Math.round(grossProfit).toLocaleString()}`;
-  
-  // Update slider fill
-  const fillPercent = ((parseFloat(slider.value) - parseFloat(slider.min)) / (parseFloat(slider.max) - parseFloat(slider.min))) * 100;
-  slider.style.setProperty('--fill', fillPercent + '%');
-}
+  let M = model(q, c);
+  let to = targets(M);
+  let from = to.map(function(p){ return { col:0, off: p.layer === 0 ? 0 : 50, units: p.units }; });
+  let cur = from.map(function(p){ return { col:p.col, off:p.off, units:p.units }; });
+  let t0 = 0, raf = 0, lastE = 0;
+  const DUR = reduce ? 0 : 700;
 
-function draw() {
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, w, h);
-  
-  animTime += 0.016;
-  
-  const change = priceChange;
-  
-  // Draw inventory flow visualization
-  const boxCount = 10;
-  const boxW = w * 0.08;
-  const boxH = h * 0.14;
-  const spacing = (w - boxW * 2) / (boxCount + 1);
-  
-  // Starting y position
-  const startY = h * 0.25;
-  const endY = h * 0.65;
-  
-  // Draw oldest boxes (left side) - these go to COGS
-  for (let i = 0; i < 5; i++) {
-    const x = spacing * (i + 1);
-    const y = startY;
-    
-    // Animate boxes moving down to COGS
-    const progress = Math.min(1, (animTime % 3) / 1.5);
-    const currentY = y + (endY - y) * progress;
-    const fade = 1 - progress * 0.7;
-    
-    // Box color gets darker (older = cheaper in rising market)
-    const intensity = change > 0 ? 0.3 + (i / 5) * 0.3 : 0.6 - (i / 5) * 0.3;
-    
-    ctx.save();
-    ctx.globalAlpha = fade;
-    
-    // Box
-    ctx.fillStyle = `rgba(206, 68, 128, ${intensity})`;
-    ctx.fillRect(x, currentY, boxW, boxH);
-    
-    // Glow
-    ctx.globalCompositeOperation = 'lighter';
-    const glow = ctx.createRadialGradient(x + boxW/2, currentY + boxH/2, 0, x + boxW/2, currentY + boxH/2, boxW * 0.8);
-    glow.addColorStop(0, `rgba(206, 68, 128, ${intensity * 0.4})`);
-    glow.addColorStop(1, 'rgba(206, 68, 128, 0)');
-    ctx.fillStyle = glow;
-    ctx.fillRect(x - boxW * 0.3, currentY - boxH * 0.3, boxW * 1.6, boxH * 1.6);
-    
+  function ease(t){ return 1 - Math.pow(1 - t, 3); }
+  function lerp(a, b, t){ return a + (b - a) * t; }
+
+  function resize(){
+    const rect = wrap.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    buf.width = canvas.width; buf.height = canvas.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    drawAt(raf ? lastE : 1);
+  }
+
+  function drawAt(e){
+    lastE = e;
+    const w = canvas.width / dpr, h = canvas.height / dpr;
+    ctx.clearRect(0, 0, w, h);
+    const colC = function(col){ return w / 6 + col * (w / 3); };
+    const blockW = Math.min(w * 0.27, 180);
+    const top = h * 0.25, bottom = h * 0.76;
+    const scale = (bottom - top) / 150;
+    const mono = "11px 'JetBrains Mono', monospace";
+    const mono12 = "500 12px 'JetBrains Mono', monospace";
+
+    // headers + totals
+    ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
+    const heads = ["PURCHASES", "COST OF SALES", "INVENTORY"];
+    const tots = [M.tot, M.cos, M.inv];
+    for (let i = 0; i < 3; i++){
+      ctx.font = mono; ctx.fillStyle = i === 0 ? DIM : INK; ctx.globalAlpha = i === 0 ? 0.9 : 1;
+      ctx.fillText(heads[i], colC(i), h * 0.07 + 11);
+      ctx.font = mono12; ctx.fillStyle = i === 0 ? DIM : (i === 1 ? AMB : ACC);
+      ctx.fillText(fmt(tots[i]), colC(i), h * 0.07 + 27);
+      ctx.globalAlpha = 1;
+    }
+
+    // ghost purchase layers
+    const layers = [{ units:50, cost:M.c1, off:0 }, { units:100, cost:M.c2, off:50 }];
+    ctx.setLineDash([4, 4]); ctx.lineWidth = 1; ctx.strokeStyle = DIM; ctx.globalAlpha = 0.75;
+    layers.forEach(function(L){
+      const x = colC(0) - blockW / 2, y = top + L.off * scale, hg = L.units * scale;
+      ctx.strokeRect(x + 0.5, y + 0.5, blockW - 1, hg - 1);
+      ctx.font = mono; ctx.fillStyle = DIM; ctx.textAlign = "center";
+      if (hg >= 28){
+        ctx.fillText(L.units + " @ $" + L.cost, colC(0), y + hg / 2 - 2);
+        ctx.fillText(fmt(L.units * L.cost), colC(0), y + hg / 2 + 11);
+      } else if (hg >= 14){
+        ctx.fillText(L.units + " @ $" + L.cost, colC(0), y + hg / 2 + 4);
+      }
+    });
+    ctx.setLineDash([]); ctx.globalAlpha = 1;
+
+    // moving pieces
+    for (let i = 0; i < to.length; i++){
+      const col = lerp(from[i].col, to[i].col, e);
+      const off = lerp(from[i].off, to[i].off, e);
+      const units = lerp(from[i].units, to[i].units, e);
+      cur[i] = { col:col, off:off, units:units };
+      if (units <= 0.01) continue;
+      const x = colC(col) - blockW / 2, y = top + off * scale, hg = units * scale;
+      const rgb = to[i].layer === 0 ? AMB_RGB : RGB;
+      const solid = to[i].layer === 0 ? AMB : ACC;
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      ctx.fillStyle = "rgba(" + rgb + ",0.16)";
+      ctx.fillRect(x - 6, y - 6, blockW + 12, hg + 12);
+      ctx.restore();
+      ctx.fillStyle = "rgba(" + rgb + ",0.42)";
+      ctx.fillRect(x, y, blockW, hg);
+      ctx.strokeStyle = solid; ctx.lineWidth = 1.5;
+      ctx.strokeRect(x + 0.75, y + 0.75, blockW - 1.5, Math.max(0, hg - 1.5));
+      const tu = to[i].units;
+      if (tu > 0 && e > 0.6){
+        ctx.font = mono; ctx.fillStyle = INK; ctx.textAlign = "center";
+        if (hg >= 28){
+          ctx.fillText(tu + " @ $" + to[i].cost, x + blockW / 2, y + hg / 2 - 2);
+          ctx.fillText(fmt(tu * to[i].cost), x + blockW / 2, y + hg / 2 + 11);
+        } else if (hg >= 14){
+          ctx.fillText(tu + " @ $" + to[i].cost, x + blockW / 2, y + hg / 2 + 4);
+        }
+      }
+    }
+
+    // bloom
+    bctx.setTransform(1, 0, 0, 1, 0, 0); bctx.clearRect(0, 0, buf.width, buf.height);
+    if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+    ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
+    if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
     ctx.restore();
+
+    // vignette
+    const cx = w / 2, cy = h / 2;
+    const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
   }
-  
-  // Draw newest boxes (right side) - these stay in inventory
-  for (let i = 0; i < 5; i++) {
-    const x = w - spacing * (i + 1) - boxW;
-    const y = startY;
-    
-    // These boxes stay put with subtle pulse
-    const pulse = 1 + Math.sin(animTime * 2 + i * 0.5) * 0.05;
-    
-    // Box color gets brighter (newer = more expensive in rising market)
-    const intensity = change > 0 ? 0.6 + (i / 5) * 0.3 : 0.3 + (i / 5) * 0.3;
-    
-    ctx.save();
-    
-    // Box
-    ctx.fillStyle = `rgba(206, 68, 128, ${intensity})`;
-    ctx.fillRect(x, y, boxW * pulse, boxH * pulse);
-    
-    // Glow
-    ctx.globalCompositeOperation = 'lighter';
-    const glow = ctx.createRadialGradient(x + boxW/2, y + boxH/2, 0, x + boxW/2, y + boxH/2, boxW * 0.9);
-    glow.addColorStop(0, `rgba(206, 68, 128, ${intensity * 0.5})`);
-    glow.addColorStop(1, 'rgba(206, 68, 128, 0)');
-    ctx.fillStyle = glow;
-    ctx.fillRect(x - boxW * 0.4, y - boxH * 0.4, boxW * 1.8, boxH * 1.8);
-    
-    ctx.restore();
+
+  function frame(now){
+    const dt = Math.min(now - t0, 50);
+    t0 += 0; // keep t0 as start time; dt only guards against a hidden tab overshoot
+    const t = DUR === 0 ? 1 : Math.min(1, (now - t0) / DUR);
+    drawAt(ease(t));
+    if (t < 1 && dt >= 0) raf = requestAnimationFrame(frame);
+    else raf = 0;
   }
-  
-  // Labels
-  ctx.font = '11px JetBrains Mono';
-  ctx.textAlign = 'center';
-  
-  // Oldest label
-  ctx.fillStyle = 'rgba(237, 237, 232, 0.6)';
-  ctx.fillText('OLDEST', spacing * 3, h * 0.18);
-  ctx.fillText('↓ TO COGS', spacing * 3, endY + boxH + 20);
-  
-  // Newest label
-  ctx.fillStyle = 'rgba(206, 68, 128, 0.9)';
-  ctx.fillText('NEWEST', w - spacing * 3, h * 0.18);
-  ctx.fillText('ENDING INV', w - spacing * 3, startY + boxH + 20);
-  
-  // Arrow showing flow
-  const arrowY = h * 0.5;
-  ctx.strokeStyle = 'rgba(237, 237, 232, 0.3)';
-  ctx.lineWidth = 2;
-  ctx.setLineDash([4, 4]);
-  ctx.beginPath();
-  ctx.moveTo(w * 0.15, arrowY);
-  ctx.lineTo(w * 0.4, arrowY);
-  ctx.stroke();
-  ctx.setLineDash([]);
-  
-  // Bloom effect
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
-  
-  // Vignette
-  const vig = ctx.createRadialGradient(w/2, h/2, h * 0.28, w/2, h/2, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-  
-  requestAnimationFrame(draw);
-}
 
-slider.addEventListener('input', (e) => {
-  priceChange = parseFloat(e.target.value);
-  updateUI();
-});
+  function retarget(){
+    M = model(q, c);
+    from = cur.map(function(p){ return { col:p.col, off:p.off, units:p.units }; });
+    to = targets(M);
+    if (DUR === 0){ drawAt(1); return; }
+    t0 = performance.now();
+    if (!raf) raf = requestAnimationFrame(frame);
+  }
 
-btnRising.addEventListener('click', () => {
-  btnRising.classList.add('active');
-  btnFalling.classList.remove('active');
-  knowdropText.textContent = risingText;
-  slider.value = 15;
-  priceChange = 15;
-  updateUI();
-});
+  function pct(s){ return ((s.value - s.min) / (s.max - s.min) * 100) + "%"; }
 
-btnFalling.addEventListener('click', () => {
-  btnFalling.classList.add('active');
-  btnRising.classList.remove('active');
-  knowdropText.textContent = fallingText;
-  slider.value = -15;
-  priceChange = -15;
-  updateUI();
-});
+  function readouts(){
+    const m = model(q, c);
+    qV.textContent = q + " units";
+    cV.textContent = c > 0 ? "+" + c + "%" : (c < 0 ? "−" + Math.abs(c) + "%" : "0%");
+    qS.style.setProperty("--fill", pct(qS));
+    cS.style.setProperty("--fill", pct(cS));
+    const trend = c > 0 ? "Cost +" + c + "%" : (c < 0 ? "Cost −" + Math.abs(c) + "%" : "Cost stable");
+    live.textContent = trend + " · " + q + " sold";
+    let ov;
+    if (q === 0) ov = "0 sold: all in Inventory";
+    else if (q <= 50) ov = q + " sold: " + m.s1 + "@$" + m.c1 + " only";
+    else if (q < 150) ov = q + " sold: 50@$" + m.c1 + " + " + m.s2 + "@$" + m.c2;
+    else ov = "150 sold: 50@$" + m.c1 + " + 100@$" + m.c2;
+    overlay.textContent = ov;
+    revEl.textContent = fmt(m.rev);
+    cosEl.textContent = fmt(m.cos);
+    gpEl.textContent = fmt(m.gp);
+    invEl.textContent = fmt(m.inv);
+  }
 
-window.addEventListener('resize', resize);
-resize();
-updateUI();
+  qS.addEventListener("input", function(){ q = parseInt(qS.value, 10); readouts(); retarget(); });
+  cS.addEventListener("input", function(){ c = parseInt(cS.value, 10); readouts(); retarget(); });
+
+  function setTog(rising){
+    riseBtn.setAttribute("aria-pressed", rising ? "true" : "false");
+    fallBtn.setAttribute("aria-pressed", rising ? "false" : "true");
+    drop.textContent = rising ? riseText : fallText;
+    c = rising ? 15 : -15;
+    cS.value = String(c);
+    readouts(); retarget();
+  }
+  riseBtn.addEventListener("click", function(){ setTog(true); });
+  fallBtn.addEventListener("click", function(){ setTog(false); });
+
+  drop.textContent = riseText;
+  window.addEventListener("resize", resize);
+  if (window.ResizeObserver){ new ResizeObserver(function(){ resize(); }).observe(wrap); }
+  resize();
+  readouts();
+  t0 = performance.now();
+  if (DUR === 0) drawAt(1); else if (!raf) raf = requestAnimationFrame(frame);
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'fifo-first-in-first-out'},'*');}catch(e){}}

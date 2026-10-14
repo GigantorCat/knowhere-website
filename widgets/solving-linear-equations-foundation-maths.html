@@ -301,11 +301,11 @@ canvas{
 <div class="container">
   <h1>Equations aren't puzzles — they're <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">balances</span></h1>
   
-  <p class="intro">The secret to solving any linear equation isn't memorising steps — it's understanding that both sides must stay equal, and operations must be undone in the reverse of the order they were applied to x. Move the slider through the steps: each step does the same thing to both sides, so the scale stays level the whole way.</p>
+  <p class="intro">The secret to solving any linear equation isn't memorising steps — it's understanding that both sides must stay equal, and operations must be undone in the reverse of the order they were applied to x. Step through the moves: the same move on both sides keeps the scale level; a move on one side only tips it.</p>
 
   <div class="card">
     <div class="card-header">
-      <span class="card-label">Balance View</span>
+      <span class="card-label">Balance view</span>
       <span class="live-tag" id="balanceTag">Level</span>
     </div>
     <div class="card-hint">Step through: the same move on both sides keeps the scale level</div>
@@ -315,11 +315,16 @@ canvas{
       <div class="canvas-overlay" id="canvasOverlay" style="text-transform:none">Start: 2x + 3 = 9</div>
     </div>
 
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" id="modeBoth">Both sides</button>
+      <button class="toggle-btn" id="modeLeft">Left side only</button>
+    </div>
+
     <input aria-label="Solving step" type="range" class="eq-slider" id="xSlider" min="0" max="2" step="1" value="0">
     <div class="tick-labels">
       <span>Start</span>
-      <span>− 3 both sides</span>
-      <span>÷ 2 both sides</span>
+      <span>− 3</span>
+      <span>÷ 2</span>
     </div>
 
     <div class="stat-row">
@@ -328,16 +333,16 @@ canvas{
         <div class="stat-value acc" id="xValue">2x + 3 = 9</div>
       </div>
       <div class="stat">
-        <div class="stat-label">Left · right</div>
-        <div class="stat-value amb" id="balanceStatus">9 · 9 at x = 3</div>
+        <div class="stat-label">Left · right at x = 3</div>
+        <div class="stat-value amb" id="balanceStatus">9 · 9</div>
       </div>
     </div>
   </div>
 
   <div class="toggle-card">
     <div class="toggle-buttons">
-      <button class="toggle-btn active" data-mode="order">Order Matters</button>
-      <button class="toggle-btn" data-mode="check">Check Solution</button>
+      <button class="toggle-btn active" data-mode="order">Order matters</button>
+      <button class="toggle-btn" data-mode="check">Check solution</button>
     </div>
     
     <div class="knowdrop" id="knowdropText">
@@ -379,10 +384,18 @@ const STEPS = [
   { xs: A, units: 0, right: C - B, action: "Take " + B + " from both sides", removed: { left: B, right: B } },
   { xs: 1, units: 0, right: (C - B) / A, action: "Halve both sides", removed: { leftX: A - 1, right: (C - B) - (C - B) / A } }
 ];
+/* The common mistake: the same moves made on the left side only, so the right tray keeps its blocks */
+const STEPS_ONE = [
+  STEPS[0],
+  { xs: A, units: 0, right: C, action: "Take " + B + " from the left only", removed: { left: B } },
+  { xs: 1, units: 0, right: C, action: "Halve the left only", removed: { leftX: A - 1 } }
+];
+let oneSide = false;
 
 function eqText(st) {
   const left = (st.xs === 1 ? "x" : st.xs + "x") + (st.units ? " + " + st.units : "");
-  return left + " = " + st.right;
+  const level = Math.abs(st.xs * SOLUTION + st.units - st.right) < 1e-9;
+  return left + (level ? " = " : " ≠ ") + st.right;
 }
 
 function resize() {
@@ -442,7 +455,7 @@ function draw() {
   shown += (target - shown) * 0.18;
   if (Math.abs(target - shown) < 0.002) shown = target;
   const idx = Math.round(shown);
-  const st = STEPS[idx];
+  const st = (oneSide ? STEPS_ONE : STEPS)[idx];
   const fade = 1 - Math.min(1, Math.abs(shown - idx) * 2);
 
   ctx.fillStyle = "#000";
@@ -463,7 +476,7 @@ function draw() {
   ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.fillStyle = pivotGlow;
   ctx.beginPath(); ctx.arc(cx, cy, 28, 0, Math.PI * 2); ctx.fill(); ctx.restore();
 
-  /* tilt comes from the model: left minus right at the true solution, which is 0 at every step */
+  /* tilt comes from the model: left minus right at the true solution, which is 0 only when the same move is made on both sides */
   const leftVal = st.xs * SOLUTION + st.units;
   const rightVal = st.right;
   const tilt = Math.max(-0.3, Math.min(0.3, (rightVal - leftVal) * 0.05));
@@ -529,19 +542,30 @@ function draw() {
 
 function update() {
   const k = parseInt(slider.value, 10);
-  const st = STEPS[k];
+  const st = (oneSide ? STEPS_ONE : STEPS)[k];
   const leftVal = st.xs * SOLUTION + st.units;
   const level = Math.abs(leftVal - st.right) < 1e-9;
   xValue.textContent = eqText(st);
-  balanceStatus.textContent = leftVal + " · " + st.right + " at x = " + SOLUTION;
+  balanceStatus.textContent = leftVal + " · " + st.right;
   balanceTag.textContent = level ? "Level ✓" : "Tipped";
-  canvasOverlay.textContent = (k === 0 ? "Start: " : "Step " + k + ": " + st.action.toLowerCase() + " → ") + eqText(st);
+  canvasOverlay.textContent = (k === 0 ? "Start: " : "Step " + k + ": " + st.action.toLowerCase() + " → ") + eqText(st) + (level ? "" : " (tipped)");
   slider.style.setProperty("--fill", (k / 2) * 100 + "%");
 }
 
 slider.addEventListener("input", update);
 
-const toggleBtns = document.querySelectorAll(".toggle-btn");
+const modeBoth = document.getElementById("modeBoth");
+const modeLeft = document.getElementById("modeLeft");
+function setMode(one) {
+  oneSide = one;
+  modeBoth.classList.toggle("active", !one);
+  modeLeft.classList.toggle("active", one);
+  update();
+}
+modeBoth.addEventListener("click", () => setMode(false));
+modeLeft.addEventListener("click", () => setMode(true));
+
+const toggleBtns = document.querySelectorAll(".toggle-card .toggle-btn");
 const knowdropContent = {
   order: `To solve 2x + 3 = 9, undo what was done to x in the reverse order. x was doubled, then 3 was added, so take 3 from both sides first (2x = 6), then halve both sides (x = 3). The order comes from the equation, not a fixed rule: in (x + 3) ÷ 2 = 9 the last thing done was dividing by 2, so multiply both sides by 2 first (x + 3 = 18), then take 3 (x = 15). In 2(x + 3) = 10, dividing both sides by 2 first is simplest (x + 3 = 5, so x = 2).`,
   check: `After solving 2x + 3 = 9 to get x = 3, substitute that value back into the original equation to verify: 2(3) + 3 = 6 + 3 = 9. Both sides equal 9, confirming the solution is correct. This checking step catches arithmetic errors and ensures you haven't lost or gained solutions during manipulation. For the equation above, any x value other than 3 will create an imbalance — try x = 2: you get 2(2) + 3 = 7, which doesn't equal 9. Substitution back is the ultimate test of whether your solution maintains the equality principle that defines equations.`

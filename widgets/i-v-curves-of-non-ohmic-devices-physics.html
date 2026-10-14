@@ -1,0 +1,539 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>I-V curves of non-ohmic devices — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{
+  --bg:#0B0D0C;
+  --bg2:#12160F;
+  --acc:#3A6FC8;
+  --acc-rgb:58, 111, 200;
+  --ag:rgba(var(--acc-rgb),.7);
+  --ag1:rgba(var(--acc-rgb),.12);
+  --ag2:rgba(var(--acc-rgb),.45);
+  --amb:#FAC775;
+  --ink:#EDEDE8;
+  --ink-dim:#8C9389;
+  --line:#262B26;
+}
+body{margin:0;background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C 55%);font-family:'Geist',sans-serif;color:var(--ink);min-height:100vh;padding:40px 16px 0;box-sizing:border-box}
+.iv *{box-sizing:border-box}
+.iv{max-width:720px;margin:0 auto}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.iv h1{font-family:'Geist',sans-serif;font-weight:800;font-size:clamp(26px,6.5vw,44px);letter-spacing:-0.03em;line-height:1.05;margin:0 0 14px;color:var(--ink)}
+.iv .intro{font-size:15.5px;font-weight:400;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin:0 0 24px}
+.iv .card{background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);margin-bottom:18px}
+.iv .card.sec{border-radius:14px}
+.iv .hrow{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.iv .hlabel{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;color:#fff}
+.iv .live{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--acc)}
+.iv .hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin:6px 0 12px;line-height:1.5}
+.iv .devs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.iv .dv{font-family:'JetBrains Mono',monospace;font-size:13px;padding:10px 6px;border-radius:11px;background:#12160F;border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:all .2s}
+.iv .dv.on{background:rgba(var(--acc-rgb),.1);border:1px solid var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.iv .note{font-family:'Geist',sans-serif;font-size:13.5px;line-height:1.5;color:var(--ink-dim);margin:0 0 12px;min-height:3em}
+.iv .cwrap{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1)}
+.iv .cwrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.iv .otag{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--acc);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.iv .srow{margin-top:16px}
+.iv .slab{display:flex;justify-content:space-between;gap:10px;font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:10px}
+.iv .slab b{color:var(--ink);font-weight:500}
+.iv .nc{text-transform:none}
+.iv .ticks{display:flex;justify-content:space-between;gap:10px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink-dim);margin-top:8px}
+.iv .srow.off{opacity:.42}
+.iv-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;background:linear-gradient(90deg,var(--acc) var(--fill,0%),#23291f var(--fill,0%));outline:none;margin:0;display:block}
+.iv-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.iv-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.iv-slider:hover::-webkit-slider-thumb{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.iv-slider:hover::-moz-range-thumb{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.iv-slider:disabled::-webkit-slider-thumb{cursor:not-allowed}
+.iv .stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;border-top:1px solid var(--line);margin-top:18px;padding-top:14px}
+.iv .stl{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:4px}
+.iv .stv{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500}
+.iv .stv.a{color:var(--acc)}
+.iv .stv.b{color:var(--amb)}
+.iv .toggles{display:flex;gap:10px}
+.iv .tg{flex:1;font-family:'JetBrains Mono',monospace;font-size:14.5px;padding:12px;border-radius:11px;background:#12160F;border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:all .2s}
+.iv .tg.on{background:rgba(var(--acc-rgb),.1);border:1px solid var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.iv .kd{border-top:1px solid var(--line);padding-top:16px;margin-top:16px}
+.iv .kd p{font-family:'Geist',sans-serif;font-size:14.5px;font-weight:400;line-height:1.65;color:var(--ink);margin:0}
+.iv .know{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));border-radius:0 12px 12px 0;margin:6px 0 0}
+.iv .ktag{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.iv .kdot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:kpulse 2.4s ease-in-out infinite}
+.iv .ktxt{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:0.15em;color:var(--acc)}
+.iv .know p{font-family:'Geist',sans-serif;font-size:17.4px;font-weight:400;line-height:1.55;color:var(--ink);margin:0}
+.iv>*:last-child{margin-bottom:0;padding-bottom:16px}
+@keyframes kpulse{0%,100%{opacity:1}50%{opacity:.45}}
+@media (max-width:480px){.iv .devs{grid-template-columns:repeat(2,1fr)}.iv .otag{font-size:12px;padding:6px 10px}.iv .tg{font-size:13px;padding:12px 8px}.iv .stv{font-size:20px}}
+@media (prefers-reduced-motion:reduce){.iv .kdot{animation:none}.iv .tg,.iv .dv{transition:none}}
+</style>
+<div class="iv">
+  <h2 class="sr-only">Interactive I-V graph: choose a filament bulb, diode, LED, thermistor, LDR or potentiometer, change the voltage to trace its current against voltage curve, and set the temperature, light level or knob setting to change the thermistor, LDR and potentiometer lines. A chord from the origin shows the resistance R = V/I at the chosen point and a small circuit shows charge flowing at a rate set by the current.</h2>
+  <h1>Ohm's law is the exception, not the <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">rule</span>.</h1>
+  <p class="intro">A fixed resistor gives a straight I-V line, but non-ohmic devices such as bulbs, diodes, LEDs, thermistors and LDRs bend it, kink it or tilt it. Resistance is still V/I at every point; it just changes as you go. Pick a component, then change the voltage and watch its curve trace out.</p>
+
+  <div class="card">
+    <div class="hrow"><span class="hlabel">I-V curves of non-ohmic devices</span><span class="live" id="ivLive">conducting</span></div>
+    <div class="hint">Pick a part, then sweep V from reverse to forward.</div>
+    <div class="devs" role="group" aria-label="Choose a component">
+      <button class="dv" type="button" data-d="bulb" aria-pressed="false">Bulb</button>
+      <button class="dv on" type="button" data-d="diode" aria-pressed="true">Diode</button>
+      <button class="dv" type="button" data-d="led" aria-pressed="false">LED</button>
+      <button class="dv" type="button" data-d="therm" aria-pressed="false">Thermistor</button>
+      <button class="dv" type="button" data-d="ldr" aria-pressed="false">LDR</button>
+      <button class="dv" type="button" data-d="pot" aria-pressed="false">Potentiometer</button>
+    </div>
+    <p class="note" id="ivNote"></p>
+    <div class="cwrap"><canvas id="ivCv" aria-label="Current against voltage graph for the chosen component, with a small test circuit, drawn live"></canvas><div class="otag" id="ivTag">V = 0.75 V · I = 17 mA · P = 13 mW</div></div>
+
+    <div class="srow">
+      <div class="slab"><span>Voltage across it <span class="nc">V</span></span><b class="nc" id="ivVv">0.75 V</b></div>
+      <input class="iv-slider" id="ivV" type="range" min="0" max="1000" step="1" value="900" aria-label="Voltage across the component, from reverse to forward">
+      <div class="ticks"><span id="ivVlo">-0.6 V · reverse</span><span id="ivVhi">+0.9 V · forward</span></div>
+    </div>
+
+    <div class="srow off" id="ivCrow">
+      <div class="slab"><span id="ivCl">Second control</span><b class="nc" id="ivCv2">not used</b></div>
+      <input class="iv-slider" id="ivC" type="range" min="0" max="100" step="1" value="50" aria-label="Temperature, light level or knob setting for the chosen component" disabled>
+      <div class="ticks"><span id="ivClo">only V sets I here</span><span id="ivChi"></span></div>
+    </div>
+
+    <div class="stats">
+      <div><div class="stl">Current <span class="nc">I</span></div><div class="stv a nc" id="ivI">17 mA</div></div>
+      <div><div class="stl">Resistance <span class="nc">R = V/I</span></div><div class="stv b nc" id="ivR">43 Ω</div></div>
+    </div>
+  </div>
+
+  <div class="card sec">
+    <div class="toggles">
+      <button class="tg on" id="ivT1" type="button" aria-pressed="true">Why it bends</button>
+      <button class="tg" id="ivT2" type="button" aria-pressed="false">In the lab</button>
+    </div>
+    <div class="kd"><p id="ivKd"></p></div>
+  </div>
+
+  <div class="know">
+    <div class="ktag"><span class="kdot"></span><span class="ktxt">Know This</span></div>
+    <p><span style="color:var(--acc)">Resistance</span> at any point is <span style="color:var(--acc)">R = V/I</span>, and only an <span style="color:var(--acc)">ohmic device</span> keeps it constant, giving a straight line through the origin.</p>
+  </div>
+</div>
+<script>
+(function(){
+  const CSS = getComputedStyle(document.documentElement);
+  const ACC = CSS.getPropertyValue("--acc").trim();
+  const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+  function hexRgb(hx, fb){ hx = (hx || "").replace("#", "").trim(); if (hx.length === 3) hx = hx.split("").map(c => c + c).join(""); if (hx.length !== 6) return fb; return parseInt(hx.slice(0,2),16) + "," + parseInt(hx.slice(2,4),16) + "," + parseInt(hx.slice(4,6),16); }
+  const AMBR = hexRgb(CSS.getPropertyValue("--amb"), "250,199,117");
+  const INKR = hexRgb(CSS.getPropertyValue("--ink"), "237,237,232");
+  const DIMR = hexRgb(CSS.getPropertyValue("--ink-dim"), "140,147,137");
+  const acc = a => "rgba(" + RGB + "," + a + ")";
+  const amb = a => "rgba(" + AMBR + "," + a + ")";
+  const ink = a => "rgba(" + INKR + "," + a + ")";
+  const dim = a => "rgba(" + DIMR + "," + a + ")";
+
+  const canvas = document.getElementById("ivCv");
+  const ctx = canvas.getContext("2d");
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const buf = document.createElement("canvas"); const bctx = buf.getContext("2d");
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const VT = 0.02585;
+  function junctionI(V, Is, n, Rs){
+    if (V <= 0) return Is * (Math.exp(V / (n * VT)) - 1);
+    let lo = 0, hi = V / Rs;
+    for (let k = 0; k < 60; k++){ const m = (lo + hi) / 2; const f = n * VT * Math.log(m / Is + 1) + m * Rs - V; if (f > 0) hi = m; else lo = m; }
+    return (lo + hi) / 2;
+  }
+  const thermR = c => 100 * Math.exp(3500 * (1 / (c * 0.6 + 273.15) - 1 / 298.15));
+  const ldrR = c => 50000 * Math.pow(Math.pow(10, 3 * c / 100), -0.75);
+  const potR = c => 20 + 180 * c / 100;
+
+  const DEV = {
+    bulb: { name: "Filament bulb", vmax: 6, imax: 0.6, vstep: 1, istep: 0.1,
+      I: V => V / (4 * (1 + 0.233 * Math.pow(Math.abs(V), 1.2))),
+      note: "Current heats the filament, and a hotter filament has more resistance, so each extra volt adds less current: the curve bends over. Reverse the supply and the same thing happens the other way." },
+    diode: { name: "Silicon diode", vmax: 0.9, imax: 0.08, vstep: 0.1, istep: 0.01, on: 0.7,
+      I: V => junctionI(V, 3e-9, 1.8, 1.5),
+      note: "A one-way valve for current. In reverse it blocks; forward, almost nothing flows until about 0.7 V, then the current shoots up." },
+    led: { name: "Red LED", vmax: 2.4, imax: 0.045, vstep: 0.5, istep: 0.01, on: 1.8,
+      I: V => junctionI(V, 3e-19, 2, 8),
+      note: "A diode that gives out light. Its switch-on voltage is higher, about 1.8 V for a red LED, and it only glows while forward current flows." },
+    therm: { name: "NTC thermistor", vmax: 6, imax: 0.24, vstep: 1, istep: 0.04, cond: 40,
+      R: thermR, cl: "Temperature", cfmt: c => (c * 0.6).toFixed(0) + " °C", clo: "0 °C · cold", chi: "60 °C · hot",
+      note: "Warm an NTC thermistor and its resistance falls, so the line gets steeper. Held at one temperature, R = V/I stays constant and its line is straight. It is still classed as non-ohmic because its resistance changes with temperature, including when its own current warms it." },
+    ldr: { name: "LDR", vmax: 6, imax: 0.025, vstep: 1, istep: 0.005, cond: 70,
+      R: ldrR, cl: "Light level", cfmt: c => { const lx = Math.pow(10, 3 * c / 100); return (lx < 10 ? lx.toFixed(1) : lx.toFixed(0)) + " lx"; }, clo: "1 lx · nearly dark", chi: "1000 lx · bright",
+      note: "A light-dependent resistor: more light means lower resistance and a steeper line. In near-darkness it lets almost no current through. At one light level, R = V/I stays constant and its line is straight; it is classed as non-ohmic because its resistance changes with light." },
+    pot: { name: "Potentiometer", vmax: 6, imax: 0.33, vstep: 1, istep: 0.05, cond: 40,
+      R: potR, cl: "Knob setting", cfmt: c => potR(c).toFixed(0) + " Ω", clo: "20 Ω", chi: "200 Ω",
+      note: "Used as a variable resistor it is ohmic: a straight line through the origin at every setting. Turning the knob only changes the slope." }
+  };
+  function curI(d, V, c){ return d.R ? V / d.R(c) : d.I(V); }
+
+  const KD = [
+    "Ohm's law, V = IR with R constant, only holds while nothing inside the component changes as the current grows. In a filament bulb the current heats the wire, its atoms vibrate harder and get in the way of the moving electrons, so R climbs to several times its cold value and the curve flattens. An NTC thermistor does the opposite: warming it frees more charge carriers, so R falls and its line gets steeper, and an LDR does the same with light. Held at one temperature or light level, either one gives a straight line because R = V/I is constant there; they are still non-ohmic because R changes with temperature or light, including when the current through them warms them. A diode or LED is a one-way valve: almost no current flows in reverse, and forward current only takes off past a switch-on voltage, about 0.7 V for a silicon diode and roughly 1.8 V to 3 V for an LED depending on its colour. At every point you still use R = V/I and P = VI; the device simply has a different R at each point.",
+    "To trace a curve yourself, put the component in series with an ammeter and connect a voltmeter in parallel across it. Use a variable supply, or a potentiometer wired as a voltage divider, to step the voltage up from zero, and record V and I at each step. Swap the supply leads to collect the negative half of the graph. Put a protective resistor in series with a diode or LED, because past switch-on its current rises so steeply that it can burn out. For a thermistor or LDR, keep the current small so it does not heat itself, hold the temperature or light steady during a sweep, then repeat at a new setting to get a new line."
+  ];
+
+  const vS = document.getElementById("ivV"), cS = document.getElementById("ivC");
+  const el = id => document.getElementById(id);
+  let key = "diode";
+  const seen = {}; /* furthest forward voltage each device has been taken to: its note and whole-curve ghost wait for it */
+  const explored = (k) => (seen[k] || 0) >= DEV[k].vmax * 0.6;
+  const conds = { therm: 40, ldr: 70, pot: 40 };
+  let vShown = 0, cShown = 50, prog = 1, phase = 0, last = performance.now();
+
+  const vmin = d => -d.vmax * 2 / 3;
+  const vTarget = () => { const d = DEV[key]; return vmin(d) + (d.vmax - vmin(d)) * (+vS.value) / 1000; };
+
+  function fmtV(V){ const d = DEV[key]; const s = (V < 0 ? "-" : "") + Math.abs(V).toFixed(d.vmax < 3 ? 2 : 1) + " V"; return s; }
+  function fmtI(I){ const a = Math.abs(I) * 1000; if (a < 0.005) return "0 mA"; const s = I < 0 ? "-" : ""; if (a < 1) return s + a.toFixed(2) + " mA"; if (a < 10) return s + a.toFixed(1) + " mA"; return s + a.toFixed(0) + " mA"; }
+  function fmtR(V, I){ if (Math.abs(V) < 0.005) return "—"; if (Math.abs(I) < 1e-6) return "> 1 MΩ"; const R = V / I; if (R >= 1e6) return "> 1 MΩ"; if (R >= 1000) return (R / 1000).toFixed(R >= 10000 ? 0 : 1) + " kΩ"; return R.toFixed(R < 10 ? 1 : 0) + " Ω"; }
+  function fmtP(P){ const a = Math.abs(P); if (a < 1e-4) return "0 mW"; if (a < 1) return (a * 1000).toFixed(a < 0.01 ? 1 : 0) + " mW"; return a.toFixed(2) + " W"; }
+
+  function liveText(d, V, I){
+    if (key === "diode" || key === "led"){
+      if (V < -0.005) return "reverse · blocking";
+      if (Math.abs(I) < d.imax * 0.03) return "below switch-on";
+      return key === "led" ? "conducting · glowing" : "conducting";
+    }
+    if (key === "bulb") return Math.abs(V) < 0.05 ? "filament cold" : "filament heating · R rising";
+    if (key === "pot") return "ohmic · straight line";
+    if (key === "therm") return "hotter means lower R";
+    return "brighter means lower R";
+  }
+
+  function fill(s){ const mn = +s.min, mx = +s.max; s.style.setProperty("--fill", ((+s.value - mn) / (mx - mn) * 100) + "%"); }
+
+  function syncUI(){
+    const d = DEV[key];
+    const V = vTarget(), c = d.R ? conds[key] : 0, I = curI(d, V, c);
+    el("ivVv").textContent = fmtV(V);
+    el("ivVlo").textContent = (-d.vmax * 2 / 3).toFixed(d.vmax < 3 ? 1 : 0) + " V · reverse";
+    el("ivVhi").textContent = "+" + d.vmax.toFixed(d.vmax < 3 ? 1 : 0) + " V · forward";
+    el("ivI").textContent = fmtI(I);
+    el("ivR").textContent = fmtR(V, I);
+    el("ivTag").textContent = "V = " + fmtV(V) + " · I = " + fmtI(I) + " · P = VI = " + fmtP(V * I);
+    el("ivLive").textContent = liveText(d, V, I);
+    el("ivNote").textContent = explored(key) ? d.note : "Raise the voltage forward and watch the shape the line makes.";
+    const row = el("ivCrow");
+    if (d.R){
+      row.classList.remove("off"); cS.disabled = false;
+      el("ivCl").textContent = d.cl; el("ivCv2").textContent = d.cfmt(conds[key]);
+      el("ivClo").textContent = d.clo; el("ivChi").textContent = d.chi;
+    } else {
+      row.classList.add("off"); cS.disabled = true;
+      el("ivCl").textContent = "Second control"; el("ivCv2").textContent = "not used";
+      el("ivClo").textContent = "only V sets I for this part"; el("ivChi").textContent = "";
+    }
+    fill(vS); fill(cS);
+  }
+
+  function resize(){
+    const r = canvas.getBoundingClientRect();
+    if (!r.width || !r.height) return; /* f27c: refuse a zero measurement, keep the last good size */
+    canvas.width = Math.max(1, Math.round(r.width * dpr)); canvas.height = Math.max(1, Math.round(r.height * dpr));
+    buf.width = canvas.width; buf.height = canvas.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function tag(t, x, y, align, col){
+    const tw = ctx.measureText(t).width, fh = parseFloat(ctx.font.match(/([\d.]+)px/)[1]);
+    const lx = align === "right" ? x - tw : x;
+    ctx.save(); ctx.fillStyle = "rgba(0,0,0,0.62)"; ctx.fillRect(lx - 3, y - fh * 0.62, tw + 6, fh * 1.24); ctx.restore();
+    ctx.fillStyle = col; ctx.textAlign = "left"; ctx.textBaseline = "middle"; ctx.fillText(t, lx, y);
+  }
+  function line(x1, y1, x2, y2){ ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); }
+
+  function drawSymbol(k, cx, cy, u, glow){
+    ctx.save();
+    ctx.strokeStyle = ink(0.85); ctx.lineWidth = 1.4; ctx.fillStyle = ink(0.85);
+    const bw = u * 1.5, bh = u * 0.6;
+    if (glow > 0.01){
+      ctx.save(); ctx.globalCompositeOperation = "lighter";
+      const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, u * 3.2);
+      g.addColorStop(0, amb(0.75 * glow)); g.addColorStop(0.45, amb(0.22 * glow)); g.addColorStop(1, amb(0));
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, u * 3.2, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+    }
+    if (k === "bulb"){
+      ctx.beginPath(); ctx.arc(cx, cy, u * 0.6, 0, Math.PI * 2); ctx.stroke();
+      const q = u * 0.42; line(cx - q, cy - q, cx + q, cy + q); line(cx - q, cy + q, cx + q, cy - q);
+      line(cx - u, cy, cx - u * 0.6, cy); line(cx + u * 0.6, cy, cx + u, cy);
+    } else if (k === "diode" || k === "led"){
+      const t = u * 0.5;
+      line(cx - u, cy, cx - t, cy); line(cx + t, cy, cx + u, cy);
+      ctx.beginPath(); ctx.moveTo(cx - t, cy - t); ctx.lineTo(cx - t, cy + t); ctx.lineTo(cx + t, cy); ctx.closePath(); ctx.stroke();
+      line(cx + t, cy - t, cx + t, cy + t);
+      if (k === "led"){
+        for (let i = 0; i < 2; i++){
+          const x0 = cx + i * u * 0.35 - u * 0.05, y0 = cy - t - u * 0.08;
+          const x1 = x0 + u * 0.35, y1 = y0 - u * 0.35;
+          line(x0, y0, x1, y1);
+          ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x1 - u * 0.16, y1 + u * 0.02); ctx.lineTo(x1 - u * 0.02, y1 + u * 0.16); ctx.closePath(); ctx.fill();
+        }
+      }
+    } else {
+      ctx.strokeRect(cx - bw / 2, cy - bh / 2, bw, bh);
+      line(cx - u * 1.25, cy, cx - bw / 2, cy); line(cx + bw / 2, cy, cx + u * 1.25, cy);
+      if (k === "therm"){
+        line(cx - bw * 0.62, cy + bh * 1.0, cx + bw * 0.5, cy - bh * 1.0);
+        line(cx - bw * 0.62, cy + bh * 1.0, cx - bw * 0.85, cy + bh * 1.0);
+      } else if (k === "ldr"){
+        const rr = bw * 0.62;
+        ctx.beginPath(); ctx.arc(cx, cy, rr, 0, Math.PI * 2); ctx.stroke();
+        for (const a of [-2.2, -2.75]){
+          const x1 = cx + Math.cos(a) * (rr + 2), y1 = cy + Math.sin(a) * (rr + 2);
+          const x0 = x1 - u * 0.36, y0 = y1 - u * 0.36;
+          line(x0, y0, x1, y1);
+          ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x1 - u * 0.16, y1 - u * 0.02); ctx.lineTo(x1 - u * 0.02, y1 - u * 0.16); ctx.closePath(); ctx.fill();
+        }
+      } else if (k === "pot"){
+        const y0 = cy + bh * 1.5, y1 = cy + bh / 2 + 1;
+        line(cx, y0, cx, y1);
+        ctx.beginPath(); ctx.moveTo(cx, y1); ctx.lineTo(cx - u * 0.14, y1 + u * 0.2); ctx.lineTo(cx + u * 0.14, y1 + u * 0.2); ctx.closePath(); ctx.fill();
+      }
+    }
+    ctx.restore();
+  }
+
+  function drawCircuit(bx, by, bw, bh, d, V, I, dt){
+    if (bw < 60 || bh < 44) return;
+    const x0 = bx + bw * 0.1, x1 = bx + bw * 0.9, y0 = by + bh * 0.5, y1 = by + bh * 0.92;
+    const cx = (x0 + x1) / 2, u = Math.min(bw * 0.13, bh * (key === "ldr" ? 0.16 : 0.19));
+    const vy = by + bh * 0.1, mr = Math.max(6, u * 0.42);
+    const ext = (key === "bulb" || key === "diode" || key === "led") ? u : u * 1.25;
+    ctx.save();
+    ctx.strokeStyle = dim(0.75); ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(cx - ext, y0); ctx.lineTo(x0, y0); ctx.lineTo(x0, y1); ctx.lineTo(cx - 4, y1);
+    ctx.moveTo(cx + 4, y1); ctx.lineTo(x1, y1); ctx.lineTo(x1, y0); ctx.lineTo(cx + ext, y0);
+    ctx.stroke();
+    // voltmeter across the component
+    ctx.strokeStyle = dim(0.55);
+    ctx.beginPath(); ctx.moveTo(cx - ext - u * 0.3, y0); ctx.lineTo(cx - ext - u * 0.3, vy); ctx.lineTo(cx - mr, vy);
+    ctx.moveTo(cx + mr, vy); ctx.lineTo(cx + ext + u * 0.3, vy); ctx.lineTo(cx + ext + u * 0.3, y0); ctx.stroke();
+    ctx.restore();
+    const fsz = Math.max(8, Math.min(11, mr * 1.2));
+    function meter(x, y, t){
+      ctx.save(); ctx.fillStyle = "rgba(0,0,0,0.9)"; ctx.strokeStyle = ink(0.8); ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.arc(x, y, mr, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = ink(0.9); ctx.font = "500 " + fsz + "px 'JetBrains Mono', monospace"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(t, x, y + 0.5); ctx.restore();
+    }
+    // cell: long thin plate is always +. Forward: + on the left, so current runs left to right along the top.
+    // Reverse (supply leads swapped): the cell is drawn flipped, + on the right.
+    const pL = V >= 0 ? cx - 4 : cx + 4, pS = V >= 0 ? cx + 4 : cx - 4;
+    ctx.save(); ctx.strokeStyle = ink(0.85); ctx.lineWidth = 1.6;
+    line(pL, y1 - u * 0.55, pL, y1 + u * 0.55); ctx.lineWidth = 3; line(pS, y1 - u * 0.28, pS, y1 + u * 0.28);
+    ctx.fillStyle = dim(0.9); ctx.font = fsz + "px 'JetBrains Mono', monospace"; ctx.textAlign = "center"; ctx.textBaseline = "bottom";
+    ctx.fillText("+", V >= 0 ? cx - 11 : cx + 12, y1 - 3); ctx.fillText("−", V >= 0 ? cx + 12 : cx - 11, y1 - 3);
+    ctx.restore();
+    let glow = 0;
+    if (key === "led") glow = Math.max(0, Math.min(1, I / d.imax)) ;
+    if (key === "bulb") glow = Math.min(1, Math.abs(V * I) / (d.vmax * d.I(d.vmax)));
+    drawSymbol(key, cx, y0, u, glow);
+    meter(x0, (y0 + y1) / 2, "A");
+    meter(cx, vy, "V");
+    // charges flowing round the loop at a rate set by the current
+    const per = 2 * ((x1 - x0) + (y1 - y0));
+    const frac = Math.max(-1.3, Math.min(1.3, I / d.imax));
+    if (!reduce) phase += frac * (dt / 1000) * per * 0.18;
+    phase = ((phase % per) + per) % per;
+    const N = 16, sp = per / N;
+    function at(s){
+      s = ((s % per) + per) % per;
+      const a = x1 - x0, b = y1 - y0;
+      if (s < a) return [x0 + s, y0];
+      s -= a; if (s < b) return [x1, y0 + s];
+      s -= b; if (s < a) return [x1 - s, y1];
+      s -= a; return [x0, y1 - s];
+    }
+    const show = Math.abs(frac) > 0.004 ? Math.min(1, 0.35 + Math.abs(frac)) : 0.12;
+    ctx.save(); ctx.globalCompositeOperation = "lighter";
+    for (let i = 0; i < N; i++){
+      const p = at(phase + i * sp);
+      ctx.fillStyle = acc(0.95 * show); ctx.beginPath(); ctx.arc(p[0], p[1], 2.3, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = acc(0.25 * show); ctx.beginPath(); ctx.arc(p[0], p[1], 5, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  function draw(dt){
+    const w = canvas.width / dpr, h = canvas.height / dpr;
+    if (w < 10 || h < 10) return;
+    const d = DEV[key];
+    ctx.clearRect(0, 0, w, h);
+    const L = w * 0.07, R = w * 0.965, T = h * 0.08, B = h * 0.8;
+    const PW = R - L, PH = B - T;
+    const ox = L + PW * 0.4, oy = T + PH * 0.62;
+    const vlo = vmin(d);
+    const X = V => ox + (V / d.vmax) * (R - ox);
+    const Y = I => oy - (I / d.imax) * (oy - T);
+    const fs = Math.max(9, Math.min(12, w / 60));
+    const c = d.R ? cShown : 0;
+    const V = vShown, I = curI(d, V, c);
+
+    // grid
+    ctx.save(); ctx.lineWidth = 1; ctx.strokeStyle = ink(0.06);
+    for (let v = Math.ceil(vlo / d.vstep) * d.vstep; v <= d.vmax + 1e-9; v += d.vstep){ const x = X(v); line(x, T, x, B); }
+    for (let i = Math.ceil(-d.imax * 0.613 / d.istep) * d.istep; i <= d.imax + 1e-9; i += d.istep){ const y = Y(i); line(L, y, R, y); }
+    ctx.strokeStyle = ink(0.4); ctx.lineWidth = 1.2; line(L, oy, R, oy); line(ox, T, ox, B);
+    ctx.restore();
+
+    // axis labels
+    ctx.save(); ctx.font = fs + "px 'JetBrains Mono', monospace"; ctx.fillStyle = dim(0.95);
+    ctx.textAlign = "center"; ctx.textBaseline = "top";
+    const vpx = (R - ox) / d.vmax * d.vstep; const vk = Math.max(1, Math.ceil(fs * 3.4 / vpx));
+    let n = 0;
+    for (let v = Math.ceil(vlo / d.vstep) * d.vstep; v <= d.vmax + 1e-9; v += d.vstep){ const r = Math.round(v / d.vstep); if (r === 0 || r % vk || X(v) > R - fs * 4.6) continue; ctx.fillText((+v.toFixed(2)).toString(), X(v), oy + 4); n++; }
+    ctx.textAlign = "left"; ctx.textBaseline = "middle";
+    const ipx = (oy - T) / d.imax * d.istep; const ik = Math.max(1, Math.ceil(fs * 1.7 / ipx));
+    for (let i = d.istep; i <= d.imax + 1e-9; i += d.istep){ const r = Math.round(i / d.istep); if (r % ik) continue; ctx.fillText((+(i * 1000).toFixed(1)).toString(), ox + 5, Y(i)); }
+    ctx.fillStyle = ink(0.75); ctx.textAlign = "right"; ctx.textBaseline = "top"; ctx.fillText("V (V)", R - 2, oy + 4);
+    ctx.textAlign = "right"; ctx.textBaseline = "top"; ctx.fillText("I (mA)", ox - 5, T + 1);
+    ctx.restore();
+
+    // device name and setting in the empty lower-right quadrant
+    ctx.save(); ctx.textAlign = "right"; ctx.textBaseline = "bottom";
+    ctx.font = "500 " + (fs + 2) + "px 'JetBrains Mono', monospace"; ctx.fillStyle = acc(0.9);
+    ctx.fillText(d.name, R - 4, B - 4 - (d.R ? fs + 6 : 0));
+    if (d.R){ ctx.font = fs + "px 'JetBrains Mono', monospace"; ctx.fillStyle = dim(0.95); ctx.fillText(d.cl + " " + d.cfmt(cShown), R - 4, B - 4); }
+    if (key === "diode" || key === "led"){
+      ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.font = fs + "px 'JetBrains Mono', monospace"; ctx.fillStyle = dim(0.9);
+      ctx.fillText("reverse: blocks", (L + ox) / 2, oy + (B - oy) * 0.55);
+    }
+    ctx.restore();
+
+    ctx.save(); ctx.beginPath(); ctx.rect(L, T, PW, PH); ctx.clip();
+
+    // reference lines
+    ctx.save(); ctx.setLineDash([4, 5]); ctx.lineWidth = 1.2;
+    if (key === "bulb"){
+      ctx.strokeStyle = ink(0.32); const vEnd = d.imax * 0.95 * 4;
+      line(X(-vEnd * 0.6), Y(-vEnd * 0.6 / 4), X(vEnd), Y(vEnd / 4));
+      ctx.setLineDash([]); ctx.font = fs + "px 'JetBrains Mono', monospace";
+      tag("if R stayed cold", X(vEnd) + 6, Y(vEnd / 4) + fs * 0.2, "left", ink(0.6));
+    }
+    if (d.on){
+      ctx.strokeStyle = amb(0.45); line(X(d.on), T, X(d.on), oy);
+      ctx.setLineDash([]); ctx.fillStyle = amb(0.85); ctx.font = fs + "px 'JetBrains Mono', monospace"; ctx.textAlign = "right"; ctx.textBaseline = "top";
+      ctx.fillText("switch-on ≈ " + d.on + " V", X(d.on) - 5, T + PH * 0.18);
+    }
+    ctx.restore();
+
+    // ghost of the whole curve at the current setting
+    const NS = 180;
+    if (explored(key)){ /* the ghost waits until this device has been explored */
+    const vEndG = vlo + (d.vmax - vlo) * prog;
+    ctx.save(); ctx.strokeStyle = ink(0.2); ctx.lineWidth = 1.4; ctx.beginPath();
+    for (let k = 0; k <= NS; k++){ const v = vlo + (vEndG - vlo) * k / NS; const y = Math.max(T - 40, Math.min(B + 40, Y(curI(d, v, c)))); if (k) ctx.lineTo(X(v), y); else ctx.moveTo(X(v), y); }
+    ctx.stroke(); ctx.restore();
+    }
+
+    // traced curve from the origin to the chosen voltage
+    const pts = [];
+    for (let k = 0; k <= NS; k++){ const v = V * k / NS; pts.push([X(v), Math.max(T - 40, Math.min(B + 40, Y(curI(d, v, c))))]); }
+    ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.lineJoin = "round"; ctx.lineCap = "round";
+    for (const [lw, a] of [[9, 0.12], [5, 0.25], [2.6, 1]]){
+      ctx.strokeStyle = a === 1 ? ACC : acc(a); ctx.lineWidth = lw; ctx.beginPath();
+      pts.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.stroke();
+    }
+    ctx.restore();
+
+    const px = X(V), py = Math.max(T, Math.min(B, Y(I)));
+    // drop lines to the axes
+    ctx.save(); ctx.setLineDash([3, 4]); ctx.strokeStyle = acc(0.55); ctx.lineWidth = 1; line(px, py, px, oy); line(px, py, ox, py); ctx.restore();
+    // chord from the origin: its slope is I/V = 1/R at this point
+    if (Math.abs(V) > 0.01){
+      ctx.save(); ctx.strokeStyle = amb(0.9); ctx.lineWidth = 1.6; ctx.globalCompositeOperation = "lighter";
+      line(ox, oy, px, py);
+      if (Math.abs(py - oy) > fs * 2.2 && Math.abs(px - ox) > fs * 3){
+        const mx = (ox + px) / 2, my = (oy + py) / 2;
+        ctx.fillStyle = amb(0.95); ctx.font = fs + "px 'JetBrains Mono', monospace";
+        ctx.textAlign = V > 0 ? "left" : "right"; ctx.textBaseline = "middle";
+        ctx.fillText("R = V/I", mx + (V > 0 ? 8 : -8), my + (V > 0 ? 4 : -4));
+      }
+      ctx.restore();
+    }
+    ctx.restore(); // end clip
+
+    // the operating point
+    ctx.save(); ctx.globalCompositeOperation = "lighter";
+    const halo = ctx.createRadialGradient(px, py, 0, px, py, 18);
+    halo.addColorStop(0, acc(0.8)); halo.addColorStop(1, acc(0));
+    ctx.fillStyle = halo; ctx.beginPath(); ctx.arc(px, py, 18, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = ink(1); ctx.beginPath(); ctx.arc(px, py, 3.6, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+    ctx.save(); ctx.font = "500 " + fs + "px 'JetBrains Mono', monospace"; ctx.fillStyle = ink(0.95);
+    const lab = "(" + fmtV(V) + ", " + fmtI(I) + ")"; const tw = ctx.measureText(lab).width;
+    let lx = px + 10, ly = py - 12;
+    if (py < T + PH * 0.3){ ly = py + 24; lx = Math.min(px - tw / 2, w - 6 - tw); }
+    if (lx + tw > w - 6) lx = px - 10 - tw;
+    if (lx < ox + 4 && V >= 0) lx = Math.min(w - 6 - tw, ox + 6);
+    if (lx < 4) lx = 4;
+    if (ly < T + fs) ly = py + 16;
+    tag(lab, lx, ly, "left", ink(0.95));
+    ctx.restore();
+
+    // test circuit in the empty upper-left quadrant
+    drawCircuit(L + 2, T + fs * 1.3, ox - L - 14, oy - T - 12 - fs * 1.3, d, V, I, dt);
+
+    // bloom
+    bctx.setTransform(1, 0, 0, 1, 0, 0); bctx.clearRect(0, 0, buf.width, buf.height);
+    if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+    ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
+    (buf.width&&buf.height)&&ctx.drawImage(buf, 0, 0, w, h); ctx.restore();
+    // vignette
+    const cx = w / 2, cy = h / 2;
+    const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
+  }
+
+  function frame(now){
+    const dt = Math.min(now - last, 50); last = now;
+    const tv = vTarget(), tc = DEV[key].R ? conds[key] : 0;
+    if (reduce){ vShown = tv; cShown = tc; prog = 1; }
+    else {
+      const k = 1 - Math.exp(-dt / 90);
+      vShown += (tv - vShown) * k; cShown += (tc - cShown) * k;
+      if (Math.abs(tv - vShown) < 1e-5) vShown = tv;
+      if (Math.abs(tc - cShown) < 1e-3) cShown = tc;
+      prog = Math.min(1, prog + dt / 650);
+    }
+    draw(dt);
+    requestAnimationFrame(frame);
+  }
+
+  function pick(k){
+    if (!DEV[k]) return;
+    key = k;
+    document.querySelectorAll(".iv .dv").forEach(b => { const on = b.dataset.d === k; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on ? "true" : "false"); });
+    if (DEV[k].R){ cS.value = conds[k]; cShown = conds[k]; }
+    vShown = 0; prog = reduce ? 1 : 0;
+    syncUI();
+  }
+  document.querySelectorAll(".iv .dv").forEach(b => b.addEventListener("click", () => { vS.value = 400; pick(b.dataset.d); })); /* a picked device starts at 0 V (400 = the 0 V point for every device) */
+  vS.addEventListener("input", () => { seen[key] = Math.max(seen[key] || 0, vTarget()); syncUI(); });
+  cS.addEventListener("input", () => { if (DEV[key].R) conds[key] = +cS.value; syncUI(); });
+
+  const t1 = el("ivT1"), t2 = el("ivT2"), kd = el("ivKd");
+  function tog(i){ [t1, t2].forEach((b, j) => { b.classList.toggle("on", i === j); b.setAttribute("aria-pressed", i === j ? "true" : "false"); }); kd.textContent = KD[i]; }
+  t1.addEventListener("click", () => tog(0)); t2.addEventListener("click", () => tog(1));
+  tog(0);
+
+  /* resizing clears the canvas, so repaint at once rather than waiting for the next animation frame */
+  let ready = false;
+  function resizeDraw(){ resize(); if (ready) draw(0); }
+  window.addEventListener("resize", resizeDraw);
+  if (window.ResizeObserver) new ResizeObserver(resizeDraw).observe(canvas);
+  resize();
+  vShown = vTarget();
+  syncUI();
+  ready = true; draw(0);
+  requestAnimationFrame(t => { last = t; frame(t); });
+})();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'i-v-curves-of-non-ohmic-devices'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

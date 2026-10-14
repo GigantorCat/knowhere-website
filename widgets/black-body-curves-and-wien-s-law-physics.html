@@ -1,0 +1,388 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Black body curves and Wien's law — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap");
+:root{
+  --bg:#0B0D0C;
+  --bg2:#12160F;
+  --acc:#3A6FC8;
+  --acc-rgb:58, 111, 200;
+  --ag:rgba(var(--acc-rgb),.7);
+  --ag1:rgba(var(--acc-rgb),.12);
+  --ag2:rgba(var(--acc-rgb),.45);
+  --amb:#FAC775;
+  --ink:#EDEDE8;
+  --ink-dim:#8C9389;
+  --line:#262B26;
+}
+body{margin:0;background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C 55%);font-family:"Geist",sans-serif;color:var(--ink);min-height:100vh;padding:40px 16px 0;box-sizing:border-box}
+.bb-wrap{max-width:720px;margin:0 auto;padding-bottom:0}
+.bb-wrap *{box-sizing:border-box}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.bb-h1{font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin:0 0 14px;color:var(--ink)}
+.bb-intro{font-size:15.5px;font-weight:400;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin:0 0 26px}
+.bb-card{background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);margin-bottom:22px}
+.bb-card.sec{border-radius:14px}
+.bb-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.bb-label{font-family:"JetBrains Mono",monospace;font-size:13px;text-transform:uppercase;color:#fff;letter-spacing:.04em}
+.bb-live{font-family:"JetBrains Mono",monospace;font-size:11px;text-transform:uppercase;color:var(--acc)}
+.bb-hint{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--ink-dim);margin:6px 0 12px;line-height:1.5}
+.bb-cv{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1)}
+.bb-cv canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.bb-over{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);padding:9px 16px;font-family:"JetBrains Mono",monospace;font-size:14px;color:var(--acc);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bb-sl-wrap{margin-top:16px}
+.bb-srow{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;gap:8px}
+.bb-slabel{font-family:"JetBrains Mono",monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);letter-spacing:.06em}
+.bb-sval{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--ink);white-space:nowrap}
+.bb-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;background:linear-gradient(90deg,var(--acc) var(--fill,0%),#23291f var(--fill,0%));outline:none;margin:6px 0;cursor:pointer}
+.bb-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s}
+.bb-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s}
+.bb-slider:hover::-webkit-slider-thumb{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.bb-slider:hover::-moz-range-thumb{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.bb-ticks{display:flex;justify-content:space-between;font-family:"JetBrains Mono",monospace;font-size:9px;color:var(--ink-dim);margin-top:4px}
+.bb-note{font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--ink-dim);line-height:1.7;margin:16px 0 0;padding:12px 14px;border:1px solid var(--line);border-radius:11px;background:rgba(0,0,0,.25)}
+.bb-note b{color:var(--ink);font-weight:500}
+.bb-note .a{color:var(--acc)}
+.bb-note .m{color:var(--amb)}
+.bb-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;border-top:1px solid var(--line);margin-top:16px;padding-top:14px}
+.bb-stat-l{font-family:"JetBrains Mono",monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);letter-spacing:.06em}
+.bb-stat-v{font-family:"JetBrains Mono",monospace;font-size:24px;font-weight:500;margin-top:4px}
+.bb-stat-s{font-family:"JetBrains Mono",monospace;font-size:10.5px;color:var(--ink-dim);margin-top:2px;line-height:1.45}
+.bb-btns{display:flex;gap:10px}
+.bb-btn{flex:1;font-family:"JetBrains Mono",monospace;font-size:14.5px;padding:12px;border-radius:11px;background:#12160F;border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:all .2s;line-height:1.3}
+.bb-btn.on{background:rgba(var(--acc-rgb),.1);border:1px solid var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.bb-drop{border-top:1px solid var(--line);padding-top:16px;margin-top:16px;font-size:14.5px;font-weight:400;line-height:1.65;color:var(--ink);margin-bottom:0}
+.bb-know{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));border-radius:0 12px 12px 0;margin-bottom:0}
+.bb-ktag{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.bb-kdot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:bbk 2.4s ease-in-out infinite}
+.bb-ktxt{font-family:"JetBrains Mono",monospace;font-size:13px;text-transform:uppercase;letter-spacing:0.15em;color:var(--acc)}
+.bb-kbody{font-size:17.4px;font-weight:400;line-height:1.55;color:var(--ink);margin:0}
+@keyframes bbk{0%,100%{opacity:1}50%{opacity:.45}}
+@media (prefers-reduced-motion: reduce){.bb-kdot{animation:none}.bb-btn{transition:none}}
+@media (max-width:480px){.bb-stat-v{font-size:20px}.bb-over{font-size:12px;padding:8px 10px}.bb-btn{font-size:13px;padding:11px 8px}}
+</style>
+
+<div class="bb-wrap">
+  <h2 class="sr-only">Black body curves and Wien's law: changing the temperature redraws the emission curve of a glowing object against wavelength, next to the Sun's curve, showing the peak moving to shorter wavelengths and the area under the curve growing as the object gets hotter.</h2>
+
+  <h1 class="bb-h1">Heat a star and it gives off more red light, not less. Its peak just slides to <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">blue</span></h1>
+  <p class="bb-intro">Every warm object glows across a whole spread of wavelengths, and the shape of that spread is set by its temperature alone. Hotter objects emit more at every wavelength, peak at a shorter wavelength and pour out far more energy in total. Raise the temperature and watch the curve grow past the Sun's.</p>
+
+  <div class="bb-card">
+    <div class="bb-head">
+      <div class="bb-label">Black body curve</div>
+      <div class="bb-live" id="bbLive">T = 5800 K</div>
+    </div>
+    <div class="bb-hint">Blue is your object. Amber is the Sun (about 5800 K) for comparison.</div>
+    <div class="bb-cv">
+      <canvas id="bbCv" aria-label="Graph of energy emitted per nanometre against wavelength from 0 to 3200 nanometres, with ultraviolet, visible and infrared regions marked. The object's curve is drawn in blue and the Sun's curve in amber."></canvas>
+      <div class="bb-over" id="bbOver">5800 K · peak 500 nm · visible</div>
+    </div>
+
+    <div class="bb-sl-wrap">
+      <div class="bb-srow"><span class="bb-slabel">Temperature of the object</span><span class="bb-sval" id="bbTv">5800 K</span></div>
+      <input class="bb-slider" id="bbT" type="range" min="1000" max="10000" step="50" value="5800" aria-label="Temperature in kelvin">
+      <div class="bb-ticks"><span>1000 K</span><span>5500 K</span><span>10 000 K</span></div>
+    </div>
+
+    <div class="bb-note" id="bbNote"></div>
+
+    <div class="bb-stats">
+      <div>
+        <div class="bb-stat-l">Peak wavelength</div>
+        <div class="bb-stat-v" id="bbPk" style="color:var(--acc)">500 nm</div>
+        <div class="bb-stat-s" id="bbPks">in the visible</div>
+      </div>
+      <div>
+        <div class="bb-stat-l">Total power vs Sun</div>
+        <div class="bb-stat-v" id="bbPw" style="color:var(--amb)">×1.00</div>
+        <div class="bb-stat-s" id="bbPws">same area as the Sun</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bb-card sec">
+    <div class="bb-btns">
+      <button class="bb-btn on" id="bbBtnW" type="button" aria-pressed="true">The peak (Wien)</button>
+      <button class="bb-btn" id="bbBtnE" type="button" aria-pressed="false">The area (energy)</button>
+    </div>
+    <p class="bb-drop" id="bbDrop"></p>
+  </div>
+
+  <div class="bb-know">
+    <div class="bb-ktag"><span class="bb-kdot"></span><span class="bb-ktxt">Know This</span></div>
+    <p class="bb-kbody">Heat an object and it emits more at <span style="color:var(--acc)">every wavelength</span>, its <span style="color:var(--acc)">peak wavelength</span> shrinks so that λ<sub>max</sub>T stays constant, and its <span style="color:var(--acc)">total energy</span> soars.</p>
+  </div>
+</div>
+
+<script>
+(function(){
+  const CSS = getComputedStyle(document.documentElement);
+  const ACC = CSS.getPropertyValue("--acc").trim();
+  const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+  const AMBHEX = CSS.getPropertyValue("--amb").trim().replace("#", "");
+  const AMB = parseInt(AMBHEX.slice(0, 2), 16) + "," + parseInt(AMBHEX.slice(2, 4), 16) + "," + parseInt(AMBHEX.slice(4, 6), 16);
+  const INKHEX = CSS.getPropertyValue("--ink").trim().replace("#", "");
+  const INK = parseInt(INKHEX.slice(0, 2), 16) + "," + parseInt(INKHEX.slice(2, 4), 16) + "," + parseInt(INKHEX.slice(4, 6), 16);
+  const RM = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const $ = id => document.getElementById(id);
+
+  const cv = $("bbCv"), ctx = cv.getContext("2d"), ov = $("bbOver"), sl = $("bbT");
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const buf = document.createElement("canvas"); const bctx = buf.getContext("2d");
+
+  const C2 = 1.4388e7;          /* hc/k in nm K */
+  const WIEN = 2.898e6;          /* Wien constant in nm K */
+  const TSUN = 5800, XMAX = 3200;
+  let mode = "wien";
+  let Tt = +sl.value, Td = Tt, raf = 0, last = 0;
+
+  function planck(l, T) { const e = C2 / (l * T); if (e > 700) return 0; return Math.pow(l, -5) / (Math.exp(e) - 1); }
+  function peakVal(T) { return planck(WIEN / T, T); }
+  function band(nm) { return nm < 400 ? "ultraviolet" : nm <= 700 ? "visible" : "infrared"; }
+  function total(T) { return Math.pow(T / C2, 4) * Math.pow(Math.PI, 4) / 15; }
+  function integ(a, b, T) { const n = 300, d = (b - a) / n; let s = 0; for (let i = 0; i < n; i++) s += planck(a + (i + 0.5) * d, T) * d; return s; }
+  function fracs(T) {
+    const tot = total(T), u = integ(5, 400, T) / tot, v = integ(400, 700, T) / tot;
+    return { u: u, v: v, i: Math.max(0, 1 - u - v) };
+  }
+
+  /* approximate colour a glowing body looks at temperature T (kelvin) */
+  function bodyCol(T) {
+    const t = T / 100; let r, g, b;
+    r = t <= 66 ? 255 : 329.7 * Math.pow(t - 60, -0.1332);
+    g = t <= 66 ? 99.47 * Math.log(t) - 161.12 : 288.12 * Math.pow(t - 60, -0.0755);
+    b = t >= 66 ? 255 : (t <= 19 ? 0 : 138.52 * Math.log(t - 10) - 305.04);
+    const c = x => Math.max(0, Math.min(255, Math.round(x)));
+    return c(r) + "," + c(g) + "," + c(b);
+  }
+
+  /* spectrum hue for a visible wavelength */
+  function nmHue(nm) { const k = Math.max(0, Math.min(1, (nm - 400) / 300)); return 275 - k * 275; }
+
+  function resize() {
+    const rect = cv.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    cv.width = Math.round(rect.width * dpr); cv.height = Math.round(rect.height * dpr);
+    buf.width = cv.width; buf.height = cv.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function draw() {
+    const w = cv.width / dpr, h = cv.height / dpr;
+    if (!w || !h) return;
+    const T = Td, fs = Math.max(9, Math.min(12, w / 62));
+    const ovH = ov.offsetHeight || 36;
+    const x0 = w * 0.07, x1 = w * 0.97, yt = h * 0.17, yb = h - ovH - fs * 2.6;
+    const ph = yb - yt;
+    const X = nm => x0 + (nm / XMAX) * (x1 - x0);
+    const pT = peakVal(T), pS = peakVal(TSUN), ymax = Math.max(pT, pS) * 1.06;
+    const Y = v => yb - (v / ymax) * ph;
+
+    ctx.save();
+    ctx.globalCompositeOperation = "source-over"; ctx.globalAlpha = 1; ctx.filter = "none";
+    ctx.fillStyle = "rgba(0,0,0,1)"; ctx.fillRect(0, 0, w, h);
+
+    /* region bands: UV, visible, infrared */
+    ctx.fillStyle = "hsla(275,80%,55%,0.07)"; ctx.fillRect(x0, yt - h * 0.05, X(400) - x0, yb - yt + h * 0.05);
+    const vg = ctx.createLinearGradient(X(400), 0, X(700), 0);
+    for (let i = 0; i <= 6; i++) { const nm = 400 + i * 50; vg.addColorStop(i / 6, "hsla(" + nmHue(nm).toFixed(0) + ",90%,55%,0.13)"); }
+    ctx.fillStyle = vg; ctx.fillRect(X(400), yt - h * 0.05, X(700) - X(400), yb - yt + h * 0.05);
+
+    /* faint grid */
+    ctx.strokeStyle = "rgba(" + INK + ",0.06)"; ctx.lineWidth = 1;
+    for (let nm = 500; nm <= XMAX; nm += 500) { ctx.beginPath(); ctx.moveTo(X(nm), yt); ctx.lineTo(X(nm), yb); ctx.stroke(); }
+    for (let k = 1; k <= 3; k++) { const y = yb - ph * k / 4; ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x1, y); ctx.stroke(); }
+
+    /* region labels across the top */
+    ctx.font = "500 " + fs + "px JetBrains Mono, monospace"; ctx.textBaseline = "middle"; ctx.textAlign = "center";
+    const ly = h * 0.075;
+    ctx.fillStyle = "hsla(275,80%,72%,0.9)"; ctx.fillText("UV", (x0 + X(400)) / 2, ly);
+    ctx.fillStyle = "hsla(120,70%,70%,0.9)"; ctx.fillText(ctx.measureText("VISIBLE").width < (X(700) - X(400)) * 1.5 ? "VISIBLE" : "VIS", X(550), ly);
+    ctx.fillStyle = "hsla(8,75%,65%,0.9)"; ctx.fillText("INFRARED  →", X(1700), ly);
+
+    /* curve path helper */
+    const N = 260;
+    function curvePath(Tc, k) {
+      ctx.beginPath(); ctx.moveTo(x0, yb);
+      for (let i = 1; i <= N; i++) { const nm = (i / N) * XMAX; ctx.lineTo(X(nm), Y(planck(nm, Tc) * k)); }
+      ctx.lineTo(x1, yb); ctx.closePath();
+    }
+    function curveLine(Tc, k) {
+      ctx.beginPath();
+      for (let i = 1; i <= N; i++) { const nm = (i / N) * XMAX, y = Y(planck(nm, Tc) * k); if (i === 1) ctx.moveTo(X(nm), y); else ctx.lineTo(X(nm), y); }
+    }
+
+    ctx.save(); ctx.beginPath(); ctx.rect(x0, yt - h * 0.05, x1 - x0, yb - yt + h * 0.05); ctx.clip();
+
+    /* the Sun, for comparison */
+    curvePath(TSUN, 1); ctx.fillStyle = "rgba(" + AMB + "," + (mode === "energy" ? 0.10 : 0.06) + ")"; ctx.fill();
+    curveLine(TSUN, 1); ctx.strokeStyle = "rgba(" + AMB + ",0.85)"; ctx.lineWidth = 1.6; ctx.setLineDash([5, 4]); ctx.stroke(); ctx.setLineDash([]);
+
+    /* the object: area filled */
+    if (mode === "energy") {
+      ctx.save(); curvePath(T, 1); ctx.clip();
+      ctx.fillStyle = "hsla(275,80%,58%,0.55)"; ctx.fillRect(x0, yt - h * 0.05, X(400) - x0, ph + h * 0.05);
+      const vf = ctx.createLinearGradient(X(400), 0, X(700), 0);
+      for (let i = 0; i <= 6; i++) { const nm = 400 + i * 50; vf.addColorStop(i / 6, "hsla(" + nmHue(nm).toFixed(0) + ",90%,55%,0.6)"); }
+      ctx.fillStyle = vf; ctx.fillRect(X(400), yt - h * 0.05, X(700) - X(400), ph + h * 0.05);
+      ctx.fillStyle = "hsla(5,70%,34%,0.55)"; ctx.fillRect(X(700), yt - h * 0.05, x1 - X(700), ph + h * 0.05);
+      ctx.restore();
+    } else {
+      curvePath(T, 1);
+      const gf = ctx.createLinearGradient(0, yt, 0, yb);
+      gf.addColorStop(0, "rgba(" + RGB + ",0.30)"); gf.addColorStop(1, "rgba(" + RGB + ",0.04)");
+      ctx.fillStyle = gf; ctx.fill();
+    }
+
+    /* Wien locus: where the peak sits at every temperature */
+    if (mode === "wien") {
+      ctx.beginPath();
+      for (let Tl = 1000; Tl <= 10000; Tl += 50) { const x = X(WIEN / Tl), y = Y(peakVal(Tl)); if (Tl === 1000) ctx.moveTo(x, y); else ctx.lineTo(x, y); }
+      ctx.strokeStyle = "rgba(" + RGB + ",0.55)"; ctx.lineWidth = 1.2; ctx.setLineDash([2, 4]); ctx.stroke(); ctx.setLineDash([]);
+    }
+
+    /* magnified shape when the real curve is too small to see */
+    const ratio = pT / ymax;
+    let mag = 0;
+    if (ratio < 0.2) {
+      const raw = 0.55 / ratio, p10 = Math.pow(10, Math.floor(Math.log10(raw)));
+      mag = Math.round(raw / p10) * p10;
+      ctx.save(); curvePath(T, mag); ctx.clip();
+      if (mode === "energy") {
+        ctx.fillStyle = "hsla(275,80%,58%,0.22)"; ctx.fillRect(x0, yt - h * 0.05, X(400) - x0, ph + h * 0.05);
+        const vm = ctx.createLinearGradient(X(400), 0, X(700), 0);
+        for (let i = 0; i <= 6; i++) { const nm = 400 + i * 50; vm.addColorStop(i / 6, "hsla(" + nmHue(nm).toFixed(0) + ",90%,55%,0.25)"); }
+        ctx.fillStyle = vm; ctx.fillRect(X(400), yt - h * 0.05, X(700) - X(400), ph + h * 0.05);
+        ctx.fillStyle = "hsla(5,70%,34%,0.3)"; ctx.fillRect(X(700), yt - h * 0.05, x1 - X(700), ph + h * 0.05);
+      } else { ctx.fillStyle = "rgba(" + RGB + ",0.08)"; ctx.fillRect(x0, yt - h * 0.05, x1 - x0, ph + h * 0.05); }
+      ctx.restore();
+      curveLine(T, mag); ctx.strokeStyle = "rgba(" + RGB + ",0.75)"; ctx.lineWidth = 1.4; ctx.setLineDash([6, 5]); ctx.stroke(); ctx.setLineDash([]);
+    }
+
+    /* the object curve on top, glowing */
+    ctx.save(); ctx.globalCompositeOperation = "lighter";
+    curveLine(T, 1); ctx.strokeStyle = "rgba(" + RGB + ",0.35)"; ctx.lineWidth = 7; ctx.stroke();
+    ctx.restore();
+    curveLine(T, 1); ctx.strokeStyle = ACC; ctx.lineWidth = 2.6; ctx.stroke();
+    ctx.restore();
+
+    /* axes */
+    ctx.strokeStyle = "rgba(" + INK + ",0.45)"; ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.moveTo(x0, yt - h * 0.05); ctx.lineTo(x0, yb); ctx.lineTo(x1, yb); ctx.stroke();
+    ctx.fillStyle = "rgba(" + INK + ",0.55)"; ctx.font = (fs - 1) + "px JetBrains Mono, monospace";
+    ctx.textAlign = "center"; ctx.textBaseline = "top";
+    for (let nm = 0; nm <= 3000; nm += 500) { ctx.fillText(String(nm), X(nm), yb + 4); }
+    ctx.textAlign = "right"; ctx.fillText("wavelength (nm)", x1, yb + 4 + fs * 1.15);
+    ctx.save(); ctx.translate(x0 - fs * 0.7, (yt + yb) / 2); ctx.rotate(-Math.PI / 2); ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText("energy emitted", 0, 0); ctx.restore();
+
+    /* peak marker */
+    const lp = WIEN / T, xp = X(lp), yp = Y(mag ? pT * mag : pT);
+    if (mode === "wien") {
+      ctx.strokeStyle = "rgba(" + RGB + ",0.9)"; ctx.lineWidth = 1.2; ctx.setLineDash([4, 3]);
+      ctx.beginPath(); ctx.moveTo(xp, yp); ctx.lineTo(xp, yb); ctx.stroke(); ctx.setLineDash([]);
+    }
+    ctx.save(); ctx.globalCompositeOperation = "lighter";
+    const pg = ctx.createRadialGradient(xp, yp, 0, xp, yp, 14);
+    pg.addColorStop(0, "rgba(" + RGB + ",0.9)"); pg.addColorStop(1, "rgba(" + RGB + ",0)");
+    ctx.fillStyle = pg; ctx.beginPath(); ctx.arc(xp, yp, 14, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+    ctx.fillStyle = ACC; ctx.beginPath(); ctx.arc(xp, yp, 3.5, 0, Math.PI * 2); ctx.fill();
+
+    ctx.font = "500 " + fs + "px JetBrains Mono, monospace"; ctx.textBaseline = "middle";
+    const left = xp > w * 0.62;
+    ctx.textAlign = left ? "right" : "left";
+    const tx = xp + (left ? -12 : 12);
+    ctx.fillStyle = ACC;
+    ctx.fillText(Math.round(T) + " K" + (mag ? "  (shape ×" + mag + ")" : ""), tx, yp + fs * 0.1);
+    if (mode === "wien") { ctx.fillStyle = "rgba(" + INK + ",0.85)"; ctx.fillText("λmax " + Math.round(lp) + " nm", tx, yp + fs * 1.3); }
+
+    /* Sun label on its curve */
+    const sx = X(1250), sy = Y(planck(1250, TSUN));
+    ctx.fillStyle = "rgba(" + AMB + ",0.95)"; ctx.textAlign = "left"; ctx.textBaseline = "bottom";
+    if (sy > yt - h * 0.04) ctx.fillText("Sun 5800 K", sx + 6, sy - 4);
+
+    /* the glowing body itself */
+    const bc = bodyCol(T), br = Math.max(0.35, Math.min(1, Math.pow(T / TSUN, 1.5)));
+    const bx = w * 0.925, by = h * 0.075 + h * 0.05, rr = h * 0.06;
+    ctx.save(); ctx.globalCompositeOperation = "lighter";
+    const halo = ctx.createRadialGradient(bx, by, 0, bx, by, rr * 3.2);
+    halo.addColorStop(0, "rgba(" + bc + "," + (0.55 * br).toFixed(3) + ")"); halo.addColorStop(1, "rgba(" + bc + ",0)");
+    ctx.fillStyle = halo; ctx.beginPath(); ctx.arc(bx, by, rr * 3.2, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+    ctx.fillStyle = "rgba(" + bc + "," + br.toFixed(3) + ")"; ctx.beginPath(); ctx.arc(bx, by, rr, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "rgba(" + INK + ",0.6)"; ctx.font = (fs - 1) + "px JetBrains Mono, monospace"; ctx.textAlign = "right"; ctx.textBaseline = "middle";
+    ctx.fillText("glow", bx - rr - 6, by);
+
+    /* bloom */
+    bctx.setTransform(1, 0, 0, 1, 0, 0); bctx.clearRect(0, 0, buf.width, buf.height);
+    if (cv.width && cv.height) bctx.drawImage(cv, 0, 0);
+    ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
+    (buf.width&&buf.height)&&ctx.drawImage(buf, 0, 0, w, h); ctx.restore();
+
+    /* vignette */
+    const cx = w / 2, cy = h / 2;
+    const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
+    ctx.restore();
+  }
+
+  const DROP = {
+    wien: "Wien's law says the peak wavelength and the temperature always multiply to the same constant: λ<sub>max</sub>T = 2.898 × 10⁻³ m K. Double the temperature and the peak wavelength halves, which is why the dotted path of peaks sweeps up and to the left. Work in kelvin and metres, then convert: the Sun at 5800 K peaks at 2.898 × 10⁻³ ÷ 5800 = 5.0 × 10⁻⁷ m, or 500 nm, in the visible. Your body at about 310 K peaks near 9.3 µm, deep in the infrared, which is what a thermal camera picks up. The peak only marks where the curve is highest: the object still emits across a wide range of wavelengths on both sides of it.",
+    energy: "The area under a black body curve is the total energy the object radiates each second from each square metre, added up across every wavelength. Heat the object and its curve rises at every wavelength at once, so a hotter curve sits wholly above a cooler one and the two never cross. That makes the area grow very steeply: it goes as T⁴, so doubling the kelvin temperature gives 16 times the total energy. The Sun, close to a 5800 K black body, sends out about 51% of its energy as infrared, 37% as visible light and 12% as ultraviolet. A 3000 K lamp filament sends over 90% of its energy out as infrared, which is why old incandescent globes run hot."
+  };
+
+  function fill(el) { const mn = +el.min, mx = +el.max; el.style.setProperty("--fill", ((+el.value - mn) / (mx - mn) * 100) + "%"); }
+  function pct(x) { return x < 0.005 ? "<1%" : Math.round(x * 100) + "%"; }
+
+  function ui() {
+    fill(sl);
+    const T = Tt, lp = WIEN / T, f = fracs(T), pw = Math.pow(T / TSUN, 4);
+    $("bbLive").textContent = "T = " + T + " K";
+    $("bbTv").textContent = T + " K";
+    $("bbPk").textContent = Math.round(lp) + " nm";
+    $("bbPks").textContent = "in the " + band(lp);
+    $("bbPw").textContent = "×" + (pw >= 10 ? pw.toFixed(1) : pw >= 0.1 ? pw.toFixed(2) : pw.toFixed(4));
+    $("bbPws").textContent = Math.abs(pw - 1) < 0.01 ? "same area as the Sun" : pw > 1 ? "more area than the Sun" : "less area than the Sun";
+    if (mode === "wien") {
+      ov.textContent = T + " K · peak " + Math.round(lp) + " nm · " + band(lp);
+      $("bbNote").innerHTML = "<span class=\"a\">λ<sub>max</sub></span> = 2.898 × 10⁻³ ÷ " + T + " = <b class=\"a\">" + (lp < 1000 ? (lp / 100).toFixed(2) + " × 10⁻⁷ m" : (lp / 1000).toFixed(2) + " × 10⁻⁶ m") + "</b> = <b>" + Math.round(lp) + " nm</b><br>" +
+        "Constant check: " + Math.round(lp) + " nm × " + T + " K = <b>2.898 × 10⁻³ m K</b>";
+    } else {
+      ov.textContent = "UV " + pct(f.u) + " · visible " + pct(f.v) + " · infrared " + pct(f.i);
+      $("bbNote").innerHTML = "Share of the energy at " + T + " K: UV <b>" + pct(f.u) + "</b> · visible <b>" + pct(f.v) + "</b> · infrared <b>" + pct(f.i) + "</b><br>" +
+        "Total energy vs the <span class=\"m\">Sun</span>: (" + T + " ÷ 5800)⁴ = <b class=\"m\">" + $("bbPw").textContent + "</b>";
+    }
+    $("bbDrop").innerHTML = DROP[mode];
+    $("bbBtnW").classList.toggle("on", mode === "wien"); $("bbBtnE").classList.toggle("on", mode === "energy");
+    $("bbBtnW").setAttribute("aria-pressed", String(mode === "wien")); $("bbBtnE").setAttribute("aria-pressed", String(mode === "energy"));
+  }
+
+  function frame(now) {
+    const dt = Math.min(now - (last || now), 50); last = now;
+    const k = 1 - Math.exp(-dt / 90);
+    Td += (Tt - Td) * k;
+    if (Math.abs(Tt - Td) < 0.5) { Td = Tt; draw(); raf = 0; last = 0; return; }
+    draw();
+    raf = requestAnimationFrame(frame);
+  }
+  function go() {
+    if (RM) { Td = Tt; draw(); return; }
+    if (!raf) { last = 0; raf = requestAnimationFrame(frame); }
+  }
+
+  function setMode(m) { if (mode === m) return; mode = m; ui(); draw(); }
+  $("bbBtnW").addEventListener("click", () => setMode("wien"));
+  $("bbBtnE").addEventListener("click", () => setMode("energy"));
+  sl.addEventListener("input", () => { Tt = +sl.value; ui(); go(); });
+  window.addEventListener("resize", () => { resize(); draw(); });
+
+  resize(); ui(); draw();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => draw());
+})();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'black-body-curves-and-wien-s-law'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

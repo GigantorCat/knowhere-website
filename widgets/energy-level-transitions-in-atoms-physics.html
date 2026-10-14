@@ -334,14 +334,14 @@ canvas {
   
   <h1>Electrons can only jump between <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">invisible rungs</span></h1>
   
-  <p class="intro">In atoms, electrons can't exist between energy levels—they occupy discrete allowed states like rungs on a quantum ladder. When a photon's energy exactly matches the gap between two levels, electrons jump. Drag the slider to change which transition occurs and watch the photon energy adjust.</p>
+  <p class="intro">In atoms, electrons can't exist between energy levels—they occupy discrete allowed states like rungs on a quantum ladder. When a photon's energy exactly matches the gap between two levels, electrons jump. Change which transition occurs and watch the photon energy adjust.</p>
 
   <div class="card">
     <div class="card-header">
       <span class="card-label">Hydrogen Energy Levels</span>
       <span class="live-tag" id="transition-label">n=1→2 Transition</span>
     </div>
-    <div class="card-hint">Drag slider to select different electron transitions</div>
+    <div class="card-hint">Choose different electron transitions</div>
     
     <div class="canvas-wrapper">
       <canvas id="etCanvas"></canvas>
@@ -471,7 +471,9 @@ function updateStats() {
   const t = transitions[currentTransition];
   const label = mode === 'emission' ? 'n=' + t.to + '→' + t.from : t.label;
   transitionLabel.textContent = label + ' Transition';
-  photonEnergy.textContent = `Photon: ${t.energy.toFixed(1)} eV`;
+  /* E = 13.6(1/n1^2 - 1/n2^2): 3 s.f. at or above 1 eV (2.55), 1 d.p. below (0.66 reads 0.7) */
+  const e = 13.6 * (1 / (t.from * t.from) - 1 / (t.to * t.to));
+  photonEnergy.textContent = `Photon: ${e >= 1 ? e.toPrecision(3) : e.toFixed(1)} eV`;
   wavelength.textContent = t.wavelength + ' nm';
   seriesLabel.textContent = t.series;
 }
@@ -511,7 +513,14 @@ function draw() {
     
     ctx.fillStyle = 'rgba(140,147,137,0.5)';
     ctx.font = '11px JetBrains Mono';
-    ctx.fillText(`n=${lvl.n}`, w * 0.78, lvl.y + 4);
+    /* the top levels bunch up: n=4 is labelled on the left, n=5 sits just above its line */
+    if (lvl.n === 4) {
+      ctx.textAlign = 'right';
+      ctx.fillText(`n=${lvl.n}`, w * 0.22, lvl.y + 4);
+      ctx.textAlign = 'left';
+    } else {
+      ctx.fillText(`n=${lvl.n}`, w * 0.78, lvl.n === 5 ? lvl.y - 2 : lvl.y + 4);
+    }
   });
 
   // Highlight active levels

@@ -127,7 +127,7 @@ h1 {
   padding: 9px 16px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 14px;
-  text-transform: uppercase;
+  text-transform: none;
   color: var(--acc);
   text-align: center;
 }
@@ -326,14 +326,14 @@ h1 {
 
   <h1>Reverse differentiation to discover <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">infinity</span></h1>
   
-  <p class="intro">Every time you integrate a function, you're undoing differentiation—but since the derivative of any constant is zero, you unlock infinitely many antiderivatives, all differing by a vertical shift. Drag the slider to explore how the constant C translates your antiderivative curve up and down.</p>
+  <p class="intro">Every time you integrate a function, you're undoing differentiation—but since the derivative of any constant is zero, you unlock infinitely many antiderivatives, all differing by a vertical shift. Change C and watch which curve moves and which line never does.</p>
 
   <div class="card">
     <div class="card-header">
-      <div class="card-label">Antiderivative Family</div>
+      <div class="card-label">Antiderivative family</div>
       <div class="live-tag" id="liveTag">C = +2.0</div>
     </div>
-    <div class="card-hint">Slide to shift the antiderivative vertically</div>
+    <div class="card-hint">Change C. Watch the grey line.</div>
     
     <div class="canvas-wrapper">
       <canvas id="intCanvas"></canvas>
@@ -341,7 +341,7 @@ h1 {
     </div>
 
     <div class="slider-section">
-      <div class="slider-label">Constant of Integration (C)</div>
+      <div class="slider-label">Constant of integration (C)</div>
       <input type="range" class="int-slider" id="cSlider" min="-4" max="4" step="0.1" value="2">
       <div class="tick-labels">
         <span>−4</span>
@@ -356,15 +356,15 @@ h1 {
         <div class="stat-value acc" id="cValue">+2.0</div>
       </div>
       <div class="stat">
-        <div class="stat-label">Vertical Shift</div>
-        <div class="stat-value amb" id="shiftValue">+2.0 units</div>
+        <div class="stat-label">Gradient at x = 1</div>
+        <div class="stat-value amb" id="shiftValue">F′(1) = 2</div>
       </div>
     </div>
   </div>
 
   <div class="card">
     <div class="toggle-section">
-      <button class="toggle-btn active" id="btn1">Power Rule</button>
+      <button class="toggle-btn active" id="btn1">Power rule</button>
       <button class="toggle-btn" id="btn2">Finding C</button>
     </div>
     <div class="knowdrop-divider">
@@ -400,10 +400,11 @@ const bctx = buf.getContext('2d');
 
 let C = parseFloat(slider.value);
 let animFrame;
+let showTarget = false;
 
 const text1 = "The power rule for integration states that the integral of x to the power n equals x to the power n+1 divided by n+1, plus C—but only when n is not equal to negative one. This rule reverses the power rule for differentiation: since differentiating x to the power n+1 brings the exponent down and reduces it by one, integrating x to the power n does the opposite, increasing the exponent by one and dividing by the new exponent. Constant multiples can be factored outside the integral sign, and the integral of a sum equals the sum of the integrals, so you can integrate polynomials term by term. Every antiderivative includes the constant C because differentiating any constant gives zero, meaning infinite vertical translations of the same curve are all valid antiderivatives.";
 
-const text2 = "Every curve in the family x² + C has the same gradient function 2x, so one extra fact is needed to pick out a single curve. That fact is a boundary (or initial) condition, such as a point the curve must pass through. Suppose F(x) = x² + C must pass through (1, 5). Substitute x = 1 and F = 5: 5 = 1² + C, so C = 4 and F(x) = x² + 4. Try it above: slide C to 4 and the bright curve passes through (1, 5), with its lowest point at (0, 4). Write + C as soon as you anti-differentiate, then substitute the point to find it.";
+const text2 = "Every curve in the family x² + C has the same gradient function 2x, so one extra fact is needed to pick out a single curve. That fact is a boundary (or initial) condition, such as a point the curve must pass through. Suppose F(x) = x² + C must pass through (1, 5). Substitute x = 1 and F = 5: 5 = 1² + C, so C = 4 and F(x) = x² + 4. Try it above: set C to 4 and the bright curve passes through (1, 5), with its lowest point at (0, 4). Write + C as soon as you anti-differentiate, then substitute the point to find it.";
 
 function resize() {
   const rect = canvas.getBoundingClientRect();
@@ -419,7 +420,8 @@ function updateUI() {
   const sign = C >= 0 ? '+' : '';
   liveTag.textContent = `C = ${sign}${C.toFixed(1)}`;
   cValue.textContent = `${sign}${C.toFixed(1)}`;
-  shiftValue.textContent = C === 0 ? `0.0 units` : `${sign}${C.toFixed(1)} units ${C > 0 ? `up` : `down`}`;
+  shiftValue.textContent = `F′(1) = 2`;
+  canvasOverlay.textContent = `F(x) = x² ${C < 0 ? `− ` : `+ `}${Math.abs(C).toFixed(1)}`;
   
   const fill = ((C + 4) / 8) * 100;
   slider.style.setProperty('--fill', fill + '%');
@@ -440,14 +442,15 @@ function draw() {
   // Grid
   ctx.strokeStyle = 'rgba(62, 181, 86,0.08)';
   ctx.lineWidth = 0.8;
-  const gridSpacing = w / 12;
-  for (let i = -6; i <= 6; i++) {
+  const scale = w / 10;
+  const gridSpacing = scale;
+  for (let i = -5; i <= 5; i++) {
     ctx.beginPath();
     ctx.moveTo(cx + i * gridSpacing, 0);
     ctx.lineTo(cx + i * gridSpacing, h);
     ctx.stroke();
   }
-  for (let gy = yMin; gy <= yMax; gy++) {
+  for (let gy = Math.ceil(yMin); gy <= yMax; gy++) {
     ctx.beginPath();
     ctx.moveTo(0, cy - gy * yScale);
     ctx.lineTo(w, cy - gy * yScale);
@@ -466,8 +469,6 @@ function draw() {
   ctx.lineTo(cx, h);
   ctx.stroke();
 
-  const scale = w / 10;
-
   // Draw f(x) = 2x (derivative) in dim color
   ctx.strokeStyle = 'rgba(140,147,137,0.4)';
   ctx.lineWidth = 1.5;
@@ -480,6 +481,9 @@ function draw() {
     else ctx.lineTo(px, py);
   }
   ctx.stroke();
+  ctx.fillStyle = 'rgba(140,147,137,0.85)';
+  ctx.font = "11px 'JetBrains Mono', monospace";
+  ctx.fillText("f(x) = 2x — same for every C", cx - 4.8 * scale, cy - 5.7 * yScale);
 
   // Draw F(x) = x^2 + C (antiderivative) in accent with glow
   ctx.save();
@@ -524,6 +528,29 @@ function draw() {
   ctx.arc(cx, dotY, 4, 0, Math.PI * 2);
   ctx.fill();
   ctx.restore();
+  ctx.fillStyle = '#3EB556';
+  ctx.font = "11px 'JetBrains Mono', monospace";
+  ctx.textAlign = 'right';
+  ctx.fillText(`F(x) = x² ${C < 0 ? `− ` : `+ `}${Math.abs(C).toFixed(1)}`, cx - 8, dotY - 8);
+  ctx.textAlign = 'left';
+
+  // Target point (1, 5) for the Finding C text
+  if (showTarget) {
+    const onCurve = Math.abs(1 + C - 5) < 0.05;
+    const tx = cx + 1 * scale;
+    const ty = cy - 5 * yScale;
+    ctx.save();
+    ctx.globalAlpha = onCurve ? 1 : 0.55;
+    ctx.fillStyle = '#FAC775';
+    ctx.shadowColor = 'rgba(250,199,117,0.8)';
+    ctx.shadowBlur = onCurve ? 12 : 0;
+    ctx.beginPath();
+    ctx.arc(tx, ty, 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.font = "11px 'JetBrains Mono', monospace";
+    ctx.fillText("(1, 5)", tx + 8, ty + 4);
+    ctx.restore();
+  }
 
   // Bloom
   bctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -554,12 +581,14 @@ slider.addEventListener('input', e => {
 btn1.addEventListener('click', () => {
   btn1.classList.add('active');
   btn2.classList.remove('active');
+  showTarget = false;
   knowdropText.textContent = text1;
 });
 
 btn2.addEventListener('click', () => {
   btn2.classList.add('active');
   btn1.classList.remove('active');
+  showTarget = true;
   knowdropText.textContent = text2;
 });
 

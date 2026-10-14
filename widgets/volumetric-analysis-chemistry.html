@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Volumetric Analysis — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Volumetric analysis — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -91,7 +91,7 @@ h1 {
 .live-tag {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
-  text-transform: uppercase;
+  text-transform: none; /* mL, not ML */
   color: var(--acc);
   letter-spacing: 0.08em;
 }
@@ -132,7 +132,7 @@ canvas {
   padding: 9px 16px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 14px;
-  text-transform: uppercase;
+  text-transform: none; /* mL, not ML */
   color: var(--acc);
   text-align: center;
   letter-spacing: 0.08em;
@@ -271,7 +271,7 @@ canvas {
 .stat-label {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10.5px;
-  text-transform: uppercase;
+  text-transform: none; /* pH, not PH */
   color: var(--ink-dim);
   margin-bottom: 6px;
   letter-spacing: 0.05em;
@@ -359,7 +359,7 @@ canvas {
 }
 </style>
 
-<h2 class="sr-only">Volumetric Analysis Interactive: Understanding Primary Standards and Titration Precision</h2>
+<h2 class="sr-only">Volumetric analysis interactive: understanding primary standards and titration precision</h2>
 
 <div class="container">
   <h1>A single dirty beaker ruins <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">precision</span></h1>
@@ -368,7 +368,7 @@ canvas {
 
   <div class="card">
     <div class="card-header">
-      <div class="card-label">Titration Simulation</div>
+      <div class="card-label">Titration simulation</div>
       <div class="live-tag" id="liveTag">Titrating</div>
     </div>
     <div class="card-hint">0.100 M NaOH into 25.00 mL of 0.100 M HCl with phenolphthalein. Arrow keys add one drop (0.05 mL).</div>
@@ -379,7 +379,7 @@ canvas {
     </div>
 
     <div class="slider-wrapper">
-      <div class="slider-label">Burette Volume Delivered</div>
+      <div class="slider-label">Burette volume delivered</div>
       <input type="range" min="0" max="600" value="0" step="1" class="vol-slider" id="volSlider" aria-label="Burette volume delivered, mL">
       <div class="tick-labels">
         <span style="left: calc(10px + (100% - 20px) * 0)">0.00</span>
@@ -392,7 +392,7 @@ canvas {
 
     <div class="stat-row">
       <div class="stat">
-        <div class="stat-label">pH Level</div>
+        <div class="stat-label">pH level</div>
         <div class="stat-value" style="color:var(--acc)" id="phStat">1.0</div>
       </div>
       <div class="stat">
@@ -417,12 +417,12 @@ canvas {
 
   <div class="toggle-card">
     <div class="toggle-buttons">
-      <button class="toggle-btn active" id="btn1">Primary Standard</button>
+      <button class="toggle-btn active" id="btn1">Primary standard</button>
       <button class="toggle-btn" id="btn2">Concordance</button>
     </div>
     
     <div class="knowdrop">
-      <p id="kdText">A primary standard must be pure (no impurities skewing your molar mass), stable (won't decompose or absorb water from air), and have a known, high molar mass (so weighing errors become negligible). Sodium carbonate (Na₂CO₃) is a classic example: it's stable, doesn't absorb moisture once dried, and you can weigh it accurately to prepare a solution of exact concentration. That exact concentration becomes your reference for every subsequent calculation — if it's wrong, every answer downstream is wrong. This is why glassware must be spotless and why you never estimate the standard's mass.</p>
+      <p id="kdText">A primary standard must be pure (no impurities skewing your molar mass), stable (won't decompose or absorb water from air), and have a known, high molar mass (so weighing errors become negligible). Anhydrous sodium carbonate (Na₂CO₃) is a classic example: once dried in an oven and cooled in a desiccator it is stable and can be weighed accurately to prepare a solution of exact concentration. That exact concentration becomes your reference for every subsequent calculation — if it's wrong, every answer downstream is wrong. This is why glassware must be spotless and why you never estimate the standard's mass.</p>
     </div>
   </div>
 
@@ -454,7 +454,7 @@ let time = 0;
 let animFrame;
 
 const texts = {
-  primary: "A primary standard must be pure (no impurities skewing your molar mass), stable (won't decompose or absorb water from air), and have a known, high molar mass (so weighing errors become negligible). Sodium carbonate (Na₂CO₃) is a classic example: it's stable, doesn't absorb moisture once dried, and you can weigh it accurately to prepare a solution of exact concentration. That exact concentration becomes your reference for every subsequent calculation — if it's wrong, every answer downstream is wrong. This is why glassware must be spotless and why you never estimate the standard's mass.",
+  primary: "A primary standard must be pure (no impurities skewing your molar mass), stable (won't decompose or absorb water from air), and have a known, high molar mass (so weighing errors become negligible). Anhydrous sodium carbonate (Na₂CO₃) is a classic example: once dried in an oven and cooled in a desiccator it is stable and can be weighed accurately to prepare a solution of exact concentration. That exact concentration becomes your reference for every subsequent calculation — if it's wrong, every answer downstream is wrong. This is why glassware must be spotless and why you never estimate the standard's mass.",
   concordance: "Concordant titres are results that agree within 0.10 mL — this tight window confirms your technique is reproducible and that you've hit the end point consistently. You discard rogue results (the first rough titre, or any outlier more than 0.10 mL away) and average only the concordant ones. Why 0.10 mL? A burette is marked every 0.1 mL and read to the nearest 0.05 mL, so each reading is ±0.05 mL. A titre is the difference of two readings (start and finish), so it carries about ±0.10 mL, and 0.10 mL captures genuine reading variation without including sloppiness. If your titres scatter beyond this, your technique needs refinement — maybe you're overshooting the end point, or your swirling isn't uniform."
 };
 
@@ -553,114 +553,160 @@ recBtn.addEventListener("click", () => {
   update();
 });
 
+let lastMove = -10; /* time of the last slider move: the tap drips only just after you open it */
+slider.addEventListener("input", () => { lastMove = time; });
+
 function draw() {
   const w = canvas.width / dpr;
   const h = canvas.height / dpr;
   time += 0.016;
-  
-  ctx.fillStyle = '#000';
+
+  ctx.fillStyle = "#000";
   ctx.fillRect(0, 0, w, h);
-  
-  // Flask
-  const flaskW = w * 0.26;
-  const flaskH = h * 0.5;
-  const flaskX = w * 0.25;
-  const flaskY = h * 0.72;
-  
-  // Solution colour based on volume
+
+  const cx = w * 0.5;
+  const mono = (px) => "500 " + px + "px \"JetBrains Mono\", monospace";
+  const fs = Math.max(11, Math.min(13, Math.min(w, h) / 30));
+
+  /* burette: 50 mL, reads 0.00 at the top mark and 50.00 at the bottom mark, tap and tip under it */
+  const bw = Math.max(16, Math.min(34, w * 0.055));
+  /* keep the drawing clear of the name strip when it sits over the canvas (desktop); on a phone it sits below */
+  const ovAbs = getComputedStyle(overlay).position === "absolute";
+  const bottom = ovAbs ? h - overlay.offsetHeight - 8 : h * 0.97;
+  const Y = (f) => h * 0.03 + f * (bottom - h * 0.03);
+  const tubeTop = Y(0.02);
+  const mark0 = Y(0.06);
+  const mark50 = Y(0.50);
+  const tapY = Y(0.54);
+  const tipY = Y(0.59);
+  const yOf = (r) => mark0 + (r / 50) * (mark50 - mark0);
+  const bx = cx - bw / 2;
+
+  /* liquid sits on the tap: from the current reading down to the tip */
+  const reading = Math.min(volume, 50);
+  ctx.fillStyle = "rgba(62, 154, 214,0.42)";
+  ctx.fillRect(bx, yOf(reading), bw, tapY - yOf(reading));
+  ctx.fillRect(cx - 2.5, tapY, 5, tipY - tapY);
+  /* meniscus */
+  ctx.strokeStyle = "rgba(62, 154, 214,0.95)";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(bx, yOf(reading) - 2);
+  ctx.quadraticCurveTo(cx, yOf(reading) + 4, bx + bw, yOf(reading) - 2);
+  ctx.stroke();
+
+  /* tube outline */
+  ctx.strokeStyle = "rgba(255,255,255,0.38)";
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(bx, tubeTop); ctx.lineTo(bx, tapY - 4); ctx.lineTo(cx - 3, tapY);
+  ctx.lineTo(cx - 3, tipY); ctx.lineTo(cx + 3, tipY); ctx.lineTo(cx + 3, tapY);
+  ctx.lineTo(bx + bw, tapY - 4); ctx.lineTo(bx + bw, tubeTop);
+  ctx.stroke();
+  /* tap */
+  ctx.fillStyle = "rgba(237,237,232,0.55)";
+  ctx.fillRect(cx - bw * 0.9, tapY + 2, bw * 1.8, 5);
+
+  /* scale: a tick every 1 mL, longer every 5 mL, numbers every 10 mL at their true marks */
+  ctx.textAlign = "right";
+  ctx.textBaseline = "middle";
+  ctx.font = mono(fs);
+  for (let r = 0; r <= 50; r++) {
+    const y = yOf(r);
+    const len = r % 10 === 0 ? bw * 0.5 : r % 5 === 0 ? bw * 0.35 : bw * 0.2;
+    ctx.strokeStyle = "rgba(237,237,232," + (r % 5 === 0 ? 0.6 : 0.3) + ")";
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(bx, y); ctx.lineTo(bx + len, y); ctx.stroke();
+    if (r % 10 === 0) { ctx.fillStyle = "rgba(140,147,137,0.95)"; ctx.fillText(String(r), bx - 6, y); }
+  }
+  /* reading arrow */
+  ctx.textAlign = "left";
+  ctx.fillStyle = "rgba(62, 154, 214,1)";
+  ctx.beginPath();
+  ctx.moveTo(bx + bw + 4, yOf(reading)); ctx.lineTo(bx + bw + 11, yOf(reading) - 5); ctx.lineTo(bx + bw + 11, yOf(reading) + 5); ctx.fill();
+  ctx.fillText(volume.toFixed(2) + " mL", bx + bw + 14, yOf(reading));
+
+  /* conical flask under the tip */
+  const neckW = bw * 1.5;
+  const neckTop = Y(0.62);
+  const bodyTop = Y(0.69);
+  const base = Y(1);
+  const baseW = Math.min(w * 0.42, (base - bodyTop) * 1.9);
+  const H = base - bodyTop;
+  const flaskPath = new Path2D();
+  flaskPath.moveTo(cx - neckW / 2, neckTop);
+  flaskPath.lineTo(cx - neckW / 2, bodyTop);
+  flaskPath.lineTo(cx - baseW / 2, base);
+  flaskPath.lineTo(cx + baseW / 2, base);
+  flaskPath.lineTo(cx + neckW / 2, bodyTop);
+  flaskPath.lineTo(cx + neckW / 2, neckTop);
+
+  /* liquid height from volume: the body holds 100 mL; find the height whose cross-section area matches the fraction */
+  const CAP = 100;
+  const areaUpTo = (y) => y * (baseW - (baseW - neckW) * y / (2 * H)); /* trapezoid area from the base up to y */
+  const levelFor = (v) => {
+    const target = Math.min(v / CAP, 1) * areaUpTo(H);
+    let lo = 0, hi = H;
+    for (let i = 0; i < 30; i++) { const mid = (lo + hi) / 2; if (areaUpTo(mid) < target) lo = mid; else hi = mid; }
+    return lo;
+  };
   const ind = indicatorAt(pHAt(volume));
-  let solutionCol;
-  if (ind === "Colourless") {
-    solutionCol = "rgba(170,200,215,0.22)"; // clear
-  } else if (ind === "Pale pink") {
-    solutionCol = "rgba(255,150,190,0.55)";
-  } else {
-    solutionCol = "rgba(255,90,190,0.75)";
-  }
-  
-  // Fill level proportional to total volume (25 + added), flask holds 60 mL
-  const totalVol = V_ACID + volume;
-  const fillLevel = Math.min((totalVol / 60) * flaskH, flaskH);
-  
+  const solutionCol = ind === "Colourless" ? "rgba(170,200,215,0.20)" : ind === "Pale pink" ? "rgba(255,170,205,0.42)" : "rgba(255,90,190,0.72)";
+  const lev = base - levelFor(V_ACID + volume);
+  const swirl = Math.sin(time * 2.2) * 2.5; /* the flask is swirled as you titrate */
   ctx.save();
+  ctx.clip(flaskPath);
   ctx.fillStyle = solutionCol;
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.fillRect(flaskX, flaskY - fillLevel, flaskW, fillLevel);
+  ctx.beginPath();
+  ctx.moveTo(cx - baseW / 2 - 2, lev + swirl);
+  ctx.quadraticCurveTo(cx, lev - swirl, cx + baseW / 2 + 2, lev + swirl);
+  ctx.lineTo(cx + baseW / 2 + 2, base + 2);
+  ctx.lineTo(cx - baseW / 2 - 2, base + 2);
+  ctx.closePath();
+  ctx.fill();
   ctx.restore();
-  
-  // Flask outline
-  ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+  ctx.strokeStyle = "rgba(255,255,255,0.38)";
   ctx.lineWidth = 1.5;
-  ctx.strokeRect(flaskX, flaskY - flaskH, flaskW, flaskH);
-  
-  // Burette
-  const burX = w * 0.68;
-  const burY = h * 0.15;
-  const burW = w * 0.12;
-  const burH = h * 0.6;
-  
-  ctx.strokeStyle = 'rgba(255,255,255,0.3)';
-  ctx.lineWidth = 1.5;
-  ctx.strokeRect(burX, burY, burW, burH);
-  
-  // Burette fill (decreasing as volume increases)
-  const burFill = Math.max(0, (1 - volume / 50) * burH); /* 50 mL burette */
-  const burCol = 'rgba(62, 154, 214,0.5)';
-  ctx.fillStyle = burCol;
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.fillRect(burX, burY + burH - burFill, burW, burFill);
-  ctx.globalCompositeOperation = 'source-over';
-  
-  // Drip animation if volume > 0
-  if (volume > 0.5) {
-    const dropY = burY + burH + (Math.sin(time * 5) * 0.5 + 0.5) * (flaskY - flaskH - (burY + burH)) * 0.4;
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.fillStyle = burCol;
-    ctx.beginPath();
-    ctx.arc(burX + burW / 2, dropY, 2.5, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-  }
-  
-  // Equivalence point marker line
-  const equivY = flaskY - ((V_ACID + EQUIV) / 60) * flaskH;
+  ctx.stroke(flaskPath);
+
+  /* where the level will be at equivalence (25.00 mL added) */
+  const eqY = base - levelFor(V_ACID + EQUIV);
   ctx.save();
-  ctx.strokeStyle = 'rgba(62, 154, 214,0.4)';
+  ctx.strokeStyle = "rgba(62, 154, 214,0.5)";
   ctx.lineWidth = 1;
   ctx.setLineDash([4, 4]);
   ctx.beginPath();
-  ctx.moveTo(flaskX - 10, equivY);
-  ctx.lineTo(flaskX + flaskW + 10, equivY);
+  ctx.moveTo(cx - baseW / 2 - 6, eqY);
+  ctx.lineTo(cx + baseW / 2 + 6, eqY);
   ctx.stroke();
   ctx.restore();
-  
-  // Equivalence label
-  ctx.fillStyle = 'rgba(62, 154, 214,0.6)';
-  ctx.font = '9px "JetBrains Mono"';
-  ctx.textAlign = 'right';
-  ctx.fillText('EQUIV', flaskX - 14, equivY + 3);
-  
+  ctx.fillStyle = "rgba(62, 154, 214,0.85)";
+  ctx.font = mono(fs);
+  ctx.textAlign = "right";
+  ctx.fillText("equivalence", cx - baseW / 2 - 10, eqY);
+
+  /* a drop falls from the tip only while you are adding */
+  const since = time - lastMove;
+  if (volume > 0 && since < 0.9) {
+    const k = (since % 0.45) / 0.45;
+    const dy = tipY + 4 + k * (lev - tipY - 4);
+    ctx.fillStyle = "rgba(62, 154, 214,0.9)";
+    ctx.beginPath();
+    ctx.arc(cx, dy, 2.6, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
   // Bloom
   bctx.setTransform(1, 0, 0, 1, 0, 0);
   bctx.clearRect(0, 0, buf.width, buf.height);
   if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
   ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
+  ctx.globalCompositeOperation = "lighter";
+  ctx.globalAlpha = 0.3;
+  ctx.filter = "blur(7px)";
   if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
   ctx.restore();
-  
-  // Vignette
-  const cx = w / 2;
-  const cy = h / 2;
-  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-  
+
   animFrame = requestAnimationFrame(draw);
 }
 

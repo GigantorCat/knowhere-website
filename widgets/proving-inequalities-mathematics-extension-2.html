@@ -4,610 +4,417 @@ body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
-
-:root {
-  --bg: #0B0D0C;
-  --bg2: #12160F;
-  --acc: #23833F;
-  --acc-rgb: 35, 131, 63;
-  --ag: rgba(var(--acc-rgb),.7);
-  --ag1: rgba(var(--acc-rgb),.12);
-  --ag2: rgba(var(--acc-rgb),.45);
-  --amb: #FAC775;
-  --ink: #EDEDE8;
-  --ink-dim: #8C9389;
-  --line: #262B26;
+:root{
+  --bg:#0B0D0C;--bg2:#12160F;--acc:#23833F;--acc-rgb:35, 131, 63;
+  --ag:rgba(var(--acc-rgb),.7);--ag1:rgba(var(--acc-rgb),.12);--ag2:rgba(var(--acc-rgb),.45);
+  --amb:#FAC775;--ink:#EDEDE8;--ink-dim:#8C9389;--line:#262B26;
 }
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
-}
-
-body {
-  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
-  font-family: 'Geist', sans-serif;
-  color: var(--ink);
-  min-height: 100vh;
-  padding: 40px 16px 0;
-  line-height: 1.5;
-}
-
-.container {
-  max-width: 720px;
-  margin: 0 auto;
-}
-
-h1 {
-  font-size: clamp(26px, 6.5vw, 44px);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
-  margin-bottom: 14px;
-}
-
-.intro {
-  font-size: 15.5px;
-  font-weight: 400;
-  color: var(--ink-dim);
-  max-width: 58ch;
-  line-height: 1.55;
-  margin-bottom: 32px;
-}
-
-.card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  margin-bottom: 18px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
-}
-
-.card-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  color: white;
-}
-
-.live-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--acc);
-}
-
-.card-hint {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--ink-dim);
-  margin-bottom: 14px;
-}
-
-.canvas-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16/9;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
-  box-shadow: inset 0 0 0 1px var(--ag1);
-  margin-bottom: 16px;
-}
-
-.canvas-wrapper canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.canvas-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(4px);
-  padding: 9px 16px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  text-transform: uppercase;
-  color: var(--acc);
-  text-align: center;
-}
-
-.slider-container {
-  margin-bottom: 16px;
-}
-
-.slider-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 10px;
-}
-
-.ineq-slider {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  height: 4px;
-  border-radius: 3px;
-  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
-  outline: none;
-  margin-bottom: 8px;
-}
-
-.ineq-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow .15s;
-}
-
-.ineq-slider::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.ineq-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow .15s;
-}
-
-.ineq-slider::-moz-range-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.tick-labels {
-  display: flex;
-  justify-content: space-between;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--ink-dim);
-}
-
-.stat-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-}
-
-.stat {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.stat-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-}
-
-.stat-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 24px;
-  font-weight: 500;
-}
-
-.stat-value.acc { color: var(--acc); }
-.stat-value.amb { color: var(--amb); }
-
-.toggle-container {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.toggle-btn {
-  flex: 1;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14.5px;
-  padding: 12px;
-  border-radius: 11px;
-  border: 1px solid var(--line);
-  background: #12160F;
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: all .2s;
-}
-
-.toggle-btn.active {
-  background: rgba(var(--acc-rgb),.1);
-  border: 1px solid var(--acc);
-  color: var(--acc);
-  box-shadow: 0 0 22px rgba(var(--acc-rgb),.18);
-}
-
-.knowdrop-divider {
-  border-top: 1px solid var(--line);
-  padding-top: 16px;
-}
-
-.knowdrop-text {
-  font-size: 14.5px;
-  font-weight: 400;
-  line-height: 1.65;
-  color: var(--ink);
-}
-
-.know-this {
-  border-left: 3px solid var(--acc);
-  padding: 16px 18px;
-  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
-  border-radius: 0 12px 12px 0;
-  margin-bottom: 0;
-}
-
-.know-this-tag {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  margin-bottom: 12px;
-}
-
-.know-this-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--acc);
-  box-shadow: 0 0 8px var(--acc);
-  animation: pulse 2.4s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.45; }
-}
-
-.know-this-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--acc);
-}
-
-.know-this-body {
-  font-size: 17.4px;
-  font-weight: 400;
-  line-height: 1.55;
-  color: var(--ink);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+body{background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C 55%);font-family:'Geist',sans-serif;color:var(--ink);min-height:100vh;padding:40px 16px 0;line-height:1.5}
+.iq-wrap{max-width:720px;margin:0 auto}
+.iq-wrap h1{font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin-bottom:14px}
+.iq-intro{font-size:15.5px;font-weight:400;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin-bottom:30px}
+.iq-card{background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:18px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1)}
+.iq-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+.iq-label{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;color:#fff}
+.iq-live{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--acc);white-space:nowrap}
+.iq-hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin-bottom:14px;line-height:1.5}
+.iq-ptitle{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:8px;letter-spacing:.04em}
+.iq-pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.iq-pill{flex:1 1 auto;min-width:0;font-family:'JetBrains Mono',monospace;font-size:12px;padding:9px 14px;border-radius:999px;border:1px solid var(--line);background:#12160F;color:var(--ink-dim);cursor:pointer;transition:background .2s,color .2s,border-color .2s,box-shadow .2s;white-space:nowrap}
+.iq-pill[aria-pressed="true"]{background:rgba(var(--acc-rgb),.1);border-color:var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.iq-canvas{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1)}
+@media (max-width:620px){.iq-canvas{aspect-ratio:1/1}}
+@media (max-width:420px){.iq-canvas{aspect-ratio:4/5}}
+.iq-canvas canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.iq-overlay{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:14px;text-transform:uppercase;color:var(--acc);text-align:center;line-height:1.3}
+.iq-cap{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);line-height:1.55;margin:10px 2px 16px}
+.iq-slide{margin-bottom:16px}
+.iq-row{display:flex;justify-content:space-between;align-items:baseline;font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:9px;gap:10px}
+.iq-row b{color:var(--ink);font-weight:500;font-size:12px}
+.iq-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;background:linear-gradient(90deg,var(--acc) var(--fill,0%),#23291f var(--fill,0%));outline:none;margin:6px 0 8px;display:block}
+.iq-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);cursor:pointer;transition:box-shadow .15s}
+.iq-slider::-webkit-slider-thumb:hover{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.iq-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);cursor:pointer;transition:box-shadow .15s}
+.iq-slider::-moz-range-thumb:hover{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.iq-ticks{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink-dim)}
+.iq-stats{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding-top:16px;border-top:1px solid var(--line)}
+.iq-stat{display:flex;flex-direction:column;gap:4px;min-width:0}
+.iq-stat-l{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim)}
+.iq-stat-v{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500}
+.iq-stat-v.acc{color:var(--acc)}.iq-stat-v.amb{color:var(--amb)}
+.iq-drop{border-top:1px solid var(--line);padding-top:16px}
+.iq-drop p{font-size:14.5px;font-weight:400;line-height:1.65;color:var(--ink)}
+.iq-know{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));border-radius:0 12px 12px 0;margin-bottom:0;padding-bottom:16px}
+.iq-know-tag{display:flex;align-items:center;gap:9px;margin-bottom:12px}
+.iq-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:iqPulse 2.4s ease-in-out infinite}
+@keyframes iqPulse{0%,100%{opacity:1}50%{opacity:.45}}
+.iq-know-l{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.15em;color:var(--acc)}
+.iq-know p{font-size:17.4px;font-weight:400;line-height:1.55;color:var(--ink)}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
 
-<div class="container">
-  <h2 class="sr-only">Interactive inequality proof visualisation showing Cauchy-Schwarz inequality</h2>
+<div class="iq-wrap">
+  <h2 class="sr-only">Proving Inequalities: Interactive proof of Cauchy–Schwarz, the triangle inequality and the absolute value triangle inequality, with adjustable angle and vector length</h2>
 
-  <h1>Inequality proofs end at something that is never <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">negative</span></h1>
+  <h1>To prove one side is bigger, never measure either side: measure the <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">gap</span></h1>
 
-  <p class="intro">You prove A ≥ B by showing A − B is something you already know can't be negative; to prove A > B, show it is positive. Drag the slider to see the gap between the dot product of two vectors and the Cauchy-Schwarz bound: the gap is never negative, and it is zero when the vectors are parallel (0° and 180°).</p>
+  <p class="iq-intro">Cauchy–Schwarz, the triangle inequality and |a + b| ≤ |a| + |b| all come from one move: write the difference between the two sides as something that cannot be negative, then read the inequality off it. Here ‖u‖ is fixed at 1. Change the angle between the vectors and the length of v, and watch what the gap between the two sides does as the shaded area grows and shrinks.</p>
 
-  <div class="card">
-    <div class="card-header">
-      <span class="card-label">Cauchy-Schwarz Inequality</span>
-      <span class="live-tag" id="liveTag">Gap: +0.00</span>
+  <div class="iq-card">
+    <div class="iq-head">
+      <span class="iq-label">Gap between the two sides</span>
+      <span class="iq-live" id="iqLive">gap 0.50</span>
     </div>
-    <div class="card-hint">Drag to change vector angle — the gap never drops below zero, and hits zero when the vectors are parallel</div>
-    
-    <div class="canvas-wrapper">
-      <canvas id="canvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">|⟨u,v⟩| ≤ ‖u‖‖v‖</div>
-    </div>
+    <div class="iq-hint">Change the angle. Watch where the projection lands and what the shaded area does.</div>
 
-    <div class="slider-container">
-      <div class="slider-label">Vector angle θ</div>
-      <input type="range" min="0" max="180" value="60" class="ineq-slider" id="angleSlider">
-      <div class="tick-labels">
-        <span>0°</span>
-        <span>45°</span>
-        <span>90°</span>
-        <span>135°</span>
-        <span>180°</span>
-      </div>
+    <div class="iq-ptitle">Which inequality</div>
+    <div class="iq-pills" role="group" aria-label="Which inequality the picture proves">
+      <button class="iq-pill iq-mode" data-mode="square" aria-pressed="true">Cauchy–Schwarz</button>
+      <button class="iq-pill iq-mode" data-mode="triangle" aria-pressed="false">Triangle</button>
+      <button class="iq-pill iq-mode" data-mode="cases" aria-pressed="false">Cases</button>
     </div>
 
-    <div class="stat-row">
-      <div class="stat">
-        <div class="stat-label">Dot product |⟨u,v⟩|</div>
-        <div class="stat-value acc" id="dotValue">0.87</div>
-      </div>
-      <div class="stat">
-        <div class="stat-label">Upper bound ‖u‖‖v‖</div>
-        <div class="stat-value amb" id="boundValue">1.00</div>
-      </div>
+    <div class="iq-canvas" id="iqWrap">
+      <canvas id="iqCanvas" aria-label="Vectors u and v with the inequality gap drawn on screen"></canvas>
+      <div class="iq-overlay" id="iqOverlay" aria-live="polite">|u·v| 0.50 ≤ 1.00 = ‖u‖‖v‖ · gap 0.50</div>
     </div>
-  </div>
+    <p class="iq-cap" id="iqCap">‖u‖²‖v‖² − (u·v)² = ‖u‖²‖v‖² sin²θ = area² ≥ 0, so (u·v)² ≤ ‖u‖²‖v‖² and |u·v| ≤ ‖u‖‖v‖.</p>
 
-  <div class="card">
-    <div class="toggle-container">
-      <button class="toggle-btn active" id="btnSquare">Square Method</button>
-      <button class="toggle-btn" id="btnTriangle">Triangle Ineq</button>
+    <div class="iq-slide">
+      <div class="iq-row"><span>Angle θ between u and v</span><b id="iqAngV">60°</b></div>
+      <input type="range" class="iq-slider" id="iqAng" aria-label="Angle between u and v" min="0" max="180" step="1" value="60">
+      <div class="iq-ticks"><span>0°</span><span>45°</span><span>90°</span><span>135°</span><span>180°</span></div>
+    </div>
+    <div class="iq-slide">
+      <div class="iq-row"><span>Length of v (‖u‖ = 1)</span><b id="iqLenV">1.00</b></div>
+      <input type="range" class="iq-slider" id="iqLen" aria-label="Length of v" min="0.5" max="2" step="0.05" value="1">
+      <div class="iq-ticks"><span>0.5</span><span>1.0</span><span>1.5</span><span>2.0</span></div>
     </div>
 
-    <div class="knowdrop-divider">
-      <p class="knowdrop-text" id="knowdropText">The universal starting move: rearrange until you're proving something ≥ 0. Expand (a − b)² and you get a² − 2ab + b² which is never negative because it's literally a square. This lets you prove a² + b² ≥ 2ab instantly. Stack this trick into higher dimensions and you get Cauchy-Schwarz: the square of the dot product can never exceed the product of the squared magnitudes. Every classical inequality is this move wearing a different disguise.</p>
+    <div class="iq-stats">
+      <div class="iq-stat"><div class="iq-stat-l" id="iqStatLl">|u·v|</div><div class="iq-stat-v acc" id="iqStatL">0.50</div></div>
+      <div class="iq-stat"><div class="iq-stat-l" id="iqStatRl">‖u‖‖v‖</div><div class="iq-stat-v amb" id="iqStatR">1.00</div></div>
     </div>
   </div>
 
-  <div class="know-this">
-    <div class="know-this-tag">
-      <div class="know-this-dot"></div>
-      <div class="know-this-label">Know This</div>
+  <div class="iq-card">
+    <div class="iq-ptitle">Which proof technique</div>
+    <div class="iq-pills" role="group" aria-label="Which proof technique the paragraph explains">
+      <button class="iq-pill iq-tech" data-tech="direct" aria-pressed="true">Direct chain</button>
+      <button class="iq-pill iq-tech" data-tech="cases" aria-pressed="false">Cases</button>
+      <button class="iq-pill iq-tech" data-tech="indirect" aria-pressed="false">Contrapositive</button>
+      <button class="iq-pill iq-tech" data-tech="calculus" aria-pressed="false">Calculus</button>
     </div>
-    <p class="know-this-body">Proving an inequality means constructing a chain of steps that ends in <span style="color:var(--acc)">something obviously non-negative</span>, usually a <span style="color:var(--acc)">perfect square</span> or a <span style="color:var(--acc)">norm</span>.</p>
+    <div class="iq-drop"><p id="iqDrop"></p></div>
+  </div>
+
+  <div class="iq-know">
+    <div class="iq-know-tag"><div class="iq-dot"></div><div class="iq-know-l">Know This</div></div>
+    <p>To prove A ≥ B, show A − B is a <span style="color:var(--acc)">perfect square</span>, a <span style="color:var(--acc)">squared area</span> or some other quantity that is <span style="color:var(--acc)">never negative</span>.</p>
   </div>
 </div>
 
 <script>
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-const slider = document.getElementById('angleSlider');
-const liveTag = document.getElementById('liveTag');
-const canvasOverlay = document.getElementById('canvasOverlay');
-const dotValue = document.getElementById('dotValue');
-const boundValue = document.getElementById('boundValue');
+(function(){
+  const canvas=document.getElementById("iqCanvas");
+  const ctx=canvas.getContext("2d");
+  const wrap=document.getElementById("iqWrap");
+  const overlay=document.getElementById("iqOverlay");
+  const cap=document.getElementById("iqCap");
+  const liveTag=document.getElementById("iqLive");
+  const angS=document.getElementById("iqAng");
+  const lenS=document.getElementById("iqLen");
+  const angV=document.getElementById("iqAngV");
+  const lenV=document.getElementById("iqLenV");
+  const statL=document.getElementById("iqStatL");
+  const statR=document.getElementById("iqStatR");
+  const statLl=document.getElementById("iqStatLl");
+  const statRl=document.getElementById("iqStatRl");
+  const drop=document.getElementById("iqDrop");
+  const modeBtns=Array.from(document.querySelectorAll(".iq-mode"));
+  const techBtns=Array.from(document.querySelectorAll(".iq-tech"));
 
-const btnSquare = document.getElementById('btnSquare');
-const btnTriangle = document.getElementById('btnTriangle');
-const knowdropText = document.getElementById('knowdropText');
-
-const CSS = getComputedStyle(document.documentElement);
-const ACC = CSS.getPropertyValue('--acc').trim();
-const RGB = CSS.getPropertyValue('--acc-rgb').trim();
-const AMB = CSS.getPropertyValue('--amb').trim();
-
-const dpr = Math.min(window.devicePixelRatio || 1, 2);
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d');
-
-let angle = 60;
-let time = 0;
-
-const knowdrops = {
-  square: "The universal starting move: rearrange until you're proving something ≥ 0. Expand (a − b)² and you get a² − 2ab + b² which is never negative because it's literally a square. This lets you prove a² + b² ≥ 2ab instantly. Stack this trick into higher dimensions and you get Cauchy-Schwarz: the square of the dot product can never exceed the product of the squared magnitudes. Every classical inequality is this move wearing a different disguise.",
-  triangle: "The triangle inequality says the direct path is always shortest: |a + b| ≤ |a| + |b|. In number form it looks trivial but in vector space it becomes a geometric guarantee. Any time you need to bound a sum of terms, the triangle inequality is your first tool. It composes: apply it twice and you can bound three terms, apply it n times and you have induction. Cauchy-Schwarz is what you reach for when triangle inequality isn't quite strong enough."
-};
-
-function resize() {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
-
-function draw() {
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, w, h);
-
-  const cx = w / 2;
-  const cy = h / 2;
-  const scale = Math.min(w, h) * 0.28;
-
-  // Grid
-  ctx.save();
-  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
-  ctx.lineWidth = 0.5;
-  const gridStep = scale * 0.5;
-  for (let x = cx % gridStep; x < w; x += gridStep) {
-    ctx.beginPath();
-    ctx.moveTo(x, 0);
-    ctx.lineTo(x, h);
-    ctx.stroke();
+  const CSS=getComputedStyle(document.documentElement);
+  const ACC=CSS.getPropertyValue("--acc").trim();
+  const RGB=CSS.getPropertyValue("--acc-rgb").trim();
+  const AMB=CSS.getPropertyValue("--amb").trim();
+  const INK=CSS.getPropertyValue("--ink").trim();
+  const DIM=CSS.getPropertyValue("--ink-dim").trim();
+  function hexToRgb(hex){
+    hex=hex.replace("#","");
+    if(hex.length===3) hex=hex.split("").map(function(ch){return ch+ch;}).join("");
+    const n=parseInt(hex,16);
+    return ((n>>16)&255)+","+((n>>8)&255)+","+(n&255);
   }
-  for (let y = cy % gridStep; y < h; y += gridStep) {
-    ctx.beginPath();
-    ctx.moveTo(0, y);
-    ctx.lineTo(w, y);
-    ctx.stroke();
+  const AMBRGB=hexToRgb(AMB);
+  const INKRGB=hexToRgb(INK);
+  const MONO="500 11px 'JetBrains Mono', monospace";
+  const reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const dpr=Math.min(window.devicePixelRatio||1,2);
+  const buf=document.createElement("canvas");
+  const bctx=buf.getContext("2d");
+
+  let theta=60, m=1, mode="square", fa=1, raf=0;
+
+  const CAPS={
+    square:"‖u‖²‖v‖² − (u·v)² = ‖u‖²‖v‖² sin²θ = area² ≥ 0, so (u·v)² ≤ ‖u‖²‖v‖² and |u·v| ≤ ‖u‖‖v‖.",
+    triangle:"‖u+v‖² = ‖u‖² + 2u·v + ‖v‖² ≤ ‖u‖² + 2‖u‖‖v‖ + ‖v‖² = (‖u‖+‖v‖)², using Cauchy–Schwarz on the middle term, then take square roots of two non-negative numbers.",
+    cases:"Let a = ‖u‖ = 1 and b = u·v. Case b ≥ 0: |a+b| = a+b = |a|+|b|. Case b < 0: |a+b| = |a − |b|| < a + |b| = |a|+|b|. Both cases give |a+b| ≤ |a|+|b|."
+  };
+  const DROPS={
+    direct:"A direct proof is a chain of implications you can read top to bottom with no gaps. For Cauchy–Schwarz: ‖u‖²‖v‖² − (u·v)² = ‖u‖²‖v‖²(1 − cos²θ) = ‖u‖²‖v‖² sin²θ, which is the square of the parallelogram area, so it is at least zero, so (u·v)² ≤ ‖u‖²‖v‖², so |u·v| ≤ ‖u‖‖v‖. The triangle inequality is the next link: ‖u+v‖² = ‖u‖² + 2u·v + ‖v‖² ≤ ‖u‖² + 2‖u‖‖v‖ + ‖v‖² = (‖u‖+‖v‖)², and taking square roots is allowed because both sides are non-negative. Start at a line you know is true and let each line imply the next. The statement you were asked to prove is the last line, never the first.",
+    cases:"Proof by cases splits the problem on something that changes the algebra, then handles each piece separately. For real numbers, |a+b| ≤ |a|+|b| splits on the sign of b when a = ‖u‖ > 0: if b ≥ 0 then a+b ≥ 0, so |a+b| = a+b = |a|+|b| with equality; if b < 0 then |a+b| = |a − |b||, which is strictly less than a + |b|. Both cases land on the same inequality, so it holds for every b. In the Cases view the angle decides the sign of b = u·v: past 90° the two segments point opposite ways and the gap opens. The cases must cover every possibility, and you must say so.",
+    indirect:"Contrapositive and contradiction prove a statement by examining what would happen if it failed. The equality case of Cauchy–Schwarz: if |u·v| = ‖u‖‖v‖ then area² = 0, so sin θ = 0, so u and v are parallel. The contrapositive is just as useful: if u and v are not parallel, the area is positive and the inequality is strict. Contradiction runs the other way: suppose |u·v| > ‖u‖‖v‖ for some pair; then ‖u‖²‖v‖² − (u·v)² is negative, yet it equals a square, which is impossible, so no such pair exists. Both techniques help when the direct chain is hard to start: assume the opposite, follow it to a square that would have to be negative, and stop there.",
+    calculus:"When the inequality is about functions rather than vectors, let f(x) be the larger side minus the smaller side and show f never dips below zero. For eˣ ≥ 1 + x: f(x) = eˣ − 1 − x has f′(x) = eˣ − 1, which is negative for x < 0 and positive for x > 0, so f has its minimum at x = 0, where f(0) = 0, hence f(x) ≥ 0 everywhere. Graphically, sketch both sides and show the curves touch only where their gradients agree. Monotonic arguments work too: if f(0) = 0 and f′(x) ≥ 0 for x ≥ 0, then f(x) ≥ 0 for x ≥ 0. The shape matches the vector proofs: the difference of the two sides is shown to be a non-negative quantity."
+  };
+
+  function model(){
+    const th=theta*Math.PI/180, c=Math.cos(th), s=Math.sin(th);
+    const dot=m*c, absDot=Math.abs(dot), bound=m;
+    const area=m*s, area2=Math.max(0,m*m-dot*dot);
+    const sumLen=Math.sqrt(Math.max(0,1+2*dot+m*m)), sumBound=1+m;
+    const lhs=Math.abs(1+dot), rhs=1+absDot;
+    return {th:th,c:c,s:s,dot:dot,absDot:absDot,bound:bound,area:area,area2:area2,sumLen:sumLen,sumBound:sumBound,lhs:lhs,rhs:rhs};
   }
-  ctx.restore();
+  const f=function(v){return v.toFixed(2);};
 
-  // Axes
-  ctx.save();
-  ctx.strokeStyle = 'rgba(255,255,255,0.15)';
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(0, cy);
-  ctx.lineTo(w, cy);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(cx, 0);
-  ctx.lineTo(cx, h);
-  ctx.stroke();
-  ctx.restore();
+  function arrow(x1,y1,x2,y2,col,lw,alpha){
+    const dx=x2-x1,dy=y2-y1,len=Math.hypot(dx,dy); if(len<2) return;
+    const ux=dx/len,uy=dy/len,hl=Math.min(10,len*0.5),hw=hl*0.55;
+    ctx.save(); ctx.globalAlpha=alpha==null?1:alpha; ctx.strokeStyle=col; ctx.fillStyle=col; ctx.lineWidth=lw; ctx.lineCap="round";
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2-ux*hl*0.8,y2-uy*hl*0.8); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x2,y2); ctx.lineTo(x2-ux*hl-uy*hw,y2-uy*hl+ux*hw); ctx.lineTo(x2-ux*hl+uy*hw,y2-uy*hl-ux*hw); ctx.closePath(); ctx.fill();
+    ctx.restore();
+  }
+  function txt(s,x,y,col,align,alpha){
+    ctx.save(); ctx.globalAlpha=alpha==null?1:alpha; ctx.font=MONO; ctx.fillStyle=col; ctx.textAlign=align||"left"; ctx.textBaseline="middle"; ctx.fillText(s,x,y); ctx.restore();
+  }
+  function halo(x,y,rgb,alpha){
+    ctx.save(); ctx.globalCompositeOperation="lighter";
+    const g=ctx.createRadialGradient(x,y,0,x,y,22);
+    g.addColorStop(0,"rgba("+rgb+","+(0.4*alpha)+")"); g.addColorStop(1,"rgba("+rgb+",0)");
+    ctx.fillStyle=g; ctx.fillRect(x-22,y-22,44,44); ctx.restore();
+  }
+  function seg(x1,y1,x2,y2,col,lw,alpha,dash){
+    ctx.save(); ctx.globalAlpha=alpha==null?1:alpha; ctx.strokeStyle=col; ctx.lineWidth=lw; ctx.lineCap="butt";
+    if(dash) ctx.setLineDash(dash);
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+  }
+  function dot(x,y,r,col,alpha){
+    ctx.save(); ctx.globalAlpha=alpha==null?1:alpha; ctx.fillStyle=col; ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill(); ctx.restore();
+  }
 
-  // Vectors
-  const rad = (angle * Math.PI) / 180;
-  const u = { x: scale, y: 0 };
-  const v = { x: scale * Math.cos(rad), y: -scale * Math.sin(rad) };
+  function drawBar(bx,y,bw,rowH,val,ref,label,col,rgb){
+    const barH=Math.max(6,Math.min(10,rowH*0.3));
+    txt(label,bx,y+7,col,"left");
+    txt(f(val),bx+bw,y+7,col,"right");
+    const by=y+rowH-barH-3;
+    ctx.save(); ctx.fillStyle="rgba(255,255,255,0.07)"; ctx.fillRect(bx,by,bw,barH); ctx.restore();
+    const frac=ref>0?Math.max(0,Math.min(1,val/ref)):0;
+    ctx.save(); ctx.globalCompositeOperation="lighter"; ctx.fillStyle="rgba("+rgb+",0.85)"; ctx.fillRect(bx,by,bw*frac,barH); ctx.restore();
+    return by;
+  }
+  function drawBars(b,L,R,lL,lR){
+    const rowH=Math.min(34,b.h/2);
+    const y0=b.y+(b.h-rowH*2)/2;
+    const byL=drawBar(b.x,y0,b.w,rowH,L,R,lL,ACC,RGB);
+    drawBar(b.x,y0+rowH,b.w,rowH,R,R,lR,AMB,AMBRGB);
+    const fracL=R>0?L/R:0;
+    const tx=b.x+b.w*fracL;
+    seg(tx,byL-2,tx,y0+rowH*2-3,"rgba("+AMBRGB+",0.7)",1,1,[2,3]);
+    if(b.w*(1-fracL)>80) txt("gap",(tx+b.x+b.w)/2,byL-9,DIM,"center",0.9);
+  }
 
-  // Vector u (amber)
-  ctx.save();
-  ctx.strokeStyle = AMB;
-  ctx.lineWidth = 2.5;
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.beginPath();
-  ctx.moveTo(cx, cy);
-  ctx.lineTo(cx + u.x, cy + u.y);
-  ctx.stroke();
-  ctx.fillStyle = AMB;
-  ctx.beginPath();
-  ctx.arc(cx + u.x, cy + u.y, 5, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
+  function draw(){
+    const w=canvas.width/dpr,h=canvas.height/dpr; if(w<10||h<10) return;
+    const M=model();
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.globalCompositeOperation="source-over"; ctx.globalAlpha=1; ctx.filter="none"; ctx.setLineDash([]);
+    ctx.fillStyle="rgb(0,0,0)"; ctx.fillRect(0,0,w,h);
 
-  // Vector v (accent)
-  ctx.save();
-  ctx.strokeStyle = ACC;
-  ctx.lineWidth = 2.5;
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.beginPath();
-  ctx.moveTo(cx, cy);
-  ctx.lineTo(cx + v.x, cy + v.y);
-  ctx.stroke();
-  ctx.fillStyle = ACC;
-  ctx.beginPath();
-  ctx.arc(cx + v.x, cy + v.y, 5, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
+    const overlayH=overlay.offsetHeight||36;
+    const avail=Math.max(60,h-overlayH-6);
+    const side=w>=560;
+    const pic=side?{x:0,y:0,w:w*0.62,h:avail}:{x:0,y:0,w:w,h:avail*0.6};
+    const bars=side?{x:w*0.66,y:Math.max(8,avail*0.5-50),w:w*0.30,h:100}:{x:16,y:pic.h+2,w:w-32,h:Math.max(40,avail*0.4-6)};
 
-  // Angle arc
-  ctx.save();
-  ctx.strokeStyle = 'rgba(' + RGB + ',0.4)';
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.arc(cx, cy, scale * 0.35, 0, -rad, true);
-  ctx.stroke();
-  ctx.restore();
+    const th=M.th,c=M.c,s=M.s;
+    const ymin=mode==="cases"?-0.98:-0.7, ymax=m+0.3, xmin=-(m+0.3), xmax=1+m+0.3;
+    const scale=Math.min(pic.w*0.92/(xmax-xmin),pic.h*0.9/(ymax-ymin));
+    const ox=pic.x+pic.w/2-(xmin+xmax)/2*scale, oy=pic.y+pic.h/2+(ymin+ymax)/2*scale;
+    const X=function(x){return ox+x*scale;}, Y=function(y){return oy-y*scale;};
 
-  // Dot product projection line
-  const projLen = Math.cos(rad);
-  const projX = cx + u.x * projLen;
-  ctx.save();
-  ctx.setLineDash([4, 4]);
-  ctx.strokeStyle = 'rgba(' + RGB + ',0.5)';
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(cx + v.x, cy + v.y);
-  ctx.lineTo(projX, cy);
-  ctx.stroke();
-  ctx.restore();
+    // grid
+    ctx.save(); ctx.strokeStyle="rgba(255,255,255,0.05)"; ctx.lineWidth=1;
+    for(let gx=Math.ceil(xmin);gx<=Math.floor(xmax);gx++){ctx.beginPath();ctx.moveTo(X(gx),pic.y);ctx.lineTo(X(gx),pic.y+pic.h);ctx.stroke();}
+    for(let gy=Math.ceil(ymin);gy<=Math.floor(ymax);gy++){ctx.beginPath();ctx.moveTo(pic.x,Y(gy));ctx.lineTo(pic.x+pic.w,Y(gy));ctx.stroke();}
+    ctx.restore();
+    seg(pic.x,oy,pic.x+pic.w,oy,"rgba(255,255,255,0.18)",1,1);
 
-  // Labels
-  ctx.save();
-  ctx.fillStyle = AMB;
-  ctx.font = '500 13px "JetBrains Mono"';
-  ctx.fillText('u', cx + u.x + 12, cy + u.y + 5);
-  ctx.fillStyle = ACC;
-  ctx.fillText('v', cx + v.x + 12, cy + v.y);
-  ctx.restore();
+    const uTx=X(1),uTy=oy, vTx=X(M.dot),vTy=Y(M.area);
+    let vAlpha=1;
 
-  // Glow halos
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  const haloU = ctx.createRadialGradient(cx + u.x, cy + u.y, 0, cx + u.x, cy + u.y, 22);
-  haloU.addColorStop(0, 'rgba(250,199,117,0.35)');
-  haloU.addColorStop(1, 'rgba(250,199,117,0)');
-  ctx.fillStyle = haloU;
-  ctx.fillRect(cx + u.x - 22, cy + u.y - 22, 44, 44);
+    if(mode==="square"){
+      ctx.save(); ctx.globalAlpha=fa;
+      ctx.beginPath(); ctx.moveTo(X(0),Y(0)); ctx.lineTo(X(1),Y(0)); ctx.lineTo(X(1+M.dot),Y(M.area)); ctx.lineTo(X(M.dot),Y(M.area)); ctx.closePath();
+      ctx.fillStyle="rgba("+RGB+",0.18)"; ctx.fill(); ctx.strokeStyle="rgba("+RGB+",0.4)"; ctx.lineWidth=1; ctx.stroke();
+      ctx.restore();
+      const sign=c>=0?1:-1;
+      ctx.save(); ctx.globalAlpha=fa; ctx.setLineDash([2,5]); ctx.strokeStyle="rgba("+AMBRGB+",0.45)"; ctx.lineWidth=1;
+      ctx.beginPath(); if(sign>0) ctx.arc(ox,oy,m*scale,-th,0,false); else ctx.arc(ox,oy,m*scale,-th,-Math.PI,true); ctx.stroke();
+      ctx.restore();
+      seg(vTx,vTy,X(M.dot),oy,"rgba("+RGB+",0.5)",1,fa,[4,4]);
+      seg(X(0),oy,X(M.dot),oy,"rgba("+RGB+",0.95)",4,fa);
+      dot(X(M.dot),oy,3,ACC,fa);
+      seg(X(M.dot),oy,X(sign*m),oy,AMB,4,fa);
+      dot(X(sign*m),oy,3,AMB,fa);
+      const gapPx=Math.abs(X(sign*m)-X(M.dot)), gapMid=(X(sign*m)+X(M.dot))/2;
+      if(gapPx>26){
+        const near=Math.abs(gapMid-(uTx+9.5))<23;
+        txt("gap",gapMid,oy+(near?26:13),AMB,"center",fa);
+        if(gapPx>64&&Math.abs(X(sign*m)-(uTx+9.5))>26&&Math.abs(X(sign*m)-gapMid)>26) txt("‖v‖",X(sign*m),oy+13,AMB,"center",fa*0.9);
+      }
+      if(M.area*scale>36&&scale>72){
+        const ax=X(0.5+M.dot/2), ay=Y(M.area*0.7), rL=0.42*Math.min(m,1)*scale+15, la2=theta<25?-14*Math.PI/180:th/2;
+        const lx=ox+Math.cos(la2)*rL, ly=oy-Math.sin(la2)*rL;
+        if(Math.abs(ay-ly)>12||Math.abs(ax-lx)>48) txt("area² ≥ 0",ax,ay,ACC,"center",fa);
+      }
+    }
+    else if(mode==="triangle"){
+      vAlpha=0.3;
+      const px=1+M.dot,py=M.area;
+      ctx.save(); ctx.globalAlpha=fa; ctx.beginPath(); ctx.moveTo(X(0),oy); ctx.lineTo(X(1),oy); ctx.lineTo(X(px),Y(py)); ctx.closePath();
+      ctx.fillStyle="rgba("+RGB+",0.1)"; ctx.fill(); ctx.restore();
+      arrow(X(1),oy,X(px),Y(py),ACC,2.5,fa);
+      const rl=Math.hypot(px,py);
+      if(rl*scale>8) arrow(X(0),oy,X(px),Y(py),INK,2.5,fa); else dot(X(0),oy,4,INK,fa);
+      halo(X(px),Y(py),RGB,fa);
+      // label v on shifted copy, offset outward
+      const small=theta<15;
+      const mvx=X(1+M.dot/2), mvy=Y(M.area/2);
+      txt("v",mvx+(small?0:14*s),mvy+(small?-14:14*c),ACC,"center",fa);
+      if(rl*scale>24){
+        const nx=-py/rl,ny=px/rl;
+        txt("u+v",X(px*0.38)+nx*16,Y(py*0.38)-ny*16,INK,"center",fa);
+      }
+    }
+    else {
+      vAlpha=0.4;
+      const b=M.dot;
+      seg(vTx,vTy,X(b),oy,"rgba("+RGB+",0.5)",1,fa,[4,4]);
+      dot(X(b),oy,3,ACC,fa);
+      const ya=Y(-0.3),yb=Y(-0.66);
+      seg(X(0),ya,X(1),ya,AMB,5,fa);
+      txt("a=‖u‖",X(0)-8,ya,AMB,"right",fa);
+      seg(X(1),yb,X(1+b),yb,ACC,5,fa);
+      dot(X(1),yb,3,AMB,fa);
+      txt("b=u·v",X(1+b)+(b<0?-8:8),yb,ACC,b<0?"right":"left",fa);
+      seg(X(1+b),yb,X(1+b),oy,"rgba("+INKRGB+",0.5)",1,fa,[2,3]);
+      dot(X(1+b),oy,3.5,INK,fa);
+      txt("a+b",X(1+b),yb+15,INK,"center",fa);
+    }
 
-  const haloV = ctx.createRadialGradient(cx + v.x, cy + v.y, 0, cx + v.x, cy + v.y, 22);
-  haloV.addColorStop(0, 'rgba(' + RGB + ',0.35)');
-  haloV.addColorStop(1, 'rgba(' + RGB + ',0)');
-  ctx.fillStyle = haloV;
-  ctx.fillRect(cx + v.x - 22, cy + v.y - 22, 44, 44);
-  ctx.restore();
+    // angle arc
+    const rA=0.42*Math.min(m,1)*scale;
+    ctx.save(); ctx.strokeStyle="rgba("+RGB+",0.45)"; ctx.lineWidth=1; ctx.beginPath(); ctx.arc(ox,oy,rA,-th,0,false); ctx.stroke(); ctx.restore();
+    if(!(mode==="cases"&&theta<25)){
+      const la=theta<25?-14*Math.PI/180:th/2;
+      txt(theta+"°",ox+Math.cos(la)*(rA+15),oy-Math.sin(la)*(rA+15),DIM,"center");
+    }
 
-  // Bloom
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
+    // u and v arrows
+    arrow(X(0),oy,uTx,uTy,AMB,2.5,1);
+    arrow(X(0),oy,vTx,vTy,ACC,2.5,vAlpha);
+    halo(uTx,uTy,AMBRGB,1);
+    halo(vTx,vTy,RGB,vAlpha);
+    if(mode!=="cases") txt("u",uTx+6,oy+12,AMB,"left");
+    if(mode!=="triangle"){
+      if(theta<30) txt("v",vTx,vTy-11,ACC,"center",vAlpha+0.3);
+      else txt("v",vTx+14*c,vTy-14*s,ACC,"center",vAlpha+0.3);
+    }
 
-  // Vignette
-  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
+    // bars
+    let L,R,lL,lR;
+    if(mode==="square"){L=M.absDot;R=M.bound;lL="|u·v|";lR="‖u‖‖v‖";}
+    else if(mode==="triangle"){L=M.sumLen;R=M.sumBound;lL="‖u+v‖";lR="‖u‖+‖v‖";}
+    else {L=M.lhs;R=M.rhs;lL="|a+b|";lR="|a|+|b|";}
+    drawBars(bars,L,R,lL,lR);
 
-  time += 0.016;
-}
+    // bloom
+    bctx.setTransform(1,0,0,1,0,0); bctx.clearRect(0,0,buf.width,buf.height);
+    if (canvas.width && canvas.height) bctx.drawImage(canvas,0,0);
+    ctx.save(); ctx.globalCompositeOperation="lighter"; ctx.globalAlpha=0.38; ctx.filter="blur(7px)";
+    (buf.width&&buf.height)&&ctx.drawImage(buf,0,0,w,h); ctx.restore();
 
-function update() {
-  angle = parseFloat(slider.value);
-  const fillPct = (angle / 180) * 100;
-  slider.style.setProperty('--fill', fillPct + '%');
+    // vignette
+    const cx=w/2,cy=h/2;
+    const vig=ctx.createRadialGradient(cx,cy,h*0.28,cx,cy,w*0.72);
+    vig.addColorStop(0,"rgba(0,0,0,0)"); vig.addColorStop(1,"rgba(0,0,0,0.52)");
+    ctx.fillStyle=vig; ctx.fillRect(0,0,w,h);
+  }
 
-  const rad = (angle * Math.PI) / 180;
-  const dotProd = Math.abs(Math.cos(rad));
-  const bound = 1.0;
-  const gap = bound - dotProd;
+  function update(){
+    theta=parseFloat(angS.value); m=parseFloat(lenS.value);
+    angS.style.setProperty("--fill",(theta/180*100)+"%");
+    lenS.style.setProperty("--fill",((m-0.5)/1.5*100)+"%");
+    angV.textContent=theta+"°"; lenV.textContent=f(m);
+    const M=model();
+    let L,R,lL,lR,ov;
+    if(mode==="square"){L=M.absDot;R=M.bound;lL="|u·v|";lR="‖u‖‖v‖";ov=`|u·v| ${f(L)} ≤ ${f(R)} = ‖u‖‖v‖ · gap ${f(Math.max(0,R-L))}`;}
+    else if(mode==="triangle"){L=M.sumLen;R=M.sumBound;lL="‖u+v‖";lR="‖u‖+‖v‖";ov=`‖u+v‖ ${f(L)} ≤ ${f(R)} = ‖u‖+‖v‖ · gap ${f(Math.max(0,R-L))}`;}
+    else {L=M.lhs;R=M.rhs;lL="|a+b|";lR="|a|+|b|";ov=`|a+b| ${f(L)} ≤ ${f(R)} = |a|+|b| · case b ${M.dot<0?"< 0":"≥ 0"}`;}
+    liveTag.textContent=`gap ${f(Math.max(0,R-L))}`;
+    statL.textContent=f(L); statR.textContent=f(R); statLl.textContent=lL; statRl.textContent=lR;
+    overlay.textContent=ov; cap.textContent=CAPS[mode];
+    draw();
+  }
 
-  liveTag.textContent = `Gap: +${gap.toFixed(2)}`;
-  dotValue.textContent = dotProd.toFixed(2);
-  boundValue.textContent = bound.toFixed(2);
+  function startFade(){
+    if(raf){cancelAnimationFrame(raf);raf=0;}
+    if(reduce){fa=1;return;}
+    fa=0; const t0=performance.now();
+    const step=function(now){
+      const t=Math.min(1,(now-t0)/320);
+      fa=1-Math.pow(1-t,3); draw();
+      if(t<1) raf=requestAnimationFrame(step); else {raf=0;fa=1;}
+    };
+    raf=requestAnimationFrame(step);
+  }
 
-  draw();
-  requestAnimationFrame(update);
-}
+  angS.addEventListener("input",update);
+  lenS.addEventListener("input",update);
+  modeBtns.forEach(function(b){
+    b.addEventListener("click",function(){
+      if(b.dataset.mode===mode) return;
+      mode=b.dataset.mode;
+      modeBtns.forEach(function(x){x.setAttribute("aria-pressed",x===b?"true":"false");});
+      startFade(); update();
+    });
+  });
+  techBtns.forEach(function(b){
+    b.addEventListener("click",function(){
+      techBtns.forEach(function(x){x.setAttribute("aria-pressed",x===b?"true":"false");});
+      drop.textContent=DROPS[b.dataset.tech];
+    });
+  });
+  drop.textContent=DROPS.direct;
 
-slider.addEventListener('input', () => {
-  angle = parseFloat(slider.value);
-  const fillPct = (angle / 180) * 100;
-  slider.style.setProperty('--fill', fillPct + '%');
-});
-
-btnSquare.addEventListener('click', () => {
-  btnSquare.classList.add('active');
-  btnTriangle.classList.remove('active');
-  knowdropText.textContent = knowdrops.square;
-});
-
-btnTriangle.addEventListener('click', () => {
-  btnTriangle.classList.add('active');
-  btnSquare.classList.remove('active');
-  knowdropText.textContent = knowdrops.triangle;
-});
-
-window.addEventListener('resize', resize);
-resize();
-update();
+  function resize(){
+    const r=wrap.getBoundingClientRect();
+    if(!r.width||!r.height) return;
+    canvas.width=Math.round(r.width*dpr); canvas.height=Math.round(r.height*dpr);
+    buf.width=canvas.width; buf.height=canvas.height;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    draw();
+  }
+  if("ResizeObserver" in window){ new ResizeObserver(function(){resize();}).observe(wrap); }
+  window.addEventListener("resize",resize);
+  if(document.fonts&&document.fonts.ready){ document.fonts.ready.then(function(){draw();}); }
+  resize(); update();
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'proving-inequalities'},'*');}catch(e){}}

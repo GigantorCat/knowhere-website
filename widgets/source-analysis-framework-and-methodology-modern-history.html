@@ -9,9 +9,10 @@ body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body
   --bg: #0B0D0C;
   --bg2: #12160F;
   --acc: #9A5FD2;
-  --ag: rgba(154, 95, 210, .7);
-  --ag1: rgba(154, 95, 210, .12);
-  --ag2: rgba(154, 95, 210, .45);
+  --acc-rgb: 154, 95, 210;
+  --ag:  rgba(var(--acc-rgb),.7);
+  --ag1: rgba(var(--acc-rgb),.12);
+  --ag2: rgba(var(--acc-rgb),.45);
   --amb: #FAC775;
   --ink: #EDEDE8;
   --ink-dim: #8C9389;
@@ -25,30 +26,32 @@ body {
   font-family: 'Geist', sans-serif;
   color: var(--ink);
   min-height: 100vh;
-  padding: 40px 16px 72px;
+  padding: 40px 16px 0;
   line-height: 1.5;
 }
 
-.container { max-width: 720px; margin: 0 auto; }
+.sa-wrap { max-width: 720px; margin: 0 auto; }
+
+.sr-only { position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0; }
 
 h1 {
-  font-size: clamp(30px, 8vw, 52px);
-  font-weight: 700;
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
   letter-spacing: -0.03em;
-  line-height: 1.02;
+  line-height: 1.05;
   margin-bottom: 16px;
 }
 
-.intro {
+.sa-intro {
   font-size: 15.5px;
   font-weight: 400;
   color: var(--ink-dim);
   max-width: 58ch;
   line-height: 1.55;
-  margin-bottom: 32px;
+  margin-bottom: 30px;
 }
 
-.card {
+.sa-card {
   background: linear-gradient(180deg, #12160F, #0d100b);
   border: 1px solid var(--line);
   border-radius: 18px;
@@ -57,584 +60,440 @@ h1 {
   margin-bottom: 18px;
 }
 
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
+.sa-head { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:6px; }
+.sa-label { font-family:'JetBrains Mono', monospace; font-size:13px; text-transform:uppercase; color:#fff; }
+.sa-live { font-family:'JetBrains Mono', monospace; font-size:11px; text-transform:uppercase; color:var(--acc); text-align:right; }
+.sa-hint { font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--ink-dim); margin-bottom:14px; line-height:1.5; }
+
+.sa-qtitle { font-family:'JetBrains Mono', monospace; font-size:10.5px; text-transform:uppercase; color:var(--ink-dim); margin-bottom:8px; letter-spacing:0.04em; }
+.sa-group { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
+.sa-pill {
+  font-family:'JetBrains Mono', monospace; font-size:12px; padding:9px 14px; border-radius:999px;
+  border:1px solid var(--line); background:#12160F; color:var(--ink-dim); cursor:pointer; transition:all .2s;
+}
+.sa-pill[aria-pressed="true"] {
+  background:rgba(var(--acc-rgb),.1); border-color:var(--acc); color:var(--acc);
+  box-shadow:0 0 22px rgba(var(--acc-rgb),.18);
 }
 
-.card-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  color: var(--ink);
+.sa-cv {
+  position:relative; width:100%; aspect-ratio:16/9; border-radius:12px; overflow:hidden;
+  background:#000; box-shadow:inset 0 0 0 1px var(--ag1); margin-bottom:16px;
+}
+.sa-cv canvas { position:absolute; inset:0; width:100%; height:100%; display:block; }
+.sa-ov {
+  position:absolute; left:0; right:0; bottom:0; background:rgba(0,0,0,0.55); backdrop-filter:blur(4px);
+  padding:8px 12px; font-family:'JetBrains Mono', monospace; font-size:clamp(11px, 3vw, 14px); text-transform:uppercase;
+  color:var(--acc); text-align:center; line-height:1.3;
 }
 
-.live-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--acc);
-}
+.sa-row { display:flex; justify-content:space-between; align-items:baseline; font-family:'JetBrains Mono', monospace; font-size:10.5px; text-transform:uppercase; color:var(--ink-dim); margin-bottom:6px; }
+.sa-row b { font-weight:500; color:var(--ink); font-size:12px; text-transform:none; }
 
-.card-hint {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--ink-dim);
-  margin-bottom: 14px;
-}
+.sa-slider { width:100%; height:24px; -webkit-appearance:none; appearance:none; background:transparent; cursor:pointer; display:block; }
+.sa-slider::-webkit-slider-runnable-track { width:100%; height:4px; border-radius:3px; background:linear-gradient(90deg, var(--acc) var(--fill,0%), #23291f var(--fill,0%)); }
+.sa-slider::-moz-range-track { width:100%; height:4px; border-radius:3px; background:linear-gradient(90deg, var(--acc) var(--fill,0%), #23291f var(--fill,0%)); }
+.sa-slider::-webkit-slider-thumb { -webkit-appearance:none; appearance:none; width:20px; height:20px; border-radius:50%; background:#0B0D0C; border:2px solid var(--acc); box-shadow:0 0 16px var(--ag), 0 0 4px var(--ag); margin-top:-8px; transition:box-shadow .15s; }
+.sa-slider::-moz-range-thumb { width:20px; height:20px; border-radius:50%; background:#0B0D0C; border:2px solid var(--acc); box-shadow:0 0 16px var(--ag), 0 0 4px var(--ag); transition:box-shadow .15s; }
+.sa-slider::-webkit-slider-thumb:hover { box-shadow:0 0 24px var(--acc), 0 0 8px var(--ag); }
+.sa-slider::-moz-range-thumb:hover { box-shadow:0 0 24px var(--acc), 0 0 8px var(--ag); }
 
-.canvas-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16/9;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
-  box-shadow: inset 0 0 0 1px var(--ag1);
-  margin-bottom: 18px;
-}
+.sa-ticks { position:relative; height:14px; margin:4px 10px 0; }
+.sa-ticks span { position:absolute; top:0; transform:translateX(-50%); font-family:'JetBrains Mono', monospace; font-size:10px; color:var(--ink-dim); white-space:nowrap; }
 
-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
+.sa-cap { border-top:1px solid var(--line); margin-top:14px; padding-top:14px; display:grid; gap:10px; }
+.sa-cap-k { display:block; font-family:'JetBrains Mono', monospace; font-size:10.5px; text-transform:uppercase; color:var(--acc); margin-bottom:3px; letter-spacing:0.04em; }
+.sa-cap-k.amb { color:var(--amb); }
+.sa-cap-v { font-size:13.5px; line-height:1.5; color:var(--ink); }
 
-.canvas-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(4px);
-  padding: 9px 16px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  text-transform: uppercase;
-  color: var(--acc);
-  text-align: center;
-}
+.sa-stats { border-top:1px solid var(--line); margin-top:14px; padding-top:14px; display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.sa-stat-l { font-family:'JetBrains Mono', monospace; font-size:10.5px; text-transform:uppercase; color:var(--ink-dim); margin-bottom:4px; }
+.sa-stat-v { font-family:'JetBrains Mono', monospace; font-size:24px; font-weight:500; }
 
-.slider-row {
-  margin-bottom: 10px;
-}
+.sa-tog { display:flex; gap:10px; margin-bottom:16px; }
+.sa-tog .sa-pill { flex:1; font-size:13px; padding:12px 8px; text-align:center; }
+.sa-div { border-top:1px solid var(--line); margin-bottom:16px; }
+.sa-drop { font-size:14.5px; font-weight:400; line-height:1.65; color:var(--ink); }
 
-.sa-slider {
-  width: 100%;
-  height: 24px;
-  -webkit-appearance: none;
-  appearance: none;
-  background: transparent;
-  cursor: pointer;
+.sa-know {
+  border-left:3px solid var(--acc); padding:16px 18px;
+  background:linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius:0 12px 12px 0; margin-bottom:0; padding-bottom:16px;
 }
+.sa-know-tag { display:flex; align-items:center; gap:9px; margin-bottom:8px; font-family:'JetBrains Mono', monospace; font-size:13px; text-transform:uppercase; letter-spacing:0.15em; color:var(--acc); }
+.sa-dot { width:6px; height:6px; border-radius:50%; background:var(--acc); box-shadow:0 0 8px var(--acc); animation:saPulse 2.4s ease-in-out infinite; }
+.sa-know-body { font-size:17.4px; font-weight:400; line-height:1.55; color:var(--ink); }
 
-.sa-slider::-webkit-slider-runnable-track {
-  width: 100%;
-  height: 4px;
-  border-radius: 3px;
-  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
-}
-
-.sa-slider::-moz-range-track {
-  width: 100%;
-  height: 4px;
-  border-radius: 3px;
-  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
-}
-
-.sa-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  margin-top: -8px;
-  transition: box-shadow .15s;
-}
-
-.sa-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  transition: box-shadow .15s;
-}
-
-.sa-slider::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.sa-slider::-moz-range-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.tick-labels {
-  display: flex;
-  justify-content: space-between;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--ink-dim);
-  padding: 0 2px;
-}
-
-.stat-divider {
-  border-top: 1px solid var(--line);
-  margin-top: 16px;
-  padding-top: 16px;
-}
-
-.stat-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-
-.stat {
-  display: flex;
-  flex-direction: column;
-}
-
-.stat-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 4px;
-}
-
-.stat-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 24px;
-  font-weight: 500;
-}
-
-.toggle-knowdrop-card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 18px;
-}
-
-.toggle-row {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.toggle-btn {
-  flex: 1;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14.5px;
-  padding: 12px;
-  border-radius: 11px;
-  border: 1px solid var(--line);
-  background: #12160F;
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: all .2s;
-}
-
-.toggle-btn.active {
-  background: rgba(154,95,210,.1);
-  border: 1px solid var(--acc);
-  color: var(--acc);
-  box-shadow: 0 0 22px rgba(154,95,210,.18);
-}
-
-.knowdrop-divider {
-  border-top: 1px solid var(--line);
-  margin-bottom: 16px;
-}
-
-.knowdrop-text {
-  font-family: 'Geist', sans-serif;
-  font-size: 14.5px;
-  font-weight: 400;
-  line-height: 1.65;
-  color: var(--ink);
-}
-
-.know-this {
-  border-left: 3px solid var(--acc);
-  padding: 16px 18px;
-  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
-  border-radius: 0 12px 12px 0;
-  margin-bottom: 34px;
-}
-
-.know-this-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--acc);
-  margin-bottom: 8px;
-}
-
-.know-this-body {
-  font-family: 'Geist', sans-serif;
-  font-size: 17.4px;
-  font-weight: 400;
-  line-height: 1.55;
-  color: var(--ink);
-}
-
-.footer {
-  margin-top: 34px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.pulse-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--acc);
-  box-shadow: 0 0 10px var(--acc);
-  animation: saPulse 2.4s ease-in-out infinite;
-}
-
-@keyframes saPulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.35; transform: scale(0.6); }
-}
+@keyframes saPulse { 0%,100%{opacity:1} 50%{opacity:.45} }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
-}
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
+  *, *::before, *::after { animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; }
 }
 </style>
 
-<div class="container">
-  <h2 class="sr-only">Interactive source analysis framework demonstrating how layers of scrutiny reveal historical truth</h2>
-  
-  <h1>No source is simply <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">reliable</span> or unreliable</h1>
-  
-  <p class="intro">Reliability depends on what you ask of a source. A biased speech can be poor evidence of what happened and strong evidence of what its speaker wanted people to believe. Historians don't simply trust or dismiss sources; they question them layer by layer. Drag the slider to see how each layer of questions changes what a source can tell you.</p>
+<div class="sa-wrap">
+  <h2 class="sr-only">Interactive chart showing how the evidential weight of five source types changes with the historical question asked of them</h2>
 
-  <div class="card">
-    <div class="card-header">
-      <div class="card-label">Source Interrogation</div>
-      <div class="live-tag" id="liveTag">Surface reading</div>
-    </div>
-    <div class="card-hint">Deeper analysis extracts hidden context and bias</div>
-    
-    <div class="canvas-wrapper">
-      <canvas id="canvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">EXAMINING SURFACE CONTENT</div>
-    </div>
+  <h1>A propaganda poster is poor evidence until you change the <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">question</span></h1>
 
-    <div class="slider-row">
-      <input aria-label="Depth of analysis (%)" type="range" min="0" max="100" value="15" class="sa-slider" id="slider">
+  <p class="sa-intro">Reliability is not a property of a source. It belongs to the pairing of a source with a question. A poster made to persuade is weak evidence of what happened in the street and strong evidence of what the state wanted believed. Change the question, then move across the five source types, and watch what each one can and cannot prove.</p>
+
+  <div class="sa-card">
+    <div class="sa-head">
+      <div class="sa-label">Source against question</div>
+      <div class="sa-live" id="saLive">Asking: what happened?</div>
     </div>
-    <div class="tick-labels">
-      <span>Content</span>
-      <span>Origin</span>
-      <span>Purpose</span>
-      <span>Limitations</span>
+    <div class="sa-hint">Change the question first. Then move across the source types and watch the bars reshuffle.</div>
+
+    <div class="sa-qtitle" id="saQTitle">Question asked of the source</div>
+    <div class="sa-group" role="group" aria-label="Question asked of the source">
+      <button class="sa-pill" type="button" data-q="0" aria-pressed="true">What happened?</button>
+      <button class="sa-pill" type="button" data-q="1" aria-pressed="false">What was claimed?</button>
+      <button class="sa-pill" type="button" data-q="2" aria-pressed="false">How people felt?</button>
     </div>
 
-    <div class="stat-divider">
-      <div class="stat-row">
-        <div class="stat">
-          <div class="stat-label">Analysis depth</div>
-          <div class="stat-value" style="color:var(--acc)" id="depthStat">15%</div>
-        </div>
-        <div class="stat">
-          <div class="stat-label">Questions asked</div>
-          <div class="stat-value" style="color:var(--amb)" id="reliabilityStat">1 of 5</div>
-        </div>
+    <div class="sa-cv">
+      <canvas id="saCanvas"></canvas>
+      <div class="sa-ov" id="saOverlay">Poster · weak for what happened</div>
+    </div>
+
+    <div class="sa-row"><span>Source type</span><b id="saVal">Poster</b></div>
+    <input type="range" class="sa-slider" id="saSlider" aria-label="Source type" min="0" max="4" step="1" value="3">
+    <div class="sa-ticks">
+      <span style="left:0%">Diary</span>
+      <span style="left:25%">Memo</span>
+      <span style="left:50%">Speech</span>
+      <span style="left:75%">Poster</span>
+      <span style="left:100%">Photo</span>
+    </div>
+
+    <div class="sa-cap">
+      <div><span class="sa-cap-k">Can prove</span><span class="sa-cap-v" id="saCan"></span></div>
+      <div><span class="sa-cap-k amb">Cannot prove</span><span class="sa-cap-v" id="saCannot"></span></div>
+    </div>
+
+    <div class="sa-stats">
+      <div>
+        <div class="sa-stat-l">Weight for this question (illustrative, 0–100)</div>
+        <div class="sa-stat-v" style="color:var(--acc)" id="saWeight">15</div>
+      </div>
+      <div>
+        <div class="sa-stat-l">Rank among the five sources</div>
+        <div class="sa-stat-v" style="color:var(--amb)" id="saRank">5th of 5</div>
       </div>
     </div>
   </div>
 
-  <div class="toggle-knowdrop-card">
-    <div class="toggle-row">
-      <button class="toggle-btn active" id="btnOrigin">Origin</button>
-      <button class="toggle-btn" id="btnPurpose">Purpose</button>
+  <div class="sa-card">
+    <div class="sa-qtitle">Which question to ask first</div>
+    <div class="sa-tog" role="group" aria-label="Framework question">
+      <button class="sa-pill" type="button" data-k="origin" aria-pressed="true">Origin</button>
+      <button class="sa-pill" type="button" data-k="purpose" aria-pressed="false">Purpose</button>
+      <button class="sa-pill" type="button" data-k="auth" aria-pressed="false">Authenticity</button>
     </div>
-    
-    <div class="knowdrop-divider"></div>
-    
-    <div class="knowdrop-text" id="knowdropText">
-      Origin analysis establishes who created the source, when it was produced, and under what circumstances, forming the foundational context for all interpretation. A government memorandum from 1942 carries different weight than a personal diary entry from the same year; a photograph taken by a war correspondent differs fundamentally from one staged for propaganda purposes. Understanding authorship reveals potential access to information, institutional pressures, and the creator's position within power structures. Temporal proximity matters — eyewitness accounts written immediately after events capture visceral detail but lack perspective, while retrospective memoirs gain analytical distance but suffer from memory decay and hindsight bias. The circumstances of creation — whether produced under censorship, created for publication, or intended to remain private — fundamentally shape what information the source contains and how it presents events.
-    </div>
+    <div class="sa-div"></div>
+    <div class="sa-drop" id="saDrop"></div>
   </div>
 
-  <div class="know-this">
-    <div class="know-this-tag">Know This</div>
-    <div class="know-this-body">Historians extract reliable information not by trusting sources, but by systematically interrogating their <span style="color:var(--acc)">origin</span>, <span style="color:var(--acc)">purpose</span>, and <span style="color:var(--acc)">limitations</span> — revealing what even biased or incomplete sources can prove about the past.</div>
-  </div>
-
-  <div class="footer">
-    <div class="pulse-dot"></div>
+  <div class="sa-know">
+    <div class="sa-know-tag"><span class="sa-dot"></span><span>Know This</span></div>
+    <div class="sa-know-body">No source is reliable in itself: its <span style="color:var(--acc)">value</span> depends on the <span style="color:var(--acc)">question</span> you ask of it, and its <span style="color:var(--acc)">limitations</span> are whatever that question needs and the source cannot supply.</div>
   </div>
 </div>
 
 <script>
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d', { alpha: false });
-const slider = document.getElementById('slider');
-const liveTag = document.getElementById('liveTag');
-const canvasOverlay = document.getElementById('canvasOverlay');
-const depthStat = document.getElementById('depthStat');
-const reliabilityStat = document.getElementById('reliabilityStat');
-const btnOrigin = document.getElementById('btnOrigin');
-const btnPurpose = document.getElementById('btnPurpose');
-const knowdropText = document.getElementById('knowdropText');
+(function(){
+  const canvas = document.getElementById("saCanvas");
+  const ctx = canvas.getContext("2d");
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const buf = document.createElement("canvas");
+  const bctx = buf.getContext("2d");
+  const CSSV = getComputedStyle(document.documentElement);
+  const ACC = CSSV.getPropertyValue("--acc").trim();
+  const RGB = CSSV.getPropertyValue("--acc-rgb").trim();
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-const dpr = Math.min(window.devicePixelRatio || 1, 2);
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d');
+  const slider = document.getElementById("saSlider");
+  const valEl = document.getElementById("saVal");
+  const liveEl = document.getElementById("saLive");
+  const ovEl = document.getElementById("saOverlay");
+  const canEl = document.getElementById("saCan");
+  const cannotEl = document.getElementById("saCannot");
+  const weightEl = document.getElementById("saWeight");
+  const rankEl = document.getElementById("saRank");
+  const dropEl = document.getElementById("saDrop");
+  const qBtns = Array.from(document.querySelectorAll("[data-q]"));
+  const kBtns = Array.from(document.querySelectorAll("[data-k]"));
 
-let nodes = [];
-let beams = [];
-let time = 0;
+  const SOURCES = ["Diary", "Memo", "Speech", "Poster", "Photo"];
+  const QUESTIONS = ["What happened?", "What was claimed?", "How people felt?"];
 
-const nodeLabels = ['Content', 'Origin', 'Purpose', 'Value', 'Limits'];
-const nodeColors = [
-  'rgba(250,199,117,0.9)',  // amber for content
-  'rgba(154,95,210,0.9)',   // acc for origin
-  'rgba(154,95,210,0.9)',   // acc for purpose
-  'rgba(250,199,117,0.9)',  // amber for value
-  'rgba(154,95,210,0.9)'    // acc for limits
-];
+  const VALUES = [
+    [70, 85, 30, 15, 55],
+    [25, 60, 90, 95, 70],
+    [80, 50, 25, 30, 35]
+  ];
 
-function initNodes(w, h) {
-  const cx = w / 2;
-  const cy = h / 2;
-  const radius = Math.min(w, h) * 0.35;
-  
-  nodes = nodeLabels.map((label, i) => {
-    const angle = (i / nodeLabels.length) * Math.PI * 2 - Math.PI / 2;
-    return {
-      x: cx + Math.cos(angle) * radius,
-      y: cy + Math.sin(angle) * radius,
-      label,
-      color: nodeColors[i],
-      active: false,
-      glow: 0
-    };
-  });
-  
-  beams = [];
-}
+  const CAN = [
+    [
+      "An eyewitness record of daily events, written close to the time with no public audience to please.",
+      "Written for colleagues who already knew the situation, so it minutes decisions, numbers and problems candidly.",
+      "Fixes what was said in public on a known date, which is itself an event.",
+      "Proves the campaign existed and roughly when, and that the state judged this message worth paying for.",
+      "Shows that a scene existed in front of a lens at one moment: faces, places, objects."
+    ],
+    [
+      "Records how official messages reached one person and what they repeated or doubted.",
+      "Reveals the aims and calculations behind the public message, including what officials wanted kept quiet.",
+      "The regime’s message in its own words, delivered to a chosen audience on a chosen occasion.",
+      "The message distilled to image and slogan: exactly what the state wanted believed, and by whom.",
+      "A published image is a choice: what an editor wanted the public to see of an event."
+    ],
+    [
+      "Private reactions, fears and jokes recorded with no reason to perform loyalty.",
+      "Officials often reported on public mood internally because they needed to know it.",
+      "What the speaker assumed the audience wanted to hear or feared, and how the crowd was expected to react.",
+      "What the state believed would move people: its reading of popular hopes and fears.",
+      "Faces and crowds hint at mood, if the image was not staged."
+    ]
+  ];
 
-function resize() {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  initNodes(w, h);
-}
+  const CANNOT = [
+    [
+      "One person at one vantage point; it cannot show what the writer never witnessed.",
+      "Records what officials knew and chose to minute; omission and euphemism hide what they preferred not to write down.",
+      "A performance for an audience: claims about events are selected and shaped to persuade, not to report.",
+      "Built to persuade, not to record; it says almost nothing about what actually happened.",
+      "Framing, cropping, staging and the editor’s choice of which frame to print decide what you see."
+    ],
+    [
+      "A private writer may never mention the official line, or may garble it.",
+      "Internal intent is not the public message itself; the words the public actually heard are elsewhere.",
+      "Tells you what was said, not whether it was believed or acted upon.",
+      "Says nothing about whether the claim was true or whether anyone was convinced.",
+      "Without the publication context, who selected it and whether it was staged stay unknown."
+    ],
+    [
+      "One voice from one class, region and politics; typicality must be tested against other diaries.",
+      "Officials heard what people dared to say in front of them, filtered through their own hopes.",
+      "Applause is organised; the speech records intention, not reception.",
+      "Shows the state’s guess about the public, not the public itself.",
+      "Crowds were assembled and frames selected; a smiling crowd proves only that a camera pointed at smiles."
+    ]
+  ];
 
-function updateSlider() {
-  const val = parseInt(slider.value);
-  const fill = val + '%';
-  slider.style.setProperty('--fill', fill);
-  
-  depthStat.textContent = val + '%';
-  
-  // Activate nodes based on depth
-  nodes[0].active = val >= 0;   // Content always active
-  nodes[1].active = val >= 25;  // Origin at 25%
-  nodes[2].active = val >= 50;  // Purpose at 50%
-  nodes[3].active = val >= 75;  // Value at 75%
-  nodes[4].active = val >= 90;  // Limits at 90%
+  const DROPS = {
+    origin: "Origin asks who created the source, when, and under what circumstances, and that context frames every later judgement. A government memorandum from 1942 carries different weight from a personal diary entry of the same year; a photograph taken by a war correspondent differs from one staged for a ministry. Authorship reveals access to information, institutional pressure and the creator’s position within power structures. Timing matters too: an account written the same night captures detail but lacks perspective, while a memoir written decades later gains distance but suffers from memory and hindsight. Whether the source was made under censorship, for publication or to stay private shapes what it contains and how it presents events.",
+    purpose: "Purpose asks why the source was made, for whom, and what its creator wanted the audience to think or do. A politician’s public speech serves a different purpose from the same person’s private letters; a newspaper written for readers at home differs from a diplomatic cable meant for a foreign government. Propaganda is far from worthless: it is strong evidence of attitudes, fears and power structures even when it is poor evidence of events. Reading for purpose exposes what the creator chose to emphasise, what was left out and how events were framed to persuade. A wartime recruitment poster says less about battlefield conditions than about how a government mobilised its population; the gap between stated purpose and actual function is where analysis begins.",
+    auth: "Authenticity asks whether a source is what it claims to be: made by the stated author, at the stated time, and unaltered since. It is a different problem from reliability. A genuine propaganda leaflet is perfectly authentic and still a poor witness to events, while a forged diary can be fluent and plausible and worth nothing. Historians test authenticity through provenance (the chain of custody from creation to archive), material evidence such as paper, ink and printing method, and internal consistency with what the author could have known. Corroboration with independent sources of a different type is the strongest check, because a forger or a censor rarely controls every record. Only once a source passes these tests does the question of what it can prove, and for which inquiry, begin."
+  };
 
-  // Readout counts the questions now lit in the picture (no reliability score: it depends on the question asked)
-  reliabilityStat.textContent = nodes.filter(n => n.active).length + " of " + nodes.length;
-  
-  // Update live tag and overlay
-  if (val < 25) {
-    liveTag.textContent = 'Surface reading';
-    canvasOverlay.textContent = 'EXAMINING SURFACE CONTENT';
-  } else if (val < 50) {
-    liveTag.textContent = 'Origin analysis';
-    canvasOverlay.textContent = 'ESTABLISHING PROVENANCE';
-  } else if (val < 75) {
-    liveTag.textContent = 'Purpose investigation';
-    canvasOverlay.textContent = 'REVEALING MOTIVATIONS';
-  } else if (val < 90) {
-    liveTag.textContent = 'Value assessment';
-    canvasOverlay.textContent = 'WEIGHING USEFULNESS';
-  } else {
-    liveTag.textContent = 'Full framework';
-    canvasOverlay.textContent = 'COMPLETE INTERROGATION';
+  let q = 0;
+  let sel = 3;
+  let target = VALUES[q].slice();
+  let cur = target.slice();
+  let curSel = sel;
+  let raf = null;
+
+  function weightWord(v){
+    if (v >= 75) return "strong";
+    if (v >= 50) return "useful";
+    if (v >= 35) return "partial";
+    return "weak";
   }
-}
-
-function draw() {
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  const cx = w / 2;
-  const cy = h / 2;
-  
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, w, h);
-  
-  // Update node glow
-  nodes.forEach(node => {
-    if (node.active) {
-      node.glow = Math.min(node.glow + 0.08, 1);
-    } else {
-      node.glow = Math.max(node.glow - 0.08, 0);
-    }
-  });
-  
-  // Generate beams toward centre from active nodes
-  const activeNodes = nodes.filter(n => n.active);
-  
-  // Draw beams
-  activeNodes.forEach(node => {
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    
-    const grad = ctx.createLinearGradient(node.x, node.y, cx, cy);
-    grad.addColorStop(0, node.color);
-    grad.addColorStop(1, 'rgba(154,95,210,0)');
-    
-    ctx.strokeStyle = grad;
-    ctx.lineWidth = 2 * node.glow;
-    ctx.beginPath();
-    ctx.moveTo(node.x, node.y);
-    ctx.lineTo(cx, cy);
-    ctx.stroke();
-    
-    // Additional glow layer
-    ctx.strokeStyle = grad;
-    ctx.lineWidth = 6 * node.glow;
-    ctx.globalAlpha = 0.3 * node.glow;
-    ctx.beginPath();
-    ctx.moveTo(node.x, node.y);
-    ctx.lineTo(cx, cy);
-    ctx.stroke();
-    
-    ctx.restore();
-  });
-  
-  // Centre convergence glow
-  if (activeNodes.length > 0) {
-    const intensity = activeNodes.length / nodes.length;
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    
-    const corona = ctx.createRadialGradient(cx, cy, 0, cx, cy, 60);
-    corona.addColorStop(0, `rgba(154,95,210,${0.6 * intensity})`);
-    corona.addColorStop(0.4, `rgba(154,95,210,${0.2 * intensity})`);
-    corona.addColorStop(1, 'rgba(154,95,210,0)');
-    
-    ctx.fillStyle = corona;
-    ctx.beginPath();
-    ctx.arc(cx, cy, 60, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
+  function ordinal(n){
+    return n === 1 ? "1st" : n === 2 ? "2nd" : n === 3 ? "3rd" : n + "th";
   }
-  
-  // Draw nodes
-  nodes.forEach(node => {
-    if (node.glow > 0) {
-      // Node halo
-      ctx.save();
-      ctx.globalCompositeOperation = 'lighter';
-      const halo = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, 18);
-      halo.addColorStop(0, node.color);
-      halo.addColorStop(1, 'rgba(0,0,0,0)');
-      ctx.fillStyle = halo;
-      ctx.globalAlpha = 0.5 * node.glow;
-      ctx.beginPath();
-      ctx.arc(node.x, node.y, 18, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
+
+  function update(){
+    const v = VALUES[q][sel];
+    valEl.textContent = SOURCES[sel];
+    slider.style.setProperty("--fill", (sel / 4 * 100) + "%");
+    liveEl.textContent = "Asking: " + QUESTIONS[q].toLowerCase();
+    ovEl.textContent = SOURCES[sel] + " · " + weightWord(v) + " for " + QUESTIONS[q].replace("?", "").toLowerCase();
+    canEl.textContent = CAN[q][sel];
+    cannotEl.textContent = CANNOT[q][sel];
+    weightEl.textContent = v;
+    const rank = VALUES[q].filter(function(x){ return x > v; }).length + 1;
+    rankEl.textContent = ordinal(rank) + " of 5";
+  }
+
+  function resize(){
+    const rect = canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    buf.width = canvas.width;
+    buf.height = canvas.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    draw();
+  }
+
+  function draw(){
+    const w = canvas.width / dpr, h = canvas.height / dpr;
+    if (!w || !h) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.globalCompositeOperation = "source-over";
+    ctx.globalAlpha = 1;
+    ctx.filter = "none";
+    ctx.fillStyle = "#000";
+    ctx.fillRect(0, 0, w, h);
+
+    const xPad = w * 0.05;
+    const colW = (w - 2 * xPad) / 5;
+    const bw = Math.min(colW * 0.5, 64);
+    const yTop = h * 0.26, yBase = h * 0.70, span = yBase - yTop;
+
+    // gridlines at 0, 25, 50, 75, 100 (unlabelled)
+    ctx.strokeStyle = "rgba(237,237,232,0.07)";
+    ctx.lineWidth = 1;
+    for (let g = 0; g <= 4; g++){
+      const y = yBase - span * g / 4;
+      ctx.beginPath(); ctx.moveTo(xPad, y); ctx.lineTo(w - xPad, y); ctx.stroke();
     }
-    
-    // Node core
-    ctx.fillStyle = node.active ? node.color : 'rgba(140,147,137,0.3)';
+
+    // highlight band under the chosen source
+    const selX = xPad + colW * (curSel + 0.5);
+    ctx.fillStyle = "rgba(" + RGB + ",0.07)";
+    ctx.fillRect(selX - colW / 2, h * 0.15, colW, h * 0.70);
+
+    // marker pointing down at the chosen source
+    const apex = yTop - h * 0.06;
+    ctx.fillStyle = ACC;
     ctx.beginPath();
-    ctx.arc(node.x, node.y, 6, 0, Math.PI * 2);
+    ctx.moveTo(selX, apex);
+    ctx.lineTo(selX - 6, apex - 7);
+    ctx.lineTo(selX + 6, apex - 7);
+    ctx.closePath();
     ctx.fill();
-    
-    // Node label
-    ctx.fillStyle = node.active ? node.color : 'rgba(140,147,137,0.6)';
-    ctx.font = '10px "JetBrains Mono"';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    
-    const offsetY = node.y < cy ? -16 : 16;
-    ctx.fillText(node.label.toUpperCase(), node.x, node.y + offsetY);
+
+    for (let s = 0; s < 5; s++){
+      const x = xPad + colW * (s + 0.5);
+      const v = cur[s];
+      const bh = span * v / 100;
+      const isSel = s === sel;
+
+      // track: everything the question demands
+      ctx.strokeStyle = "rgba(237,237,232,0.13)";
+      ctx.lineWidth = 1;
+      ctx.strokeRect(x - bw / 2 + 0.5, yTop + 0.5, bw - 1, span - 1);
+
+      // bar: what this source can supply
+      if (isSel){
+        const grad = ctx.createLinearGradient(0, yBase - bh, 0, yBase);
+        grad.addColorStop(0, ACC);
+        grad.addColorStop(1, "rgba(" + RGB + ",0.55)");
+        ctx.fillStyle = grad;
+        ctx.fillRect(x - bw / 2, yBase - bh, bw, bh);
+        ctx.save();
+        ctx.globalCompositeOperation = "lighter";
+        const halo = ctx.createRadialGradient(x, yBase - bh, 0, x, yBase - bh, bw * 1.2);
+        halo.addColorStop(0, "rgba(" + RGB + ",0.45)");
+        halo.addColorStop(1, "rgba(" + RGB + ",0)");
+        ctx.fillStyle = halo;
+        ctx.beginPath(); ctx.arc(x, yBase - bh, bw * 1.2, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+      } else {
+        ctx.fillStyle = "rgba(" + RGB + ",0.28)";
+        ctx.fillRect(x - bw / 2, yBase - bh, bw, bh);
+      }
+
+      // value above bar
+      ctx.font = "11px 'JetBrains Mono', monospace";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "bottom";
+      ctx.fillStyle = isSel ? ACC : "rgba(140,147,137,0.9)";
+      ctx.fillText(String(Math.round(v)), x, yBase - bh - 4);
+
+      // source label under bar
+      ctx.textBaseline = "middle";
+      ctx.fillStyle = isSel ? "#EDEDE8" : "rgba(140,147,137,0.9)";
+      ctx.fillText(SOURCES[s].toUpperCase(), x, h * 0.77);
+    }
+
+    // question top-left
+    ctx.font = "13px 'JetBrains Mono', monospace";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = ACC;
+    ctx.fillText("ASKING: " + QUESTIONS[q].toUpperCase(), xPad, h * 0.09);
+
+    // bloom
+    bctx.setTransform(1, 0, 0, 1, 0, 0);
+    bctx.clearRect(0, 0, buf.width, buf.height);
+    if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    ctx.globalAlpha = 0.38;
+    ctx.filter = "blur(7px)";
+    if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+    ctx.restore();
+
+    // vignette
+    const cx = w / 2, cy = h / 2;
+    const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)");
+    vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig;
+    ctx.fillRect(0, 0, w, h);
+  }
+
+  function snap(){
+    cur = target.slice();
+    curSel = sel;
+  }
+
+  function tick(){
+    raf = null;
+    let maxd = 0;
+    for (let s = 0; s < 5; s++){
+      cur[s] += (target[s] - cur[s]) * 0.16;
+      maxd = Math.max(maxd, Math.abs(target[s] - cur[s]));
+    }
+    curSel += (sel - curSel) * 0.16;
+    maxd = Math.max(maxd, Math.abs(sel - curSel) * 20);
+    if (maxd < 0.25){
+      snap();
+      draw();
+      return;
+    }
+    draw();
+    raf = requestAnimationFrame(tick);
+  }
+
+  function kick(){
+    if (reduce){ snap(); draw(); return; }
+    if (!raf) raf = requestAnimationFrame(tick);
+  }
+
+  slider.addEventListener("input", function(){
+    sel = parseInt(slider.value, 10) || 0;
+    update();
+    kick();
   });
-  
-  // Bloom
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
-  
-  // Vignette
-  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-  
-  time += 0.016;
-  requestAnimationFrame(draw);
-}
 
-slider.addEventListener('input', updateSlider);
+  qBtns.forEach(function(btn){
+    btn.addEventListener("click", function(){
+      q = parseInt(btn.getAttribute("data-q"), 10) || 0;
+      qBtns.forEach(function(b){ b.setAttribute("aria-pressed", b === btn ? "true" : "false"); });
+      target = VALUES[q].slice();
+      update();
+      kick();
+    });
+  });
 
-btnOrigin.addEventListener('click', () => {
-  btnOrigin.classList.add('active');
-  btnPurpose.classList.remove('active');
-  knowdropText.textContent = "Origin analysis establishes who created the source, when it was produced, and under what circumstances, forming the foundational context for all interpretation. A government memorandum from 1942 carries different weight than a personal diary entry from the same year; a photograph taken by a war correspondent differs fundamentally from one staged for propaganda purposes. Understanding authorship reveals potential access to information, institutional pressures, and the creator's position within power structures. Temporal proximity matters — eyewitness accounts written immediately after events capture visceral detail but lack perspective, while retrospective memoirs gain analytical distance but suffer from memory decay and hindsight bias. The circumstances of creation — whether produced under censorship, created for publication, or intended to remain private — fundamentally shape what information the source contains and how it presents events.";
-});
+  kBtns.forEach(function(btn){
+    btn.addEventListener("click", function(){
+      kBtns.forEach(function(b){ b.setAttribute("aria-pressed", b === btn ? "true" : "false"); });
+      dropEl.textContent = DROPS[btn.getAttribute("data-k")] || DROPS.origin;
+    });
+  });
 
-btnPurpose.addEventListener('click', () => {
-  btnPurpose.classList.add('active');
-  btnOrigin.classList.remove('active');
-  knowdropText.textContent = "Purpose investigation identifies why the source was created, its intended audience, and the creator's motivations, revealing the selective presentations and distortions embedded within. A politician's public speech serves different purposes than their private correspondence; a newspaper article written for domestic consumption differs fundamentally from diplomatic cables meant for foreign governments. Propaganda sources, far from being worthless, can be strong evidence of historical attitudes, fears, and power structures, even when they are poor evidence of events. Understanding purpose exposes what the creator chose to emphasise, what they omitted, and how they framed events to persuade their audience. A wartime recruitment poster tells us less about battlefield conditions than about how governments mobilised populations; a colonial administrator's report reveals more about imperial ideology than about the colonised society being described. The gap between stated purpose and actual function — between official justifications and underlying motivations — becomes a primary site of historical analysis.";
-});
-
-window.addEventListener('resize', resize);
-resize();
-updateSlider();
-requestAnimationFrame(draw);
+  dropEl.textContent = DROPS.origin;
+  window.addEventListener("resize", resize);
+  update();
+  resize();
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'source-analysis-framework-and-methodology'},'*');}catch(e){}}

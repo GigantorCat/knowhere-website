@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Antimicrobial Resistance — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Antimicrobial resistance — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -214,7 +214,23 @@ canvas {
 }
 
 .stat:first-child .stat-value { color: var(--acc); }
-.stat:last-child .stat-value { color: var(--amb); }
+.stat:last-child .stat-value { color: rgba(237,237,232,0.75); }
+
+.cell-key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin: -6px 0 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+}
+
+.cell-key span { display: inline-flex; align-items: center; gap: 7px; }
+
+.key-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.key-res { background: #5AADD4; box-shadow: 0 0 8px var(--ag); }
+.key-sus { background: rgba(237,237,232,0.75); box-shadow: 0 0 6px rgba(237,237,232,0.3); }
 
 .toggle-section {
   display: flex;
@@ -318,26 +334,30 @@ canvas {
 </style>
 
 <div class="container">
-  <h2 class="sr-only">Antimicrobial Resistance Interactive: Understanding how antibiotics create selection pressure</h2>
+  <h2 class="sr-only">Antimicrobial resistance interactive: blue cells are resistant, grey cells are susceptible, and antibiotic pressure selects the resistant ones</h2>
 
   <h1>We don't <i>give</i> bacteria resistance — we reveal the <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">survivors</span></h1>
 
-  <p class="intro">Antibiotics don't create resistance; they kill vulnerable microbes and leave resistant ones to multiply. Every dose is a selection event. Drag the slider to see how antibiotic pressure shifts the population toward resistant strains.</p>
+  <p class="intro">Antibiotics don't create resistance; they kill vulnerable microbes and leave resistant ones to multiply. Every dose is a selection event. Raise the antibiotic pressure and watch how it shifts the population toward resistant strains.</p>
 
   <div class="card">
     <div class="card-header">
-      <span class="card-label">Population Selection</span>
+      <span class="card-label">Population selection</span>
       <span class="live-tag" id="liveTag">0% antibiotic pressure</span>
     </div>
-    <p class="card-hint">Drag to increase antibiotic exposure</p>
+    <p class="card-hint">Raise the antibiotic pressure. Watch which cells are left to divide.</p>
 
     <div class="canvas-wrapper">
-      <canvas id="amrCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">Baseline: mixed population</div>
+      <canvas id="amrCanvas" role="img" aria-label="Bacteria drifting in a dish: blue glowing cells are resistant, grey cells are susceptible"></canvas>
+      <div class="canvas-overlay" id="canvasOverlay">0% dose · mixed population</div>
+    </div>
+    <div class="cell-key" aria-label="Key">
+      <span><i class="key-dot key-res"></i>Blue = resistant</span>
+      <span><i class="key-dot key-sus"></i>Grey = susceptible</span>
     </div>
 
     <div class="slider-group">
-      <div class="slider-label">Antibiotic Pressure</div>
+      <div class="slider-label">Antibiotic pressure</div>
       <input type="range" class="amr-slider" id="pressureSlider" min="0" max="100" value="0">
       <div class="tick-labels">
         <span>None</span>
@@ -350,11 +370,11 @@ canvas {
 
     <div class="stat-row">
       <div class="stat">
-        <div class="stat-label">Resistant %</div>
+        <div class="stat-label"><i class="key-dot key-res" style="width:7px;height:7px;margin-right:6px;vertical-align:1px"></i>Resistant %</div>
         <div class="stat-value" id="resistantPct">8%</div>
       </div>
       <div class="stat">
-        <div class="stat-label">Susceptible %</div>
+        <div class="stat-label"><i class="key-dot key-sus" style="width:7px;height:7px;margin-right:6px;vertical-align:1px"></i>Susceptible %</div>
         <div class="stat-value" id="susceptiblePct">92%</div>
       </div>
     </div>
@@ -362,8 +382,8 @@ canvas {
 
   <div class="card">
     <div class="toggle-section">
-      <button class="toggle-btn active" id="btnVertical">Vertical Transfer</button>
-      <button class="toggle-btn" id="btnHorizontal">Horizontal Transfer</button>
+      <button class="toggle-btn active" id="btnVertical" aria-pressed="true">Vertical transfer</button>
+      <button class="toggle-btn" id="btnHorizontal" aria-pressed="false">Horizontal transfer</button>
     </div>
 
     <div class="knowdrop">
@@ -373,7 +393,7 @@ canvas {
 
   <div class="know-this">
     <div class="know-this-tag">Know This</div>
-    <p><span style="color:var(--acc)">Resistance is selected for, not created</span> — antibiotics don't cause mutations; they kill off vulnerable microbes and let the <span style="color:var(--acc)">naturally resistant survivors</span> take over the population.</p>
+    <p><span style="color:var(--acc)">Resistance is selected for, not created</span> — antibiotics don't cause mutations; they kill off vulnerable microbes and let the <span style="color:var(--acc)">naturally resistant survivors</span> take over the population — which is why cutting unnecessary antibiotic use slows the spread of resistance.</p>
   </div>
 
   <div class="footer">
@@ -520,6 +540,11 @@ function draw() {
   const resPct = total > 0 ? Math.round((aliveResistant / total) * 100) : 0;
   const susPct = 100 - resPct;
 
+  // The caption is a readout from the live population, not a fixed line per dose
+  let state = resPct < 15 ? "mixed population" : resPct < 50 ? "susceptible declining" : resPct < 90 ? "resistant dominating" : "near-total resistance";
+  if (pressure < 15 && resFrac > 0.15) state = "little drug: costly resistance being outgrown";
+  canvasOverlay.textContent = pressure + "% dose · " + state;
+
   resistantPct.textContent = resPct + '%';
   susceptiblePct.textContent = susPct + '%';
 
@@ -594,29 +619,21 @@ slider.addEventListener('input', () => {
   slider.style.setProperty('--fill', fill + '%');
 
   liveTag.textContent = pressure + '% antibiotic pressure';
-
-  if (pressure === 0) {
-    canvasOverlay.textContent = 'Baseline: mixed population';
-  } else if (pressure < 30) {
-    canvasOverlay.textContent = 'Low pressure: some die-off';
-  } else if (pressure < 60) {
-    canvasOverlay.textContent = 'Moderate: susceptible declining';
-  } else if (pressure < 90) {
-    canvasOverlay.textContent = 'High: resistant dominating';
-  } else {
-    canvasOverlay.textContent = 'Extreme: near-total resistance';
-  }
 });
 
 btnVertical.addEventListener('click', () => {
   btnVertical.classList.add('active');
   btnHorizontal.classList.remove('active');
+  btnVertical.setAttribute('aria-pressed', 'true');
+  btnHorizontal.setAttribute('aria-pressed', 'false');
   knowdropText.textContent = 'Vertical gene transfer is the inheritance of resistance from parent to offspring during cell division. Once a bacterium survives antibiotic exposure, it passes resistance genes to all descendants. This is classic Darwinian selection: resistant microbes reproduce, susceptible ones die. Over successive generations, the resistant lineage dominates the population. Vertical transfer alone can shift a community toward resistance in days under sustained antibiotic pressure.';
 });
 
 btnHorizontal.addEventListener('click', () => {
   btnHorizontal.classList.add('active');
   btnVertical.classList.remove('active');
+  btnHorizontal.setAttribute('aria-pressed', 'true');
+  btnVertical.setAttribute('aria-pressed', 'false');
   knowdropText.textContent = 'Horizontal gene transfer allows bacteria to share resistance genes across species boundaries via plasmids, small DNA loops that replicate independently. A resistant E. coli can transfer a plasmid to Salmonella or Klebsiella in hours, bypassing the need for reproduction. This mechanism spreads resistance through diverse microbial communities at alarming speed. Conjugation, transformation, and transduction are the three main pathways. Horizontal transfer is why a single resistance gene can appear in unrelated pathogens almost simultaneously.';
 });
 

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>IUPAC Nomenclature — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>IUPAC nomenclature — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -129,7 +129,7 @@ canvas {
   padding: 9px 16px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 14px;
-  text-transform: uppercase;
+  text-transform: none;
   color: var(--acc);
   text-align: center;
 }
@@ -307,26 +307,26 @@ canvas {
 </style>
 
 <div class="container">
-  <h2 class="sr-only">IUPAC Nomenclature Interactive Widget</h2>
+  <h2 class="sr-only">IUPAC nomenclature interactive widget</h2>
   
   <h1>Every organic name is just a <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">recipe</span></h1>
   
-  <p class="intro">A systematic name isn't labelling a molecule — it's a set of step-by-step instructions for rebuilding it from scratch. Longest chain, lowest numbers, alphabetical substituents: do them in that order and the name writes itself. Drag the slider to build your molecule step by step.</p>
+  <p class="intro">A systematic name isn't labelling a molecule — it's a set of step-by-step instructions for rebuilding it from scratch. Longest chain, lowest numbers, alphabetical substituents: do them in that order and the name writes itself. Pick a molecule below, then raise the building progress and watch its name build step by step.</p>
 
   <div class="card">
     <div class="card-header">
-      <span class="card-label">Molecule Builder</span>
+      <span class="card-label">Molecule builder</span>
       <span class="live-tag" id="liveTag">Step 1/4</span>
     </div>
-    <div class="card-hint">Each step reveals the next piece of the naming system</div>
+    <div class="card-hint">Name parts counts the pieces in the name box: position numbers, branch names, the chain stem and the ending</div>
     
     <div class="canvas-wrapper">
       <canvas id="canvas"></canvas>
-      <div class="canvas-overlay" id="overlayTag">Finding longest chain...</div>
+      <div class="canvas-overlay" id="overlayTag">Counting the longest chain: 0 carbons</div>
     </div>
 
     <div class="slider-container">
-      <label class="slider-label" for="stepSlider">Building Progress</label>
+      <label class="slider-label" for="stepSlider">Building progress</label>
       <input type="range" id="stepSlider" class="nc-slider" min="0" max="100" value="0" step="1">
       <div class="tick-labels">
         <span>Start</span>
@@ -339,11 +339,11 @@ canvas {
 
     <div class="stat-row">
       <div class="stat">
-        <div class="stat-label">Chain Length</div>
+        <div class="stat-label">Chain length</div>
         <div class="stat-value acc" id="chainStat">0</div>
       </div>
       <div class="stat">
-        <div class="stat-label">Name Parts</div>
+        <div class="stat-label">Name parts</div>
         <div class="stat-value amb" id="partsStat">0</div>
       </div>
     </div>
@@ -351,11 +351,11 @@ canvas {
 
   <div class="card">
     <div class="toggle-section">
-      <button class="toggle-btn active" id="btn1">Simple Chain</button>
-      <button class="toggle-btn" id="btn2">With Substituents</button>
+      <button class="toggle-btn active" id="btn1">Simple chain</button>
+      <button class="toggle-btn" id="btn2">With substituents</button>
     </div>
     <div class="knowdrop-divider"></div>
-    <p class="knowdrop-text" id="knowdropText">For a simple unbranched alkane, the name is straightforward: count the carbons in the chain, apply the prefix (meth-, eth-, prop-, but-, pent-, hex-), and add "-ane" as the suffix. But this simplicity is deceptive — the real power of IUPAC naming only becomes clear when molecules get complex. A six-carbon chain is hexane. A seven-carbon chain is heptane. The suffix "-ane" tells you it's a saturated hydrocarbon with only single bonds. The system is designed so that every molecule has exactly one correct name, and every name describes exactly one molecule.</p>
+    <p class="knowdrop-text" id="knowdropText">For a simple unbranched alkane, the name is straightforward: count the carbons in the chain, apply the prefix (meth-, eth-, prop-, but-, pent-, hex-, hept-, oct-), and add "-ane" as the suffix. But this simplicity is deceptive — the real power of IUPAC naming only becomes clear when molecules get complex. A six-carbon chain is hexane. A seven-carbon chain is heptane. The suffix "-ane" tells you it is a saturated hydrocarbon with only single bonds. The system is designed so that every molecule has exactly one correct name, and every name describes exactly one molecule.</p>
   </div>
 
   <div class="know-this">
@@ -384,8 +384,8 @@ let step = 0;
 let animFrame;
 
 const texts = {
-  simple: "For a simple unbranched alkane, the name is straightforward: count the carbons in the chain, apply the prefix (meth-, eth-, prop-, but-, pent-, hex-), and add \"-ane\" as the suffix. But this simplicity is deceptive — the real power of IUPAC naming only becomes clear when molecules get complex. A six-carbon chain is hexane. A seven-carbon chain is heptane. The suffix \"-ane\" tells you it's a saturated hydrocarbon with only single bonds. The system is designed so that every molecule has exactly one correct name, and every name describes exactly one molecule.",
-  complex: "When substituents appear, you must first identify the longest continuous chain containing the functional group — this becomes your parent name. Then number the chain from the end that gives the functional group (or first substituent if no functional group) the lowest number. Name each substituent with its position: \"2-methyl\" means a methyl group on carbon 2. If multiple identical substituents exist, use di-, tri-, tetra- prefixes and list all positions: \"2,3-dimethyl\". Finally, arrange substituents alphabetically in the name, ignoring the multiplier prefixes. So \"3-ethyl-2-methylhexane\" not \"2-methyl-3-ethylhexane\". This algorithmic approach ensures that 3-methylhexane and 2-methylhexane are understood as distinct molecules, and that everyone reading the name reconstructs the identical structure."
+  simple: "For a simple unbranched alkane, the name is straightforward: count the carbons in the chain, apply the prefix (meth-, eth-, prop-, but-, pent-, hex-, hept-, oct-), and add \"-ane\" as the suffix. But this simplicity is deceptive — the real power of IUPAC naming only becomes clear when molecules get complex. A six-carbon chain is hexane. A seven-carbon chain is heptane. The suffix \"-ane\" tells you it is a saturated hydrocarbon with only single bonds. The system is designed so that every molecule has exactly one correct name, and every name describes exactly one molecule.",
+  complex: "When substituents appear, you must first identify the longest continuous chain containing the functional group — this becomes your parent name. Then number the chain from the end that gives the functional group the lowest number; with no functional group, number from the end that gives the substituents the lowest set of numbers, compared one by one at the first point of difference. Name each substituent with its position: \"2-methyl\" means a methyl group on carbon 2. If multiple identical substituents exist, use di-, tri-, tetra- prefixes and list all positions: \"2,3-dimethyl\". Finally, arrange substituents alphabetically in the name, ignoring the multiplier prefixes. So \"3-ethyl-2-methylhexane\" not \"2-methyl-3-ethylhexane\". In the molecule above the branch sits on carbon 3 counting from the left but carbon 4 from the right, so it is 3-methylhexane, never 4-methylhexane. This algorithmic approach ensures that 3-methylhexane and 2-methylhexane are understood as distinct molecules, and that everyone reading the name reconstructs the identical structure."
 };
 
 function resize() {
@@ -401,51 +401,65 @@ function resize() {
 window.addEventListener('resize', resize);
 resize();
 
+let mode = "simple"; /* simple = hexane, branched = 3-methylhexane */
+const STEMS = ["", "meth", "eth", "prop", "but", "pent", "hex", "hept", "oct"];
+
+function stepOf(val) { return val < 25 ? 1 : val < 50 ? 2 : val < 75 ? 3 : 4; }
+
+/* the name box and both readouts come from the molecule on screen */
+function nameState(val) {
+  const t1 = Math.min(val / 25, 1);
+  const lit = Math.min(mainChain.length, Math.floor(t1 * mainChain.length + 1e-9));
+  const st = stepOf(val);
+  const stem = STEMS[mainChain.length];
+  const branched = mode === "branched";
+  const loc = methyl.parent + 1; /* numbered from the left, the end nearest the branch */
+  let name, parts;
+  if (lit < mainChain.length) {
+    name = "Counting the longest chain: " + lit + (lit === 1 ? " carbon" : " carbons");
+    parts = 0;
+  } else if (st <= 2 || !branched) {
+    name = stem + "ane";
+    parts = 2; /* stem + ending */
+    if (st === 3 && !branched) name += "  (no branches to add)";
+  } else if (st === 3) {
+    name = loc + "-methyl  +  " + stem + "ane";
+    parts = 4; /* locant + branch + stem + ending */
+  } else {
+    name = loc + "-methyl" + stem + "ane";
+    parts = 4;
+  }
+  return { lit: lit, name: name, parts: parts, st: st };
+}
+
 function updateUI() {
   const val = parseFloat(slider.value);
   const fill = val + '%';
   slider.style.setProperty('--fill', fill);
-
-  if (val < 25) {
-    step = 1;
-    liveTag.textContent = 'Step 1/4';
-    overlayTag.textContent = 'Finding longest chain...';
-    chainStat.textContent = '6';
-    partsStat.textContent = '1';
-  } else if (val < 50) {
-    step = 2;
-    liveTag.textContent = 'Step 2/4';
-    overlayTag.textContent = 'Numbering carbons...';
-    chainStat.textContent = '6';
-    partsStat.textContent = '2';
-  } else if (val < 75) {
-    step = 3;
-    liveTag.textContent = 'Step 3/4';
-    overlayTag.textContent = 'Naming substituents...';
-    chainStat.textContent = '6';
-    partsStat.textContent = '3';
-  } else {
-    step = 4;
-    liveTag.textContent = 'Step 4/4';
-    overlayTag.textContent = '3-methylhexane';
-    chainStat.textContent = '6';
-    partsStat.textContent = '4';
-  }
+  const n = nameState(val);
+  step = n.st;
+  liveTag.textContent = "Step " + n.st + "/4";
+  overlayTag.textContent = n.name;
+  chainStat.textContent = String(n.lit);
+  partsStat.textContent = String(n.parts);
 }
 
 slider.addEventListener('input', updateUI);
-updateUI();
 
 btn1.addEventListener('click', () => {
   btn1.classList.add('active');
   btn2.classList.remove('active');
   knowdropText.textContent = texts.simple;
+  mode = "simple";
+  updateUI();
 });
 
 btn2.addEventListener('click', () => {
   btn2.classList.add('active');
   btn1.classList.remove('active');
   knowdropText.textContent = texts.complex;
+  mode = "branched";
+  updateUI();
 });
 
 // Molecule structure
@@ -459,12 +473,42 @@ const mainChain = [
 ];
 
 const methyl = { x: 0.42, y: 0.7, parent: 2 };
+updateUI();
 
 function draw() {
   const w = canvas.width / dpr;
   const h = canvas.height / dpr;
   const cx = w / 2;
   const cy = h / 2;
+  /* phone stage: when the canvas is tall, the same chain is drawn bigger and tilted 40 degrees (still a 120 degree zigzag running left to right) so it uses the height; wide canvases keep the original layout */
+  const tall = h > w * 0.8;
+  const k = tall ? Math.max(1, Math.min(1.35, h / 280)) : 1;
+  const fsT = Math.max(11, Math.min(13, w / 32)) * 1.1;
+  const TH = 40 * Math.PI / 180, RC = Math.cos(TH), RS = Math.sin(TH);
+  const tp = new Map();
+  if (tall) {
+    const raw = [[0, 0]];
+    for (let i = 0; i < mainChain.length - 1; i++) {
+      const ang = TH + (i % 2 === 0 ? -1 : 1) * Math.PI / 6;
+      raw.push([raw[i][0] + Math.cos(ang), raw[i][1] + Math.sin(ang)]);
+    }
+    const par = raw[methyl.parent];
+    const mraw = [par[0] - RS, par[1] + RC];
+    const all = raw.concat([mraw]);
+    const minX = Math.min.apply(null, all.map(function (q) { return q[0]; })), maxX = Math.max.apply(null, all.map(function (q) { return q[0]; }));
+    const minY = Math.min.apply(null, all.map(function (q) { return q[1]; })), maxY = Math.max.apply(null, all.map(function (q) { return q[1]; }));
+    const side = 26 * k, top = 34 * k, bottom = 44 * k + 2 * fsT + 14;
+    const bl = Math.min((w - 2 * side) / (maxX - minX), (h - top - bottom) / (maxY - minY));
+    const ox = (w - (maxX - minX) * bl) / 2 - minX * bl;
+    const oy = top + ((h - top - bottom) - (maxY - minY) * bl) / 2 - minY * bl;
+    raw.forEach(function (q, i) { tp.set(mainChain[i], [ox + q[0] * bl, oy + q[1] * bl]); });
+    tp.set(methyl, [ox + mraw[0] * bl, oy + mraw[1] * bl]);
+  }
+  const PX = function (pt) { return tall ? tp.get(pt)[0] : pt.x * w; };
+  const PY = function (pt) { return tall ? tp.get(pt)[1] : pt.y * h; };
+  /* a label anchor offset from an atom: the offset turns with the tilted chain */
+  const LX = function (pt, ox, oy) { return tall ? PX(pt) + ox * RC - oy * RS : pt.x * w + ox; };
+  const LY = function (pt, ox, oy) { return tall ? PY(pt) + ox * RS + oy * RC : pt.y * h + oy; };
 
   ctx.fillStyle = '#000';
   ctx.fillRect(0, 0, w, h);
@@ -479,21 +523,23 @@ function draw() {
   ctx.save();
   ctx.strokeStyle = "rgba(237,237,232,0.26)";
   ctx.fillStyle = "rgba(237,237,232,0.34)";
-  ctx.lineWidth = 2;
+  ctx.lineWidth = 2 * k;
   ctx.lineCap = "round";
   ctx.beginPath();
-  ctx.moveTo(mainChain[0].x * w, mainChain[0].y * h);
-  for (let i = 1; i < mainChain.length; i++) ctx.lineTo(mainChain[i].x * w, mainChain[i].y * h);
-  ctx.moveTo(mainChain[methyl.parent].x * w, mainChain[methyl.parent].y * h);
-  ctx.lineTo(methyl.x * w, methyl.y * h);
+  ctx.moveTo(PX(mainChain[0]), PY(mainChain[0]));
+  for (let i = 1; i < mainChain.length; i++) ctx.lineTo(PX(mainChain[i]), PY(mainChain[i]));
+  if (mode === "branched") {
+    ctx.moveTo(PX(mainChain[methyl.parent]), PY(mainChain[methyl.parent]));
+    ctx.lineTo(PX(methyl), PY(methyl));
+  }
   ctx.stroke();
-  mainChain.concat([methyl]).forEach(function (c) { ctx.beginPath(); ctx.arc(c.x * w, c.y * h, 3, 0, Math.PI * 2); ctx.fill(); });
+  (mode === "branched" ? mainChain.concat([methyl]) : mainChain).forEach(function (c) { ctx.beginPath(); ctx.arc(PX(c), PY(c), 3 * k, 0, Math.PI * 2); ctx.fill(); });
   ctx.restore();
 
   // Step 1: Draw main chain bonds
   if (t1 > 0) {
     ctx.strokeStyle = 'rgba(62, 154, 214,' + (0.3 + t1 * 0.5) + ')';
-    ctx.lineWidth = 2.5;
+    ctx.lineWidth = 2.5 * k;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
 
@@ -501,10 +547,10 @@ function draw() {
       const prog = Math.min(Math.max((t1 * mainChain.length - i) / 1, 0), 1);
       if (prog > 0) {
         ctx.beginPath();
-        ctx.moveTo(mainChain[i].x * w, mainChain[i].y * h);
+        ctx.moveTo(PX(mainChain[i]), PY(mainChain[i]));
         ctx.lineTo(
-          mainChain[i].x * w + (mainChain[i+1].x - mainChain[i].x) * w * prog,
-          mainChain[i].y * h + (mainChain[i+1].y - mainChain[i].y) * h * prog
+          PX(mainChain[i]) + (PX(mainChain[i+1]) - PX(mainChain[i])) * prog,
+          PY(mainChain[i]) + (PY(mainChain[i+1]) - PY(mainChain[i])) * prog
         );
         ctx.stroke();
       }
@@ -513,7 +559,7 @@ function draw() {
 
   // Step 2: Draw numbers
   if (t2 > 0) {
-    ctx.font = '500 13px "JetBrains Mono"';
+    ctx.font = '500 ' + (13 * k) + 'px "JetBrains Mono", monospace';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     
@@ -521,28 +567,47 @@ function draw() {
       const alpha = Math.min(Math.max((t2 * mainChain.length - i) / 1, 0), 1);
       if (alpha > 0) {
         ctx.fillStyle = 'rgba(250,199,117,' + alpha + ')';
-        ctx.fillText((i + 1).toString(), mainChain[i].x * w, mainChain[i].y * h - 22);
+        ctx.fillText((i + 1).toString(), LX(mainChain[i], 0, -22 * k), LY(mainChain[i], 0, -22 * k));
       }
+    }
+    /* the other direction, dimmed: it would put the branch on carbon 4, a higher number, so it loses */
+    if (mode === "branched") {
+      const n = mainChain.length;
+      ctx.font = '500 ' + (11 * k) + 'px "JetBrains Mono", monospace';
+      for (let i = 0; i < n; i++) {
+        const alpha = Math.min(Math.max((t2 * n - i) / 1, 0), 1) * 0.8;
+        if (alpha > 0) {
+          ctx.fillStyle = "rgba(140,147,137," + alpha + ")";
+          const dx = (i === methyl.parent) ? 18 * k : 0; /* clear of the branch bond */
+          ctx.fillText((n - i).toString(), LX(mainChain[i], dx, 22 * k), LY(mainChain[i], dx, 22 * k));
+        }
+      }
+      const fs = tall ? fsT : Math.max(11, Math.min(13, w / 32));
+      ctx.font = "500 " + fs + "px \"JetBrains Mono\", monospace";
+      ctx.fillStyle = "rgba(250,199,117," + t2 + ")";
+      ctx.fillText("branch: C3 from the left, C4 from the right", w / 2, Math.min(h - 14 - (tall ? fs + 6 : 0), (tall ? Math.max.apply(null, mainChain.concat([methyl]).map(PY)) : Math.max(mainChain[0].y, mainChain[1].y, methyl.y) * h) + 44 * k));
+      ctx.fillStyle = "rgba(140,147,137," + t2 + ")";
+      ctx.fillText("lowest number wins: count from the left", w / 2, Math.min(h - 14 - (tall ? fs + 6 : 0), (tall ? Math.max.apply(null, mainChain.concat([methyl]).map(PY)) : Math.max(mainChain[0].y, mainChain[1].y, methyl.y) * h) + 44 * k) + fs + 6);
     }
   }
 
   // Step 3: Draw methyl substituent
-  if (t3 > 0) {
+  if (t3 > 0 && mode === "branched") {
     ctx.strokeStyle = 'rgba(62, 154, 214,' + t3 * 0.8 + ')';
-    ctx.lineWidth = 2.5;
+    ctx.lineWidth = 2.5 * k;
     ctx.beginPath();
-    ctx.moveTo(mainChain[methyl.parent].x * w, mainChain[methyl.parent].y * h);
+    ctx.moveTo(PX(mainChain[methyl.parent]), PY(mainChain[methyl.parent]));
     ctx.lineTo(
-      mainChain[methyl.parent].x * w + (methyl.x - mainChain[methyl.parent].x) * w * t3,
-      mainChain[methyl.parent].y * h + (methyl.y - mainChain[methyl.parent].y) * h * t3
+      PX(mainChain[methyl.parent]) + (PX(methyl) - PX(mainChain[methyl.parent])) * t3,
+      PY(mainChain[methyl.parent]) + (PY(methyl) - PY(mainChain[methyl.parent])) * t3
     );
     ctx.stroke();
 
     if (t3 > 0.5) {
-      ctx.font = '500 12px "Geist"';
+      ctx.font = '500 ' + (12 * k) + 'px "Geist", sans-serif';
       ctx.fillStyle = 'rgba(62, 154, 214,' + ((t3 - 0.5) * 2) + ')';
       ctx.textAlign = 'center';
-      ctx.fillText('CH₃', methyl.x * w, methyl.y * h + 16);
+      ctx.fillText('CH₃', LX(methyl, 0, 16 * k), LY(methyl, 0, 16 * k));
     }
   }
 
@@ -553,53 +618,53 @@ function draw() {
       if (alpha > 0) {
         // Glow
         const grad = ctx.createRadialGradient(
-          mainChain[i].x * w, mainChain[i].y * h, 0,
-          mainChain[i].x * w, mainChain[i].y * h, 14
+          PX(mainChain[i]), PY(mainChain[i]), 0,
+          PX(mainChain[i]), PY(mainChain[i]), 14 * k
         );
         grad.addColorStop(0, 'rgba(62, 154, 214,' + (alpha * 0.4) + ')');
         grad.addColorStop(1, 'rgba(62, 154, 214,0)');
         ctx.fillStyle = grad;
         ctx.beginPath();
-        ctx.arc(mainChain[i].x * w, mainChain[i].y * h, 14, 0, Math.PI * 2);
+        ctx.arc(PX(mainChain[i]), PY(mainChain[i]), 14 * k, 0, Math.PI * 2);
         ctx.fill();
 
         // Core
         ctx.fillStyle = 'rgba(62, 154, 214,' + alpha + ')';
         ctx.beginPath();
-        ctx.arc(mainChain[i].x * w, mainChain[i].y * h, 5, 0, Math.PI * 2);
+        ctx.arc(PX(mainChain[i]), PY(mainChain[i]), 5 * k, 0, Math.PI * 2);
         ctx.fill();
 
         // Inner highlight
         ctx.fillStyle = 'rgba(237,237,232,' + (alpha * 0.7) + ')';
         ctx.beginPath();
-        ctx.arc(mainChain[i].x * w - 1.5, mainChain[i].y * h - 1.5, 2, 0, Math.PI * 2);
+        ctx.arc(PX(mainChain[i]) - 1.5 * k, PY(mainChain[i]) - 1.5 * k, 2 * k, 0, Math.PI * 2);
         ctx.fill();
       }
     }
   }
 
   // Methyl carbon
-  if (t3 > 0.7) {
+  if (t3 > 0.7 && mode === "branched") {
     const alpha = (t3 - 0.7) / 0.3;
     const grad = ctx.createRadialGradient(
-      methyl.x * w, methyl.y * h, 0,
-      methyl.x * w, methyl.y * h, 14
+      PX(methyl), PY(methyl), 0,
+      PX(methyl), PY(methyl), 14 * k
     );
     grad.addColorStop(0, 'rgba(62, 154, 214,' + (alpha * 0.4) + ')');
     grad.addColorStop(1, 'rgba(62, 154, 214,0)');
     ctx.fillStyle = grad;
     ctx.beginPath();
-    ctx.arc(methyl.x * w, methyl.y * h, 14, 0, Math.PI * 2);
+    ctx.arc(PX(methyl), PY(methyl), 14 * k, 0, Math.PI * 2);
     ctx.fill();
 
     ctx.fillStyle = 'rgba(62, 154, 214,' + alpha + ')';
     ctx.beginPath();
-    ctx.arc(methyl.x * w, methyl.y * h, 5, 0, Math.PI * 2);
+    ctx.arc(PX(methyl), PY(methyl), 5 * k, 0, Math.PI * 2);
     ctx.fill();
 
     ctx.fillStyle = 'rgba(237,237,232,' + (alpha * 0.7) + ')';
     ctx.beginPath();
-    ctx.arc(methyl.x * w - 1.5, methyl.y * h - 1.5, 2, 0, Math.PI * 2);
+    ctx.arc(PX(methyl) - 1.5 * k, PY(methyl) - 1.5 * k, 2 * k, 0, Math.PI * 2);
     ctx.fill();
   }
 

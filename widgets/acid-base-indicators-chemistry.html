@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Acid-Base Indicators — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Acid-base indicators — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -146,7 +146,7 @@ canvas {
 .slider-label {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10.5px;
-  text-transform: uppercase;
+  text-transform: none; /* uppercase would turn a symbol wrong */
   color: var(--ink-dim);
   margin-bottom: 8px;
   display: block;
@@ -227,7 +227,7 @@ canvas {
 .stat-label {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10.5px;
-  text-transform: uppercase;
+  text-transform: none; /* uppercase would turn a symbol wrong */
   color: var(--ink-dim);
   margin-bottom: 4px;
   display: block;
@@ -342,19 +342,19 @@ canvas {
 }
 </style>
 
-<h2 class="sr-only">Acid-Base Indicators Interactive Widget</h2>
+<h2 class="sr-only">Acid-base indicators interactive widget</h2>
 
 <div class="container">
   <h1>The indicator doesn't measure pH—it <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">becomes</span> it</h1>
   
-  <p class="intro">Indicators are weak acids caught in their own equilibrium. The molecule itself shifts between two forms with wildly different colours, and the ratio between them is set entirely by the pH around it. Drag the slider to watch phenolphthalein transform as pH crosses its transition range.</p>
+  <p class="intro">Indicators are weak acids caught in their own equilibrium. The molecule itself shifts between two forms with wildly different colours, and the ratio between them is set entirely by the pH around it. Raise the pH and watch phenolphthalein transform as pH crosses its transition range.</p>
 
   <div class="card">
     <div class="card-header">
-      <span class="card-label">Phenolphthalein Equilibrium</span>
+      <span class="card-label" id="card-label">Phenolphthalein equilibrium</span>
       <span class="live-tag" id="state-tag">ACID FORM</span>
     </div>
-    <p class="card-hint">pH 0–14 range showing indicator colour shift</p>
+    <p class="card-hint">Colour ratio = acid form : base form (%)</p>
     
     <div class="canvas-wrapper">
       <canvas id="indicator-canvas"></canvas>
@@ -362,7 +362,7 @@ canvas {
     </div>
 
     <div class="slider-container">
-      <label class="slider-label" for="ph-slider">pH Level</label>
+      <label class="slider-label" for="ph-slider">pH level</label>
       <input type="range" id="ph-slider" class="ph-slider" min="0" max="14" step="0.1" value="7" style="--fill: 50%">
       <div class="tick-labels">
         <span>0</span>
@@ -373,12 +373,12 @@ canvas {
 
     <div class="stats">
       <div class="stat">
-        <span class="stat-label">pH Value</span>
+        <span class="stat-label">pH value</span>
         <div class="stat-value acc" id="ph-display">7.0</div>
       </div>
       <div class="stat">
-        <span class="stat-label">Colour Ratio</span>
-        <div class="stat-value amb" id="ratio-display">50:50</div>
+        <span class="stat-label">Colour ratio</span>
+        <div class="stat-value amb" id="ratio-display">100:0</div>
       </div>
     </div>
   </div>
@@ -386,11 +386,11 @@ canvas {
   <div class="toggle-card">
     <div class="toggle-buttons">
       <button class="toggle-btn active" data-indicator="phenol">Phenolphthalein</button>
-      <button class="toggle-btn" data-indicator="methyl">Methyl Orange</button>
+      <button class="toggle-btn" data-indicator="methyl">Methyl orange</button>
     </div>
     
     <div class="knowdrop-section">
-      <p class="knowdrop-text" id="knowdrop-text">Phenolphthalein has a pKa around 9.3, meaning its transition range sits between pH 8.2 and 10.0. In acid form (below pH 8.2), it's completely colourless—the conjugate base hasn't formed yet. As pH rises past 8.2, the equilibrium shifts and the base form (bright pink) starts appearing. By pH 10, almost all molecules have donated their proton and the solution glows deep magenta. This makes it a good choice for strong acid–strong base titrations, where the equivalence point is pH 7 and the pH jumps steeply through its range, and the standard choice for weak acid–strong base titrations, where the equivalence point sits around pH 8–9. It is a poor choice for strong acid–weak base titrations, where the equivalence point is near pH 5, below its range. The indicator's own pKa determines where it changes, not the strength of the acids you're titrating.</p>
+      <p class="knowdrop-text" id="knowdrop-text">Phenolphthalein changes colour between about pH 8.3 and 10.0. Its pKa, the pH where half the molecules are in each form, is about 9.3. Below pH 8.3 more than nine in ten molecules are in the colourless acid form, so the solution looks colourless. As pH rises past 8.3 the equilibrium shifts and the pink base form shows. By pH 10 more than four in five molecules have lost their proton and the solution is deep pink. (In very strong base, above about pH 12, the pink slowly fades again; the picture leaves that out.) This makes it a good choice for strong acid–strong base titrations, where the equivalence point is pH 7 and the pH jumps steeply through its range, and the standard choice for weak acid–strong base titrations, where the equivalence point sits around pH 8–9. It is a poor choice for strong acid–weak base titrations, where the equivalence point is near pH 5, below its range. Where it changes is set by the indicator itself, not by the strength of the acids you are titrating.</p>
     </div>
   </div>
 
@@ -399,7 +399,7 @@ canvas {
       <div class="pulse-dot"></div>
       <span class="know-this-label">Know This</span>
     </div>
-    <p class="know-this-text">An indicator's <span style="color:var(--acc)">pKa</span> sets its <span style="color:var(--acc)">transition range</span>, which must overlap the titration's <span style="color:var(--acc)">equivalence point</span> or you'll miss the endpoint entirely.</p>
+    <p class="know-this-text">An indicator changes colour only across its narrow <span style="color:var(--acc)">transition range</span>. Choose one whose range sits inside the steep pH jump at the titration's <span style="color:var(--acc)">equivalence point</span>, or the colour will change at the wrong volume.</p>
   </div>
 </div>
 
@@ -413,6 +413,7 @@ const stateTag = document.getElementById('state-tag');
 const colourLabel = document.getElementById('colour-label');
 const knowdropText = document.getElementById('knowdrop-text');
 const toggleButtons = document.querySelectorAll('.toggle-btn');
+const cardLabel = document.getElementById("card-label");
 
 const CSS = getComputedStyle(document.documentElement);
 const ACC = CSS.getPropertyValue('--acc').trim();
@@ -424,15 +425,19 @@ let currentIndicator = 'phenol';
 const indicators = {
   phenol: {
     pKa: 9.3,
+    range: [8.3, 10.0],
+    label: "Phenolphthalein equilibrium",
     acidColour: [230, 230, 230],
     baseColour: [255, 20, 147],
-    text: "Phenolphthalein has a pKa around 9.3, meaning its transition range sits between pH 8.2 and 10.0. In acid form (below pH 8.2), it's completely colourless—the conjugate base hasn't formed yet. As pH rises past 8.2, the equilibrium shifts and the base form (bright pink) starts appearing. By pH 10, almost all molecules have donated their proton and the solution glows deep magenta. This makes it a good choice for strong acid–strong base titrations, where the equivalence point is pH 7 and the pH jumps steeply through its range, and the standard choice for weak acid–strong base titrations, where the equivalence point sits around pH 8–9. It is a poor choice for strong acid–weak base titrations, where the equivalence point is near pH 5, below its range. The indicator's own pKa determines where it changes, not the strength of the acids you're titrating."
+    text: "Phenolphthalein changes colour between about pH 8.3 and 10.0. Its pKa, the pH where half the molecules are in each form, is about 9.3. Below pH 8.3 more than nine in ten molecules are in the colourless acid form, so the solution looks colourless. As pH rises past 8.3 the equilibrium shifts and the pink base form shows. By pH 10 more than four in five molecules have lost their proton and the solution is deep pink. (In very strong base, above about pH 12, the pink slowly fades again; the picture leaves that out.) This makes it a good choice for strong acid–strong base titrations, where the equivalence point is pH 7 and the pH jumps steeply through its range, and the standard choice for weak acid–strong base titrations, where the equivalence point sits around pH 8–9. It is a poor choice for strong acid–weak base titrations, where the equivalence point is near pH 5, below its range. Where it changes is set by the indicator itself, not by the strength of the acids you are titrating."
   },
   methyl: {
     pKa: 3.7,
+    range: [3.1, 4.4],
+    label: "Methyl orange equilibrium",
     acidColour: [255, 80, 80],
     baseColour: [255, 200, 100],
-    text: "Methyl orange sits at the opposite end with a pKa of 3.7, giving it a transition range from pH 3.1 to 4.4. The acid form is red (you're seeing the protonated version with a positive charge), and as pH rises past 3.1, it loses that proton and shifts to yellow-orange. This low transition range makes it ideal for titrating weak bases with strong acids, where the equivalence point typically lands around pH 3–6. For a strong acid–strong base titration (equivalence at pH 7), methyl orange still works: the pH jumps steeply from about 4 to about 10 within a drop or so, so both indicators change close to the endpoint. Methyl orange is the better match when the endpoint is acidic, as with a strong acid and a weak base, and a poor match for a weak acid with a strong base, where the endpoint is around pH 8–9."
+    text: "Methyl orange sits at the opposite end: it changes colour between about pH 3.1 and 4.4, with a pKa of about 3.7. The acid form, which holds the extra proton, is red. As pH rises past 3.1 it loses that proton and turns yellow. This low range makes it the right choice for titrating a weak base with a strong acid, where the equivalence point is usually around pH 5 and the steep jump runs down through its range. For a strong acid–strong base titration (equivalence at pH 7), methyl orange still works: the pH jumps steeply from about 4 to about 10 within a drop or so, so both indicators change close to the endpoint. Methyl orange is the better match when the endpoint is acidic, as with a strong acid and a weak base, and a poor match for a weak acid with a strong base, where the endpoint is around pH 8–9."
   }
 };
 
@@ -578,19 +583,20 @@ function updateUI() {
   
   ratioDisplay.textContent = `${acidPercent}:${basePercent}`;
   
-  if (baseFraction < 0.1) {
-    stateTag.textContent = 'ACID FORM';
-    colourLabel.textContent = currentIndicator === 'phenol' 
-      ? 'COLOURLESS — ACID FORM DOMINATES'
-      : 'RED — ACID FORM DOMINATES';
-  } else if (baseFraction > 0.9) {
-    stateTag.textContent = 'BASE FORM';
-    colourLabel.textContent = currentIndicator === 'phenol'
-      ? 'MAGENTA — BASE FORM DOMINATES'
-      : 'YELLOW — BASE FORM DOMINATES';
+  /* labels follow the observed colour-change range (as in data tables), not a fixed 10 / 90 split */
+  if (pH < ind.range[0]) {
+    stateTag.textContent = "ACID FORM";
+    colourLabel.textContent = currentIndicator === "phenol"
+      ? "COLOURLESS — ACID FORM DOMINATES"
+      : "RED — ACID FORM DOMINATES";
+  } else if (pH > ind.range[1]) {
+    stateTag.textContent = "BASE FORM";
+    colourLabel.textContent = currentIndicator === "phenol"
+      ? "PINK — BASE FORM DOMINATES"
+      : "YELLOW — BASE FORM DOMINATES";
   } else {
-    stateTag.textContent = 'TRANSITION';
-    colourLabel.textContent = 'TRANSITION RANGE — BOTH FORMS PRESENT';
+    stateTag.textContent = "TRANSITION";
+    colourLabel.textContent = "TRANSITION RANGE — BOTH FORMS PRESENT";
   }
 }
 
@@ -602,6 +608,7 @@ toggleButtons.forEach(btn => {
     btn.classList.add('active');
     currentIndicator = btn.dataset.indicator;
     knowdropText.textContent = indicators[currentIndicator].text;
+    cardLabel.textContent = indicators[currentIndicator].label;
     updateUI();
   });
 });

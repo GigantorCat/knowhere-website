@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Conditions vs Triggers — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Conditions vs triggers — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -189,11 +189,30 @@ canvas {
 }
 
 .tick-labels {
-  display: flex;
-  justify-content: space-between;
+  position: relative;
+  height: 12px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 9px;
   color: var(--ink-dim);
+}
+
+.tick-labels span {
+  position: absolute;
+  top: 0;
+}
+
+.tick-labels span:nth-child(1) {
+  left: 0;
+}
+
+.tick-labels span:nth-child(2) {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.tick-labels span:nth-child(3) {
+  left: 75%;
+  transform: translateX(-50%);
 }
 
 .stat-row {
@@ -333,16 +352,16 @@ canvas {
 <div class="container">
   <h2 class="sr-only">Interactive widget exploring the difference between conditions and triggers in revolutions</h2>
 
-  <h1>Famine Alone Has Never Started a <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">Revolution</span></h1>
+  <h1>Famine alone has never started a <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">revolution</span></h1>
   
-  <p class="intro">Long-term suffering creates pressure, but revolutions ignite from specific moments — a bread riot, a tax decree, a single arrest. Understanding the difference between conditions and triggers is the foundation of every strong historical argument. Drag the slider to build up the conditions, then fire a trigger and see whether it sets anything off.</p>
+  <p class="intro">Long-term suffering creates pressure, but revolutions ignite from specific moments — a bread riot, a tax decree, a single arrest. Understanding the difference between conditions and triggers is the foundation of every strong historical argument. Raise the pressure to build up the conditions, then fire a trigger and see whether it sets anything off.</p>
 
   <div class="card">
     <div class="card-header">
-      <span class="card-label">Pressure System</span>
+      <span class="card-label">Pressure system</span>
       <span class="live-tag" id="header-tag">Building</span>
     </div>
-    <div class="card-hint">The slider builds conditions. Only the trigger button sets them off.</div>
+    <div class="card-hint">Rising pressure only builds the conditions. Only the trigger button sets them off.</div>
     
     <div class="canvas-wrapper">
       <canvas id="canvas"></canvas>
@@ -362,11 +381,11 @@ canvas {
 
     <div class="stat-row">
       <div class="stat">
-        <div class="stat-label">Conditions Active</div>
+        <div class="stat-label">Conditions active</div>
         <div class="stat-value" id="conditions-count">0</div>
       </div>
       <div class="stat">
-        <div class="stat-label">Trigger Status</div>
+        <div class="stat-label">Trigger status</div>
         <div class="stat-value" id="trigger-status">—</div>
       </div>
     </div>
@@ -379,7 +398,7 @@ canvas {
     </div>
     
     <div class="knowdrop-section">
-      <p class="knowdrop-text" id="knowdrop">Long-term causes are the structural conditions that accumulate over years or decades: economic inequality, political exclusion, ideological shifts, fiscal crisis, crop failures. These build pressure like water behind a dam. The French Third Estate was locked out of power for centuries, Russian serfs endured brutal conditions for generations, colonial subjects faced systemic exploitation for decades. But conditions alone rarely produce eruption — they create fragility and anger, but revolution requires ignition. The critical insight: most societies endure terrible conditions without revolting. What tips them over is the trigger.</p>
+      <p class="knowdrop-text" id="knowdrop">Long-term causes are the structural conditions that accumulate over years or decades: economic inequality, political exclusion, ideological shifts, fiscal crisis, crop failures. These build pressure like water behind a dam. The French Third Estate was locked out of power for centuries, Russian serfs endured brutal conditions for generations, colonial subjects faced systematic exploitation for decades. But conditions alone rarely produce eruption — they create fragility and anger, but revolution requires ignition. The critical insight: most societies endure terrible conditions without revolting. What tips them over is the trigger.</p>
     </div>
   </div>
 
@@ -414,7 +433,7 @@ let time = 0;
 
 const conditionsText = "Long-term causes are the structural conditions that accumulate over years or decades: economic inequality, political exclusion, ideological shifts, fiscal crisis, crop failures. These build pressure like water behind a dam. The French Third Estate was locked out of power for centuries, Russian serfs endured brutal conditions for generations, colonial subjects faced systematic exploitation for decades. But conditions alone rarely produce eruption — they create fragility and anger, but revolution requires ignition. The critical insight: most societies endure terrible conditions without revolting. What tips them over is the trigger.";
 
-const triggersText = "Short-term triggers are specific, dateable events that ignite the accumulated pressure: the storming of a building, a massacre, a tax decree, a bread riot, an arrest, a failed harvest. The French Revolution ignited when the Assembly of Notables failed and Louis XVI called the Estates-General — not centuries of inequality, but a specific political crisis in 1788–89. The Russian Revolution's triggers were Bloody Sunday (1905) and the February bread riots (1917) — not abstract suffering, but concrete events. Triggers are necessary because they provide a focal point, a moment when resistance becomes coordinated. Without the trigger, pressure dissipates into grumbling and resignation.";
+const triggersText = "Short-term triggers are specific, dateable events that ignite the accumulated pressure: the storming of a building, a massacre, a tax decree, a bread riot, an arrest. The French Revolution ignited when the Assembly of Notables failed and Louis XVI called the Estates-General — not centuries of inequality, but a specific political crisis in 1788–89. The February Revolution of 1917 in Russia was set off by strikes and bread riots in Petrograd — not abstract suffering, but concrete events. (Bloody Sunday, in January 1905, was the trigger of an earlier revolution, the 1905 Revolution.) Triggers are necessary because they provide a focal point, a moment when resistance becomes coordinated. Without the trigger, pressure dissipates into grumbling and resignation.";
 
 function resize() {
   const rect = canvas.getBoundingClientRect();
@@ -432,18 +451,18 @@ function initNodes() {
   const w = canvas.width / dpr;
   const h = canvas.height / dpr;
   const cx = w / 2;
-  const cy = h / 2;
+  const cy = (h - 36) / 2;
   
   nodes = [];
   const count = 8;
   for (let i = 0; i < count; i++) {
     const angle = (i / count) * Math.PI * 2;
-    const r = Math.min(w, h) * 0.38;
+    const r = Math.min(w, h - 36) * 0.35;
     nodes.push({
       x: cx + Math.cos(angle) * r,
       y: cy + Math.sin(angle) * r,
       active: false,
-      label: ['Inequality', 'Exclusion', 'Fiscal Crisis', 'Ideology', 'Famine', 'Oppression', 'Corruption', 'Debt'][i]
+      label: ['Inequality', 'Exclusion', 'Fiscal crisis', 'Ideology', 'Famine', 'Oppression', 'Corruption', 'Debt'][i]
     });
   }
 }
@@ -465,13 +484,13 @@ function updateSlider() {
     triggered = false;
     explosionParticles = [];
   } else if (pressure < 75) {
-    headerTag.textContent = 'Pressure Rising';
+    headerTag.textContent = 'Pressure rising';
     overlayTag.textContent = 'Tension increasing';
     triggered = false;
     explosionParticles = [];
   } else {
     /* conditions alone never erupt: even at full pressure the system waits for a trigger */
-    headerTag.textContent = "Critical Threshold";
+    headerTag.textContent = "Critical threshold";
     overlayTag.textContent = "Critical pressure — awaiting trigger";
     triggered = false;
     explosionParticles = [];
@@ -504,7 +523,7 @@ function createExplosion(n, s0, s1) {
   const w = canvas.width / dpr;
   const h = canvas.height / dpr;
   const cx = w / 2;
-  const cy = h / 2;
+  const cy = (h - 36) / 2;
   
   for (let i = 0; i < n; i++) {
     const angle = Math.random() * Math.PI * 2;
@@ -524,7 +543,7 @@ function draw() {
   const w = canvas.width / dpr;
   const h = canvas.height / dpr;
   const cx = w / 2;
-  const cy = h / 2;
+  const cy = (h - 36) / 2;
   
   ctx.fillStyle = '#000';
   ctx.fillRect(0, 0, w, h);
@@ -584,6 +603,11 @@ function draw() {
       ctx.arc(n.x, n.y, 4, 0, Math.PI * 2);
       ctx.fill();
     }
+    ctx.font = '11px JetBrains Mono, monospace';
+    ctx.fillStyle = n.active ? '#9A5FD2' : 'rgba(140,147,137,0.6)';
+    ctx.textAlign = n.x < cx - 5 ? 'right' : (n.x > cx + 5 ? 'left' : 'center');
+    ctx.textBaseline = n.y < cy - 5 ? 'bottom' : (n.y > cy + 5 ? 'top' : 'middle');
+    ctx.fillText(n.label, n.x + (n.x < cx - 5 ? -9 : n.x > cx + 5 ? 9 : 0), n.y + (n.y < cy - 5 ? -9 : n.y > cy + 5 ? 9 : 0));
   });
   
   // Draw explosion particles if triggered
@@ -591,7 +615,7 @@ function draw() {
     explosionParticles = explosionParticles.filter(p => {
       p.x += p.vx;
       p.y += p.vy;
-      p.life -= 0.015;
+      p.life -= 0.006;
       
       if (p.life <= 0) return false;
       

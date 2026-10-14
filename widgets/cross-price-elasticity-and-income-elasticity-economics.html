@@ -320,15 +320,15 @@ canvas {
 </style>
 
 <div class="container">
-  <h2 class="sr-only">Cross Price Elasticity and Income Elasticity Interactive Widget</h2>
+  <h2 class="sr-only">Cross-price elasticity and income elasticity interactive widget</h2>
   
   <h1>Markets are interconnected webs, not isolated <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">islands</span></h1>
   
-  <p class="intro">A price change in one good ripples through related markets — substitutes pull demand away when their rival's price rises, complements drag demand down when their partner's price climbs. Drag the slider to explore how cross-price elasticity reveals whether two goods are rivals or partners.</p>
+  <p class="intro">A price change in one good ripples through related markets — substitutes pull demand away when their rival's price rises, complements drag demand down when their partner's price climbs. Raise the related good's price and watch how cross-price elasticity reveals whether two goods are rivals or partners.</p>
 
   <div class="card">
     <div class="card-header">
-      <span class="card-label">Cross-Price Elasticity</span>
+      <span class="card-label">Cross-price elasticity</span>
       <span class="live-tag" id="xed-tag">XED = 0.00</span>
     </div>
     <div class="card-hint">Negative XED = complements · Positive XED = substitutes</div>
@@ -339,22 +339,22 @@ canvas {
     </div>
 
     <div class="slider-row">
-      <div class="slider-label">Cross-Price Elasticity (XED)</div>
+      <div class="slider-label">Cross-price elasticity (XED)</div>
       <input type="range" class="xed-slider" id="xed-input" min="-2" max="2" step="0.01" value="0">
       <div class="tick-labels">
-        <span>Strong Complements</span>
+        <span>Strong complements</span>
         <span>Unrelated</span>
-        <span>Strong Substitutes</span>
+        <span>Strong substitutes</span>
       </div>
     </div>
 
     <div class="stat-row">
       <div class="stat">
-        <div class="stat-label">Good A Price</div>
+        <div class="stat-label">Good A price</div>
         <div class="stat-value" id="price-stat">+10%</div>
       </div>
       <div class="stat">
-        <div class="stat-label">Good B Demand</div>
+        <div class="stat-label">Good B demand</div>
         <div class="stat-value" id="demand-stat">0%</div>
       </div>
     </div>
@@ -363,7 +363,7 @@ canvas {
   <div class="card">
     <div class="toggle-section">
       <button class="toggle-btn active" data-type="substitute">Substitutes</button>
-      <button class="toggle-btn" data-type="luxury">Luxury Goods</button>
+      <button class="toggle-btn" data-type="luxury">Luxury goods</button>
     </div>
     
     <div class="knowdrop" id="knowdrop-text">
@@ -425,16 +425,15 @@ function updateUI() {
   const demandChange = xed * 10;
   demandStat.textContent = demandChange > 0 ? `+${demandChange.toFixed(1)}%` : `${demandChange.toFixed(1)}%`;
   
-  if (xed < -0.3) {
-    canvasStatus.textContent = 'Strong complements';
+  /* strength comes from the size of XED: above 1 is strong, 0.4 to 1 moderate, below 0.4 weak */
+  const size = Math.abs(xed);
+  const strength = size > 1 ? "Strong" : (size > 0.4 ? "Moderate" : "Weak");
+  if (xed === 0) {
+    canvasStatus.textContent = "Unrelated goods";
   } else if (xed < 0) {
-    canvasStatus.textContent = 'Weak complements';
-  } else if (xed === 0) {
-    canvasStatus.textContent = 'Unrelated goods';
-  } else if (xed < 0.3) {
-    canvasStatus.textContent = 'Weak substitutes';
+    canvasStatus.textContent = strength + " complements";
   } else {
-    canvasStatus.textContent = 'Strong substitutes';
+    canvasStatus.textContent = strength + " substitutes";
   }
   
   const fillPercent = ((xed + 2) / 4) * 100;
@@ -484,8 +483,8 @@ function draw() {
   ctx.fillStyle = 'rgba(237,237,232,0.5)';
   ctx.font = '10px JetBrains Mono';
   ctx.fillText('Good B', 6, 16);
-  ctx.fillText('Demand', 6, 28);
-  ctx.fillText('Good A Price', w - 82, h - 24);
+  ctx.fillText('demand', 6, 28);
+  ctx.fillText('Good A price', w - 82, h - 46); /* above the x-axis, clear of the caption bar */
   
   // Draw relationship line
   const startX = 50;

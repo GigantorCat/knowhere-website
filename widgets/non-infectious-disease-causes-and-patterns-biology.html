@@ -10,32 +10,18 @@ body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body
   --bg2: #12160F;
   --acc: #5AADD4;
   --acc-rgb: 90, 173, 212;
-  --ag: rgba(var(--acc-rgb), 0.7);
-  --ag1: rgba(var(--acc-rgb), 0.12);
-  --ag2: rgba(var(--acc-rgb), 0.45);
+  --ag:  rgba(var(--acc-rgb),.7);
+  --ag1: rgba(var(--acc-rgb),.12);
+  --ag2: rgba(var(--acc-rgb),.45);
   --amb: #FAC775;
   --ink: #EDEDE8;
   --ink-dim: #8C9389;
   --line: #262B26;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
-}
+.sr-only { position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0; }
 
 body {
   background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
@@ -46,18 +32,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-.container {
-  max-width: 720px;
-  margin: 0 auto;
-}
+.nid-wrap { max-width: 720px; margin: 0 auto; }
 
 h1 {
   font-size: clamp(26px, 6.5vw, 44px);
@@ -81,39 +56,23 @@ h1 {
   border: 1px solid var(--line);
   border-radius: 18px;
   padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,0.5), inset 0 1px 0 var(--ag1);
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
   margin-bottom: 18px;
 }
 
-.card-header {
+.card-head {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 12px;
   margin-bottom: 4px;
 }
+.card-label { font-family: 'JetBrains Mono', monospace; font-size: 13px; text-transform: uppercase; color: #fff; }
+.live-tag { font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; color: var(--acc); }
+.card-hint { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-dim); margin-bottom: 14px; }
 
-.card-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  color: var(--ink);
-}
-
-.live-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--acc);
-}
-
-.card-hint {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--ink-dim);
-  margin-bottom: 14px;
-}
-
-.canvas-wrapper {
+.canvas-wrap {
   position: relative;
   width: 100%;
   aspect-ratio: 16/9;
@@ -121,22 +80,10 @@ h1 {
   overflow: hidden;
   background: #000;
   box-shadow: inset 0 0 0 1px var(--ag1);
-  margin-bottom: 16px;
 }
-
-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.canvas-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
+.canvas-wrap canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.overlay {
+  position: absolute; left: 0; right: 0; bottom: 0;
   background: rgba(0,0,0,0.55);
   backdrop-filter: blur(4px);
   padding: 9px 16px;
@@ -147,148 +94,87 @@ canvas {
   text-align: center;
 }
 
-.slider-section {
-  margin-top: 16px;
-}
-
-.slider-label {
+.grp-title {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10.5px;
   text-transform: uppercase;
   color: var(--ink-dim);
-  margin-bottom: 8px;
-  display: block;
+  margin: 16px 0 8px;
 }
+.pills { display: flex; flex-wrap: wrap; gap: 8px; }
+.pills.stretch .pill { flex: 1; }
+.pill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  padding: 9px 14px;
+  border-radius: 999px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  cursor: pointer;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  line-height: 1.2;
+  transition: background .2s, border-color .2s, color .2s, box-shadow .2s;
+}
+.pill small { display: block; font-size: 11px; opacity: .8; }
+.pill[aria-pressed="true"] {
+  background: rgba(var(--acc-rgb), .1);
+  border-color: var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(var(--acc-rgb), .18);
+}
+
+.nid-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px; text-transform: uppercase; color: var(--ink-dim);
+  margin: 18px 0 8px;
+}
+.nid-row b { font-weight: 500; color: var(--acc); font-size: 12px; }
 
 .nid-slider {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  height: 4px;
-  border-radius: 3px;
-  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
-  outline: none;
-  margin-bottom: 6px;
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 4px; border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill,0%), #23291f var(--fill,0%));
+  outline: none; display: block;
 }
-
 .nid-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
+  -webkit-appearance: none; appearance: none;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: #0B0D0C; border: 2px solid var(--acc);
   box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow 0.15s;
+  cursor: pointer; transition: box-shadow .15s;
 }
-
 .nid-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
+  width: 20px; height: 20px; border-radius: 50%;
+  background: #0B0D0C; border: 2px solid var(--acc);
   box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow 0.15s;
+  cursor: pointer; transition: box-shadow .15s;
 }
+.nid-slider:hover::-webkit-slider-thumb { box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag); }
+.nid-slider:hover::-moz-range-thumb { box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag); }
 
-.nid-slider:hover::-webkit-slider-thumb {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+.ticks { position: relative; height: 14px; margin-top: 6px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-dim); }
+.ticks span { position: absolute; top: 0; transform: translateX(-50%); }
+.ticks span:first-child { transform: translateX(0); }
+.ticks span:last-child { transform: translateX(-100%); }
+
+.stats {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line);
 }
-
-.nid-slider:hover::-moz-range-thumb {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.tick-labels {
-  display: flex;
-  justify-content: space-between;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--ink-dim);
-}
-
-.stat-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  padding-top: 16px;
-  margin-top: 16px;
-  border-top: 1px solid var(--line);
-}
-
-.stat {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.stat-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-}
-
-.stat-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 24px;
-  font-weight: 500;
-}
-
+.stat { display: flex; flex-direction: column; gap: 4px; }
+.stat-label { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; text-transform: uppercase; color: var(--ink-dim); }
+.stat-value { font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 500; }
 .stat-value.acc { color: var(--acc); }
 .stat-value.amb { color: var(--amb); }
 
-.toggle-knowdrop-card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,0.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 18px;
-}
-
-.toggle-buttons {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.toggle-btn {
-  flex: 1;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14.5px;
-  padding: 12px;
-  border-radius: 11px;
-  border: 1px solid var(--line);
-  background: #12160F;
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.toggle-btn.active {
-  background: rgba(var(--acc-rgb), 0.1);
-  border: 1px solid var(--acc);
-  color: var(--acc);
-  box-shadow: 0 0 22px rgba(var(--acc-rgb), 0.18);
-}
-
-.knowdrop-divider {
-  border-top: 1px solid var(--line);
-  margin-bottom: 16px;
-}
-
-.knowdrop-text {
-  font-family: 'Geist', sans-serif;
-  font-size: 14.5px;
-  font-weight: 400;
-  line-height: 1.65;
-  color: var(--ink);
-}
+.kd-divider { border-top: 1px solid var(--line); margin-top: 16px; padding-top: 16px; }
+.kd-text { font-family: 'Geist', sans-serif; font-size: 14.5px; line-height: 1.65; color: var(--ink); }
 
 .know-this {
   border-left: 3px solid var(--acc);
@@ -296,312 +182,358 @@ canvas {
   background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
   border-radius: 0 12px 12px 0;
   margin-bottom: 0;
+  padding-bottom: 16px;
+}
+.kt-tag { display: flex; align-items: center; gap: 9px; margin-bottom: 12px; }
+.kt-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--acc); box-shadow: 0 0 8px var(--acc); animation: ktpulse 2.4s ease-in-out infinite; }
+@keyframes ktpulse { 0%,100% { opacity: 1; } 50% { opacity: .45; } }
+.kt-label { font-family: 'JetBrains Mono', monospace; font-size: 13px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--acc); }
+.kt-body { font-family: 'Geist', sans-serif; font-size: 17.4px; line-height: 1.55; color: var(--ink); margin: 0; }
+
+@media (max-width: 430px) {
+  .overlay { font-size: 11px; padding: 7px 10px; }
 }
 
-.know-this-tag {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  margin-bottom: 12px;
-}
-
-.know-this-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--acc);
-  box-shadow: 0 0 8px var(--acc);
-  animation: pulse 2.4s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.45; }
-}
-
-.know-this-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--acc);
-}
-
-.know-this-body {
-  font-family: 'Geist', sans-serif;
-  font-size: 17.4px;
-  font-weight: 400;
-  line-height: 1.55;
-  color: var(--ink);
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }
 </style>
 
-<h2 class="sr-only">Interactive non-infectious disease risk factor visualization</h2>
+<h2 class="sr-only">Interactive visualisation of non-infectious disease risk factors, incidence and prevalence in a modelled town of 1,000 people</h2>
 
-<div class="container">
-  <h1>Most modern deaths have no <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">pathogen</span></h1>
-  
-  <p class="intro">The world's biggest killers — cancer, cardiovascular disease, diabetes — aren't caused by viruses or bacteria. They emerge from the accumulation of genetic, environmental, nutritional and lifestyle factors over years or decades. Drag the slider to see how risk compounds across a lifetime.</p>
+<div class="nid-wrap">
+  <h1>Switch on every risk factor and half the town still stays <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">well</span></h1>
+  <p class="intro">Cancer, type 2 diabetes and heart disease have no pathogen, so there is nothing to catch. Risk builds from genes, environment, diet and lifestyle, and each one nudges probability rather than deciding fate. Switch on risk factors for a town of 1,000 and watch how many people develop a type 2 diabetes-like condition; then add years and watch which count climbs and which one holds.</p>
 
   <div class="card">
-    <div class="card-header">
-      <span class="card-label">Risk accumulation</span>
-      <span class="live-tag" id="liveTag">Age 25 • Low risk</span>
+    <div class="card-head">
+      <span class="card-label">Town of 1,000</span>
+      <span class="live-tag" id="liveTag">Risk ×1.0 · 2.0 per 1,000 a year</span>
     </div>
-    <div class="card-hint">Visualises how non-infectious disease risk builds with exposure over time</div>
-    
-    <div class="canvas-wrapper">
-      <canvas id="riskCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">Lifestyle + Environment + Genetics</div>
+    <div class="card-hint">Switch on risk factors. Add years. Watch which count climbs. Illustrative model.</div>
+
+    <div class="canvas-wrap">
+      <canvas id="nidCanvas"></canvas>
+      <div class="overlay" id="overlay" aria-live="polite">Prevalence · 20 of 1,000 at year 10</div>
     </div>
 
-    <div class="slider-section">
-      <label class="slider-label" for="ageSlider">Age (Years)</label>
-      <input type="range" id="ageSlider" class="nid-slider" min="0" max="100" value="25" step="1">
-      <div class="tick-labels">
-        <span>0</span>
-        <span>25</span>
-        <span>50</span>
-        <span>75</span>
-        <span>100</span>
-      </div>
+    <div class="grp-title">Risk factors switched on</div>
+    <div class="pills" role="group" aria-label="Risk factors" data-kw-multi id="factors">
+      <button class="pill" type="button" data-f="smoke" aria-pressed="false">Smoking<small>×1.4</small></button>
+      <button class="pill" type="button" data-f="diet" aria-pressed="false">Poor diet<small>×1.6</small></button>
+      <button class="pill" type="button" data-f="inact" aria-pressed="false">Inactivity<small>×1.5</small></button>
+      <button class="pill" type="button" data-f="fam" aria-pressed="false">Family history<small>×2.0</small></button>
+      <button class="pill" type="button" data-f="age" aria-pressed="false">Age 60+<small>×2.5</small></button>
     </div>
 
-    <div class="stat-row">
+    <div class="nid-row"><span>Years followed</span><b id="yearsV">Year 10</b></div>
+    <input type="range" class="nid-slider" id="years" aria-label="Years followed" min="1" max="20" step="1" value="10">
+    <div class="ticks">
+      <span style="left:0%">1</span>
+      <span style="left:21.05%">5</span>
+      <span style="left:47.37%">10</span>
+      <span style="left:73.68%">15</span>
+      <span style="left:100%">20</span>
+    </div>
+
+    <div class="grp-title">Read the town as</div>
+    <div class="pills stretch" role="group" aria-label="Readout" id="views">
+      <button class="pill" type="button" data-v="inc" aria-pressed="false">Incidence</button>
+      <button class="pill" type="button" data-v="prev" aria-pressed="true">Prevalence</button>
+    </div>
+
+    <div class="stats">
       <div class="stat">
-        <span class="stat-label">Risk Level</span>
-        <span class="stat-value acc" id="riskStat">Low</span>
+        <span class="stat-label" id="prevLab">Prevalence · living with it at year 10</span>
+        <span class="stat-value acc" id="prevVal">20</span>
       </div>
       <div class="stat">
-        <span class="stat-label">Exposure Years</span>
-        <span class="stat-value amb" id="yearStat">25</span>
+        <span class="stat-label" id="incLab">Incidence · new cases in year 10</span>
+        <span class="stat-value amb" id="incVal">2</span>
       </div>
     </div>
   </div>
 
-  <div class="toggle-knowdrop-card">
-    <div class="toggle-buttons">
-      <button class="toggle-btn active" data-mode="risk">Risk Factor</button>
-      <button class="toggle-btn" data-mode="cause">Direct Cause</button>
+  <div class="card">
+    <div class="grp-title" style="margin-top:0">Pick an idea</div>
+    <div class="pills stretch" role="group" aria-label="Idea to read about" id="ideas">
+      <button class="pill" type="button" data-k="risk" aria-pressed="true">Risk factor</button>
+      <button class="pill" type="button" data-k="cause" aria-pressed="false">Cause</button>
+      <button class="pill" type="button" data-k="patterns" aria-pressed="false">Patterns</button>
     </div>
-    
-    <div class="knowdrop-divider"></div>
-    
-    <div class="knowdrop-text" id="knowdropText">
-      A risk factor increases your probability of developing disease but doesn't guarantee it. Smoking is a risk factor for lung cancer — it raises your chances by 15–30×, but not every smoker gets cancer and some non-smokers do. Risk factors are probabilistic: they shift population-level odds, not individual certainty. This is why epidemiology studies thousands of people over decades: the pattern only emerges at scale. Changing a risk factor (quitting smoking, improving diet) reduces your probability, but your personal outcome remains uncertain because genetics, chance mutations, and cumulative exposure also play roles.
+    <div class="kd-divider">
+      <p class="kd-text" id="kdText"></p>
     </div>
   </div>
 
   <div class="know-this">
-    <div class="know-this-tag">
-      <div class="know-this-dot"></div>
-      <span class="know-this-label">Know This</span>
+    <div class="kt-tag">
+      <div class="kt-dot"></div>
+      <span class="kt-label">Know This</span>
     </div>
-    <p class="know-this-body">Non-infectious diseases dominate modern mortality because <span style="color:var(--acc)">risk compounds over time</span>, <span style="color:var(--acc)">prevention logic</span> is probabilistic not guaranteed, and socioeconomic gradients shape <span style="color:var(--acc)">exposure patterns</span> across populations.</p>
+    <p class="kt-body">A <span style="color:var(--acc)">risk factor</span> shifts probability, a <span style="color:var(--acc)">cause</span> is necessary for the disease, and a chronic disease piles up <span style="color:var(--acc)">prevalence</span> even while incidence holds steady.</p>
   </div>
 </div>
 
 <script>
-const canvas = document.getElementById('riskCanvas');
-const ctx = canvas.getContext('2d', { alpha: false });
-const slider = document.getElementById('ageSlider');
-const liveTag = document.getElementById('liveTag');
-const canvasOverlay = document.getElementById('canvasOverlay');
-const riskStat = document.getElementById('riskStat');
-const yearStat = document.getElementById('yearStat');
-const knowdropText = document.getElementById('knowdropText');
-
-const CSS = getComputedStyle(document.documentElement);
-const ACC = CSS.getPropertyValue('--acc').trim();
-const RGB = CSS.getPropertyValue('--acc-rgb').trim();
-const AMB = CSS.getPropertyValue('--amb').trim();
-
-const dpr = Math.min(window.devicePixelRatio || 1, 2);
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d', { alpha: false });
-
-let age = 25;
-let particles = [];
-let time = 0;
-
-function resize() {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  initParticles();
-}
-
-function initParticles() {
-  particles = [];
-  for (let i = 0; i < 120; i++) {
-    particles.push({
-      x: Math.random(),
-      y: Math.random(),
-      vx: (Math.random() - 0.5) * 0.15,
-      vy: Math.random() * 0.08 + 0.02,
-      r: Math.random() * 2.5 + 0.8,
-      type: Math.random() < 0.33 ? 'lifestyle' : (Math.random() < 0.5 ? 'environment' : 'genetic'),
-      birth: Math.random() * 100
-    });
+(function(){
+  const canvas = document.getElementById("nidCanvas");
+  const ctx = canvas.getContext("2d");
+  const CSS = getComputedStyle(document.documentElement);
+  const ACC = CSS.getPropertyValue("--acc").trim();
+  const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+  const AMB = CSS.getPropertyValue("--amb").trim();
+  function hexToRgb(hx){
+    let s = hx.replace("#","").trim();
+    if (s.length === 3) s = s.split("").map(c => c + c).join("");
+    const n = parseInt(s, 16);
+    return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
   }
-}
+  const A = RGB.split(",").map(v => parseFloat(v));
+  const M = hexToRgb(AMB);
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-function updateStats() {
-  const riskLevel = age < 30 ? 'Low' : (age < 50 ? 'Moderate' : (age < 70 ? 'High' : 'Critical'));
-  riskStat.textContent = riskLevel;
-  yearStat.textContent = age;
-  liveTag.textContent = `Age ${age} • ${riskLevel} risk`;
-  
-  let factorText = 'Lifestyle + Environment + Genetics';
-  if (age < 20) factorText = 'Genetic + Early Environment';
-  else if (age < 40) factorText = 'Lifestyle + Environment';
-  else if (age < 65) factorText = 'Cumulative Exposure';
-  else factorText = 'Multi-Factor Accumulation';
-  
-  canvasOverlay.textContent = factorText;
-  
-  const fillPercent = (age / 100) * 100;
-  slider.style.setProperty('--fill', fillPercent + '%');
-}
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const buf = document.createElement("canvas");
+  const bctx = buf.getContext("2d");
 
-function draw() {
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  const cx = w / 2;
-  const cy = h / 2;
+  const liveTag = document.getElementById("liveTag");
+  const overlay = document.getElementById("overlay");
+  const yearsV = document.getElementById("yearsV");
+  const slider = document.getElementById("years");
+  const prevLab = document.getElementById("prevLab");
+  const prevVal = document.getElementById("prevVal");
+  const incLab = document.getElementById("incLab");
+  const incVal = document.getElementById("incVal");
+  const kdText = document.getElementById("kdText");
 
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, w, h);
+  const COLS = 50, ROWS = 20, POP = COLS * ROWS;
+  const BASE = 0.002;
+  const factors = [
+    { id: "smoke", rr: 1.4, on: false },
+    { id: "diet",  rr: 1.6, on: false },
+    { id: "inact", rr: 1.5, on: false },
+    { id: "fam",   rr: 2.0, on: false },
+    { id: "age",   rr: 2.5, on: false }
+  ];
+  let years = 10;
+  let view = "prev";
 
-  // Background grid
-  ctx.strokeStyle = 'rgba(90, 173, 212, 0.06)';
-  ctx.lineWidth = 0.5;
-  for (let x = 0; x < w; x += 40) {
-    ctx.beginPath();
-    ctx.moveTo(x, 0);
-    ctx.lineTo(x, h);
-    ctx.stroke();
-  }
-  for (let y = 0; y < h; y += 30) {
-    ctx.beginPath();
-    ctx.moveTo(0, y);
-    ctx.lineTo(w, y);
-    ctx.stroke();
+  // deterministic scatter of who falls ill first
+  const order = (function(){
+    const arr = Array.from({ length: POP }, (_, k) => k);
+    let s = 20261011;
+    const rnd = () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; };
+    for (let k = arr.length - 1; k > 0; k--) {
+      const j = Math.floor(rnd() * (k + 1));
+      const tmp = arr[k]; arr[k] = arr[j]; arr[j] = tmp;
+    }
+    return arr;
+  })();
+
+  function model(){
+    const act = factors.filter(f => f.on);
+    const rr = act.reduce((p, f) => p * f.rr, 1);
+    const i = BASE * rr;
+    const Pp = POP * (1 - Math.pow(1 - i, years - 1));
+    const P = POP * (1 - Math.pow(1 - i, years));
+    let Pr = Math.round(P);
+    let Nr = Math.min(Math.round(P - Pp), Pr);
+    return { rr, i, P, N: P - Pp, Pr, Nr, n: act.length };
   }
 
-  // Risk accumulation zones
-  const zones = Math.floor(age / 20);
-  for (let i = 0; i <= zones && i < 5; i++) {
-    const alpha = 0.03 + (i * 0.025);
-    const yStart = h - (h / 5) * (i + 1);
-    const grad = ctx.createLinearGradient(0, yStart, 0, yStart + h / 5);
-    grad.addColorStop(0, `rgba(${RGB}, 0)`);
-    grad.addColorStop(0.5, `rgba(${RGB}, ${alpha})`);
-    grad.addColorStop(1, `rgba(${RGB}, 0)`);
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, yStart, w, h / 5);
+  // colour state per dot: [r,g,b,a]
+  const HEALTHY = [255, 255, 255, 0.10];
+  let cur = Array.from({ length: POP }, () => HEALTHY.slice());
+  let prev = cur.map(c => c.slice());
+  let tgt = cur.map(c => c.slice());
+  let isNew = new Uint8Array(POP);
+  let newAlpha = new Float32Array(POP);
+  let progress = 1, start = 0, anim = null;
+  const DUR = 650;
+
+  function computeTargets(){
+    const m = model();
+    const caseA = view === "inc" ? 0.22 : 0.85;
+    isNew = new Uint8Array(POP);
+    for (let k = 0; k < POP; k++) {
+      const d = order[k];
+      if (k < m.Pr - m.Nr) tgt[d] = [A[0], A[1], A[2], caseA];
+      else if (k < m.Pr) { tgt[d] = [M[0], M[1], M[2], 0.95]; isNew[d] = 1; }
+      else tgt[d] = HEALTHY.slice();
+    }
+    return m;
   }
 
-  // Particles (risk factors)
-  particles.forEach(p => {
-    if (p.birth > age) return;
-    
-    p.x += p.vx * 0.01;
-    p.y += p.vy * 0.01;
-    
-    if (p.x < 0) p.x = 1;
-    if (p.x > 1) p.x = 0;
-    if (p.y > 1) {
-      p.y = 0;
-      p.x = Math.random();
+  function fmt1(x){ return (Math.round(x * 10) / 10).toFixed(1); }
+
+  function updateText(m){
+    liveTag.textContent = "Risk ×" + fmt1(m.rr) + " · " + fmt1(m.i * 1000) + " per 1,000 a year";
+    yearsV.textContent = "Year " + years;
+    prevLab.textContent = "Prevalence · living with it at year " + years;
+    prevVal.textContent = m.Pr;
+    incLab.textContent = "Incidence · new cases in year " + years;
+    incVal.textContent = m.Nr;
+    overlay.textContent = view === "inc"
+      ? "Incidence · " + m.Nr + " new cases in year " + years
+      : "Prevalence · " + m.Pr + " of 1,000 at year " + years;
+    slider.style.setProperty("--fill", ((years - 1) / 19 * 100) + "%");
+  }
+
+  function change(){
+    prev = cur.map(c => c.slice());
+    const m = computeTargets();
+    updateText(m);
+    if (reduce) { progress = 1; draw(1); return; }
+    progress = 0; start = performance.now();
+    if (!anim) anim = requestAnimationFrame(step);
+  }
+
+  function step(now){
+    progress = Math.min(1, (now - start) / DUR);
+    const e = 1 - Math.pow(1 - progress, 3);
+    draw(e);
+    if (progress < 1) anim = requestAnimationFrame(step);
+    else anim = null;
+  }
+
+  function resize(){
+    const rect = canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    buf.width = canvas.width; buf.height = canvas.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    draw(progress >= 1 ? 1 : 1 - Math.pow(1 - progress, 3));
+  }
+
+  function draw(e){
+    const w = canvas.width / dpr, h = canvas.height / dpr;
+    if (!w || !h) return;
+    const cx = w / 2, cy = h / 2;
+    ctx.fillStyle = "rgba(0,0,0,1)";
+    ctx.fillRect(0, 0, w, h);
+
+    const top = h * 0.08;
+    const gridTop = top + 26, gridBot = h - 44;
+    const availH = Math.max(20, gridBot - gridTop), availW = w * 0.9;
+    const pitch = Math.min(availW / COLS, availH / ROWS);
+    const gw = pitch * COLS, gh = pitch * ROWS;
+    const gx = (w - gw) / 2, gy = gridTop + (availH - gh) / 2;
+    const r = Math.max(1.6, pitch * 0.33);
+
+    // frame around the town
+    ctx.strokeStyle = "rgba(" + RGB + ",0.16)";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(gx - pitch * 0.5, gy - pitch * 0.5, gw + pitch, gh + pitch);
+
+    // dots
+    for (let d = 0; d < POP; d++) {
+      const p = prev[d], t = tgt[d];
+      const c = [p[0] + (t[0] - p[0]) * e, p[1] + (t[1] - p[1]) * e, p[2] + (t[2] - p[2]) * e, p[3] + (t[3] - p[3]) * e];
+      cur[d] = c;
+      const col = d % COLS, row = Math.floor(d / COLS);
+      const x = gx + pitch * (col + 0.5), y = gy + pitch * (row + 0.5);
+      ctx.fillStyle = "rgba(" + Math.round(c[0]) + "," + Math.round(c[1]) + "," + Math.round(c[2]) + "," + c[3].toFixed(3) + ")";
+      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
     }
 
-    const px = p.x * w;
-    const py = p.y * h;
-    const intensity = Math.min(age / 100, 1);
-    
-    let color;
-    if (p.type === 'lifestyle') color = `rgba(${RGB}, ${0.4 + intensity * 0.4})`;
-    else if (p.type === 'environment') color = `rgba(250, 199, 117, ${0.35 + intensity * 0.3})`;
-    else color = `rgba(255, 255, 255, ${0.25 + intensity * 0.25})`;
-
+    // halos on this year's new cases
     ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.fillStyle = color;
-    ctx.beginPath();
-    ctx.arc(px, py, p.r * (1 + intensity * 0.5), 0, Math.PI * 2);
-    ctx.fill();
+    ctx.globalCompositeOperation = "lighter";
+    for (let d = 0; d < POP; d++) {
+      if (!isNew[d]) continue;
+      const col = d % COLS, row = Math.floor(d / COLS);
+      const x = gx + pitch * (col + 0.5), y = gy + pitch * (row + 0.5);
+      const a = 0.28 * e;
+      ctx.fillStyle = "rgba(" + M[0] + "," + M[1] + "," + M[2] + "," + a.toFixed(3) + ")";
+      ctx.beginPath(); ctx.arc(x, y, r * 2.3, 0, Math.PI * 2); ctx.fill();
+    }
     ctx.restore();
-  });
 
-  // Central accumulation glow
-  if (age > 30) {
-    const glowIntensity = Math.min((age - 30) / 70, 1);
-    const glowRadius = 60 + glowIntensity * 80;
-    const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, glowRadius);
-    glow.addColorStop(0, `rgba(${RGB}, ${glowIntensity * 0.25})`);
-    glow.addColorStop(0.5, `rgba(${RGB}, ${glowIntensity * 0.12})`);
-    glow.addColorStop(1, 'rgba(90, 173, 212, 0)');
+    // legend
+    ctx.font = "11px 'JetBrains Mono', monospace";
+    ctx.textBaseline = "middle";
+    const legY = top + 8;
+    const items = [
+      ["rgba(255,255,255,0.35)", "healthy"],
+      ["rgba(" + RGB + "," + (view === "inc" ? "0.35" : "0.9") + ")", view === "inc" ? "already had it" : "living with it"],
+      ["rgba(" + M[0] + "," + M[1] + "," + M[2] + ",0.95)", "new this year"]
+    ];
+    const legW = items.reduce((s, it) => s + 13 + ctx.measureText(it[1]).width + 14, -14);
+    let lx = Math.max(8, Math.min(gx, w - 8 - legW));
+    items.forEach(it => {
+      ctx.fillStyle = it[0];
+      ctx.beginPath(); ctx.arc(lx + 4, legY, 4, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "rgba(255,255,255,0.6)";
+      ctx.fillText(it[1], lx + 13, legY);
+      lx += 13 + ctx.measureText(it[1]).width + 14;
+    });
+
+    // bloom
+    bctx.setTransform(1, 0, 0, 1, 0, 0);
+    bctx.clearRect(0, 0, buf.width, buf.height);
+    if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
     ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.fillStyle = glow;
-    ctx.beginPath();
-    ctx.arc(cx, cy, glowRadius, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.globalCompositeOperation = "lighter";
+    ctx.globalAlpha = 0.38;
+    ctx.filter = "blur(7px)";
+    if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
     ctx.restore();
+
+    // vignette
+    const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)");
+    vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig;
+    ctx.fillRect(0, 0, w, h);
   }
 
-  // Bloom
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
-
-  // Vignette
-  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-
-  time += 0.016;
-  requestAnimationFrame(draw);
-}
-
-slider.addEventListener('input', (e) => {
-  age = parseInt(e.target.value);
-  updateStats();
-});
-
-// Toggle buttons
-const toggleButtons = document.querySelectorAll('.toggle-btn');
-const knowdropContent = {
-  risk: "A risk factor increases your probability of developing disease but doesn't guarantee it. Smoking is a risk factor for lung cancer — it raises your chances by 15–30×, but not every smoker gets cancer and some non-smokers do. Risk factors are probabilistic: they shift population-level odds, not individual certainty. This is why epidemiology studies thousands of people over decades: the pattern only emerges at scale. Changing a risk factor (quitting smoking, improving diet) reduces your probability, but your personal outcome remains uncertain because genetics, chance mutations, and cumulative exposure also play roles.",
-  cause: "A direct cause is necessary and sufficient to produce disease. In infectious disease, the pathogen is the cause: no Mycobacterium tuberculosis, no TB. But non-infectious diseases rarely have a single direct cause. Type 2 diabetes emerges from insulin resistance plus beta-cell dysfunction plus genetic susceptibility plus environmental triggers. You can't point to one 'diabetes germ' the way you can with cholera. This is why prevention strategies target multiple risk factors simultaneously: diet, exercise, weight, genetics all contribute, and addressing just one may not be enough. The causal web is distributed, not singular."
-};
-
-toggleButtons.forEach(btn => {
-  btn.addEventListener('click', () => {
-    toggleButtons.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const mode = btn.dataset.mode;
-    knowdropText.textContent = knowdropContent[mode];
+  // controls
+  document.querySelectorAll("#factors .pill").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const f = factors.find(x => x.id === btn.dataset.f);
+      f.on = !f.on;
+      btn.setAttribute("aria-pressed", f.on ? "true" : "false");
+      change();
+    });
   });
-});
 
-window.addEventListener('resize', resize);
-resize();
-updateStats();
-requestAnimationFrame(draw);
+  slider.addEventListener("input", () => {
+    years = parseInt(slider.value, 10);
+    change();
+  });
+
+  document.querySelectorAll("#views .pill").forEach(btn => {
+    btn.addEventListener("click", () => {
+      view = btn.dataset.v;
+      document.querySelectorAll("#views .pill").forEach(b => b.setAttribute("aria-pressed", b === btn ? "true" : "false"));
+      change();
+    });
+  });
+
+  const ideas = {
+    risk: "A risk factor raises the probability of a disease without making it certain. Smoking multiplies the risk of lung cancer many times over, yet most heavy smokers never develop it and some never-smokers do. Risk factors are probabilistic: they shift the odds in a population, not the outcome for one person. In the town above, every factor switched on still leaves about half the dots grey after twenty years. That gap between exposure and disease is exactly why epidemiologists follow thousands of people for decades before they trust a pattern.",
+    cause: "A cause is a factor the disease cannot occur without: it is necessary. In infectious disease the pathogen is necessary but not sufficient, since most people infected with Mycobacterium tuberculosis never develop TB disease; immunity, nutrition and crowding decide who does. Non-infectious diseases usually have no single necessary factor at all. Type 2 diabetes emerges from inherited susceptibility plus diet, inactivity and age acting together, so no one factor can be called the cause. That is why prevention targets several risk factors at once rather than hunting for a single trigger.",
+    patterns: "Incidence is the number of new cases in a population at risk over a set time, usually a year. Prevalence is everyone living with the disease at one moment, new and old cases combined. Because type 2 diabetes is chronic and rarely cured, a steady incidence still makes prevalence climb year after year, which is why the town fills up while the yearly count stays flat or even drifts down as fewer people are left to fall ill. Across real populations these numbers follow patterns: prevalence rises with age, differs between regions, and tracks socioeconomic gradients in diet, activity and access to care. Reading those patterns is how epidemiologists decide where a public health intervention will do most."
+  };
+  kdText.textContent = ideas.risk;
+  document.querySelectorAll("#ideas .pill").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("#ideas .pill").forEach(b => b.setAttribute("aria-pressed", b === btn ? "true" : "false"));
+      kdText.textContent = ideas[btn.dataset.k];
+    });
+  });
+
+  window.addEventListener("resize", resize);
+
+  // initial state: no fade, draw at rest
+  const m0 = computeTargets();
+  prev = tgt.map(c => c.slice());
+  cur = tgt.map(c => c.slice());
+  updateText(m0);
+  resize();
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'non-infectious-disease-causes-and-patterns'},'*');}catch(e){}}

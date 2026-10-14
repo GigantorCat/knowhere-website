@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Spectroscopy and Spectra — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Spectroscopy and spectra — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -206,7 +206,7 @@ canvas {
   position: relative;
   height: 14px;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
+  font-size: 10px;
   color: var(--ink-dim);
   margin-top: 4px;
 }
@@ -342,6 +342,12 @@ canvas {
 .know-text span {
   color: var(--acc);
 }
+
+/* Greek letters keep their case under text-transform:uppercase (6 Oct) */
+.kw-greek{text-transform:none}
+#canvasTag{text-transform:none}
+/* quantum number n stays lower case (7 Oct) */
+#liveTag,.slider-label,.stat-label{text-transform:none}
 </style>
 
 <div class="container">
@@ -349,7 +355,7 @@ canvas {
 
   <h1>Every atom confesses its identity through the <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">gaps</span></h1>
   
-  <p class="intro">A heated element doesn't glow white — it emits only certain sharp wavelengths, like a barcode stamped in light. Those missing colours are the proof that electrons can't sit anywhere: energy is quantised. Drag the slider to transition between energy levels and watch the photon that escapes.</p>
+  <p class="intro">A hot gas of one element doesn't glow in a full rainbow like a hot solid does; it emits only certain sharp wavelengths, like a barcode stamped in light. Those missing colours are the proof that electrons can't sit anywhere: energy is quantised. Move the electron between energy levels and watch the photon that escapes.</p>
 
   <div class="card">
     <div class="card-header">
@@ -360,7 +366,7 @@ canvas {
     
     <div class="canvas-wrapper">
       <canvas id="specCanvas"></canvas>
-      <div class="canvas-overlay-tag" id="canvasTag">656 nm · Visible red (Hα)</div>
+      <div class="canvas-overlay-tag" id="canvasTag">656 nm · Visible red (H<span class="kw-greek">α</span>)</div>
     </div>
 
     <div class="slider-section">
@@ -393,7 +399,7 @@ canvas {
       <button class="toggle-btn" id="absorptionBtn">Absorption</button>
     </div>
     <div class="knowdrop" id="knowdrop">
-      Heat hydrogen gas and it glows at sharp wavelengths — 656 nm red, 486 nm cyan, 434 nm violet. Each line is one electron dropping from a higher level to n=2 (the Balmer series). The photon's energy equals the gap: E = hf, so bigger jumps make bluer light. Every element has a unique set of allowed levels, so every element has a unique spectrum — astronomy's greatest forensic tool.
+      Heat hydrogen gas and it glows at sharp wavelengths — 656 nm red, 486 nm cyan, 434 nm violet. Each line is one electron dropping from a higher level to n=2 (the Balmer series); the n=2 setting is the odd one out, an ultraviolet drop to n=1 (Lyman α). The photon’s energy equals the gap: E = hf, so bigger jumps make bluer light. Every element has a unique set of allowed levels, so every element has a unique spectrum — astronomy’s greatest forensic tool.
     </div>
   </div>
 
@@ -440,7 +446,7 @@ const HC = 1239.84; /* eV nm */
 const levelE = k => -13.6 / (k * k);
 const lowerOf = k => (k === 2 ? 1 : 2);
 const specLook = {
-  2: { color: '#9B59D6', name: 'Ultraviolet (Lyman α)' },
+  2: { color: '#B9B4D0', name: 'Ultraviolet (Lyman α)' },
   3: { color: '#E74C3C', name: 'Visible red (Hα)' },
   4: { color: '#3498DB', name: 'Visible cyan (Hβ)' },
   5: { color: '#8E44AD', name: 'Visible violet (Hγ)' },
@@ -495,7 +501,7 @@ function draw() {
   const levelY = k => groundY - (1 - 1 / (k * k)) * (groundY - topY);
   const data = specData[n];
   const emit = mode === "emission";
-  const labFont = Math.max(9, Math.min(11, h * 0.05));
+  const labFont = Math.max(10, Math.min(11, h * 0.05));
   const gap = labFont + 1;
   // label positions: spread upward-crowded labels downward so none overlap
   const labY = {};
@@ -588,9 +594,9 @@ function draw() {
   
   // Photon - leaves the atom (emission) or arrives at it (absorption);
   // drawn wavelength is proportional to the real one
-  const wavelength = data.nm / 16; // visual wavelength
+  const wavelength = data.nm / 10; // drawn wavelength in px, proportional to the real one
   const flow = emit ? -1 : 1;
-  const photonX = w * 0.48;
+  const photonX = w * 0.42;
   const amplitude = 18;
   
   ctx.save();
@@ -601,7 +607,7 @@ function draw() {
   ctx.shadowBlur = 12;
   ctx.beginPath();
   
-  for (let x = 0; x < w * 0.42; x += 2) {
+  for (let x = 0; x < w * 0.34; x += 1) {
     const px = photonX + x;
     const phase = flow * photonPhase + (x / wavelength) * Math.PI * 2;
     const py = cy + Math.sin(phase) * amplitude;
@@ -613,7 +619,7 @@ function draw() {
   
   // Photon particles along wave
   for (let i = 0; i < 5; i++) {
-    const px = photonX + (w * 0.42 * i) / 5;
+    const px = photonX + (w * 0.34 * i) / 5;
     const phase = flow * photonPhase + ((px - photonX) / wavelength) * Math.PI * 2;
     const py = cy + Math.sin(phase) * amplitude;
     
@@ -629,46 +635,80 @@ function draw() {
     ctx.restore();
   }
   
-  // Spectrum bar on right
-  const specX = w * 0.88;
+  // Spectrum strip on right: a true wavelength scale (100 nm at the bottom, 700 nm at the top).
+  // Every line the slider can pick is drawn faintly, so the bunching toward the violet end shows;
+  // the selected line is bright (emission) or black (absorption).
+  const specX = w * 0.86;
   const specW = 20;
-  const specH = h * 0.6;
-  const specY = (h - specH) / 2;
-  
-  // Active line position (long wavelength at top)
-  const lineY = specY + (specH * (680 - data.nm)) / 580;
+  const specH = h * 0.66;
+  const specY = h * 0.15;
+  const NM_LO = 100, NM_HI = 700;
+  const yOf = nm => specY + specH * (NM_HI - nm) / (NM_HI - NM_LO);
+  const visTop = yOf(700), visBot = yOf(380);
   if (emit) {
-    // dark background, bright line
     ctx.fillStyle = 'rgba(255,255,255,0.05)';
     ctx.fillRect(specX, specY, specW, specH);
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.fillStyle = data.color;
-    ctx.shadowColor = data.color;
-    ctx.shadowBlur = 16;
-    ctx.fillRect(specX - 4, lineY - 1.5, specW + 8, 3);
-    ctx.restore();
   } else {
-    // continuous bright background, dark line where the photon was taken out
-    const sg = ctx.createLinearGradient(0, specY, 0, specY + specH);
-    sg.addColorStop(0, 'rgba(231,76,60,0.55)');
-    sg.addColorStop(0.2, 'rgba(241,196,15,0.5)');
-    sg.addColorStop(0.35, 'rgba(58, 111, 200,0.5)');
-    sg.addColorStop(0.5, 'rgba(52,152,219,0.55)');
-    sg.addColorStop(0.65, 'rgba(142,68,173,0.55)');
-    sg.addColorStop(1, 'rgba(110,90,140,0.35)');
+    /* continuous band: visible colours at their true wavelengths, ultraviolet shown dim */
+    const sg = ctx.createLinearGradient(0, visTop, 0, visBot);
+    sg.addColorStop(0, 'rgba(200,40,40,0.6)');
+    sg.addColorStop((700 - 620) / 320, 'rgba(231,76,60,0.6)');
+    sg.addColorStop((700 - 580) / 320, 'rgba(241,196,15,0.55)');
+    sg.addColorStop((700 - 530) / 320, 'rgba(58, 111, 200,0.55)');
+    sg.addColorStop((700 - 480) / 320, 'rgba(52,152,219,0.6)');
+    sg.addColorStop((700 - 440) / 320, 'rgba(90,80,220,0.6)');
+    sg.addColorStop(1, 'rgba(142,68,173,0.55)');
     ctx.fillStyle = sg;
-    ctx.fillRect(specX, specY, specW, specH);
-    ctx.fillStyle = '#000';
-    ctx.fillRect(specX - 4, lineY - 1.5, specW + 8, 3);
+    ctx.fillRect(specX, visTop, specW, visBot - visTop);
+    ctx.fillStyle = 'rgba(185,180,208,0.18)';
+    ctx.fillRect(specX, visBot, specW, specY + specH - visBot);
   }
-  
+  /* visible / ultraviolet boundary at 380 nm */
+  ctx.strokeStyle = 'rgba(140,147,137,0.45)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([2, 3]);
+  ctx.beginPath();
+  ctx.moveTo(specX - 4, visBot);
+  ctx.lineTo(specX + specW + 4, visBot);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  for (let k = 2; k <= 6; k++) {
+    const d = specData[k];
+    const ly = yOf(d.nm);
+    const on = k === n;
+    const lx = specX - (on ? 4 : 0), lw = specW + (on ? 8 : 0), lh = on ? 3 : 1.5;
+    if (emit) {
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.globalAlpha = on ? 1 : 0.35;
+      ctx.fillStyle = d.color;
+      if (on) { ctx.shadowColor = d.color; ctx.shadowBlur = 16; }
+      ctx.fillRect(lx, ly - lh / 2, lw, lh);
+      ctx.restore();
+    } else {
+      ctx.fillStyle = on ? '#000' : 'rgba(0,0,0,0.6)';
+      ctx.fillRect(lx, ly - lh / 2, lw, lh);
+    }
+  }
+  /* scale ticks at their true wavelengths */
+  ctx.font = '10px "JetBrains Mono"';
+  ctx.textAlign = 'right';
+  ctx.fillStyle = 'rgba(140,147,137,0.75)';
+  [700, 500, 300, 100].forEach(v => {
+    const ty = yOf(v);
+    ctx.fillRect(specX - 3, ty - 0.5, 3, 1);
+    ctx.fillText(String(v), specX - 6, ty + 3.5);
+  });
+  ctx.textAlign = 'left';
+  ctx.fillText('nm', specX + specW + 5, yOf(700) + 3.5);
+  ctx.fillText('UV', specX + specW + 5, yOf(240) + 3.5);
+
   // Spectrum label
   ctx.fillStyle = 'rgba(140,147,137,0.6)';
   ctx.font = '10px "JetBrains Mono"';
   ctx.textAlign = 'center';
   ctx.fillText('SPECTRUM', specX + specW / 2, specY - 8);
-  
+
   // Bloom
   bctx.setTransform(1, 0, 0, 1, 0, 0);
   bctx.clearRect(0, 0, buf.width, buf.height);
@@ -708,7 +748,7 @@ emissionBtn.addEventListener('click', () => {
   updateUI();
   emissionBtn.classList.add('active');
   absorptionBtn.classList.remove('active');
-  knowdrop.textContent = "Heat hydrogen gas and it glows at sharp wavelengths — 656 nm red, 486 nm cyan, 434 nm violet. Each line is one electron dropping from a higher level to n=2 (the Balmer series). The photon's energy equals the gap: E = hf, so bigger jumps make bluer light. Every element has a unique set of allowed levels, so every element has a unique spectrum — astronomy's greatest forensic tool.";
+  knowdrop.textContent = "Heat hydrogen gas and it glows at sharp wavelengths — 656 nm red, 486 nm cyan, 434 nm violet. Each line is one electron dropping from a higher level to n=2 (the Balmer series); the n=2 setting is the odd one out, an ultraviolet drop to n=1 (Lyman α). The photon’s energy equals the gap: E = hf, so bigger jumps make bluer light. Every element has a unique set of allowed levels, so every element has a unique spectrum — astronomy’s greatest forensic tool.";
 });
 
 absorptionBtn.addEventListener('click', () => {
@@ -717,7 +757,7 @@ absorptionBtn.addEventListener('click', () => {
   updateUI();
   absorptionBtn.classList.add('active');
   emissionBtn.classList.remove('active');
-  knowdrop.textContent = "Shine white light through cool hydrogen and it steals the same wavelengths it emits when hot — dark lines at 656, 486, 434 nm. The gas absorbs only photons with exactly the right energy to lift an electron to a higher level. This is how we know what stars are made of: their absorption spectra reveal every element in the outer layers, even across billions of light-years.";
+  knowdrop.textContent = "Shine white light through hydrogen and it removes exactly the wavelengths it can emit: dark lines sit where the bright lines were. The gas absorbs only photons with exactly the right energy to lift an electron to a higher level. Cool hydrogen sits in n=1, so it darkens the ultraviolet Lyman lines; the visible dark lines at 656, 486 and 434 nm appear in hot star atmospheres, where many atoms already sit in n=2. This is how we know what stars are made of: their absorption spectra reveal every element in the outer layers, even across billions of light-years.";
 });
 
 window.addEventListener('resize', resize);

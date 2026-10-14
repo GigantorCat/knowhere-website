@@ -4,674 +4,459 @@ body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
-
-:root {
-  --bg: #0B0D0C;
-  --bg2: #12160F;
-  --acc: #9A5FD2;
-  --ag: rgba(154, 95, 210, .7);
-  --ag1: rgba(154, 95, 210, .12);
-  --ag2: rgba(154, 95, 210, .45);
-  --amb: #FAC775;
-  --ink: #EDEDE8;
-  --ink-dim: #8C9389;
-  --line: #262B26;
-}
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
-}
-
-body {
-  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
-  font-family: 'Geist', sans-serif;
-  color: var(--ink);
-  min-height: 100vh;
-  padding: 40px 16px 0;
-  -webkit-font-smoothing: antialiased;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-.container {
-  max-width: 720px;
-  margin: 0 auto;
-}
-
-h1 {
-  font-size: clamp(26px, 6.5vw, 44px);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
-  margin-bottom: 14px;
-}
-
-h1 .acc {
-  color: var(--acc);
-  text-shadow: 0 0 26px var(--ag2);
-}
-
-.intro {
-  font-size: 15.5px;
-  font-weight: 400;
-  color: var(--ink-dim);
-  line-height: 1.55;
-  max-width: 58ch;
-  margin-bottom: 32px;
-}
-
-.card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 18px;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
-}
-
-.card-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  color: var(--ink);
-}
-
-.live-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--acc);
-}
-
-.card-hint {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--ink-dim);
-  margin-bottom: 14px;
-}
-
-.canvas-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16/9;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
-  box-shadow: inset 0 0 0 1px var(--ag1);
-  margin-bottom: 16px;
-}
-
-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.canvas-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(4px);
-  padding: 9px 16px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  text-transform: uppercase;
-  color: var(--acc);
-  text-align: center;
-}
-
-.slider-wrapper {
-  margin-bottom: 8px;
-}
-
-.slider-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 10px;
-}
-
-.war-slider {
-  width: 100%;
-  height: 4px;
-  -webkit-appearance: none;
-  appearance: none;
-  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
-  border-radius: 3px;
-  outline: none;
-  cursor: pointer;
-}
-
-.war-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow .15s;
-}
-
-.war-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow .15s;
-}
-
-.war-slider:hover::-webkit-slider-thumb {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.war-slider:hover::-moz-range-thumb {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.tick-labels {
-  display: flex;
-  justify-content: space-between;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--ink-dim);
-  margin-top: 6px;
-}
-
-.stat-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-}
-
-.stat {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.stat-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-}
-
-.stat-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 24px;
-  font-weight: 500;
-}
-
-.stat-value.acc { color: var(--acc); }
-.stat-value.amb { color: var(--amb); }
-
-.toggle-card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 18px;
-}
-
-.toggle-buttons {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.toggle-btn {
-  flex: 1;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14.5px;
-  padding: 12px;
-  border-radius: 11px;
-  background: #12160F;
-  border: 1px solid var(--line);
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: all .15s;
-}
-
-.toggle-btn.active {
-  background: rgba(154, 95, 210,.1);
-  border: 1px solid var(--acc);
-  color: var(--acc);
-  box-shadow: 0 0 22px rgba(154, 95, 210,.18);
-}
-
-.knowdrop-divider {
-  border-top: 1px solid var(--line);
-  margin-bottom: 16px;
-}
-
-.knowdrop {
-  font-size: 14.5px;
-  font-weight: 400;
-  line-height: 1.65;
-  color: var(--ink);
-}
-
-.know-this {
-  border-left: 3px solid var(--acc);
-  padding: 16px 18px;
-  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
-  border-radius: 0 12px 12px 0;
-  margin-bottom: 0;
-}
-
-.know-this-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--acc);
-  margin-bottom: 10px;
-  display: block;
-}
-
-.know-this p {
-  font-size: 17.4px;
-  font-weight: 400;
-  line-height: 1.55;
-  color: var(--ink);
-  margin: 0;
-  padding: 0;
-}
-
-.know-this .term {
-  color: var(--acc);
-}
+:root{--bg:#0B0D0C;--bg2:#12160F;--acc:#9A5FD2;--acc-rgb:154, 95, 210;--ag:rgba(var(--acc-rgb),.7);--ag1:rgba(var(--acc-rgb),.12);--ag2:rgba(var(--acc-rgb),.45);--amb:#FAC775;--amb-rgb:250,199,117;--ink:#EDEDE8;--ink-rgb:237,237,232;--ink-dim:#8C9389;--line:#262B26;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C 55%);font-family:'Geist',sans-serif;color:var(--ink);min-height:100vh;padding:40px 16px 0;-webkit-font-smoothing:antialiased}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.cw{max-width:720px;margin:0 auto}
+.cw h1{font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin-bottom:14px}
+.cw-intro{font-size:15.5px;font-weight:400;color:var(--ink-dim);line-height:1.55;max-width:58ch;margin-bottom:30px}
+.cw-card{background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);margin-bottom:18px}
+.cw-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+.cw-label{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;color:var(--ink)}
+.cw-live{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--acc);text-align:right}
+.cw-hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin-bottom:14px;line-height:1.5}
+.cw-wrap{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1);margin-bottom:16px}
+@media (max-width:560px){.cw-wrap{aspect-ratio:3/4}}
+.cw-wrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.cw-overlay{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:14px;text-transform:uppercase;color:var(--acc);text-align:center;line-height:1.3}
+.cw-row{display:flex;justify-content:space-between;align-items:baseline;font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:10px}
+.cw-row b{font-weight:500;color:var(--ink);font-size:12px}
+.cw-slider{width:100%;height:4px;-webkit-appearance:none;appearance:none;background:linear-gradient(90deg,var(--acc) var(--fill,0%),#23291f var(--fill,0%));border-radius:3px;outline:none;cursor:pointer;display:block}
+.cw-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.cw-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.cw-slider:hover::-webkit-slider-thumb{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.cw-slider:hover::-moz-range-thumb{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.cw-ticks{position:relative;height:12px;margin-top:8px}
+.cw-ticks span{position:absolute;top:0;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink-dim);transform:translateX(-50%)}
+.cw-ticks span:first-child{transform:none}
+.cw-stats{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+.cw-stat{display:flex;flex-direction:column;gap:4px}
+.cw-stat small{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim)}
+.cw-stat b{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500}
+.cw-stat b.acc{color:var(--acc)}
+.cw-stat b.amb{color:var(--amb)}
+.cw-note{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);line-height:1.5;margin-top:12px}
+.cw-tg-title{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:10px}
+.cw-pills{display:flex;gap:10px}
+.cw-pill{flex:1;font-family:'JetBrains Mono',monospace;font-size:13px;padding:12px 10px;border-radius:999px;background:#12160F;border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:all .15s}
+.cw-pill[aria-pressed="true"]{background:rgba(var(--acc-rgb),.1);border:1px solid var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.cw-div{border-top:1px solid var(--line);margin:16px 0}
+.cw-drop{font-size:14.5px;font-weight:400;line-height:1.65;color:var(--ink)}
+.cw-know{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));border-radius:0 12px 12px 0;margin-bottom:0;padding-bottom:16px}
+.cw-know-tag{display:flex;align-items:center;gap:9px;font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.15em;color:var(--acc);margin-bottom:10px}
+.cw-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:cwPulse 2.4s ease-in-out infinite}
+@keyframes cwPulse{0%,100%{opacity:1}50%{opacity:.45}}
+.cw-know p{font-size:17.4px;font-weight:400;line-height:1.55;color:var(--ink);margin:0;padding:0}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}}
 </style>
 
-<div class="container">
-  <h2 class="sr-only">Russian Civil War and War Communism interactive visualisation</h2>
+<div class="cw">
+  <h2 class="sr-only">Interactive map and chart of the Russian Civil War and War Communism, 1918 to 1921</h2>
+  <h1>The Reds won the war and lost the <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">villages</span></h1>
+  <p class="cw-intro">Between 1918 and 1921 the Red Army beat four White armies one at a time, while behind the lines the Cheka and the grain squads enforced War Communism. The same policy that fed the army emptied the countryside. Move the month forward and watch each White front swell and fade while the harvest and industry lines sink; then switch the layer to see what the villages paid.</p>
 
-  <h1>The Bolsheviks won by <span class="acc">destroying</span></h1>
-  <p class="intro">Military victory in the Civil War came at the cost of economic collapse. Trotsky's Red Army and the Cheka's terror defeated the Whites, but War Communism's grain seizures and total nationalisation left the economy in ruins and the peasants in revolt. Drag the slider to see how Bolshevik control intensified across the war years.</p>
-
-  <div class="card">
-    <div class="card-header">
-      <span class="card-label">Civil War Intensity</span>
-      <span class="live-tag" id="yearTag">1918</span>
+  <section class="cw-card">
+    <div class="cw-head">
+      <span class="cw-label">Civil War and the home front</span>
+      <span class="cw-live" id="liveTag">Jan 1918 · 1 White front</span>
     </div>
-    <p class="card-hint">Watch the Red Army expand and the Cheka's terror spread</p>
-    
-    <div class="canvas-wrapper">
-      <canvas id="warCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasTag">Red Army forming – Whites mobilising</div>
+    <p class="cw-hint">Move the month forward from 1918. Watch each White front on the map, then the three lines beneath.</p>
+    <div class="cw-wrap">
+      <canvas id="cwCanvas"></canvas>
+      <div class="cw-overlay" id="ovTag" aria-live="polite">Red Army formed · Assembly dissolved</div>
     </div>
-
-    <div class="slider-wrapper">
-      <div class="slider-label">War Progression</div>
-      <input type="range" min="0" max="100" value="0" class="war-slider" id="warSlider">
-      <div class="tick-labels">
-        <span>1918</span>
-        <span>1919</span>
-        <span>1920</span>
-        <span>1921</span>
-      </div>
+    <div class="cw-row"><span>Month</span><b id="monV">Jan 1918</b></div>
+    <input type="range" class="cw-slider" id="monthRange" aria-label="Month, January 1918 to July 1921" min="0" max="42" step="1" value="0">
+    <div class="cw-ticks"><span style="left:0">1918</span><span style="left:28.57%">1919</span><span style="left:57.14%">1920</span><span style="left:85.71%">1921</span></div>
+    <div class="cw-stats">
+      <div class="cw-stat"><small>Red Army size (approx)</small><b class="acc" id="armyStat">≈ 0.3M</b></div>
+      <div class="cw-stat"><small>Industry vs 1913 (approx)</small><b class="amb" id="indStat">≈ 35%</b></div>
     </div>
+    <p class="cw-note">Figures are approximate textbook estimates: large-scale industrial output index (1913 = 100), grain harvest as a share of pre-war, grain requisitioned per procurement year in million tonnes.</p>
+  </section>
 
-    <div class="stat-row">
-      <div class="stat">
-        <span class="stat-label">Red Army Size</span>
-        <span class="stat-value acc" id="armyStat">150k</span>
-      </div>
-      <div class="stat">
-        <span class="stat-label">Economic Control</span>
-        <span class="stat-value amb" id="controlStat">12%</span>
-      </div>
+  <section class="cw-card">
+    <p class="cw-tg-title">Which layer to show</p>
+    <div class="cw-pills" role="group" aria-label="Map layer">
+      <button type="button" class="cw-pill" data-layer="army" aria-pressed="true">Red Army fronts</button>
+      <button type="button" class="cw-pill" data-layer="wc" aria-pressed="false">War Communism</button>
     </div>
-  </div>
+    <div class="cw-div"></div>
+    <p class="cw-drop" id="dropText"></p>
+  </section>
 
-  <div class="toggle-card">
-    <div class="toggle-buttons">
-      <button class="toggle-btn active" id="btnReds">Red Army</button>
-      <button class="toggle-btn" id="btnCheka">Cheka Terror</button>
-    </div>
-    
-    <div class="knowdrop-divider"></div>
-    
-    <p class="knowdrop" id="knowdropText">Trotsky built the Red Army from nothing into a 5-million-strong force by 1920. He re-recruited 50,000 Tsarist officers under threat of death, instituted military discipline with execution for desertion, and deployed Bolshevik commissars to every unit to ensure loyalty. The Red Army's central position allowed it to defeat White forces on interior lines, moving troops rapidly between fronts while the Whites remained geographically isolated from each other. Trotsky's armoured trains became mobile command centres, carrying him to crisis points across the vast front.</p>
-  </div>
-
-  <div class="know-this">
-    <span class="know-this-tag">Know This</span>
-    <p>The <span class="term">Civil War</span> (1918-1921) saw the <span class="term">Reds</span> defeat the <span class="term">Whites</span> through <span class="term">Trotsky's Red Army</span>, the <span class="term">Cheka's terror</span>, and <span class="term">War Communism</span> – but victory left the economy in ruins and the peasantry alienated.</p>
-  </div>
+  <aside class="cw-know">
+    <div class="cw-know-tag"><span class="cw-dot"></span><span>Know This</span></div>
+    <p><span style="color:var(--acc)">War Communism</span> fed the <span style="color:var(--acc)">Red Army</span> from villages that stopped sowing, so military victory arrived together with famine, <span style="color:var(--acc)">Tambov and Kronstadt</span>.</p>
+  </aside>
 </div>
 
 <script>
-const canvas = document.getElementById('warCanvas');
-const ctx = canvas.getContext('2d', { alpha: false });
-const slider = document.getElementById('warSlider');
-const yearTag = document.getElementById('yearTag');
-const canvasTag = document.getElementById('canvasTag');
-const armyStat = document.getElementById('armyStat');
-const controlStat = document.getElementById('controlStat');
-const knowdropText = document.getElementById('knowdropText');
-const btnReds = document.getElementById('btnReds');
-const btnCheka = document.getElementById('btnCheka');
+(function(){
+"use strict";
+const CSS=getComputedStyle(document.documentElement);
+const ACC=CSS.getPropertyValue("--acc").trim();
+const RGB=CSS.getPropertyValue("--acc-rgb").trim();
+const AMB=CSS.getPropertyValue("--amb").trim();
+const AMBRGB=CSS.getPropertyValue("--amb-rgb").trim();
+const INKRGB=CSS.getPropertyValue("--ink-rgb").trim();
+const INK=CSS.getPropertyValue("--ink").trim();
+const DIM=CSS.getPropertyValue("--ink-dim").trim();
+const acc=a=>"rgba("+RGB+","+a+")";
+const amb=a=>"rgba("+AMBRGB+","+a+")";
+const ink=a=>"rgba("+INKRGB+","+a+")";
+const FONT=`11px "JetBrains Mono", monospace`;
 
-const dpr = Math.min(window.devicePixelRatio || 1, 2);
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d', { alpha: false });
+const canvas=document.getElementById("cwCanvas");
+const wrap=canvas.parentElement;
+const ctx=canvas.getContext("2d");
+const dpr=Math.min(window.devicePixelRatio||1,2);
+const buf=document.createElement("canvas");
+const bctx=buf.getContext("2d");
+const range=document.getElementById("monthRange");
+const monV=document.getElementById("monV");
+const liveTag=document.getElementById("liveTag");
+const ovTag=document.getElementById("ovTag");
+const armyStat=document.getElementById("armyStat");
+const indStat=document.getElementById("indStat");
+const dropText=document.getElementById("dropText");
+const pills=Array.from(document.querySelectorAll(".cw-pill"));
+const reduced=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const MAXM=42, OV=40;
+const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
-let nodes = [];
-let connections = [];
-let terrorfronts = [];
-
-function resize() {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  initNodes();
+function kf(pts,m){
+  if(m<pts[0][0]) return 0;
+  for(let i=1;i<pts.length;i++){
+    if(m<=pts[i][0]){ const a=pts[i-1], b=pts[i]; return a[1]+(b[1]-a[1])*(m-a[0])/(b[0]-a[0]); }
+  }
+  return pts[pts.length-1][1];
 }
 
-function initNodes() {
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  const cx = w / 2;
-  const cy = h / 2;
-  
-  // Moscow at centre (Red base)
-  nodes = [{ x: cx, y: cy, type: 'red', label: 'Moscow' }];
-  
-  // White positions around perimeter
-  const whitePositions = [
-    { angle: 0.3, dist: 0.38, label: 'Kolchak (East)' },
-    { angle: 2.8, dist: 0.36, label: 'Denikin (South)' },
-    { angle: 4.5, dist: 0.32, label: 'Yudenich (West)' },
-    { angle: 5.5, dist: 0.35, label: 'Wrangel (Crimea)' }
-  ];
-  
-  whitePositions.forEach(wp => {
-    nodes.push({
-      x: cx + Math.cos(wp.angle) * w * wp.dist,
-      y: cy + Math.sin(wp.angle) * h * wp.dist,
-      type: 'white',
-      label: wp.label
-    });
-  });
-  
-  // Red expansion nodes (appear as war progresses)
-  const redExpansion = [
-    { x: cx + w * 0.15, y: cy - h * 0.12, threshold: 0.25 },
-    { x: cx - w * 0.18, y: cy + h * 0.08, threshold: 0.35 },
-    { x: cx + w * 0.08, y: cy + h * 0.18, threshold: 0.45 },
-    { x: cx - w * 0.12, y: cy - h * 0.15, threshold: 0.55 },
-    { x: cx + w * 0.22, y: cy + h * 0.05, threshold: 0.65 },
-    { x: cx - w * 0.08, y: cy + h * 0.22, threshold: 0.75 }
-  ];
-  
-  redExpansion.forEach(re => {
-    nodes.push({ x: re.x, y: re.y, type: 'red-exp', threshold: re.threshold });
-  });
-  
-  // Terror fronts (Cheka reach)
-  terrorfronts = [];
-  for (let i = 0; i < 8; i++) {
-    terrorfronts.push({
-      angle: (Math.PI * 2 * i) / 8,
-      baseRadius: 0,
-      maxRadius: Math.min(w, h) * 0.42,
-      speed: 0.3 + Math.random() * 0.2
-    });
-  }
-}
+const INDUSTRY=[[0,35],[12,26],[24,18],[36,19],[42,20]];
+const HARVEST=[[0,72],[12,66],[24,58],[36,50],[42,46]];
+const REQ=[[0,0.4],[5,0.8],[12,1.8],[24,3.5],[36,6.0],[42,6.0]];
+const ARMY=[[0,0.3],[12,0.8],[24,3.0],[36,5.0],[42,5.0]];
+const RBASE=[[0,0.26],[12,0.27],[21,0.26],[24,0.34],[30,0.46],[36,0.62],[42,0.66]];
+const MOSCOW=[0.45,0.42];
 
-function updateSlider() {
-  const val = parseFloat(slider.value);
-  slider.style.setProperty('--fill', val + '%');
-  
-  // Year mapping
-  const year = Math.floor(1918 + (val / 100) * 3);
-  yearTag.textContent = year;
-  
-  // Canvas tag updates
-  if (val < 25) {
-    canvasTag.textContent = 'Red Army forming – Whites mobilising';
-  } else if (val < 50) {
-    canvasTag.textContent = 'Red Army pushing out – White forces isolated';
-  } else if (val < 75) {
-    canvasTag.textContent = 'Whites collapsing – Red control expanding';
-  } else {
-    canvasTag.textContent = 'Victory secured – economy destroyed';
-  }
-  
-  // Army stat (150k to 5M)
-  const armySize = Math.round(150 + (5000 - 150) * (val / 100));
-  armyStat.textContent = armySize < 1000 ? armySize + 'k' : (armySize / 1000).toFixed(1) + 'M';
-  
-  // Economic control (12% to 94%)
-  const control = Math.round(12 + 82 * (val / 100));
-  controlStat.textContent = control + '%';
-}
+const FRONTS=[
+  {name:"Kolchak",where:"east",base:[0.97,0.38],aim:[0.62,0.40],curve:[[10,0],[15,1],[20,0.6],[22,0.3],[25,0]],end:"Feb 1920",align:"right",off:[-0.03,-0.04]},
+  {name:"Denikin",where:"south",base:[0.56,0.88],aim:[0.46,0.50],curve:[[0,0.1],[5,0.25],[12,0.45],[21,1],[23,0.6],[26,0.2],[27,0]],end:"Mar 1920",align:"left",off:[0.02,0]},
+  {name:"Yudenich",where:"north-west",base:[0.12,0.30],aim:[0.29,0.21],curve:[[16,0.5],[18,0.3],[21,1],[22,0.3],[24,0]],end:"Nov 1919",align:"left",off:[0.04,-0.04]},
+  {name:"Wrangel",where:"Crimea",base:[0.39,0.86],aim:[0.41,0.68],curve:[[27,0.4],[29,0.8],[32,0.7],[34,0.3],[35,0]],end:"Nov 1920",align:"right",off:[0.02,-0.07]}
+];
 
-slider.addEventListener('input', updateSlider);
+const LAND=[[0,0],[0.40,0],[0.44,0.02],[0.46,0.12],[0.50,0.14],[0.54,0.04],[0.58,0],[1,0],[1,1],[0.80,1],[0.77,0.92],[0.74,0.80],[0.68,0.74],[0.63,0.78],[0.62,0.90],[0.60,1],[0.55,1],[0.52,0.92],[0.47,0.85],[0.43,0.79],[0.44,0.86],[0.40,0.91],[0.36,0.85],[0.35,0.78],[0.28,0.75],[0.20,0.78],[0.16,0.90],[0.14,1],[0,1],[0,0.46],[0.05,0.40],[0.06,0.30],[0.12,0.25],[0.22,0.22],[0.30,0.19],[0.24,0.15],[0.12,0.13],[0.04,0.14],[0,0.12]];
+const RIVERS=[
+  [[0.40,0.30],[0.52,0.32],[0.64,0.40],[0.70,0.52],[0.63,0.66],[0.66,0.75]],
+  [[0.34,0.42],[0.28,0.56],[0.32,0.70],[0.34,0.77]],
+  [[0.49,0.50],[0.55,0.62],[0.47,0.78]]
+];
+const URALS=[[0.90,0],[0.88,0.35],[0.93,0.70]];
+const REQPTS=[];
+for(let i=0;i<24;i++){ REQPTS.push([0.36+((i*7)%12)/11*0.34+((i%3)-1)*0.01, 0.50+((i*5)%8)/7*0.24+((i%2)?0.01:-0.01)]); }
 
-let time = 0;
-let lastFrame = Date.now();
+const EVENTS=[
+  [0,"Red Army formed · Assembly dissolved"],
+  [2,"Brest-Litovsk signed · war widens"],
+  [4,"Czech revolt · food dictatorship"],
+  [6,"Industry nationalised · Tsar shot"],
+  [8,"Red Terror decreed · Cheka unleashed"],
+  [10,"Kolchak seizes power at Omsk"],
+  [12,"Grain quotas seized by armed squads"],
+  [15,"Kolchak at his peak near the Volga"],
+  [17,"Kolchak pushed back · Yudenich moves"],
+  [21,"Whites at Oryol and Pulkovo heights"],
+  [22,"Omsk falls · Whites in retreat"],
+  [25,"Kolchak shot · Denikin collapsing"],
+  [27,"Wrangel takes command · Polish war"],
+  [31,"Tambov peasants rise against squads"],
+  [34,"Wrangel evacuates · Whites beaten"],
+  [37,"Petrograd strikes · harvest failing"],
+  [38,"Kronstadt crushed · NEP announced"],
+  [40,"War won · famine on the Volga"]
+];
 
-function draw() {
-  requestAnimationFrame(draw);
-  const now = Date.now();
-  const dt = Math.min((now - lastFrame) / 1000, 0.05);
-  lastFrame = now;
-  time += dt;
-  
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  const cx = w / 2;
-  const cy = h / 2;
-  const progress = parseFloat(slider.value) / 100;
-  
-  // Clear
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, w, h);
-  
-  // Background grid
-  ctx.strokeStyle = 'rgba(154, 95, 210,0.04)';
-  ctx.lineWidth = 0.5;
-  const gridSpacing = Math.min(w, h) / 12;
-  for (let gx = 0; gx < w; gx += gridSpacing) {
-    ctx.beginPath();
-    ctx.moveTo(gx, 0);
-    ctx.lineTo(gx, h);
-    ctx.stroke();
-  }
-  for (let gy = 0; gy < h; gy += gridSpacing) {
-    ctx.beginPath();
-    ctx.moveTo(0, gy);
-    ctx.lineTo(w, gy);
-    ctx.stroke();
-  }
-  
-  // Terror waves (if visible)
-  terrorfronts.forEach(tf => {
-    const targetRadius = tf.maxRadius * progress;
-    tf.baseRadius += (targetRadius - tf.baseRadius) * 0.08;
-    
-    const pulseRadius = tf.baseRadius + Math.sin(time * tf.speed + tf.angle) * 8;
-    
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.strokeStyle = 'rgba(154, 95, 210,' + (0.12 * progress) + ')';
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(cx, cy);
-    ctx.lineTo(
-      cx + Math.cos(tf.angle) * pulseRadius,
-      cy + Math.sin(tf.angle) * pulseRadius
-    );
-    ctx.stroke();
-    ctx.restore();
-  });
-  
-  // Connection lines from Red nodes to Whites (weakening as Reds expand)
-  nodes.forEach((n, i) => {
-    if (n.type === 'red' || (n.type === 'red-exp' && progress >= n.threshold)) {
-      nodes.forEach((target, j) => {
-        if (target.type === 'white' && j !== i) {
-          const fadeOut = Math.max(0, 1 - progress * 1.2);
-          ctx.save();
-          ctx.globalCompositeOperation = 'lighter';
-          const grad = ctx.createLinearGradient(n.x, n.y, target.x, target.y);
-          grad.addColorStop(0, 'rgba(154, 95, 210,' + (0.18 * fadeOut) + ')');
-          grad.addColorStop(1, 'rgba(250,199,117,' + (0.08 * fadeOut) + ')');
-          ctx.strokeStyle = grad;
-          ctx.lineWidth = 1;
-          ctx.beginPath();
-          ctx.moveTo(n.x, n.y);
-          ctx.lineTo(target.x, target.y);
-          ctx.stroke();
-          ctx.restore();
-        }
-      });
-    }
-  });
-  
-  // Draw nodes
-  nodes.forEach(n => {
-    if (n.type === 'red') {
-      // Moscow central glow
-      const glow = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, 28);
-      glow.addColorStop(0, 'rgba(154, 95, 210,0.6)');
-      glow.addColorStop(0.5, 'rgba(154, 95, 210,0.22)');
-      glow.addColorStop(1, 'rgba(154, 95, 210,0)');
-      ctx.save();
-      ctx.globalCompositeOperation = 'lighter';
-      ctx.fillStyle = glow;
-      ctx.beginPath();
-      ctx.arc(n.x, n.y, 28, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-      
-      ctx.fillStyle = '#9A5FD2';
-      ctx.beginPath();
-      ctx.arc(n.x, n.y, 6, 0, Math.PI * 2);
-      ctx.fill();
-      
-    } else if (n.type === 'white') {
-      // White forces fade as war progresses
-      const strength = Math.max(0, 1 - progress * 1.3);
-      ctx.fillStyle = 'rgba(250,199,117,' + (0.7 * strength) + ')';
-      ctx.beginPath();
-      ctx.arc(n.x, n.y, 5, 0, Math.PI * 2);
-      ctx.fill();
-      
-      ctx.strokeStyle = 'rgba(250,199,117,' + (0.4 * strength) + ')';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.arc(n.x, n.y, 9, 0, Math.PI * 2);
-      ctx.stroke();
-      
-    } else if (n.type === 'red-exp' && progress >= n.threshold) {
-      // Red expansion nodes emerge
-      const age = (progress - n.threshold) * 5;
-      const opacity = Math.min(1, age);
-      
-      ctx.save();
-      ctx.globalCompositeOperation = 'lighter';
-      const glow = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, 16);
-      glow.addColorStop(0, 'rgba(154, 95, 210,' + (0.35 * opacity) + ')');
-      glow.addColorStop(1, 'rgba(154, 95, 210,0)');
-      ctx.fillStyle = glow;
-      ctx.beginPath();
-      ctx.arc(n.x, n.y, 16, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-      
-      ctx.fillStyle = 'rgba(154, 95, 210,' + opacity + ')';
-      ctx.beginPath();
-      ctx.arc(n.x, n.y, 4, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  });
-  
-  // Bloom
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
-  
-  // Vignette
-  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-}
-
-// Toggle logic
-const toggleContent = {
-  redArmy: "Trotsky built the Red Army from nothing into a 5-million-strong force by 1920. He re-recruited 50,000 Tsarist officers under threat of death, instituted military discipline with execution for desertion, and deployed Bolshevik commissars to every unit to ensure loyalty. The Red Army's central position allowed it to defeat White forces on interior lines, moving troops rapidly between fronts while the Whites remained geographically isolated from each other. Trotsky's armoured trains became mobile command centres, carrying him to crisis points across the vast front.",
-  
-  cheka: "The Cheka (secret police) executed an estimated 50,000 to 200,000 people during the Civil War in the Red Terror. Felix Dzerzhinsky's forces didn't wait for trials – suspected counter-revolutionaries, deserters, and 'class enemies' were shot on sight. The Cheka took hostages from bourgeois families to ensure compliance, broke peasant grain-hoarding resistance through mass executions, and ran concentration camps for political prisoners. This systematic terror paralysed potential opposition and ensured Bolshevik control even in areas where popular support was weak or non-existent."
+const DROPS={
+  army:"Trotsky rebuilt a conscript Red Army from about 300 000 men in early 1918 to roughly five million by 1920, using some 50 000 former tsarist officers watched by political commissars and shooting deserters. The Reds held the centre: Moscow, Petrograd, the railways and the arms factories, so troops could be shuttled to whichever front was in crisis, while Kolchak in Siberia, Denikin in the south, Yudenich in Estonia and later Wrangel in the Crimea never coordinated an attack. Each White army peaked and collapsed separately: Kolchak after Omsk fell in November 1919, Yudenich and Denikin over the winter of 1919 to 1920, Wrangel in November 1920. Both sides ruled by terror. The Cheka’s Red Terror, decreed in September 1918 after the attempt on Lenin’s life, shot hostages and suspected class enemies in the tens of thousands, while the White Terror under Kolchak and Denikin brought mass executions in Siberia and pogroms that killed tens of thousands of Jews in Ukraine in 1919. The Whites also promised to return the land, which pushed wavering peasants towards the Reds.",
+  wc:"In spring 1918 Lenin’s State Capitalism kept bourgeois specialists, one-man management and some private trade under state supervision. The Civil War swept that away: from May and June 1918 came the food dictatorship and the nationalisation of large industry, and in January 1919 prodrazvyorstka, the requisition quota that sent armed detachments to seize grain, after the Committees of the Poor of 1918 had been set up to point out the hoarders. Money gave way to rationing, labour was conscripted and private trade was banned. The policy fed the army and the cities after a fashion, but peasants sowed only what they could hide or eat, so the harvest fell towards half the pre-war level while industrial output sank to about a fifth of 1913. By August 1920 the Tambov peasants were in open revolt under Antonov, and in March 1921 the Kronstadt sailors, once the pride of October, demanded soviets without Bolsheviks. The Red Army crushed them while the Tenth Party Congress replaced requisitioning with a tax in kind, the start of the NEP."
 };
 
-btnReds.addEventListener('click', () => {
-  btnReds.classList.add('active');
-  btnCheka.classList.remove('active');
-  knowdropText.textContent = toggleContent.redArmy;
-});
+let layer="army";
+let cur=0, target=0, raf=null;
+let labels=[];
 
-btnCheka.addEventListener('click', () => {
-  btnCheka.classList.add('active');
-  btnReds.classList.remove('active');
-  knowdropText.textContent = toggleContent.cheka;
-});
+function L(text,x,y,align,color,a){ labels.push({text:text,x:x,y:y,align:align||"left",color:color,a:(a==null?1:a)}); }
 
-window.addEventListener('resize', resize);
+function pathLand(P){
+  ctx.beginPath();
+  LAND.forEach((p,i)=>{ const q=P(p[0],p[1]); if(i) ctx.lineTo(q[0],q[1]); else ctx.moveTo(q[0],q[1]); });
+  ctx.closePath();
+}
+
+function drawMap(box,m){
+  let mw=box.w-12, mh=box.h-12;
+  if(mw/mh>1.5) mw=mh*1.5;
+  if(mw/mh<0.85) mh=mw/0.85;
+  const mx=box.x+(box.w-mw)/2, my=box.y+(box.h-mh)/2;
+  const P=(u,v)=>[mx+u*mw, my+v*mh];
+  const wc=layer==="wc";
+
+  pathLand(P); ctx.fillStyle=ink(0.07); ctx.fill(); ctx.strokeStyle=ink(0.28); ctx.lineWidth=1.2; ctx.stroke();
+  ctx.strokeStyle=ink(0.16); ctx.lineWidth=1;
+  RIVERS.forEach(r=>{ ctx.beginPath(); r.forEach((p,i)=>{ const q=P(p[0],p[1]); if(i) ctx.lineTo(q[0],q[1]); else ctx.moveTo(q[0],q[1]); }); ctx.stroke(); });
+  ctx.save(); ctx.setLineDash([3,4]); ctx.strokeStyle=ink(0.22); ctx.beginPath();
+  URALS.forEach((p,i)=>{ const q=P(p[0],p[1]); if(i) ctx.lineTo(q[0],q[1]); else ctx.moveTo(q[0],q[1]); });
+  ctx.stroke(); ctx.restore();
+  const ur=P(0.905,0.24); L("Urals",ur[0],ur[1],"left",DIM);
+  const bs=P(0.19,0.96); L("Black Sea",bs[0],bs[1],"left",DIM,0.8);
+  const cs=P(0.69,0.97); L("Caspian",cs[0],cs[1],"left",DIM,0.8);
+
+  const S=FRONTS.map(f=>kf(f.curve,m));
+
+  /* Red territory, clipped to land, squeezed where a White front presses */
+  const Rb=kf(RBASE,m);
+  ctx.save(); pathLand(P); ctx.clip();
+  ctx.beginPath();
+  for(let i=0;i<=72;i++){
+    const th=i/72*Math.PI*2; let red=0;
+    FRONTS.forEach((f,j)=>{
+      const s=S[j]; if(s<=0) return;
+      const tx=f.base[0]+(f.aim[0]-f.base[0])*s, ty=f.base[1]+(f.aim[1]-f.base[1])*s;
+      const dx=tx-MOSCOW[0], dy=ty-MOSCOW[1];
+      const ang=Math.atan2(dy,dx); let d=th-ang; d=Math.atan2(Math.sin(d),Math.cos(d));
+      const dBase=Math.hypot(f.base[0]-MOSCOW[0],f.base[1]-MOSCOW[1]);
+      const close=1-Math.hypot(dx,dy)/dBase;
+      red+=0.7*s*Math.max(0,close)*Math.exp(-(d/0.75)*(d/0.75));
+    });
+    const r=Rb*Math.max(0.3,1-red);
+    const q=P(MOSCOW[0]+Math.cos(th)*r, MOSCOW[1]+Math.sin(th)*r);
+    if(i) ctx.lineTo(q[0],q[1]); else ctx.moveTo(q[0],q[1]);
+  }
+  ctx.closePath();
+  const Mo=P(MOSCOW[0],MOSCOW[1]);
+  const g=ctx.createRadialGradient(Mo[0],Mo[1],0,Mo[0],Mo[1],Math.max(10,Rb*mw));
+  g.addColorStop(0,acc(0.45)); g.addColorStop(1,acc(0.10));
+  ctx.fillStyle=g; ctx.fill();
+  ctx.strokeStyle=acc(0.85); ctx.lineWidth=1.5; ctx.stroke();
+  ctx.restore();
+
+  /* White fronts */
+  const fa=wc?0.35:1;
+  FRONTS.forEach((f,j)=>{
+    const s=S[j]; const first=f.curve[0][0], last=f.curve[f.curve.length-1][0];
+    if(m<first) return;
+    const lp=P(f.base[0]+f.off[0], f.base[1]+f.off[1]);
+    if(s<=0.001){
+      if(m>=last){
+        const B=P(f.base[0],f.base[1]);
+        ctx.fillStyle=ink(0.35); ctx.beginPath(); ctx.arc(B[0],B[1],3,0,Math.PI*2); ctx.fill();
+        if(!wc) L(f.name+" × "+f.end, lp[0], lp[1], f.align, ink(0.55));
+      }
+      return;
+    }
+    const B=P(f.base[0],f.base[1]);
+    const T=P(f.base[0]+(f.aim[0]-f.base[0])*s, f.base[1]+(f.aim[1]-f.base[1])*s);
+    const dx=T[0]-B[0], dy=T[1]-B[1], len=Math.hypot(dx,dy)||1;
+    const px=-dy/len, py=dx/len;
+    const wb=mw*0.05, wt=mw*0.09*s;
+    ctx.save(); ctx.globalCompositeOperation="lighter"; ctx.globalAlpha=fa;
+    ctx.beginPath();
+    ctx.moveTo(B[0]-px*wb,B[1]-py*wb); ctx.lineTo(T[0]-px*wt,T[1]-py*wt);
+    ctx.lineTo(T[0]+px*wt,T[1]+py*wt); ctx.lineTo(B[0]+px*wb,B[1]+py*wb); ctx.closePath();
+    const lg=ctx.createLinearGradient(B[0],B[1],T[0],T[1]);
+    lg.addColorStop(0,amb(0.05+0.10*s)); lg.addColorStop(1,amb(0.30*s));
+    ctx.fillStyle=lg; ctx.fill();
+    ctx.strokeStyle=amb(0.9); ctx.lineWidth=2.5; ctx.beginPath();
+    ctx.moveTo(T[0]-px*wt,T[1]-py*wt); ctx.lineTo(T[0]+px*wt,T[1]+py*wt); ctx.stroke();
+    const gl=ctx.createRadialGradient(B[0],B[1],0,B[0],B[1],mw*0.06);
+    gl.addColorStop(0,amb(0.6)); gl.addColorStop(1,amb(0));
+    ctx.fillStyle=gl; ctx.beginPath(); ctx.arc(B[0],B[1],mw*0.06,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+    ctx.fillStyle=amb(0.95*fa); ctx.beginPath(); ctx.arc(B[0],B[1],3.5,0,Math.PI*2); ctx.fill();
+    if(!wc) L(f.name+" · "+f.where, lp[0], lp[1], f.align, AMB);
+  });
+
+  /* War Communism layer: grain squads, terror, risings */
+  if(wc){
+    const req=kf(REQ,m); const n=Math.round(req/6*REQPTS.length);
+    ctx.save(); ctx.globalCompositeOperation="lighter";
+    for(let i=0;i<n;i++){ const q=P(REQPTS[i][0],REQPTS[i][1]); ctx.fillStyle=acc(0.85); ctx.fillRect(q[0]-2.5,q[1]-2.5,5,5); }
+    ctx.restore();
+    if(m>=8){ const rt=P(0.49,0.40); L("Red Terror · Sep 1918", rt[0], rt[1], "left", ACC); }
+    if(S[0]>0.02||S[1]>0.02){ const wt=P(0.96,0.68); L("White Terror", wt[0], wt[1], "right", AMB); }
+    if(m>=38){
+      const K=P(0.26,0.185), KL=P(0.12,0.31);
+      ctx.save(); ctx.globalCompositeOperation="lighter";
+      ctx.strokeStyle=amb(0.9); ctx.lineWidth=2; ctx.beginPath(); ctx.arc(K[0],K[1],7,0,Math.PI*2); ctx.stroke();
+      ctx.strokeStyle=amb(0.5); ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(K[0],K[1]+7); ctx.lineTo(KL[0]+30,KL[1]-8); ctx.stroke();
+      ctx.restore();
+      L("Kronstadt revolt Mar 1921", KL[0], KL[1], "left", AMB);
+    }
+  }
+
+  /* Cities */
+  ctx.fillStyle=ACC; ctx.beginPath(); ctx.arc(Mo[0],Mo[1],4,0,Math.PI*2); ctx.fill();
+  L("Moscow", Mo[0]+8, Mo[1]+12, "left", INK);
+  const Pe=P(0.30,0.19);
+  ctx.fillStyle=acc(0.9); ctx.beginPath(); ctx.arc(Pe[0],Pe[1],3,0,Math.PI*2); ctx.fill();
+  L("Petrograd", Pe[0]+4, Pe[1]-10, "left", INK);
+  const Ta=P(0.52,0.56);
+  ctx.fillStyle=ink(0.6); ctx.beginPath(); ctx.arc(Ta[0],Ta[1],2.5,0,Math.PI*2); ctx.fill();
+  if(wc&&m>=31){
+    ctx.save(); ctx.globalCompositeOperation="lighter"; ctx.strokeStyle=amb(0.9); ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(Ta[0],Ta[1],8,0,Math.PI*2); ctx.stroke(); ctx.restore();
+    L("Tambov Aug 1920", Ta[0]+10, Ta[1]+4, "left", AMB);
+  } else {
+    L("Tambov", Ta[0]+8, Ta[1]+4, "left", DIM);
+  }
+
+  /* Key */
+  const kx=mx+mw-4, ky=my+10;
+  if(wc){ L("Grain squads",kx,ky,"right",ACC); L("Risings",kx,ky+16,"right",AMB); }
+  else { L("Red control",kx,ky,"right",ACC); L("White fronts",kx,ky+16,"right",AMB); }
+}
+
+function drawChart(c,m){
+  const dim=layer==="army"; const la=dim?0.55:1;
+  ctx.save(); ctx.globalAlpha=dim?0.5:1;
+  const px0=c.x+40, px1=c.x+c.w-42, py0=c.y+50, py1=c.y+c.h-OV-20;
+  const X=mm=>px0+mm/MAXM*(px1-px0);
+  const Y=p=>py1-p/100*(py1-py0);
+  const YR=t=>py1-t/6*(py1-py0);
+
+  ctx.strokeStyle=ink(0.12); ctx.lineWidth=1;
+  [0,50,100].forEach(p=>{ ctx.beginPath(); ctx.moveTo(px0,Y(p)); ctx.lineTo(px1,Y(p)); ctx.stroke(); });
+  [12,24,36].forEach(mm=>{ ctx.beginPath(); ctx.moveTo(X(mm),py0); ctx.lineTo(X(mm),py1); ctx.stroke(); });
+  L("100%",px0-5,Y(100),"right",DIM,la); L("50%",px0-5,Y(50),"right",DIM,la); L("0",px0-5,Y(0),"right",DIM,la);
+  L("6 Mt",px1+5,YR(6),"left",DIM,la); L("3",px1+5,YR(3),"left",DIM,la);
+  L("Economy vs 1913 (approx)",px0,c.y+11,"left",ink(0.85),la);
+  [0,12,24,36].forEach((mm,i)=>L(String(1918+i),X(mm),py1+12,"center",DIM,la));
+
+  /* grain requisitioned (area) */
+  ctx.beginPath(); ctx.moveTo(X(0),py1);
+  for(let k=0;k<=m;k+=0.5) ctx.lineTo(X(k),YR(kf(REQ,k)));
+  ctx.lineTo(X(m),YR(kf(REQ,m))); ctx.lineTo(X(m),py1); ctx.closePath();
+  ctx.fillStyle=acc(0.22); ctx.fill();
+  series(REQ,YR,X,m,acc(0.9),2);
+  series(HARVEST,Y,X,m,amb(0.95),2);
+  series(INDUSTRY,Y,X,m,ink(0.9),2);
+
+  /* event markers */
+  [[31,"Tambov Aug 1920",c.y+27],[38,"Kronstadt Mar 1921",c.y+43]].forEach(e=>{
+    if(m>=e[0]){
+      ctx.save(); ctx.setLineDash([4,4]); ctx.strokeStyle=amb(0.7); ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(X(e[0]),py0); ctx.lineTo(X(e[0]),py1); ctx.stroke(); ctx.restore();
+      L(e[1],X(e[0])+2,e[2],"right",AMB,la);
+    }
+  });
+
+  /* current month */
+  ctx.strokeStyle=ink(0.25); ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(X(m),py0); ctx.lineTo(X(m),py1); ctx.stroke();
+  const h0=kf(HARVEST,m), i0=kf(INDUSTRY,m), r0=kf(REQ,m);
+  ctx.fillStyle=amb(1); ctx.beginPath(); ctx.arc(X(m),Y(h0),3,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle=ink(1); ctx.beginPath(); ctx.arc(X(m),Y(i0),3,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle=ACC; ctx.beginPath(); ctx.arc(X(m),YR(r0),3,0,Math.PI*2); ctx.fill();
+  const right=m/MAXM<0.6; const lx=right?X(m)+8:X(m)-8; const al=right?"left":"right";
+  const ly=Math.min(Y(i0),py1-26); const hy=Math.min(Y(h0),ly-16);
+  L("Harvest "+Math.round(h0)+"%",lx,hy,al,AMB,la);
+  L("Industry "+Math.round(i0)+"%",lx,ly,al,INK,la);
+  L("Grain taken "+r0.toFixed(1)+" Mt/yr",(m/MAXM<0.6)?px0+6:px1-4,py1-9,(m/MAXM<0.6)?"left":"right",ACC,la);
+  ctx.restore();
+}
+
+function series(pts,Y,X,m,color,width){
+  ctx.strokeStyle=color; ctx.lineWidth=width; ctx.lineJoin="round";
+  ctx.beginPath();
+  for(let k=0;k<=m;k+=0.5){ const x=X(k), y=Y(kf(pts,k)); if(k) ctx.lineTo(x,y); else ctx.moveTo(x,y); }
+  ctx.lineTo(X(m),Y(kf(pts,m))); ctx.stroke();
+}
+
+function renderLabels(){
+  ctx.font=FONT; ctx.textBaseline="middle";
+  labels.forEach(l=>{
+    ctx.globalAlpha=l.a; ctx.textAlign=l.align;
+    const tw=ctx.measureText(l.text).width;
+    const x0=l.align==="right"?l.x-tw:(l.align==="center"?l.x-tw/2:l.x);
+    ctx.fillStyle="rgba(0,0,0,0.62)"; ctx.fillRect(x0-3,l.y-8,tw+6,16);
+    ctx.fillStyle=l.color; ctx.fillText(l.text,l.x,l.y);
+  });
+  ctx.globalAlpha=1;
+}
+
+function draw(){
+  const w=canvas.width/dpr, h=canvas.height/dpr; if(!w||!h) return;
+  const m=cur; labels=[];
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.fillStyle="rgb(0,0,0)"; ctx.fillRect(0,0,w,h);
+  const stacked=w<560;
+  let map, chart;
+  if(stacked){ const mh=Math.round((h-OV)*0.5); map={x:0,y:0,w:w,h:mh}; chart={x:0,y:mh,w:w,h:h-mh}; }
+  else { const mw=Math.round(w*0.55); map={x:0,y:0,w:mw,h:h-OV}; chart={x:mw,y:0,w:w-mw,h:h}; }
+  drawMap(map,m);
+  drawChart(chart,m);
+
+  bctx.setTransform(1,0,0,1,0,0); bctx.clearRect(0,0,buf.width,buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas,0,0);
+  ctx.save(); ctx.globalCompositeOperation="lighter"; ctx.globalAlpha=0.38; ctx.filter="blur(7px)";
+  (buf.width&&buf.height)&&ctx.drawImage(buf,0,0,w,h); ctx.restore();
+
+  const vig=ctx.createRadialGradient(w/2,h/2,h*0.28,w/2,h/2,w*0.72);
+  vig.addColorStop(0,"rgba(0,0,0,0)"); vig.addColorStop(1,"rgba(0,0,0,0.52)");
+  ctx.fillStyle=vig; ctx.fillRect(0,0,w,h);
+
+  renderLabels();
+}
+
+function readouts(m){
+  const label=MONTHS[m%12]+" "+(1918+Math.floor(m/12));
+  monV.textContent=label;
+  const n=FRONTS.reduce((a,f)=>a+(kf(f.curve,m)>0.02?1:0),0);
+  liveTag.textContent=label+" · "+n+" White front"+(n===1?"":"s");
+  let ev=EVENTS[0][1]; EVENTS.forEach(e=>{ if(m>=e[0]) ev=e[1]; });
+  ovTag.textContent=ev;
+  armyStat.textContent="≈ "+kf(ARMY,m).toFixed(1)+"M";
+  indStat.textContent="≈ "+Math.round(kf(INDUSTRY,m))+"%";
+  range.style.setProperty("--fill",(m/MAXM*100)+"%");
+}
+
+function tick(){
+  const d=target-cur;
+  if(Math.abs(d)<0.02){ cur=target; draw(); raf=null; return; }
+  cur+=d*0.18; draw(); raf=requestAnimationFrame(tick);
+}
+function go(){
+  if(reduced){ cur=target; draw(); return; }
+  if(!raf) raf=requestAnimationFrame(tick);
+}
+
+range.addEventListener("input",()=>{ target=parseInt(range.value,10)||0; readouts(target); go(); });
+
+pills.forEach(b=>b.addEventListener("click",()=>{
+  layer=b.getAttribute("data-layer");
+  pills.forEach(p=>p.setAttribute("aria-pressed",p===b?"true":"false"));
+  dropText.textContent=DROPS[layer];
+  draw();
+}));
+
+function resize(){
+  const r=wrap.getBoundingClientRect();
+  if(!r.width||!r.height) return;
+  canvas.width=Math.round(r.width*dpr); canvas.height=Math.round(r.height*dpr);
+  buf.width=canvas.width; buf.height=canvas.height;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  draw();
+}
+if(window.ResizeObserver){ new ResizeObserver(()=>resize()).observe(wrap); }
+window.addEventListener("resize",resize);
+
+dropText.textContent=DROPS.army;
+readouts(0);
 resize();
-updateSlider();
-draw();
+if(document.fonts&&document.fonts.ready){ document.fonts.ready.then(()=>draw()); }
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'civil-war-and-war-communism'},'*');}catch(e){}}

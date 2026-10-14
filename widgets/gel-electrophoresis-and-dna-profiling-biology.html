@@ -313,14 +313,14 @@ canvas {
   
   <h1>Your DNA runs a race where <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">size matters</span></h1>
   
-  <p class="intro">In gel electrophoresis, smaller DNA fragments outpace larger ones through microscopic pores, creating a molecular separation that reveals your unique genetic fingerprint. Each fragment's distance becomes a measurable identity marker. Drag the slider to control the electrical current and watch fragments separate by size.</p>
+  <p class="intro">In gel electrophoresis, smaller DNA fragments outpace larger ones through microscopic pores, creating a molecular separation that reveals your unique genetic fingerprint. Each fragment's distance becomes a measurable identity marker. Raise the voltage and watch the fragments separate by size.</p>
 
   <div class="card">
     <div class="card-header">
       <div class="card-label">Gel Chamber</div>
       <div class="live-tag" id="liveTag">100V — SLOW MIGRATION</div>
     </div>
-    <div class="card-hint">Fragments separate based on size and applied voltage</div>
+    <div class="card-hint">Fragments separate based on size and applied voltage. DNA is negative, so it runs toward +</div>
     
     <div class="canvas-wrapper">
       <canvas id="gelCanvas"></canvas>
@@ -344,7 +344,7 @@ canvas {
       </div>
       <div class="stat">
         <div class="stat-label">Separation</div>
-        <div class="stat-value" style="color:var(--amb)" id="sepValue">Low</div>
+        <div class="stat-value" style="color:var(--amb)" id="sepValue">0 px</div>
       </div>
     </div>
   </div>
@@ -352,7 +352,7 @@ canvas {
   <div class="card">
     <div class="toggle-section">
       <button class="toggle-btn active" data-mode="forensic">Forensic ID</button>
-      <button class="toggle-btn" data-mode="paternity">Paternity Test</button>
+      <button class="toggle-btn" data-mode="paternity">Paternity test</button>
     </div>
     <div class="knowdrop" id="knowdrop">
       DNA profiling in forensic science exploits short tandem repeats (STRs) — highly variable non-coding regions where individuals possess different numbers of repeated sequences at specific loci. Crime scene samples are amplified using PCR targeting multiple STR loci simultaneously, then separated by electrophoresis to generate a unique banding pattern. Each band represents one allele inherited from a parent at that locus. When comparing a suspect's profile to crime scene DNA, forensic analysts look for matching alleles at 13-20 different loci. The probability of two unrelated individuals sharing identical alleles at all tested loci is astronomically low — often less than one in several billion — making DNA profiling one of the most reliable forensic identification methods available.
@@ -387,7 +387,7 @@ const buf = document.createElement('canvas');
 const bctx = buf.getContext('2d');
 
 let voltage = 100;
-let time = 0;
+let run = 0, last = 0;
 
 // Fragment data: size (bp), initial y position
 const fragments = [
@@ -414,7 +414,7 @@ function updateSliderFill() {
   voltageSlider.style.setProperty('--fill', percent + '%');
 }
 
-function draw() {
+function draw(now = performance.now()) {
   const w = canvas.width / dpr;
   const h = canvas.height / dpr;
   
@@ -443,6 +443,15 @@ function draw() {
   ctx.lineWidth = 1;
   ctx.strokeRect(wellX, wellY - 8, wellWidth, 16);
 
+  // Electrode labels
+  ctx.save();
+  ctx.font = '9px JetBrains Mono';
+  ctx.fillStyle = 'rgba(140, 147, 137, 0.8)';
+  ctx.textAlign = 'left';
+  ctx.fillText("− cathode", 6, wellY - 12);
+  ctx.fillText("+ anode", 6, h - 44);
+  ctx.restore();
+
   // Electric field lines
   ctx.save();
   ctx.globalAlpha = 0.15;
@@ -458,15 +467,17 @@ function draw() {
   }
   ctx.restore();
 
-  // Migration rate based on voltage (normalized to 100V)
-  const baseSpeed = 0.15;
-  const migrationFactor = (voltage / 100) * baseSpeed;
+  // Accumulated travel: distance only ever grows, so a lower voltage slows rather than reverses the bands
+  const dt = last ? Math.min(now - last, 50) / 1000 : 0;
+  last = now;
+  const runMax = (h - 45 - wellY - 20) * Math.sqrt(300) / 170;
+  run = Math.min(run + (voltage / 100) * dt, runMax);
 
   // Draw fragments
   fragments.forEach((frag, idx) => {
     // Migration distance inversely proportional to size
     const sizeSpeed = 1 / Math.sqrt(frag.size);
-    frag.y = wellY + 20 + (time * migrationFactor * sizeSpeed * 80);
+    frag.y = wellY + 20 + run * sizeSpeed * 170;
     
     // Clamp to canvas
     if (frag.y > h - 15) frag.y = h - 15;
@@ -507,14 +518,24 @@ function draw() {
   ctx.textAlign = 'left';
   ctx.fillStyle = 'rgba(140, 147, 137, 0.6)';
   const markerX = w - 42;
+  let lastLabelY = -Infinity; /* narrow canvas: keep ladder labels in a clear column */
   [2000, 1000, 500].forEach(bp => {
     const sizeSpeed = 1 / Math.sqrt(bp);
-    const markerY = wellY + 20 + (time * migrationFactor * sizeSpeed * 80);
+    const markerY = wellY + 20 + run * sizeSpeed * 170;
     if (markerY < h - 15) {
+      if (w < 560) {
+        const labelY = Math.max(markerY, lastLabelY + 13);
+        lastLabelY = labelY;
+        ctx.fillText(bp + 'bp', markerX, labelY + 3);
+      } else {
       ctx.fillText(bp + 'bp', markerX, markerY + 3);
+      }
     }
   });
   ctx.restore();
+
+  // Separation readout: on-screen gap between the 300 bp and 2000 bp bands
+  sepValue.textContent = Math.round(fragments[5].y - fragments[0].y) + ' px';
 
   // Bloom effect
   bctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -536,7 +557,6 @@ function draw() {
   ctx.fillStyle = vig;
   ctx.fillRect(0, 0, w, h);
 
-  time += 0.016;
   requestAnimationFrame(draw);
 }
 
@@ -547,11 +567,6 @@ voltageSlider.addEventListener('input', (e) => {
   // Update live displays
   const rate = (voltage / 100).toFixed(1);
   rateValue.textContent = rate + '×';
-  
-  let sep = 'Low';
-  if (voltage >= 150 && voltage < 200) sep = 'Medium';
-  if (voltage >= 200) sep = 'High';
-  sepValue.textContent = sep;
   
   let speedDesc = 'SLOW';
   if (voltage >= 150 && voltage < 200) speedDesc = 'MODERATE';
@@ -570,7 +585,7 @@ toggleBtns.forEach(btn => {
     if (mode === 'forensic') {
       knowdrop.textContent = "DNA profiling in forensic science exploits short tandem repeats (STRs) — highly variable non-coding regions where individuals possess different numbers of repeated sequences at specific loci. Crime scene samples are amplified using PCR targeting multiple STR loci simultaneously, then separated by electrophoresis to generate a unique banding pattern. Each band represents one allele inherited from a parent at that locus. When comparing a suspect's profile to crime scene DNA, forensic analysts look for matching alleles at 13-20 different loci. The probability of two unrelated individuals sharing identical alleles at all tested loci is astronomically low — often less than one in several billion — making DNA profiling one of the most reliable forensic identification methods available.";
     } else {
-      knowdrop.textContent = "Paternity testing relies on Mendelian inheritance of STR alleles — each child inherits exactly one allele from each biological parent at every locus tested. A DNA profile compares the child's banding pattern to the alleged father's profile across 15-20 STR loci. For each locus, the child must share at least one band with the biological father, since they inherited one copy from him. If the alleged father's profile shows no matching bands at even a single locus, paternity is definitively excluded. Conversely, if the child shares bands with the alleged father at all tested loci, and those shared bands are sufficiently rare in the population, the combined paternity index typically exceeds 99.99%, providing near-certain confirmation of biological fatherhood.";
+      knowdrop.textContent = "Paternity testing relies on Mendelian inheritance of STR alleles — each child inherits exactly one allele from each biological parent at every locus tested. A DNA profile compares the child's banding pattern to the alleged father's profile across 15-20 STR loci. For each locus, the child must share at least one band with the biological father, since they inherited one copy from him. If the alleged father's profile shows no matching bands at even a single locus, paternity is definitively excluded. Conversely, if the child shares bands with the alleged father at all tested loci, and those shared bands are sufficiently rare in the population, the probability of paternity typically exceeds 99.99%, providing near-certain confirmation of biological fatherhood.";
     }
   });
 });

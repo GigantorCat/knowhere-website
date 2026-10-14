@@ -88,7 +88,7 @@ h1 {
 .live-tag {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
-  text-transform: uppercase;
+  text-transform: none; /* "v = 0.90c", not "V = 0.90C" */
   color: var(--acc);
 }
 
@@ -139,7 +139,7 @@ canvas {
 .slider-label {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10.5px;
-  text-transform: uppercase;
+  text-transform: none; /* "Velocity (fraction of c)", lower-case c for the speed of light */
   color: var(--ink-dim);
   margin-bottom: 10px;
 }
@@ -327,7 +327,7 @@ canvas {
 
   <h1>Moving objects shrink, but only in the direction they <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">move</span></h1>
   
-  <p class="intro">At high speeds near the speed of light, objects contract along their direction of motion while staying unchanged in perpendicular directions. A spaceship rushing past you would appear squashed front-to-back but maintain its full height and width. Drag the slider to increase velocity and watch the spaceship contract.</p>
+  <p class="intro">At high speeds near the speed of light, objects contract along their direction of motion while staying unchanged in perpendicular directions. A spaceship rushing past you would appear squashed front-to-back but maintain its full height and width. Increase the velocity and watch the spaceship contract.</p>
 
   <div class="card">
     <div class="card-header">
@@ -370,7 +370,7 @@ canvas {
     </div>
     <div class="knowdrop-divider"></div>
     <div class="knowdrop-text" id="knowdropText">
-      Length contraction reveals that space itself is relative. The proper length L₀ is measured in the object's rest frame and is always the longest measurement. An observer watching the object move at velocity v measures a contracted length L = L₀/γ, where γ (gamma) is the Lorentz factor. Critically, only the dimension parallel to motion contracts—perpendicular dimensions remain unchanged. A meter stick moving lengthwise shrinks, but if it moves sideways, its length stays constant. This directional nature proves that spacetime mixing occurs only along the motion axis. At everyday speeds where v ≪ c, gamma approaches 1 and the contraction becomes unmeasurably small, which is why we never notice it in daily life.
+      Length contraction reveals that space itself is relative. The proper length L₀ is measured in the object's rest frame and is always the longest measurement. An observer watching the object move at velocity v measures a contracted length L = L₀/γ, where γ (gamma) is the Lorentz factor. Critically, only the dimension parallel to motion contracts—perpendicular dimensions remain unchanged. A metre stick moving lengthwise shrinks, but if it moves sideways, its length stays constant. This directional nature shows that the effect acts only along the motion axis. At everyday speeds where v ≪ c, gamma approaches 1 and the contraction becomes unmeasurably small, which is why we never notice it in daily life.
     </div>
   </div>
 
@@ -404,6 +404,9 @@ const bctx = buf.getContext('2d', { alpha: false });
 
 let velocity = 0; // fraction of c
 let time = 0;
+let mode = "length";
+let shipX = -1e9; /* first frame parks the ship mid-canvas */
+let lastFrame = 0;
 
 const stars = Array.from({length: 150}, () => ({
   x: Math.random(),
@@ -469,72 +472,132 @@ function draw() {
     ctx.stroke();
   }
 
-  const properLength = 100; // meters
+  const properLength = 100; // metres
   const g = gamma(velocity);
   const contractedLength = properLength / g;
 
-  // Draw spaceship
-  const shipWidthRest = 100; // logical px at rest
-  const shipHeightRest = 40;
-  
-  const shipWidth = shipWidthRest / g; // contracted
-  const shipHeight = shipHeightRest; // unchanged
+  const nowMs = performance.now();
+  const dt = lastFrame ? Math.min((nowMs - lastFrame) / 1000, 0.1) : 0;
+  lastFrame = nowMs;
 
-  // Main body
+  // Spaceship: 1 px per metre along the motion, height never changes
+  const shipWidthRest = 100;
+  const shipHeight = 40;
+  const shipWidth = shipWidthRest / g; // contracted along x only
+  const shipY = mode === "momentum" ? (h - 40) * 0.64 : (h - 40) * 0.5;
+
+  // Fly the ship left to right across the canvas, faster for bigger v
+  if (shipX < -1e8) shipX = cx;
+  shipX += velocity * w * 0.3 * dt;
+  if (shipX - shipWidthRest / 2 > w + 8) shipX = -shipWidthRest / 2 - 8;
+
+  // Rest-length ghost: the same ship at rest, dashed, riding with it
   ctx.save();
-  ctx.translate(cx, cy);
-  
-  // Outer glow
-  const bodyGlow = ctx.createRadialGradient(0, 0, 0, 0, 0, shipWidth * 0.8);
-  bodyGlow.addColorStop(0, 'rgba(58,111,200,0.3)');
-  bodyGlow.addColorStop(1, 'rgba(58,111,200,0)');
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.fillStyle = bodyGlow;
-  ctx.fillRect(-shipWidth/2, -shipHeight/2, shipWidth, shipHeight);
-  
-  // Main hull
-  ctx.globalCompositeOperation = 'source-over';
-  const hullGrad = ctx.createLinearGradient(0, -shipHeight/2, 0, shipHeight/2);
-  hullGrad.addColorStop(0, '#1a2218');
-  hullGrad.addColorStop(0.5, '#243327');
-  hullGrad.addColorStop(1, '#1a2218');
-  ctx.fillStyle = hullGrad;
-  ctx.fillRect(-shipWidth/2, -shipHeight/2, shipWidth, shipHeight);
-
-  // Accent stripe
-  ctx.fillStyle = 'rgba(58,111,200,0.6)';
-  ctx.fillRect(-shipWidth/2, -2, shipWidth, 4);
-
-  // Cockpit window (perpendicular dimension unchanged)
-  ctx.fillStyle = 'rgba(58,111,200,0.4)';
-  const windowWidth = 12 / g; // contracts
-  const windowHeight = 8; // unchanged
-  ctx.fillRect(-windowWidth/2, -shipHeight/2 + 8, windowWidth, windowHeight);
-
-  // Engine glow at rear
-  const engineGlow = ctx.createRadialGradient(-shipWidth/2, 0, 0, -shipWidth/2, 0, 20);
-  engineGlow.addColorStop(0, 'rgba(250,199,117,0.8)');
-  engineGlow.addColorStop(1, 'rgba(250,199,117,0)');
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.fillStyle = engineGlow;
-  ctx.beginPath();
-  ctx.arc(-shipWidth/2, 0, 20, 0, Math.PI * 2);
-  ctx.fill();
-
+  ctx.strokeStyle = "rgba(237,237,232,0.45)";
+  ctx.setLineDash([4, 4]);
+  ctx.lineWidth = 1;
+  ctx.strokeRect(shipX - shipWidthRest / 2, shipY - shipHeight / 2, shipWidthRest, shipHeight);
+  ctx.setLineDash([]);
+  ctx.fillStyle = "rgba(237,237,232,0.7)";
+  ctx.font = "500 11px \"JetBrains Mono\", monospace";
+  ctx.textAlign = "center";
+  ctx.fillText("at rest: 100 m", shipX, shipY - shipHeight / 2 - 6);
   ctx.restore();
 
-  // Motion lines if moving
-  if (velocity > 0.1) {
-    ctx.strokeStyle = `rgba(58,111,200,${velocity * 0.3})`;
+  // Motion streaks behind the ship (rear is on the left)
+  if (velocity > 0.05) {
+    ctx.strokeStyle = "rgba(58,111,200," + (0.15 + velocity * 0.4) + ")";
     ctx.lineWidth = 1;
     for (let i = 0; i < 5; i++) {
-      const lineY = cy - shipHeight/2 + (shipHeight / 4) * i;
-      const lineLen = velocity * 80;
+      const lineY = shipY - shipHeight / 2 + (shipHeight / 4) * i;
+      const lineLen = 12 + velocity * 70;
       ctx.beginPath();
-      ctx.moveTo(cx - shipWidth/2, lineY);
-      ctx.lineTo(cx - shipWidth/2 - lineLen, lineY);
+      ctx.moveTo(shipX - shipWidth / 2 - 4, lineY);
+      ctx.lineTo(shipX - shipWidth / 2 - 4 - lineLen, lineY);
       ctx.stroke();
     }
+  }
+
+  ctx.save();
+  ctx.translate(shipX, shipY);
+
+  // Outer glow
+  const bodyGlow = ctx.createRadialGradient(0, 0, 0, 0, 0, Math.max(shipWidth, shipHeight) * 0.8);
+  bodyGlow.addColorStop(0, "rgba(58,111,200,0.3)");
+  bodyGlow.addColorStop(1, "rgba(58,111,200,0)");
+  ctx.globalCompositeOperation = "lighter";
+  ctx.fillStyle = bodyGlow;
+  ctx.fillRect(-shipWidth / 2, -shipHeight / 2, shipWidth, shipHeight);
+
+  // Hull with a nose at the front (right), both squashed by the same 1/γ
+  ctx.globalCompositeOperation = "source-over";
+  const noseStart = shipWidth / 2 - shipWidth * 0.22;
+  const hullGrad = ctx.createLinearGradient(0, -shipHeight / 2, 0, shipHeight / 2);
+  hullGrad.addColorStop(0, "#1a2218");
+  hullGrad.addColorStop(0.5, "#2c3f33");
+  hullGrad.addColorStop(1, "#1a2218");
+  ctx.fillStyle = hullGrad;
+  ctx.beginPath();
+  ctx.moveTo(-shipWidth / 2, -shipHeight / 2);
+  ctx.lineTo(noseStart, -shipHeight / 2);
+  ctx.lineTo(shipWidth / 2, 0);
+  ctx.lineTo(noseStart, shipHeight / 2);
+  ctx.lineTo(-shipWidth / 2, shipHeight / 2);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = "rgba(58,111,200,0.9)";
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // Accent stripe
+  ctx.fillStyle = "rgba(58,111,200,0.6)";
+  ctx.fillRect(-shipWidth / 2, -2, noseStart + shipWidth / 2, 4);
+
+  // Cockpit window (contracts in width, keeps its height)
+  ctx.fillStyle = "rgba(58,111,200,0.55)";
+  const windowWidth = 12 / g;
+  ctx.fillRect(noseStart - windowWidth - 2 / g, -shipHeight / 2 + 8, windowWidth, 8);
+
+  // Engine glow at the rear
+  const engineGlow = ctx.createRadialGradient(-shipWidth / 2, 0, 0, -shipWidth / 2, 0, 16);
+  engineGlow.addColorStop(0, "rgba(250,199,117,0.8)");
+  engineGlow.addColorStop(1, "rgba(250,199,117,0)");
+  ctx.globalCompositeOperation = "lighter";
+  ctx.fillStyle = engineGlow;
+  ctx.beginPath();
+  ctx.arc(-shipWidth / 2, 0, 16, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+  // Measured length under the ship
+  ctx.fillStyle = "#6F9BE6";
+  ctx.font = "500 11px \"JetBrains Mono\", monospace";
+  ctx.textAlign = "center";
+  ctx.fillText("measured: " + contractedLength.toFixed(1) + " m", shipX, shipY + shipHeight / 2 + 15);
+
+  // Momentum mode: classical mv against relativistic γmv, in units of mc
+  if (mode === "momentum") {
+    const pad = 14;
+    const maxP = 7.1; // γv at 0.99c is 7.02
+    const scale = (w - pad * 2) / maxP;
+    const pc = velocity;
+    const pr = g * velocity;
+    ctx.save();
+    ctx.font = "500 11px \"JetBrains Mono\", monospace";
+    ctx.textAlign = "left";
+    ctx.fillStyle = "rgba(237,237,232,0.85)";
+    ctx.fillText("classical mv = " + pc.toFixed(2) + " mc", pad, 17);
+    ctx.fillStyle = "rgba(237,237,232,0.12)";
+    ctx.fillRect(pad, 22, w - pad * 2, 8);
+    ctx.fillStyle = "rgba(237,237,232,0.75)";
+    ctx.fillRect(pad, 22, pc * scale, 8);
+    ctx.fillStyle = "#FAC775";
+    ctx.fillText("relativistic \u03b3mv = " + pr.toFixed(2) + " mc", pad, 46);
+    ctx.fillStyle = "rgba(250,199,117,0.12)";
+    ctx.fillRect(pad, 51, w - pad * 2, 8);
+    ctx.fillStyle = "#FAC775";
+    ctx.fillRect(pad, 51, pr * scale, 8);
+    ctx.restore();
   }
 
   // Bloom
@@ -581,12 +644,14 @@ vSlider.addEventListener('input', updateUI);
 btn1.addEventListener('click', () => {
   btn1.classList.add('active');
   btn2.classList.remove('active');
-  knowdropText.textContent = "Length contraction reveals that space itself is relative. The proper length L₀ is measured in the object's rest frame and is always the longest measurement. An observer watching the object move at velocity v measures a contracted length L = L₀/γ, where γ (gamma) is the Lorentz factor. Critically, only the dimension parallel to motion contracts—perpendicular dimensions remain unchanged. A meter stick moving lengthwise shrinks, but if it moves sideways, its length stays constant. This directional nature proves that spacetime mixing occurs only along the motion axis. At everyday speeds where v ≪ c, gamma approaches 1 and the contraction becomes unmeasurably small, which is why we never notice it in daily life.";
+  mode = "length";
+  knowdropText.textContent = "Length contraction reveals that space itself is relative. The proper length L₀ is measured in the object's rest frame and is always the longest measurement. An observer watching the object move at velocity v measures a contracted length L = L₀/γ, where γ (gamma) is the Lorentz factor. Critically, only the dimension parallel to motion contracts—perpendicular dimensions remain unchanged. A metre stick moving lengthwise shrinks, but if it moves sideways, its length stays constant. This directional nature shows that the effect acts only along the motion axis. At everyday speeds where v ≪ c, gamma approaches 1 and the contraction becomes unmeasurably small, which is why we never notice it in daily life.";
 });
 
 btn2.addEventListener('click', () => {
   btn2.classList.add('active');
   btn1.classList.remove('active');
+  mode = "momentum";
   knowdropText.textContent = "Classical momentum p = mv fails at relativistic speeds because it violates conservation laws in high-energy collisions. Experiments show that particles carry more momentum than Newtonian physics predicts. Relativistic momentum p = γmv accounts for this by multiplying the classical expression by the Lorentz factor. As velocity approaches c, gamma grows without bound, meaning momentum increases toward infinity even though velocity is capped. This explains why accelerating particles to light speed is impossible—it would require infinite energy. At low velocities where v ≪ c, gamma approaches 1 and the equation reduces to p = mv, recovering Newton's result. This smooth reduction is a hallmark of relativity: extreme-speed physics must simplify to everyday physics in the appropriate limit.";
 });
 

@@ -325,6 +325,8 @@ td{
 
 tr:last-child td{border-bottom:none}
 
+.mode-note{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin-top:8px;line-height:1.4}
+
 .change-val{color:var(--acc)}
 .eq-val{color:var(--amb)}
 </style>
@@ -334,14 +336,14 @@ tr:last-child td{border-bottom:none}
 <div class="container">
   <h1>One known change unlocks <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">everything</span></h1>
   
-  <p class="intro">In equilibrium problems, you rarely know all the concentrations at equilibrium — but you don't need to. A single known change, combined with the stoichiometric coefficients, cascades through the entire system. Drag the slider to adjust how much A is consumed, and watch the ICE table auto-fill based on the reaction 2A + B ⇌ 3C.</p>
+  <p class="intro">In equilibrium problems, you rarely know all the concentrations at equilibrium — but you don't need to. A single known change, combined with the stoichiometric coefficients, cascades through the entire system. Set how much A is consumed, and watch the ICE table auto-fill based on the reaction 2A + B ⇌ 3C.</p>
 
   <div class="card">
     <div class="card-header">
       <span class="card-label">ICE Table Builder</span>
       <span class="live-tag" id="liveTag">Change A: 0.00 M</span>
     </div>
-    <p class="card-hint">Drag to set the change in [A] — the ratios do the rest</p>
+    <p class="card-hint">Set the change in [A] — the ratios do the rest</p>
     
     <div class="canvas-wrapper">
       <canvas id="iceCanvas"></canvas>
@@ -349,13 +351,14 @@ tr:last-child td{border-bottom:none}
     </div>
 
     <div class="slider-section">
-      <label class="slider-label" for="changeSlider">Change in [A] consumed</label>
+      <label class="slider-label" for="changeSlider" style="display:flex;justify-content:space-between;gap:10px"><span id="sliderLabel">Change in [A] consumed</span><span id="sliderVal" style="color:var(--acc)">0.00 M</span></label>
       <input type="range" id="changeSlider" class="ice-slider" min="0" max="100" value="0" step="1">
       <div class="tick-labels">
         <span>0.00 M</span>
         <span>0.50 M</span>
         <span>1.00 M</span>
       </div>
+      <div class="mode-note" id="modeNote">Forward: A is used up, so its change is negative.</div>
     </div>
 
     <div class="table-container">
@@ -409,7 +412,7 @@ tr:last-child td{border-bottom:none}
       <button class="toggle-btn" data-mode="reverse">Reverse</button>
     </div>
     <div class="toggle-divider"></div>
-    <p class="knowdrop" id="knowdropText">When the reaction runs forward, reactants A and B are consumed and product C is formed. The change row shows negative values for A and B (they decrease) and positive for C (it increases). The stoichiometric coefficients — 2:1:3 — determine the exact ratio of these changes. If 0.40 M of A is consumed, then 0.20 M of B must also be consumed (half as much, because B's coefficient is 1 while A's is 2), and 0.60 M of C is produced (1.5 times the A change, because C's coefficient is 3 while A's is 2). This ratio is locked by the balanced equation and never changes, regardless of direction or how far the reaction proceeds.</p>
+    <p class="knowdrop" id="knowdropText">When the reaction runs forward, reactants A and B are consumed and product C is formed. The change row shows negative values for A and B (they decrease) and positive for C (it increases). The stoichiometric coefficients — 2:1:3 — determine the exact ratio of these changes. If 0.40 M of A is consumed, then 0.20 M of B must also be consumed (half as much, because the coefficient of B is 1 while that of A is 2), and 0.60 M of C is produced (1.5 times the A change, because the coefficient of C is 3 while that of A is 2). This ratio is locked by the balanced equation and never changes, regardless of direction or how far the reaction proceeds.</p>
   </div>
 
   <div class="know-this">
@@ -419,237 +422,268 @@ tr:last-child td{border-bottom:none}
 </div>
 
 <script>
-const canvas=document.getElementById('iceCanvas');
-const ctx=canvas.getContext('2d',{alpha:false});
-const slider=document.getElementById('changeSlider');
-const liveTag=document.getElementById('liveTag');
-const canvasOverlay=document.getElementById('canvasOverlay');
+const canvas = document.getElementById("iceCanvas");
+const ctx = canvas.getContext("2d", { alpha: false });
+const slider = document.getElementById("changeSlider");
+const liveTag = document.getElementById("liveTag");
+const canvasOverlay = document.getElementById("canvasOverlay");
+const sliderVal = document.getElementById("sliderVal");
+const sliderLabel = document.getElementById("sliderLabel");
+const modeNote = document.getElementById("modeNote");
 
-const changeA=document.getElementById('changeA');
-const changeB=document.getElementById('changeB');
-const changeC=document.getElementById('changeC');
-const initC=document.getElementById('initC');
-const eqA=document.getElementById('eqA');
-const eqB=document.getElementById('eqB');
-const eqC=document.getElementById('eqC');
-const totalConsumed=document.getElementById('totalConsumed');
-const totalProduced=document.getElementById('totalProduced');
+const changeA = document.getElementById("changeA");
+const changeB = document.getElementById("changeB");
+const changeC = document.getElementById("changeC");
+const initC = document.getElementById("initC");
+const eqA = document.getElementById("eqA");
+const eqB = document.getElementById("eqB");
+const eqC = document.getElementById("eqC");
+const totalConsumed = document.getElementById("totalConsumed");
+const totalProduced = document.getElementById("totalProduced");
 
-const toggleBtns=document.querySelectorAll('.toggle-btn');
-const knowdropText=document.getElementById('knowdropText');
+const toggleBtns = document.querySelectorAll(".toggle-btn");
+const knowdropText = document.getElementById("knowdropText");
 
-let changeVal=0;
-let mode='forward';
+let changeVal = 0;
+let mode = "forward";
 
-const dpr=Math.min(window.devicePixelRatio||1,2);
-const buf=document.createElement('canvas');
-const bctx=buf.getContext('2d',{alpha:false});
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement("canvas");
+const bctx = buf.getContext("2d", { alpha: false });
 
-const knowdrops={
-  forward:"When the reaction runs forward, reactants A and B are consumed and product C is formed. The change row shows negative values for A and B (they decrease) and positive for C (it increases). The stoichiometric coefficients — 2:1:3 — determine the exact ratio of these changes. If 0.40 M of A is consumed, then 0.20 M of B must also be consumed (half as much, because B's coefficient is 1 while A's is 2), and 0.60 M of C is produced (1.5 times the A change, because C's coefficient is 3 while A's is 2). This ratio is locked by the balanced equation and never changes, regardless of direction or how far the reaction proceeds.",
-  reverse:"When equilibrium shifts in reverse, products become reactants. Now C is consumed (negative change) and A and B are produced (positive changes). The same stoichiometric ratio still governs the change row, just with flipped signs. If 0.60 M of C is consumed, you produce 0.40 M of A (because the ratio 3C:2A means each 3 mol of C yields 2 mol of A) and 0.20 M of B (3C:1B gives one-third as much B as C). The initial row stays fixed as the reaction shifts — it's the starting snapshot (here 1.50 M of C) before any shift. Only row 2 changes direction, and row 3 recalculates as initial plus (or minus) change."
+const knowdrops = {
+  forward: "When the reaction runs forward, reactants A and B are consumed and product C is formed. The change row shows negative values for A and B (they decrease) and positive for C (it increases). The stoichiometric coefficients — 2:1:3 — determine the exact ratio of these changes. If 0.40 M of A is consumed, then 0.20 M of B must also be consumed (half as much, because the coefficient of B is 1 while that of A is 2), and 0.60 M of C is produced (1.5 times the A change, because the coefficient of C is 3 while that of A is 2). This ratio is locked by the balanced equation and never changes, regardless of direction or how far the reaction proceeds.",
+  reverse: "When equilibrium shifts in reverse, products become reactants. Now C is consumed (negative change) and A and B are produced (positive changes). The same stoichiometric ratio still governs the change row, just with flipped signs. If 0.60 M of C is consumed, you produce 0.40 M of A (because the ratio 3C:2A means each 3 mol of C yields 2 mol of A) and 0.20 M of B (3C:1B gives one-third as much B as C). The initial row stays fixed as the reaction shifts — it is the starting snapshot (here 1.50 M of C) before any shift. Only row 2 changes direction, and row 3 recalculates as initial plus (or minus) change."
+};
+const notes = {
+  forward: "Forward: A is used up, so its change is negative.",
+  reverse: "Reverse: you set how much A forms, so its change is positive."
 };
 
-function resize(){
-  const rect=canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width=Math.round(rect.width*dpr);
-  canvas.height=Math.round(rect.height*dpr);
-  buf.width=canvas.width;
-  buf.height=canvas.height;
-  ctx.setTransform(dpr,0,0,dpr,0,0);
-  draw();
+/* the model: one known change in [A], every other change follows 2 : 1 : 3 */
+function model() {
+  const a = changeVal / 100;
+  const ch = mode === "forward" ? [-a, -a / 2, a * 1.5] : [a, a / 2, -a * 1.5];
+  const init = mode === "forward" ? [1.0, 1.0, 0.0] : [1.0, 1.0, 1.5];
+  const eq = init.map((v, i) => Math.max(0, v + ch[i]));
+  return { a, ch, init, eq };
 }
 
-function updateTable(){
-  const raw=changeVal/100;
-  const A=raw;
-  const B=raw/2;
-  const C=raw*1.5;
+function sgn(v) { return (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v).toFixed(2); }
 
-  if(mode==='forward'){
-    changeA.textContent=(-A).toFixed(2);
-    changeB.textContent=(-B).toFixed(2);
-    changeC.textContent='+'+(C).toFixed(2);
-    initC.textContent='0.00';
-    eqA.textContent=(1.00-A).toFixed(2);
-    eqB.textContent=(1.00-B).toFixed(2);
-    eqC.textContent=(0+C).toFixed(2);
-    totalConsumed.textContent=(A+B).toFixed(2)+' M';
-    totalProduced.textContent=C.toFixed(2)+' M';
-  }else{
-    changeA.textContent='+'+(A).toFixed(2);
-    changeB.textContent='+'+(B).toFixed(2);
-    changeC.textContent=(-C).toFixed(2);
-    initC.textContent='1.50';
-    eqA.textContent=(1.00+A).toFixed(2);
-    eqB.textContent=(1.00+B).toFixed(2);
-    eqC.textContent=Math.max(0,1.50-C).toFixed(2);
-    totalProduced.textContent=(A+B).toFixed(2)+' M';
-    totalConsumed.textContent=C.toFixed(2)+' M';
+function updateTable() {
+  const m = model();
+  const A = m.a, B = m.a / 2, C = m.a * 1.5;
+  if (mode === "forward") {
+    changeA.textContent = (-A).toFixed(2);
+    changeB.textContent = (-B).toFixed(2);
+    changeC.textContent = "+" + C.toFixed(2);
+    initC.textContent = "0.00";
+    totalConsumed.textContent = (A + B).toFixed(2) + " M";
+    totalProduced.textContent = C.toFixed(2) + " M";
+  } else {
+    changeA.textContent = "+" + A.toFixed(2);
+    changeB.textContent = "+" + B.toFixed(2);
+    changeC.textContent = (-C).toFixed(2);
+    initC.textContent = "1.50";
+    totalProduced.textContent = (A + B).toFixed(2) + " M";
+    totalConsumed.textContent = C.toFixed(2) + " M";
   }
+  eqA.textContent = m.eq[0].toFixed(2);
+  eqB.textContent = m.eq[1].toFixed(2);
+  eqC.textContent = m.eq[2].toFixed(2);
+  sliderVal.textContent = A.toFixed(2) + " M";
+  sliderLabel.textContent = mode === "reverse" ? "Change in [A] formed" : "Change in [A] consumed";
+  modeNote.textContent = notes[mode];
 }
 
-slider.addEventListener('input',e=>{
-  changeVal=parseFloat(e.target.value);
-  const fill=(changeVal/100)*100;
-  slider.style.setProperty('--fill',fill+'%');
-  liveTag.textContent='Change A: '+(changeVal/100).toFixed(2)+' M';
+function readSlider() {
+  changeVal = parseFloat(slider.value) || 0;
+  slider.style.setProperty("--fill", changeVal + "%");
+  liveTag.textContent = "Change A: " + (changeVal / 100).toFixed(2) + " M";
   updateTable();
-  draw();
-});
+}
+slider.addEventListener("input", readSlider);
+slider.addEventListener("change", readSlider);
 
-toggleBtns.forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    toggleBtns.forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    mode=btn.dataset.mode;
-    knowdropText.textContent=knowdrops[mode];
-    if(mode==='reverse'){
-      canvasOverlay.textContent='Reverse: C → A + B (same ratio)';
-    }else{
-      canvasOverlay.textContent='Row 2 Ratio: 2A : 1B : 3C';
-    }
+toggleBtns.forEach(btn => {
+  btn.addEventListener("click", () => {
+    toggleBtns.forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    mode = btn.dataset.mode;
+    knowdropText.textContent = knowdrops[mode];
+    canvasOverlay.textContent = mode === "reverse" ? "Reverse: C → A + B (same ratio)" : "Row 2 Ratio: 2A : 1B : 3C";
     updateTable();
-    draw();
   });
 });
 
-const particles=[];
-for(let i=0;i<60;i++){
-  particles.push({
-    x:Math.random(),
-    y:Math.random(),
-    vx:(Math.random()-0.5)*0.0008,
-    vy:(Math.random()-0.5)*0.0008,
-    r:Math.random()*1.8+0.6,
-    type:i<20?'A':(i<35?'B':'C')
-  });
+/* ---------- picture: one column per species, bar height = concentration on a true 0 to 2.0 M axis ---------- */
+let W = 0, H = 0;
+const shown = { init: [1, 1, 0], eq: [1, 1, 0] }; /* eased copies of the model, so bars glide */
+const MAXC = 2.25; /* axis headroom; ticks stop at 2.0 */
+const NAMES = ["A", "B", "C"];
+const COL = ["#3E9AD6", "#3E9AD6", "#FAC775"];
+const COLA = ["rgba(62, 154, 214,", "rgba(62, 154, 214,", "rgba(250,199,117,"];
+const MONO = "\"JetBrains Mono\", ui-monospace, monospace";
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  W = rect.width; H = rect.height;
 }
 
-let time=0;
+function bottomPad() {
+  const st = window.getComputedStyle(canvasOverlay);
+  if (st.position !== "absolute" || st.display === "none") return 0;
+  return canvasOverlay.offsetHeight || 0;
+}
 
-function draw(){
-  const w=canvas.width/dpr;
-  const h=canvas.height/dpr;
-
-  ctx.fillStyle='#000';
-  ctx.fillRect(0,0,w,h);
-
-  time+=0.016;
-  const raw=changeVal/100;
-
-  // Update particles
-  particles.forEach(p=>{
-    p.x+=p.vx;
-    p.y+=p.vy;
-    if(p.x<0||p.x>1)p.vx*=-1;
-    if(p.y<0||p.y>1)p.vy*=-1;
-    p.x=Math.max(0,Math.min(1,p.x));
-    p.y=Math.max(0,Math.min(1,p.y));
-  });
-
-  // Draw particles with ratio-based glow
-  particles.forEach(p=>{
-    const px=p.x*w;
-    const py=p.y*h;
-    let alpha=0.3;
-    let glowR=4;
-
-    if(mode==='forward'){
-      if(p.type==='A'){
-        alpha=0.9-raw*0.6;
-        glowR=4-raw*2;
-      }else if(p.type==='B'){
-        alpha=0.9-raw*0.6;
-        glowR=4-raw*2;
-      }else{
-        alpha=0.2+raw*0.7;
-        glowR=3+raw*5;
-      }
-    }else{
-      if(p.type==='C'){
-        alpha=0.9-raw*0.6;
-        glowR=5-raw*3;
-      }else{
-        alpha=0.2+raw*0.7;
-        glowR=3+raw*5;
-      }
-    }
-
-    const grad=ctx.createRadialGradient(px,py,0,px,py,glowR);
-    if(p.type==='C'){
-      grad.addColorStop(0,'rgba(250,199,117,'+alpha+')');
-      grad.addColorStop(1,'rgba(250,199,117,0)');
-    }else{
-      grad.addColorStop(0,'rgba(62, 154, 214,'+alpha+')');
-      grad.addColorStop(1,'rgba(62, 154, 214,0)');
-    }
-    ctx.save();
-    ctx.globalCompositeOperation='lighter';
-    ctx.fillStyle=grad;
-    ctx.beginPath();
-    ctx.arc(px,py,glowR,0,Math.PI*2);
-    ctx.fill();
-    ctx.restore();
-
-    ctx.fillStyle=p.type==='C'?'rgba(250,199,117,'+alpha+')':'rgba(62, 154, 214,'+alpha+')';
-    ctx.beginPath();
-    ctx.arc(px,py,p.r,0,Math.PI*2);
-    ctx.fill();
-  });
-
-  // Draw ratio bars
-  const barY=h-30;
-  const barH=6;
-  const barGap=w*0.05;
-  const barW=(w-barGap*4)/3;
-
-  const labels=['2A','B','3C'];
-  const widths=[raw/1.5,raw/3,raw];
-  const colors=['rgba(62, 154, 214,0.8)','rgba(62, 154, 214,0.8)','rgba(250,199,117,0.8)'];
-
-  for(let i=0;i<3;i++){
-    const x=barGap+(barW+barGap)*i;
-    ctx.fillStyle='rgba(38,43,38,0.6)';
-    ctx.fillRect(x,barY,barW,barH);
-    
-    const fill=Math.min(1,widths[i])*barW;
-    ctx.fillStyle=colors[i];
-    ctx.fillRect(x,barY,fill,barH);
-
-    ctx.fillStyle='rgba(237,237,232,0.7)';
-    ctx.font='11px "JetBrains Mono"';
-    ctx.textAlign='center';
-    ctx.fillText(labels[i],x+barW/2,barY-6);
+function draw(ts) {
+  requestAnimationFrame(draw);
+  const w = W, h = H;
+  if (!w || !h) return;
+  const time = ts / 1000;
+  const m = model();
+  for (let i = 0; i < 3; i++) {
+    shown.init[i] += (m.init[i] - shown.init[i]) * 0.18;
+    shown.eq[i] += (m.eq[i] - shown.eq[i]) * 0.18;
   }
 
-  // Bloom
-  bctx.setTransform(1,0,0,1,0,0);
-  bctx.clearRect(0,0,buf.width,buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas,0,0);
+  ctx.fillStyle = "#000";
+  ctx.fillRect(0, 0, w, h);
+
+  const padB = bottomPad();
+  const fs = w < 420 ? 11 : 12;
+  const top = 44, bot = h - padB - 34;
+  const axisX = Math.max(52, w * 0.09);
+  const plotW = w - axisX - 12;
+  const y = c => bot - (c / MAXC) * (bot - top);
+
+  /* equation */
+  ctx.fillStyle = "rgba(237,237,232,0.9)";
+  ctx.font = "500 " + (fs + 2) + "px " + MONO;
+  ctx.textAlign = "left"; ctx.textBaseline = "middle";
+  ctx.fillText("2A + B ⇌ 3C", axisX, 20);
+
+  /* axis with ticks at their true values */
+  ctx.font = fs + "px " + MONO;
+  ctx.textAlign = "right";
+  for (let c = 0; c <= 2.0 + 1e-9; c += 0.5) {
+    const yy = y(c);
+    ctx.strokeStyle = "rgba(38,43,38,0.9)"; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(axisX, yy); ctx.lineTo(w - 12, yy); ctx.stroke();
+    ctx.fillStyle = "rgba(140,147,137,0.95)";
+    ctx.fillText(c.toFixed(1), axisX - 6, yy);
+  }
   ctx.save();
-  ctx.globalCompositeOperation='lighter';
-  ctx.globalAlpha=0.38;
-  ctx.filter='blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf,0,0,w,h);
+  ctx.translate(10, (top + bot) / 2); ctx.rotate(-Math.PI / 2);
+  ctx.textAlign = "center"; ctx.fillStyle = "rgba(140,147,137,0.95)";
+  ctx.fillText("conc. (M)", 0, 0);
   ctx.restore();
 
-  // Vignette
-  const cx=w/2,cy=h/2;
-  const vig=ctx.createRadialGradient(cx,cy,h*0.28,cx,cy,w*0.72);
-  vig.addColorStop(0,'rgba(0,0,0,0)');
-  vig.addColorStop(1,'rgba(0,0,0,0.52)');
-  ctx.fillStyle=vig;
-  ctx.fillRect(0,0,w,h);
+  const colW = plotW / 3;
+  const barW = Math.min(64, colW * 0.36);
+  for (let i = 0; i < 3; i++) {
+    const cx = axisX + colW * (i + 0.5) - colW * 0.15; /* bars sit left of centre, leaving room for the change arrow and its value */
+    const bx = cx - barW / 2;
+    const yI = y(shown.init[i]), yE = y(shown.eq[i]);
+    const ch = m.ch[i];
 
-  requestAnimationFrame(draw);
+    /* equilibrium amount: solid bar */
+    const g = ctx.createLinearGradient(0, yE, 0, bot);
+    g.addColorStop(0, COLA[i] + "0.95)"); g.addColorStop(1, COLA[i] + "0.35)");
+    ctx.fillStyle = g;
+    ctx.fillRect(bx, yE, barW, bot - yE);
+
+    /* drifting particles inside the bar, so it reads as stuff in the flask */
+    ctx.save();
+    ctx.beginPath(); ctx.rect(bx, yE, barW, bot - yE); ctx.clip();
+    ctx.fillStyle = "rgba(0,0,0,0.35)";
+    for (let k = 0; k < 18; k++) {
+      const px = bx + ((k * 37 + 11) % 100) / 100 * barW;
+      const py = bot - (((k * 53 + time * 18 * (1 + (k % 3))) % 200) / 200) * (bot - top);
+      ctx.beginPath(); ctx.arc(px, py, 1.6, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.restore();
+
+    /* initial amount: dashed outline */
+    ctx.save();
+    ctx.setLineDash([4, 4]);
+    ctx.strokeStyle = "rgba(237,237,232,0.75)"; ctx.lineWidth = 1.5;
+    ctx.strokeRect(bx - 4, yI, barW + 8, bot - yI);
+    ctx.restore();
+
+    /* the change: arrow from I to E beside the bar */
+    const ax = bx + barW + 12;
+    if (Math.abs(yE - yI) > 3) {
+      ctx.strokeStyle = COL[i]; ctx.fillStyle = COL[i]; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(ax, yI); ctx.lineTo(ax, yE); ctx.stroke();
+      const dir = yE > yI ? 1 : -1;
+      ctx.beginPath(); ctx.moveTo(ax, yE); ctx.lineTo(ax - 5, yE - 7 * dir); ctx.lineTo(ax + 5, yE - 7 * dir); ctx.closePath(); ctx.fill();
+    }
+    /* labels */
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.font = "500 " + (fs + 1) + "px " + MONO;
+    ctx.fillStyle = COL[i];
+    ctx.fillText("[" + NAMES[i] + "]", cx, bot + 14);
+    ctx.font = fs + "px " + MONO;
+    /* change value, beside the arrow; equilibrium value above the bar */
+    const lbl = sgn(ch);
+    const ly = Math.max(top + 8, Math.min(bot - 8, (yI + yE) / 2));
+    ctx.save();
+    ctx.textAlign = "left";
+    const tw = ctx.measureText(lbl).width;
+    const lx = ax + 6 + tw + 4 < w - 2 ? ax + 6 : bx - 10 - tw;
+    ctx.fillStyle = "rgba(0,0,0,0.6)"; ctx.fillRect(lx - 3, ly - 9, tw + 6, 18);
+    ctx.fillStyle = COL[i]; ctx.fillText(lbl, lx, ly);
+    ctx.restore();
+    const ty = Math.max(top - 2, Math.min(yE, yI) - 12);
+    ctx.fillStyle = "rgba(237,237,232,0.95)";
+    ctx.fillText("E " + m.eq[i].toFixed(2), cx, ty);
+  }
+
+  /* key, right to left: I start (dashed), E end (solid), change (arrow) */
+  ctx.save();
+  ctx.font = fs + "px " + MONO; ctx.textAlign = "left"; ctx.textBaseline = "middle";
+  const keys = [["dash", "start (I)"], ["fill", "end (E)"], ["arrow", "change"]];
+  let kx = w - 12;
+  const ky = 20;
+  for (let k = keys.length - 1; k >= 0; k--) {
+    const tw = ctx.measureText(keys[k][1]).width;
+    kx -= tw;
+    ctx.fillStyle = "rgba(140,147,137,1)"; ctx.fillText(keys[k][1], kx, ky);
+    kx -= 18;
+    if (keys[k][0] === "dash") { ctx.setLineDash([3, 3]); ctx.strokeStyle = "rgba(237,237,232,0.75)"; ctx.lineWidth = 1.5; ctx.strokeRect(kx, ky - 5, 12, 10); ctx.setLineDash([]); }
+    else if (keys[k][0] === "fill") { ctx.fillStyle = "rgba(62, 154, 214,0.9)"; ctx.fillRect(kx, ky - 5, 12, 10); }
+    else { ctx.strokeStyle = "rgba(237,237,232,0.8)"; ctx.fillStyle = "rgba(237,237,232,0.8)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(kx + 6, ky - 6); ctx.lineTo(kx + 6, ky + 2); ctx.stroke(); ctx.beginPath(); ctx.moveTo(kx + 6, ky + 6); ctx.lineTo(kx + 2, ky); ctx.lineTo(kx + 10, ky); ctx.closePath(); ctx.fill(); }
+    kx -= 12;
+  }
+  ctx.restore();
+
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = "lighter";
+  ctx.globalAlpha = 0.22;
+  ctx.filter = "blur(6px)";
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
 }
 
-window.addEventListener('resize',resize);
+window.addEventListener("resize", resize);
+if (window.ResizeObserver) new ResizeObserver(resize).observe(canvas);
 resize();
 updateTable();
+requestAnimationFrame(draw);
 </script>
+
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'ice-tables'},'*');}catch(e){}}
 if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

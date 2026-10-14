@@ -4,624 +4,460 @@ body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
-
-:root {
-  --bg: #0B0D0C;
-  --bg2: #12160F;
-  --acc: #23833F;
-  --ag: rgba(35, 131, 63, .7);
-  --ag1: rgba(35, 131, 63, .12);
-  --ag2: rgba(35, 131, 63, .45);
-  --amb: #FAC775;
-  --ink: #EDEDE8;
-  --ink-dim: #8C9389;
-  --line: #262B26;
+:root{
+  --bg:#0B0D0C;
+  --bg2:#12160F;
+  --acc:#23833F;
+  --acc-rgb:35, 131, 63;
+  --ag:rgba(var(--acc-rgb),.7);
+  --ag1:rgba(var(--acc-rgb),.12);
+  --ag2:rgba(var(--acc-rgb),.45);
+  --amb:#FAC775;
+  --amb-rgb:250,199,117;
+  --ink:#EDEDE8;
+  --ink-dim:#8C9389;
+  --dim-rgb:140,147,137;
+  --line:#262B26;
 }
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
-body {
-  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
-  font-family: 'Geist', sans-serif;
-  color: var(--ink);
-  min-height: 100vh;
-  padding: 40px 16px 0;
-}
-
-.container { max-width: 720px; margin: 0 auto; }
-
-h1 {
-  font-size: clamp(26px,6.5vw,44px);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
-  margin-bottom: 14px;
-}
-
-.intro {
-  font-size: 15.5px;
-  color: var(--ink-dim);
-  line-height: 1.55;
-  max-width: 58ch;
-  margin-bottom: 28px;
-}
-
-.card {
-  background: linear-gradient(180deg,#12160F,#0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 20px;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
-}
-
-.card-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  color: var(--ink);
-}
-
-.live-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--acc);
-}
-
-.card-hint {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--ink-dim);
-  margin-bottom: 14px;
-}
-
-.canvas-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16/9;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
-  box-shadow: inset 0 0 0 1px var(--ag1);
-  margin-bottom: 16px;
-}
-
-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.canvas-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(4px);
-  padding: 9px 16px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  text-transform: uppercase;
-  color: var(--acc);
-  text-align: center;
-}
-
-.slider-row {
-  margin-bottom: 10px;
-}
-
-.slider-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 8px;
-}
-
-.line-slider {
-  width: 100%;
-  height: 4px;
-  -webkit-appearance: none;
-  appearance: none;
-  background: transparent;
-  outline: none;
-  border-radius: 3px;
-  position: relative;
-}
-
-.line-slider::-webkit-slider-runnable-track {
-  width: 100%;
-  height: 4px;
-  background: linear-gradient(90deg, var(--acc) var(--fill,0%), #23291f var(--fill,0%));
-  border-radius: 3px;
-}
-
-.line-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  margin-top: -8px;
-  transition: box-shadow .15s;
-}
-
-.line-slider::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.line-slider::-moz-range-track {
-  width: 100%;
-  height: 4px;
-  background: linear-gradient(90deg, var(--acc) var(--fill,0%), #23291f var(--fill,0%));
-  border-radius: 3px;
-}
-
-.line-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow .15s;
-}
-
-.line-slider::-moz-range-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.tick-labels {
-  display: flex;
-  justify-content: space-between;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--ink-dim);
-  margin-top: 6px;
-}
-
-.stat-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-}
-
-.stat {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.stat-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-}
-
-.stat-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 24px;
-  font-weight: 500;
-}
-
-.toggle-row {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.toggle-btn {
-  flex: 1;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14.5px;
-  padding: 12px;
-  border-radius: 11px;
-  background: #12160F;
-  border: 1px solid var(--line);
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: all .2s;
-}
-
-.toggle-btn.active {
-  background: rgba(35, 131, 63,.1);
-  border: 1px solid var(--acc);
-  color: var(--acc);
-  box-shadow: 0 0 22px rgba(35, 131, 63,.18);
-}
-
-.knowdrop {
-  border-top: 1px solid var(--line);
-  padding-top: 16px;
-  font-size: 14.5px;
-  line-height: 1.65;
-  color: var(--ink);
-}
-
-.know-this {
-  border-left: 3px solid var(--acc);
-  padding: 16px 18px;
-  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
-  border-radius: 0 12px 12px 0;
-  margin-bottom: 0;
-}
-
-.know-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--acc);
-  margin-bottom: 8px;
-}
-
-.know-body {
-  font-size: 17.4px;
-  line-height: 1.55;
-  color: var(--ink);
-}
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C 55%);font-family:'Geist',sans-serif;color:var(--ink);min-height:100vh;padding:40px 16px 0}
+.vl{max-width:720px;margin:0 auto}
+.vl h1{font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin:0 0 14px}
+.vl-intro{font-size:15.5px;font-weight:400;color:var(--ink-dim);line-height:1.55;max-width:58ch;margin:0 0 26px}
+.vl-card{background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);margin:0 0 20px}
+.vl-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+.vl-label{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;color:#fff}
+.vl-live{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--acc);text-align:right}
+.vl-hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin:0 0 12px;line-height:1.5}
+.vl-tt{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin:0 0 8px}
+.vl-pills{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+.vl-pill{flex:1 1 auto;min-width:0;font-family:'JetBrains Mono',monospace;font-size:12px;padding:9px 12px;border-radius:999px;background:var(--bg2);border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:background .2s,color .2s,box-shadow .2s,border-color .2s}
+.vl-pill[aria-pressed="true"]{background:rgba(var(--acc-rgb),.1);border-color:var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.vl-wrap{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1);margin-bottom:16px}
+.vl-wrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+@media (max-width:600px){.vl-wrap{aspect-ratio:1/1}}
+.vl-over{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:14px;text-transform:uppercase;color:var(--acc);text-align:center}
+.vl-ctl{margin:0 0 4px}
+.vl-ctl + .vl-ctl{margin-top:16px}
+.vl-row{display:flex;justify-content:space-between;align-items:baseline;font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:8px}
+.vl-row b{font-weight:500;color:var(--ink);font-size:12px}
+.vl-slider{width:100%;height:4px;-webkit-appearance:none;appearance:none;background:transparent;outline:none;margin:8px 0 0;display:block}
+.vl-slider::-webkit-slider-runnable-track{height:4px;border-radius:3px;background:linear-gradient(90deg,var(--acc) var(--fill,0%),#23291f var(--fill,0%))}
+.vl-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:var(--bg);border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);margin-top:-8px;cursor:pointer;transition:box-shadow .15s}
+.vl-slider::-webkit-slider-thumb:hover{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.vl-slider::-moz-range-track{height:4px;border-radius:3px;background:linear-gradient(90deg,var(--acc) var(--fill,0%),#23291f var(--fill,0%))}
+.vl-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--bg);border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);cursor:pointer;transition:box-shadow .15s}
+.vl-slider::-moz-range-thumb:hover{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.vl-ticks{position:relative;height:14px;margin-top:6px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink-dim)}
+.vl-ticks span{position:absolute;top:0;transform:translateX(-50%)}
+.vl-ticks span:first-child{transform:none}
+.vl-ticks span:last-child{transform:translateX(-100%)}
+.vl-stats{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}
+.vl-sl{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:4px;line-height:1.4}
+.vl-sv{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500;line-height:1.2;overflow-wrap:anywhere}
+.vl-sv.acc{color:var(--acc)}
+.vl-sv.amb{color:var(--amb)}
+.vl-kd p{margin:0;font-size:14.5px;font-weight:400;line-height:1.65;color:var(--ink)}
+.vl-know{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));border-radius:0 12px 12px 0;margin:0;padding-bottom:16px}
+.vl-ktag{display:flex;align-items:center;gap:9px;font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.15em;color:var(--acc);margin-bottom:10px}
+.vl-kdot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:vlPulse 2.4s ease-in-out infinite}
+@keyframes vlPulse{0%,100%{opacity:1}50%{opacity:.45}}
+.vl-kbody{font-size:17.4px;font-weight:400;line-height:1.55;color:var(--ink);margin:0}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
 
-<div class="container">
-  <h2 class="sr-only">Vector Equations of Lines and Planes Interactive Widget</h2>
-  
-  <h1>A single parameter creates <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">infinity</span></h1>
-  
-  <p class="intro">In three-dimensional space, you can describe an entire infinite line with just a starting point and a direction. By varying one parameter t, you trace every single point along that line. Drag the slider to move along the line and watch how the parameter dictates position.</p>
-  
-  <div class="card">
-    <div class="card-header">
-      <span class="card-label">Line Explorer</span>
-      <span class="live-tag" id="liveTag">t = 0.00</span>
+<div class="vl">
+  <h2 class="sr-only">Interactive picture of a line in three dimensions together with a second line that meets it, runs parallel to it or is skew to it, or a plane with its normal vector; the parameters on each line can be changed</h2>
+  <h1>Not parallel still doesn't mean they <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">meet</span></h1>
+  <p class="vl-intro">On a flat page, two lines that are not parallel have to cross. In space they usually miss, passing above or below each other, and only one exact pair of parameters can ever close the gap. Move λ₁ and λ₂ until the gap between the two points reaches zero, then switch to the plane and find the single λ₁ where line 1 pierces it.</p>
+
+  <section class="vl-card">
+    <div class="vl-head">
+      <span class="vl-label">Lines and planes in space</span>
+      <span class="vl-live" id="vlLive">λ₁ = 0.00 · λ₂ = 0.00</span>
     </div>
-    <div class="card-hint">Drag slider to change parameter t</div>
-    
-    <div class="canvas-wrapper">
-      <canvas id="lineCanvas"></canvas>
-      <div class="canvas-overlay" id="overlayTag">r = a + 0.00d</div>
+    <p class="vl-hint">Choose the second object. Move λ₁ and λ₂ and watch the gap between r₁ and r₂.</p>
+    <p class="vl-tt">Second object</p>
+    <div class="vl-pills" role="group" aria-label="Second object drawn with line 1">
+      <button type="button" class="vl-pill" data-mode="meet" aria-pressed="true">Meeting line</button>
+      <button type="button" class="vl-pill" data-mode="parallel" aria-pressed="false">Parallel line</button>
+      <button type="button" class="vl-pill" data-mode="skew" aria-pressed="false">Skew line</button>
+      <button type="button" class="vl-pill" data-mode="plane" aria-pressed="false">Plane</button>
     </div>
-    
-    <div class="slider-row">
-      <div class="slider-label">Parameter t</div>
-      <input type="range" class="line-slider" id="tSlider" min="-3" max="3" step="0.01" value="0">
-      <div class="tick-labels">
-        <span>-3</span>
-        <span>0</span>
-        <span>+3</span>
-      </div>
+
+    <div class="vl-wrap" id="vlWrap">
+      <canvas id="vlCanvas"></canvas>
+      <div class="vl-over" id="vlOver" aria-live="polite">r₁ − r₂ = (3, −3, −4)</div>
     </div>
-    
-    <div class="stat-row">
-      <div class="stat">
-        <div class="stat-label">Position</div>
-        <div class="stat-value" style="color:var(--acc);" id="posValue">(2, 1, 3)</div>
-      </div>
-      <div class="stat">
-        <div class="stat-label">Direction</div>
-        <div class="stat-value" style="color:var(--amb);">d = (1, 1, 2)</div>
-      </div>
+
+    <div class="vl-ctl">
+      <div class="vl-row"><span>Parameter λ₁ on line 1</span><b id="vlL1V">0.00</b></div>
+      <input type="range" class="vl-slider" id="vlL1" aria-label="Parameter lambda one on line 1" min="-2" max="4" step="0.25" value="0">
+      <div class="vl-ticks"><span style="left:0%">−2</span><span style="left:33.333%">0</span><span style="left:66.667%">2</span><span style="left:100%">4</span></div>
     </div>
-  </div>
-  
-  <div class="card">
-    <div class="toggle-row">
-      <button class="toggle-btn active" data-mode="parallel">Parallel Lines</button>
-      <button class="toggle-btn" data-mode="skew">Skew Lines</button>
+    <div class="vl-ctl" id="vlL2Wrap">
+      <div class="vl-row"><span>Parameter λ₂ on line 2</span><b id="vlL2V">0.00</b></div>
+      <input type="range" class="vl-slider" id="vlL2" aria-label="Parameter lambda two on line 2" min="-2" max="4" step="0.25" value="0">
+      <div class="vl-ticks"><span style="left:0%">−2</span><span style="left:33.333%">0</span><span style="left:66.667%">2</span><span style="left:100%">4</span></div>
     </div>
-    <div class="knowdrop" id="knowdrop">
-      Two lines are parallel if their direction vectors are scalar multiples of each other. This means one direction is just a scaled version of the other: if line 1 has direction d₁ = (2, 4, 6) and line 2 has direction d₂ = (1, 2, 3), then d₁ = 2d₂, so they're parallel. Parallel lines in 3D never meet, just like train tracks extending forever. Even though they might be at different heights or positions in space, their shared direction means they maintain constant separation. The beauty is that you can check this algebraically without needing to visualise the entire infinite lines.
+
+    <div class="vl-stats">
+      <div><div class="vl-sl" id="vlS1L">Gap |r₁ − r₂|</div><div class="vl-sv acc" id="vlS1V">—</div></div>
+      <div><div class="vl-sl" id="vlS2L">Meeting point</div><div class="vl-sv amb" id="vlS2V">—</div></div>
     </div>
-  </div>
-  
-  <div class="know-this">
-    <div class="know-tag">Know This</div>
-    <div class="know-body">
-      <span style="color:var(--acc);">A line is written as position vector = a + t d</span>, where d is the direction vector, and <span style="color:var(--acc);">different values of the parameter t trace out every point on the line</span>.
-    </div>
-  </div>
+  </section>
+
+  <section class="vl-card vl-kd">
+    <p id="vlKd"></p>
+  </section>
+
+  <aside class="vl-know">
+    <div class="vl-ktag"><span class="vl-kdot"></span><span>Know This</span></div>
+    <p class="vl-kbody">Two lines meet only when the <span style="color:var(--acc)">λ₁ and λ₂</span> found from two component equations also satisfy the <span style="color:var(--acc)">third equation</span>; a line pierces a plane where <span style="color:var(--acc)">(a + λb)·n = c</span>.</p>
+  </aside>
 </div>
 
 <script>
-const canvas = document.getElementById('lineCanvas');
-const ctx = canvas.getContext('2d');
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d');
+(function(){
+  const CSS=getComputedStyle(document.documentElement);
+  const ACC=CSS.getPropertyValue("--acc").trim();
+  const RGB=CSS.getPropertyValue("--acc-rgb").trim();
+  const AMB=CSS.getPropertyValue("--amb").trim();
+  const AMBRGB=CSS.getPropertyValue("--amb-rgb").trim();
+  const INK=CSS.getPropertyValue("--ink").trim();
+  const DIM=CSS.getPropertyValue("--ink-dim").trim();
+  const DIMRGB=CSS.getPropertyValue("--dim-rgb").trim();
+  const RM=!!(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 
-const tSlider = document.getElementById('tSlider');
-const liveTag = document.getElementById('liveTag');
-const overlayTag = document.getElementById('overlayTag');
-const posValue = document.getElementById('posValue');
+  const canvas=document.getElementById("vlCanvas");
+  const ctx=canvas.getContext("2d");
+  const wrap=document.getElementById("vlWrap");
+  const dpr=Math.min(window.devicePixelRatio||1,2);
+  const buf=document.createElement("canvas");
+  const bctx=buf.getContext("2d");
 
-let t = 0;
-let time = 0;
-let animFrame;
+  const s1=document.getElementById("vlL1"), s2=document.getElementById("vlL2");
+  const v1=document.getElementById("vlL1V"), v2=document.getElementById("vlL2V");
+  const l2Wrap=document.getElementById("vlL2Wrap");
+  const live=document.getElementById("vlLive"), over=document.getElementById("vlOver");
+  const s1L=document.getElementById("vlS1L"), s1V=document.getElementById("vlS1V");
+  const s2L=document.getElementById("vlS2L"), s2V=document.getElementById("vlS2V");
+  const kd=document.getElementById("vlKd");
+  const pills=Array.from(document.querySelectorAll(".vl-pill"));
 
-const a = [2, 1, 3]; // starting point
-const d = [1, 1, 2]; // direction vector
-
-function resize() {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
-
-function updateSlider() {
-  const val = parseFloat(tSlider.value);
-  const min = parseFloat(tSlider.min);
-  const max = parseFloat(tSlider.max);
-  const pct = ((val - min) / (max - min)) * 100;
-  tSlider.style.setProperty('--fill', pct + '%');
-}
-
-tSlider.addEventListener('input', () => {
-  t = parseFloat(tSlider.value);
-  liveTag.textContent = `t = ${t.toFixed(2)}`;
-  overlayTag.textContent = `r = a + ${t.toFixed(2)}d`;
-  
-  const pos = [
-    a[0] + t * d[0],
-    a[1] + t * d[1],
-    a[2] + t * d[2]
-  ];
-  posValue.textContent = `(${pos[0].toFixed(1)}, ${pos[1].toFixed(1)}, ${pos[2].toFixed(1)})`;
-  
-  updateSlider();
-});
-
-function project3D(x, y, z, cx, cy, scale, rotX, rotY) {
-  // Rotate around Y axis
-  let x1 = x * Math.cos(rotY) - z * Math.sin(rotY);
-  let z1 = x * Math.sin(rotY) + z * Math.cos(rotY);
-  
-  // Rotate around X axis
-  let y1 = y * Math.cos(rotX) - z1 * Math.sin(rotX);
-  let z2 = y * Math.sin(rotX) + z1 * Math.cos(rotX);
-  
-  // Simple perspective
-  const perspective = 600;
-  const depth = 1 / (1 + z2 / perspective);
-  
-  return {
-    sx: cx + x1 * scale * depth,
-    sy: cy + y1 * scale * depth,
-    depth: depth
+  // ---------- model ----------
+  const A1=[2,1,3], B1=[1,1,2];
+  const LMIN=-2, LMAX=4, FZ=-2;
+  const STATES={
+    meet:{a2:[-1,4,7], b2:[2,-1,-1]},
+    parallel:{a2:[-1,3,6], b2:[-1,-1,-2]},
+    skew:{a2:[-1,4,8], b2:[2,-1,-1]},
+    plane:{p0:[0,2,6], u:[1,0,0], v:[0,1,1], sRange:[-1.5,5], tRange:[-3,3]}
   };
-}
+  let mode="meet";
 
-function draw() {
-  const w = canvas.width / Math.min(window.devicePixelRatio || 1, 2);
-  const h = canvas.height / Math.min(window.devicePixelRatio || 1, 2);
-  const cx = w / 2;
-  const cy = h / 2;
-  
-  ctx.clearRect(0, 0, w, h);
-  
-  // Dark gradient background
-  const bgGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(w, h) * 0.8);
-  bgGrad.addColorStop(0, '#000');
-  bgGrad.addColorStop(1, '#000');
-  ctx.fillStyle = bgGrad;
-  ctx.fillRect(0, 0, w, h);
-  
-  const scale = 30;
-  const rotX = 0.4;
-  const rotY = time * 0.12;
-  
-  // Draw coordinate grid (faint)
-  ctx.save();
-  ctx.strokeStyle = 'rgba(140,147,137,0.08)';
-  ctx.lineWidth = 0.8;
-  
-  for (let i = -5; i <= 5; i++) {
-    // XZ plane grid
-    const p1 = project3D(i, -2, -5, cx, cy, scale, rotX, rotY);
-    const p2 = project3D(i, -2, 5, cx, cy, scale, rotX, rotY);
-    ctx.beginPath();
-    ctx.moveTo(p1.sx, p1.sy);
-    ctx.lineTo(p2.sx, p2.sy);
-    ctx.stroke();
-    
-    const p3 = project3D(-5, -2, i, cx, cy, scale, rotX, rotY);
-    const p4 = project3D(5, -2, i, cx, cy, scale, rotX, rotY);
-    ctx.beginPath();
-    ctx.moveTo(p3.sx, p3.sy);
-    ctx.lineTo(p4.sx, p4.sy);
-    ctx.stroke();
+  const add=(p,q)=>[p[0]+q[0],p[1]+q[1],p[2]+q[2]];
+  const sub=(p,q)=>[p[0]-q[0],p[1]-q[1],p[2]-q[2]];
+  const mul=(p,k)=>[p[0]*k,p[1]*k,p[2]*k];
+  const dot=(p,q)=>p[0]*q[0]+p[1]*q[1]+p[2]*q[2];
+  const cross=(p,q)=>[p[1]*q[2]-p[2]*q[1], p[2]*q[0]-p[0]*q[2], p[0]*q[1]-p[1]*q[0]];
+  const len=p=>Math.hypot(p[0],p[1],p[2]);
+  const linePt=(a,b,l)=>add(a,mul(b,l));
+
+  function fmt(v){
+    if(Math.abs(v)<1e-9) v=0;
+    let s=v.toFixed(2);
+    if(s.indexOf(".")>=0) s=s.replace(/0+$/,"").replace(/\.$/,"");
+    return s.replace("-","\u2212");
   }
-  ctx.restore();
-  
-  // Draw the infinite line (multiple segments)
-  ctx.save();
-  ctx.strokeStyle = 'rgba(140,147,137,0.25)';
-  ctx.lineWidth = 2;
-  
-  const linePoints = [];
-  for (let tt = -4; tt <= 4; tt += 0.1) {
-    const px = a[0] + tt * d[0];
-    const py = a[1] + tt * d[1];
-    const pz = a[2] + tt * d[2];
-    linePoints.push(project3D(px, py, pz, cx, cy, scale, rotX, rotY));
+  function fmt2(v){ if(Math.abs(v)<1e-9) v=0; return v.toFixed(2).replace("-","\u2212"); }
+  const vec=p=>"("+p.map(fmt).join(", ")+")";
+  function kStr(k){
+    if(Math.abs(k-1)<1e-9) return "b\u2081";
+    if(Math.abs(k+1)<1e-9) return "\u2212b\u2081";
+    return fmt(k)+"b\u2081";
   }
-  
-  ctx.beginPath();
-  ctx.moveTo(linePoints[0].sx, linePoints[0].sy);
-  for (let i = 1; i < linePoints.length; i++) {
-    ctx.lineTo(linePoints[i].sx, linePoints[i].sy);
+
+  function solveLines(a1,b1,a2,b2){
+    const cr=cross(b1,b2);
+    if(len(cr)<1e-9){
+      let k=0; for(let i=0;i<3;i++){ if(Math.abs(b1[i])>1e-9){ k=b2[i]/b1[i]; break; } }
+      return {type:"parallel",k:k};
+    }
+    const pairs=[[0,1],[0,2],[1,2]];
+    for(let n=0;n<pairs.length;n++){
+      const i=pairs[n][0], j=pairs[n][1];
+      const det=-b1[i]*b2[j]+b2[i]*b1[j];
+      if(Math.abs(det)<1e-9) continue;
+      const dx=a2[i]-a1[i], dy=a2[j]-a1[j];
+      const l1=(-dx*b2[j]+b2[i]*dy)/det;
+      const l2=(b1[i]*dy-b1[j]*dx)/det;
+      const kk=3-i-j;
+      const z1=a1[kk]+l1*b1[kk], z2=a2[kk]+l2*b2[kk];
+      if(Math.abs(z1-z2)<1e-9) return {type:"meet",l1:l1,l2:l2,p:linePt(a1,b1,l1),k:kk};
+      return {type:"skew",l1:l1,l2:l2,z1:z1,z2:z2,k:kk};
+    }
+    return {type:"parallel",k:1};
   }
-  ctx.stroke();
-  ctx.restore();
-  
-  // Draw starting point 'a'
-  const aProj = project3D(a[0], a[1], a[2], cx, cy, scale, rotX, rotY);
-  ctx.save();
-  ctx.fillStyle = '#FAC775';
-  ctx.shadowColor = '#FAC775';
-  ctx.shadowBlur = 12;
-  ctx.beginPath();
-  ctx.arc(aProj.sx, aProj.sy, 5, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
-  
-  // Draw direction vector arrow from 'a'
-  const dEnd = project3D(a[0] + d[0], a[1] + d[1], a[2] + d[2], cx, cy, scale, rotX, rotY);
-  ctx.save();
-  ctx.strokeStyle = '#FAC775';
-  ctx.lineWidth = 2;
-  ctx.setLineDash([4, 4]);
-  ctx.beginPath();
-  ctx.moveTo(aProj.sx, aProj.sy);
-  ctx.lineTo(dEnd.sx, dEnd.sy);
-  ctx.stroke();
-  ctx.setLineDash([]);
-  
-  // Arrowhead
-  const angle = Math.atan2(dEnd.sy - aProj.sy, dEnd.sx - aProj.sx);
-  ctx.fillStyle = '#FAC775';
-  ctx.beginPath();
-  ctx.moveTo(dEnd.sx, dEnd.sy);
-  ctx.lineTo(dEnd.sx - 8 * Math.cos(angle - Math.PI / 6), dEnd.sy - 8 * Math.sin(angle - Math.PI / 6));
-  ctx.lineTo(dEnd.sx - 8 * Math.cos(angle + Math.PI / 6), dEnd.sy - 8 * Math.sin(angle + Math.PI / 6));
-  ctx.closePath();
-  ctx.fill();
-  ctx.restore();
-  
-  // Draw current position point 'r'
-  const px = a[0] + t * d[0];
-  const py = a[1] + t * d[1];
-  const pz = a[2] + t * d[2];
-  const rProj = project3D(px, py, pz, cx, cy, scale, rotX, rotY);
-  
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  
-  // Glow halo
-  const halo = ctx.createRadialGradient(rProj.sx, rProj.sy, 0, rProj.sx, rProj.sy, 28);
-  halo.addColorStop(0, 'rgba(35, 131, 63,0.55)');
-  halo.addColorStop(0.5, 'rgba(35, 131, 63,0.18)');
-  halo.addColorStop(1, 'rgba(35, 131, 63,0)');
-  ctx.fillStyle = halo;
-  ctx.beginPath();
-  ctx.arc(rProj.sx, rProj.sy, 28, 0, Math.PI * 2);
-  ctx.fill();
-  
-  ctx.restore();
-  
-  // Point itself
-  ctx.save();
-  ctx.fillStyle = '#23833F';
-  ctx.shadowColor = '#23833F';
-  ctx.shadowBlur = 16;
-  ctx.beginPath();
-  ctx.arc(rProj.sx, rProj.sy, 6, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
-  
-  // Trail points
-  for (let i = 1; i <= 8; i++) {
-    const prevT = t - i * 0.3;
-    const tpx = a[0] + prevT * d[0];
-    const tpy = a[1] + prevT * d[1];
-    const tpz = a[2] + prevT * d[2];
-    const tProj = project3D(tpx, tpy, tpz, cx, cy, scale, rotX, rotY);
-    
-    const alpha = 1 - i / 8;
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.fillStyle = `rgba(35, 131, 63,${alpha * 0.4})`;
-    ctx.beginPath();
-    ctx.arc(tProj.sx, tProj.sy, 3 * alpha, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
+
+  function model(){
+    const l1=parseFloat(s1.value), l2=parseFloat(s2.value);
+    const r1=linePt(A1,B1,l1);
+    const st=STATES[mode];
+    if(mode==="plane"){
+      const n=cross(st.u,st.v);
+      const c=dot(n,st.p0);
+      const bn=dot(n,B1);
+      const lam=(c-dot(n,A1))/bn;
+      return {l1:l1,l2:l2,r1:r1,n:n,c:c,lam:lam,hit:linePt(A1,B1,lam),val:dot(n,r1),onPlane:Math.abs(dot(n,r1)-c)<1e-9};
+    }
+    const r2=linePt(st.a2,st.b2,l2);
+    const gap=sub(r1,r2);
+    return {l1:l1,l2:l2,r1:r1,r2:r2,gap:gap,dist:len(gap),sol:solveLines(A1,B1,st.a2,st.b2)};
   }
-  
-  // Bloom
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
-  
-  // Vignette
-  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-  
-  time += 0.016;
-  animFrame = requestAnimationFrame(draw);
-}
 
-// Toggle buttons
-const toggleBtns = document.querySelectorAll('.toggle-btn');
-const knowdrop = document.getElementById('knowdrop');
+  // ---------- view ----------
+  const RX=0.42, RY=-0.6, PERSP=40;
+  const CY=Math.cos(RY), SY=Math.sin(RY), CX=Math.cos(RX), SX=Math.sin(RX);
+  let view=null, appear=1, raf=null;
+  function rot(p){
+    const X=p[0], Y=-p[2], Z=p[1];
+    const x1=X*CY-Z*SY, z1=X*SY+Z*CY;
+    const y1=Y*CX-z1*SX, z2=Y*SX+z1*CX;
+    const d=1/(1+z2/PERSP);
+    return {x:x1*d,y:y1*d,z:z2};
+  }
+  function P(p){ const r=rot(p); return {x:view.ox+view.s*r.x, y:view.oy+view.s*r.y, z:r.z}; }
 
-const content = {
-  parallel: "Two lines are parallel if their direction vectors are scalar multiples of each other. This means one direction is just a scaled version of the other: if line 1 has direction d₁ = (2, 4, 6) and line 2 has direction d₂ = (1, 2, 3), then d₁ = 2d₂, so they're parallel. Parallel lines in 3D never meet, just like train tracks extending forever. Even though they might be at different heights or positions in space, their shared direction means they maintain constant separation. The beauty is that you can check this algebraically without needing to visualise the entire infinite lines.",
-  skew: "Lines that are neither parallel nor intersecting are called skew lines. This is unique to three-dimensional space—it can't happen on a flat plane. Imagine one line running along the floor and another line floating diagonally across the room above it. Their direction vectors aren't multiples of each other, and they never cross, so they're skew. Skew lines don't share a common plane; you can't draw a single flat surface that contains both. Checking if two lines are skew requires verifying they don't intersect (by solving the vector equation) and that their directions aren't parallel. Most pairs of randomly chosen lines in 3D are actually skew."
-};
+  function keyPoints(m){
+    const pts=[[-5,-2,FZ],[7,-2,FZ],[7,6,FZ],[-5,6,FZ],[0,0,0],[2.2,0,0],[0,2.2,0],[0,0,2.2],linePt(A1,B1,LMIN),linePt(A1,B1,LMAX)];
+    const st=STATES[m];
+    if(m==="plane"){
+      const sr=st.sRange, tr=st.tRange;
+      [[sr[0],tr[0]],[sr[1],tr[0]],[sr[1],tr[1]],[sr[0],tr[1]]].forEach(q=>pts.push(add(add(st.p0,mul(st.u,q[0])),mul(st.v,q[1]))));
+      pts.push(add(st.p0,mul(cross(st.u,st.v),1.4)));
+    } else {
+      pts.push(linePt(st.a2,st.b2,LMIN),linePt(st.a2,st.b2,LMAX));
+    }
+    return pts;
+  }
+  function fit(m,w,h){
+    let minx=1e9,maxx=-1e9,miny=1e9,maxy=-1e9;
+    keyPoints(m).forEach(p=>{ const r=rot(p); minx=Math.min(minx,r.x); maxx=Math.max(maxx,r.x); miny=Math.min(miny,r.y); maxy=Math.max(maxy,r.y); });
+    const left=w*0.06, right=w*0.88, top=h*0.08, bottom=h-44-h*0.04;
+    const s=Math.min((right-left)/(maxx-minx),(bottom-top)/(maxy-miny));
+    return {s:s, ox:(left+right)/2-s*(minx+maxx)/2, oy:(top+bottom)/2-s*(miny+maxy)/2};
+  }
 
-toggleBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    toggleBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const mode = btn.dataset.mode;
-    knowdrop.textContent = content[mode];
-  });
-});
+  // ---------- drawing helpers ----------
+  function polyline(pts,col,width,alpha,dash){
+    ctx.save(); ctx.globalAlpha=alpha; ctx.strokeStyle=col; ctx.lineWidth=width; ctx.lineJoin="round";
+    if(dash) ctx.setLineDash(dash);
+    ctx.beginPath(); pts.forEach((p,i)=>{ if(i===0) ctx.moveTo(p.x,p.y); else ctx.lineTo(p.x,p.y); }); ctx.stroke(); ctx.restore();
+  }
+  function samples(a,b,from,to,n){ const out=[]; for(let i=0;i<=n;i++){ out.push(P(linePt(a,b,from+(to-from)*i/n))); } return out; }
+  function arrow(P1,P2,col,width,alpha){
+    ctx.save(); ctx.globalAlpha=alpha; ctx.strokeStyle=col; ctx.fillStyle=col; ctx.lineWidth=width;
+    ctx.beginPath(); ctx.moveTo(P1.x,P1.y); ctx.lineTo(P2.x,P2.y); ctx.stroke();
+    const ang=Math.atan2(P2.y-P1.y,P2.x-P1.x), L=8;
+    ctx.beginPath(); ctx.moveTo(P2.x,P2.y);
+    ctx.lineTo(P2.x-L*Math.cos(ang-0.5),P2.y-L*Math.sin(ang-0.5));
+    ctx.lineTo(P2.x-L*Math.cos(ang+0.5),P2.y-L*Math.sin(ang+0.5));
+    ctx.closePath(); ctx.fill(); ctx.restore();
+  }
+  function ring(Pt,col,r,alpha){ ctx.save(); ctx.globalAlpha=alpha; ctx.strokeStyle=col; ctx.lineWidth=1.6; ctx.beginPath(); ctx.arc(Pt.x,Pt.y,r,0,Math.PI*2); ctx.stroke(); ctx.restore(); }
+  function glowDot(Pt,col,rgb,alpha){
+    ctx.save(); ctx.globalAlpha=alpha; ctx.globalCompositeOperation="lighter";
+    const g=ctx.createRadialGradient(Pt.x,Pt.y,0,Pt.x,Pt.y,26);
+    g.addColorStop(0,"rgba("+rgb+",0.5)"); g.addColorStop(0.5,"rgba("+rgb+",0.16)"); g.addColorStop(1,"rgba("+rgb+",0)");
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(Pt.x,Pt.y,26,0,Math.PI*2); ctx.fill(); ctx.restore();
+    ctx.save(); ctx.globalAlpha=alpha; ctx.fillStyle=col; ctx.beginPath(); ctx.arc(Pt.x,Pt.y,5.5,0,Math.PI*2); ctx.fill(); ctx.restore();
+  }
+  function stem(p,alpha){ polyline([P(p),P([p[0],p[1],FZ])],"rgba("+DIMRGB+",0.6)",1,alpha,[3,4]); }
+  function label(txt,Pt,dx,dy,col,alpha,w,h){
+    ctx.save(); ctx.globalAlpha=alpha; ctx.fillStyle=col; ctx.textBaseline="middle";
+    const tw=ctx.measureText(txt).width;
+    let x=Pt.x+dx, align=dx>=0?"left":"right";
+    if(align==="left"&&x+tw>w-6){ x=Pt.x-Math.abs(dx); align="right"; }
+    else if(align==="right"&&x-tw<6){ x=Pt.x+Math.abs(dx); align="left"; }
+    const y=Math.max(10,Math.min(h-50,Pt.y+dy));
+    ctx.textAlign=align; ctx.fillText(txt,x,y); ctx.restore();
+  }
 
-window.addEventListener('resize', resize);
-resize();
-updateSlider();
-draw();
+  // ---------- draw ----------
+  function draw(){
+    const w=canvas.width/dpr, h=canvas.height/dpr;
+    if(!w||!h||!view) return;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,w,h);
+    ctx.font="11.5px 'JetBrains Mono', monospace";
+    const m=model(), ap=appear, st=STATES[mode];
+
+    // floor grid
+    for(let x=-5;x<=7;x++) polyline([P([x,-2,FZ]),P([x,6,FZ])],"rgba("+DIMRGB+",1)",0.8,0.13);
+    for(let y=-2;y<=6;y++) polyline([P([-5,y,FZ]),P([7,y,FZ])],"rgba("+DIMRGB+",1)",0.8,0.13);
+
+    // axes
+    const O=P([0,0,0]);
+    arrow(O,P([2.2,0,0]),DIM,1,0.55); arrow(O,P([0,2.2,0]),DIM,1,0.55); arrow(O,P([0,0,2.2]),DIM,1,0.55);
+    label("x",P([2.2,0,0]),6,4,DIM,0.8,w,h); label("y",P([0,2.2,0]),6,-4,DIM,0.8,w,h); label("z",P([0,0,2.2]),-6,-6,DIM,0.8,w,h);
+
+    const Pa1=P(A1), Pb1=P(add(A1,B1)), Pr1=P(m.r1);
+
+    if(mode==="plane"){
+      // line 1, behind the plane
+      const lam=m.lam;
+      polyline(samples(A1,B1,-3,lam,40),ACC,2,0.35);
+      // plane patch
+      const sr=st.sRange, tr=st.tRange;
+      const Q=(s,t)=>P(add(add(st.p0,mul(st.u,s)),mul(st.v,t)));
+      const c1=Q(sr[0],tr[0]), c2=Q(sr[1],tr[0]), c3=Q(sr[1],tr[1]), c4=Q(sr[0],tr[1]);
+      ctx.save(); ctx.globalAlpha=ap; ctx.fillStyle="rgba("+AMBRGB+",0.15)"; ctx.strokeStyle="rgba("+AMBRGB+",0.55)"; ctx.lineWidth=1.2;
+      ctx.beginPath(); ctx.moveTo(c1.x,c1.y); ctx.lineTo(c2.x,c2.y); ctx.lineTo(c3.x,c3.y); ctx.lineTo(c4.x,c4.y); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore();
+      for(let s=Math.ceil(sr[0]);s<=sr[1];s++) polyline([Q(s,tr[0]),Q(s,tr[1])],"rgba("+AMBRGB+",1)",0.8,0.2*ap);
+      for(let t=Math.ceil(tr[0]);t<=tr[1];t++) polyline([Q(sr[0],t),Q(sr[1],t)],"rgba("+AMBRGB+",1)",0.8,0.2*ap);
+      label("\u2212y + z = 4",c2,10,12,AMB,0.9*ap,w,h);
+      // u, v, n from p0
+      const Pp0=P(st.p0), Pu=P(add(st.p0,st.u)), Pv=P(add(st.p0,st.v)), Pn=P(add(st.p0,mul(m.n,1.4)));
+      arrow(Pp0,Pu,AMB,1.4,0.7*ap); arrow(Pp0,Pv,AMB,1.4,0.7*ap); arrow(Pp0,Pn,AMB,2.2,ap);
+      ring(Pp0,AMB,3.5,ap);
+      label("p\u2080 (0, 2, 6)",Pp0,-9,14,DIM,ap,w,h);
+      label("u",Pu,6,8,AMB,0.9*ap,w,h); label("v",Pv,-6,-14,AMB,0.9*ap,w,h);
+      label("n = u \u00D7 v = (0, \u22121, 1)",Pn,-8,-10,AMB,ap,w,h);
+      // piercing marker
+      ring(P(m.hit),AMB,9,0.8*ap);
+      // line 1, in front of the plane
+      polyline(samples(A1,B1,lam,5,40),ACC,2,0.95);
+    } else {
+      // line 2
+      polyline(samples(st.a2,st.b2,-3,5,60),AMB,2,0.9*ap);
+      const Pa2=P(st.a2), Pb2=P(add(st.a2,st.b2));
+      ring(Pa2,INK,3.5,0.9*ap);
+      arrow(Pa2,Pb2,AMB,2.2,ap);
+      label("b\u2082 "+vec(st.b2),Pb2,8,4,AMB,0.9*ap,w,h);
+      label("a\u2082 "+vec(st.a2),Pa2,-9,14,DIM,ap,w,h);
+      // line 1
+      polyline(samples(A1,B1,-3,5,60),ACC,2,0.95);
+    }
+
+    // a1, b1
+    ring(Pa1,INK,3.5,0.9);
+    arrow(Pa1,Pb1,ACC,2.2,1);
+    label("b\u2081 (1, 1, 2)",{x:(Pa1.x+Pb1.x)/2,y:(Pa1.y+Pb1.y)/2},-10,2,ACC,0.95,w,h);
+    label("a\u2081 (2, 1, 3)",Pa1,-9,14,DIM,1,w,h);
+
+    if(mode!=="plane"){
+      const Pr2=P(m.r2);
+      // gap vector
+      if(m.dist>1e-6) polyline([Pr2,Pr1],"rgba("+DIMRGB+",1)",1.2,0.8*ap,[4,4]);
+      stem(m.r2,0.6*ap);
+      glowDot(Pr2,AMB,AMBRGB,ap);
+      label("r\u2082 "+vec(m.r2),Pr2,14,10,AMB,ap,w,h);
+      if(m.dist<1e-6){ ring(Pr1,INK,11,0.9); ring(Pr1,INK,16,0.5); }
+    }
+    stem(m.r1,0.6);
+    glowDot(Pr1,ACC,RGB,1);
+    label("r\u2081 "+vec(m.r1),Pr1,10,-8,INK,1,w,h);
+
+    // bloom
+    bctx.setTransform(1,0,0,1,0,0); bctx.clearRect(0,0,buf.width,buf.height);
+    if (canvas.width && canvas.height) bctx.drawImage(canvas,0,0);
+    ctx.save(); ctx.globalCompositeOperation="lighter"; ctx.globalAlpha=0.38; ctx.filter="blur(7px)";
+    (buf.width&&buf.height)&&ctx.drawImage(buf,0,0,w,h); ctx.restore();
+
+    // vignette
+    const cx=w/2, cy=h/2;
+    const vig=ctx.createRadialGradient(cx,cy,h*0.28,cx,cy,w*0.72);
+    vig.addColorStop(0,"rgba(0,0,0,0)"); vig.addColorStop(1,"rgba(0,0,0,0.52)");
+    ctx.fillStyle=vig; ctx.fillRect(0,0,w,h);
+  }
+
+  // ---------- readouts ----------
+  function fill(sl){ const v=parseFloat(sl.value), mn=parseFloat(sl.min), mx=parseFloat(sl.max); sl.style.setProperty("--fill",((v-mn)/(mx-mn)*100)+"%"); }
+  function update(){
+    fill(s1); fill(s2);
+    const m=model();
+    v1.textContent=fmt2(m.l1); v2.textContent=fmt2(m.l2);
+    if(mode==="plane"){
+      live.textContent="\u03BB\u2081 = "+fmt2(m.l1);
+      over.textContent=m.onPlane
+        ? "r\u2081\u00B7n = "+fmt(m.c)+" \u00B7 r\u2081 lies on the plane"
+        : "r\u2081\u00B7n = "+fmt(m.val)+" \u00B7 plane needs "+fmt(m.c);
+      s1L.textContent="r\u2081 \u00B7 n (plane needs "+fmt(m.c)+")";
+      s1V.textContent=fmt2(m.val);
+      s2L.textContent="Pierces at \u03BB\u2081 = "+fmt(m.lam);
+      s2V.textContent=vec(m.hit);
+    } else {
+      live.textContent="\u03BB\u2081 = "+fmt2(m.l1)+" \u00B7 \u03BB\u2082 = "+fmt2(m.l2);
+      over.textContent="r\u2081 \u2212 r\u2082 = "+vec(m.gap);
+      s1L.textContent="Gap |r\u2081 \u2212 r\u2082|";
+      s1V.textContent=fmt2(m.dist);
+      const sol=m.sol, comp=["x","y","z"];
+      if(sol.type==="parallel"){ s2L.textContent="Direction test: b\u2081 \u00D7 b\u2082 = 0"; s2V.textContent="b\u2082 = "+kStr(sol.k); }
+      else if(sol.type==="meet"){ s2L.textContent="Meet at \u03BB\u2081 = "+fmt(sol.l1)+", \u03BB\u2082 = "+fmt(sol.l2); s2V.textContent=vec(sol.p); }
+      else { s2L.textContent="\u03BB\u2081 = "+fmt(sol.l1)+", \u03BB\u2082 = "+fmt(sol.l2)+" fail the "+comp[sol.k]+" equation"; s2V.textContent=fmt(sol.z1)+" \u2260 "+fmt(sol.z2); }
+    }
+    draw();
+  }
+
+  const KD={
+    meet:`To test whether r₁ = (2,1,3) + λ₁(1,1,2) and r₂ = (−1,4,7) + λ₂(2,−1,−1) meet, set the two position vectors equal and read off three component equations: 2 + λ₁ = −1 + 2λ₂, 1 + λ₁ = 4 − λ₂ and 3 + 2λ₁ = 7 − λ₂. Solve any two of them: subtracting the second from the first gives 1 = −5 + 3λ₂, so λ₂ = 2 and then λ₁ = 1. Now the step that earns the conclusion: substitute both values into the third equation. 3 + 2(1) = 5 and 7 − 2 = 5, so it holds and the lines really do meet, at (3, 2, 5). Set λ₁ to 1 and λ₂ to 2 and the gap between the two points closes to zero.`,
+    parallel:`Line 2 is now r₂ = (−1,3,6) + λ₂(−1,−1,−2), and its direction is −1 times b₁ = (1,1,2). Any non-zero scalar multiple counts, negative ones included, so these lines are parallel even though their direction arrows point opposite ways. The quickest test is the vector product: b₁ × b₂ = 0 exactly when the directions are multiples of each other. Trying to solve for a meeting point gives 2 + λ₁ = −1 − λ₂ and 1 + λ₁ = 3 − λ₂, which subtract to 1 = −4, a contradiction. Because (−1,3,6) is not on line 1 they are distinct parallel lines rather than the same line, and no pair of values for λ₁ and λ₂ brings the gap to zero.`,
+    skew:`Only one number has changed: a₂ is now (−1,4,8) instead of (−1,4,7). The first two component equations are untouched, so they still give λ₁ = 1 and λ₂ = 2. But the third equation now reads 3 + 2(1) = 8 − 2, that is 5 = 6, which is false. The lines are not parallel, since b₁ × b₂ ≠ 0, and they do not intersect, so they are skew: a possibility that only exists in three dimensions. Watch the gap at λ₁ = 1 and λ₂ = 2: the two points pass each other, one above the other, and the gap never reaches zero for any pair of parameters.`,
+    plane:`A plane needs a point and a normal. This plane contains p₀ = (0,2,6) and the directions u = (1,0,0) and v = (0,1,1), so its normal is the vector product n = u × v = (0·1 − 0·1, 0·0 − 1·1, 1·1 − 0·0) = (0, −1, 1). Every point r on the plane satisfies r·n = p₀·n, which is −y + z = 4. To find where line 1 pierces it, substitute r₁ = (2 + λ, 1 + λ, 3 + 2λ): −(1 + λ) + (3 + 2λ) = 4 simplifies to 2 + λ = 4, so λ = 2 and the point is (4, 3, 7). Because b₁·n = 1 is not zero the line is not parallel to the plane, so exactly one piercing point exists.`
+  };
+
+  // ---------- transitions ----------
+  function transition(){
+    const w=canvas.width/dpr, h=canvas.height/dpr;
+    if(!w||!h) return;
+    const to=fit(mode,w,h);
+    if(raf){ cancelAnimationFrame(raf); raf=null; }
+    if(RM||!view){ view=to; appear=1; draw(); return; }
+    const from={s:view.s,ox:view.ox,oy:view.oy};
+    appear=0;
+    const t0=performance.now();
+    function step(now){
+      const k=Math.min((now-t0)/700,1);
+      const e=1-Math.pow(1-k,3);
+      view={s:from.s+(to.s-from.s)*e, ox:from.ox+(to.ox-from.ox)*e, oy:from.oy+(to.oy-from.oy)*e};
+      appear=e;
+      draw();
+      if(k<1) raf=requestAnimationFrame(step); else { raf=null; appear=1; view=to; draw(); }
+    }
+    raf=requestAnimationFrame(step);
+  }
+
+  function setMode(m){
+    mode=m;
+    pills.forEach(b=>{ b.setAttribute("aria-pressed", b.dataset.mode===m ? "true" : "false"); });
+    l2Wrap.hidden=(m==="plane");
+    kd.textContent=KD[m];
+    update();
+    transition();
+  }
+  pills.forEach(b=>b.addEventListener("click",()=>setMode(b.dataset.mode)));
+  s1.addEventListener("input",update);
+  s2.addEventListener("input",update);
+
+  function resize(){
+    const rect=wrap.getBoundingClientRect();
+    if(!rect.width||!rect.height) return;
+    canvas.width=Math.round(rect.width*dpr); canvas.height=Math.round(rect.height*dpr);
+    buf.width=canvas.width; buf.height=canvas.height;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    if(raf){ cancelAnimationFrame(raf); raf=null; }
+    view=fit(mode,rect.width,rect.height); appear=1;
+    draw();
+  }
+  if(window.ResizeObserver){ new ResizeObserver(()=>resize()).observe(wrap); }
+  window.addEventListener("resize",resize);
+
+  kd.textContent=KD[mode];
+  resize();
+  update();
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'vector-equations-of-lines-and-planes'},'*');}catch(e){}}

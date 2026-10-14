@@ -192,13 +192,24 @@ canvas {
 }
 
 .tick-labels {
-  display: flex;
-  justify-content: space-between;
+  position: relative;
+  height: 12px;
   margin-top: 6px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 9px;
   color: var(--ink-dim);
 }
+
+.tick-labels span {
+  position: absolute;
+  transform: translateX(-50%);
+}
+
+.tick-labels span:nth-child(1) { left: 0; transform: none; }
+.tick-labels span:nth-child(2) { left: 21.1%; }
+.tick-labels span:nth-child(3) { left: 47.4%; }
+.tick-labels span:nth-child(4) { left: 73.7%; }
+.tick-labels span:nth-child(5) { left: 100%; transform: translateX(-100%); }
 
 .stat-row {
   display: grid;
@@ -334,7 +345,7 @@ canvas {
 
   <h1>Bigger samples make you <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">certain</span></h1>
   
-  <p class="intro">Most people think a 95% confidence interval means "95% chance the true value is inside." Wrong. It means if you repeated the sampling forever, 95% of your intervals would capture the truth. Drag the slider to see how sample size changes the width of the interval.</p>
+  <p class="intro">Most people think a 95% confidence interval means "95% chance the true value is inside." Wrong. It means if you repeated the sampling forever, 95% of your intervals would capture the truth. Raise the sample size to see how it changes the width of the interval.</p>
 
   <div class="card">
     <div class="card-header">
@@ -363,7 +374,7 @@ canvas {
     <div class="stat-row">
       <div class="stat">
         <div class="stat-label">Width</div>
-        <div class="stat-value" id="widthStat" style="color:var(--acc)">10.8</div>
+        <div class="stat-value" id="widthStat" style="color:var(--acc)">10.7</div>
       </div>
       <div class="stat">
         <div class="stat-label">Margin ±</div>
@@ -375,7 +386,7 @@ canvas {
   <div class="toggle-card">
     <div class="toggle-buttons">
       <button class="toggle-btn active" id="knownBtn">σ known</button>
-      <button class="toggle-btn" id="unknownBtn">σ unknown</button>
+      <button class="toggle-btn" id="unknownBtn">s from sample</button>
     </div>
     <div class="knowdrop" id="knowdropText">
       For large samples with known population standard deviation, the interval formula is <span style="color:var(--acc)">x̄ ± z* × (σ/√n)</span>. The z-critical value comes from the normal distribution — for 95% confidence, z* = 1.96. As sample size increases, the denominator √n gets larger, so the margin of error shrinks. This is why bigger samples give tighter, more precise intervals. The confidence level stays at 95%, but the interval narrows because we have more data.
@@ -405,6 +416,7 @@ const marginStat = document.getElementById('marginStat');
 const knownBtn = document.getElementById('knownBtn');
 const unknownBtn = document.getElementById('unknownBtn');
 const knowdropText = document.getElementById('knowdropText');
+const cardHint = document.querySelector('.card-hint');
 
 const dpr = Math.min(window.devicePixelRatio || 1, 2);
 const buf = document.createElement('canvas');
@@ -433,12 +445,7 @@ function updateSliderFill() {
 }
 
 function getCritical() {
-  if (useT) {
-    const df = n - 1;
-    // Approximate t-critical for 95% CI
-    if (df < 30) return 2.042 + (30 - df) * 0.01;
-    return 1.96 + 0.5 / Math.sqrt(df);
-  }
+  // 95% quantile of the standard normal, used with σ or (for large n) with s
   return 1.96;
 }
 
@@ -460,7 +467,8 @@ function draw() {
   widthStat.textContent = width.toFixed(1);
   marginStat.textContent = margin.toFixed(1);
   liveTag.textContent = `n = ${n}`;
-  overlayTag.textContent = `95% CI: [${lower.toFixed(1)}, ${upper.toFixed(1)}]`;
+  overlayTag.textContent = `95% CI: [${lower.toFixed(1)}, ${upper.toFixed(1)}]${useT && n < 30 ? " (n < 30: approximation unreliable)" : ""}`;
+  cardHint.textContent = useT ? "Population mean μ = 100, sample s = 15 (approximate, needs n ≥ 30)" : "Population mean μ = 100, σ = 15";
 
   // Draw number line
   const centerX = w / 2;
@@ -528,11 +536,12 @@ function draw() {
   ctx.lineTo(upperX, centerY + 8);
   ctx.stroke();
 
-  // Sample mean marker (x̄ = 100 for visualization)
-  ctx.fillStyle = '#24803F';
+  // Sample mean marker (x̄ = 100 for visualization), hollow so μ stays visible
+  ctx.strokeStyle = '#24803F';
+  ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.arc(centerX, centerY, 5, 0, Math.PI * 2);
-  ctx.fill();
+  ctx.arc(centerX, centerY, 7, 0, Math.PI * 2);
+  ctx.stroke();
 
   // Flowing dots along interval
   const time = Date.now() / 1000;
@@ -585,7 +594,7 @@ unknownBtn.addEventListener('click', () => {
   useT = true;
   knownBtn.classList.remove('active');
   unknownBtn.classList.add('active');
-  knowdropText.innerHTML = 'When the population standard deviation is unknown, we substitute the sample standard deviation and use <span style="color:var(--acc)">t-distribution critical values with n−1 degrees of freedom</span>. The t-distribution has heavier tails than the normal, so t* > z* for the same confidence level. This accounts for the extra uncertainty from estimating σ. As n grows, the t-distribution converges to normal, so the difference becomes negligible. For n = 30, t* ≈ 2.045; for n = 200, t* ≈ 1.972, very close to z* = 1.96.';
+  knowdropText.innerHTML = `When the population standard deviation is unknown and the sample is large (n ≥ 30 in practice), replace σ with the sample standard deviation s and keep the same normal critical value z* = 1.96. The interval becomes <span style="color:var(--acc)">x̄ ± 1.96 × (s/√n)</span>, which is approximate because s is itself an estimate of σ. The margin still shrinks as √n grows, exactly as in the σ-known case. For n < 30 this approximation is unreliable, so a larger sample is needed before the normal quantile can be trusted.`;
 });
 
 window.addEventListener('resize', resize);

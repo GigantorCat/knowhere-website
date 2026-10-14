@@ -9,10 +9,12 @@ body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body
   --bg: #0B0D0C;
   --bg2: #12160F;
   --acc: #6A60D4;
-  --ag: rgba(106, 96, 212, .7);
-  --ag1: rgba(106, 96, 212, .12);
-  --ag2: rgba(106, 96, 212, .45);
+  --acc-rgb: 106, 96, 212;
+  --ag:  rgba(var(--acc-rgb),.7);
+  --ag1: rgba(var(--acc-rgb),.12);
+  --ag2: rgba(var(--acc-rgb),.45);
   --amb: #FAC775;
+  --amb-rgb: 250, 199, 117;
   --ink: #EDEDE8;
   --ink-dim: #8C9389;
   --line: #262B26;
@@ -21,15 +23,8 @@ body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 .sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
 }
 
 body {
@@ -40,10 +35,7 @@ body {
   padding: 40px 16px 0;
 }
 
-.container {
-  max-width: 720px;
-  margin: 0 auto;
-}
+.em-container { max-width: 720px; margin: 0 auto; }
 
 h1 {
   font-size: clamp(26px, 6.5vw, 44px);
@@ -53,7 +45,7 @@ h1 {
   margin-bottom: 14px;
 }
 
-.intro {
+.em-intro {
   font-size: 15.5px;
   font-weight: 400;
   color: var(--ink-dim);
@@ -62,7 +54,7 @@ h1 {
   margin-bottom: 28px;
 }
 
-.card {
+.em-card {
   background: linear-gradient(180deg, #12160F, #0d100b);
   border: 1px solid var(--line);
   border-radius: 18px;
@@ -71,506 +63,473 @@ h1 {
   margin-bottom: 18px;
 }
 
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
+.em-head {
+  display: flex; justify-content: space-between; align-items: center; gap: 10px;
+  margin-bottom: 6px; flex-wrap: wrap;
+}
+.em-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 13px;
+  text-transform: uppercase; color: var(--ink);
+}
+.em-live {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  text-transform: uppercase; color: var(--acc);
+}
+.em-hint {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  color: var(--ink-dim); margin-bottom: 14px; line-height: 1.5;
 }
 
-.card-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  color: var(--ink);
-}
-
-.live-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--acc);
-}
-
-.card-hint {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--ink-dim);
-  margin-bottom: 14px;
-}
-
-.canvas-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16/9;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
-  box-shadow: inset 0 0 0 1px var(--ag1);
+.em-wrap {
+  position: relative; width: 100%; aspect-ratio: 16/9; border-radius: 12px;
+  overflow: hidden; background: #000; box-shadow: inset 0 0 0 1px var(--ag1);
   margin-bottom: 16px;
 }
-
-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
+.em-wrap canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.em-overlay {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.55); backdrop-filter: blur(4px);
+  padding: 9px 16px; font-family: 'JetBrains Mono', monospace; font-size: 14px;
+  text-transform: uppercase; color: var(--acc); text-align: center; line-height: 1.25;
 }
 
-.canvas-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(4px);
-  padding: 9px 16px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  text-transform: uppercase;
-  color: var(--acc);
-  text-align: center;
+.em-group-title {
+  font-size: 12.5px; color: var(--ink-dim); line-height: 1.5; margin: 14px 0 8px;
 }
-
-.slider-wrapper {
-  margin-bottom: 8px;
+.em-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+.em-pill {
+  font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 10px 14px;
+  border-radius: 999px; border: 1px solid var(--line); background: #12160F;
+  color: var(--ink-dim); cursor: pointer; transition: background .2s, color .2s, border-color .2s, box-shadow .2s;
 }
-
-.mem-slider {
-  width: 100%;
-  height: 4px;
-  -webkit-appearance: none;
-  appearance: none;
-  background: linear-gradient(90deg, var(--acc) var(--fill, 50%), #23291f var(--fill, 50%));
-  border-radius: 3px;
-  outline: none;
-  cursor: pointer;
+.em-pill[aria-pressed="true"] {
+  background: rgba(var(--acc-rgb),.1); border-color: var(--acc); color: var(--acc);
+  box-shadow: 0 0 22px rgba(var(--acc-rgb),.18);
 }
+.em-pills.em-flex .em-pill { flex: 1 1 0; text-align: center; }
 
-.mem-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow .15s;
+.em-roles {
+  margin-top: 14px; font-size: 12.5px; line-height: 1.6; color: var(--ink-dim);
 }
+.em-roles b { font-weight: 500; color: var(--ink); }
+.em-roles .em-s { color: var(--acc); font-weight: 500; }
+.em-roles .em-a { color: var(--amb); font-weight: 500; }
 
-.mem-slider::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+.em-stats {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  border-top: 1px solid var(--line); padding-top: 14px; margin-top: 14px;
 }
-
-.mem-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow .15s;
+.em-stat { text-align: center; }
+.em-stat-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 10.5px; text-transform: uppercase;
+  color: var(--ink-dim); margin-bottom: 6px; line-height: 1.4;
 }
-
-.mem-slider::-moz-range-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+.em-stat-value {
+  font-family: 'JetBrains Mono', monospace; font-size: clamp(18px, 6vw, 24px); font-weight: 500;
 }
+.em-stat-value.acc { color: var(--acc); }
+.em-stat-value.amb { color: var(--amb); }
 
-.tick-labels {
-  display: flex;
-  justify-content: space-between;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--ink-dim);
-  padding: 0 10px;
-}
+.em-drop { border-top: 1px solid var(--line); padding-top: 16px; margin-top: 16px; }
+.em-drop p { font-size: 14.5px; font-weight: 400; line-height: 1.65; color: var(--ink); }
 
-.stat-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  border-top: 1px solid var(--line);
-  padding-top: 14px;
-  margin-top: 14px;
-}
-
-.stat {
-  text-align: center;
-}
-
-.stat-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 6px;
-}
-
-.stat-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 24px;
-  font-weight: 500;
-}
-
-.stat-value.explicit { color: var(--acc); }
-.stat-value.implicit { color: var(--amb); }
-
-.toggle-section {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.toggle-btn {
-  flex: 1;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14.5px;
-  padding: 12px;
-  border-radius: 11px;
-  border: 1px solid var(--line);
-  background: #12160F;
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: all .2s;
-}
-
-.toggle-btn.active {
-  background: rgba(106,96,212,.1);
-  border-color: var(--acc);
-  color: var(--acc);
-  box-shadow: 0 0 22px rgba(106,96,212,.18);
-}
-
-.knowdrop {
-  border-top: 1px solid var(--line);
-  padding-top: 16px;
-}
-
-.knowdrop p {
-  font-size: 14.5px;
-  font-weight: 400;
-  line-height: 1.65;
-  color: var(--ink);
-}
-
-.know-this {
-  border-left: 3px solid var(--acc);
-  padding: 16px 18px;
+.em-know {
+  border-left: 3px solid var(--acc); padding: 16px 18px;
   background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
-  border-radius: 0 12px 12px 0;
-  margin-top: 18px;
-  margin-bottom: 0;
+  border-radius: 0 12px 12px 0; margin-top: 18px; margin-bottom: 0; padding-bottom: 16px;
 }
-
-.know-this-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--acc);
-  margin-bottom: 10px;
-  display: block;
+.em-know-tag {
+  display: flex; align-items: center; gap: 9px; margin-bottom: 10px;
+  font-family: 'JetBrains Mono', monospace; font-size: 13px; text-transform: uppercase;
+  letter-spacing: 0.15em; color: var(--acc);
 }
-
-.know-this p {
-  font-size: 17.4px;
-  font-weight: 400;
-  line-height: 1.55;
-  color: var(--ink);
-  margin-bottom: 0;
+.em-know-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--acc);
+  box-shadow: 0 0 8px var(--acc); animation: emPulse 2.4s ease-in-out infinite;
 }
+@keyframes emPulse { 0%,100% { opacity: 1; } 50% { opacity: .45; } }
+.em-know p { font-size: 17.4px; font-weight: 400; line-height: 1.55; color: var(--ink); margin: 0; }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-@media (max-width: 360px) {
-  body { padding: 32px 12px 0; }
-  .card { padding: 14px; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }
 </style>
 
-<h2 class="sr-only">Interactive demonstration of explicit and implicit memory types</h2>
+<h2 class="sr-only">Interactive medial brain cross-section showing which structures encode and store explicit and implicit memories</h2>
 
-<div class="container">
-  <h1>The bike you can ride but can't <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">explain</span></h1>
-  
-  <p class="intro">You know your birthday. You know how to ride a bike. But one memory you can describe in words — the other only shows up in motion. Drag the slider to see how different memories leave different traces in your brain.</p>
+<div class="em-container">
+  <h1>Lose every new fact and you can still learn to ride a <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">bike</span></h1>
 
-  <div class="card">
-    <div class="card-header">
-      <span class="card-label">Memory Type Scanner</span>
-      <span class="live-tag" id="memtype">Explicit/Episodic</span>
-    </div>
-    <div class="card-hint">Drag to shift between memory systems</div>
-    
-    <div class="canvas-wrapper">
-      <canvas id="memCanvas"></canvas>
-      <div class="canvas-overlay" id="overlay">Last birthday party</div>
-    </div>
+  <p class="em-intro">Explicit memories are declared in words; implicit memories show up in what you do. The two systems are built in different parts of the brain. Choose a memory and watch which structures light up, then take the hippocampus away and see which memories can still be learned afresh.</p>
 
-    <div class="slider-wrapper">
-      <input aria-label="Memory type" type="range" min="0" max="100" value="25" class="mem-slider" id="memSlider">
+  <div class="em-card">
+    <div class="em-head">
+      <span class="em-label">Where each memory lives</span>
+      <span class="em-live" id="liveTag">Explicit · episodic</span>
     </div>
-    <div class="tick-labels">
-      <span>Explicit</span>
-      <span>Implicit</span>
+    <div class="em-hint">Choose a memory. Watch which structures light. Then remove the hippocampus and check each memory again.</div>
+
+    <div class="em-wrap" id="wrap">
+      <canvas id="brainCanvas" aria-label="Medial view of the brain with hippocampus, amygdala, neocortex, basal ganglia and cerebellum labelled"></canvas>
+      <div class="em-overlay" id="overlay">Explicit · hippocampus encodes · neocortex stores</div>
     </div>
 
-    <div class="stat-row">
-      <div class="stat">
-        <div class="stat-label">Can Describe</div>
-        <div class="stat-value explicit" id="describeVal">100%</div>
+    <div class="em-group-title">Which memory is being formed?</div>
+    <div class="em-pills" role="group" aria-label="Memory example" id="exGroup">
+      <button class="em-pill" data-ex="episodic" aria-pressed="true">Episodic event</button>
+      <button class="em-pill" data-ex="semantic" aria-pressed="false">Semantic fact</button>
+      <button class="em-pill" data-ex="motor" aria-pressed="false">Motor skill</button>
+      <button class="em-pill" data-ex="eyeblink" aria-pressed="false">Eyeblink reflex</button>
+      <button class="em-pill" data-ex="fear" aria-pressed="false">Conditioned fear</button>
+    </div>
+
+    <div class="em-group-title">Predict first: if both hippocampi were removed, which of these memories could still be learned afresh?</div>
+    <div class="em-pills em-flex" role="group" aria-label="Hippocampus condition" id="lesionGroup">
+      <button class="em-pill" data-lesion="0" aria-pressed="true">Hippocampus intact</button>
+      <button class="em-pill" data-lesion="1" aria-pressed="false">Hippocampus removed</button>
+    </div>
+
+    <p class="em-roles" id="roles" aria-live="polite"><b>Your last birthday</b> — <span class="em-s">Hippocampus</span> encodes and consolidates the event · <span class="em-s">Neocortex</span> stores it long term · <span class="em-s">Amygdala</span> tags the emotion, strengthening encoding</p>
+
+    <div class="em-stats">
+      <div class="em-stat">
+        <div class="em-stat-label">Expressed</div>
+        <div class="em-stat-value acc" id="statExpress">In words</div>
       </div>
-      <div class="stat">
-        <div class="stat-label">Shows in Action</div>
-        <div class="stat-value implicit" id="actionVal">35%</div>
+      <div class="em-stat">
+        <div class="em-stat-label">Hippocampus to form it</div>
+        <div class="em-stat-value amb" id="statHippo">Needed</div>
       </div>
     </div>
   </div>
 
-  <div class="card">
-    <div class="toggle-section">
-      <button class="toggle-btn active" id="btnExplicit">Explicit</button>
-      <button class="toggle-btn" id="btnImplicit">Implicit</button>
+  <div class="em-card">
+    <div class="em-pills em-flex" role="group" aria-label="Memory system explained" id="dropGroup">
+      <button class="em-pill" data-drop="explicit" aria-pressed="true">Explicit</button>
+      <button class="em-pill" data-drop="implicit" aria-pressed="false">Implicit</button>
     </div>
-
-    <div class="knowdrop">
-      <p id="dropText">Explicit memory is what you can consciously retrieve and state in words. It splits into two types: episodic memory holds your personal experiences — your last birthday, yesterday's conversation, the smell of your grandmother's kitchen. Semantic memory stores general facts and knowledge: Paris is the capital of France, photosynthesis requires light, the Pythagorean theorem. Both can be declared, tested with direct questions, and impaired by damage to the hippocampus and medial temporal lobe structures.</p>
+    <div class="em-drop">
+      <p id="dropText">Explicit memories are the ones you can state: episodic memories of events you lived through and semantic memories of facts about the world. The hippocampus encodes them and consolidates them over time, then hands long-term storage to the neocortex, which is why older memories can survive hippocampal damage while new ones cannot be laid down. The amygdala adds the emotional charge: an episodic memory formed during fear or joy is encoded more strongly. Explicit memory is tested by asking: recall the event, state the fact.</p>
     </div>
   </div>
 
-  <div class="know-this">
-    <span class="know-this-tag">Know This</span>
-    <p>You possess two fundamentally different memory systems: <span style="color:var(--acc)">explicit memory</span> (consciously retrieved and declared) and <span style="color:var(--acc)">implicit memory</span> (expressed through performance, not words).</p>
+  <div class="em-know">
+    <div class="em-know-tag"><span class="em-know-dot"></span><span>Know This</span></div>
+    <p><span style="color:var(--acc)">Explicit</span> memories are encoded by the hippocampus and stored in the <span style="color:var(--acc)">neocortex</span>; implicit skills and reflexes are built by the <span style="color:var(--acc)">basal ganglia and cerebellum</span>, so they survive when the hippocampus is lost.</p>
   </div>
 </div>
 
 <script>
-const canvas = document.getElementById('memCanvas');
-const ctx = canvas.getContext('2d', { alpha: false });
-const slider = document.getElementById('memSlider');
-const memtype = document.getElementById('memtype');
-const overlay = document.getElementById('overlay');
-const describeVal = document.getElementById('describeVal');
-const actionVal = document.getElementById('actionVal');
-const btnExplicit = document.getElementById('btnExplicit');
-const btnImplicit = document.getElementById('btnImplicit');
-const dropText = document.getElementById('dropText');
+(function(){
+  const canvas = document.getElementById("brainCanvas");
+  const ctx = canvas.getContext("2d");
+  const wrap = document.getElementById("wrap");
+  const overlayEl = document.getElementById("overlay");
+  const liveTag = document.getElementById("liveTag");
+  const rolesEl = document.getElementById("roles");
+  const statExpress = document.getElementById("statExpress");
+  const statHippo = document.getElementById("statHippo");
+  const dropText = document.getElementById("dropText");
 
-const dpr = Math.min(window.devicePixelRatio || 1, 2);
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d', { alpha: false });
+  const CSS = getComputedStyle(document.documentElement);
+  const ACC = CSS.getPropertyValue("--acc").trim();
+  const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+  const AMB = CSS.getPropertyValue("--amb").trim();
+  const AMBRGB = CSS.getPropertyValue("--amb-rgb").trim();
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-let w, h, cx, cy;
-let nodes = [];
-let time = 0;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const buf = document.createElement("canvas");
+  const bctx = buf.getContext("2d");
 
-function resize() {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  
-  w = canvas.width / dpr;
-  h = canvas.height / dpr;
-  cx = w / 2;
-  cy = h / 2;
-  
-  initNodes();
-}
+  const EX = {
+    episodic: {
+      tag: "Explicit · episodic", example: "Your last birthday", explicit: true,
+      roles: [["Hippocampus", "encodes and consolidates the event"], ["Neocortex", "stores it long term"], ["Amygdala", "tags the emotion, strengthening encoding"]],
+      lit: { hippo: 1, neo: 1, amyg: 0.7 },
+      overlay: "Explicit · hippocampus encodes · neocortex stores",
+      overlayLesion: "Hippocampus removed · no new episodic memory forms",
+      lesionNote: "Without a hippocampus the event is never encoded. Episodic memories already stored in the neocortex remain."
+    },
+    semantic: {
+      tag: "Explicit · semantic", example: "Canberra is the capital of Australia", explicit: true,
+      roles: [["Hippocampus", "encodes and consolidates the fact"], ["Neocortex", "stores it long term"]],
+      lit: { hippo: 1, neo: 1 },
+      overlay: "Explicit · hippocampus encodes · neocortex stores",
+      overlayLesion: "Hippocampus removed · no new semantic memory forms",
+      lesionNote: "Without a hippocampus the fact is never encoded. Facts already stored in the neocortex remain."
+    },
+    motor: {
+      tag: "Implicit · procedural", example: "Riding a bike", explicit: false,
+      roles: [["Basal ganglia", "encode and store the skill as a habit"], ["Cerebellum", "fine-tunes timing and balance"]],
+      lit: { bg: 1, cereb: 0.8 },
+      overlay: "Implicit · basal ganglia · cerebellum",
+      overlayLesion: "Hippocampus removed · still learned through practice",
+      lesionNote: "No hippocampus needed: the basal ganglia and cerebellum still build the skill with practice, even with no memory of practising."
+    },
+    eyeblink: {
+      tag: "Implicit · conditioned reflex", example: "Blinking before an air puff", explicit: false,
+      roles: [["Cerebellum", "encodes and stores the conditioned eyeblink"]],
+      lit: { cereb: 1 },
+      overlay: "Implicit · cerebellum",
+      overlayLesion: "Hippocampus removed · reflex still conditioned",
+      lesionNote: "No hippocampus needed: the cerebellum still pairs the tone with the puff."
+    },
+    fear: {
+      tag: "Implicit · conditioned fear", example: "Flinching at the sound of a dentist drill", explicit: false,
+      roles: [["Amygdala", "encodes and stores the conditioned fear response"]],
+      lit: { amyg: 1 },
+      overlay: "Implicit · amygdala",
+      overlayLesion: "Hippocampus removed · fear still conditioned",
+      lesionNote: "No hippocampus needed: the amygdala still pairs the sound with the pain."
+    }
+  };
 
-function initNodes() {
-  nodes = [];
-  const radius = Math.min(w, h) * 0.32;
-  
-  // Explicit nodes (left hemisphere)
-  for (let i = 0; i < 18; i++) {
-    const angle = (i / 18) * Math.PI * 2;
-    nodes.push({
-      x: cx - radius * 0.6 + Math.cos(angle) * radius * 0.5,
-      y: cy + Math.sin(angle) * radius * 0.5,
-      r: 3 + Math.random() * 2,
-      phase: Math.random() * Math.PI * 2,
-      speed: 0.8 + Math.random() * 0.6,
-      type: 'explicit'
-    });
+  const DROPS = {
+    explicit: "Explicit memories are the ones you can state: episodic memories of events you lived through and semantic memories of facts about the world. The hippocampus encodes them and consolidates them over time, then hands long-term storage to the neocortex, which is why older memories can survive hippocampal damage while new ones cannot be laid down. The amygdala adds the emotional charge: an episodic memory formed during fear or joy is encoded more strongly. Explicit memory is tested by asking: recall the event, state the fact.",
+    implicit: "Implicit memories show in what you do rather than what you say. Procedural memories for skills and habits, like riding a bike or typing, are encoded and stored by the basal ganglia, with the cerebellum coordinating the timing and smoothness of the movement. The cerebellum also stores simple classically conditioned reflexes such as blinking before an air puff, and the amygdala stores conditioned fear responses such as a flinch at the sound of a dentist drill. None of these depend on the hippocampus, so a person who cannot form a single new episodic memory can still improve at a skill with practice, without remembering a single practice session."
+  };
+
+  const KEYS = ["neo", "bg", "amyg", "hippo", "cereb"];
+  const level = { neo: 0, bg: 0, amyg: 0, hippo: 0, cereb: 0 };
+  const target = { neo: 0, bg: 0, amyg: 0, hippo: 0, cereb: 0 };
+  let lesionLvl = 0, lesionTarget = 0;
+  let cur = "episodic", lesion = false;
+  let raf = null, last = 0;
+
+  let w = 0, h = 0;
+
+  function resize(){
+    const rect = canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    buf.width = canvas.width; buf.height = canvas.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    w = canvas.width / dpr; h = canvas.height / dpr;
+    draw();
   }
-  
-  // Implicit nodes (right hemisphere)
-  for (let i = 0; i < 18; i++) {
-    const angle = (i / 18) * Math.PI * 2;
-    nodes.push({
-      x: cx + radius * 0.6 + Math.cos(angle) * radius * 0.5,
-      y: cy + Math.sin(angle) * radius * 0.5,
-      r: 3 + Math.random() * 2,
-      phase: Math.random() * Math.PI * 2,
-      speed: 0.8 + Math.random() * 0.6,
-      type: 'implicit'
-    });
-  }
-}
 
-function updateSlider() {
-  const val = parseInt(slider.value);
-  slider.style.setProperty('--fill', val + '%');
-  
-  // Update labels
-  if (val < 33) {
-    memtype.textContent = 'Explicit/Episodic';
-    overlay.textContent = 'Last birthday party';
-  } else if (val < 50) {
-    memtype.textContent = 'Explicit/Semantic';
-    overlay.textContent = 'Paris = capital of France';
-  } else if (val < 75) {
-    memtype.textContent = 'Implicit/Procedural';
-    overlay.textContent = 'Riding a bike';
-  } else {
-    memtype.textContent = 'Implicit/Conditioned';
-    overlay.textContent = 'Blinking at air puff';
+  function setTargets(){
+    const ex = EX[cur];
+    const blocked = lesion && ex.explicit;
+    KEYS.forEach(k => { target[k] = blocked ? 0 : (ex.lit[k] || 0); });
+    lesionTarget = lesion ? 1 : 0;
+    if (reduce) { snap(); draw(); return; }
+    if (raf === null) { last = performance.now(); raf = requestAnimationFrame(step); }
   }
-  
-  // Update stats
-  const describe = Math.round(100 - val * 0.95);
-  const action = Math.round(35 + val * 0.62);
-  describeVal.textContent = describe + '%';
-  actionVal.textContent = action + '%';
-}
+  function snap(){ KEYS.forEach(k => { level[k] = target[k]; }); lesionLvl = lesionTarget; }
+  function step(now){
+    const dt = Math.min(now - last, 50); last = now;
+    const f = 1 - Math.exp(-dt / 140);
+    let done = true;
+    KEYS.forEach(k => { level[k] += (target[k] - level[k]) * f; if (Math.abs(target[k] - level[k]) > 0.004) done = false; });
+    lesionLvl += (lesionTarget - lesionLvl) * f; if (Math.abs(lesionTarget - lesionLvl) > 0.004) done = false;
+    if (done) { snap(); draw(); raf = null; return; }
+    draw();
+    raf = requestAnimationFrame(step);
+  }
 
-function draw() {
-  time += 0.016;
-  const val = parseInt(slider.value);
-  const explicitAlpha = 1 - (val / 100);
-  const implicitAlpha = val / 100;
-  
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, w, h);
-  
-  // Draw connections within each hemisphere
-  ctx.globalCompositeOperation = 'lighter';
-  
-  // Explicit connections
-  for (let i = 0; i < nodes.length; i++) {
-    if (nodes[i].type !== 'explicit') continue;
-    for (let j = i + 1; j < nodes.length; j++) {
-      if (nodes[j].type !== 'explicit') continue;
-      const dist = Math.hypot(nodes[i].x - nodes[j].x, nodes[i].y - nodes[j].y);
-      if (dist < 80) {
-        const alpha = (1 - dist / 80) * explicitAlpha * 0.25;
-        ctx.strokeStyle = `rgba(106,96,212,${alpha})`;
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(nodes[i].x, nodes[i].y);
-        ctx.lineTo(nodes[j].x, nodes[j].y);
-        ctx.stroke();
+  function draw(){
+    if (!w || !h) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.globalCompositeOperation = "source-over";
+    ctx.globalAlpha = 1;
+    ctx.filter = "none";
+    ctx.fillStyle = "#000";
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.font = "11px JetBrains Mono, monospace";
+    const mt = t => ctx.measureText(t).width;
+    const ovH = overlayEl.offsetHeight || 32;
+    const top = Math.max(h * 0.05, 22);
+    const bottom = h - ovH - 4;
+    const availH = Math.max(40, bottom - top);
+    const leftRoom = Math.max(mt("Neocortex"), mt("Basal"), mt("ganglia"), mt("Amygdala")) + 14;
+    const rightRoom = Math.max(mt("Hippocampus"), mt("Cerebellum")) + 14;
+    const availW = Math.max(60, w - leftRoom - rightRoom - 8);
+    let bh = availH, bw = bh * 1.3;
+    if (bw > availW) { bw = availW; bh = bw / 1.3; }
+    const bx = leftRoom + 4 + (availW - bw) / 2;
+    const by = top + (availH - bh) / 2;
+    const X = u => bx + u * bw, Y = v => by + v * bh;
+
+    function cerebrumPath(){
+      ctx.beginPath();
+      ctx.moveTo(X(0.02), Y(0.42));
+      ctx.bezierCurveTo(X(0.0), Y(0.18), X(0.2), Y(0.0), X(0.48), Y(0.0));
+      ctx.bezierCurveTo(X(0.78), Y(0.0), X(1.0), Y(0.18), X(0.98), Y(0.44));
+      ctx.bezierCurveTo(X(0.97), Y(0.56), X(0.90), Y(0.62), X(0.74), Y(0.60));
+      ctx.bezierCurveTo(X(0.66), Y(0.60), X(0.62), Y(0.70), X(0.50), Y(0.74));
+      ctx.bezierCurveTo(X(0.36), Y(0.78), X(0.18), Y(0.76), X(0.14), Y(0.68));
+      ctx.bezierCurveTo(X(0.08), Y(0.62), X(0.04), Y(0.56), X(0.02), Y(0.42));
+      ctx.closePath();
+    }
+    function cerebPath(){ ctx.beginPath(); ctx.ellipse(X(0.80), Y(0.80), bw * 0.165, bh * 0.145, -0.2, 0, Math.PI * 2); }
+    function bgPath(){ ctx.beginPath(); ctx.ellipse(X(0.41), Y(0.40), bw * 0.10, bh * 0.13, 0.35, 0, Math.PI * 2); }
+    const amR = Math.min(bw, bh) * 0.048;
+    function amygPath(){ ctx.beginPath(); ctx.arc(X(0.33), Y(0.605), amR, 0, Math.PI * 2); }
+    function hippoPath(){ ctx.beginPath(); ctx.moveTo(X(0.40), Y(0.62)); ctx.quadraticCurveTo(X(0.58), Y(0.70), X(0.70), Y(0.50)); }
+
+    function fillStructure(pathFn, lvl, dimAlpha){
+      pathFn(); ctx.fillStyle = "rgba(237,237,232," + dimAlpha + ")"; ctx.fill();
+      pathFn(); ctx.strokeStyle = "rgba(237,237,232,0.16)"; ctx.lineWidth = 1; ctx.stroke();
+      if (lvl > 0.01) {
+        pathFn(); ctx.fillStyle = "rgba(" + RGB + "," + (0.25 + 0.65 * lvl) + ")"; ctx.fill();
+        ctx.save(); ctx.globalCompositeOperation = "lighter";
+        ctx.shadowColor = ACC; ctx.shadowBlur = 20 * lvl;
+        pathFn(); ctx.fillStyle = "rgba(" + RGB + "," + (0.35 * lvl) + ")"; ctx.fill();
+        ctx.restore();
       }
     }
-  }
-  
-  // Implicit connections
-  for (let i = 0; i < nodes.length; i++) {
-    if (nodes[i].type !== 'implicit') continue;
-    for (let j = i + 1; j < nodes.length; j++) {
-      if (nodes[j].type !== 'implicit') continue;
-      const dist = Math.hypot(nodes[i].x - nodes[j].x, nodes[i].y - nodes[j].y);
-      if (dist < 80) {
-        const alpha = (1 - dist / 80) * implicitAlpha * 0.25;
-        ctx.strokeStyle = `rgba(250,199,117,${alpha})`;
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(nodes[i].x, nodes[i].y);
-        ctx.lineTo(nodes[j].x, nodes[j].y);
-        ctx.stroke();
-      }
+
+    // brainstem (context only)
+    ctx.beginPath();
+    ctx.moveTo(X(0.53), Y(0.70)); ctx.lineTo(X(0.66), Y(0.68)); ctx.lineTo(X(0.64), Y(1.0)); ctx.lineTo(X(0.55), Y(1.0)); ctx.closePath();
+    ctx.fillStyle = "rgba(237,237,232,0.07)"; ctx.fill();
+    ctx.strokeStyle = "rgba(237,237,232,0.12)"; ctx.lineWidth = 1; ctx.stroke();
+
+    // cerebellum
+    fillStructure(cerebPath, level.cereb, 0.08);
+    ctx.save(); cerebPath(); ctx.clip();
+    ctx.strokeStyle = "rgba(0,0,0,0.5)"; ctx.lineWidth = 1.2;
+    for (let i = 1; i <= 3; i++) {
+      ctx.beginPath(); ctx.ellipse(X(0.80), Y(0.80), bw * 0.165 * (1 - i * 0.22), bh * 0.145 * (1 - i * 0.22), -0.2, 0, Math.PI * 2); ctx.stroke();
     }
-  }
-  
-  ctx.globalCompositeOperation = 'source-over';
-  
-  // Draw nodes
-  nodes.forEach(node => {
-    const pulse = 0.7 + 0.3 * Math.sin(time * node.speed + node.phase);
-    const alpha = node.type === 'explicit' ? explicitAlpha : implicitAlpha;
-    const color = node.type === 'explicit' ? '106,96,212' : '250,199,117';
-    
-    ctx.fillStyle = `rgba(${color},${alpha * pulse})`;
-    ctx.beginPath();
-    ctx.arc(node.x, node.y, node.r, 0, Math.PI * 2);
-    ctx.fill();
-    
-    // Glow
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    const glow = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, node.r * 3);
-    glow.addColorStop(0, `rgba(${color},${alpha * pulse * 0.4})`);
-    glow.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = glow;
-    ctx.beginPath();
-    ctx.arc(node.x, node.y, node.r * 3, 0, Math.PI * 2);
-    ctx.fill();
     ctx.restore();
-  });
-  
-  // Central divider
-  ctx.strokeStyle = 'rgba(38,43,38,0.6)';
-  ctx.lineWidth = 1;
-  ctx.setLineDash([4, 4]);
-  ctx.beginPath();
-  ctx.moveTo(cx, 0);
-  ctx.lineTo(cx, h);
-  ctx.stroke();
-  ctx.setLineDash([]);
-  
-  // Bloom
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
-  
-  // Vignette
-  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-  
-  requestAnimationFrame(draw);
-}
 
-slider.addEventListener('input', updateSlider);
+    // cerebrum body and neocortex band
+    cerebrumPath(); ctx.fillStyle = "rgba(237,237,232,0.05)"; ctx.fill();
+    ctx.save(); cerebrumPath(); ctx.clip();
+    cerebrumPath(); ctx.lineWidth = bh * 0.15; ctx.strokeStyle = "rgba(237,237,232,0.15)"; ctx.stroke();
+    if (level.neo > 0.01) {
+      cerebrumPath(); ctx.strokeStyle = "rgba(" + RGB + "," + (0.2 + 0.6 * level.neo) + ")"; ctx.stroke();
+      ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.shadowColor = ACC; ctx.shadowBlur = 22 * level.neo;
+      cerebrumPath(); ctx.lineWidth = bh * 0.12; ctx.strokeStyle = "rgba(" + RGB + "," + (0.3 * level.neo) + ")"; ctx.stroke();
+      ctx.restore();
+    }
+    ctx.strokeStyle = "rgba(0,0,0,0.55)"; ctx.lineWidth = 1.5;
+    for (let k = 0; k <= 10; k++) {
+      const a = Math.PI * (0.08 + 0.84 * k / 10);
+      const ox = 0.5 - 0.49 * Math.cos(a), oy = 0.40 - 0.40 * Math.sin(a);
+      const ix = 0.5 - 0.40 * Math.cos(a), iy = 0.40 - 0.29 * Math.sin(a);
+      ctx.beginPath(); ctx.moveTo(X(ox), Y(oy)); ctx.lineTo(X(ix), Y(iy)); ctx.stroke();
+    }
+    ctx.restore();
+    cerebrumPath(); ctx.strokeStyle = "rgba(237,237,232,0.22)"; ctx.lineWidth = 1; ctx.stroke();
 
-btnExplicit.addEventListener('click', () => {
-  btnExplicit.classList.add('active');
-  btnImplicit.classList.remove('active');
-  dropText.textContent = 'Explicit memory is what you can consciously retrieve and state in words. It splits into two types: episodic memory holds your personal experiences — your last birthday, yesterday\'s conversation, the smell of your grandmother\'s kitchen. Semantic memory stores general facts and knowledge: Paris is the capital of France, photosynthesis requires light, the Pythagorean theorem. Both can be declared, tested with direct questions, and impaired by damage to the hippocampus and medial temporal lobe structures.';
-});
+    // basal ganglia and amygdala
+    fillStructure(bgPath, level.bg, 0.10);
+    fillStructure(amygPath, level.amyg, 0.12);
 
-btnImplicit.addEventListener('click', () => {
-  btnImplicit.classList.add('active');
-  btnExplicit.classList.remove('active');
-  dropText.textContent = 'Implicit memory expresses itself through performance, not conscious retrieval. You cannot fully explain in words how you balance on a bike, tie your shoes, or type without looking — you just do it. Procedural memory governs motor skills and habits. Classically conditioned responses — blinking before an air puff, tensing at the dentist\'s drill sound — are also implicit. These memories resist hippocampal damage that devastates explicit recall. Patient H.M., who lost explicit memory formation, still learned new motor skills despite having no conscious memory of practising them.';
-});
+    // hippocampus (body fades as lesion applies; dashed amber outline appears)
+    const hw = bh * 0.07;
+    ctx.lineCap = "round";
+    if (lesionLvl < 0.99) {
+      const keep = 1 - lesionLvl;
+      hippoPath(); ctx.lineWidth = hw; ctx.strokeStyle = "rgba(237,237,232," + (0.14 * keep) + ")"; ctx.stroke();
+      if (level.hippo > 0.01) {
+        hippoPath(); ctx.strokeStyle = "rgba(" + RGB + "," + ((0.25 + 0.65 * level.hippo) * keep) + ")"; ctx.stroke();
+        ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.shadowColor = ACC; ctx.shadowBlur = 20 * level.hippo * keep;
+        hippoPath(); ctx.strokeStyle = "rgba(" + RGB + "," + (0.35 * level.hippo * keep) + ")"; ctx.stroke(); ctx.restore();
+      }
+    }
+    if (lesionLvl > 0.01) {
+      ctx.save(); ctx.setLineDash([3, 5]);
+      hippoPath(); ctx.lineWidth = hw; ctx.strokeStyle = "rgba(" + AMBRGB + "," + (0.22 * lesionLvl) + ")"; ctx.stroke();
+      ctx.setLineDash([4, 4]);
+      hippoPath(); ctx.lineWidth = 1.4; ctx.strokeStyle = "rgba(" + AMBRGB + "," + (0.85 * lesionLvl) + ")"; ctx.stroke();
+      ctx.restore();
+    }
+    ctx.lineCap = "butt";
 
-window.addEventListener('resize', resize);
-resize();
-updateSlider();
-requestAnimationFrame(draw);
+    // bloom
+    bctx.setTransform(1, 0, 0, 1, 0, 0); bctx.clearRect(0, 0, buf.width, buf.height);
+    if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+    ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
+    (buf.width&&buf.height)&&ctx.drawImage(buf, 0, 0, w, h); ctx.restore();
+
+    // vignette
+    const cx = w / 2, cy = h / 2;
+    const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
+
+    // crisp labels and leaders on top
+    ctx.font = "11px JetBrains Mono, monospace";
+    ctx.textBaseline = "middle";
+    const dimCol = "rgba(190,195,188,0.75)";
+    const leaderCol = "rgba(190,195,188,0.35)";
+    function colFor(lvl){ return lvl > 0.5 ? "rgba(" + RGB + "," + (0.75 + 0.25 * lvl) + ")" : dimCol; }
+    function leader(x1, y1, x2, y2, col){
+      ctx.strokeStyle = col; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+      ctx.fillStyle = col; ctx.beginPath(); ctx.arc(x2, y2, 2, 0, Math.PI * 2); ctx.fill();
+    }
+    const lx = bx - 10, rx = bx + bw + 10;
+    // neocortex
+    ctx.textAlign = "right"; ctx.fillStyle = colFor(level.neo); ctx.fillText("Neocortex", lx, Y(0.16));
+    leader(lx + 4, Y(0.16), X(0.07), Y(0.17), level.neo > 0.5 ? "rgba(" + RGB + ",0.7)" : leaderCol);
+    // basal ganglia (two lines)
+    ctx.fillStyle = colFor(level.bg); ctx.fillText("Basal", lx, Y(0.40) - 6.5); ctx.fillText("ganglia", lx, Y(0.40) + 6.5);
+    leader(lx + 4, Y(0.40), X(0.31), Y(0.40), level.bg > 0.5 ? "rgba(" + RGB + ",0.7)" : leaderCol);
+    // amygdala
+    ctx.fillStyle = colFor(level.amyg); ctx.fillText("Amygdala", lx, Y(0.62));
+    leader(lx + 4, Y(0.62), X(0.33) - amR, Y(0.605), level.amyg > 0.5 ? "rgba(" + RGB + ",0.7)" : leaderCol);
+    // hippocampus
+    ctx.textAlign = "left";
+    const hipCol = lesionLvl > 0.5 ? AMB : colFor(level.hippo);
+    ctx.fillStyle = hipCol; ctx.fillText("Hippocampus", rx, Y(0.44));
+    leader(rx - 4, Y(0.44), X(0.70), Y(0.50), lesionLvl > 0.5 ? "rgba(" + AMBRGB + ",0.75)" : (level.hippo > 0.5 ? "rgba(" + RGB + ",0.7)" : leaderCol));
+    // cerebellum
+    ctx.fillStyle = colFor(level.cereb); ctx.fillText("Cerebellum", rx, Y(0.80));
+    leader(rx - 4, Y(0.80), X(0.80) + bw * 0.165, Y(0.80), level.cereb > 0.5 ? "rgba(" + RGB + ",0.7)" : leaderCol);
+    // orientation caption
+    ctx.textAlign = "right"; ctx.fillStyle = "rgba(140,147,137,0.9)";
+    ctx.fillText("Medial view · front at left", w - 8, 12);
+  }
+
+  function escapeHtml(s){ return s.replace(/&/g, "&amp;").replace(/</g, "&lt;"); }
+
+  function updateText(){
+    const ex = EX[cur];
+    liveTag.textContent = ex.tag;
+    overlayEl.textContent = lesion ? ex.overlayLesion : ex.overlay;
+    statExpress.textContent = ex.explicit ? "In words" : "In action";
+    statHippo.textContent = ex.explicit ? "Needed" : "Not needed";
+    const blocked = lesion && ex.explicit;
+    let html = "<b>" + escapeHtml(ex.example) + "</b> — ";
+    if (blocked) {
+      html += "<span class=\"em-a\">Hippocampus removed</span> · " + escapeHtml(ex.lesionNote);
+    } else {
+      html += ex.roles.map(r => "<span class=\"em-s\">" + escapeHtml(r[0]) + "</span> " + escapeHtml(r[1])).join(" · ");
+      if (lesion) html += " · <span class=\"em-a\">Hippocampus removed</span> · " + escapeHtml(ex.lesionNote);
+    }
+    rolesEl.innerHTML = html;
+  }
+
+  function wireGroup(id, attr, onPick){
+    const group = document.getElementById(id);
+    const btns = Array.from(group.querySelectorAll("button"));
+    btns.forEach(b => {
+      b.addEventListener("click", () => {
+        btns.forEach(o => o.setAttribute("aria-pressed", o === b ? "true" : "false"));
+        onPick(b.getAttribute(attr));
+      });
+    });
+  }
+
+  wireGroup("exGroup", "data-ex", v => { cur = v; updateText(); setTargets(); draw(); });
+  wireGroup("lesionGroup", "data-lesion", v => { lesion = v === "1"; updateText(); setTargets(); draw(); });
+  wireGroup("dropGroup", "data-drop", v => { dropText.textContent = DROPS[v]; });
+
+  window.addEventListener("resize", resize);
+  if (window.ResizeObserver) { new ResizeObserver(() => resize()).observe(wrap); }
+  if (document.fonts && document.fonts.ready) { document.fonts.ready.then(() => draw()); }
+
+  updateText();
+  resize();
+  setTargets();
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'explicit-and-implicit-memory'},'*');}catch(e){}}

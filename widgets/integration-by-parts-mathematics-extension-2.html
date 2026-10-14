@@ -4,597 +4,410 @@ body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
-
-:root {
-  --bg: #0B0D0C;
-  --bg2: #12160F;
-  --acc: #23833F;
-  --ag: rgba(35, 131, 63, .7);
-  --ag1: rgba(35, 131, 63, .12);
-  --ag2: rgba(35, 131, 63, .45);
-  --amb: #FAC775;
-  --ink: #EDEDE8;
-  --ink-dim: #8C9389;
-  --line: #262B26;
-}
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-body {
-  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
-  font-family: 'Geist', sans-serif;
-  color: var(--ink);
-  min-height: 100vh;
-  padding: 40px 16px 0;
-  -webkit-font-smoothing: antialiased;
-}
-
-.container {
-  max-width: 720px;
-  margin: 0 auto;
-}
-
-h1 {
-  font-size: clamp(26px, 6.5vw, 44px);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
-  margin-bottom: 14px;
-}
-
-.intro {
-  font-size: 15.5px;
-  font-weight: 400;
-  color: var(--ink-dim);
-  line-height: 1.55;
-  max-width: 58ch;
-  margin-bottom: 28px;
-}
-
-.card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 16px;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 4px;
-}
-
-.card-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  color: var(--ink);
-}
-
-.live-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--acc);
-}
-
-.card-hint {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--ink-dim);
-  margin-bottom: 14px;
-}
-
-.canvas-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16/9;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
-  box-shadow: inset 0 0 0 1px var(--ag1);
-  margin-bottom: 14px;
-}
-
-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.canvas-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(4px);
-  padding: 9px 16px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  text-transform: uppercase;
-  color: var(--acc);
-  text-align: center;
-}
-
-.slider-group {
-  margin-bottom: 12px;
-}
-
-.slider-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 8px;
-}
-
-.ibp-slider {
-  width: 100%;
-  height: 4px;
-  border-radius: 3px;
-  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
-  -webkit-appearance: none;
-  appearance: none;
-  outline: none;
-  margin-bottom: 8px;
-}
-
-.ibp-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow .15s;
-}
-
-.ibp-slider::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.ibp-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow .15s;
-}
-
-.ibp-slider::-moz-range-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.tick-labels {
-  display: flex;
-  justify-content: space-between;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--ink-dim);
-  padding: 0 4px;
-}
-
-.stat-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  border-top: 1px solid var(--line);
-  padding-top: 14px;
-  margin-top: 14px;
-}
-
-.stat {
-  text-align: center;
-}
-
-.stat-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 6px;
-}
-
-.stat-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 24px;
-  font-weight: 500;
-}
-
-.stat:first-child .stat-value { color: var(--acc); }
-.stat:last-child .stat-value { color: var(--amb); }
-
-.toggle-group {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.toggle-btn {
-  flex: 1;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14.5px;
-  padding: 12px;
-  border-radius: 11px;
-  border: 1px solid var(--line);
-  background: #12160F;
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: all .2s;
-}
-
-.toggle-btn.active {
-  background: rgba(35, 131, 63,.1);
-  border: 1px solid var(--acc);
-  color: var(--acc);
-  box-shadow: 0 0 22px rgba(35, 131, 63,.18);
-}
-
-.knowdrop {
-  border-top: 1px solid var(--line);
-  padding-top: 16px;
-}
-
-.knowdrop-text {
-  font-size: 14.5px;
-  font-weight: 400;
-  line-height: 1.65;
-  color: var(--ink);
-}
-
-.know-this {
-  border-left: 3px solid var(--acc);
-  padding: 16px 18px;
-  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
-  border-radius: 0 12px 12px 0;
-  margin-bottom: 0;
-}
-
-.know-this-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--acc);
-  margin-bottom: 10px;
-}
-
-.know-this-body {
-  font-size: 17.4px;
-  font-weight: 400;
-  line-height: 1.55;
-  color: var(--ink);
-}
-
-.know-this-body .acc { color: var(--acc); }
+:root{--bg:#0B0D0C;--bg2:#12160F;--acc:#23833F;--acc-rgb:35, 131, 63;--ag:rgba(var(--acc-rgb),.7);--ag1:rgba(var(--acc-rgb),.12);--ag2:rgba(var(--acc-rgb),.45);--amb:#FAC775;--ink:#EDEDE8;--ink-dim:#8C9389;--line:#262B26;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C 55%);font-family:'Geist',sans-serif;color:var(--ink);min-height:100vh;padding:40px 16px 0;-webkit-font-smoothing:antialiased}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.ibp-wrap{max-width:720px;margin:0 auto}
+h1{font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin-bottom:14px}
+.intro{font-size:15.5px;font-weight:400;color:var(--ink-dim);line-height:1.55;max-width:58ch;margin-bottom:28px}
+.card{background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);margin-bottom:16px}
+.card.sec{border-radius:14px}
+.hdr{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:4px}
+.lbl{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;color:var(--ink)}
+.live{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--acc);text-align:right}
+.hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);line-height:1.5}
+.rowt{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin:12px 0 6px}
+.pills{display:grid;gap:8px}
+.pills.two{grid-template-columns:1fr 1fr}
+.pills.four{grid-template-columns:1fr 1fr}
+@media(min-width:560px){.pills.four{grid-template-columns:repeat(4,1fr)}}
+.pill{font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.2;padding:9px 10px;border-radius:999px;border:1px solid var(--line);background:#12160F;color:var(--ink-dim);cursor:pointer;transition:background .2s,color .2s,box-shadow .2s,border-color .2s}
+.pill[aria-pressed="true"]{background:rgba(var(--acc-rgb),.1);border-color:var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.cwrap{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1);margin-top:14px}
+.cwrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.ov{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--acc);text-align:center;line-height:1.3}
+.ov .k{text-transform:uppercase}
+.srow{display:flex;justify-content:space-between;align-items:baseline;font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin:16px 0 8px}
+.srow b{font-weight:500;font-size:12px;color:var(--ink);text-transform:none}
+.ibp-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;outline:none;background:linear-gradient(90deg,var(--acc) var(--fill,0%),#23291f var(--fill,0%));display:block}
+.ibp-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.ibp-slider::-webkit-slider-thumb:hover{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.ibp-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.ibp-slider::-moz-range-thumb:hover{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.ticks{position:relative;height:16px;margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim)}
+.ticks span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}
+.ticks span:first-child{left:0;transform:none}
+.ticks span:last-child{right:0;left:auto;transform:none}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:16px;border-top:1px solid var(--line);margin-top:16px;padding-top:14px}
+.stat{text-align:center}
+.stat .sl{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:6px}
+.stat .sv{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500}
+.stat:first-child .sv{color:var(--acc)}
+.stat:last-child .sv{color:var(--amb)}
+.kd{border-top:1px solid var(--line);padding-top:16px;margin-top:14px}
+.kd p{font-size:14.5px;font-weight:400;line-height:1.65;color:var(--ink)}
+.kt{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));border-radius:0 12px 12px 0;margin-bottom:0;padding-bottom:16px}
+.kt-tag{display:flex;align-items:center;gap:9px;font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:0.15em;color:var(--acc);margin-bottom:10px}
+.kt-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:ktp 2.4s ease-in-out infinite}
+@keyframes ktp{0%,100%{opacity:1}50%{opacity:.45}}
+.kt-body{font-size:17.4px;font-weight:400;line-height:1.55;color:var(--ink)}
+.kt-body span{color:var(--acc)}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
 
-<h2 class="sr-only">Integration by Parts Interactive Widget</h2>
+<h2 class="sr-only">Integration by parts: choose which factor is u, step through each pass of the formula and derive it from the product rule</h2>
 
-<div class="container">
-  <h1>Making one integral harder to make it <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">easier</span></h1>
-  
-  <p class="intro">Integration by parts deliberately creates a harder-looking integral than the one you started with — but if you choose correctly, the second integral actually solves itself. Drag the slider to see different choices of <em>u</em> and watch how complexity flows from one side to the other.</p>
+<div class="ibp-wrap">
+  <h1>Parts is the product rule, read <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">backwards</span></h1>
+  <p class="intro">Differentiate a product and you get two terms. Integrate that line and rearrange it, and you have ∫u dv = uv − ∫v du: a product swapped for a boundary term and a new integral. The whole skill is choosing u so the new integral is simpler than the one you started with. Pick which factor is u for ∫x²eˣ dx, step through the passes and watch what happens to the power of x left under the integral sign.</p>
 
-  <div class="card">
-    <div class="card-header">
-      <span class="card-label">Integration Workspace</span>
-      <span class="live-tag" id="liveTag">u = x²</span>
-    </div>
-    <div class="card-hint">Drag slider to change which part becomes u</div>
-    
-    <div class="canvas-wrapper">
-      <canvas id="canvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">u = x² → Complexity: 68%</div>
+  <section class="card">
+    <div class="hdr"><span class="lbl">Parts table</span><span class="live" id="liveTag">Start · start</span></div>
+    <div class="hint">Pick the integrand and which factor is u, then step through the passes. Watch the power of x left under the integral sign.</div>
+
+    <div class="rowt">Mode</div>
+    <div class="pills two" role="group" aria-label="Apply the formula or derive it" id="modeGroup">
+      <button type="button" class="pill" data-i="0" aria-pressed="true">Apply parts</button>
+      <button type="button" class="pill" data-i="1" aria-pressed="false">Derive it</button>
     </div>
 
-    <div class="slider-group">
-      <div class="slider-label">Choice of u</div>
-      <input type="range" class="ibp-slider" id="slider" min="0" max="100" value="60" />
-      <div class="tick-labels">
-        <span>e^x</span>
-        <span>x</span>
-        <span>x²</span>
-        <span>ln x</span>
-      </div>
+    <div class="rowt">Integrand</div>
+    <div class="pills four" role="group" aria-label="Integrand" id="intGroup">
+      <button type="button" class="pill" data-i="0" aria-pressed="true">∫x²eˣ dx</button>
+      <button type="button" class="pill" data-i="1" aria-pressed="false">∫x ln x dx</button>
+      <button type="button" class="pill" data-i="2" aria-pressed="false">∫x sin x dx</button>
+      <button type="button" class="pill" data-i="3" aria-pressed="false">∫eˣ sin x dx</button>
     </div>
 
-    <div class="stat-row">
-      <div class="stat">
-        <div class="stat-label">Original Complexity</div>
-        <div class="stat-value" id="origComplexity">72%</div>
-      </div>
-      <div class="stat">
-        <div class="stat-label">New Integral</div>
-        <div class="stat-value" id="newComplexity">34%</div>
-      </div>
+    <div class="rowt">Which factor is u</div>
+    <div class="pills two" role="group" aria-label="Which factor is u" id="uGroup">
+      <button type="button" class="pill" data-i="0" aria-pressed="true">u = x²</button>
+      <button type="button" class="pill" data-i="1" aria-pressed="false">u = eˣ</button>
     </div>
-  </div>
 
-  <div class="card">
-    <div class="toggle-group">
-      <button class="toggle-btn active" data-mode="forward">Forward Strategy</button>
-      <button class="toggle-btn" data-mode="twice">Apply Twice</button>
+    <div class="cwrap" id="ibpWrap">
+      <canvas id="ibpCanvas" aria-label="Table of u, du, dv and v with the resulting line uv minus the integral of v du"></canvas>
+      <div class="ov" id="ov" aria-live="polite"><span class="k" id="ovK">Start</span><span> · </span><span id="ovM"></span></div>
     </div>
-    <div class="knowdrop">
-      <p class="knowdrop-text" id="knowdropText">The key insight: choose u to be the part that becomes simpler when you differentiate it. Logarithms and inverse trig functions are almost always the right choice for u because they vanish or reduce when differentiated, while exponentials and powers stay manageable when integrated. If you choose u to be e^x or sin x, you just move complexity around without reducing it.</p>
-    </div>
-  </div>
 
-  <div class="know-this">
-    <div class="know-this-tag">Know This</div>
-    <div class="know-this-body">
-      <span class="acc">The formula</span> ∫u dv = uv − ∫v du trades one integral for another, but only works when the <span class="acc">new integral is simpler</span> than the original.
+    <div class="srow"><span>Step</span><b id="stepV">Start</b></div>
+    <input type="range" class="ibp-slider" id="stepSlider" aria-label="Step" min="0" max="3" step="1" value="0">
+    <div class="ticks" id="ticks"><span>start</span><span style="left:33.333%">pass 1</span><span style="left:66.667%">pass 2</span><span>finish</span></div>
+
+    <div class="stats" id="statRow">
+      <div class="stat"><div class="sl">Degree of x under ∫</div><div class="sv" id="statDeg">2</div></div>
+      <div class="stat"><div class="sl">Passes used</div><div class="sv" id="statN">0</div></div>
     </div>
-  </div>
+  </section>
+
+  <section class="card sec">
+    <div class="rowt" style="margin-top:0">Notes</div>
+    <div class="pills two" role="group" aria-label="Which note to read" id="kdGroup">
+      <button type="button" class="pill" data-i="0" aria-pressed="true">Choosing u</button>
+      <button type="button" class="pill" data-i="1" aria-pressed="false">When it loops</button>
+    </div>
+    <div class="kd"><p id="kdText"></p></div>
+  </section>
+
+  <aside class="kt">
+    <div class="kt-tag"><span class="kt-dot"></span>Know This</div>
+    <div class="kt-body"><span>∫u dv = uv − ∫v du</span> turns one integral into a <span>boundary term</span> minus a new integral, and the choice of u is right only when that <span>new integral is simpler</span>.</div>
+  </aside>
 </div>
 
 <script>
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d', { alpha: false });
-const slider = document.getElementById('slider');
-const liveTag = document.getElementById('liveTag');
-const canvasOverlay = document.getElementById('canvasOverlay');
-const origComplexity = document.getElementById('origComplexity');
-const newComplexity = document.getElementById('newComplexity');
-const knowdropText = document.getElementById('knowdropText');
-const toggleBtns = document.querySelectorAll('.toggle-btn');
+(function(){
+const CSSV=getComputedStyle(document.documentElement);
+const ACC=CSSV.getPropertyValue("--acc").trim();
+const RGB=CSSV.getPropertyValue("--acc-rgb").trim();
+const AMB=CSSV.getPropertyValue("--amb").trim();
+const INK=CSSV.getPropertyValue("--ink").trim();
+const DIM=CSSV.getPropertyValue("--ink-dim").trim();
+const LINE=CSSV.getPropertyValue("--line").trim();
+const COL={ink:INK,amb:AMB,acc:ACC,dim:DIM};
+const RM=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const $=function(id){return document.getElementById(id);};
+const canvas=$("ibpCanvas"),ctx=canvas.getContext("2d"),wrap=$("ibpWrap"),ov=$("ov");
+const dpr=Math.min(window.devicePixelRatio||1,2);
+const buf=document.createElement("canvas"),bctx=buf.getContext("2d");
+const I=function(t){return {t:t,c:"ink"};},A=function(t){return {t:t,c:"amb"};},G=function(t){return {t:t,c:"acc"};},D=function(t){return {t:t,c:"dim"};};
+const C=function(k,m){return {k:k,m:m};};
 
-const dpr = Math.min(window.devicePixelRatio || 1, 2);
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d', { alpha: false });
-
-let choice = 0.6;
-
-const choices = [
-  { pos: 0, label: 'e^x', orig: 72, next: 72, desc: 'e^x stays e^x when differentiated or integrated — you go in circles.' },
-  { pos: 0.33, label: 'x', orig: 72, next: 58, desc: 'x simplifies to 1 when differentiated, reducing the degree of the polynomial.' },
-  { pos: 0.6, label: 'x²', orig: 72, next: 34, desc: 'x² becomes 2x when differentiated — each application drops the power by 1.' },
-  { pos: 1, label: 'ln x', orig: 72, next: 12, desc: 'ln x becomes 1/x when differentiated, eliminating the logarithm entirely.' }
+const SCEN=[
+ {orig:"x²eˣ",opts:[
+  {pill:"u = x²",
+   passes:[{u:"x²",du:"2x dx",dv:"eˣ dx",v:"eˣ",up:"2x",vp:"eˣ"},{u:"2x",du:"2 dx",dv:"eˣ dx",v:"eˣ"}],
+   der:{uv:"x²eˣ",vs:"2xeˣ",vi:"2xeˣ"},
+   steps:[
+    {pass:0,deg:"2",n:"0",v:"start",rows:[[I("∫x²eˣ dx = ?")]],cap:C("Start","differentiate u = x², integrate dv = eˣ dx")},
+    {pass:0,deg:"1",n:"1",v:"simpler",rows:[[I("∫x²eˣ dx = "),A("x²eˣ"),I(" − "),G("∫2xeˣ dx")]],cap:C("Pass 1","power 2 → 1, new integral simpler. Parts again")},
+    {pass:1,deg:"0",n:"2",v:"simpler",rows:[[I("= "),A("x²eˣ − 2xeˣ"),I(" + "),G("∫2eˣ dx")]],cap:C("Pass 2","power 1 → 0, only ∫2eˣ dx is left")},
+    {pass:1,deg:"none",n:"2",v:"done",rows:[[I("= "),A("x²eˣ − 2xeˣ + 2eˣ"),I(" + C")]],cap:C("Finished","x²eˣ − 2xeˣ + 2eˣ + C")}
+   ]},
+  {pill:"u = eˣ",
+   passes:[{u:"eˣ",du:"eˣ dx",dv:"x² dx",v:"x³/3",up:"eˣ",vp:"x²"},{u:"eˣ",du:"eˣ dx",dv:"(x³/3) dx",v:"x⁴/12"}],
+   der:{uv:"(x³/3)eˣ",vs:"(x³/3)eˣ",vi:"(x³/3)eˣ"},
+   steps:[
+    {pass:0,deg:"2",n:"0",v:"start",rows:[[I("∫x²eˣ dx = ?")]],cap:C("Start","differentiate u = eˣ, integrate dv = x² dx")},
+    {pass:0,deg:"3",n:"1",v:"harder",rows:[[I("∫x²eˣ dx = "),A("(x³/3)eˣ"),I(" − "),G("∫(x³/3)eˣ dx")]],cap:C("Pass 1","power 2 → 3, the new integral is harder")},
+    {pass:1,deg:"4",n:"2",v:"harder",rows:[[I("= "),A("(x³/3)eˣ − (x⁴/12)eˣ"),I(" + "),G("∫(x⁴/12)eˣ dx")]],cap:C("Pass 2","power 3 → 4, each pass makes it worse")},
+    {pass:1,deg:"4",n:"2",v:"no finish",rows:[[I("= "),A("(x³/3)eˣ − (x⁴/12)eˣ"),I(" + "),G("∫(x⁴/12)eˣ dx")]],cap:C("No finish","power keeps climbing, choose u = x² instead")}
+   ]}
+ ]},
+ {orig:"x ln x",opts:[
+  {pill:"u = x",stuck:true,
+   passes:[{u:"x",du:"dx",dv:"ln x dx",v:"?",up:"1",vp:"ln x"}],
+   steps:[
+    {pass:0,deg:"1",n:"0",v:"start",rows:[[I("∫x ln x dx = ?")]],cap:C("Start","differentiate u = x, integrate dv = ln x dx")},
+    {pass:0,deg:"—",n:"0",v:"stuck",rows:[[D("v = ∫ln x dx needs parts itself")]],cap:C("Stuck","v = ∫ln x dx cannot be written at sight")},
+    {pass:0,deg:"—",n:"0",v:"stuck",rows:[[D("v = ∫ln x dx needs parts itself")]],cap:C("Stuck","dv must be something you can integrate at sight")},
+    {pass:0,deg:"—",n:"0",v:"stuck",rows:[[D("v = ∫ln x dx needs parts itself")]],cap:C("Stuck","choose u = ln x, the factor that simplifies")}
+   ]},
+  {pill:"u = ln x",
+   passes:[{u:"ln x",du:"(1/x) dx",dv:"x dx",v:"x²/2",up:"1/x",vp:"x"}],
+   der:{uv:"(x²/2) ln x",vs:"(x²/2)(1/x)",vi:"(x²/2)(1/x)"},
+   steps:[
+    {pass:0,deg:"1",n:"0",v:"start",rows:[[I("∫x ln x dx = ?")]],cap:C("Start","differentiate u = ln x, integrate dv = x dx")},
+    {pass:0,deg:"1",n:"1",v:"simpler",rows:[[I("∫x ln x dx = "),A("(x²/2) ln x"),I(" − "),G("∫(x²/2)(1/x) dx")]],cap:C("Pass 1","the log has gone: (x²/2)(1/x) = x/2")},
+    {pass:0,deg:"1",n:"1",v:"simpler",rows:[[I("= "),A("(x²/2) ln x"),I(" − "),G("∫x/2 dx")]],cap:C("No pass 2","∫x/2 dx is a standard integral")},
+    {pass:0,deg:"none",n:"1",v:"done",rows:[[I("= "),A("(x²/2) ln x − x²/4"),I(" + C")]],cap:C("Finished","(x²/2) ln x − x²/4 + C")}
+   ]}
+ ]},
+ {orig:"x sin x",opts:[
+  {pill:"u = x",
+   passes:[{u:"x",du:"dx",dv:"sin x dx",v:"−cos x",up:"1",vp:"sin x"}],
+   der:{uv:"−x cos x",vs:"−cos x",vi:"(−cos x)"},
+   steps:[
+    {pass:0,deg:"1",n:"0",v:"start",rows:[[I("∫x sin x dx = ?")]],cap:C("Start","differentiate u = x, integrate dv = sin x dx")},
+    {pass:0,deg:"0",n:"1",v:"simpler",rows:[[I("∫x sin x dx = "),A("−x cos x"),I(" + "),G("∫cos x dx")]],cap:C("Pass 1","power 1 → 0, only ∫cos x dx is left")},
+    {pass:0,deg:"0",n:"1",v:"simpler",rows:[[I("∫x sin x dx = "),A("−x cos x"),I(" + "),G("∫cos x dx")]],cap:C("No pass 2","∫cos x dx is a standard integral")},
+    {pass:0,deg:"none",n:"1",v:"done",rows:[[I("= "),A("−x cos x + sin x"),I(" + C")]],cap:C("Finished","−x cos x + sin x + C")}
+   ]},
+  {pill:"u = sin x",
+   passes:[{u:"sin x",du:"cos x dx",dv:"x dx",v:"x²/2",up:"cos x",vp:"x"},{u:"cos x",du:"−sin x dx",dv:"(x²/2) dx",v:"x³/6"}],
+   der:{uv:"(x²/2) sin x",vs:"(x²/2) cos x",vi:"(x²/2) cos x"},
+   steps:[
+    {pass:0,deg:"1",n:"0",v:"start",rows:[[I("∫x sin x dx = ?")]],cap:C("Start","differentiate u = sin x, integrate dv = x dx")},
+    {pass:0,deg:"2",n:"1",v:"harder",rows:[[I("∫x sin x dx = "),A("(x²/2) sin x"),I(" − "),G("∫(x²/2) cos x dx")]],cap:C("Pass 1","power 1 → 2, the new integral is harder")},
+    {pass:1,deg:"3",n:"2",v:"harder",rows:[[I("= "),A("(x²/2) sin x − (x³/6) cos x"),I(" − "),G("∫(x³/6) sin x dx")]],cap:C("Pass 2","power 2 → 3, each pass makes it worse")},
+    {pass:1,deg:"3",n:"2",v:"no finish",rows:[[I("= "),A("(x²/2) sin x − (x³/6) cos x"),I(" − "),G("∫(x³/6) sin x dx")]],cap:C("No finish","power keeps climbing, choose u = x instead")}
+   ]}
+ ]},
+ {orig:"eˣ sin x",opts:[
+  {pill:"u = eˣ",
+   passes:[{u:"eˣ",du:"eˣ dx",dv:"sin x dx",v:"−cos x",up:"eˣ",vp:"sin x"},{u:"eˣ",du:"eˣ dx",dv:"cos x dx",v:"sin x"}],
+   der:{uv:"−eˣ cos x",vs:"−eˣ cos x",vi:"(−eˣ cos x)"},
+   steps:[
+    {pass:0,deg:"0",n:"0",v:"start",rows:[[I("∫eˣ sin x dx = ?")]],cap:C("Start","differentiate u = eˣ, integrate dv = sin x dx")},
+    {pass:0,deg:"0",n:"1",v:"same shape",rows:[[I("∫eˣ sin x dx = "),A("−eˣ cos x"),I(" + "),G("∫eˣ cos x dx")]],cap:C("Pass 1","same shape as the start: parts again, u = eˣ")},
+    {pass:1,deg:"0",n:"2",v:"loop",rows:[[I("= "),A("−eˣ cos x + eˣ sin x"),I(" − "),G("∫eˣ sin x dx")]],cap:C("Pass 2","the original integral I is back on the right")},
+    {pass:1,deg:"none",n:"2",v:"done",rows:[[I("I = "),A("−eˣ cos x + eˣ sin x"),I(" − I")],[I("I = "),A("½eˣ(sin x − cos x)"),I(" + C")]],cap:C("Finished","2I = eˣ(sin x − cos x), then divide by 2")}
+   ]},
+  {pill:"u = sin x",
+   passes:[{u:"sin x",du:"cos x dx",dv:"eˣ dx",v:"eˣ",up:"cos x",vp:"eˣ"},{u:"cos x",du:"−sin x dx",dv:"eˣ dx",v:"eˣ"}],
+   der:{uv:"eˣ sin x",vs:"eˣ cos x",vi:"eˣ cos x"},
+   steps:[
+    {pass:0,deg:"0",n:"0",v:"start",rows:[[I("∫eˣ sin x dx = ?")]],cap:C("Start","differentiate u = sin x, integrate dv = eˣ dx")},
+    {pass:0,deg:"0",n:"1",v:"same shape",rows:[[I("∫eˣ sin x dx = "),A("eˣ sin x"),I(" − "),G("∫eˣ cos x dx")]],cap:C("Pass 1","same shape as the start: parts again, u = cos x")},
+    {pass:1,deg:"0",n:"2",v:"loop",rows:[[I("= "),A("eˣ sin x − eˣ cos x"),I(" − "),G("∫eˣ sin x dx")]],cap:C("Pass 2","the original integral I is back on the right")},
+    {pass:1,deg:"none",n:"2",v:"done",rows:[[I("I = "),A("eˣ sin x − eˣ cos x"),I(" − I")],[I("I = "),A("½eˣ(sin x − cos x)"),I(" + C")]],cap:C("Finished","2I = eˣ(sin x − cos x), then divide by 2")}
+   ]}
+ ]}
 ];
 
-const knowdrops = {
-  forward: "The key insight: choose u to be the part that becomes simpler when you differentiate it. Logarithms and inverse trig functions are almost always the right choice for u because they vanish or reduce when differentiated, while exponentials and powers stay manageable when integrated. If you choose u to be e^x or sin x, you just move complexity around without reducing it.",
-  twice: "Some integrals require applying integration by parts twice. Classic example: ∫x²e^x dx. Choose u = x², dv = e^x dx. After the first pass you get x²e^x − ∫2xe^x dx, which still needs parts. Apply again with u = 2x, dv = e^x dx. After two rounds the polynomial vanishes and you're left with exponentials only. Occasionally the original integral reappears on the right side and you can solve algebraically by adding it to both sides."
-};
+const DER=[
+ {gen:"d/dx(uv) = u′v + uv′",cap:C("Product rule","differentiate the product uv"),v:"product rule"},
+ {gen:"uv = ∫u′v dx + ∫uv′ dx",cap:C("Integrate","both sides: the left gives back uv"),v:"integrate"},
+ {gen:"∫uv′ dx = uv − ∫u′v dx",cap:C("Rearrange","move ∫u′v dx across"),v:"rearrange"},
+ {gen:"∫u dv = uv − ∫v du",cap:C("Formula","write v′dx as dv and u′dx as du"),v:"formula"}
+];
+const STUCK_D="v = ∫ln x dx is not at sight: choose u = ln x";
+const STEP_A=["Start","Pass 1","Pass 2","Finish"],TICK_A=["start","pass 1","pass 2","finish"];
+const STEP_D=["Product rule","Integrate","Rearrange","Formula"],TICK_D=["rule","∫ sides","rearrange","formula"];
 
-function getChoice(val) {
-  val = val / 100;
-  let bestIdx = 0;
-  let bestDist = Math.abs(choices[0].pos - val);
-  for (let i = 1; i < choices.length; i++) {
-    const dist = Math.abs(choices[i].pos - val);
-    if (dist < bestDist) {
-      bestDist = dist;
-      bestIdx = i;
-    }
-  }
-  return choices[bestIdx];
+const KD=[
+ "Choose u as the factor that gets simpler when you differentiate it, and dv as the factor you can integrate at sight. A power of x drops a degree each time, so u = x² in ∫x²eˣ dx needs two passes before only ∫2eˣ dx is left, while u = eˣ pushes the power up to x³, then x⁴, forever. Logarithms and inverse trig functions almost always take u, because ln x becomes 1/x and arctan x becomes 1/(1 + x²), neither of which you could have integrated directly. The mnemonic LIATE (log, inverse trig, algebraic, trig, exponential) ranks what to pick for u. Check the new integral before you continue: if it is not simpler, swap the roles.",
+ "Sometimes neither factor simplifies: eˣ stays eˣ and sin x only turns into cos x. For ∫eˣ sin x dx a first pass gives −eˣ cos x + ∫eˣ cos x dx, which is the same shape as the start. Apply parts a second time, keeping the same kind of u (the exponential both times, or the trig factor both times), and the original integral reappears on the right. Call it I, so I = −eˣ cos x + eˣ sin x − I, and solve: 2I = eˣ(sin x − cos x). Switching which factor is u on the second pass simply undoes the first and returns you to I = I. For a definite integral the boundary term uv is evaluated between the same limits as the integral."
+];
+
+let mode=0,sIdx=0,uIdx=0,step=0;
+let animT=1,last=0,raf=0;
+
+const modeBtns=Array.from($("modeGroup").querySelectorAll("button"));
+const intBtns=Array.from($("intGroup").querySelectorAll("button"));
+const uBtns=Array.from($("uGroup").querySelectorAll("button"));
+const kdBtns=Array.from($("kdGroup").querySelectorAll("button"));
+const tickEls=Array.from($("ticks").querySelectorAll("span"));
+const slider=$("stepSlider"),stepV=$("stepV"),liveTag=$("liveTag"),ovK=$("ovK"),ovM=$("ovM");
+const statDeg=$("statDeg"),statN=$("statN"),statRow=$("statRow"),kdText=$("kdText");
+
+function setOn(b,on){b.setAttribute("aria-pressed",on?"true":"false");}
+function mathFont(fs){return "italic 500 "+fs+"px Georgia, Times, serif";}
+function monoFont(fs){return "500 "+fs+"px JetBrains Mono, monospace";}
+function ease(t){return 1-Math.pow(1-t,3);}
+
+function deriveRows(sc,op,i){
+  const genRow=[I(DER[i].gen)];
+  if(op.stuck)return [genRow,[D(STUCK_D)]];
+  const d=op.der,o=sc.orig;
+  let c;
+  if(i===0)c=[I("d/dx("),A(d.uv),I(") = "),G(d.vs),I(" + "+o)];
+  else if(i===1)c=[A(d.uv),I(" = "),G("∫"+d.vi+" dx"),I(" + ∫"+o+" dx")];
+  else c=op.steps[1].rows[0];
+  return [genRow,c];
 }
 
-function resizeCanvas() {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+function segW(segs,fs){ctx.font=mathFont(fs);let t=0;for(let i=0;i<segs.length;i++)t+=ctx.measureText(segs[i].t).width;return t;}
+function fitFs(segs,maxW,base,min){const tw=segW(segs,base);return tw>maxW?Math.max(min,base*maxW/tw):base;}
+function drawSegs(segs,cx,cy,fs,alpha){
+  ctx.font=mathFont(fs);ctx.textBaseline="middle";ctx.textAlign="left";
+  const tw=segW(segs,fs);let x=cx-tw/2;ctx.globalAlpha=alpha;
+  for(let i=0;i<segs.length;i++){ctx.fillStyle=COL[segs[i].c];ctx.fillText(segs[i].t,x,cy);x+=ctx.measureText(segs[i].t).width;}
+  ctx.globalAlpha=1;
+}
+function rrect(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+function drawCell(x,y,text,fs,hot,alpha,maxW){
+  ctx.font=mathFont(fs);let tw=ctx.measureText(text).width;let f=fs;
+  if(tw>maxW){f=Math.max(11,fs*maxW/tw);ctx.font=mathFont(f);tw=ctx.measureText(text).width;}
+  const bw=tw+16,bh=f+10;
+  ctx.globalAlpha=alpha;
+  rrect(x-bw/2,y-bh/2,bw,bh,7);
+  ctx.fillStyle=hot?"rgba("+RGB+",0.14)":"rgba(255,255,255,0.03)";ctx.fill();
+  ctx.strokeStyle=hot?"rgba("+RGB+",0.6)":LINE;ctx.lineWidth=1;ctx.stroke();
+  ctx.fillStyle=INK;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(text,x,y);
+  ctx.globalAlpha=1;
+  return bh/2;
+}
+function arrow(x,ya,yb,label,glow){
+  ctx.save();ctx.globalCompositeOperation="lighter";
+  if(yb-ya>4){
+    ctx.strokeStyle="rgba("+RGB+","+(0.25+0.3*glow)+")";ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(x,ya);ctx.lineTo(x,yb-4);ctx.stroke();
+    ctx.strokeStyle=ACC;ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(x,ya);ctx.lineTo(x,yb-4);ctx.stroke();
+  }
+  ctx.fillStyle=ACC;ctx.beginPath();ctx.moveTo(x,yb);ctx.lineTo(x-4.5,yb-6);ctx.lineTo(x+4.5,yb-6);ctx.closePath();ctx.fill();
+  ctx.restore();
+  ctx.font=monoFont(11);ctx.fillStyle=DIM;ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillText(label,x+9,(ya+yb)/2);
 }
 
-function updateSliderFill() {
-  slider.style.setProperty('--fill', slider.value + '%');
+function draw(){
+  const w=canvas.width/dpr,h=canvas.height/dpr;if(!w||!h)return;
+  const e=ease(animT);
+  const sc=SCEN[sIdx],op=sc.opts[uIdx],st=op.steps[step];
+  const p=mode===0?op.passes[st.pass]:op.passes[0];
+  const OV=ov.offsetHeight||40;
+  const hd=Math.max(80,h-OV);
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.globalCompositeOperation="source-over";ctx.globalAlpha=1;ctx.filter="none";
+  ctx.fillStyle="rgb(0,0,0)";ctx.fillRect(0,0,w,h);
+
+  const rows=mode===0?st.rows:deriveRows(sc,op,step);
+  const yRes=rows.length>1?hd*0.86:hd*0.85;
+  ctx.save();ctx.globalCompositeOperation="lighter";
+  const g=ctx.createRadialGradient(w/2,yRes,0,w/2,yRes,w*0.4);
+  g.addColorStop(0,"rgba("+RGB+",0.16)");g.addColorStop(1,"rgba("+RGB+",0)");
+  ctx.fillStyle=g;ctx.fillRect(0,0,w,h);ctx.restore();
+
+  const fsC=Math.max(12,Math.min(17,w*0.046));
+  const xL=w*0.27,xR=w*0.73,y1=hd*0.16,y2=hd*0.50,yDiv=hd*0.66;
+  const top=mode===0?["u = "+p.u,"dv = "+p.dv]:["u = "+p.u,"v = "+p.v];
+  const bot=mode===0?["du = "+p.du,"v = "+p.v]:["u′ = "+p.up,"v′ = "+p.vp];
+  const maxC=w*0.42;
+  const hL=drawCell(xL,y1,top[0],fsC,false,1,maxC);
+  const hR=drawCell(xR,y1,top[1],fsC,false,1,maxC);
+  const bL=drawCell(xL,y2,bot[0],fsC,true,0.35+0.65*e,maxC);
+  const bR=drawCell(xR,y2,bot[1],fsC,true,0.35+0.65*e,maxC);
+  arrow(xL,y1+hL+3,y2-bL-3,"d/dx",e);
+  arrow(xR,y1+hR+3,y2-bR-3,mode===0?"∫ dx":"d/dx",e);
+
+  const tag=mode===0?"PASS "+(st.pass+1):"PRODUCT RULE";
+  ctx.font=monoFont(11);const tw=ctx.measureText(tag).width;
+  ctx.strokeStyle=LINE;ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(w*0.06,yDiv);ctx.lineTo(w/2-tw/2-8,yDiv);ctx.moveTo(w/2+tw/2+8,yDiv);ctx.lineTo(w*0.94,yDiv);ctx.stroke();
+  ctx.fillStyle=ACC;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(tag,w/2,yDiv);
+
+  const fsR=Math.max(12,Math.min(19,w*0.05));
+  const dy=(1-e)*10;
+  if(rows.length===1){
+    const fs=fitFs(rows[0],w*0.94,fsR,11);
+    drawSegs(rows[0],w/2,yRes+dy,fs,e);
+  }else{
+    const fs0=fitFs(rows[0],w*0.94,fsR,11),fs1=fitFs(rows[1],w*0.94,fsR,11);
+    drawSegs(rows[0],w/2,hd*0.78+dy,fs0,e);
+    drawSegs(rows[1],w/2,hd*0.93+dy,fs1,e);
+  }
+
+  bctx.setTransform(1,0,0,1,0,0);bctx.clearRect(0,0,buf.width,buf.height);
+  if(canvas.width&&canvas.height)bctx.drawImage(canvas,0,0);
+  ctx.save();ctx.globalCompositeOperation="lighter";ctx.globalAlpha=0.38;ctx.filter="blur(7px)";
+  if(buf.width&&buf.height)ctx.drawImage(buf,0,0,w,h);
+  ctx.restore();
+
+  const cx=w/2,cy=h/2;
+  const vig=ctx.createRadialGradient(cx,cy,h*0.28,cx,cy,w*0.72);
+  vig.addColorStop(0,"rgba(0,0,0,0)");vig.addColorStop(1,"rgba(0,0,0,0.52)");
+  ctx.fillStyle=vig;ctx.fillRect(0,0,w,h);
 }
 
-function draw() {
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  const cx = w / 2;
-  const cy = h / 2;
-
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, w, h);
-
-  const ch = getChoice(slider.value);
-  const complexity = ch.next / 100;
-
-  // Grid background
-  ctx.strokeStyle = 'rgba(38,43,38,0.5)';
-  ctx.lineWidth = 0.5;
-  for (let i = 0; i < w; i += 30) {
-    ctx.beginPath();
-    ctx.moveTo(i, 0);
-    ctx.lineTo(i, h);
-    ctx.stroke();
-  }
-  for (let j = 0; j < h; j += 30) {
-    ctx.beginPath();
-    ctx.moveTo(0, j);
-    ctx.lineTo(w, j);
-    ctx.stroke();
-  }
-
-  // Original integral (left side) - flowing particles
-  const leftX = w * 0.25;
-  const particleCount = Math.floor(ch.orig / 3);
-  for (let i = 0; i < particleCount; i++) {
-    const angle = (i / particleCount) * Math.PI * 2 + Date.now() / 1000;
-    const r = 40 + Math.sin(Date.now() / 800 + i) * 8;
-    const px = leftX + Math.cos(angle) * r;
-    const py = cy + Math.sin(angle) * r;
-    
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    const grad = ctx.createRadialGradient(px, py, 0, px, py, 6);
-    grad.addColorStop(0, 'rgba(250,199,117,0.8)');
-    grad.addColorStop(1, 'rgba(250,199,117,0)');
-    ctx.fillStyle = grad;
-    ctx.beginPath();
-    ctx.arc(px, py, 6, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-  }
-
-  // Original integral glow
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  const leftGlow = ctx.createRadialGradient(leftX, cy, 0, leftX, cy, 60);
-  leftGlow.addColorStop(0, 'rgba(250,199,117,0.3)');
-  leftGlow.addColorStop(1, 'rgba(250,199,117,0)');
-  ctx.fillStyle = leftGlow;
-  ctx.beginPath();
-  ctx.arc(leftX, cy, 60, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
-
-  // Transfer beam
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  const beamGrad = ctx.createLinearGradient(leftX, cy, w * 0.75, cy);
-  beamGrad.addColorStop(0, 'rgba(250,199,117,0.4)');
-  beamGrad.addColorStop(0.5, 'rgba(35, 131, 63,0.4)');
-  beamGrad.addColorStop(1, 'rgba(35, 131, 63,0.4)');
-  ctx.strokeStyle = beamGrad;
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-  ctx.moveTo(leftX + 45, cy);
-  ctx.lineTo(w * 0.75 - 45, cy);
-  ctx.stroke();
-  ctx.restore();
-
-  // Arrow
-  ctx.save();
-  ctx.fillStyle = 'rgba(35, 131, 63,0.7)';
-  ctx.translate(w * 0.75 - 45, cy);
-  ctx.beginPath();
-  ctx.moveTo(0, -6);
-  ctx.lineTo(12, 0);
-  ctx.lineTo(0, 6);
-  ctx.closePath();
-  ctx.fill();
-  ctx.restore();
-
-  // New integral (right side) - particle count based on complexity
-  const rightX = w * 0.75;
-  const newParticleCount = Math.floor(ch.next / 3);
-  for (let i = 0; i < newParticleCount; i++) {
-    const angle = (i / newParticleCount) * Math.PI * 2 - Date.now() / 1200;
-    const r = 40 + Math.sin(Date.now() / 900 + i) * 8;
-    const px = rightX + Math.cos(angle) * r;
-    const py = cy + Math.sin(angle) * r;
-    
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    const grad = ctx.createRadialGradient(px, py, 0, px, py, 6);
-    grad.addColorStop(0, 'rgba(35, 131, 63,0.8)');
-    grad.addColorStop(1, 'rgba(35, 131, 63,0)');
-    ctx.fillStyle = grad;
-    ctx.beginPath();
-    ctx.arc(px, py, 6, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-  }
-
-  // New integral glow (intensity based on complexity)
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  const rightGlow = ctx.createRadialGradient(rightX, cy, 0, rightX, cy, 70);
-  rightGlow.addColorStop(0, `rgba(35, 131, 63,${0.5 - complexity * 0.4})`);
-  rightGlow.addColorStop(1, 'rgba(35, 131, 63,0)');
-  ctx.fillStyle = rightGlow;
-  ctx.beginPath();
-  ctx.arc(rightX, cy, 70, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
-
-  // Labels
-  ctx.font = '14px "JetBrains Mono"';
-  ctx.textAlign = 'center';
-  ctx.fillStyle = 'rgba(250,199,117,0.9)';
-  ctx.fillText('∫ u dv', leftX, cy - 70);
-  ctx.fillStyle = complexity < 0.5 ? 'rgba(35, 131, 63,0.9)' : 'rgba(237,237,232,0.6)';
-  ctx.fillText('∫ v du', rightX, cy - 70);
-
-  // Bloom
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
-
-  // Vignette
-  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-
-  requestAnimationFrame(draw);
+function kick(){
+  if(RM){animT=1;draw();return;}
+  animT=0;last=performance.now();
+  if(!raf)raf=requestAnimationFrame(tick);
+}
+function tick(now){
+  const dt=Math.min(now-last,50);last=now;
+  animT=Math.min(1,animT+dt/450);
+  draw();
+  if(animT<1)raf=requestAnimationFrame(tick);else raf=0;
+}
+function resize(){
+  const r=canvas.getBoundingClientRect();
+  if(!r.width||!r.height)return;
+  canvas.width=Math.round(r.width*dpr);canvas.height=Math.round(r.height*dpr);
+  buf.width=canvas.width;buf.height=canvas.height;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
 }
 
-function updateUI() {
-  const ch = getChoice(slider.value);
-  liveTag.textContent = `u = ${ch.label}`;
-  canvasOverlay.textContent = `u = ${ch.label} → Complexity: ${ch.next}%`;
-  origComplexity.textContent = `${ch.orig}%`;
-  newComplexity.textContent = `${ch.next}%`;
+function sync(){
+  const sc=SCEN[sIdx],op=sc.opts[uIdx];
+  modeBtns.forEach(function(b,i){setOn(b,i===mode);});
+  intBtns.forEach(function(b,i){setOn(b,i===sIdx);});
+  uBtns.forEach(function(b,i){b.textContent=sc.opts[i].pill;setOn(b,i===uIdx);});
+  const names=mode===0?STEP_A:STEP_D,ticks=mode===0?TICK_A:TICK_D;
+  stepV.textContent=names[step];
+  tickEls.forEach(function(t,i){t.textContent=ticks[i];});
+  slider.style.setProperty("--fill",(step/3*100)+"%");
+  slider.setAttribute("aria-valuetext",names[step]);
+  if(mode===0){
+    const st=op.steps[step];
+    liveTag.textContent=names[step]+" · "+st.v;
+    ovK.textContent=st.cap.k;ovM.textContent=st.cap.m;
+    statDeg.textContent=st.deg;statN.textContent=st.n;
+    statRow.style.display="";
+  }else{
+    const d=DER[step];
+    liveTag.textContent="Derive · "+d.v;
+    ovK.textContent=d.cap.k;ovM.textContent=(op.stuck&&step>0)?STUCK_D:d.cap.m;
+    statRow.style.display="none";
+  }
+  kick();
 }
 
-slider.addEventListener('input', () => {
-  updateSliderFill();
-  updateUI();
-});
+modeBtns.forEach(function(b){b.addEventListener("click",function(){mode=+b.dataset.i;sync();});});
+intBtns.forEach(function(b){b.addEventListener("click",function(){sIdx=+b.dataset.i;sync();});});
+uBtns.forEach(function(b){b.addEventListener("click",function(){uIdx=+b.dataset.i;sync();});});
+slider.addEventListener("input",function(){step=Math.max(0,Math.min(3,Math.round(+slider.value)));sync();});
+kdBtns.forEach(function(b){b.addEventListener("click",function(){
+  const i=+b.dataset.i;kdBtns.forEach(function(x,j){setOn(x,j===i);});kdText.textContent=KD[i];
+});});
+kdText.textContent=KD[0];
 
-toggleBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    toggleBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const mode = btn.dataset.mode;
-    knowdropText.textContent = knowdrops[mode];
-  });
-});
-
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
-updateSliderFill();
-updateUI();
-draw();
+if(window.ResizeObserver){new ResizeObserver(function(){resize();draw();}).observe(wrap);}
+window.addEventListener("resize",function(){resize();draw();});
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(function(){draw();});}
+resize();
+sync();
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'integration-by-parts'},'*');}catch(e){}}

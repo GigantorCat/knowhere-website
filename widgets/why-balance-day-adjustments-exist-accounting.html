@@ -4,595 +4,480 @@ body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
-:root {
-  --bg: #0B0D0C;
-  --bg2: #12160F;
-  --acc: #CE4480;
-  --ag: rgba(206, 68, 128, .7);
-  --ag1: rgba(206, 68, 128, .12);
-  --ag2: rgba(206, 68, 128, .45);
-  --amb: #FAC775;
-  --ink: #EDEDE8;
-  --ink-dim: #8C9389;
-  --line: #262B26;
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0B0D0C;
+  --bg2:#12160F;
+  --acc:#CE4480;
+  --acc-rgb:206, 68, 128;
+  --ag:rgba(var(--acc-rgb),.7);
+  --ag1:rgba(var(--acc-rgb),.12);
+  --ag2:rgba(var(--acc-rgb),.45);
+  --amb:#FAC775;
+  --amb-rgb:250,199,117;
+  --ink:#EDEDE8;
+  --ink-dim:#8C9389;
+  --line:#262B26;
 }
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
-}
-
-body {
-  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
-  font-family: 'Geist', sans-serif;
-  color: var(--ink);
-  min-height: 100vh;
-  padding: 40px 16px 0;
-}
-
-.container { max-width: 720px; margin: 0 auto; }
-
-h1 {
-  font-size: clamp(26px, 6.5vw, 44px);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
-  margin-bottom: 14px;
-}
-
-.intro {
-  font-size: 15.5px;
-  font-weight: 400;
-  color: var(--ink-dim);
-  max-width: 58ch;
-  line-height: 1.55;
-  margin-bottom: 32px;
-}
-
-.card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 20px;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
-}
-
-.card-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  color: var(--ink);
-}
-
-.live-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--acc);
-}
-
-.card-hint {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--ink-dim);
-  margin-bottom: 14px;
-}
-
-.canvas-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16/9;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
-  box-shadow: inset 0 0 0 1px var(--ag1);
-  margin-bottom: 16px;
-}
-
-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.canvas-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(4px);
-  padding: 9px 16px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  text-transform: uppercase;
-  color: var(--acc);
-  text-align: center;
-}
-
-.slider-wrapper { margin-bottom: 10px; }
-
-.slider-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 8px;
-}
-
-.time-slider {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  height: 4px;
-  border-radius: 3px;
-  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
-  outline: none;
-  cursor: pointer;
-}
-
-.time-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow 0.15s;
-}
-
-.time-slider::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.time-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow 0.15s;
-}
-
-.time-slider::-moz-range-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.tick-labels {
-  display: flex;
-  justify-content: space-between;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--ink-dim);
-  padding: 0 4px;
-}
-
-.stat-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-}
-
-.stat {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.stat-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-}
-
-.stat-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 24px;
-  font-weight: 500;
-}
-
-.toggle-card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 20px;
-}
-
-.toggle-buttons {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.toggle-btn {
-  flex: 1;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14.5px;
-  padding: 12px;
-  border-radius: 11px;
-  border: 1px solid var(--line);
-  background: #12160F;
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.toggle-btn.active {
-  background: rgba(206,68,128,.1);
-  border: 1px solid var(--acc);
-  color: var(--acc);
-  box-shadow: 0 0 22px rgba(206,68,128,.18);
-}
-
-.knowdrop-divider {
-  border-top: 1px solid var(--line);
-  padding-top: 16px;
-}
-
-.knowdrop {
-  font-size: 14.5px;
-  font-weight: 400;
-  line-height: 1.65;
-  color: var(--ink);
-}
-
-.know-this {
-  border-left: 3px solid var(--acc);
-  padding: 16px 18px;
-  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
-  border-radius: 0 12px 12px 0;
-  margin-bottom: 0;
-}
-
-.know-this-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--acc);
-  margin-bottom: 10px;
-}
-
-.know-this-body {
-  font-size: 17.4px;
-  font-weight: 400;
-  line-height: 1.55;
-  color: var(--ink);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+body{background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C 55%);font-family:'Geist',sans-serif;color:var(--ink);min-height:100vh;padding:40px 16px 0}
+.bd-wrap{max-width:720px;margin:0 auto}
+h1{font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin-bottom:14px}
+.bd-intro{font-size:15.5px;font-weight:400;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin-bottom:30px}
+.bd-card{background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);margin-bottom:20px}
+.bd-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+.bd-label{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;color:var(--ink)}
+.bd-live{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--acc);text-align:right}
+.bd-hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin-bottom:14px;line-height:1.5}
+.bd-cwrap{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1);margin-bottom:16px}
+.bd-cwrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.bd-overlay{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:14px;text-transform:uppercase;color:var(--acc);text-align:center;line-height:1.3}
+.bd-tog-title{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin:0 0 7px}
+.bd-tog{display:flex;gap:10px;margin-bottom:14px}
+.bd-tog button{flex:1;font-family:'JetBrains Mono',monospace;font-size:12px;padding:10px 12px;border-radius:999px;border:1px solid var(--line);background:#12160F;color:var(--ink-dim);cursor:pointer;transition:all .2s;line-height:1.2}
+.bd-tog button[aria-pressed="true"]{background:rgba(var(--acc-rgb),.1);border:1px solid var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.bd-row{display:flex;justify-content:space-between;align-items:baseline;font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin:4px 0 8px}
+.bd-row b{font-weight:500;font-size:12px;color:var(--ink)}
+.bd-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;background:linear-gradient(90deg,var(--acc) var(--fill,0%),#23291f var(--fill,0%));outline:none;cursor:pointer;display:block}
+.bd-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);cursor:pointer;transition:box-shadow .15s}
+.bd-slider::-webkit-slider-thumb:hover{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.bd-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);cursor:pointer;transition:box-shadow .15s}
+.bd-slider::-moz-range-thumb:hover{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.bd-ticks{position:relative;height:16px;margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink-dim)}
+.bd-ticks span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}
+.bd-ticks span:first-child{transform:none}
+.bd-ticks span:last-child{transform:translateX(-100%)}
+.bd-stats{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding-top:16px;margin-top:14px;border-top:1px solid var(--line)}
+.bd-stat{display:flex;flex-direction:column;gap:4px;min-width:0}
+.bd-stat-l{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);line-height:1.4}
+.bd-stat-v{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500}
+.bd-reports{display:grid;grid-template-columns:1fr;gap:12px;margin-top:16px}
+@media(min-width:560px){.bd-reports{grid-template-columns:1fr 1fr}}
+.bd-rep{background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:inset 0 1px 0 var(--ag1)}
+.bd-rep-h{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:10px}
+.bd-jl{display:grid;grid-template-columns:1fr auto auto;column-gap:10px;row-gap:6px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink);align-items:baseline}
+.bd-jl .h{font-size:10.5px;color:var(--ink-dim);text-transform:uppercase}
+.bd-jl .cr{padding-left:14px;color:var(--amb)}
+.bd-jl .dr{color:var(--acc)}
+.bd-jl .num{text-align:right;min-width:36px}
+.bd-narr{grid-column:1/-1;font-family:'Geist',sans-serif;font-size:12.5px;color:var(--ink-dim);font-style:italic;margin-top:2px}
+.bd-none{font-family:'Geist',sans-serif;font-size:13.5px;color:var(--ink-dim);line-height:1.5}
+.bd-lines{display:flex;flex-direction:column;gap:8px}
+.bd-line{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink);line-height:1.4}
+.bd-line span{color:var(--ink-dim)}
+.bd-line b{font-weight:500;white-space:nowrap}
+.bd-line.acc b{color:var(--acc)}
+.bd-line.amb b{color:var(--amb)}
+.bd-kd-tog{display:flex;gap:10px;margin-bottom:16px}
+.bd-kd-tog button{flex:1;font-family:'JetBrains Mono',monospace;font-size:12px;padding:12px;border-radius:999px;border:1px solid var(--line);background:#12160F;color:var(--ink-dim);cursor:pointer;transition:all .2s}
+.bd-kd-tog button[aria-pressed="true"]{background:rgba(var(--acc-rgb),.1);border:1px solid var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.bd-kd{border-top:1px solid var(--line);padding-top:16px}
+.bd-kd p{font-size:14.5px;font-weight:400;line-height:1.65;color:var(--ink)}
+.bd-know{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));border-radius:0 12px 12px 0;margin-bottom:0;padding-bottom:16px}
+.bd-know-tag{display:flex;align-items:center;gap:9px;margin-bottom:10px;font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:0.15em;color:var(--acc)}
+.bd-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:bdPulse 2.4s ease-in-out infinite}
+@keyframes bdPulse{0%,100%{opacity:1}50%{opacity:.45}}
+.bd-know p{font-size:17.4px;font-weight:400;line-height:1.55;color:var(--ink)}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
 
-<div class="container">
-  <h2 class="sr-only">Balance Day Adjustments Interactive Widget</h2>
+<div class="bd-wrap">
+  <h2 class="sr-only">Balance day adjustments: how one rent payment is split between an expense and an asset or liability at balance day</h2>
 
-  <h1>Your Cash Says One Thing. The <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">Truth</span> Says Another.</h1>
+  <h1>You paid $6000 on day 1. By day 30 only half of it is an <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">expense</span>.</h1>
+  <p class="bd-intro">Accrual accounting records an expense when the benefit is used up, not when the cash moves. Rent of $6000 paid on day 1 buys 60 days of the premises, so at balance day that $6000 has to be split between the days already used and the days still to come. Move the balance day along the rent period, switch the adjustment off, and watch what happens to the expense row and the profit line.</p>
 
-  <p class="intro">Accrual accounting exposes the lie: profit isn't about when money hits the bank — it's about when you've earned or consumed something. Balance day adjustments force the books to tell the truth at period end. Drag the timeline to see how the same transaction splits across periods.</p>
-
-  <div class="card">
-    <div class="card-header">
-      <div class="card-label">Period Timeline</div>
-      <div class="live-tag" id="liveTag">Day 1 • Period 1</div>
+  <div class="bd-card">
+    <div class="bd-head">
+      <div class="bd-label">Rent for 60 days</div>
+      <div class="bd-live" id="bdLive">Day 30 · with adjustment</div>
     </div>
-    <div class="card-hint">Watch how expenses fall into different accounting periods</div>
-    
-    <div class="canvas-wrapper">
-      <canvas id="timeline"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">Period 1 Active</div>
+    <div class="bd-hint">Choose where balance day falls. Switch the adjustment on and off. Watch the income statement row and the balance sheet row.</div>
+
+    <div class="bd-cwrap">
+      <canvas id="bdCanvas"></canvas>
+      <div class="bd-overlay" id="bdOverlay">Expense $3000 · asset $3000</div>
     </div>
 
-    <div class="slider-wrapper">
-      <div class="slider-label">Timeline Position</div>
-      <input type="range" min="1" max="90" value="1" class="time-slider" id="timeSlider">
-      <div class="tick-labels">
-        <span>Day 1</span>
-        <span>Period 1 End</span>
-        <span>Day 60</span>
-        <span>Period 2 End</span>
+    <div class="bd-tog-title">Adjustment at balance day</div>
+    <div class="bd-tog" role="group" aria-label="Adjustment at balance day">
+      <button type="button" id="bdWith" aria-pressed="true">With adjustment</button>
+      <button type="button" id="bdWithout" aria-pressed="false">No adjustment</button>
+    </div>
+
+    <div class="bd-tog-title">When the rent is paid</div>
+    <div class="bd-tog" role="group" aria-label="When the rent is paid">
+      <button type="button" id="bdPrepaid" aria-pressed="true">Paid in advance</button>
+      <button type="button" id="bdAccrued" aria-pressed="false">Paid in arrears</button>
+    </div>
+
+    <div class="bd-row"><span>Balance day</span><b id="bdDayV">Day 30</b></div>
+    <input type="range" class="bd-slider" id="bdSlider" aria-label="Balance day" min="1" max="60" step="1" value="30">
+    <div class="bd-ticks">
+      <span style="left:0%">Day 1</span>
+      <span style="left:49.15%">Day 30</span>
+      <span style="left:100%">Day 60</span>
+    </div>
+
+    <div class="bd-stats">
+      <div class="bd-stat">
+        <div class="bd-stat-l">Rent expense this period</div>
+        <div class="bd-stat-v" style="color:var(--acc)" id="bdExp">$3000</div>
+      </div>
+      <div class="bd-stat">
+        <div class="bd-stat-l" id="bdCarL">Prepaid asset carried</div>
+        <div class="bd-stat-v" style="color:var(--amb)" id="bdCar">$3000</div>
       </div>
     </div>
 
-    <div class="stat-row">
-      <div class="stat">
-        <div class="stat-label">Reported Profit</div>
-        <div class="stat-value" style="color:var(--acc)" id="reportedProfit">$0</div>
+    <div class="bd-reports">
+      <div class="bd-rep">
+        <div class="bd-rep-h">General journal · balance day</div>
+        <div id="bdJournal"></div>
       </div>
-      <div class="stat">
-        <div class="stat-label">Adjustment Need</div>
-        <div class="stat-value" style="color:var(--amb)" id="adjustmentNeed">$0</div>
+      <div class="bd-rep">
+        <div class="bd-rep-h">Reports for the period</div>
+        <div class="bd-lines" id="bdLines"></div>
       </div>
     </div>
   </div>
 
-  <div class="toggle-card">
-    <div class="toggle-buttons">
-      <button class="toggle-btn active" id="btnPrepaid">Prepaid</button>
-      <button class="toggle-btn" id="btnAccrued">Accrued</button>
+  <div class="bd-card">
+    <div class="bd-kd-tog" role="group" aria-label="What the paragraph explains">
+      <button type="button" id="bdKdRec" aria-pressed="true">Recording</button>
+      <button type="button" id="bdKdRep" aria-pressed="false">Reporting</button>
     </div>
-    <div class="knowdrop-divider">
-      <p class="knowdrop" id="knowdropText">Prepaid expenses are when you pay cash now but consume the benefit later — like insurance or rent paid in advance. At balance day, the unused portion sits on the balance sheet as an asset (prepaid expense), not on the income statement. Without the adjustment, Period 1 profit is understated because you've expensed something you haven't yet consumed. The adjustment shifts the expense forward into the period where it's actually used, matching cost to benefit. This is accrual accounting's core promise: economic reality wins over cash movement.</p>
+    <div class="bd-kd">
+      <p id="bdKd"></p>
     </div>
   </div>
 
-  <div class="know-this">
-    <div class="know-this-tag">Know This</div>
-    <p class="know-this-body"><span style="color:var(--acc)">Accrual accounting</span> matches revenue and expenses to the period they belong to — adjustments at <span style="color:var(--acc)">balance day</span> fix timing mismatches so profit reflects economic truth, not just when cash moved.</p>
+  <div class="bd-know">
+    <div class="bd-know-tag"><span class="bd-dot"></span><span>Know This</span></div>
+    <p>A <span style="color:var(--acc)">balance day adjustment</span> splits a cash amount into the <span style="color:var(--acc)">expense of this period</span> and the <span style="color:var(--acc)">asset or liability</span> carried into the next.</p>
   </div>
 </div>
 
 <script>
-const canvas = document.getElementById('timeline');
-const ctx = canvas.getContext('2d', { alpha: false });
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d', { alpha: false });
-const dpr = Math.min(window.devicePixelRatio || 1, 2);
+(function(){
+  const CSS = getComputedStyle(document.documentElement);
+  const ACC = CSS.getPropertyValue("--acc").trim();
+  const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+  const AMB = CSS.getPropertyValue("--amb").trim();
+  const AMB_RGB = CSS.getPropertyValue("--amb-rgb").trim();
+  const INK_DIM = CSS.getPropertyValue("--ink-dim").trim();
+  const BG = CSS.getPropertyValue("--bg").trim();
 
-const slider = document.getElementById('timeSlider');
-const liveTag = document.getElementById('liveTag');
-const canvasOverlay = document.getElementById('canvasOverlay');
-const reportedProfit = document.getElementById('reportedProfit');
-const adjustmentNeed = document.getElementById('adjustmentNeed');
+  const TOTAL = 6000;
+  const SPAN = 60;
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-const btnPrepaid = document.getElementById('btnPrepaid');
-const btnAccrued = document.getElementById('btnAccrued');
-const knowdropText = document.getElementById('knowdropText');
+  const canvas = document.getElementById("bdCanvas");
+  const ctx = canvas.getContext("2d");
+  const wrap = canvas.parentElement;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const buf = document.createElement("canvas");
+  const bctx = buf.getContext("2d");
 
-let currentDay = 1;
-let animFrame;
+  const slider = document.getElementById("bdSlider");
+  const dayV = document.getElementById("bdDayV");
+  const live = document.getElementById("bdLive");
+  const overlay = document.getElementById("bdOverlay");
+  const expEl = document.getElementById("bdExp");
+  const carEl = document.getElementById("bdCar");
+  const carL = document.getElementById("bdCarL");
+  const journal = document.getElementById("bdJournal");
+  const lines = document.getElementById("bdLines");
 
-const prepaidText = "Prepaid expenses are when you pay cash now but consume the benefit later — like insurance or rent paid in advance. At balance day, the unused portion sits on the balance sheet as an asset (prepaid expense), not on the income statement. Without the adjustment, Period 1 profit is understated because you've expensed something you haven't yet consumed. The adjustment shifts the expense forward into the period where it's actually used, matching cost to benefit. This is accrual accounting's core promise: economic reality wins over cash movement.";
+  const bWith = document.getElementById("bdWith");
+  const bWithout = document.getElementById("bdWithout");
+  const bPre = document.getElementById("bdPrepaid");
+  const bAcc = document.getElementById("bdAccrued");
 
-const accruedText = "Accrued expenses are when you consume the benefit now but pay cash later — like wages earned by employees or interest building up on a loan. At balance day, the expense is real even though no cash has left. Without the adjustment, Period 1 profit is overstated because you've ignored a cost you've already incurred. The adjustment recognises the liability (accrued expense) and pulls the expense into the period where it belongs, even though payment happens later. Accrual accounting captures obligations, not just transactions.";
+  let day = 30;
+  let withAdj = true;
+  let mode = "prepaid";
 
-function resize() {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
-
-function draw() {
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, w, h);
-
-  const period1End = 30;
-  const period2End = 60;
-
-  // Background periods
-  ctx.fillStyle = 'rgba(206,68,128,0.06)';
-  ctx.fillRect(0, 0, w * (period1End / 90), h);
-  ctx.fillStyle = 'rgba(206,68,128,0.04)';
-  ctx.fillRect(w * (period1End / 90), 0, w * ((period2End - period1End) / 90), h);
-
-  // Period divider lines
-  ctx.strokeStyle = 'rgba(206,68,128,0.25)';
-  ctx.lineWidth = 1.5;
-  ctx.setLineDash([4, 4]);
-  ctx.beginPath();
-  ctx.moveTo(w * (period1End / 90), 0);
-  ctx.lineTo(w * (period1End / 90), h);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(w * (period2End / 90), 0);
-  ctx.lineTo(w * (period2End / 90), h);
-  ctx.stroke();
-  ctx.setLineDash([]);
-
-  // Timeline track
-  const trackY = h * 0.5;
-  const trackW = w * 0.88;
-  const trackX = w * 0.06;
-
-  ctx.strokeStyle = 'rgba(206,68,128,0.2)';
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(trackX, trackY);
-  ctx.lineTo(trackX + trackW, trackY);
-  ctx.stroke();
-
-  // Transaction payment event at day 1
-  const payX = trackX;
-  const payY = trackY;
-  
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  const payGlow = ctx.createRadialGradient(payX, payY, 0, payX, payY, 18);
-  payGlow.addColorStop(0, 'rgba(250,199,117,0.6)');
-  payGlow.addColorStop(0.5, 'rgba(250,199,117,0.25)');
-  payGlow.addColorStop(1, 'rgba(250,199,117,0)');
-  ctx.fillStyle = payGlow;
-  ctx.beginPath();
-  ctx.arc(payX, payY, 18, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
-
-  ctx.fillStyle = '#FAC775';
-  ctx.beginPath();
-  ctx.arc(payX, payY, 7, 0, Math.PI * 2);
-  ctx.fill();
-
-  // Current position marker
-  const posX = trackX + (trackW * (currentDay / 90));
-  
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  const posGlow = ctx.createRadialGradient(posX, trackY, 0, posX, trackY, 22);
-  posGlow.addColorStop(0, 'rgba(206,68,128,0.7)');
-  posGlow.addColorStop(0.4, 'rgba(206,68,128,0.35)');
-  posGlow.addColorStop(1, 'rgba(206,68,128,0)');
-  ctx.fillStyle = posGlow;
-  ctx.beginPath();
-  ctx.arc(posX, trackY, 22, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
-
-  ctx.fillStyle = '#CE4480';
-  ctx.beginPath();
-  ctx.arc(posX, trackY, 9, 0, Math.PI * 2);
-  ctx.fill();
-
-  ctx.strokeStyle = '#0B0D0C';
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.arc(posX, trackY, 9, 0, Math.PI * 2);
-  ctx.stroke();
-
-  // Expense allocation visualization
-  const totalExpense = 6000;
-  const period1Share = currentDay <= period1End ? (currentDay / period1End) * totalExpense : totalExpense;
-  const period2Share = currentDay > period1End ? ((currentDay - period1End) / (period2End - period1End)) * totalExpense : 0;
-
-  const barY = h * 0.72;
-  const barH = 8;
-  const bar1W = (period1Share / totalExpense) * (w * 0.3);
-  const bar2W = (period2Share / totalExpense) * (w * 0.3);
-
-  // Period 1 bar
-  ctx.fillStyle = 'rgba(206,68,128,0.15)';
-  ctx.fillRect(w * 0.1, barY, w * 0.3, barH);
-  ctx.fillStyle = '#CE4480';
-  ctx.fillRect(w * 0.1, barY, bar1W, barH);
-
-  // Period 2 bar
-  ctx.fillStyle = 'rgba(206,68,128,0.15)';
-  ctx.fillRect(w * 0.56, barY, w * 0.3, barH);
-  if (currentDay > period1End) {
-    ctx.fillStyle = '#CE4480';
-    ctx.fillRect(w * 0.56, barY, bar2W, barH);
+  // ---------- model ----------
+  function model(){
+    const used = TOTAL * day / SPAN;
+    const rem = TOTAL - used;
+    const f = day / SPAN;
+    let expense, carried, isF, bsA, bsB, err;
+    if (withAdj){
+      expense = used; isF = f; err = 0;
+      if (mode === "prepaid"){ carried = rem; bsA = f; bsB = 1; }
+      else { carried = used; bsA = 0; bsB = f; }
+    } else {
+      expense = 0; isF = 0; err = used;
+      if (mode === "prepaid"){ carried = TOTAL; bsA = 0; bsB = 1; }
+      else { carried = 0; bsA = 0; bsB = 0; }
+    }
+    return { used, rem, f, expense, carried, isF, bsA, bsB, err, cash: mode === "prepaid" ? 0 : 1 };
   }
 
-  // Labels
-  ctx.font = '11px "JetBrains Mono"';
-  ctx.fillStyle = 'rgba(237,237,232,0.6)';
-  ctx.textAlign = 'center';
-  ctx.fillText('P1 Expense', w * 0.25, barY - 8);
-  ctx.fillText('P2 Expense', w * 0.71, barY - 8);
+  // ---------- animation state (eases to a resting position, then stops) ----------
+  const m0 = model();
+  const cur = { line: m0.f, is: m0.isF, bsA: m0.bsA, bsB: m0.bsB, cash: m0.cash };
+  let from = Object.assign({}, cur), to = Object.assign({}, cur);
+  let t0 = 0, raf = 0;
+  const DUR = reduce ? 0 : 520;
+  function ease(p){ return 1 - Math.pow(1 - p, 3); }
 
-  // Bloom
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
-
-  // Vignette
-  const cx = w / 2;
-  const cy = h / 2;
-  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-
-  animFrame = requestAnimationFrame(draw);
-}
-
-function updateStats() {
-  const period1End = 30;
-  const totalExpense = 6000;
-  
-  if (currentDay <= period1End) {
-    const consumed = (currentDay / period1End) * totalExpense;
-    reportedProfit.textContent = '-$' + Math.round(consumed);
-    adjustmentNeed.textContent = '$' + Math.round(totalExpense - consumed);
-  } else {
-    reportedProfit.textContent = '-$' + totalExpense;
-    adjustmentNeed.textContent = '$0';
+  function animateTo(target){
+    from = Object.assign({}, cur);
+    to = target;
+    t0 = performance.now();
+    if (DUR === 0){ Object.assign(cur, to); draw(); return; }
+    if (!raf) raf = requestAnimationFrame(step);
   }
-}
-
-function updateUI() {
-  const period1End = 30;
-  const period2End = 60;
-  
-  if (currentDay <= period1End) {
-    liveTag.textContent = `Day ${currentDay} • Period 1`;
-    canvasOverlay.textContent = 'Period 1 Active';
-  } else if (currentDay <= period2End) {
-    liveTag.textContent = `Day ${currentDay} • Period 2`;
-    canvasOverlay.textContent = 'Period 2 Active';
-  } else {
-    liveTag.textContent = `Day ${currentDay} • Beyond Period 2`;
-    canvasOverlay.textContent = 'Periods Complete';
+  function step(now){
+    const p = Math.min(1, (now - t0) / DUR);
+    const e = ease(p);
+    for (const k in to) cur[k] = from[k] + (to[k] - from[k]) * e;
+    draw();
+    if (p < 1) raf = requestAnimationFrame(step);
+    else raf = 0;
   }
-  
-  updateStats();
-}
 
-slider.addEventListener('input', (e) => {
-  const val = parseInt(e.target.value);
-  currentDay = val;
-  slider.style.setProperty('--fill', ((val - 1) / 89 * 100) + '%');
-  updateUI();
-});
+  // ---------- canvas ----------
+  function resize(){
+    const rect = wrap.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    buf.width = canvas.width; buf.height = canvas.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    draw();
+  }
 
-btnPrepaid.addEventListener('click', () => {
-  btnPrepaid.classList.add('active');
-  btnAccrued.classList.remove('active');
-  knowdropText.textContent = prepaidText;
-});
+  function rr(x, y, w, h, r){
+    r = Math.min(r, h / 2, Math.max(w, 0) / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+  }
+  const FONT = "11px 'JetBrains Mono', monospace";
+  const FONTB = "500 11px 'JetBrains Mono', monospace";
 
-btnAccrued.addEventListener('click', () => {
-  btnAccrued.classList.add('active');
-  btnPrepaid.classList.remove('active');
-  knowdropText.textContent = accruedText;
-});
+  function draw(){
+    const w = canvas.width / dpr, h = canvas.height / dpr;
+    if (!w || !h) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    const m = model();
+    const x0 = w * 0.05, x1 = w * 0.95, W = x1 - x0;
+    const xd = x0 + W * cur.line;
+    const usable = h - 34; // keep clear of the overlay tag
 
-window.addEventListener('resize', () => {
+    // period shading
+    ctx.fillStyle = "rgba(" + RGB + ",0.07)";
+    ctx.fillRect(x0, h * 0.04, xd - x0, usable - h * 0.04);
+    ctx.fillStyle = "rgba(255,255,255,0.025)";
+    ctx.fillRect(xd, h * 0.04, x1 - xd, usable - h * 0.04);
+
+    // balance day pill
+    const pillY = h * 0.09;
+    ctx.font = FONTB;
+    ctx.textBaseline = "middle";
+    const pillTxt = "BALANCE DAY · " + day;
+    const pw = ctx.measureText(pillTxt).width + 16;
+    const pcx = Math.max(x0 + pw / 2, Math.min(x1 - pw / 2, xd));
+    rr(pcx - pw / 2, pillY - 9, pw, 18, 9);
+    ctx.fillStyle = "rgba(" + RGB + ",0.16)"; ctx.fill();
+    ctx.strokeStyle = ACC; ctx.lineWidth = 1; ctx.stroke();
+    ctx.fillStyle = ACC; ctx.textAlign = "center";
+    ctx.fillText(pillTxt, pcx, pillY);
+
+    // period labels beside the pill, only when there is room
+    ctx.font = FONT;
+    const tpw = ctx.measureText("THIS PERIOD").width;
+    if (pcx - pw / 2 - 8 - x0 >= tpw){
+      ctx.fillStyle = "rgba(" + RGB + ",0.85)"; ctx.textAlign = "right";
+      ctx.fillText("THIS PERIOD", pcx - pw / 2 - 8, pillY);
+    }
+    const npw = ctx.measureText("NEXT PERIOD").width;
+    if (x1 - (pcx + pw / 2 + 8) >= npw){
+      ctx.fillStyle = INK_DIM; ctx.textAlign = "left";
+      ctx.fillText("NEXT PERIOD", pcx + pw / 2 + 8, pillY);
+    }
+
+    // balance day line
+    ctx.save();
+    ctx.setLineDash([4, 4]);
+    ctx.strokeStyle = "rgba(" + RGB + ",0.75)";
+    ctx.lineWidth = 1.5;
+    const Ly = h * 0.24 + 16, Iy = h * 0.46, By = h * 0.68, bHt = Math.max(12, h * 0.09);
+    const segs = withAdj
+      ? [[pillY + 11, Ly - 11], [Ly + 4, Iy - 11], [Iy + 4, By - 11], [By + 4, usable - 4]]
+      : [[pillY + 11, Ly - 11], [Ly + 4, Iy - 11], [h * 0.49 + bHt + 3, By - 11], [h * 0.71 + bHt + 3, usable - 4]];
+    segs.forEach(function(s){ if (s[1] > s[0]){ ctx.beginPath(); ctx.moveTo(xd, s[0]); ctx.lineTo(xd, s[1]); ctx.stroke(); } });
+    ctx.restore();
+
+    // timeline track
+    const ty = h * 0.24;
+    ctx.strokeStyle = "rgba(255,255,255,0.18)"; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(x0, ty); ctx.lineTo(x1, ty); ctx.stroke();
+    ctx.strokeStyle = "rgba(255,255,255,0.3)"; ctx.lineWidth = 1;
+    [x0, x1].forEach(function(x){ ctx.beginPath(); ctx.moveTo(x, ty - 5); ctx.lineTo(x, ty + 5); ctx.stroke(); });
+
+    // cash event
+    const cx = x0 + W * cur.cash;
+    ctx.save(); ctx.globalCompositeOperation = "lighter";
+    const g = ctx.createRadialGradient(cx, ty, 0, cx, ty, 20);
+    g.addColorStop(0, "rgba(" + AMB_RGB + ",0.6)");
+    g.addColorStop(0.5, "rgba(" + AMB_RGB + ",0.22)");
+    g.addColorStop(1, "rgba(" + AMB_RGB + ",0)");
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, ty, 20, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+    ctx.fillStyle = AMB; ctx.beginPath(); ctx.arc(cx, ty, 6, 0, Math.PI * 2); ctx.fill();
+
+    // under-track labels
+    ctx.font = FONT; ctx.textBaseline = "alphabetic";
+    const ly = ty + 16;
+    ctx.textAlign = "left";
+    ctx.fillStyle = mode === "prepaid" ? AMB : INK_DIM;
+    ctx.fillText(mode === "prepaid" ? "DAY 1 · $6000 PAID" : "DAY 1", x0, ly);
+    ctx.textAlign = "right";
+    ctx.fillStyle = mode === "accrued" ? AMB : INK_DIM;
+    ctx.fillText(mode === "accrued" ? "$6000 PAID AFTER DAY 60" : "DAY 60", x1, ly);
+
+    // income statement row
+    const isHy = h * 0.46, isY = h * 0.49, barH = Math.max(12, h * 0.09);
+    ctx.textAlign = "left"; ctx.fillStyle = INK_DIM;
+    ctx.fillText("INCOME STATEMENT · RENT EXPENSE", x0, isHy);
+    ctx.textAlign = "right"; ctx.fillStyle = ACC; ctx.font = FONTB;
+    ctx.fillText("$" + Math.round(m.expense), x1, isHy);
+    ctx.font = FONT;
+    rr(x0, isY, W, barH, 4); ctx.fillStyle = "rgba(255,255,255,0.06)"; ctx.fill();
+    const isW = W * cur.is;
+    if (isW > 0.5){
+      rr(x0, isY, isW, barH, 4); ctx.fillStyle = "rgba(" + RGB + ",0.9)"; ctx.fill();
+    }
+    if (!withAdj){
+      ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillStyle = INK_DIM;
+      ctx.fillText("NO ENTRY · $0 EXPENSE", x0 + W / 2, isY + barH / 2);
+      ctx.textBaseline = "alphabetic";
+    }
+
+    // balance sheet row
+    const bsHy = h * 0.68, bsY = h * 0.71;
+    ctx.textAlign = "left"; ctx.fillStyle = INK_DIM;
+    ctx.fillText(mode === "prepaid" ? "BALANCE SHEET · CURRENT ASSET" : "BALANCE SHEET · CURRENT LIABILITY", x0, bsHy);
+    ctx.textAlign = "right"; ctx.fillStyle = AMB; ctx.font = FONTB;
+    ctx.fillText("$" + Math.round(m.carried), x1, bsHy);
+    ctx.font = FONT;
+    rr(x0, bsY, W, barH, 4); ctx.fillStyle = "rgba(255,255,255,0.06)"; ctx.fill();
+    const bA = x0 + W * cur.bsA, bB = x0 + W * cur.bsB;
+    if (bB - bA > 0.5){
+      rr(bA, bsY, bB - bA, barH, 4); ctx.fillStyle = "rgba(" + AMB_RGB + ",0.9)"; ctx.fill();
+    }
+    if (!withAdj){
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      if (mode === "prepaid"){
+        ctx.fillStyle = BG;
+        ctx.fillText("WHOLE $6000 STILL AN ASSET", x0 + W / 2, bsY + barH / 2);
+      } else {
+        ctx.fillStyle = INK_DIM;
+        ctx.fillText("NOTHING RECORDED · $" + Math.round(m.used) + " OWED HIDDEN", x0 + W / 2, bsY + barH / 2);
+      }
+      ctx.textBaseline = "alphabetic";
+    }
+
+    // bloom
+    bctx.setTransform(1, 0, 0, 1, 0, 0);
+    bctx.clearRect(0, 0, buf.width, buf.height);
+    if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+    ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
+    (buf.width&&buf.height)&&ctx.drawImage(buf, 0, 0, w, h); ctx.restore();
+
+    // vignette
+    const vcx = w / 2, vcy = h / 2;
+    const vig = ctx.createRadialGradient(vcx, vcy, h * 0.28, vcx, vcy, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
+  }
+
+  // ---------- readouts ----------
+  function money(n){ return "$" + Math.round(n); }
+
+  function update(){
+    const m = model();
+    dayV.textContent = "Day " + day;
+    slider.style.setProperty("--fill", ((day - 1) / 59 * 100) + "%");
+    live.textContent = "Day " + day + " · " + (withAdj ? "with adjustment" : "no adjustment");
+    const item = mode === "prepaid" ? "asset" : "liability";
+    overlay.textContent = withAdj
+      ? "Expense " + money(m.expense) + " · " + item + " " + money(m.carried)
+      : "Expense $0 · profit over by " + money(m.err);
+    expEl.textContent = money(m.expense);
+    carL.textContent = mode === "prepaid" ? "Prepaid asset carried" : "Accrued liability carried";
+    carEl.textContent = money(m.carried);
+
+    const acct = mode === "prepaid" ? "Prepaid Rent Expense" : "Accrued Rent Expense";
+    if (withAdj){
+      journal.innerHTML = `<div class="bd-jl">
+        <span class="h">Account</span><span class="h num">Dr</span><span class="h num">Cr</span>
+        <span class="dr">Rent Expense</span><span class="num">${Math.round(m.used)}</span><span class="num"></span>
+        <span class="cr">${acct}</span><span class="num"></span><span class="num">${Math.round(m.used)}</span>
+        <span class="bd-narr">${mode === "prepaid" ? "Rent used to balance day, transferred from the prepaid asset" : "Rent used to balance day but not yet paid"} (${day} of 60 days)</span>
+      </div>`;
+    } else {
+      journal.innerHTML = `<p class="bd-none">No entry made at balance day. Rent Expense stays at $0 and ${mode === "prepaid" ? "the prepaid asset stays at the full $6000." : "the rent owed for " + day + " days is recorded nowhere."}</p>`;
+    }
+
+    const bsLabel = mode === "prepaid" ? "Balance sheet · current assets · Prepaid Rent Expense" : "Balance sheet · current liabilities · Accrued Rent Expense";
+    const bsVal = (!withAdj && mode === "accrued") ? "$0 (missing)" : money(m.carried) + (!withAdj && mode === "prepaid" ? " (too high)" : "");
+    lines.innerHTML = `
+      <div class="bd-line acc"><span>Income statement · Rent Expense</span><b>${money(m.expense)}</b></div>
+      <div class="bd-line amb"><span>${bsLabel}</span><b>${bsVal}</b></div>
+      <div class="bd-line ${withAdj ? "acc" : "amb"}"><span>Effect on net profit</span><b>${withAdj ? "reported correctly" : "overstated by " + money(m.err)}</b></div>`;
+
+    animateTo({ line: m.f, is: m.isF, bsA: m.bsA, bsB: m.bsB, cash: m.cash });
+  }
+
+  // ---------- controls ----------
+  slider.addEventListener("input", function(e){
+    day = parseInt(e.target.value, 10) || 1;
+    update();
+  });
+
+  function setPressed(onBtn, offBtn){
+    onBtn.setAttribute("aria-pressed", "true");
+    offBtn.setAttribute("aria-pressed", "false");
+  }
+  bWith.addEventListener("click", function(){ withAdj = true; setPressed(bWith, bWithout); update(); });
+  bWithout.addEventListener("click", function(){ withAdj = false; setPressed(bWithout, bWith); update(); });
+  bPre.addEventListener("click", function(){ mode = "prepaid"; setPressed(bPre, bAcc); update(); });
+  bAcc.addEventListener("click", function(){ mode = "accrued"; setPressed(bAcc, bPre); update(); });
+
+  // ---------- knowdrop ----------
+  const kd = document.getElementById("bdKd");
+  const kRec = document.getElementById("bdKdRec");
+  const kRep = document.getElementById("bdKdRep");
+  const recText = "On the day the rent is paid in advance the business records Prepaid Rent Expense, a current asset, because it has bought 60 days of use and consumed none of them. At balance day the adjustment goes into the general journal: debit Rent Expense for the days used, credit Prepaid Rent Expense for the same amount, with a narration such as rent used to balance day. The entry is posted to both ledger accounts, so Rent Expense shows the figure for the period and the asset account shows what is left. When rent is paid in arrears there is no asset to reduce, so the credit goes to Accrued Rent Expense, a current liability for the days used but not yet paid. Either way the Bank account is untouched: the adjustment moves a figure between accounts, it does not move money.";
+  const repText = "The adjusted Rent Expense is reported in the income statement, which brings the expense into the period that used the premises and gives a net profit that belongs to that period. The remaining Prepaid Rent Expense is a current asset in the balance sheet, because the business still has a right to the premises for the rest of the lease; an Accrued Rent Expense is a current liability, because the landlord is owed for days already used. Switch the adjustment off and the problem appears: expenses are understated, net profit is overstated by the amount used, and the balance sheet shows either an asset that is too large or a liability that is missing. The same logic drives every balance day adjustment, including depreciation, which allocates the cost of a non-current asset across the periods that use it.";
+  kd.textContent = recText;
+  kRec.addEventListener("click", function(){ setPressed(kRec, kRep); kd.textContent = recText; });
+  kRep.addEventListener("click", function(){ setPressed(kRep, kRec); kd.textContent = repText; });
+
+  // ---------- boot ----------
+  if (window.ResizeObserver){
+    new ResizeObserver(function(){ resize(); }).observe(wrap);
+  }
+  window.addEventListener("resize", resize);
+  if (document.fonts && document.fonts.ready){ document.fonts.ready.then(function(){ draw(); }); }
   resize();
-});
-
-slider.style.setProperty('--fill', '0%');
-resize();
-updateUI();
-draw();
+  update();
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'why-balance-day-adjustments-exist'},'*');}catch(e){}}

@@ -172,13 +172,19 @@ canvas {
 }
 
 .tick-labels {
-  display: flex;
-  justify-content: space-between;
+  position: relative;
+  height: 12px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 9px;
   color: var(--ink-dim);
   margin-bottom: 16px;
 }
+
+.tick-labels span { position: absolute; top: 0; }
+.tick-labels span:nth-child(1) { left: 0; }
+.tick-labels span:nth-child(2) { left: 20%; transform: translateX(-50%); }
+.tick-labels span:nth-child(3) { left: 50%; transform: translateX(-50%); }
+.tick-labels span:nth-child(4) { left: 100%; transform: translateX(-100%); }
 
 .stat-row {
   display: grid;
@@ -314,14 +320,14 @@ canvas {
   
   <h1>Your body produces 19× more energy when it waits for <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">oxygen</span></h1>
   
-  <p class="intro">The aerobic system generates 38 ATP molecules per glucose versus just 2 ATP from anaerobic glycolysis alone—a staggering efficiency gain when oxygen is available. Slide through exercise duration to see when aerobic metabolism takes over.</p>
+  <p class="intro">The aerobic system generates 38 ATP molecules per glucose versus just 2 ATP from anaerobic glycolysis alone—a staggering efficiency gain when oxygen is available. Lengthen the exercise to see when aerobic metabolism takes over.</p>
   
   <div class="card">
     <div class="card-header">
-      <span class="card-label">Energy System Dominance</span>
+      <span class="card-label">Energy system dominance</span>
       <span class="live-tag" id="dominantSystem">ATP-PC</span>
     </div>
-    <div class="card-hint">Drag to change exercise duration</div>
+    <div class="card-hint">Lengthen the exercise and watch which band grows</div>
     
     <div class="canvas-wrapper">
       <canvas id="aerCanvas"></canvas>
@@ -329,7 +335,7 @@ canvas {
     </div>
     
     <div class="slider-container">
-      <div class="slider-label">Exercise Duration</div>
+      <div class="slider-label">Exercise duration</div>
       <input type="range" class="aer-slider" id="timeSlider" min="0" max="600" value="0" step="1">
       <div class="tick-labels">
         <span>0s</span>
@@ -341,20 +347,20 @@ canvas {
     
     <div class="stat-row">
       <div class="stat">
-        <div class="stat-label">Aerobic Contribution</div>
+        <div class="stat-label">Aerobic contribution</div>
         <div class="stat-value" id="aerobicPercent">0%</div>
       </div>
       <div class="stat">
-        <div class="stat-label">ATP Efficiency</div>
-        <div class="stat-value" id="atpMultiplier">2×</div>
+        <div class="stat-label">ATP per glucose or PC</div>
+        <div class="stat-value" id="atpMultiplier">1 ATP</div>
       </div>
     </div>
   </div>
   
   <div class="card">
     <div class="toggle-section">
-      <button class="toggle-btn active" id="btnStages">Three Stages</button>
-      <button class="toggle-btn" id="btnFuel">Fuel Sources</button>
+      <button class="toggle-btn active" id="btnStages">Three stages</button>
+      <button class="toggle-btn" id="btnFuel">Fuel sources</button>
     </div>
     
     <div class="knowdrop" id="knowdropText">The aerobic system operates through three sequential stages: <strong>glycolysis</strong> breaks down glucose in the cytoplasm producing 2 ATP and pyruvate; the <strong>Krebs cycle</strong> (citric acid cycle) occurs in the mitochondrial matrix oxidising pyruvate to produce 2 more ATP plus electron carriers; and the <strong>electron transport chain</strong> in the inner mitochondrial membrane generates the remaining 34 ATP through oxidative phosphorylation. This three-stage cascade transforms a single glucose molecule into 38 ATP, compared to the 2 ATP produced when glycolysis operates anaerobically alone. The process requires 2-3 minutes to reach peak output as oxygen delivery systems ramp up, but once established can sustain ATP production indefinitely given adequate oxygen and substrate availability.</div>
@@ -362,7 +368,7 @@ canvas {
   
   <div class="know-this">
     <div class="know-this-tag">Know This</div>
-    <div class="know-this-body">The aerobic system <span style="color:var(--acc)">becomes predominant after 2 minutes</span> and sustains low to moderate intensity exercise indefinitely, producing <span style="color:var(--acc)">38 ATP per glucose molecule</span> compared to 2 ATP from glycolysis alone while utilizing <span style="color:var(--acc)">carbohydrates and fats as fuel</span> with protein contributing minimally during prolonged exercise.</div>
+    <div class="know-this-body">The aerobic system <span style="color:var(--acc)">becomes predominant after 2 minutes</span> and sustains low to moderate intensity exercise indefinitely, producing <span style="color:var(--acc)">38 ATP per glucose molecule</span> compared to 2 ATP from glycolysis alone while utilising <span style="color:var(--acc)">carbohydrates and fats as fuel</span> with protein contributing minimally during prolonged exercise.</div>
   </div>
   
   <div class="footer">
@@ -417,7 +423,7 @@ function updateSlider() {
   let dominant = 'ATP-PC';
   if (seconds >= 120) {
     dominant = 'AEROBIC';
-  } else if (seconds >= 10) {
+  } else if (seconds >= 9) {
     dominant = 'GLYCOLYTIC';
   }
   dominantTag.textContent = dominant;
@@ -434,9 +440,8 @@ function updateSlider() {
   }
   aerobicPercent.textContent = Math.round(aerobic) + '%';
   
-  // ATP efficiency multiplier
-  const efficiency = 2 + (aerobic / 100) * 36;
-  atpMultiplier.textContent = efficiency.toFixed(0) + '×';
+  // ATP yield per fuel molecule for the dominant system
+  atpMultiplier.textContent = dominant === 'AEROBIC' ? '38 ATP' : (dominant === 'GLYCOLYTIC' ? '2 ATP' : '1 ATP');
 }
 
 function getSystemContributions(t) {
@@ -488,6 +493,11 @@ function draw() {
     grad.addColorStop(1, 'rgba(232,106,50,0.5)');
     ctx.fillStyle = grad;
     ctx.fillRect(0, aerTop, w, aerH);
+    if (aerH > 20) {
+      ctx.fillStyle = 'rgba(237,237,232,0.85)';
+      ctx.font = '11px "JetBrains Mono", monospace';
+      ctx.fillText('Aerobic', 12, aerTop + 16);
+    }
     
     // Add flowing particles
     if (Math.random() < 0.15 && aerH > 20) {
@@ -521,6 +531,11 @@ function draw() {
     grad.addColorStop(1, 'rgba(250,199,117,0.45)');
     ctx.fillStyle = grad;
     ctx.fillRect(0, glyTop, w, glyH);
+    if (glyH > 20) {
+      ctx.fillStyle = 'rgba(237,237,232,0.85)';
+      ctx.font = '11px "JetBrains Mono", monospace';
+      ctx.fillText('Glycolytic', 12, glyTop + 16);
+    }
     
     if (Math.random() < 0.12 && glyH > 20) {
       particles.push({
@@ -553,6 +568,11 @@ function draw() {
     grad.addColorStop(1, 'rgba(237,237,232,0.3)');
     ctx.fillStyle = grad;
     ctx.fillRect(0, pcTop, w, pcH);
+    if (pcH > 20) {
+      ctx.fillStyle = 'rgba(237,237,232,0.85)';
+      ctx.font = '11px "JetBrains Mono", monospace';
+      ctx.fillText('ATP-PC', 12, pcTop + 16);
+    }
     
     if (Math.random() < 0.08 && pcH > 20) {
       particles.push({
@@ -619,7 +639,7 @@ btnStages.addEventListener('click', () => {
 btnFuel.addEventListener('click', () => {
   btnFuel.classList.add('active');
   btnStages.classList.remove('active');
-  knowdropText.innerHTML = 'The aerobic system primarily utilizes <strong>carbohydrates</strong> (glucose and glycogen) and <strong>fats</strong> (fatty acids) as fuel sources, with their relative contribution depending on exercise intensity and duration. At lower intensities and longer durations, fat oxidation predominates as it yields more ATP per molecule but requires more oxygen and time to metabolize. As intensity increases toward moderate levels, carbohydrate utilization increases due to faster ATP production rates. <strong>Protein</strong> contributes minimally to aerobic energy production—typically less than 5% during most exercise—only becoming significant during ultra-endurance events exceeding several hours when glycogen stores deplete. The availability of oxygen determines whether these substrates enter aerobic or anaerobic pathways, with the aerobic system\'s 19-fold efficiency advantage making it the dominant energy source for sustained activity.';
+  knowdropText.innerHTML = 'The aerobic system primarily utilises <strong>carbohydrates</strong> (glucose and glycogen) and <strong>fats</strong> (fatty acids) as fuel sources, with their relative contribution depending on exercise intensity and duration. At lower intensities and longer durations, fat oxidation predominates as it yields more ATP per molecule but requires more oxygen and time to metabolise. As intensity increases toward moderate levels, carbohydrate utilisation increases due to faster ATP production rates. <strong>Protein</strong> contributes minimally to aerobic energy production—typically less than 5% during most exercise—only becoming significant during ultra-endurance events exceeding several hours when glycogen stores deplete. The availability of oxygen determines whether these substrates enter aerobic or anaerobic pathways, with the aerobic system\'s 19-fold efficiency advantage making it the dominant energy source for sustained activity.';
 });
 
 timeSlider.addEventListener('input', updateSlider);

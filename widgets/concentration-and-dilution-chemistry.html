@@ -1,0 +1,383 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Concentration and dilution — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap");
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #3E9AD6;
+  --acc-rgb: 62, 154, 214;
+  --ag:  rgba(var(--acc-rgb),.7);
+  --ag1: rgba(var(--acc-rgb),.12);
+  --ag2: rgba(var(--acc-rgb),.45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+  --bg-top: #11160F;
+  --card-end: #0d100b;
+  --track: #23291f;
+  --black: #000;
+}
+body{margin:0;background:radial-gradient(120% 80% at 50% -10%,var(--bg-top) 0%,var(--bg) 55%);font-family:"Geist",sans-serif;color:var(--ink);min-height:100vh;padding:40px 16px 0;box-sizing:border-box}
+.cd{max-width:720px;margin:0 auto}
+.cd *{box-sizing:border-box}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.cd h1{font-family:"Geist",sans-serif;font-weight:800;font-size:clamp(26px,6.5vw,44px);letter-spacing:-0.03em;line-height:1.05;margin:0 0 14px}
+.cd .intro{font-size:15.5px;font-weight:400;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin:0 0 26px}
+.cd .card{background:linear-gradient(180deg,var(--bg2),var(--card-end));border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);margin-bottom:22px}
+.cd .card.sec{border-radius:14px}
+.cd .head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.cd .lbl{font-family:"JetBrains Mono",monospace;font-size:13px;text-transform:uppercase;color:var(--ink);letter-spacing:.04em}
+.cd .live{font-family:"JetBrains Mono",monospace;font-size:11px;text-transform:uppercase;color:var(--acc)}
+.cd .hint{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--ink-dim);margin:6px 0 12px;line-height:1.45}
+.cd .cv-wrap{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:var(--black);box-shadow:inset 0 0 0 1px var(--ag1)}
+.cd .cv-wrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.cd .ov{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);padding:9px 16px;font-family:"JetBrains Mono",monospace;font-size:14px;color:var(--acc);text-align:center;line-height:1.3}
+.cd .srow{margin-top:16px}
+.cd .slbl{display:flex;justify-content:space-between;gap:10px;font-family:"JetBrains Mono",monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:10px}
+.cd .slbl b{color:var(--acc);font-weight:500}
+.cd-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;outline:none;margin:6px 0;background:linear-gradient(90deg,var(--acc) var(--fill,0%),var(--track) var(--fill,0%))}
+.cd-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:var(--bg);border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.cd-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--bg);border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.cd-slider:hover::-webkit-slider-thumb{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.cd-slider:hover::-moz-range-thumb{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.cd-slider:focus-visible::-webkit-slider-thumb{outline:2px solid var(--acc);outline-offset:2px}
+.cd .ticks{display:flex;justify-content:space-between;gap:6px;font-family:"JetBrains Mono",monospace;font-size:9px;color:var(--ink-dim);margin-top:6px}
+.cd .stats{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+.cd .stat{min-width:0}
+.cd .stat .k{font-family:"JetBrains Mono",monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:4px}
+.cd .stat .v{font-family:"JetBrains Mono",monospace;font-size:24px;font-weight:500;line-height:1.15;white-space:nowrap}
+.cd .stat .v .u{font-size:13px;font-weight:400;margin-left:4px}
+.cd .stat .s{font-family:"JetBrains Mono",monospace;font-size:10.5px;color:var(--ink-dim);margin-top:3px;line-height:1.45}
+.cd .stat.a .v{color:var(--acc)}
+.cd .stat.b .v{color:var(--amb)}
+.cd .tgs{display:flex;gap:10px}
+.cd .tg{flex:1;font-family:"JetBrains Mono",monospace;font-size:14.5px;padding:12px;border-radius:11px;background:var(--bg2);border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:all .2s;line-height:1.2}
+.cd .tg.on{background:rgba(var(--acc-rgb),.1);border:1px solid var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.cd .tg:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.cd .kd{border-top:1px solid var(--line);padding-top:16px;margin-top:16px}
+.cd .kd p{font-family:"Geist",sans-serif;font-size:14.5px;font-weight:400;line-height:1.65;color:var(--ink);margin:0}
+.cd .know{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));border-radius:0 12px 12px 0;margin-bottom:0}
+.cd .ktag{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.cd .kdot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:kpulse 2.4s ease-in-out infinite;flex:none}
+.cd .ktxt{font-family:"JetBrains Mono",monospace;font-size:13px;text-transform:uppercase;letter-spacing:0.15em;color:var(--acc)}
+.cd .know p{font-family:"Geist",sans-serif;font-size:17.4px;font-weight:400;line-height:1.55;color:var(--ink);margin:0}
+.cd > :last-child{margin-bottom:0;padding-bottom:16px}
+@keyframes kpulse{0%,100%{opacity:1}50%{opacity:.45}}
+@media (prefers-reduced-motion: reduce){.cd .kdot{animation:none}.cd .tg{transition:none}}
+@media (max-width:420px){.cd .stat .v{font-size:21px}.cd .stat .v .u{font-size:11px}.cd .tg{font-size:13px;padding:12px 8px}.cd .ov{font-size:12px;padding:8px 10px}}
+</style>
+<div class="cd">
+  <h2 class="sr-only">Interactive: concentration and dilution. Copper(II) and sulfate ions sit in a container of solution. Set the final volume of solution: the ion count stays fixed while the liquid rises, the ions spread out and the colour fades. A graph of concentration against volume shows a rectangle of area c times V that never changes. A toggle switches between making a standard solution from a weighed solid and diluting a stock solution with a pipette.</h2>
+  <h1>Dilute it ten times and not one ion <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">leaves</span></h1>
+  <p class="intro">Concentration is an amount of solute shared out through a volume of solution: c = n ÷ V. Add water and the count of solute particles stays exactly the same; only the volume they share grows. Make the solution up to a new volume and watch the ions spread out, then switch between making a standard solution and diluting a stock.</p>
+
+  <div class="card">
+    <div class="head">
+      <span class="lbl">Same moles, more water</span>
+      <span class="live" id="cdLive">Live · 250 mL</span>
+    </div>
+    <div class="hint">0.0500 mol CuSO₄ = 25 Cu²⁺ + 25 SO₄²⁻ dots, 2 mmol each · change the final volume and watch the colour fade</div>
+    <div class="cv-wrap">
+      <canvas id="cdCanvas" aria-label="Solute ions in a container of solution beside a graph of concentration against volume"></canvas>
+      <div class="ov" id="cdTag">0.0500 mol in 0.250 L → 0.200 mol L⁻¹</div>
+    </div>
+    <div class="srow">
+      <div class="slbl"><span>Final volume of solution</span><b id="cdVal">250 mL</b></div>
+      <input type="range" class="cd-slider" id="cdSlider" min="100" max="1000" step="10" value="250" aria-label="Final volume of solution in millilitres">
+      <div class="ticks"><span>100 mL</span><span>550 mL</span><span>1000 mL</span></div>
+    </div>
+    <div class="stats">
+      <div class="stat a"><div class="k">Concentration</div><div class="v"><span id="cdC">0.200</span><span class="u">mol L⁻¹</span></div><div class="s" id="cdCSub">c = n ÷ V = 0.0500 ÷ 0.250 L</div></div>
+      <div class="stat b"><div class="k">Same, by mass</div><div class="v"><span id="cdG">31.9</span><span class="u">g L⁻¹</span></div><div class="s" id="cdGSub">3.19 %(m/v) · ≈ 31 900 ppm</div></div>
+    </div>
+  </div>
+
+  <div class="card sec">
+    <div class="tgs">
+      <button class="tg on" id="cdStd" type="button" aria-pressed="true">Make a standard</button>
+      <button class="tg" id="cdDil" type="button" aria-pressed="false">Dilute a stock</button>
+    </div>
+    <div class="kd"><p id="cdDrop"></p></div>
+  </div>
+
+  <div class="know">
+    <div class="ktag"><span class="kdot"></span><span class="ktxt">Know This</span></div>
+    <p>Adding water changes the <span style="color:var(--acc)">volume</span> but never the <span style="color:var(--acc)">moles of solute</span>, so the concentration falls in proportion and <span style="color:var(--acc)">c₁V₁ = c₂V₂</span>.</p>
+  </div>
+</div>
+<script>
+(function(){
+  const canvas = document.getElementById("cdCanvas");
+  const ctx = canvas.getContext("2d");
+  const slider = document.getElementById("cdSlider");
+  const bStd = document.getElementById("cdStd");
+  const bDil = document.getElementById("cdDil");
+  const elLive = document.getElementById("cdLive"), elTag = document.getElementById("cdTag"), elVal = document.getElementById("cdVal");
+  const elC = document.getElementById("cdC"), elCSub = document.getElementById("cdCSub");
+  const elG = document.getElementById("cdG"), elGSub = document.getElementById("cdGSub");
+  const elDrop = document.getElementById("cdDrop");
+
+  const CSS = getComputedStyle(document.documentElement);
+  const ACC = CSS.getPropertyValue("--acc").trim();
+  const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+  const AMB = CSS.getPropertyValue("--amb").trim();
+  const INK = CSS.getPropertyValue("--ink").trim();
+  const DIM = CSS.getPropertyValue("--ink-dim").trim();
+  const LINE = CSS.getPropertyValue("--line").trim();
+  const BG2 = CSS.getPropertyValue("--bg2").trim();
+  const acc = a => "rgba(" + RGB + "," + a + ")";
+
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const buf = document.createElement("canvas"); const bctx = buf.getContext("2d");
+
+  /* the chemistry: 0.0500 mol CuSO4 (M = 159.6 g/mol, so 7.98 g), or 100.0 mL of 0.500 mol/L stock */
+  const N = 0.0500, M = 159.6, VMIN = 100, VMAX = 1000, CMAX = N / (VMIN / 1000), V1 = 100.0, C1 = 0.500;
+  const DOTS = 50;
+
+  const DROPS = {
+    std: "A standard solution is one whose concentration is known accurately. Weigh the pure solid on an electronic balance (here 7.98 g of copper(II) sulfate) and turn it into moles with n = m ÷ M: 7.98 ÷ 159.6 = 0.0500 mol. Dissolve it in a little deionised water in a beaker, then transfer every drop, rinsings included, into a volumetric flask and add water until the bottom of the meniscus sits on the mark; stopper and invert to mix. Made up to 250.0 mL that is 0.0500 ÷ 0.2500 = 0.200 mol L⁻¹, with the volume in litres. The same solution is 0.200 × 159.6 = 31.9 g L⁻¹, or 3.19 %(m/v), because %(m/v) is grams per 100 mL.",
+    dil: "To dilute, a pipette delivers an accurately measured aliquot of stock (here 100.0 mL of 0.500 mol L⁻¹, which holds 0.0500 mol of CuSO₄) into a volumetric flask, then deionised water is added up to the mark and the flask is inverted to mix. The water brings volume but no solute, so the moles before equal the moles after: c₁V₁ = c₂V₂. Made up to 250.0 mL, c₂ = 0.500 × 100.0 ÷ 250.0 = 0.200 mol L⁻¹, a dilution factor of 2.5. V₁ and V₂ only need the same units, so millilitres work here without converting. The classic slip is using the volume of water added as V₂; V₂ is the final volume of the whole solution."
+  };
+
+  const st = { v: 250, vv: 250, dil: 0, mv: 0 };
+  let raf = 0, last = 0;
+
+  /* evenly spread positions (golden-ratio lattice), fixed for good: only the volume they share changes */
+  const PH = 0.6180339887;
+  const dots = Array.from({ length: DOTS }, (_, i) => ({ u: 0.08 + 0.84 * ((i * PH + 0.21) % 1), t: (i + 0.5) / DOTS, cu: i % 2 === 0 }));
+
+  function conc(v){ return N / (v / 1000); }
+  function sig3(x){ return Number(x.toPrecision(3)); }
+  function p3(x){ return x.toPrecision(3); }
+  function grp(x){ return String(Math.round(x)).replace(/\B(?=(\d{3})+(?!\d))/g, " "); }
+  function fit(text, maxW, size, weight){
+    let s = size;
+    ctx.font = (weight || "") + " " + s + "px JetBrains Mono, monospace";
+    while (s > 7 && ctx.measureText(text).width > maxW){ s -= 0.5; ctx.font = (weight || "") + " " + s + "px JetBrains Mono, monospace"; }
+    return s;
+  }
+  function label(text, x, y, maxW, size, color, align, weight){
+    fit(text, maxW, size, weight); ctx.fillStyle = color; ctx.textAlign = align || "left"; ctx.fillText(text, x, y);
+  }
+
+  function resize(){
+    const r = canvas.getBoundingClientRect();
+    if (!r.width || !r.height) return; /* f27c: refuse a zero measurement, keep the last good size */
+    canvas.width = Math.max(1, Math.round(r.width * dpr)); canvas.height = Math.max(1, Math.round(r.height * dpr));
+    buf.width = canvas.width; buf.height = canvas.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    draw();
+  }
+
+  function rr(x, y, w, h, r){ ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+
+  function ion(x, y, r, cu){
+    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+    if (cu){ ctx.fillStyle = ACC; ctx.fill(); }
+    else { ctx.fillStyle = AMB; ctx.fill(); }
+  }
+
+  function draw(){
+    const w = canvas.width / dpr, h = canvas.height / dpr;
+    if (w < 2 || h < 2) return;
+    const V = st.vv, c = conc(V), mv = st.mv, sv = 1 - mv;
+    ctx.save(); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    const nar = w < 480;
+    const fs = nar ? 9.5 : Math.max(9, Math.min(13, h * 0.05));
+    const m = h * 0.08, baseY = h - Math.max(40, h * 0.17);
+    const L = nar ? { l0: 0.02, l1: 0.3, c0: 0.36, c1: 0.585, g0: 0.69, g1: 0.97 } : { l0: 0.03, l1: 0.27, c0: 0.35, c1: 0.6, g0: 0.71, g1: 0.96 };
+    ctx.textBaseline = "alphabetic";
+
+    /* faint grid */
+    ctx.strokeStyle = LINE; ctx.lineWidth = 1; ctx.globalAlpha = 0.45;
+    for (let gx = 0; gx <= w; gx += w / 16){ ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke(); }
+    for (let gy = 0; gy <= h; gy += h / 9){ ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke(); }
+    ctx.globalAlpha = 1;
+
+    /* ---------- left: where the 0.0500 mol came from ---------- */
+    const lx0 = w * L.l0, lx1 = w * L.l1, lw = lx1 - lx0, lc = (lx0 + lx1) / 2;
+    label(nar ? "SOURCE OF n" : "WHERE n COMES FROM", lc, m + fs, lw, fs * 0.85, DIM, "center");
+    const lh = fs * 1.35, bH = Math.max(16, h * 0.1), bY = baseY - bH;
+    const tTop = m + fs * 2, tBot = bY - lw * 0.3;
+    const ty = tTop + Math.max(0, (tBot - tTop - lh * 4) / 2) + fs * 0.9;
+    /* standard: weighed solid on a balance */
+    if (sv > 0.01){
+      ctx.save(); ctx.globalAlpha = sv;
+      ctx.fillStyle = BG2; ctx.strokeStyle = DIM; ctx.lineWidth = 1.2; rr(lx0, bY, lw, bH, 5); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = DIM; ctx.fillRect(lx0 + lw * 0.1, bY - 4, lw * 0.8, 4);
+      ctx.fillStyle = "rgba(0,0,0,0.85)"; rr(lx0 + lw * 0.18, bY + bH * 0.2, lw * 0.64, bH * 0.6, 3); ctx.fill();
+      label("7.98 g", lc, bY + bH * 0.5 + fs * 0.35, lw * 0.6, Math.min(fs * 1.05, bH * 0.55), ACC, "center", "500");
+      /* crystal pile in a weighing boat */
+      const py = bY - 5, pw = lw * 0.5;
+      ctx.strokeStyle = INK; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(lc - pw / 2, py - pw * 0.16); ctx.lineTo(lc - pw * 0.4, py); ctx.lineTo(lc + pw * 0.4, py); ctx.lineTo(lc + pw / 2, py - pw * 0.16); ctx.stroke();
+      ctx.fillStyle = acc(0.75); ctx.beginPath(); ctx.moveTo(lc - pw * 0.36, py - 1); ctx.quadraticCurveTo(lc, py - pw * 0.42, lc + pw * 0.36, py - 1); ctx.closePath(); ctx.fill();
+      label("solid CuSO₄", lc, ty, lw, fs, INK, "center");
+      label("n = m ÷ M", lc, ty + lh, lw, fs, DIM, "center");
+      label("= 7.98 ÷ 159.6", lc, ty + lh * 2, lw, fs, DIM, "center");
+      label("= 0.0500 mol", lc, ty + lh * 3, lw, fs, ACC, "center", "500");
+      ctx.restore();
+    }
+    /* dilution: a pipetted aliquot of stock */
+    if (mv > 0.01){
+      ctx.save(); ctx.globalAlpha = mv;
+      label("stock 0.500 mol L⁻¹", lc, ty, lw, fs, INK, "center");
+      label("n = c₁ × V₁", lc, ty + lh, lw, fs, DIM, "center");
+      label("= 0.500 × 0.1000", lc, ty + lh * 2, lw, fs, DIM, "center");
+      label("= 0.0500 mol", lc, ty + lh * 3, lw, fs, ACC, "center", "500");
+      /* pipette lying across, bulb in the middle */
+      const pyc = ty + lh * 3 + (baseY - (ty + lh * 3)) * 0.55, px0 = lx0 + lw * 0.02, px1 = lx1 - lw * 0.02;
+      const bulbR = Math.max(5, Math.min(lw * 0.13, (baseY - pyc) * 0.7)), tube = Math.max(2, bulbR * 0.3);
+      ctx.fillStyle = acc(0.08 + 0.55 * (C1 / CMAX));
+      ctx.fillRect(px0 + lw * 0.04, pyc - tube / 2, px1 - px0 - lw * 0.18, tube);
+      ctx.beginPath(); ctx.ellipse(lc, pyc, bulbR * 1.5, bulbR, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = INK; ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.ellipse(lc, pyc, bulbR * 1.5, bulbR, 0, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(px0, pyc - tube / 2); ctx.lineTo(lc - bulbR * 1.5, pyc - tube / 2); ctx.moveTo(px0, pyc + tube / 2); ctx.lineTo(lc - bulbR * 1.5, pyc + tube / 2);
+      ctx.moveTo(lc + bulbR * 1.5, pyc - tube / 2); ctx.lineTo(px1, pyc - tube / 2); ctx.moveTo(lc + bulbR * 1.5, pyc + tube / 2); ctx.lineTo(px1, pyc + tube / 2); ctx.stroke();
+      ctx.strokeStyle = AMB; ctx.beginPath(); ctx.moveTo(px1 - lw * 0.14, pyc - tube * 1.6); ctx.lineTo(px1 - lw * 0.14, pyc + tube * 1.6); ctx.stroke();
+      label("100.0 mL pipette", lc, pyc + bulbR + fs * 1.2, lw, fs * 0.85, DIM, "center");
+      ctx.restore();
+    }
+    /* arrow into the container */
+    const ax = lx1 + w * 0.012, ax1 = w * L.c0 - w * 0.015, ay = baseY - h * 0.06;
+    ctx.strokeStyle = DIM; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(ax1, ay); ctx.lineTo(ax1 - 5, ay - 4); ctx.moveTo(ax1, ay); ctx.lineTo(ax1 - 5, ay + 4); ctx.stroke();
+
+    /* ---------- middle: the solution ---------- */
+    const cx0 = w * L.c0, cx1 = w * L.c1, cw = cx1 - cx0, cTop = m + fs * 1.6, cBot = baseY, cH = cBot - cTop;
+    const lvl = cBot - cH * (V / VMAX);
+    /* liquid: colour fades as c falls */
+    ctx.save();
+    const g = ctx.createLinearGradient(0, lvl, 0, cBot);
+    const a = 0.06 + 0.5 * (c / CMAX);
+    g.addColorStop(0, acc(a * 0.85)); g.addColorStop(1, acc(a));
+    ctx.fillStyle = g; ctx.fillRect(cx0, lvl, cw, cBot - lvl);
+    ctx.strokeStyle = acc(0.9); ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(cx0, lvl); ctx.lineTo(cx1, lvl); ctx.stroke();
+    ctx.restore();
+    /* graduations every 100 mL */
+    ctx.strokeStyle = DIM; ctx.lineWidth = 1;
+    for (let k = 1; k <= 10; k++){
+      const yy = cBot - cH * k / 10, len = cw * (k % 5 ? 0.1 : 0.2);
+      ctx.beginPath(); ctx.moveTo(cx0, yy); ctx.lineTo(cx0 + len, yy); ctx.stroke();
+    }
+    /* vessel walls */
+    ctx.strokeStyle = INK; ctx.lineWidth = 1.8; ctx.beginPath(); ctx.moveTo(cx0, cTop); ctx.lineTo(cx0, cBot); ctx.lineTo(cx1, cBot); ctx.lineTo(cx1, cTop); ctx.stroke();
+    /* ions: same 50 dots, spread through whatever volume there is */
+    const ih = cBot - lvl;
+    const r = Math.max(1.4, Math.min(cw * 0.03, h * 0.016, Math.sqrt(cw * ih / DOTS) * 0.36));
+    const pad = Math.min(r * 1.4, ih * 0.2);
+    ctx.save(); ctx.globalCompositeOperation = "lighter";
+    for (const d of dots){
+      const x = cx0 + d.u * cw, y = cBot - pad - d.t * Math.max(0, ih - pad * 2);
+      ion(x, y, r, d.cu);
+    }
+    ctx.restore();
+    /* volume label at the surface */
+    const vlab = Math.round(V) + " mL";
+    fit(vlab, w * (L.g0 - L.c1) - w * 0.03, fs, "500");
+    ctx.fillStyle = ACC; ctx.textAlign = "left";
+    const lyT = Math.max(cTop + fs * 0.4, Math.min(lvl + fs * 0.35, cBot - 2));
+    ctx.fillText(vlab, cx1 + w * 0.01, lyT);
+    /* legend above */
+    const lgY = m + fs * 0.6;
+    const lr = Math.max(2.5, Math.min(cw * 0.03, h * 0.016));
+    ctx.save(); ctx.globalCompositeOperation = "lighter"; ion(cx0 + lr, lgY - fs * 0.32, lr, true); ctx.restore();
+    label(nar ? "Cu²⁺" : "25 Cu²⁺", cx0 + lr * 2 + 4, lgY, cw * 0.42, fs * 0.85, INK, "left");
+    ctx.save(); ctx.globalCompositeOperation = "lighter"; ion(cx0 + cw * 0.52 + lr, lgY - fs * 0.32, lr, false); ctx.restore();
+    label(nar ? "SO₄²⁻" : "25 SO₄²⁻", cx0 + cw * 0.52 + lr * 2 + 4, lgY, cw * 0.48 - lr * 2 - 4, fs * 0.85, INK, "left");
+
+    /* ---------- right: c against V, rectangle area c x V = n ---------- */
+    const gx0 = w * L.g0, gx1 = w * L.g1, gy0 = m + fs * 1.6, gy1 = baseY, gH = gy1 - gy0, gW = gx1 - gx0;
+    const X = vol => gx0 + gW * vol / VMAX;
+    const Y = cc => gy1 - gH * cc / (CMAX * 1.08);
+    /* ghost: the starting point of the dilution (V1, c1) */
+    if (mv > 0.01){
+      ctx.save(); ctx.globalAlpha = mv; ctx.strokeStyle = AMB; ctx.setLineDash([3, 3]); ctx.lineWidth = 1.2;
+      ctx.strokeRect(X(0), Y(C1), X(V1) - X(0), gy1 - Y(C1)); ctx.restore();
+    }
+    /* the n-rectangle */
+    ctx.save();
+    ctx.fillStyle = acc(0.2); ctx.fillRect(X(0), Y(c), X(V) - X(0), gy1 - Y(c));
+    ctx.strokeStyle = acc(0.85); ctx.lineWidth = 1.4; ctx.strokeRect(X(0), Y(c), X(V) - X(0), gy1 - Y(c));
+    ctx.restore();
+    /* the curve c = n / V */
+    ctx.save(); ctx.strokeStyle = AMB; ctx.lineWidth = 1.8; ctx.globalAlpha = 0.85; ctx.beginPath();
+    for (let vol = VMIN; vol <= V; vol += 10){ const px = X(vol), py = Y(conc(vol)); vol === VMIN ? ctx.moveTo(px, py) : ctx.lineTo(px, py); }
+    ctx.lineTo(X(V), Y(c)); /* the curve is drawn only as far as the current volume */
+    ctx.stroke(); ctx.restore();
+    /* axes */
+    ctx.strokeStyle = DIM; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(gx0, gy0); ctx.lineTo(gx0, gy1); ctx.lineTo(gx1, gy1); ctx.stroke();
+    label(nar ? "c" : "c (mol L⁻¹)", gx0, gy0 - fs * 0.45, gW, fs * 0.85, DIM, "left");
+    label("V →", gx1, gy1 + fs * 1.2, w * 0.1, fs * 0.85, DIM, "right");
+    label("c × V = n", gx1, gy0 + fs * 1.2, gW * 0.6, fs * 0.9, AMB, "right");
+    /* the point */
+    ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.fillStyle = ACC;
+    ctx.beginPath(); ctx.arc(X(V), Y(c), 4, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+    const cl = p3(c);
+    const tx = X(V) + 7, right = tx + ctx.measureText(cl).width > gx1;
+    const ly = Y(c) - 6 < gy0 + fs * 1.2 ? Y(c) + fs + 3 : (right ? Y(c) - fs - 4 : Y(c) - 6);
+    label(cl, right ? X(V) - 7 : tx, ly, w * 0.12, fs, ACC, right ? "right" : "left", "500");
+    /* area label inside the rectangle when it is wide enough */
+    const rw = X(V) - X(0), rh = gy1 - Y(c);
+    if (rw > fs * 4 && rh > fs * 1.6) label("0.0500 mol", X(0) + rw / 2, gy1 - rh / 2 + fs * 0.35, rw - 6, fs * 0.8, INK, "center");
+
+    /* bloom */
+    bctx.setTransform(1, 0, 0, 1, 0, 0); bctx.clearRect(0, 0, buf.width, buf.height);
+    if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+    ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
+    (buf.width&&buf.height)&&ctx.drawImage(buf, 0, 0, w, h); ctx.restore();
+    /* vignette */
+    const vx = w / 2, vy = h / 2;
+    const vig = ctx.createRadialGradient(vx, vy, h * 0.28, vx, vy, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
+    ctx.restore();
+  }
+
+  function updateText(){
+    const V = st.v, c = conc(V), dil = st.dil === 1, gL = c * M;
+    const cs = p3(c), L = (V / 1000).toFixed(3);
+    elVal.textContent = V + " mL";
+    elLive.textContent = "Live · " + V + " mL";
+    elC.textContent = cs;
+    elCSub.textContent = dil ? ("c₂ = c₁V₁ ÷ V₂ = 0.500 × 100 ÷ " + V) : ("c = n ÷ V = 0.0500 ÷ " + L + " L");
+    elG.textContent = p3(gL);
+    elGSub.textContent = p3(gL / 10) + " %(m/v) · ≈ " + grp(sig3(gL * 1000)) + " ppm";
+    const f = V / V1;
+    elTag.textContent = dil
+      ? ("Dilution ×" + sig3(f) + " · c₁V₁ = c₂V₂ → " + cs + " mol L⁻¹")
+      : ("0.0500 mol in " + L + " L → " + cs + " mol L⁻¹");
+    slider.style.setProperty("--fill", ((V - VMIN) / (VMAX - VMIN) * 100).toFixed(1) + "%");
+    bStd.classList.toggle("on", !dil); bDil.classList.toggle("on", dil);
+    bStd.setAttribute("aria-pressed", String(!dil)); bDil.setAttribute("aria-pressed", String(dil));
+    elDrop.textContent = dil ? DROPS.dil : DROPS.std;
+  }
+
+  function tick(now){
+    const dt = Math.min(now - last, 50); last = now;
+    const k = 1 - Math.exp(-dt / 110);
+    st.vv += (st.v - st.vv) * k; st.mv += (st.dil - st.mv) * k;
+    if (Math.abs(st.v - st.vv) < 0.5 && Math.abs(st.dil - st.mv) < 0.002){ st.vv = st.v; st.mv = st.dil; draw(); raf = 0; return; }
+    draw(); raf = requestAnimationFrame(tick);
+  }
+  function kick(){
+    if (reduce){ st.vv = st.v; st.mv = st.dil; draw(); return; }
+    if (!raf){ last = performance.now(); raf = requestAnimationFrame(tick); }
+  }
+
+  slider.addEventListener("input", () => { st.v = Number(slider.value); updateText(); kick(); });
+  bStd.addEventListener("click", () => { st.dil = 0; updateText(); kick(); });
+  bDil.addEventListener("click", () => { st.dil = 1; updateText(); kick(); });
+  window.addEventListener("resize", resize);
+  updateText(); resize();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(draw).catch(() => {});
+})();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'concentration-and-dilution'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

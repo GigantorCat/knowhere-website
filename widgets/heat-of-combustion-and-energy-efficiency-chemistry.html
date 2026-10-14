@@ -190,8 +190,7 @@ canvas {
 }
 
 .stat-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
   gap: 16px;
   padding-top: 16px;
   border-top: 1px solid var(--line);
@@ -201,6 +200,9 @@ canvas {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  flex: 1 1 0;
+  min-width: 0;
+  justify-content: space-between;
 }
 
 .stat-label {
@@ -212,7 +214,8 @@ canvas {
 
 .stat-value {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 24px;
+  font-size: clamp(18px, 5vw, 24px);
+  white-space: nowrap;
   font-weight: 500;
 }
 
@@ -307,14 +310,14 @@ canvas {
 
   <h1>Your experiment always <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">loses</span></h1>
   
-  <p class="intro">Every fuel-burning experiment you run will give a value lower than the textbook. It's not technique—it's thermodynamics. Heat escapes to the air, warms the apparatus, and some fuel burns incompletely. Drag the slider to see how efficiency changes the energy picture.</p>
+  <p class="intro">Every fuel-burning experiment you run will give a value lower than the textbook. It's not technique—it's thermodynamics. Heat escapes to the air, warms the apparatus, and some fuel burns incompletely. Lower the efficiency and watch how the energy picture changes.</p>
 
   <div class="card">
     <div class="card-header">
-      <span class="card-label">Combustion Calorimeter</span>
+      <span class="card-label">Combustion calorimeter</span>
       <span class="live-tag" id="effTag">70% efficiency</span>
     </div>
-    <p class="card-hint">Move slider to adjust experimental efficiency · 0.5 g ethanol burned releases 14.9 kJ</p>
+    <p class="card-hint">Set the experimental efficiency · 0.5 g ethanol burned releases 14.8 kJ · 100 g water</p>
     
     <div class="canvas-wrapper">
       <canvas id="combustCanvas"></canvas>
@@ -337,7 +340,11 @@ canvas {
       </div>
       <div class="stat">
         <span class="stat-label">Lost energy</span>
-        <span class="stat-value" id="lostStat" style="color:var(--amb)">4.5 kJ</span>
+        <span class="stat-value" id="lostStat" style="color:var(--amb)">4.4 kJ</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Water temperature rise</span>
+        <span class="stat-value" id="dTStat" style="color:var(--acc)">24.8 °C</span>
       </div>
     </div>
   </div>
@@ -367,6 +374,7 @@ const effTag = document.getElementById('effTag');
 const canvasOverlay = document.getElementById('canvasOverlay');
 const usefulStat = document.getElementById('usefulStat');
 const lostStat = document.getElementById('lostStat');
+const dTStat = document.getElementById("dTStat");
 const toggleBtns = document.querySelectorAll('.toggle-btn');
 const knowdropText = document.getElementById('knowdropText');
 
@@ -376,11 +384,12 @@ const bctx = buf.getContext('2d', { alpha: false });
 
 let w, h, cx, cy;
 let efficiency = 70;
-const totalEnergy = 14.9;
+const WATER_G = 100; // g of water in the beaker
+const totalEnergy = (0.5 / 46.07) * 1364; // 0.5 g ethanol (M = 46.07 g/mol) × 1364 kJ/mol = 14.8 kJ
 
 const knowdrops = {
   sources: "Heat escapes to the surroundings because air is a poor insulator—convection currents carry energy away faster than you can measure it. The apparatus itself (beaker, stirrer, thermometer) absorbs energy, warming up instead of just the water. Evaporation from the water surface carries latent heat away. Incomplete combustion produces CO instead of CO₂, releasing less energy per mole of fuel. All four factors stack, so even careful technique gives you 60–80% of the published value. Assessment tasks want you to list these specific mechanisms, not just say \"heat loss.\"",
-  calculation: "Start with the theoretical value from data tables (e.g., ethanol = –1367 kJ/mol). Measure your temperature rise, calculate energy absorbed by water using Q = mcΔT. Divide your measured energy by the theoretical energy, multiply by 100 to get efficiency percentage. If you burned 0.5 g ethanol (0.0109 mol), theory says 14.9 kJ. If you measured 10.4 kJ, efficiency = (10.4/14.9) × 100 = 70%. The difference (4.5 kJ) went to surroundings, apparatus, evaporation, and incomplete combustion. Always show this calculation step-by-step in tests—they mark the method, not just the final %."
+  calculation: "Start with the theoretical value from data tables (e.g., ethanol = –1364 kJ/mol). Measure your temperature rise, calculate energy absorbed by water using Q = mcΔT. Divide your measured energy by the theoretical energy, multiply by 100 to get efficiency percentage. If you burned 0.5 g ethanol (0.5 ÷ 46.07 = 0.01085 mol), theory says 0.01085 × 1364 = 14.8 kJ. If you measured 10.4 kJ, efficiency = (10.4/14.8) × 100 = 70%. The difference (4.4 kJ) went to surroundings, apparatus, evaporation, and incomplete combustion. Always show this calculation step-by-step in tests—they mark the method, not just the final %."
 };
 
 function resize() {
@@ -568,6 +577,9 @@ function updateStats() {
   
   usefulStat.textContent = useful.toFixed(1) + ' kJ';
   lostStat.textContent = lost.toFixed(1) + ' kJ';
+  /* Q = mcΔT for 100 g of water (c = 4.18 J/g/°C), from the unrounded useful energy */
+  const dT = totalEnergy * (efficiency / 100) * 1000 / (WATER_G * 4.18);
+  dTStat.textContent = dT.toFixed(1) + " °C";
   effTag.textContent = efficiency + '% efficiency';
   canvasOverlay.textContent = `${efficiency}% to water · ${100 - efficiency}% lost to surroundings`;
 }

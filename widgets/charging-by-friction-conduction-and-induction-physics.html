@@ -1,0 +1,517 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Charging by friction, conduction and induction — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap");
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #3A6FC8;
+  --acc-rgb: 58, 111, 200;
+  --ag:  rgba(var(--acc-rgb),.7);
+  --ag1: rgba(var(--acc-rgb),.12);
+  --ag2: rgba(var(--acc-rgb),.45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+  --bg-top: #11160F;
+  --card-end: #0d100b;
+  --track: #23291f;
+  --black: #000;
+}
+body{margin:0;background:radial-gradient(120% 80% at 50% -10%,var(--bg-top) 0%,var(--bg) 55%);font-family:"Geist",sans-serif;color:var(--ink);min-height:100vh;padding:40px 16px 0;box-sizing:border-box}
+.chw{max-width:720px;margin:0 auto}
+.chw *{box-sizing:border-box}
+.chw .nc{text-transform:none}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.chw h1{font-family:"Geist",sans-serif;font-weight:800;font-size:clamp(26px,6.5vw,44px);letter-spacing:-0.03em;line-height:1.05;margin:0 0 14px}
+.chw .intro{font-size:15.5px;font-weight:400;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin:0 0 26px}
+.chw .card{background:linear-gradient(180deg,var(--bg2),var(--card-end));border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);margin-bottom:22px}
+.chw .card.sec{border-radius:14px}
+.chw .head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.chw .lbl{font-family:"JetBrains Mono",monospace;font-size:13px;text-transform:uppercase;color:var(--ink);letter-spacing:.04em}
+.chw .live{font-family:"JetBrains Mono",monospace;font-size:11px;text-transform:uppercase;color:var(--acc)}
+.chw .hint{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--ink-dim);margin:6px 0 12px;line-height:1.45}
+.chw .cv-wrap{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:var(--black);box-shadow:inset 0 0 0 1px var(--ag1)}
+.chw .cv-wrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.chw .ov{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);padding:9px 16px;font-family:"JetBrains Mono",monospace;font-size:14px;text-transform:uppercase;color:var(--acc);text-align:center;line-height:1.3}
+.chw .presets{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}
+.chw .tg{font-family:"JetBrains Mono",monospace;font-size:14.5px;padding:12px;border-radius:11px;background:var(--bg2);border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:all .2s;line-height:1.2}
+.chw .presets .tg{font-size:12.5px;padding:10px 6px}
+.chw .tg.on{background:rgba(var(--acc-rgb),.1);border:1px solid var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.chw .tg:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.chw .srow{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:16px 0 8px}
+.chw .slbl{font-family:"JetBrains Mono",monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);letter-spacing:.06em}
+.chw .sval{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--acc);text-align:right}
+.ch-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;background:linear-gradient(90deg,var(--acc) var(--fill,0%),var(--track) var(--fill,0%));outline:none;margin:6px 0}
+.ch-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:var(--bg);border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.ch-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--bg);border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.ch-slider:hover::-webkit-slider-thumb{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.ch-slider:hover::-moz-range-thumb{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.chw .ticks{display:flex;justify-content:space-between;gap:6px;font-family:"JetBrains Mono",monospace;font-size:9px;color:var(--ink-dim);margin-top:6px}
+.chw .ticks span{flex:1;text-align:center}
+.chw .ticks span:first-child{text-align:left}
+.chw .ticks span:last-child{text-align:right}
+.chw .stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;border-top:1px solid var(--line);margin-top:16px;padding-top:14px}
+.chw .stat .v{font-family:"JetBrains Mono",monospace;font-size:24px;font-weight:500;margin-top:4px}
+.chw .stat.a .v{color:var(--acc)}
+.chw .stat.b .v{color:var(--amb)}
+.chw .stat .s{font-family:"JetBrains Mono",monospace;font-size:10.5px;color:var(--ink-dim);margin-top:4px;line-height:1.45}
+.chw .tgl{display:flex;gap:10px}
+.chw .tgl .tg{flex:1}
+.chw .kd{border-top:1px solid var(--line);padding-top:16px;margin-top:16px;font-size:14.5px;font-weight:400;line-height:1.65;color:var(--ink);margin-bottom:0}
+.chw .know{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));border-radius:0 12px 12px 0;margin:0}
+.chw .ktag{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.chw .kdot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:chk 2.4s ease-in-out infinite}
+.chw .ktxt{font-family:"JetBrains Mono",monospace;font-size:13px;text-transform:uppercase;letter-spacing:0.15em;color:var(--acc)}
+.chw .kbody{font-family:"Geist",sans-serif;font-size:17.4px;font-weight:400;line-height:1.55;color:var(--ink);margin:0}
+@keyframes chk{0%,100%{opacity:1}50%{opacity:.45}}
+@media (prefers-reduced-motion:reduce){.chw .kdot{animation:none}.chw .tg{transition:none}}
+@media (max-width:520px){.chw .presets{grid-template-columns:1fr 1fr}}
+@media (max-width:420px){.chw .ov{font-size:11px;padding:6px 8px}.chw .stat .v{font-size:20px}.chw .tgl .tg{font-size:13px;padding:11px 8px}}
+</style>
+<div class="chw">
+  <h2 class="sr-only">Interactive: step through charging by friction, conduction and induction, and the build-up to a lightning strike, watching fixed positive charges and mobile electrons on each object</h2>
+  <h1>A positive rod gained nothing. It lost <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">electrons</span></h1>
+  <p class="intro">Rubbing, touching and simply holding a charged rod nearby all charge things the same way: electrons move, while the protons stay locked in their nuclei. A lightning strike starts with that same shuffle inside a storm cloud. Pick a method, then step through it and track where every electron goes.</p>
+
+  <div class="card">
+    <div class="head"><span class="lbl">Follow the electrons</span><span class="live" id="chLive">Friction · step 0 of 3</span></div>
+    <div class="hint">+ = proton charge fixed in an atom · glowing dot = one electron (free to move)</div>
+    <div class="cv-wrap">
+      <canvas id="chCv" aria-label="Objects drawn with fixed plus signs for positive charge and glowing dots for electrons. As the step slider moves, electrons travel between or within the objects and the net charge labels update."></canvas>
+      <div class="ov" id="chOv">Both neutral: electrons match protons</div>
+    </div>
+    <div class="presets" role="group" aria-label="Charging method">
+      <button class="tg md on" type="button" data-m="fr">Friction</button>
+      <button class="tg md" type="button" data-m="co">Conduction</button>
+      <button class="tg md" type="button" data-m="in">Induction</button>
+      <button class="tg md" type="button" data-m="li">Lightning</button>
+    </div>
+    <div class="srow"><span class="slbl">Step through the method</span><span class="sval" id="chSv">0 · start</span></div>
+    <input class="ch-slider" id="chS" type="range" min="0" max="3" step="1" value="0" aria-label="Step through the charging method">
+    <div class="ticks" id="chTicks"></div>
+    <div class="stats">
+      <div class="stat a"><div class="slbl">Electrons moved</div><div class="v" id="chMv">0</div><div class="s" id="chMvs">none yet</div></div>
+      <div class="stat b"><div class="slbl">Net charge</div><div class="v" id="chNet">0</div><div class="s" id="chNets">polythene rod · total stays 0</div></div>
+    </div>
+  </div>
+
+  <div class="card sec">
+    <div class="tgl">
+      <button class="tg kt on" id="chK1" type="button">Rub · touch · near</button>
+      <button class="tg kt" id="chK2" type="button">Storm to strike</button>
+    </div>
+    <p class="kd" id="chKd"></p>
+  </div>
+
+  <div class="know">
+    <div class="ktag"><span class="kdot"></span><span class="ktxt">Know This</span></div>
+    <p class="kbody">Solids become charged only by <span style="color:var(--acc)">gaining or losing electrons</span>: friction transfers them, <span style="color:var(--acc)">conduction</span> shares them and <span style="color:var(--acc)">induction</span> pushes them aside without contact.</p>
+  </div>
+</div>
+<script>
+(function(){
+  const CSS = getComputedStyle(document.documentElement);
+  const ACC = CSS.getPropertyValue("--acc").trim();
+  const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+  const AMB = CSS.getPropertyValue("--amb").trim();
+  const INK = CSS.getPropertyValue("--ink").trim();
+  const DIM = CSS.getPropertyValue("--ink-dim").trim();
+  function rgbOf(hex){ const m = hex.replace("#", ""); const n = parseInt(m.length === 3 ? m.split("").map(c => c + c).join("") : m, 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255].join(","); }
+  const AMBR = rgbOf(AMB), INKR = rgbOf(INK);
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const canvas = document.getElementById("chCv");
+  const ctx = canvas.getContext("2d");
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const buf = document.createElement("canvas"); const bctx = buf.getContext("2d");
+  const ov = document.getElementById("chOv"), live = document.getElementById("chLive");
+  const slider = document.getElementById("chS"), sv = document.getElementById("chSv"), ticks = document.getElementById("chTicks");
+  const oMv = document.getElementById("chMv"), oMvs = document.getElementById("chMvs");
+  const oNet = document.getElementById("chNet"), oNets = document.getElementById("chNets");
+  const kd = document.getElementById("chKd"), k1 = document.getElementById("chK1"), k2 = document.getElementById("chK2");
+  const mbtns = Array.from(document.querySelectorAll(".chw .md"));
+
+  /* ---------- per-method copy: one entry per step ---------- */
+  const META = {
+    fr: { name: "Friction", ticks: ["apart", "rub", "rub more", "pull apart"],
+      cap: ["Both neutral: electrons match protons", "Rubbing drags electrons onto the polythene", "More rubbing, more electrons cross", "Rod −6, wool +6: equal and opposite"],
+      mv: [0, 3, 6, 6], mvs: ["none yet", "wool → polythene", "wool → polythene", "wool → polythene"],
+      net: ["0", "−3", "−6", "−6"], nets: "polythene rod · wool is the opposite" },
+    co: { name: "Conduction", ticks: ["apart", "close", "touch", "separate"],
+      cap: ["Left sphere carries 6 extra electrons", "Close: right sphere’s electrons shift away", "Touching: the extra electrons spread over both", "Apart: each sphere keeps −3, same sign"],
+      mv: [0, 0, 3, 3], mvs: ["none yet", "shifted within, none crossed", "left → right on contact", "left → right on contact"],
+      net: ["0", "0", "−3", "−3"], nets: "right sphere · left is −6 → −3" },
+    in: { name: "Induction", ticks: ["start", "rod near", "earth on", "earth off", "rod away"],
+      cap: ["Negative rod, neutral metal sphere", "Rod near: electrons pushed to the far side", "Earthed: repelled electrons escape to ground", "Earth broken first, rod still near", "Rod gone: sphere is +4, spread evenly"],
+      mv: [0, 0, 4, 4, 4], mvs: ["none yet", "shifted within, none left", "sphere → earth", "sphere → earth", "sphere → earth"],
+      net: ["0", "0", "+4", "+4", "+4"], nets: "sphere · opposite sign to the rod" },
+    li: { name: "Lightning", ticks: ["updraft", "separate", "ground", "strike"],
+      cap: ["Updraft: ice particles collide, swap electrons", "Light + crystals rise, − graupel sinks", "Negative base induces + on the ground", "Air breaks down: electrons surge to ground"],
+      mv: [5, 5, 6, 5], mvs: ["swapped in collisions", "carried down on graupel", "ground electrons repelled", "cloud → ground in the strike"],
+      net: ["0", "−5", "−5", "0"], nets: "cloud base · total stays 0" }
+  };
+
+  const KD = {
+    a: `Every charge you can make on a solid comes from electrons moving: protons are locked inside nuclei, so a positive object has lost electrons and a negative one has gained them, and the total charge never changes. Friction: different materials hold their outer electrons with different strength, so rubbing polythene with wool lets the polythene pull electrons off the wool, and the rod ends exactly as negative as the wool is positive. Conduction: when a charged conductor touches a neutral one, the extra electrons repel each other and spread over both, so both end with the same sign, and two identical spheres share the charge equally. Induction: a charged rod held near a conductor never touches it, but its repulsion pushes the conductor’s electrons to the far side. Earth that far side, break the earth connection, then remove the rod, and the conductor keeps a charge of the opposite sign to the rod. On an insulator like polythene the extra charge stays where it was rubbed, while on a metal it spreads over the whole surface.`,
+    b: `Inside a thundercloud, strong updrafts make small ice crystals collide with heavier soft hail called graupel, and each collision transfers electrons, just as rubbing does. In the usual case the graupel gains electrons and sinks, while the lighter, now positive crystals are carried to the top, so the lower part of the cloud becomes strongly negative. That negative base repels electrons in the ground below, which is charging by induction: the ground under the cloud, and tall objects on it, become positive. When the electric field between cloud and ground grows strong enough (around 3 million volts per metre in dry air) the air is ionised and becomes a conducting channel. A faint stepped leader works down from the cloud, a streamer rises from a tree or building to meet it, and electrons surge down the channel in the bright flash, heating the air so fast it booms as thunder.`
+  };
+
+  /* ---------- geometry helpers ---------- */
+  let W = 0, H = 0, HD = 0, ER = 3;
+  const P = (x, y) => ({ x, y });
+  function ring(cx, cy, r, n, a0){ const out = []; for (let i = 0; i < n; i++){ const a = (a0 || 0) + i * Math.PI * 2 / n; out.push(P(cx + Math.cos(a) * r, cy + Math.sin(a) * r)); } return out; }
+  function arcPts(cx, cy, r, n, aMid, span){ const out = []; for (let i = 0; i < n; i++){ const a = n === 1 ? aMid : aMid - span / 2 + span * i / (n - 1); out.push(P(cx + Math.cos(a) * r, cy + Math.sin(a) * r)); } return out; }
+  const pair = (p) => P(p.x + ER * 1.9, p.y + ER * 1.5);
+
+  /* each keyframe: bodies (drawn shapes), ions (+, fixed in a body), els (electrons), labels */
+  function kfFriction(k){
+    const clothW = W * 0.40, clothH = HD * 0.28, cx0 = W * 0.36, cy0 = HD * 0.68;
+    const rodL = W * 0.42, rodT = Math.max(16, HD * 0.11);
+    const onCloth = k === 1 || k === 2;
+    const rx = onCloth ? cx0 + W * 0.05 : W * 0.72, ry = onCloth ? cy0 - clothH / 2 - rodT / 2 - 1 : HD * 0.22;
+    const bodies = [
+      { t: "cloth", x: cx0, y: cy0, w: clothW, h: clothH },
+      { t: "rod", x: rx, y: ry, w: rodL, h: rodT }
+    ];
+    const ions = [], els = [];
+    const clothIons = [];
+    for (let r = 0; r < 3; r++) for (let c = 0; c < 5; c++) clothIons.push(P(cx0 - clothW * 0.4 + c * clothW * 0.2, cy0 - clothH * 0.30 + r * clothH * 0.30));
+    const rodIons = []; for (let i = 0; i < 7; i++) rodIons.push(P(rx - rodL * 0.42 + i * rodL * 0.14, ry - rodT * 0.14));
+    clothIons.forEach(p => ions.push(p)); rodIons.forEach(p => ions.push(p));
+    const moved = k === 0 ? 0 : k === 1 ? 3 : 6;
+    /* excess electron sites along the rod underside */
+    const ex = []; for (let i = 0; i < 6; i++) ex.push(P(rx - rodL * 0.30 + i * rodL * 0.12, ry + rodT * 0.30));
+    const order = [0, 2, 4, 1, 3, 5];
+    clothIons.forEach((p, i) => { const j = order.indexOf(i); els.push(j > -1 && j < moved ? ex[[1, 3, 5, 0, 2, 4][j]] : pair(p)); });
+    rodIons.forEach(p => els.push(pair(p)));
+    const labels = [
+      { x: cx0, y: cy0 + clothH / 2 + HD * 0.07, s: "wool  " + (moved ? "+" + moved : "0"), c: moved ? AMB : DIM },
+      { x: rx, y: onCloth ? ry - rodT / 2 - HD * 0.06 : ry - rodT / 2 - HD * 0.07, s: "polythene  " + (moved ? "−" + moved : "0"), c: moved ? ACC : DIM }
+    ];
+    return { bodies, ions, els, labels };
+  }
+
+  function kfConduction(k){
+    const R = HD * 0.19, cy = HD * 0.40, gap = W * 0.05;
+    const bx = W * 0.66;
+    const ax = k === 0 || k === 3 ? W * 0.26 : k === 1 ? bx - 2 * R - gap : bx - 2 * R;
+    const bxx = k === 3 ? W * 0.74 : bx;
+    const bodies = [{ t: "sphere", x: ax, y: cy, r: R, base: HD * 0.92 }, { t: "sphere", x: bxx, y: cy, r: R, base: HD * 0.92 }];
+    const ions = [], els = [];
+    const aI = ring(ax, cy, R * 0.5, 8, Math.PI / 8), bI = ring(bxx, cy, R * 0.5, 8, Math.PI / 8);
+    aI.forEach(p => ions.push(p)); bI.forEach(p => ions.push(p));
+    aI.forEach(p => els.push(pair(p)));
+    /* 6 excess on sphere A */
+    let exA;
+    if (k === 0) exA = ring(ax, cy, R * 0.86, 6, -Math.PI / 2);
+    else if (k === 1) exA = arcPts(ax, cy, R * 0.86, 6, Math.PI, Math.PI * 0.95);
+    else if (k === 2) exA = arcPts(ax, cy, R * 0.86, 3, Math.PI, Math.PI * 0.55).concat(arcPts(bxx, cy, R * 0.86, 3, 0, Math.PI * 0.55));
+    else exA = ring(ax, cy, R * 0.86, 3, -Math.PI / 2).concat(ring(bxx, cy, R * 0.86, 3, -Math.PI / 2));
+    exA.forEach(p => els.push(p));
+    /* sphere B own 8 electrons: shift right when polarised (k=1) */
+    const shift = arcPts(bxx, cy, R * 0.86, 3, 0, Math.PI * 0.55);
+    const leftIdx = [3, 4, 5];
+    bI.forEach((p, i) => { const j = leftIdx.indexOf(i); els.push(k === 1 && j > -1 ? shift[j] : pair(p)); });
+    const qa = k < 2 ? "−6" : "−3", qb = k < 2 ? "0" : "−3";
+    const labels = [
+      { x: ax, y: cy - R - HD * 0.07, s: "metal " + qa, c: ACC },
+      { x: bxx, y: cy - R - HD * 0.07, s: (k === 1 ? "metal 0 (polarised)" : "metal " + qb), c: k >= 2 ? ACC : DIM }
+    ];
+    return { bodies, ions, els, labels };
+  }
+
+  function kfInduction(k){
+    const R = HD * 0.20, sx = W * 0.56, sy = HD * 0.40;
+    const rodL = W * 0.27, rodT = Math.max(14, HD * 0.10);
+    const near = k >= 1 && k <= 3;
+    const tip = near ? sx - R - W * 0.035 : W * 0.05 + rodL;
+    const rx = tip - rodL / 2, ry = sy;
+    const ex = P(W * 0.86, HD * 0.84);
+    const sw = k === 2 ? 1 : 0;
+    const bodies = [
+      { t: "rod", x: rx, y: ry, w: rodL, h: rodT },
+      { t: "sphere", x: sx, y: sy, r: R, base: HD * 0.92 },
+      { t: "earth", x: ex.x, y: ex.y, from: P(sx + R * Math.cos(-0.1), sy + R * Math.sin(-0.1)), sw }
+    ];
+    const ions = [], els = [];
+    const rI = []; for (let i = 0; i < 6; i++) rI.push(P(rx - rodL * 0.42 + i * rodL * 0.13, ry - rodT * 0.14));
+    const sI = ring(sx, sy, R * 0.55, 8, Math.PI / 8);
+    rI.forEach(p => ions.push(p)); sI.forEach(p => ions.push(p));
+    rI.forEach(p => els.push(pair(p)));
+    /* rod excess electrons stay on the rubbed tip (insulator) */
+    for (let i = 0; i < 4; i++) els.push(P(rx + rodL * 0.5 - rodT * 0.4 - i * rodL * 0.07, ry + (i % 2 ? rodT * 0.22 : -rodT * 0.22)));
+    /* sphere electrons: indices in ring order, left side = 2,3,4,5 (angles ~ 112..292 deg) */
+    const leftIdx = [2, 3, 4, 5];
+    const far = arcPts(sx, sy, R * 0.86, 4, 0, Math.PI * 0.7);
+    const earthPts = [P(ex.x - ER * 3, ex.y - ER * 2.4), P(ex.x + ER * 3, ex.y - ER * 2.4), P(ex.x - ER * 6, ex.y - ER * 2.4), P(ex.x + ER * 6, ex.y - ER * 2.4)];
+    const keepEven = [0, 2, 4, 6];
+    sI.forEach((p, i) => {
+      const j = leftIdx.indexOf(i);
+      if (j === -1){
+        if (k === 4){ /* right-hand electrons spread evenly round the sphere */
+          const rIdx = [0, 1, 6, 7].indexOf(i);
+          els.push(pair(sI[keepEven[rIdx]]));
+        } else els.push(pair(p));
+      } else {
+        if (k === 0) els.push(pair(p));
+        else if (k === 1) els.push(far[j]);
+        else els.push(earthPts[j]);
+      }
+    });
+    const qs = k <= 1 ? "0" : "+4";
+    const labels = [
+      { x: rx, y: ry - rodT / 2 - HD * 0.07, s: "rod −4", c: ACC },
+      { x: sx, y: sy - R - HD * 0.07, s: "sphere " + qs + (k === 1 ? " (polarised)" : ""), c: k >= 2 ? AMB : DIM },
+      { x: ex.x, y: ex.y + Math.max(HD * 0.1, 21), s: "earth", c: DIM }
+    ];
+    return { bodies, ions, els, labels };
+  }
+
+  function kfLightning(k){
+    const cx = W * 0.5, top = HD * 0.06, cw = W * 0.70, ch = HD * 0.36, gy = HD * 0.84;
+    const bodies = [{ t: "cloud", x: cx, y: top + ch / 2, w: cw, h: ch }, { t: "ground", y: gy }, { t: "tree", x: W * 0.62, y: gy }];
+    const ions = [], els = [];
+    /* 5 cloud pairs: + ice crystal and - graupel */
+    const mix = []; for (let i = 0; i < 5; i++) mix.push(P(cx - cw * 0.30 + i * cw * 0.15, top + ch * (i % 2 ? 0.58 : 0.42)));
+    const upper = []; for (let i = 0; i < 5; i++) upper.push(P(cx - cw * 0.28 + i * cw * 0.14, top + ch * 0.22));
+    const lower = []; for (let i = 0; i < 5; i++) lower.push(P(cx - cw * 0.22 + i * cw * 0.11, top + ch * 0.82));
+    mix.forEach((p, i) => ions.push(k === 0 ? P(p.x - ER * 2, p.y) : upper[i]));
+    /* ground: 6 surface + sites */
+    const gI = []; for (let i = 0; i < 6; i++) gI.push(P(W * 0.24 + i * W * 0.104, gy + HD * 0.035));
+    gI.forEach(p => ions.push(p));
+    const strike = P(W * 0.62, gy - HD * 0.17);
+    mix.forEach((p, i) => {
+      if (k === 0) els.push(P(p.x + ER * 2.2, p.y));
+      else if (k < 3) els.push(lower[i]);
+      else els.push(P(gI[i].x + ER * 1.9, gI[i].y + ER * 1.5));
+    });
+    gI.forEach((p, i) => els.push(k <= 1 ? pair(p) : P(p.x + (i - 2.5) * W * 0.012, gy + HD * 0.12)));
+    const labels = [];
+    if (k >= 1) labels.push({ x: cx + cw * 0.40, y: top + ch * 0.22, s: "+ top", c: AMB }, { x: cx + cw * 0.40, y: top + ch * 0.82, s: "− base", c: ACC });
+    if (k === 2) labels.push({ x: W * 0.12, y: gy + HD * 0.035, s: "+ ground", c: AMB });
+    return { bodies, ions, els, labels, bolt: k === 3 ? 1 : 0, strike };
+  }
+
+  const KF = { fr: kfFriction, co: kfConduction, in: kfInduction, li: kfLightning };
+
+  /* ---------- state + animation ---------- */
+  let mode = "fr", tgt = 0, cur = 0, from = 0, t0 = 0, raf = 0, kmode = "a";
+  const DUR = 900;
+  const ease = t => 1 - Math.pow(1 - t, 3);
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lp = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+
+  function snapshot(p){
+    const f = KF[mode];
+    const i0 = Math.floor(p), i1 = Math.min(i0 + 1, META[mode].ticks.length - 1), t = p - i0;
+    const A = f(i0), B = f(i1);
+    const s = { bodies: [], ions: A.ions.map((q, i) => lp(q, B.ions[i], t)), els: A.els.map((q, i) => lp(q, B.els[i], t)), labels: t < 0.5 ? A.labels : B.labels, t, i0, i1 };
+    A.bodies.forEach((b, i) => {
+      const c = B.bodies[i], o = Object.assign({}, b);
+      ["x", "y", "w", "h", "r", "sw"].forEach(key => { if (typeof b[key] === "number") o[key] = lerp(b[key], c[key], t); });
+      if (b.from) o.from = lp(b.from, c.from, t);
+      s.bodies.push(o);
+    });
+    /* friction: rod strokes back and forth while rubbing, then rests */
+    if (mode === "fr" && i0 === 1 && t > 0) s.bodies[1].x += Math.sin(t * Math.PI * 4) * W * 0.045 * (1 - t * 0.3);
+    if (mode === "li"){
+      s.bolt = lerp(A.bolt, B.bolt, t); s.strike = A.strike;
+      /* in the strike, electrons travel down the bolt channel, not through open air */
+      if (i0 === 2 && t > 0){
+        for (let i = 0; i < 5; i++){
+          const tt = Math.min(1, Math.max(0, (t - i * 0.06) / 0.7));
+          s.els[i] = tt < 0.55 ? lp(A.els[i], A.strike, tt / 0.55) : lp(A.strike, B.els[i], (tt - 0.55) / 0.45);
+        }
+      }
+    }
+    return s;
+  }
+
+  function roundRect(x, y, w, h, r){ ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+
+  function drawBody(b){
+    ctx.save();
+    if (b.t === "cloth"){
+      roundRect(b.x - b.w / 2, b.y - b.h / 2, b.w, b.h, 8);
+      ctx.fillStyle = "rgba(" + AMBR + ",0.07)"; ctx.fill();
+      ctx.strokeStyle = "rgba(" + AMBR + ",0.35)"; ctx.lineWidth = 1.4; ctx.stroke();
+      ctx.strokeStyle = "rgba(" + AMBR + ",0.10)"; ctx.lineWidth = 1;
+      for (let i = 1; i < 8; i++){ const yy = b.y - b.h / 2 + i * b.h / 8; ctx.beginPath(); ctx.moveTo(b.x - b.w / 2 + 6, yy); ctx.lineTo(b.x + b.w / 2 - 6, yy + 2); ctx.stroke(); }
+    } else if (b.t === "rod"){
+      roundRect(b.x - b.w / 2, b.y - b.h / 2, b.w, b.h, b.h / 2);
+      ctx.fillStyle = "rgba(" + INKR + ",0.08)"; ctx.fill();
+      ctx.strokeStyle = "rgba(" + INKR + ",0.45)"; ctx.lineWidth = 1.4; ctx.stroke();
+    } else if (b.t === "sphere"){
+      ctx.strokeStyle = "rgba(" + INKR + ",0.28)"; ctx.lineWidth = Math.max(3, b.r * 0.08);
+      ctx.beginPath(); ctx.moveTo(b.x, b.y + b.r); ctx.lineTo(b.x, b.base); ctx.stroke();
+      ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(b.x - b.r * 0.6, b.base); ctx.lineTo(b.x + b.r * 0.6, b.base); ctx.stroke();
+      const g = ctx.createRadialGradient(b.x - b.r * 0.35, b.y - b.r * 0.35, b.r * 0.1, b.x, b.y, b.r);
+      g.addColorStop(0, "rgba(" + INKR + ",0.20)"); g.addColorStop(1, "rgba(" + INKR + ",0.04)");
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = "rgba(" + INKR + ",0.55)"; ctx.lineWidth = 1.5; ctx.stroke();
+    } else if (b.t === "earth"){
+      const top = P(b.x, b.y - HD * 0.12);
+      ctx.strokeStyle = "rgba(" + INKR + ",0.55)"; ctx.lineWidth = 1.6;
+      /* fixed wire from the sphere to a switch, switch lever closes with sw */
+      const sp = P(b.x, b.y - HD * 0.24);
+      ctx.beginPath(); ctx.moveTo(b.from.x, b.from.y); ctx.lineTo(sp.x, sp.y); ctx.stroke();
+      const ang = -Math.PI / 2 + (1 - b.sw) * 0.75;
+      const len = HD * 0.12;
+      ctx.beginPath(); ctx.moveTo(top.x, top.y); ctx.lineTo(top.x + Math.cos(ang) * len, top.y + Math.sin(ang) * len); ctx.stroke();
+      ctx.beginPath(); ctx.arc(top.x, top.y, 2.5, 0, Math.PI * 2); ctx.arc(sp.x, sp.y, 2.5, 0, Math.PI * 2); ctx.fillStyle = "rgba(" + INKR + ",0.7)"; ctx.fill();
+      ctx.beginPath(); ctx.moveTo(top.x, top.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+      for (let i = 0; i < 3; i++){ const hw = HD * (0.07 - i * 0.022); ctx.beginPath(); ctx.moveTo(b.x - hw, b.y + i * 5); ctx.lineTo(b.x + hw, b.y + i * 5); ctx.stroke(); }
+    } else if (b.t === "cloud"){
+      ctx.fillStyle = "rgba(" + INKR + ",0.07)";
+      const blobs = [[-0.40, 0.12, 0.30], [-0.24, -0.06, 0.38], [-0.04, -0.16, 0.44], [0.18, -0.10, 0.40], [0.36, 0.06, 0.34], [0.46, 0.20, 0.24], [-0.47, 0.24, 0.22]];
+      ctx.beginPath();
+      blobs.forEach(q => { const rr = q[2] * b.h; ctx.moveTo(b.x + q[0] * b.w + rr, b.y + q[1] * b.h); ctx.arc(b.x + q[0] * b.w, b.y + q[1] * b.h, rr, 0, Math.PI * 2); });
+      ctx.moveTo(b.x - b.w * 0.42, b.y + b.h * 0.08); ctx.rect(b.x - b.w * 0.42, b.y + b.h * 0.08, b.w * 0.84, b.h * 0.36);
+      const cg = ctx.createLinearGradient(0, b.y - b.h * 0.6, 0, b.y + b.h * 0.45);
+      cg.addColorStop(0, "rgba(" + INKR + ",0.13)"); cg.addColorStop(1, "rgba(" + INKR + ",0.06)");
+      ctx.fillStyle = cg; ctx.fill("nonzero");
+    } else if (b.t === "ground"){
+      ctx.fillStyle = "rgba(" + AMBR + ",0.05)"; ctx.fillRect(0, b.y, W, H - b.y);
+      ctx.strokeStyle = "rgba(" + INKR + ",0.45)"; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(0, b.y); ctx.lineTo(W, b.y); ctx.stroke();
+    } else if (b.t === "tree"){
+      ctx.strokeStyle = "rgba(" + INKR + ",0.45)"; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(b.x, b.y); ctx.lineTo(b.x, b.y - HD * 0.17); ctx.stroke();
+      ctx.lineWidth = 1.6;
+      ctx.beginPath(); ctx.moveTo(b.x, b.y - HD * 0.10); ctx.lineTo(b.x - HD * 0.05, b.y - HD * 0.15); ctx.moveTo(b.x, b.y - HD * 0.08); ctx.lineTo(b.x + HD * 0.05, b.y - HD * 0.13); ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function drawBolt(s){
+    if (!s.bolt) return;
+    const a = P(W * 0.5, HD * 0.06 + HD * 0.36 * 0.95), b = s.strike;
+    const n = 9, pts = [a];
+    const jit = [0.6, -0.8, 0.9, -0.4, 0.7, -0.9, 0.5, -0.6];
+    for (let i = 1; i < n; i++){ const t = i / n; pts.push(P(lerp(a.x, b.x, t) + jit[i - 1] * W * 0.025, lerp(a.y, b.y, t))); }
+    pts.push(b);
+    const show = Math.min(1, s.bolt * 1.4);
+    const k = Math.max(1, Math.round(show * n));
+    ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.lineJoin = "round";
+    [[9, 0.12], [4, 0.35], [1.8, 0.95]].forEach(q => {
+      ctx.strokeStyle = q[0] > 2 ? "rgba(" + RGB + "," + (q[1] * s.bolt).toFixed(3) + ")" : "rgba(" + INKR + "," + (q[1] * s.bolt).toFixed(3) + ")";
+      ctx.lineWidth = q[0]; ctx.beginPath(); ctx.moveTo(pts[0].x, pts[0].y);
+      for (let i = 1; i <= k; i++) ctx.lineTo(pts[i].x, pts[i].y);
+      ctx.stroke();
+    });
+    ctx.restore();
+  }
+
+  function drawIon(p, faded){
+    const s = Math.max(3, ER * 1.25);
+    ctx.strokeStyle = "rgba(" + AMBR + "," + (faded ? 0.55 : 0.95) + ")"; ctx.lineWidth = Math.max(1.4, ER * 0.5);
+    ctx.beginPath(); ctx.moveTo(p.x - s, p.y); ctx.lineTo(p.x + s, p.y); ctx.moveTo(p.x, p.y - s); ctx.lineTo(p.x, p.y + s); ctx.stroke();
+  }
+  function drawEl(p){
+    ctx.save(); ctx.globalCompositeOperation = "lighter";
+    const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, ER * 3);
+    g.addColorStop(0, "rgba(" + RGB + ",0.55)"); g.addColorStop(1, "rgba(" + RGB + ",0)");
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(p.x, p.y, ER * 3, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+    ctx.fillStyle = ACC; ctx.beginPath(); ctx.arc(p.x, p.y, ER, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = "rgba(" + INKR + ",0.85)"; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(p.x - ER * 0.55, p.y); ctx.lineTo(p.x + ER * 0.55, p.y); ctx.stroke();
+  }
+  function label(l, fs){
+    ctx.save(); ctx.font = "500 " + fs + "px JetBrains Mono, monospace"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    const tw = ctx.measureText(l.s).width;
+    const x = Math.max(tw / 2 + 6, Math.min(W - tw / 2 - 6, l.x));
+    ctx.fillStyle = "rgba(0,0,0,0.55)"; ctx.fillRect(x - tw / 2 - 5, l.y - fs * 0.75, tw + 10, fs * 1.5);
+    ctx.fillStyle = l.c; ctx.fillText(l.s, x, l.y); ctx.restore();
+  }
+
+  function resize(){
+    const rect = canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return; /* f27c: refuse a zero measurement, keep the last good size */
+    canvas.width = Math.round(rect.width * dpr); canvas.height = Math.round(rect.height * dpr);
+    buf.width = canvas.width; buf.height = canvas.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    draw();
+  }
+
+  function draw(){
+    const w = canvas.width / dpr, h = canvas.height / dpr;
+    if (!w || !h) return;
+    W = w; H = h;
+    const ovH = ov.offsetHeight || 36;
+    HD = h - ovH;
+    ER = Math.max(2.4, Math.min(5, HD * 0.017));
+    const fs = Math.max(9, Math.min(13, w * 0.02));
+    ctx.clearRect(0, 0, w, h);
+    const s = snapshot(cur);
+    s.bodies.forEach(drawBody);
+    drawBolt(s);
+    s.ions.forEach(p => drawIon(p, false));
+    s.els.forEach(drawEl);
+    s.labels.forEach(l => label(l, fs));
+
+    /* BLOOM */
+    bctx.setTransform(1, 0, 0, 1, 0, 0); bctx.clearRect(0, 0, buf.width, buf.height);
+    if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+    ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
+    (buf.width&&buf.height)&&ctx.drawImage(buf, 0, 0, w, h); ctx.restore();
+    /* VIGNETTE */
+    const vig = ctx.createRadialGradient(w / 2, h / 2, h * 0.28, w / 2, h / 2, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
+  }
+
+  function frame(now){
+    const t = Math.min(1, (now - t0) / DUR);
+    cur = lerp(from, tgt, ease(t));
+    draw();
+    if (t < 1) raf = requestAnimationFrame(frame); else { cur = tgt; draw(); raf = 0; }
+  }
+  function goTo(step){
+    tgt = step;
+    if (reduce){ cur = tgt; draw(); return; }
+    from = cur; t0 = performance.now();
+    if (!raf) raf = requestAnimationFrame(frame);
+  }
+
+  function fill(){ const mx = parseFloat(slider.max); slider.style.setProperty("--fill", (parseFloat(slider.value) / mx * 100) + "%"); }
+  function readouts(){
+    const m = META[mode], k = parseInt(slider.value, 10), n = m.ticks.length - 1;
+    ov.textContent = m.cap[k];
+    live.textContent = m.name + " · step " + k + " of " + n;
+    sv.textContent = k + " · " + m.ticks[k];
+    oMv.textContent = String(m.mv[k]); oMvs.textContent = m.mvs[k];
+    oNet.textContent = m.net[k] === "0" ? "0" : m.net[k] + "e"; oNets.textContent = m.nets;
+    fill();
+  }
+  function setMode(m){
+    mode = m;
+    mbtns.forEach(b => b.classList.toggle("on", b.dataset.m === m));
+    slider.max = String(META[m].ticks.length - 1); slider.value = "0";
+    ticks.innerHTML = "";
+    META[m].ticks.forEach(t => { const sp = document.createElement("span"); sp.textContent = t; ticks.appendChild(sp); });
+    if (raf){ cancelAnimationFrame(raf); raf = 0; }
+    cur = 0; tgt = 0; from = 0;
+    readouts(); draw();
+  }
+  function setK(which){ kmode = which; k1.classList.toggle("on", which === "a"); k2.classList.toggle("on", which === "b"); kd.textContent = KD[which]; }
+
+  slider.addEventListener("input", () => { readouts(); goTo(parseInt(slider.value, 10)); });
+  mbtns.forEach(b => b.addEventListener("click", () => { setMode(b.dataset.m); if (b.dataset.m === "li") setK("b"); }));
+  k1.addEventListener("click", () => setK("a"));
+  k2.addEventListener("click", () => setK("b"));
+  window.addEventListener("resize", resize);
+  if (window.ResizeObserver) new ResizeObserver(() => resize()).observe(canvas);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => draw());
+
+  setK("a");
+  setMode("fr");
+  resize();
+})();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'charging-by-friction-conduction-and-induction'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

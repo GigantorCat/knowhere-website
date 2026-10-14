@@ -350,14 +350,14 @@ canvas {
 
   <h1>A single swapped letter can be harmless — a single <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">missing chromosome</span> never is</h1>
   
-  <p class="intro">Mutations span five orders of magnitude — from one nucleotide to entire chromosomes — and consequence scales with the size of the edit. Move the slider to explore the mutation hierarchy and watch how the same DNA sequence responds to changes at different scales.</p>
+  <p class="intro">Mutations span eight orders of magnitude — from one nucleotide to entire chromosomes — and consequence scales with the size of the edit. Raise the mutation scale to explore the mutation hierarchy and watch how the same DNA sequence responds to changes at different scales.</p>
 
   <div class="card">
     <div class="card-header">
       <div class="card-label">Mutation Scale Simulator</div>
       <div class="live-tag" id="mutationType">Point • Substitution</div>
     </div>
-    <div class="card-hint">Drag to increase mutation scale from single base to whole chromosome</div>
+    <div class="card-hint">Increase mutation scale from single base to whole chromosome</div>
     
     <div class="canvas-wrapper">
       <canvas id="mutCanvas"></canvas>
@@ -370,7 +370,7 @@ canvas {
       </div>
       <input type="range" min="0" max="4" step="1" value="0" class="mut-slider" id="mutSlider">
       <div class="tick-labels">
-        <span class="tick-label">Point</span>
+        <span class="tick-label">Substitution</span>
         <span class="tick-label">Frameshift</span>
         <span class="tick-label">Segment</span>
         <span class="tick-label">Chromosome</span>
@@ -393,7 +393,7 @@ canvas {
   <div class="toggle-card">
     <div class="toggle-buttons">
       <button class="toggle-btn active" data-mode="outcomes">Substitution Outcomes</button>
-      <button class="toggle-btn" data-mode="frameshift">Frameshift vs Point</button>
+      <button class="toggle-btn" data-mode="frameshift">Frameshift vs substitution</button>
     </div>
     
     <div class="knowdrop-divider">
@@ -438,7 +438,7 @@ let mutationLevel = 0;
 
 const knowdropContent = {
   outcomes: "Point mutations substitute one nucleotide for another, but the genetic code's redundancy means outcome varies wildly. A silent mutation changes the codon yet codes for the same amino acid due to wobble pairing — no functional consequence. A missense mutation swaps in a different amino acid, which may or may not disrupt protein function depending on location and chemical similarity. A nonsense mutation introduces a premature stop codon, truncating the protein and usually destroying function entirely. Same mutation type, three radically different severities — all determined by how the new codon translates through the codon table.",
-  frameshift: "Insertions and deletions shift the reading frame for every codon downstream of the mutation site, which is why they hit harder than point mutations. While a substitution affects one codon, a frameshift transforms the entire downstream sequence into gibberish — every amino acid from the mutation point onward is wrong. The protein either terminates early at a newly-created stop codon or extends past its normal endpoint, producing a completely non-functional product. That's why even a single-base indel can be catastrophic while a single substitution might be silent — it's not the size of the DNA change, it's whether the triplet reading frame survives."
+  frameshift: "Insertions and deletions shift the reading frame for every codon downstream of the mutation site, which is why they hit harder than substitutions. While a substitution affects one codon, a frameshift transforms the entire downstream sequence into gibberish — every amino acid from the mutation point onward is wrong. The protein either terminates early at a newly-created stop codon or extends past its normal endpoint, producing a completely non-functional product. That's why even a single-base indel can be catastrophic while a single substitution might be silent — it's not the size of the DNA change, it's whether the triplet reading frame survives."
 };
 
 function resize() {
@@ -465,14 +465,14 @@ function updateMutation(level) {
     },
     {
       type: 'Frameshift • Deletion',
-      tag: 'Reading frame shifted → All codons wrong',
-      bases: '1–3',
+      tag: 'Delete 1 base (not ×3) → every codon downstream shifts',
+      bases: '1',
       impact: 'Severe',
       change: () => { mutatedSequence.splice(5, 1); }
     },
     {
       type: 'Chromosomal • Inversion',
-      tag: 'Segment flipped → Gene order reversed',
+      tag: 'Segment flipped (shown at base scale) → gene order reversed',
       bases: '1000s',
       impact: 'Moderate',
       change: () => {

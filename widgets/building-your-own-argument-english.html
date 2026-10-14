@@ -163,6 +163,27 @@ h1 {
   border-radius: 3px;
 }
 
+.passage-wrapper .step {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  color: #0B0D0C;
+  background: var(--amb);
+  border-radius: 6px;
+  padding: 1px 6px;
+  margin-right: 5px;
+  text-shadow: none;
+  vertical-align: 1px;
+  white-space: nowrap;
+}
+.path { display: block; width: 100%; height: auto; margin: 0 0 14px; }
+.path .link { stroke: var(--line, #262B26); stroke-width: 2; }
+.path .node circle { fill: rgba(237,237,232,0.05); stroke: var(--line, #262B26); stroke-width: 1.5; transition: fill .3s, stroke .3s; }
+.path .node text { fill: var(--ink-dim); font-family: 'JetBrains Mono', monospace; text-anchor: middle; dominant-baseline: middle; transition: fill .3s; }
+.path .node .num { font-size: 15px; }
+.path .node .nm { font-size: 12px; }
+.path .node.on circle { stroke-width: 2.5; }
+.path .node.on text { fill: var(--ink); }
 .lens-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -324,10 +345,10 @@ h1 {
 
   <div class="card">
     <div class="card-header">
-      <span class="card-label">Argument Anatomy</span>
+      <span class="card-label">Argument anatomy</span>
       <span class="live-tag" id="lensName">Select a lens</span>
     </div>
-    <p class="card-hint">Tap a lens to highlight its function in the argument below</p>
+    <p class="card-hint">Pick a lens to highlight its function in the argument below</p>
 
     <div class="lens-grid">
       <button class="lens-btn" data-lens="contention">Contention</button>
@@ -335,6 +356,17 @@ h1 {
       <button class="lens-btn" data-lens="evidence">Evidence</button>
       <button class="lens-btn" data-lens="counter">Counter-arg</button>
     </div>
+
+    <svg class="path" id="argPath" viewBox="0 0 600 82" role="img" aria-label="Argument path: seven steps in order, claim, reason, evidence, reason, concession, solution, claim. The active lens lights its steps.">
+      <line class="link" x1="44" y1="30" x2="556" y2="30"/>
+      <g class="node" data-step="0"><circle cx="44.0" cy="30" r="20"/><text class="num" x="44.0" y="31">1</text><text class="nm" x="44.0" y="68">Claim</text></g>
+      <g class="node" data-step="1"><circle cx="129.3" cy="30" r="20"/><text class="num" x="129.3" y="31">2</text><text class="nm" x="129.3" y="68">Reason</text></g>
+      <g class="node" data-step="2"><circle cx="214.7" cy="30" r="20"/><text class="num" x="214.7" y="31">3</text><text class="nm" x="214.7" y="68">Evidence</text></g>
+      <g class="node" data-step="3"><circle cx="300.0" cy="30" r="20"/><text class="num" x="300.0" y="31">4</text><text class="nm" x="300.0" y="68">Reason</text></g>
+      <g class="node" data-step="4"><circle cx="385.3" cy="30" r="20"/><text class="num" x="385.3" y="31">5</text><text class="nm" x="385.3" y="68">Concession</text></g>
+      <g class="node" data-step="5"><circle cx="470.6" cy="30" r="20"/><text class="num" x="470.6" y="31">6</text><text class="nm" x="470.6" y="68">Solution</text></g>
+      <g class="node" data-step="6"><circle cx="556.0" cy="30" r="20"/><text class="num" x="556.0" y="31">7</text><text class="nm" x="556.0" y="68">Claim</text></g>
+    </svg>
 
     <div class="passage-wrapper" id="passage">
       <span data-type="contention">Social media isn't eroding democracy — it's exposing cracks that were always there.</span> <span data-type="sequence">For decades, we trusted gatekeepers to filter public discourse, but that trust was built on limited access, not genuine consensus.</span> <span data-type="evidence">The Digital News Report: Australia 2025 found that only 43% of Australians trust most news most of the time.</span> <span data-type="sequence">When platforms democratised publishing, they didn't create division — they revealed it.</span> <span data-type="counter">Critics argue that algorithms amplify extreme voices, and they're right — but suppressing those voices doesn't eliminate the beliefs, it just drives them underground.</span> <span data-type="sequence">The solution isn't less access but better literacy: teaching audiences to interrogate sources, recognise bias, and demand accountability from all publishers, traditional or otherwise.</span> <span data-type="contention">If democracy feels fragile now, perhaps it's because we're finally seeing it clearly.</span>
@@ -344,11 +376,11 @@ h1 {
 
     <div class="stat-row">
       <div class="stat">
-        <div class="stat-label">Active Lens</div>
+        <div class="stat-label">Active lens</div>
         <div class="stat-value" id="lensLabel">—</div>
       </div>
       <div class="stat">
-        <div class="stat-label">Instances Lit</div>
+        <div class="stat-label">Instances lit</div>
         <div class="stat-value" id="instanceCount">0</div>
       </div>
     </div>
@@ -380,8 +412,8 @@ const lenses = {
   },
   sequence: {
     name: 'Sequence',
-    annotation: 'The logical progression that builds momentum. Each highlighted sentence advances the argument by adding complexity: establishing context, then revealing consequence, then proposing solution. The order isn\'t arbitrary — it creates a path readers can follow.',
-    count: 3
+    annotation: "Sequence is the order of the whole argument, step by step. 1 Claim first, so the reader knows where you are heading. 2 Reason: the history of trusting gatekeepers sets up the problem. 3 Evidence straight after the reason it backs, so the figure lands on a point. 4 The reason sharpened by that evidence: platforms revealed division rather than created it. 5 Concession only once the case is built, so admitting a point does not sink it. 6 Solution next, answering the concession. 7 Claim restated last, so the reader leaves with your position.",
+    count: 7
   },
   evidence: {
     name: 'Evidence',
@@ -404,6 +436,21 @@ const instanceCount = document.getElementById('instanceCount');
 
 let activeLens = null;
 
+/* The Sequence lens numbers every step of the whole argument; the path above the passage shows the same order */
+const STEP_NAMES = ["Claim", "Reason", "Evidence", "Reason", "Concession", "Solution", "Claim restated"];
+const STEP_COL = { contention: "#BB6FE2", sequence: "#FAC775", evidence: "#BB6FE2", counter: "#FF9090" };
+const pathNodes = document.querySelectorAll('#argPath .node');
+function clearSteps() { passageSpans.forEach(span => { const c = span.querySelector('.step'); if (c) c.remove(); }); }
+function drawPath(lens) {
+  pathNodes.forEach((g, i) => {
+    const type = passageSpans[i] ? passageSpans[i].dataset.type : "";
+    const on = lens === 'sequence' || (lens && type === lens);
+    g.classList.toggle('on', Boolean(on));
+    g.querySelector('circle').style.fill = on ? STEP_COL[type] + "40" : "";
+    g.querySelector('circle').style.stroke = on ? STEP_COL[type] : "";
+  });
+}
+
 lensButtons.forEach(btn => {
   btn.addEventListener('click', () => {
     const lens = btn.dataset.lens;
@@ -419,6 +466,8 @@ lensButtons.forEach(btn => {
       annotation.textContent = 'Choose a lens above to see how each element functions in this argument.';
       lensLabel.textContent = '—';
       instanceCount.textContent = '0';
+      clearSteps();
+      drawPath(null);
       return;
     }
 
@@ -435,10 +484,20 @@ lensButtons.forEach(btn => {
     instanceCount.textContent = lensData.count;
 
     // Apply highlights
-    passageSpans.forEach(span => {
+    clearSteps();
+    drawPath(lens);
+    passageSpans.forEach((span, i) => {
       span.classList.remove('highlight-contention', 'highlight-sequence', 'highlight-evidence', 'highlight-counter');
       
-      if (span.dataset.type === lens) {
+      if (lens === 'sequence') {
+        /* every step lit in its own colour and numbered in order */
+        span.classList.remove('dim');
+        span.classList.add('highlight-' + span.dataset.type);
+        const chip = document.createElement('b');
+        chip.className = 'step';
+        chip.textContent = (i + 1) + ' ' + STEP_NAMES[i];
+        span.insertBefore(chip, span.firstChild);
+      } else if (span.dataset.type === lens) {
         span.classList.remove('dim');
         span.classList.add(`highlight-${lens}`);
       } else {

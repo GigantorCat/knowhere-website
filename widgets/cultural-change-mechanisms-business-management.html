@@ -338,11 +338,11 @@ canvas {
     
     <div class="canvas-wrapper">
       <canvas id="canvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">Cultural signal strength: 65%</div>
+      <div class="canvas-overlay" id="canvasOverlay">Cultural signal strength: 72%</div>
     </div>
 
     <div class="slider-row">
-      <label class="slider-label" for="alignmentSlider">Leadership commitment intensity</label>
+      <label class="slider-label" for="alignmentSlider">Leadership commitment intensity <b id="commitV">65</b>%</label>
       <input type="range" id="alignmentSlider" class="ccm-slider" min="0" max="100" value="65" step="1">
       <div class="tick-labels">
         <span>Symbolic only</span>
@@ -353,11 +353,11 @@ canvas {
     <div class="stat-row">
       <div class="stat">
         <div class="stat-label">Signal strength</div>
-        <div class="stat-value primary" id="strengthStat">65%</div>
+        <div class="stat-value primary" id="strengthStat">72%</div>
       </div>
       <div class="stat">
-        <div class="stat-label">Time to embed</div>
-        <div class="stat-value secondary" id="timeStat">18mo</div>
+        <div class="stat-label">Time to embed (model)</div>
+        <div class="stat-value secondary" id="timeStat">19mo</div>
       </div>
     </div>
   </div>
@@ -394,6 +394,7 @@ const strengthStat = document.getElementById('strengthStat');
 const timeStat = document.getElementById('timeStat');
 const slider = document.getElementById('alignmentSlider');
 const knowdrop = document.getElementById('knowdrop');
+const commitV = document.getElementById('commitV');
 const toggleBtns = document.querySelectorAll('.toggle-btn');
 
 const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -426,8 +427,9 @@ const nodes = [
 ];
 
 const knowdropText = {
+  0: "With no mechanism active, the announced values are words only. Employees see nothing in who is hired, rewarded or dismissed that confirms the stated culture, so behaviour does not change. Leadership commitment on its own gives a weak signal because staff have no daily evidence that the words carry consequences.",
   1: "With only one mechanism active, employees receive mixed signals about cultural priorities. Official values stated in meetings contradict the behaviours that actually get rewarded, hired, or tolerated. Rational employees trust actions over words, so they adapt to the real incentive structure rather than the announced culture. Culture change stalls because daily experiences don't reinforce the stated direction. Single-mechanism interventions, like redesigning office space without changing reward systems, create cynicism when employees notice the disconnect.",
-  2: "Two aligned mechanisms create stronger signals but still leave gaps where old culture persists. Employees notice partial consistency — perhaps hiring filters for new values while reward systems still incentivize legacy behaviours. This creates confusion and political tension as different groups interpret which signals to follow. Some staff adopt new behaviours in hiring contexts but revert to old patterns when performance reviews use traditional metrics. Partial alignment is better than none, but the remaining contradictions slow adoption and allow cultural pockets to resist change.",
+  2: "Two aligned mechanisms create stronger signals but still leave gaps where old culture persists. Employees notice partial consistency — perhaps hiring filters for new values while reward systems still incentivise legacy behaviours. This creates confusion and political tension as different groups interpret which signals to follow. Some staff adopt new behaviours in hiring contexts but revert to old patterns when performance reviews use traditional metrics. Partial alignment is better than none, but the remaining contradictions slow adoption and allow cultural pockets to resist change.",
   3: "Three mechanisms working together reach critical mass for culture shift. Employees encounter consistent signals across most contexts — who gets hired, who gets promoted, who gets dismissed all reinforce the same values. The remaining gap (often physical space or symbolic actions) matters less because major touchpoints align. Trust in leadership messaging increases as staff verify that stated values match real consequences. Cultural change accelerates as new norms become socially reinforced through peer observation. Most organisations need this level of consistency to overcome inertia built over years.",
   4: "When all four mechanisms align, employees receive consistent signals about which behaviours truly matter. Hiring decisions filter for cultural fit, demonstrating entry standards. Reward systems reinforce desired behaviours through tangible recognition. Dismissal decisions define hard boundaries by showing which violations trigger consequences. Physical space design embeds cultural messages in daily environments, like open floor plans signalling transparency values or removing executive perks demonstrating equality. Complete alignment creates social proof as employees observe consistent patterns across all contexts, accelerating adoption through both rational assessment and social conformity pressures."
 };
@@ -440,7 +442,6 @@ function resize() {
   buf.width = canvas.width;
   buf.height = canvas.height;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  bctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 
 function updateSliderFill() {
@@ -450,9 +451,9 @@ function updateSliderFill() {
 
 function updateStats() {
   const activeCount = Object.values(mechanisms).filter(Boolean).length;
-  const baseStrength = (activeCount / 4) * 100;
+  const baseStrength = (activeCount / 4) * 70;
   const commitmentBoost = commitment * 0.3;
-  const totalStrength = Math.min(100, baseStrength + commitmentBoost);
+  const totalStrength = baseStrength + commitmentBoost;
   
   strengthStat.textContent = Math.round(totalStrength) + '%';
   canvasOverlay.textContent = `Cultural signal strength: ${Math.round(totalStrength)}%`;
@@ -481,9 +482,9 @@ function draw() {
   pulsePhase = (time * 1.2) % (Math.PI * 2);
   
   const activeCount = Object.values(mechanisms).filter(Boolean).length;
-  const baseStrength = (activeCount / 4);
+  const baseStrength = (activeCount / 4) * 0.7;
   const commitmentFactor = commitment / 100;
-  const totalStrength = Math.min(1, baseStrength + commitmentFactor * 0.3);
+  const totalStrength = baseStrength + commitmentFactor * 0.3;
   
   // Draw connection beams from active nodes to center
   nodes.forEach((node, i) => {
@@ -511,7 +512,7 @@ function draw() {
   });
   
   // Draw central convergence glow
-  if (activeCount > 0) {
+  if (totalStrength > 0) {
     const centralGlow = ctx.createRadialGradient(cx, cy, 0, cx, cy, h * 0.35);
     centralGlow.addColorStop(0, `rgba(232,93,151,${0.7 * totalStrength})`);
     centralGlow.addColorStop(0.4, `rgba(232,93,151,${0.35 * totalStrength})`);
@@ -597,6 +598,7 @@ function draw() {
 
 slider.addEventListener('input', (e) => {
   commitment = parseInt(e.target.value);
+  commitV.textContent = commitment;
   updateSliderFill();
   updateStats();
 });

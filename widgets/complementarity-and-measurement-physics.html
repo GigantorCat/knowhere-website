@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Complementarity and Measurement — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Complementarity and measurement — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -316,7 +316,7 @@ canvas {
   
   <h1>Looking at an electron <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">changes</span> it</h1>
   
-  <p class="intro">The double-slit experiment reveals that measurement isn't passive observation—it's an interaction that fundamentally alters quantum behaviour. When you detect which slit an electron passes through, the wave interference pattern vanishes and particles appear. Turn off the detector and the pattern returns, showing each electron somehow passes through both slits. Drag the slider to control detection strength.</p>
+  <p class="intro">The double-slit experiment reveals that measurement isn't passive observation—it's an interaction that fundamentally alters quantum behaviour. When you detect which slit an electron passes through, the interference stripes vanish and the hits spread into one smooth band. Turn off the detector and the stripes return, showing each electron somehow passes through both slits. Raise the detection strength and watch the stripes fade, and switch between Wave view and Particle view to see the same experiment two ways.</p>
 
   <div class="card">
     <div class="card-header">
@@ -358,7 +358,7 @@ canvas {
       <button class="toggle-btn" data-mode="particle">Particle view</button>
     </div>
     <div class="knowdrop" id="knowdropText">
-      When no detector is active, each electron exists in a superposition state—it genuinely passes through both slits simultaneously as a probability wave. The two paths interfere with each other, creating the characteristic bands of light and dark on the screen. This isn't about ignorance of which slit it "really" went through; the electron doesn't have a definite path until measurement forces it to choose one. Quantum mechanics predicts that even if you send electrons one at a time, hours apart, the pattern still builds up—each individual electron interferes with itself.
+      Wave view shows the electron as a wave. With the detector off, the wave goes through both slits and the two parts overlap on the screen: where crest meets crest you get a bright stripe, where crest meets trough a dark one. This is not ignorance about which slit it "really" went through: with no path on record there is no single path. Fire electrons one at a time, hours apart, and the stripes still build up, so each electron interferes with itself. Turn the detector up and the stripes lose contrast; only at full detection are they gone, leaving one smooth band.
     </div>
   </div>
 
@@ -373,28 +373,78 @@ canvas {
 </div>
 
 <script>
-const canvas = document.getElementById('dseCanvas');
-const ctx = canvas.getContext('2d', { alpha: false });
-const slider = document.getElementById('detectorSlider');
-const liveTag = document.getElementById('liveTag');
-const overlayTag = document.getElementById('overlayTag');
-const visibilityStat = document.getElementById('visibilityStat');
-const pathInfoStat = document.getElementById('pathInfoStat');
-const toggleBtns = document.querySelectorAll('.toggle-btn');
-const knowdropText = document.getElementById('knowdropText');
+const canvas = document.getElementById("dseCanvas");
+const ctx = canvas.getContext("2d", { alpha: false });
+const slider = document.getElementById("detectorSlider");
+const liveTag = document.getElementById("liveTag");
+const overlayTag = document.getElementById("overlayTag");
+const visibilityStat = document.getElementById("visibilityStat");
+const pathInfoStat = document.getElementById("pathInfoStat");
+const toggleBtns = document.querySelectorAll(".toggle-btn");
+const knowdropText = document.getElementById("knowdropText");
 
 const dpr = Math.min(window.devicePixelRatio || 1, 2);
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d', { alpha: false });
+const buf = document.createElement("canvas");
+const bctx = buf.getContext("2d", { alpha: false });
 
+/* Model: D = path info (which-slit distinguishability) = slider / 100.
+   Fringe visibility for a pure state: V = sqrt(1 - D^2)  (V^2 + D^2 <= 1, equality here).
+   Screen intensity: I(y) = envelope(y) * (1 + V cos(2 pi y / fringe period)) / 2 */
 let detection = 0;
+let visibility = 1;
 let time = 0;
-let viewMode = 'wave';
+let viewMode = "wave";
+let hits = [];
+let emitClock = 0;
+let flashes = [];
 
 const knowdropContent = {
-  wave: "When no detector is active, each electron exists in a superposition state—it genuinely passes through both slits simultaneously as a probability wave. The two paths interfere with each other, creating the characteristic bands of light and dark on the screen. This isn't about ignorance of which slit it \"really\" went through; the electron doesn't have a definite path until measurement forces it to choose one. Quantum mechanics predicts that even if you send electrons one at a time, hours apart, the pattern still builds up—each individual electron interferes with itself.",
-  particle: "When you turn on the detector to measure which slit the electron passes through, you're forcing it to behave as a localized particle with a definite trajectory. The interference fringes vanish and you see one smooth band across the screen—the two single-slit patterns simply add together, with no bright and dark bands, exactly what you'd expect from classical particles. The measurement doesn't just reveal a pre-existing path; it actively collapses the superposition and creates the path. This complementarity is fundamental: you can observe wave behaviour or particle behaviour, but attempting to observe both simultaneously destroys what you're trying to see. The universe won't let you have complete information about incompatible properties."
+  wave: "Wave view shows the electron as a wave. With the detector off, the wave goes through both slits and the two parts overlap on the screen: where crest meets crest you get a bright stripe, where crest meets trough a dark one. This is not ignorance about which slit it \"really\" went through: with no path on record there is no single path. Fire electrons one at a time, hours apart, and the stripes still build up, so each electron interferes with itself. Turn the detector up and the stripes lose contrast; only at full detection are they gone, leaving one smooth band.",
+  particle: "Particle view shows what a real screen records: every electron lands as one dot, at one spot. Each landing is random, but the dots are not: with the detector off they pile up into stripes, the pattern the wave predicts. Turn the detector up and each electron leaves a record of its slit; the stripes fade, and at full detection the dots spread into one smooth band. Partial detection gives fainter stripes, not two patterns side by side: the sharper the path record (Path info, D), the lower the stripe contrast (Visibility, V), with V² + D² ≤ 1. It is the record that matters, not a clumsy knock: any device that stores which way the electron went removes the stripes."
 };
+
+function geom() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  const cr = canvas.getBoundingClientRect(), orc = overlayTag.getBoundingClientRect();
+  let bottom = h;
+  if (orc.height && orc.top < cr.bottom && orc.bottom > cr.top + cr.height / 2) bottom = h - (cr.bottom - orc.top);
+  const top = 22;
+  const midY = (top + bottom) / 2;
+  const span = bottom - top;
+  return {
+    w, h, top, bottom, midY, span,
+    srcX: w * 0.06,
+    slitX: w * 0.24,
+    slitGap: span * 0.16,
+    screenX: w * 0.68,
+    graphX0: w * 0.72,
+    graphX1: w * 0.95,
+    sigma: span * 0.2,
+    period: span * 0.075
+  };
+}
+
+function intensity(G, y) {
+  const dy = y - G.midY;
+  const env = Math.exp(-(dy * dy) / (2 * G.sigma * G.sigma));
+  return env * (1 + visibility * Math.cos(2 * Math.PI * dy / G.period)) / 2;
+}
+
+function sampleY(G) {
+  for (let k = 0; k < 200; k++) {
+    const y = G.top + Math.random() * G.span;
+    if (Math.random() < intensity(G, y)) return y;
+  }
+  return G.midY;
+}
+
+function mixColour(a) {
+  /* blue while the stripes are sharp, amber as they wash out into one band */
+  const t = 1 - visibility;
+  const r = Math.round(58 + (250 - 58) * t), g = Math.round(111 + (199 - 111) * t), b = Math.round(200 + (117 - 200) * t);
+  return "rgba(" + r + "," + g + "," + b + "," + a + ")";
+}
 
 function resize() {
   const rect = canvas.getBoundingClientRect();
@@ -404,191 +454,177 @@ function resize() {
   buf.width = canvas.width;
   buf.height = canvas.height;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  hits = [];
 }
 
 function updateUI() {
-  const vis = Math.round(100 * (1 - detection));
+  visibility = Math.sqrt(Math.max(0, 1 - detection * detection));
+  const vis = Math.round(100 * visibility);
   const path = Math.round(100 * detection);
-  
-  visibilityStat.textContent = vis + '%';
-  pathInfoStat.textContent = path + '%';
+
+  visibilityStat.textContent = vis + "%";
+  pathInfoStat.textContent = path + "%";
 
   if (detection < 0.15) {
-    liveTag.textContent = 'Wave behaviour intact';
-    overlayTag.textContent = 'Both slits — interference visible';
-  } else if (detection < 0.5) {
-    liveTag.textContent = 'Partial collapse';
-    overlayTag.textContent = 'Pattern fading';
-  } else if (detection < 0.85) {
-    liveTag.textContent = 'Particle emerging';
-    overlayTag.textContent = 'Path becoming definite';
+    liveTag.textContent = "Wave behaviour intact";
+    overlayTag.textContent = "Both slits — interference visible";
+  } else if (visibility >= 0.5) {
+    liveTag.textContent = "Partial collapse";
+    overlayTag.textContent = "Pattern fading";
+  } else if (vis > 0) {
+    liveTag.textContent = "Particle emerging";
+    overlayTag.textContent = "Path becoming definite";
   } else {
-    liveTag.textContent = 'Full measurement';
-    overlayTag.textContent = 'Fringes gone — one smooth band';
+    liveTag.textContent = "Full measurement";
+    overlayTag.textContent = "Fringes gone — one smooth band";
   }
 
   const fillPercent = (detection * 100).toFixed(1);
-  slider.style.setProperty('--fill', fillPercent + '%');
+  slider.style.setProperty("--fill", fillPercent + "%");
 }
 
-slider.addEventListener('input', (e) => {
+slider.addEventListener("input", (e) => {
   detection = parseFloat(e.target.value) / 100;
   updateUI();
+  hits = [];
 });
 
 toggleBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    toggleBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+  btn.addEventListener("click", () => {
+    toggleBtns.forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
     viewMode = btn.dataset.mode;
     knowdropText.textContent = knowdropContent[viewMode];
+    hits = [];
   });
 });
 
+function label(text, x, y, align) {
+  ctx.font = "11px 'JetBrains Mono', monospace";
+  ctx.textAlign = align || "center";
+  ctx.textBaseline = "top";
+  ctx.fillStyle = "rgba(237,237,232,0.6)";
+  ctx.fillText(text, x, y);
+  ctx.textAlign = "left";
+  ctx.textBaseline = "alphabetic";
+}
+
 function draw() {
   time += 0.016;
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
+  if (!canvas.width || !canvas.height) { requestAnimationFrame(draw); return; }
+  const G = geom();
+  const { w, h, midY } = G;
+  const slitA = midY - G.slitGap / 2, slitB = midY + G.slitGap / 2;
 
-  ctx.fillStyle = '#000';
+  ctx.fillStyle = "#000";
   ctx.fillRect(0, 0, w, h);
 
-  const slitY = h * 0.5;
-  const slitGap = h * 0.16;
-  const slitWidth = 2;
-  const screenX = w * 0.8;
+  // Barrier with two slits
+  ctx.fillStyle = "rgba(237,237,232,0.22)";
+  const sw = 5;
+  ctx.fillRect(G.slitX - 1.5, G.top, 3, slitA - sw - G.top);
+  ctx.fillRect(G.slitX - 1.5, slitA + sw, 3, slitB - slitA - 2 * sw);
+  ctx.fillRect(G.slitX - 1.5, slitB + sw, 3, G.bottom - slitB - sw);
 
-  // Draw slits
-  ctx.fillStyle = 'rgba(237,237,232,0.15)';
-  ctx.fillRect(w * 0.2 - 1, 0, 2, slitY - slitGap / 2 - slitWidth / 2);
-  ctx.fillRect(w * 0.2 - 1, slitY + slitGap / 2 + slitWidth / 2, 2, h - (slitY + slitGap / 2 + slitWidth / 2));
+  // Source
+  ctx.fillStyle = "rgba(237,237,232,0.5)";
+  ctx.beginPath(); ctx.arc(G.srcX, midY, 4, 0, Math.PI * 2); ctx.fill();
 
-  // Draw screen
-  ctx.fillStyle = 'rgba(237,237,232,0.08)';
-  ctx.fillRect(screenX - 1, 0, 2, h);
+  // Screen
+  ctx.fillStyle = "rgba(237,237,232,0.1)";
+  ctx.fillRect(G.screenX - 5, G.top, 10, G.bottom - G.top);
 
-  // Interference pattern on screen
-  if (detection < 0.99) {
-    const visibility = 1 - detection;
-    const bands = 11;
-    
-    for (let i = 0; i < 150; i++) {
-      const screenY = (i / 149) * h;
-      const dy = screenY - slitY;
-      
-      // Path difference for interference
-      const pathDiff = Math.abs(dy);
-      const phase = (pathDiff / (h * 0.08)) * Math.PI * 2;
-      
-      const intensity = 0.5 + 0.5 * Math.cos(phase) * visibility;
-      const alpha = Math.pow(intensity, 1.5) * 0.6;
-      
-      ctx.fillStyle = `rgba(58,111,200,${alpha})`;
-      ctx.fillRect(screenX - 3, screenY, 6, h / 150 + 1);
+  label("source", G.srcX, 6, "left");
+  label("slits", G.slitX, 6);
+  label("screen", G.screenX, 6);
+  label("brightness", G.graphX1, 6, "right");
+
+  ctx.save();
+  ctx.beginPath(); ctx.rect(0, G.top, w, G.bottom - G.top); ctx.clip();
+
+  if (viewMode === "wave") {
+    // Wave fronts: plane-ish fronts from the source, then circular fronts from BOTH slits
+    const lambda = G.period * 0.9;
+    const shift = (time * 40) % lambda;
+    ctx.lineWidth = 1.2;
+    for (let r = shift; r < G.slitX - G.srcX; r += lambda) {
+      ctx.strokeStyle = "rgba(58,111,200,0.45)";
+      ctx.beginPath(); ctx.arc(G.srcX, midY, r, -0.9, 0.9); ctx.stroke();
     }
-  }
-
-  // Particle bands (when detection is high)
-  if (detection > 0.01) {
-    const particleAlpha = detection * 0.5;
-    
-    // Upper slit band
-    const grad1 = ctx.createRadialGradient(screenX, slitY - slitGap / 2, 0, screenX, slitY - slitGap / 2, h * 0.15);
-    grad1.addColorStop(0, `rgba(250,199,117,${particleAlpha})`);
-    grad1.addColorStop(1, 'rgba(250,199,117,0)');
-    ctx.fillStyle = grad1;
-    ctx.fillRect(screenX - 20, slitY - slitGap / 2 - h * 0.15, 40, h * 0.3);
-    
-    // Lower slit band
-    const grad2 = ctx.createRadialGradient(screenX, slitY + slitGap / 2, 0, screenX, slitY + slitGap / 2, h * 0.15);
-    grad2.addColorStop(0, `rgba(250,199,117,${particleAlpha})`);
-    grad2.addColorStop(1, 'rgba(250,199,117,0)');
-    ctx.fillStyle = grad2;
-    ctx.fillRect(screenX - 20, slitY + slitGap / 2 - h * 0.15, 40, h * 0.3);
-  }
-
-  // Animated electrons traveling
-  const electronCount = 5;
-  for (let i = 0; i < electronCount; i++) {
-    const phaseOffset = (i / electronCount) * Math.PI * 2;
-    const progress = ((time * 0.4 + phaseOffset) % (Math.PI * 2)) / (Math.PI * 2);
-    
-    if (progress < 0.7) {
-      const x = w * 0.05 + progress * (w * 0.75 / 0.7);
-      let y;
-      
-      if (x < w * 0.2) {
-        // Before slits
-        y = slitY;
-      } else if (x < w * 0.22) {
-        // At slits - split or choose
-        const splitBlend = 1 - detection;
-        const randomChoice = (Math.sin(phaseOffset * 37.5) > 0) ? -1 : 1;
-        const splitY = slitY + (Math.sin((x - w * 0.2) * 20) * slitGap * 0.5) * splitBlend;
-        const chosenY = slitY + randomChoice * slitGap / 2;
-        y = splitY * (1 - detection) + chosenY * detection;
-      } else {
-        // After slits
-        const postProgress = (x - w * 0.22) / (w * 0.78 - w * 0.22);
-        const waveSpread = Math.sin(postProgress * Math.PI * 1.5) * h * 0.2 * (1 - detection);
-        const randomChoice = (Math.sin(phaseOffset * 37.5) > 0) ? -1 : 1;
-        const particlePath = slitY + randomChoice * slitGap / 2;
-        y = slitY + waveSpread * (1 - detection) + (particlePath - slitY) * detection;
+    const reach = G.screenX - G.slitX;
+    for (const sy of [slitA, slitB]) {
+      for (let r = shift; r < reach * 1.15; r += lambda) {
+        const a = 0.4 * (1 - r / (reach * 1.15));
+        ctx.strokeStyle = "rgba(58,111,200," + a.toFixed(3) + ")";
+        ctx.beginPath(); ctx.arc(G.slitX, sy, r, -1.2, 1.2); ctx.stroke();
       }
-      
-      const size = 2.5 + Math.sin(time * 3 + phaseOffset) * 0.5;
-      const glow = ctx.createRadialGradient(x, y, 0, x, y, size * 4);
-      glow.addColorStop(0, 'rgba(58,111,200,0.9)');
-      glow.addColorStop(0.5, 'rgba(58,111,200,0.3)');
-      glow.addColorStop(1, 'rgba(58,111,200,0)');
-      
-      ctx.save();
-      ctx.globalCompositeOperation = 'lighter';
-      ctx.fillStyle = glow;
-      ctx.beginPath();
-      ctx.arc(x, y, size * 4, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-      
-      ctx.fillStyle = 'rgba(58,111,200,1)';
-      ctx.beginPath();
-      ctx.arc(x, y, size, 0, Math.PI * 2);
-      ctx.fill();
+    }
+    // Screen glow: the intensity pattern
+    for (let y = G.top; y < G.bottom; y += 2) {
+      const I = intensity(G, y);
+      ctx.fillStyle = mixColour(((0.15 + 0.85 * I) * Math.min(1, I * 3)).toFixed(3));
+      ctx.fillRect(G.screenX - 5, y, 10, 2);
+    }
+  } else {
+    // Particle view: electrons arrive one at a time and land as dots
+    emitClock += 0.016;
+    while (emitClock > 0.012) {
+      emitClock -= 0.012;
+      const y = sampleY(G);
+      hits.push({ x: G.screenX + (Math.random() - 0.5) * 8, y });
+      if (detection > 0.05 && Math.random() < 0.3) flashes.push({ y: Math.random() < 0.5 ? slitA : slitB, t: 0 });
+    }
+    if (hits.length > 2500) hits = hits.slice(-600);
+    for (const p of hits) {
+      ctx.fillStyle = mixColour(0.85);
+      ctx.fillRect(p.x - 1.1, p.y - 1.1, 2.2, 2.2);
+    }
+    // Detector clicks at the slit each electron was recorded at
+    flashes = flashes.filter(f => (f.t += 0.016) < 0.3);
+    for (const f of flashes) {
+      ctx.fillStyle = "rgba(250,199,117," + (detection * (1 - f.t / 0.3)).toFixed(3) + ")";
+      ctx.beginPath(); ctx.arc(G.slitX, f.y, 5, 0, Math.PI * 2); ctx.fill();
     }
   }
 
-  // Detector visualization at slits
-  if (detection > 0.05) {
-    const detAlpha = Math.min(detection * 1.2, 0.6);
-    
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    
-    // Upper detector
-    const detGrad1 = ctx.createRadialGradient(w * 0.2, slitY - slitGap / 2, 0, w * 0.2, slitY - slitGap / 2, h * 0.08);
-    detGrad1.addColorStop(0, `rgba(250,199,117,${detAlpha})`);
-    detGrad1.addColorStop(1, 'rgba(250,199,117,0)');
-    ctx.fillStyle = detGrad1;
-    ctx.fillRect(w * 0.18, slitY - slitGap / 2 - h * 0.08, w * 0.04, h * 0.16);
-    
-    // Lower detector
-    const detGrad2 = ctx.createRadialGradient(w * 0.2, slitY + slitGap / 2, 0, w * 0.2, slitY + slitGap / 2, h * 0.08);
-    detGrad2.addColorStop(0, `rgba(250,199,117,${detAlpha})`);
-    detGrad2.addColorStop(1, 'rgba(250,199,117,0)');
-    ctx.fillStyle = detGrad2;
-    ctx.fillRect(w * 0.18, slitY + slitGap / 2 - h * 0.08, w * 0.04, h * 0.16);
-    
-    ctx.restore();
+  // Brightness graph across the screen (same in both views)
+  ctx.strokeStyle = mixColour(viewMode === "wave" ? 0.95 : 0.6);
+  ctx.lineWidth = 1.6;
+  if (viewMode !== "wave") ctx.setLineDash([4, 3]);
+  ctx.beginPath();
+  for (let y = G.top; y <= G.bottom; y += 1.5) {
+    const x = G.graphX0 + intensity(G, y) * (G.graphX1 - G.graphX0);
+    if (y === G.top) ctx.moveTo(x, y); else ctx.lineTo(x, y);
   }
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.strokeStyle = "rgba(237,237,232,0.15)";
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(G.graphX0, G.top); ctx.lineTo(G.graphX0, G.bottom); ctx.stroke();
+
+  // Detector at the slits (glows with detection strength)
+  if (detection > 0.05) {
+    const detAlpha = Math.min(detection * 0.8, 0.6);
+    ctx.globalCompositeOperation = "lighter";
+    for (const sy of [slitA, slitB]) {
+      const dg = ctx.createRadialGradient(G.slitX, sy, 0, G.slitX, sy, G.span * 0.07);
+      dg.addColorStop(0, "rgba(250,199,117," + detAlpha + ")");
+      dg.addColorStop(1, "rgba(250,199,117,0)");
+      ctx.fillStyle = dg;
+      ctx.fillRect(G.slitX - G.span * 0.07, sy - G.span * 0.07, G.span * 0.14, G.span * 0.14);
+    }
+    ctx.globalCompositeOperation = "source-over";
+  }
+  ctx.restore();
 
   // Bloom
   bctx.setTransform(1, 0, 0, 1, 0, 0);
   bctx.clearRect(0, 0, buf.width, buf.height);
   if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
   ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
+  ctx.globalCompositeOperation = "lighter";
+  ctx.globalAlpha = 0.3;
+  ctx.filter = "blur(7px)";
   if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
   ctx.restore();
 
@@ -596,19 +632,20 @@ function draw() {
   const cx = w / 2;
   const cy = h / 2;
   const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  vig.addColorStop(0, "rgba(0,0,0,0)");
+  vig.addColorStop(1, "rgba(0,0,0,0.45)");
   ctx.fillStyle = vig;
   ctx.fillRect(0, 0, w, h);
 
   requestAnimationFrame(draw);
 }
 
-window.addEventListener('resize', resize);
+window.addEventListener("resize", resize);
 resize();
 updateUI();
 draw();
 </script>
+
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'complementarity-and-measurement'},'*');}catch(e){}}
 if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

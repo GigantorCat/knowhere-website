@@ -315,14 +315,14 @@ canvas {
 
   <h1>Your body's overreaction is the <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">danger</span></h1>
   
-  <p class="intro">Allergies aren't caused by the allergen itself — they're caused by your immune system's full-force response to something harmless. The damage is self-inflicted, which is why antihistamines block your own reaction rather than neutralising the trigger. Drag the slider to watch sensitisation happen, then see the cascade unleashed.</p>
+  <p class="intro">Allergies aren't caused by the allergen itself — they're caused by your immune system's full-force response to something harmless. The damage is self-inflicted, which is why antihistamines block your own reaction rather than neutralising the trigger. Raise the allergen exposure and watch sensitisation happen, then see the cascade unleashed.</p>
 
   <div class="card">
     <div class="card-header">
       <span class="card-label">Immune Response Cascade</span>
       <span class="live-tag" id="phaseTag">Baseline</span>
     </div>
-    <p class="card-hint">Drag to simulate first exposure and subsequent re-exposures</p>
+    <p class="card-hint">Raise the allergen exposure to simulate first exposure and subsequent re-exposures</p>
     
     <div class="canvas-wrapper">
       <canvas id="canvas"></canvas>
@@ -431,9 +431,10 @@ function updateStats() {
   const primedCount = mastCells.filter(m => m.primed).length;
   mastStat.textContent = primedCount;
   
-  if (exposure > 75) {
+  const releasingCount = mastCells.filter(m => m.releasing).length;
+  if (releasingCount >= 6) {
     histamineStat.textContent = 'High';
-  } else if (exposure > 50) {
+  } else if (releasingCount > 0) {
     histamineStat.textContent = 'Low';
   } else {
     histamineStat.textContent = 'None';
@@ -502,8 +503,8 @@ function draw() {
   ctx.restore();
   
   // Allergen particles (phase 1)
-  if (exposure > 10 && exposure < 70) {
-    const targetCount = Math.floor((exposure - 10) / 60 * 15);
+  if (exposure > 10) {
+    const targetCount = Math.min(15, Math.floor((exposure - 10) / 60 * 15));
     while (particles.length < targetCount) {
       particles.push({
         x: Math.random() * w,
@@ -666,6 +667,7 @@ function draw() {
   ctx.fillStyle = vig;
   ctx.fillRect(0, 0, w, h);
   
+  updateStats();
   requestAnimationFrame(draw);
 }
 

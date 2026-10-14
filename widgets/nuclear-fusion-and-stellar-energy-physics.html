@@ -350,14 +350,14 @@ canvas {
 <div class="container">
   <h1>Only the biggest stars fuse all the way to <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">iron</span></h1>
   
-  <p class="intro">Every fusion reaction in a star's core trades a tiny bit of mass for energy — climbing the binding energy curve toward iron-56, the universe's most stable nucleus. Below that peak, light nuclei release energy by fusing. Above it, heavy nuclei release energy by splitting. Drag the slider to explore where fusion stops being profitable.</p>
+  <p class="intro">Every fusion reaction in a star's core trades a tiny bit of mass for energy — climbing the binding energy curve toward iron-56, one of the most tightly bound nuclei there is. Below that peak, light nuclei release energy by fusing. Above it, heavy nuclei release energy by splitting. Change the mass number and watch where fusion stops being profitable.</p>
 
   <div class="card">
     <div class="card-header">
-      <span class="card-label">Binding Energy Curve</span>
+      <span class="card-label">Binding energy curve</span>
       <span class="live-tag" id="liveRegion">FUSION ZONE</span>
     </div>
-    <div class="card-hint">Drag to explore different mass numbers</div>
+    <div class="card-hint">Try different mass numbers</div>
     
     <div class="canvas-wrapper">
       <canvas id="curveCanvas"></canvas>
@@ -365,7 +365,7 @@ canvas {
     </div>
 
     <div class="slider-row">
-      <label class="slider-label" for="massSlider">Mass Number (A)</label>
+      <label class="slider-label" for="massSlider">Mass number (A)</label>
       <input type="range" id="massSlider" class="fusion-slider" min="1" max="240" value="4" step="1">
       <div class="tick-labels">
         <span class="lo" style="--p:0.0000">H-1</span>
@@ -377,11 +377,11 @@ canvas {
 
     <div class="stat-row">
       <div class="stat">
-        <span class="stat-label">Binding Energy/Nucleon</span>
+        <span class="stat-label">Binding energy/nucleon</span>
         <span class="stat-value accent" id="beValue">7.07 MeV</span>
       </div>
       <div class="stat">
-        <span class="stat-label">Process Type</span>
+        <span class="stat-label">Process type</span>
         <span class="stat-value amber" id="processType">Fusion</span>
       </div>
     </div>
@@ -389,12 +389,12 @@ canvas {
 
   <div class="toggle-card">
     <div class="toggle-buttons">
-      <button class="toggle-btn active" data-mode="sun">The Sun's Chain</button>
-      <button class="toggle-btn" data-mode="earth">Earth's Challenge</button>
+      <button class="toggle-btn active" data-mode="sun">The Sun's chain</button>
+      <button class="toggle-btn" data-mode="earth">Earth's challenge</button>
     </div>
     
     <div class="knowdrop">
-      <p id="knowdropText">The Sun fuses hydrogen into helium via the proton-proton chain: four protons collide over multiple steps to form one helium-4 nucleus, releasing 26.7 MeV per cycle. The core's 15 million Kelvin temperature gives protons enough kinetic energy to overcome electrostatic repulsion, and immense gravitational pressure — 250 billion atmospheres — confines them long enough for the strong nuclear force to bind them. Each second, the Sun converts 600 million tonnes of hydrogen into helium, losing 4 million tonnes as pure energy. It's been doing this for 4.6 billion years and will continue for another 5 billion, then fuse helium into carbon and oxygen. That is as far up the binding energy curve as the Sun gets: it will end as a white dwarf. Only stars above about 8 times the mass of the Sun keep fusing all the way to an iron-56 core.</p>
+      <p id="knowdropText">The Sun fuses hydrogen into helium via the proton-proton chain: four protons collide over multiple steps to form one helium-4 nucleus, releasing 26.7 MeV per cycle. The core's 15 million kelvin temperature gives protons enough kinetic energy to overcome electrostatic repulsion, and immense gravitational pressure — 250 billion atmospheres — confines them long enough for the strong nuclear force to bind them. Each second, the Sun converts 600 million tonnes of hydrogen into helium, losing 4 million tonnes as pure energy. It's been doing this for 4.6 billion years and will continue for another 5 billion, then fuse helium into carbon and oxygen. That is as far up the binding energy curve as the Sun gets: it will end as a white dwarf. Only stars above about 8 times the mass of the Sun keep fusing all the way to an iron-56 core.</p>
     </div>
   </div>
 
@@ -443,6 +443,8 @@ function bindingEnergy(A) {
   return A > 56 ? Math.min(be, 8.79) : be; /* the picture treats Fe-56 as the peak (Ni-62 is level with it to 2 d.p.) */
 }
 
+/* A = 5 and A = 8 have no bound nucleus (He-5 and Be-8 fall apart almost at once); their values are the
+   measured resonances. Above A = 209 every nuclide is radioactive. */
 /* Element symbol of a real nuclide at each mass number 1-240: the most abundant stable isobar where one
    exists, otherwise the longest-lived or most familiar radioactive one (index 0 unused). */
 const NUCLIDE_SYMBOL = ('- H H H He He Li Li Be Be B ' +
@@ -562,10 +564,10 @@ function draw() {
   ctx.stroke();
   
   // Axis labels
-  ctx.fillStyle = 'rgba(255,255,255,0.4)';
-  ctx.font = '9px JetBrains Mono';
+  ctx.fillStyle = 'rgba(255,255,255,0.6)';
+  ctx.font = '10px "JetBrains Mono", monospace';
   ctx.textAlign = 'center';
-  ctx.fillText('Mass Number (A)', originX + graphW / 2, h - 12);
+  ctx.fillText('Mass number (A)', originX + graphW / 2, h - 12);
   ctx.save();
   ctx.translate(18, originY - graphH / 2);
   ctx.rotate(-Math.PI / 2);
@@ -625,7 +627,7 @@ function draw() {
   ctx.fill();
   
   ctx.fillStyle = ACC;
-  ctx.font = '10px JetBrains Mono';
+  ctx.font = '10px "JetBrains Mono", monospace';
   ctx.textAlign = 'center';
   ctx.fillText('Fe-56', fe56X, fe56Y - 12);
   
@@ -712,9 +714,9 @@ toggleBtns.forEach(btn => {
     const mode = btn.dataset.mode;
     
     if (mode === 'sun') {
-      knowdropText.textContent = "The Sun fuses hydrogen into helium via the proton-proton chain: four protons collide over multiple steps to form one helium-4 nucleus, releasing 26.7 MeV per cycle. The core's 15 million Kelvin temperature gives protons enough kinetic energy to overcome electrostatic repulsion, and immense gravitational pressure — 250 billion atmospheres — confines them long enough for the strong nuclear force to bind them. Each second, the Sun converts 600 million tonnes of hydrogen into helium, losing 4 million tonnes as pure energy. It's been doing this for 4.6 billion years and will continue for another 5 billion, then fuse helium into carbon and oxygen. That is as far up the binding energy curve as the Sun gets: it will end as a white dwarf. Only stars above about 8 times the mass of the Sun keep fusing all the way to an iron-56 core.";
+      knowdropText.textContent = "The Sun fuses hydrogen into helium via the proton-proton chain: four protons collide over multiple steps to form one helium-4 nucleus, releasing 26.7 MeV per cycle. The core's 15 million kelvin temperature gives protons enough kinetic energy to overcome electrostatic repulsion, and immense gravitational pressure — 250 billion atmospheres — confines them long enough for the strong nuclear force to bind them. Each second, the Sun converts 600 million tonnes of hydrogen into helium, losing 4 million tonnes as pure energy. It's been doing this for 4.6 billion years and will continue for another 5 billion, then fuse helium into carbon and oxygen. That is as far up the binding energy curve as the Sun gets: it will end as a white dwarf. Only stars above about 8 times the mass of the Sun keep fusing all the way to an iron-56 core.";
     } else {
-      knowdropText.textContent = "Replicating stellar fusion on Earth requires reaching 100 million Kelvin — hot enough to ionise hydrogen into plasma and give nuclei sufficient kinetic energy to overcome the Coulomb barrier. But containing that plasma is the engineering wall: magnetic confinement reactors like tokamaks use twisted magnetic fields to suspend the plasma away from any physical wall, while inertial confinement fires 192 lasers at a frozen pellet to compress it for a nanosecond-long fusion burst. No fusion power plant yet delivers net electricity, although since 2022 laser experiments have released more fusion energy from the fuel pellet than the laser energy delivered to it. ITER, still under construction, now plans its first deuterium-tritium runs in 2039, aiming for Q = 10 — ten times more fusion power out than heating power in. The promise is limitless clean energy from seawater deuterium; the challenge is holding a star in a bottle.";
+      knowdropText.textContent = "Replicating stellar fusion on Earth requires reaching 100 million kelvin — hot enough to ionise hydrogen into plasma and give nuclei sufficient kinetic energy to overcome the Coulomb barrier. But containing that plasma is the engineering wall: magnetic confinement reactors like tokamaks use twisted magnetic fields to suspend the plasma away from any physical wall, while inertial confinement fires 192 lasers at a frozen pellet to compress it for a nanosecond-long fusion burst. No fusion power plant yet delivers net electricity, although since 2022 laser experiments have released more fusion energy from the fuel pellet than the laser energy delivered to it. ITER, still under construction, now plans its first deuterium-tritium runs in 2039, aiming for Q = 10 — ten times more fusion power out than heating power in. The promise is limitless clean energy from seawater deuterium; the challenge is holding a star in a bottle.";
     }
   });
 });

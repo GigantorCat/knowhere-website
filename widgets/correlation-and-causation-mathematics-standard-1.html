@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Correlation and Causation — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Correlation and causation — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -306,19 +306,19 @@ canvas {
 }
 </style>
 
-<h2 class="sr-only">Correlation vs Causation Interactive Widget</h2>
+<h2 class="sr-only">Correlation vs causation interactive widget</h2>
 
 <div class="container">
   <h1>Perfect correlation, <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">zero</span> causation</h1>
   
-  <p class="intro">Two variables can move together in lockstep — <em>r</em> = ±1.0 — yet have nothing to do with each other. Drag the slider to explore how correlation strength changes while the causal story stays fixed.</p>
+  <p class="intro">Two variables can move together in lockstep — <em>r</em> = ±1.0 — yet have nothing to do with each other. Raise and lower the correlation strength and watch the causal story stay fixed.</p>
 
   <div class="card">
     <div class="card-header">
       <div class="card-label">Scatterplot</div>
       <div class="live-tag" id="liveCorr">r = 0.00</div>
     </div>
-    <div class="card-hint">Drag slider to adjust correlation</div>
+    <div class="card-hint">Adjust the correlation</div>
     
     <div class="canvas-wrapper">
       <canvas id="scatterCanvas"></canvas>
@@ -335,9 +335,13 @@ canvas {
       </div>
     </div>
 
-    <div class="stat-row">
+    <div class="stat-row" style="grid-template-columns:repeat(3,minmax(0,1fr))">
       <div class="stat">
-        <div class="stat-label">r value</div>
+        <div class="stat-label">Association</div>
+        <div class="stat-value amber" id="strengthWord" style="font-size:16px;line-height:1.3">None</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">r from these dots</div>
         <div class="stat-value accent" id="rValue">0.00</div>
       </div>
       <div class="stat">
@@ -355,7 +359,7 @@ canvas {
     
     <div class="knowdrop-divider">
       <p class="knowdrop-text" id="knowdropText">
-        Ice cream sales and drowning deaths have strong positive correlation every summer — yet buying ice cream doesn't cause drowning. This is pure coincidence driven by a hidden variable: warm weather. Both variables rise independently when temperature climbs. Tests love this trap because the numbers look convincing, but the causal story is fiction. Always ask: what else could explain this pattern?
+        Sometimes two things line up by pure chance, with no link at all. From 2000 to 2009, how much cheese Americans ate per person and how many people died tangled in their bedsheets rose and fell almost in step (a famous example collected by Tyler Vigen). Cheese does not cause bedsheet deaths, bedsheet deaths do not cause cheese eating, and no third variable drives both: with enough pairs of numbers, some will match by luck. Tests love this trap because the numbers look convincing, but the causal story is fiction. Always ask: is there any plausible link, or could this be chance?
       </p>
     </div>
   </div>
@@ -400,19 +404,27 @@ function resize() {
   draw();
 }
 
+/* Fixed seeded noise: x and e are standardised and made exactly uncorrelated, so y = r x + sqrt(1 - r^2) e
+   has sample correlation exactly r, centred in the plot for both signs. */
+function rng(seed) { let t = seed >>> 0; return function () { t += 0x6D2B79F5; let q = Math.imul(t ^ (t >>> 15), 1 | t); q ^= q + Math.imul(q ^ (q >>> 7), 61 | q); return ((q ^ (q >>> 14)) >>> 0) / 4294967296; }; }
+const RNG = rng(11);
+function gauss() { let u = 0; while (u === 0) u = RNG(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * RNG()); }
+function standardise(a) { const m = a.reduce((s, v) => s + v, 0) / a.length; const sd = Math.sqrt(a.reduce((s, v) => s + (v - m) * (v - m), 0) / a.length); return a.map(v => (v - m) / sd); }
+const ZX = standardise(Array.from({ length: nPoints }, gauss));
+let ZE = standardise(Array.from({ length: nPoints }, gauss));
+const PROJ = ZE.reduce((s, v, i) => s + v * ZX[i], 0) / nPoints;
+ZE = standardise(ZE.map((v, i) => v - PROJ * ZX[i]));
+let fit = { r: 0, slope: 0, mx: 0.5, my: 0.5 };
 function generatePoints() {
   const r = parseFloat(slider.value) / 100;
-  points = [];
-  
-  for (let i = 0; i < nPoints; i++) {
-    const x = Math.random();
-    const yBase = Math.random();
-    const yCorr = x;
-    const y = yCorr * r + yBase * (1 - Math.abs(r));
-    points.push({ x, y });
-  }
+  const k = Math.sqrt(Math.max(0, 1 - r * r));
+  points = ZX.map((x, i) => ({ x: Math.min(1, Math.max(0, 0.5 + x / 6)), y: Math.min(1, Math.max(0, 0.5 + (r * x + k * ZE[i]) / 6)) }));
+  const n = points.length, mx = points.reduce((s, p) => s + p.x, 0) / n, my = points.reduce((s, p) => s + p.y, 0) / n;
+  let sxx = 0, syy = 0, sxy = 0;
+  points.forEach(p => { sxx += (p.x - mx) ** 2; syy += (p.y - my) ** 2; sxy += (p.x - mx) * (p.y - my); });
+  fit = { r: syy > 0 ? sxy / Math.sqrt(sxx * syy) : 0, slope: sxy / sxx, mx, my };
 }
-
+function strengthOf(a) { return a >= 0.75 ? "Strong" : a >= 0.5 ? "Moderate" : a >= 0.25 ? "Weak" : null; }
 function draw() {
   const w = canvas.width / dpr;
   const h = canvas.height / dpr;
@@ -473,10 +485,10 @@ function draw() {
     ctx.fill();
   });
   
-  // Trend line if strong correlation
-  if (Math.abs(r) > 0.3) {
-    const slope = r;
-    const intercept = 0.5 - slope * 0.5;
+  // Least-squares trend line through the plotted dots, drawn when there is an association
+  if (strengthOf(Math.abs(fit.r))) {
+    const slope = fit.slope;
+    const intercept = fit.my - slope * fit.mx;
     const x1 = 0;
     const y1 = intercept;
     const x2 = 1;
@@ -492,6 +504,9 @@ function draw() {
     ctx.strokeStyle = `rgba(126, 217, 122,${Math.abs(r) * 0.5})`;
     ctx.lineWidth = 2;
     ctx.setLineDash([6, 4]);
+    ctx.beginPath();
+    ctx.rect(w * 0.15, h * 0.15, w * 0.7, h * 0.7);
+    ctx.clip();
     ctx.beginPath();
     ctx.moveTo(px1, py1);
     ctx.lineTo(px2, py2);
@@ -525,20 +540,15 @@ function updateUI() {
   const fill = ((r + 1) / 2) * 100;
   slider.style.setProperty('--fill', fill + '%');
   
-  const rStr = r.toFixed(2);
-  liveTag.textContent = `r = ${rStr}`;
+  const rc = fit.r;
+  const rStr = (rc < 0 ? "\u2212" : "") + Math.abs(rc).toFixed(2);
+  liveTag.textContent = "r = " + rStr;
   rValue.textContent = rStr;
-  
-  const abs = Math.abs(r);
-  if (abs < 0.3) {
-    canvasTag.textContent = 'No linear relationship';
-  } else if (abs < 0.7) {
-    canvasTag.textContent = r > 0 ? 'Moderate positive correlation' : 'Moderate negative correlation';
-  } else {
-    canvasTag.textContent = r > 0 ? 'Strong positive correlation' : 'Strong negative correlation';
-  }
+  const word = strengthOf(Math.abs(rc));
+  const desc = word ? word + " " + (rc > 0 ? "positive" : "negative") : "None";
+  document.getElementById("strengthWord").textContent = desc;
+  canvasTag.textContent = word ? desc + " association" : "No linear association";
 }
-
 slider.addEventListener('input', () => {
   generatePoints();
   draw();
@@ -548,13 +558,13 @@ slider.addEventListener('input', () => {
 btnCoincidence.addEventListener('click', () => {
   btnCoincidence.classList.add('active');
   btnCommon.classList.remove('active');
-  knowdropText.textContent = "Ice cream sales and drowning deaths have strong positive correlation every summer — yet buying ice cream doesn't cause drowning. This is pure coincidence driven by a hidden variable: warm weather. Both variables rise independently when temperature climbs. Tests love this trap because the numbers look convincing, but the causal story is fiction. Always ask: what else could explain this pattern?";
+  knowdropText.textContent = "Sometimes two things line up by pure chance, with no link at all. From 2000 to 2009, how much cheese Americans ate per person and how many people died tangled in their bedsheets rose and fell almost in step (a famous example collected by Tyler Vigen). Cheese does not cause bedsheet deaths, bedsheet deaths do not cause cheese eating, and no third variable drives both: with enough pairs of numbers, some will match by luck. Tests love this trap because the numbers look convincing, but the causal story is fiction. Always ask: is there any plausible link, or could this be chance?";
 });
 
 btnCommon.addEventListener('click', () => {
   btnCommon.classList.add('active');
   btnCoincidence.classList.remove('active');
-  knowdropText.textContent = "Shoe size and reading ability correlate strongly in children — but bigger feet don't cause better reading. The common cause is age: older children have larger feet AND more reading practice. This is confounding, where a third variable drives both outcomes. Test questions will often show you perfect r values between variables that share an underlying cause. Your job is to spot the hidden driver and reject the direct causal claim.";
+  knowdropText.textContent = "Ice cream sales and drowning deaths rise together every summer, yet buying ice cream does not cause drowning. The common cause is warm weather: hot days send more people to buy ice cream AND more people into the water. Shoe size and reading ability in children work the same way: age drives both. This is confounding, where a third variable drives both outcomes. Your job is to spot the hidden driver and reject the direct causal claim.";
 });
 
 window.addEventListener('resize', resize);

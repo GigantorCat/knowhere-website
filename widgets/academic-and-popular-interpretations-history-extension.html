@@ -4,615 +4,473 @@ body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
-
-:root {
-  --bg: #0B0D0C;
-  --bg2: #12160F;
-  --acc: #8257CB;
-  --acc-rgb: 130, 87, 203;
-  --ag: rgba(var(--acc-rgb), 0.7);
-  --ag1: rgba(var(--acc-rgb), 0.12);
-  --ag2: rgba(var(--acc-rgb), 0.45);
-  --amb: #FAC775;
-  --ink: #EDEDE8;
-  --ink-dim: #8C9389;
-  --line: #262B26;
+:root{
+  --bg:#0B0D0C;--bg2:#12160F;
+  --acc:#8257CB;--acc-rgb:130, 87, 203;
+  --ag:rgba(var(--acc-rgb),.7);--ag1:rgba(var(--acc-rgb),.12);--ag2:rgba(var(--acc-rgb),.45);
+  --amb:#FAC775;--amb-rgb:250,199,117;
+  --ink:#EDEDE8;--ink-dim:#8C9389;--dim-rgb:140,147,137;--line:#262B26;
 }
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
-}
-
-body {
-  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
-  font-family: 'Geist', sans-serif;
-  min-height: 100vh;
-  padding: 40px 16px 0;
-  color: var(--ink);
-}
-
-.container {
-  max-width: 720px;
-  margin: 0 auto;
-}
-
-h1 {
-  font-size: clamp(26px, 6.5vw, 44px);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
-  margin-bottom: 16px;
-}
-
-.intro {
-  font-size: 15.5px;
-  font-weight: 400;
-  color: var(--ink-dim);
-  max-width: 58ch;
-  line-height: 1.55;
-  margin-bottom: 32px;
-}
-
-.card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,0.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 20px;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
-}
-
-.card-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  color: var(--ink);
-}
-
-.live-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--acc);
-}
-
-.card-hint {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--ink-dim);
-  margin-bottom: 16px;
-}
-
-.canvas-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16/9;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
-  box-shadow: inset 0 0 0 1px var(--ag1);
-  margin-bottom: 16px;
-}
-
-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.canvas-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(4px);
-  padding: 9px 16px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  text-transform: uppercase;
-  color: var(--acc);
-  text-align: center;
-}
-
-.slider-wrapper {
-  position: relative;
-  width: 100%;
-  height: 50px;
-  margin-bottom: 16px;
-  cursor: grab;
-}
-
-.slider-wrapper:active {
-  cursor: grabbing;
-}
-
-.slider-track {
-  position: absolute;
-  top: 50%;
-  left: 12%;
-  right: 12%;
-  height: 2px;
-  background: rgba(140, 147, 137, 0.3);
-  transform: translateY(-50%);
-}
-
-.slider-label-left,
-.slider-label-right {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-align: center;
-}
-
-.slider-label-left {
-  left: 12%;
-  color: rgba(var(--acc-rgb), 0.7);
-  transform: translate(-50%, calc(-50% - 20px));
-}
-
-.slider-label-right {
-  right: 12%;
-  color: rgba(250, 199, 117, 0.7);
-  transform: translate(50%, calc(-50% - 20px));
-}
-
-.slider-thumb {
-  position: absolute;
-  top: 50%;
-  left: 12%;
-  transform: translate(-50%, -50%);
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  border: 2px solid rgba(var(--acc-rgb), 0.9);
-  background: radial-gradient(circle, rgba(var(--acc-rgb), 1), rgba(var(--acc-rgb), 0.6));
-  box-shadow: 0 0 12px rgba(var(--acc-rgb), 0.8);
-  transition: box-shadow 0.2s;
-}
-
-.slider-thumb-label {
-  position: absolute;
-  top: calc(50% + 26px);
-  left: 50%;
-  transform: translateX(-50%);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  text-align: center;
-  color: rgba(var(--acc-rgb), 1);
-  white-space: nowrap;
-}
-
-.toggle-group {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.toggle-btn {
-  flex: 1;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14.5px;
-  padding: 12px;
-  border-radius: 11px;
-  background: #12160F;
-  border: 1px solid var(--line);
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.toggle-btn.active {
-  background: rgba(var(--acc-rgb), 0.1);
-  border: 1px solid var(--acc);
-  color: var(--acc);
-  box-shadow: 0 0 22px rgba(var(--acc-rgb), 0.18);
-}
-
-.knowdrop-divider {
-  border-top: 1px solid var(--line);
-  padding-top: 16px;
-}
-
-.knowdrop-text {
-  font-size: 14.5px;
-  font-weight: 400;
-  line-height: 1.65;
-  color: var(--ink);
-}
-
-.know-this {
-  border-left: 3px solid var(--acc);
-  padding: 16px 18px;
-  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
-  border-radius: 0 12px 12px 0;
-  margin-bottom: 0;
-}
-
-.know-this-tag {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  margin-bottom: 12px;
-}
-
-.know-this-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--acc);
-  box-shadow: 0 0 8px var(--acc);
-  animation: pulse 2.4s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.45; }
-}
-
-.know-this-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--acc);
-}
-
-.know-this-body {
-  font-size: 17.4px;
-  font-weight: 400;
-  line-height: 1.55;
-  color: var(--ink);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C 55%);font-family:'Geist',sans-serif;min-height:100vh;padding:40px 16px 0;color:var(--ink)}
+.ri-wrap{max-width:720px;margin:0 auto}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+h1{font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin:0 0 16px}
+.ri-intro{font-size:15.5px;font-weight:400;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin:0 0 30px}
+.ri-card{background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);margin-bottom:20px}
+.ri-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:6px}
+.ri-label{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:500;text-transform:uppercase;color:var(--ink)}
+.ri-live{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--acc);text-align:right;white-space:nowrap}
+.ri-hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin-bottom:14px;line-height:1.5}
+.ri-sub{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-dim);margin:12px 0 7px}
+.ri-group{display:flex;flex-wrap:wrap;gap:8px}
+.ri-pill{font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.25;padding:8px 12px;border-radius:999px;background:#12160F;border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:background .18s,border-color .18s,color .18s,box-shadow .18s;text-align:center}
+.ri-pill small{display:block;font-size:11px;color:var(--ink-dim);opacity:.85;margin-top:2px}
+.ri-pill[aria-pressed="true"]{background:rgba(var(--acc-rgb),.1);border-color:var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.ri-pill[aria-pressed="true"] small{color:var(--acc);opacity:.75}
+.ri-era .ri-pill{flex:1 1 90px}
+.ri-prod .ri-pill{flex:1 1 120px}
+.ri-canvas{position:relative;width:100%;aspect-ratio:16/9;min-height:340px;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1);margin:14px 0 16px}
+.ri-canvas canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.ri-overlay{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);padding:9px 12px;font-family:'JetBrains Mono',monospace;font-size:14px;text-transform:uppercase;color:var(--acc);text-align:center;line-height:1.3}
+@media (max-width:420px){.ri-overlay{font-size:12px}}
+.ri-row{display:flex;justify-content:space-between;align-items:baseline;font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:8px;gap:10px}
+.ri-row b{font-weight:500;color:var(--acc);text-transform:none;font-size:12px;white-space:nowrap}
+.ri-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;background:linear-gradient(90deg,var(--acc) var(--fill,0%),#23291f var(--fill,0%));outline:none;margin:8px 0 6px;display:block}
+.ri-slider::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.ri-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.ri-slider:hover::-webkit-slider-thumb{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.ri-slider:hover::-moz-range-thumb{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.ri-ticks{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);padding:0 6px}
+.ri-focus{margin-top:14px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:rgba(0,0,0,.25)}
+.ri-focus h3{margin:0 0 4px;font-size:15px;font-weight:600;color:var(--ink)}
+.ri-fact{margin:0 0 10px;font-size:14px;line-height:1.5;color:var(--ink-dim)}
+.ri-list{list-style:none;margin:0;padding:0;display:grid;gap:9px}
+.ri-list li{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center;font-size:13.5px;line-height:1.45;color:var(--ink);padding-top:9px;border-top:1px solid var(--line)}
+.ri-pname{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--ink-dim)}
+.ri-badge{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;text-transform:uppercase;padding:2px 9px;border-radius:999px;border:1px solid}
+.ri-K{color:var(--acc);border-color:var(--acc);background:rgba(var(--acc-rgb),.12)}
+.ri-I{color:var(--amb);border-color:var(--amb);border-style:dashed}
+.ri-O{color:var(--ink-dim);border-color:var(--line)}
+.ri-note{flex-basis:100%}
+.ri-empty{font-size:13.5px;color:var(--ink-dim)}
+.ri-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+.ri-stat small{display:block;font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:4px}
+.ri-stat b{display:block;font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500;color:var(--acc);line-height:1.1}
+.ri-stat.amb b{color:var(--amb)}
+.ri-stat span{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim)}
+.ri-kd{border-top:1px solid var(--line);padding-top:16px;margin-top:14px;font-size:14.5px;line-height:1.65;color:var(--ink)}
+.ri-kd p{margin:0}
+.ri-know{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));border-radius:0 12px 12px 0;margin-bottom:0;padding-bottom:16px}
+.ri-know-tag{display:flex;align-items:center;gap:9px;margin-bottom:12px}
+.ri-know-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:riPulse 2.4s ease-in-out infinite}
+@keyframes riPulse{0%,100%{opacity:1}50%{opacity:.45}}
+.ri-know-label{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.15em;color:var(--acc)}
+.ri-know-body{margin:0;font-size:17.4px;font-weight:400;line-height:1.55;color:var(--ink)}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
 
-<div class="container">
-  <h2 class="sr-only">Academic and Popular Interpretations Interactive Widget</h2>
-  
-  <h1>Both tell the truth — just not <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">each other's</span></h1>
-  
-  <p class="intro">
-    The monograph and the movie about the same debate do not share the same goals. One builds scholarly argument; the other shapes cultural memory. What each keeps, invents and omits is not a mistake — it is a choice answering to different masters. Toggle between them to see what shifts.
-  </p>
+<div class="ri-wrap">
+  <h2 class="sr-only">Richard III interactive: which elements of the debate each producer of history keeps, invents or omits, era by era</h2>
 
-  <div class="card">
-    <div class="card-header">
-      <div class="card-label">Interpretation Scale</div>
-      <div class="live-tag" id="liveTag">Academic view</div>
+  <h1>Shakespeare kept more of the record than the <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">monument</span></h1>
+  <p class="ri-intro">Richard III is the same king in Thomas More's chronicle, Shakespeare's play, a 1981 monograph, a cathedral tomb and a 2022 film; what differs is which parts of the record each producer keeps, which it invents and which it leaves out. Choose an era and turn producers on, and watch the same seven elements re-light; then move the focus down the rows to read exactly what each producer did with that element.</p>
+
+  <div class="ri-card">
+    <div class="ri-head">
+      <div class="ri-label">Richard III · who keeps what</div>
+      <div class="ri-live" id="riLive">3 on · 20th century</div>
     </div>
-    <div class="card-hint">Drag the slider left and right to shift interpretation</div>
-    
-    <div class="canvas-wrapper" id="canvasWrapper">
-      <canvas id="shelfCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">Academic interpretation: invents frameworks & arguments</div>
+    <div class="ri-hint">Choose an era. Turn producers on. Watch which rows stay lit, then move the focus down the rows.</div>
+
+    <div class="ri-sub" id="riEraTitle">Era</div>
+    <div class="ri-group ri-era" role="group" aria-label="Era of the producers" id="riEra"></div>
+
+    <div class="ri-sub" id="riProdTitle">Producers on</div>
+    <div class="ri-group ri-prod" role="group" aria-label="Producers of history to compare" data-kw-multi id="riProd"></div>
+
+    <div class="ri-canvas" id="riWrap">
+      <canvas id="riCanvas" aria-label="Grid of elements of the Richard III debate against producers of history, lit kept, invented or omitted"></canvas>
+      <div class="ri-overlay" id="riOverlay">3 producers · 11 kept · 5 invented · 5 omitted</div>
     </div>
 
-    <div class="slider-wrapper" id="sliderWrapper">
-      <div class="slider-track"></div>
-      <div class="slider-label-left">ACADEMIC</div>
-      <div class="slider-label-right">POPULAR</div>
-      <div class="slider-thumb" id="sliderThumb">
-        <div class="slider-thumb-label" id="sliderThumbLabel">INTERPRETATION</div>
-      </div>
+    <div class="ri-row"><span>Element in focus</span><b id="riFocusV">Princes 1483</b></div>
+    <input type="range" class="ri-slider" id="riRange" aria-label="Element in focus" min="1" max="7" step="1" value="1">
+    <div class="ri-ticks" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span></div>
+
+    <div class="ri-focus" aria-live="polite">
+      <h3 id="riFocusTitle">Princes vanish, 1483</h3>
+      <p class="ri-fact" id="riFact"></p>
+      <ul class="ri-list" id="riList"></ul>
+    </div>
+
+    <div class="ri-stats">
+      <div class="ri-stat"><small>Kept</small><b id="riK">11</b><span id="riKsub">of 21 cells</span></div>
+      <div class="ri-stat amb"><small>Invented</small><b id="riI">5</b><span id="riIsub">5 omitted</span></div>
     </div>
   </div>
 
-  <div class="card">
-    <div class="toggle-group">
-      <button class="toggle-btn active" id="btnAcademic">Academic</button>
-      <button class="toggle-btn" id="btnPopular">Popular</button>
+  <div class="ri-card">
+    <div class="ri-sub" style="margin-top:0">Read the comparison</div>
+    <div class="ri-group" role="group" aria-label="Which side of the comparison to read" id="riKdGroup">
+      <button type="button" class="ri-pill" style="flex:1 1 90px" aria-pressed="true" data-kd="academic">Academic</button>
+      <button type="button" class="ri-pill" style="flex:1 1 90px" aria-pressed="false" data-kd="popular">Popular</button>
+      <button type="button" class="ri-pill" style="flex:1 1 90px" aria-pressed="false" data-kd="eras">Producers by era</button>
     </div>
-    
-    <div class="knowdrop-divider">
-      <p class="knowdrop-text" id="knowdropText">
-        Academic interpretations prioritise evidence rigour, footnoted claims, and historiographical debates. Recent scholarship excavates silenced voices, challenges master narratives, and argues with predecessors through careful source analysis. What it keeps: archival documents, witness testimony, quantitative data. What it invents: analytical frameworks, periodisation schemes, causal arguments. What it omits: narrative drama, moral simplicity, the comfort of heroes and villains rendered whole.
-      </p>
-    </div>
+    <div class="ri-kd"><p id="riKd"></p></div>
   </div>
 
-  <div class="know-this">
-    <div class="know-this-tag">
-      <div class="know-this-dot"></div>
-      <div class="know-this-label">Know This</div>
-    </div>
-    <p class="know-this-body">
-      Every case study demands both <span style="color:var(--acc)">academic historiography</span> and <span style="color:var(--acc)">popular memory</span> — what scholars argue in footnoted monographs and what the culture remembers through <span style="color:var(--acc)">film and monument</span>.
-    </p>
+  <div class="ri-know">
+    <div class="ri-know-tag"><div class="ri-know-dot"></div><div class="ri-know-label">Know This</div></div>
+    <p class="ri-know-body">Set any <span style="color:var(--acc)">academic</span> reading beside any <span style="color:var(--acc)">popular</span> reading of the same debate and ask what each <span style="color:var(--acc)">keeps, invents and omits</span>, not which one is true.</p>
   </div>
 </div>
 
 <script>
-const canvas = document.getElementById("shelfCanvas");
-const ctx = canvas.getContext("2d");
-const canvasWrapper = document.getElementById("canvasWrapper");
-const sliderWrapper = document.getElementById("sliderWrapper");
-const sliderThumb = document.getElementById("sliderThumb");
-const sliderThumbLabel = document.getElementById("sliderThumbLabel");
-const liveTag = document.getElementById("liveTag");
-const canvasOverlay = document.getElementById("canvasOverlay");
-const btnAcademic = document.getElementById("btnAcademic");
-const btnPopular = document.getElementById("btnPopular");
-const knowdropText = document.getElementById("knowdropText");
+(function(){
+  const CSSV = getComputedStyle(document.documentElement);
+  const ACC = CSSV.getPropertyValue("--acc").trim();
+  const RGB = CSSV.getPropertyValue("--acc-rgb").trim();
+  const AMB = CSSV.getPropertyValue("--amb").trim();
+  const AMBRGB = CSSV.getPropertyValue("--amb-rgb").trim();
+  const INK = CSSV.getPropertyValue("--ink").trim();
+  const DIM = CSSV.getPropertyValue("--ink-dim").trim();
+  const DIMRGB = CSSV.getPropertyValue("--dim-rgb").trim();
+  const LINE = CSSV.getPropertyValue("--line").trim();
+  const BG = CSSV.getPropertyValue("--bg").trim();
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-const CSS = getComputedStyle(document.documentElement);
-const ACC = CSS.getPropertyValue("--acc").trim();
-const RGB = CSS.getPropertyValue("--acc-rgb").trim();
-const AMB = CSS.getPropertyValue("--amb").trim();
+  const E = [
+    { short: "Princes 1483", label: "Princes vanish, 1483", fact: "The record: Edward V and his brother were last seen in the Tower in the summer of 1483. No body, no record of a death." },
+    { short: "Hastings 1483", label: "Hastings executed, 1483", fact: "The record: Lord Hastings was beheaded on 13 June 1483 without trial, noted by contemporaries." },
+    { short: "Titulus 1484", label: "Titulus Regius, 1484", fact: "The record: parliament declared the children of Edward IV illegitimate; Henry VII later ordered the act destroyed." },
+    { short: "Laws 1484", label: "Bail and jury laws, 1484", fact: "The record: Richard’s one parliament passed laws on bail, on juries and against forced loans (benevolences)." },
+    { short: "His body", label: "Richard’s body", fact: "The record: the skeleton found in Leicester in 2012 has a curved spine (scoliosis) and two healthy arms." },
+    { short: "Bosworth 1485", label: "Death at Bosworth, 1485", fact: "The record: killed in battle on 22 August 1485; the skull carries battle wounds." },
+    { short: "His words", label: "His own words", fact: "The record: almost nothing he said in private survives; his motto, Loyaulte me lie, does." }
+  ];
 
-let sliderPos = 0;
-let isDragging = false;
-let breathePhase = 0;
+  const P = {
+    more: { name: "More", year: "1513", full: "Thomas More 1513", kind: "humanist chronicle", cells: [
+      ["I", "The vanishing is real, but More tells a detailed smothering by Tyrell as fact, with no witness."],
+      ["K", "Reported in full, with the famous strawberries scene added for drama."],
+      ["K", "The bastardy claim is kept and presented as a pretext."],
+      ["O", "No mention of the 1484 parliament or its laws."],
+      ["I", "Crook-backed and ill-featured, read as the outward sign of a wicked nature."],
+      ["O", "The History breaks off in 1483 and never reaches Bosworth."],
+      ["I", "Long set speeches composed in the classical manner, none of them recorded."] ] },
+    play: { name: "The play", year: "1593", full: "Shakespeare 1593", kind: "stage play", cells: [
+      ["I", "Richard orders the murder on stage and Tyrell reports it: a scene no source witnessed."],
+      ["K", "Hastings is condemned and beheaded in Act 3, as the record says."],
+      ["K", "Buckingham argues the princes are bastards; the claim is kept, the timeline squeezed."],
+      ["O", "Not a line on bail, juries or benevolences."],
+      ["I", "A withered arm and a hump; the 2012 skeleton shows scoliosis and two healthy arms."],
+      ["K", "He dies fighting at Bosworth, which the skull wounds confirm."],
+      ["I", "A horse, a horse, my kingdom for a horse, and every soliloquy: invented."] ] },
+    tey: { name: "Tey", year: "1951", full: "Josephine Tey 1951", kind: "detective novel", cells: [
+      ["I", "A bedridden detective acquits Richard and blames Henry VII: an argument from silence, not evidence."],
+      ["O", "The execution without trial is mentioned and brushed aside."],
+      ["K", "Titulus Regius and the precontract story are the spine of the case for the defence."],
+      ["K", "The 1484 laws are kept as proof of a fair-minded king."],
+      ["O", "The portrait shows no hump, so the body is dismissed as a Tudor smear."],
+      ["K", "Bosworth is kept, briefly, as the end of the story."],
+      ["O", "Richard never speaks; a 1950s policeman speaks for him."] ] },
+    olivier: { name: "Olivier", year: "1955", full: "Olivier film 1955", kind: "feature film", cells: [
+      ["I", "The princes asleep, the murderers at the door: staged as if seen."],
+      ["K", "Hastings is sent to the block, as in the play and the record."],
+      ["K", "The citizens are told the princes are bastards; kept, compressed."],
+      ["O", "No laws, no parliament."],
+      ["I", "A hump, a limp and a long false nose, all built in the make-up chair."],
+      ["K", "He is cut down at Bosworth; the crown in a hawthorn bush is Tudor tradition."],
+      ["I", "Off with his head, so much for Buckingham: written by Colley Cibber in 1700, not Shakespeare."] ] },
+    ross: { name: "Ross", year: "1981", full: "Charles Ross 1981", kind: "academic monograph", cells: [
+      ["K", "Weighed as probable but unproven; every chronicle is tested against the next."],
+      ["K", "Treated as the turning point of the usurpation, with dates and witnesses."],
+      ["K", "Read as a political instrument and tied to its parliament."],
+      ["K", "The 1484 statutes are discussed as part of the reign."],
+      ["O", "Set aside as probable Tudor exaggeration, with no skeleton yet to check."],
+      ["K", "Reconstructed from the sources, with the politics of the battle explained."],
+      ["I", "No speech is invented, but a framework is: a magnate behaving as his age expected."] ] },
+    recent: { name: "Recent", year: "2014+", full: "Recent scholars 2014+", kind: "recent historiography", cells: [
+      ["K", "Still open; recent work argues Richard remains the most likely culprit."],
+      ["K", "Kept, dated and used to read his intentions in June 1483."],
+      ["K", "Kept, with the destroyed copies and the surviving text compared."],
+      ["K", "Kept and set alongside other late medieval parliaments."],
+      ["K", "Scoliosis confirmed by the skeleton; no withered arm (Appleby and others, 2014)."],
+      ["K", "The bones show eleven wounds, nine to the skull: a battlefield death confirmed."],
+      ["I", "A framework: the bones change what we know of his body, not of his guilt."] ] },
+    lostking: { name: "Lost King", year: "2022", full: "The Lost King 2022", kind: "feature film", cells: [
+      ["O", "The princes are barely raised; the film is about the search, not the reign."],
+      ["O", "Not mentioned."],
+      ["O", "Not mentioned."],
+      ["O", "At most a passing mention."],
+      ["K", "The curved spine in the trench is the film’s climax; the find is real."],
+      ["K", "The battle wounds are reported from the real dig."],
+      ["I", "A ghostly Richard appears to Philippa Langley and talks with her."] ] },
+    tomb: { name: "Tomb", year: "2015", full: "Leicester tomb 2015", kind: "memorial", cells: [
+      ["O", "Nothing on the princes."],
+      ["O", "Nothing on Hastings."],
+      ["O", "Nothing on the claim to the throne."],
+      ["O", "Nothing on his laws."],
+      ["O", "No effigy and no body shown: a plain block of Swaledale stone cut with a cross."],
+      ["K", "Richard III, 1452 to 1485: his death is the one event the stone records."],
+      ["K", "His motto, Loyaulte me lie (loyalty binds me), is cut into the stone."] ] }
+  };
 
-const dpr = Math.min(window.devicePixelRatio || 1, 2);
-const buf = document.createElement("canvas");
-const bctx = buf.getContext("2d");
+  const ERAS = [
+    { label: "Tudor era", ids: ["more", "play"] },
+    { label: "20th century", ids: ["tey", "olivier", "ross"] },
+    { label: "Since 2012", ids: ["recent", "lostking", "tomb"] }
+  ];
+  const WORD = { K: "Kept", I: "Invented", O: "Omitted" };
 
-function resize() {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  draw();
-}
+  const KD = {
+    academic: "Academic interpretations of Richard III are built in the open. Charles Ross (1981) weighs every chronicle against the next, treats the princes as probably but not provably Richard’s victims, and sets Hastings, Titulus Regius and the 1484 laws inside the politics of a fifteenth-century magnate. That setting is itself an invention, a framework no source states, and his dismissal of the crook-back as Tudor exaggeration was overturned in 2012 when the Leicester skeleton showed real scoliosis. Recent historiography (the 2014 skeletal studies, Michael Hicks in 2019) keeps the new bones but argues they change what we know about his body, not about his guilt. The academic habit is not having no interpretation; it is footnoting the one you have so a rival can test it.",
+    popular: "Popular interpretations keep more of the record than students expect. Shakespeare keeps Hastings, the bastardy claim and the death at Bosworth; The Lost King (2022) stakes its climax on the real curved spine lifted from a Leicester car park. What they invent is specific: a withered arm Richard never had, a line (a horse, a horse) nobody heard, a ghostly king who chats with a modern researcher, and Colley Cibber’s line from 1700, so much for Buckingham, slipped into Olivier’s 1955 film. Josephine Tey’s The Daughter of Time (1951) is popular revisionism and it omits too, brushing past the Hastings execution to acquit its hero. The skill is naming those moves element by element, not calling the film false.",
+    eras: "Who produces history changes with the era, and so does what counts as the learned version. In 1513 the serious history was Thomas More’s humanist narrative, written for an educated Tudor readership; it stops in 1483 and never reaches Bosworth. In 1593 the dominant producer was a playhouse, and the stage Richard outlived every chronicle. The twentieth century split the field: a novelist and a film studio reached millions while a university historian reached a seminar room. Since 2012 a university archaeology department, a cathedral, an amateur researcher and a film studio have all produced Richard III, often from the same trench, and part of the debate is now about who gets credit for finding him. Ask of any case study: who was allowed to produce history then, and for whom?"
+  };
 
-const academicContent = {
-  keeps: ["Sources", "Evidence", "Footnotes"],
-  invents: ["Frameworks", "Arguments"]
-};
+  let eraIdx = 1;
+  const on = ERAS.map(e => new Set(e.ids));
+  let focus = 0;
 
-const popularContent = {
-  keeps: ["Drama", "Heroes", "Emotion"],
-  invents: ["Scenes", "Dialogue"]
-};
+  const canvas = document.getElementById("riCanvas");
+  const wrapEl = document.getElementById("riWrap");
+  const ctx = canvas.getContext("2d");
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const buf = document.createElement("canvas");
+  const bctx = buf.getContext("2d");
 
-function animate() {
-  breathePhase += 0.015;
-  draw();
-  requestAnimationFrame(animate);
-}
+  const eraGroup = document.getElementById("riEra");
+  const prodGroup = document.getElementById("riProd");
+  const live = document.getElementById("riLive");
+  const overlay = document.getElementById("riOverlay");
+  const range = document.getElementById("riRange");
+  const focusV = document.getElementById("riFocusV");
+  const focusTitle = document.getElementById("riFocusTitle");
+  const factEl = document.getElementById("riFact");
+  const listEl = document.getElementById("riList");
+  const kEl = document.getElementById("riK"), kSub = document.getElementById("riKsub");
+  const iEl = document.getElementById("riI"), iSub = document.getElementById("riIsub");
+  const kdEl = document.getElementById("riKd");
+  const kdGroup = document.getElementById("riKdGroup");
 
-function draw() {
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  
-  ctx.fillStyle = "#000";
-  ctx.fillRect(0, 0, w, h);
-  
-  const academicStrength = 1 - sliderPos;
-  const popularStrength = sliderPos;
-  
-  const breatheMod = Math.sin(breathePhase) * 0.08 + 1;
-  
-  const leftCenterX = w * 0.3;
-  const rightCenterX = w * 0.7;
-  const blobY = h * 0.5;
-  
-  academicContent.keeps.forEach((item, i) => {
-    const angle = (i / academicContent.keeps.length) * Math.PI * 2 - Math.PI / 2;
-    const dist = w * 0.08;
-    const x = leftCenterX + Math.cos(angle) * dist;
-    const y = blobY + Math.sin(angle) * dist;
-    const radius = (20 + academicStrength * 25) * breatheMod;
-    
-    drawBlob(x, y, radius, item, "rgba(" + RGB + ", " + (0.3 + academicStrength * 0.5) + ")", "rgba(" + RGB + ", " + (0.6 + academicStrength * 0.4) + ")", academicStrength);
+  function selected(){ return ERAS[eraIdx].ids.filter(id => on[eraIdx].has(id)); }
+
+  function mono(px, wt){ return (wt || 400) + " " + px + "px \"JetBrains Mono\", monospace"; }
+
+  function rr(x, y, w, h, r){
+    ctx.beginPath();
+    ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y); ctx.closePath();
+  }
+
+  function cell(s, x, y, cw, ch, fade, word){
+    const r = Math.min(6, ch / 2);
+    if (s === "K"){
+      ctx.fillStyle = "rgba(" + RGB + "," + (0.82 * fade) + ")";
+      rr(x, y, cw, ch, r); ctx.fill();
+      ctx.save(); ctx.globalCompositeOperation = "lighter";
+      ctx.strokeStyle = "rgba(" + RGB + "," + (0.55 * fade) + ")"; ctx.lineWidth = 2;
+      rr(x, y, cw, ch, r); ctx.stroke(); ctx.restore();
+      if (word){ ctx.fillStyle = BG; ctx.font = mono(11, 500); ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("KEPT", x + cw / 2, y + ch / 2 + 0.5); }
+    } else if (s === "I"){
+      ctx.fillStyle = "rgba(" + AMBRGB + "," + (0.12 * fade) + ")";
+      rr(x, y, cw, ch, r); ctx.fill();
+      ctx.save(); rr(x, y, cw, ch, r); ctx.clip();
+      ctx.strokeStyle = "rgba(" + AMBRGB + "," + (0.5 * fade) + ")"; ctx.lineWidth = 1;
+      for (let k = -ch; k < cw + ch; k += 7){ ctx.beginPath(); ctx.moveTo(x + k, y + ch); ctx.lineTo(x + k + ch, y); ctx.stroke(); }
+      ctx.restore();
+      ctx.save(); ctx.setLineDash([4, 3]); ctx.strokeStyle = "rgba(" + AMBRGB + "," + (0.9 * fade) + ")"; ctx.lineWidth = 1.2;
+      rr(x, y, cw, ch, r); ctx.stroke(); ctx.restore();
+      if (word){
+        ctx.font = mono(11, 500); const tw = ctx.measureText("INVENTED").width;
+        ctx.fillStyle = BG; rr(x + cw / 2 - tw / 2 - 5, y + ch / 2 - 8, tw + 10, 16, 4); ctx.fill();
+        ctx.fillStyle = AMB; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("INVENTED", x + cw / 2, y + ch / 2 + 0.5);
+      }
+    } else {
+      ctx.strokeStyle = "rgba(" + DIMRGB + "," + (0.4 * fade) + ")"; ctx.lineWidth = 1;
+      rr(x, y, cw, ch, r); ctx.stroke();
+      if (word){ ctx.fillStyle = DIM; ctx.font = mono(11); ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("OMITTED", x + cw / 2, y + ch / 2 + 0.5); }
+    }
+  }
+
+  let fade = 1;
+  function draw(){
+    const w = canvas.width / dpr, h = canvas.height / dpr;
+    if (!w || !h) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.globalCompositeOperation = "source-over"; ctx.globalAlpha = 1; ctx.filter = "none";
+    ctx.fillStyle = BG; ctx.fillRect(0, 0, w, h);
+
+    const sel = selected(); const n = sel.length;
+    const overlayH = 42, top = h * 0.05, headH = 36, legendH = 24;
+    const rowsTop = top + headH, rowsBot = h - overlayH - legendH - 10;
+    const rowH = (rowsBot - rowsTop) / E.length;
+    const labelW = Math.min(120, w * 0.36), gx0 = labelW + 8, gx1 = w - 10;
+    const colW = (gx1 - gx0) / Math.max(n, 1);
+    const pad = Math.max(3, Math.min(6, rowH * 0.12));
+    const showWord = colW - 2 * pad >= 76 && rowH - 2 * pad >= 16;
+
+    // focus band
+    ctx.fillStyle = "rgba(" + RGB + ",0.09)";
+    ctx.fillRect(0, rowsTop + focus * rowH, w, rowH);
+    ctx.fillStyle = ACC; ctx.fillRect(0, rowsTop + focus * rowH + 3, 3, rowH - 6);
+
+    // row lines
+    ctx.strokeStyle = LINE; ctx.lineWidth = 1;
+    for (let r = 0; r <= E.length; r++){ const y = Math.round(rowsTop + r * rowH) + 0.5; ctx.beginPath(); ctx.moveTo(8, y); ctx.lineTo(w - 8, y); ctx.stroke(); }
+
+    // row labels
+    ctx.textAlign = "left"; ctx.textBaseline = "middle";
+    E.forEach((e, r) => {
+      const cy = rowsTop + (r + 0.5) * rowH;
+      ctx.font = mono(11, r === focus ? 500 : 400);
+      ctx.fillStyle = r === focus ? INK : DIM;
+      ctx.fillText(e.short, 12, cy);
+    });
+
+    // headers + cells
+    ctx.textAlign = "center";
+    sel.forEach((id, i) => {
+      const p = P[id]; const cx = gx0 + (i + 0.5) * colW;
+      ctx.fillStyle = INK; ctx.font = mono(11, 500); ctx.fillText(p.name, cx, rowsTop - 22);
+      ctx.fillStyle = DIM; ctx.font = mono(11); ctx.fillText(p.year, cx, rowsTop - 9);
+      E.forEach((e, r) => {
+        cell(p.cells[r][0], gx0 + i * colW + pad, rowsTop + r * rowH + pad, colW - 2 * pad, rowH - 2 * pad, fade, showWord);
+      });
+    });
+    if (n === 0){
+      ctx.fillStyle = DIM; ctx.font = mono(12); ctx.textAlign = "center";
+      ctx.fillText("Turn on at least one producer", gx0 + (gx1 - gx0) / 2, (rowsTop + rowsBot) / 2);
+    }
+
+    // legend
+    const ly = rowsBot + 12; let lx = 12;
+    const items = [["K", "kept"], ["I", "invented"], ["O", "omitted"]];
+    items.forEach(it => {
+      cell(it[0], lx, ly - 6, 16, 12, 1, false);
+      ctx.fillStyle = DIM; ctx.font = mono(11); ctx.textAlign = "left"; ctx.textBaseline = "middle";
+      ctx.fillText(it[1], lx + 22, ly);
+      lx += 22 + ctx.measureText(it[1]).width + 16;
+    });
+
+    // bloom
+    bctx.setTransform(1, 0, 0, 1, 0, 0); bctx.clearRect(0, 0, buf.width, buf.height);
+    if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+    ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
+    (buf.width&&buf.height)&&ctx.drawImage(buf, 0, 0, w, h); ctx.restore();
+
+    // vignette
+    const cx = w / 2, cy = h / 2;
+    const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
+  }
+
+  let raf = 0, t0 = 0;
+  function step(now){
+    const dt = Math.min(now - t0, 2000);
+    const t = Math.min(1, dt / 380);
+    fade = 1 - Math.pow(1 - t, 3);
+    draw();
+    if (t < 1) raf = requestAnimationFrame(step); else raf = 0;
+  }
+  function kick(){
+    if (reduce){ fade = 1; draw(); return; }
+    fade = 0; t0 = performance.now();
+    if (raf) cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(step);
+  }
+
+  function resize(){
+    const rect = wrapEl.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    canvas.width = Math.round(rect.width * dpr); canvas.height = Math.round(rect.height * dpr);
+    buf.width = canvas.width; buf.height = canvas.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    draw();
+  }
+
+  function updateDom(){
+    const sel = selected(); const n = sel.length;
+    let k = 0, inv = 0, o = 0;
+    sel.forEach(id => P[id].cells.forEach(c => { if (c[0] === "K") k++; else if (c[0] === "I") inv++; else o++; }));
+    live.textContent = n + " on · " + ERAS[eraIdx].label;
+    overlay.textContent = n + (n === 1 ? " producer" : " producers") + " · " + k + " kept · " + inv + " invented · " + o + " omitted";
+    kEl.textContent = k; kSub.textContent = "of " + (n * E.length) + " cells";
+    iEl.textContent = inv; iSub.textContent = o + " omitted";
+    focusV.textContent = E[focus].short;
+    focusTitle.textContent = E[focus].label;
+    factEl.textContent = E[focus].fact;
+    listEl.innerHTML = "";
+    if (n === 0){
+      const li = document.createElement("li"); li.className = "ri-empty"; li.textContent = "Turn on at least one producer to read what it does with this element."; listEl.appendChild(li);
+    }
+    sel.forEach(id => {
+      const p = P[id]; const c = p.cells[focus];
+      const li = document.createElement("li");
+      const nm = document.createElement("span"); nm.className = "ri-pname"; nm.textContent = p.full + " · " + p.kind;
+      const bd = document.createElement("span"); bd.className = "ri-badge ri-" + c[0]; bd.textContent = WORD[c[0]];
+      const nt = document.createElement("span"); nt.className = "ri-note"; nt.textContent = c[1];
+      li.appendChild(nm); li.appendChild(bd); li.appendChild(nt); listEl.appendChild(li);
+    });
+    const pct = (focus / (E.length - 1)) * 100;
+    range.style.setProperty("--fill", pct + "%");
+  }
+
+  function buildEra(){
+    eraGroup.innerHTML = "";
+    ERAS.forEach((e, i) => {
+      const b = document.createElement("button"); b.type = "button"; b.className = "ri-pill";
+      b.setAttribute("aria-pressed", i === eraIdx ? "true" : "false"); b.textContent = e.label;
+      b.addEventListener("click", () => {
+        eraIdx = i;
+        Array.from(eraGroup.children).forEach((c, j) => c.setAttribute("aria-pressed", j === i ? "true" : "false"));
+        buildProducers(); updateDom(); kick();
+      });
+      eraGroup.appendChild(b);
+    });
+  }
+
+  function buildProducers(){
+    prodGroup.innerHTML = "";
+    ERAS[eraIdx].ids.forEach(id => {
+      const p = P[id];
+      const b = document.createElement("button"); b.type = "button"; b.className = "ri-pill"; b.dataset.id = id;
+      b.setAttribute("aria-pressed", on[eraIdx].has(id) ? "true" : "false");
+      b.textContent = p.full;
+      const sm = document.createElement("small"); sm.textContent = p.kind; b.appendChild(sm);
+      b.addEventListener("click", () => {
+        if (on[eraIdx].has(id)) on[eraIdx].delete(id); else on[eraIdx].add(id);
+        Array.from(prodGroup.children).forEach(c => c.setAttribute("aria-pressed", on[eraIdx].has(c.dataset.id) ? "true" : "false"));
+        updateDom(); kick();
+      });
+      prodGroup.appendChild(b);
+    });
+  }
+
+  range.addEventListener("input", () => {
+    focus = Math.max(0, Math.min(E.length - 1, parseInt(range.value, 10) - 1));
+    updateDom(); draw();
   });
-  
-  popularContent.keeps.forEach((item, i) => {
-    const angle = (i / popularContent.keeps.length) * Math.PI * 2 - Math.PI / 2;
-    const dist = w * 0.08;
-    const x = rightCenterX + Math.cos(angle) * dist;
-    const y = blobY + Math.sin(angle) * dist;
-    const radius = (20 + popularStrength * 25) * breatheMod;
-    
-    drawBlob(x, y, radius, item, "rgba(250, 199, 117, " + (0.3 + popularStrength * 0.5) + ")", "rgba(250, 199, 117, " + (0.6 + popularStrength * 0.4) + ")", popularStrength);
+
+  kdGroup.querySelectorAll("button").forEach(b => {
+    b.addEventListener("click", () => {
+      kdGroup.querySelectorAll("button").forEach(c => c.setAttribute("aria-pressed", c === b ? "true" : "false"));
+      kdEl.textContent = KD[b.dataset.kd];
+    });
   });
-  
-  bloom();
-  vignette(w * 0.5, blobY, w, h);
-}
+  kdEl.textContent = KD.academic;
 
-function drawBlob(x, y, radius, label, fillColor, strokeColor, strength) {
-  ctx.save();
-  ctx.beginPath();
-  ctx.arc(x, y, radius, 0, Math.PI * 2);
-  ctx.fillStyle = fillColor;
-  ctx.fill();
-  ctx.strokeStyle = strokeColor;
-  ctx.lineWidth = 2;
-  ctx.stroke();
-  
-  ctx.shadowColor = strokeColor;
-  ctx.shadowBlur = 18 + strength * 12;
-  ctx.stroke();
-  ctx.restore();
-  
-  ctx.save();
-  ctx.font = "600 " + (7 + radius * 0.15) + "px 'Geist', sans-serif";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  
-  const textColor = strength > 0.5 ? "#000" : strokeColor;
-  
-  ctx.fillStyle = textColor;
-  ctx.fillText(label, x, y);
-  
-  if (strength <= 0.5) {
-    ctx.globalCompositeOperation = "lighter";
-    ctx.fillStyle = strokeColor;
-    ctx.fillText(label, x, y);
-  }
-  
-  ctx.restore();
-}
-
-function bloom() {
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  ctx.save();
-  ctx.globalCompositeOperation = "lighter";
-  ctx.globalAlpha = 0.5;
-  ctx.filter = "blur(10px)";
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
-}
-
-function vignette(cx, cy, w, h) {
-  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
-  vig.addColorStop(0, "rgba(0,0,0,0)");
-  vig.addColorStop(1, "rgba(0,0,0,0.52)");
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-}
-
-function updateSliderVisuals() {
-  const rect = sliderWrapper.getBoundingClientRect();
-  const lineMargin = rect.width * 0.12;
-  const lineWidth = rect.width - lineMargin * 2;
-  const thumbLeft = lineMargin + (lineWidth * sliderPos);
-  
-  sliderThumb.style.left = thumbLeft + 'px';
-  
-  if (sliderPos < 0.5) {
-    const blend = sliderPos * 2;
-    sliderThumb.style.borderColor = "rgba(" + RGB + ", 0.9)";
-    sliderThumb.style.background = "radial-gradient(circle, rgba(" + RGB + ", " + (1 - blend * 0.5) + "), rgba(" + RGB + ", " + (0.6 - blend * 0.3) + "))";
-    sliderThumb.style.boxShadow = "0 0 20px rgba(" + RGB + ", " + (0.8 - blend * 0.2) + ")";
-    sliderThumbLabel.style.color = "rgba(" + RGB + ", 1)";
-  } else {
-    const blend = (sliderPos - 0.5) * 2;
-    sliderThumb.style.borderColor = "rgba(250, 199, 117, 0.9)";
-    sliderThumb.style.background = "radial-gradient(circle, rgba(250, 199, 117, " + (0.5 + blend * 0.5) + "), rgba(250, 199, 117, " + (0.3 + blend * 0.3) + "))";
-    sliderThumb.style.boxShadow = "0 0 20px rgba(250, 199, 117, " + (0.6 + blend * 0.4) + ")";
-    sliderThumbLabel.style.color = "rgba(250, 199, 117, 1)";
-  }
-}
-
-function updateUI() {
-  const content = sliderPos < 0.5 ? academicContent : popularContent;
-  const mode = sliderPos < 0.5 ? "academic" : "popular";
-  const invents = content.invents.join(" & ").toLowerCase();
-  
-  if (mode === "academic") {
-    liveTag.textContent = "Academic view";
-    canvasOverlay.textContent = "Academic interpretation: invents " + invents;
-    btnAcademic.classList.add("active");
-    btnPopular.classList.remove("active");
-    knowdropText.textContent = "Academic interpretations prioritise evidence rigour, footnoted claims, and historiographical debates. Recent scholarship excavates silenced voices, challenges master narratives, and argues with predecessors through careful source analysis. What it keeps: archival documents, witness testimony, quantitative data. What it invents: analytical frameworks, periodisation schemes, causal arguments. What it omits: narrative drama, moral simplicity, the comfort of heroes and villains rendered whole.";
-  } else {
-    liveTag.textContent = "Popular view";
-    canvasOverlay.textContent = "Popular interpretation: invents " + invents;
-    btnPopular.classList.add("active");
-    btnAcademic.classList.remove("active");
-    knowdropText.textContent = "Popular interpretations prioritise emotional resonance, narrative clarity, and cultural memory. Films, monuments and public history shape what societies remember by selecting moments that feel true even when details shift. What it keeps: human drama, moral stakes, visual spectacle. What it invents: composite characters, streamlined chronologies, imagined dialogue that captures documented sentiment. What it omits: scholarly hedging, footnoted caveats, the ambiguity that makes historians uncertain and audiences restless.";
-  }
-  
-  updateSliderVisuals();
-}
-
-function handleDragStart(clientX) {
-  isDragging = true;
-  handleDrag(clientX);
-}
-
-function handleDrag(clientX) {
-  if (!isDragging) return;
-  
-  const rect = sliderWrapper.getBoundingClientRect();
-  const w = rect.width;
-  const lineMargin = w * 0.12;
-  const lineStart = lineMargin;
-  const lineEnd = w - lineMargin;
-  const lineWidth = lineEnd - lineStart;
-  
-  const x = clientX - rect.left;
-  sliderPos = Math.max(0, Math.min(1, (x - lineStart) / lineWidth));
-  
-  updateUI();
-}
-
-function handleDragEnd() {
-  isDragging = false;
-}
-
-sliderWrapper.addEventListener("mousedown", (e) => {
-  handleDragStart(e.clientX);
-});
-
-document.addEventListener("mousemove", (e) => {
-  if (isDragging) {
-    handleDrag(e.clientX);
-  }
-});
-
-document.addEventListener("mouseup", handleDragEnd);
-
-sliderWrapper.addEventListener("touchstart", (e) => {
-  e.preventDefault();
-  handleDragStart(e.touches[0].clientX);
-});
-
-document.addEventListener("touchmove", (e) => {
-  if (isDragging) {
-    e.preventDefault();
-    handleDrag(e.touches[0].clientX);
-  }
-}, { passive: false });
-
-document.addEventListener("touchend", handleDragEnd);
-
-btnAcademic.addEventListener("click", () => {
-  sliderPos = 0;
-  updateUI();
-});
-
-btnPopular.addEventListener("click", () => {
-  sliderPos = 1;
-  updateUI();
-});
-
-window.addEventListener("resize", resize);
-resize();
-updateUI();
-animate();
+  buildEra(); buildProducers(); updateDom();
+  window.addEventListener("resize", resize);
+  if ("ResizeObserver" in window) new ResizeObserver(() => resize()).observe(wrapEl);
+  resize();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => draw());
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'academic-and-popular-interpretations'},'*');}catch(e){}}

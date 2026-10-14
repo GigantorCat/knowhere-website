@@ -4,600 +4,415 @@ body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
-
-:root {
-  --bg: #0B0D0C;
-  --bg2: #12160F;
-  --acc: #E86A32;
-  --ag: rgba(232, 106, 50, .7);
-  --ag1: rgba(232, 106, 50, .12);
-  --ag2: rgba(232, 106, 50, .45);
-  --amb: #FAC775;
-  --ink: #EDEDE8;
-  --ink-dim: #8C9389;
-  --line: #262B26;
+:root{
+  --bg:#0B0D0C;
+  --bg2:#12160F;
+  --acc:#E86A32;
+  --acc-rgb:232, 106, 50;
+  --ag:rgba(var(--acc-rgb),.7);
+  --ag1:rgba(var(--acc-rgb),.12);
+  --ag2:rgba(var(--acc-rgb),.45);
+  --amb:#FAC775;
+  --ink:#EDEDE8;
+  --ink-dim:#8C9389;
+  --line:#262B26;
 }
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
-}
-
-body {
-  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
-  font-family: 'Geist', sans-serif;
-  min-height: 100vh;
-  padding: 40px 16px 0;
-  color: var(--ink);
-}
-
-.container {
-  max-width: 720px;
-  margin: 0 auto;
-}
-
-h1 {
-  font-size: clamp(26px, 6.5vw, 44px);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
-  margin-bottom: 14px;
-}
-
-.intro {
-  font-size: 15.5px;
-  font-weight: 400;
-  color: var(--ink-dim);
-  max-width: 58ch;
-  line-height: 1.55;
-  margin-bottom: 28px;
-}
-
-.card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 18px;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
-}
-
-.card-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  color: var(--ink);
-}
-
-.live-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--acc);
-}
-
-.card-hint {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--ink-dim);
-  margin-bottom: 14px;
-}
-
-.canvas-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16/9;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
-  box-shadow: inset 0 0 0 1px var(--ag1);
-  margin-bottom: 16px;
-}
-
-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.canvas-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(4px);
-  padding: 9px 16px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  text-transform: uppercase;
-  color: var(--acc);
-  text-align: center;
-}
-
-.slider-control {
-  margin-bottom: 10px;
-}
-
-.match-slider {
-  width: 100%;
-  height: 4px;
-  -webkit-appearance: none;
-  appearance: none;
-  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
-  border-radius: 3px;
-  outline: none;
-  cursor: pointer;
-}
-
-.match-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow .15s;
-}
-
-.match-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow .15s;
-}
-
-.match-slider::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.match-slider::-moz-range-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.tick-labels {
-  display: flex;
-  justify-content: space-between;
-  padding: 0 4px;
-}
-
-.tick-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--ink-dim);
-}
-
-.stat-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-}
-
-.stat {
-  text-align: center;
-}
-
-.stat-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 6px;
-}
-
-.stat-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 24px;
-  font-weight: 500;
-}
-
-.toggle-card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 18px;
-}
-
-.toggle-buttons {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.toggle-btn {
-  flex: 1;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14.5px;
-  padding: 12px;
-  border-radius: 11px;
-  border: 1px solid var(--line);
-  background: #12160F;
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: all .2s;
-}
-
-.toggle-btn.active {
-  background: rgba(232,106,50,.1);
-  border: 1px solid var(--acc);
-  color: var(--acc);
-  box-shadow: 0 0 22px rgba(232,106,50,.18);
-}
-
-.knowdrop-section {
-  border-top: 1px solid var(--line);
-  padding-top: 16px;
-}
-
-.knowdrop-text {
-  font-size: 14.5px;
-  font-weight: 400;
-  line-height: 1.65;
-  color: var(--ink);
-}
-
-.know-this {
-  border-left: 3px solid var(--acc);
-  padding: 16px 18px;
-  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
-  border-radius: 0 12px 12px 0;
-  margin-bottom: 0;
-}
-
-.know-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--acc);
-  margin-bottom: 10px;
-  display: block;
-}
-
-.know-body {
-  font-size: 17.4px;
-  font-weight: 400;
-  line-height: 1.55;
-  color: var(--ink);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-@media (max-width: 360px) {
-  body {
-    padding: 32px 12px 0;
-  }
-  .toggle-buttons {
-    flex-direction: column;
-  }
-}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C 55%);font-family:'Geist',sans-serif;min-height:100vh;padding:40px 16px 0;color:var(--ink)}
+.aa-wrap{max-width:720px;margin:0 auto}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+h1{font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin:0 0 14px}
+.intro{font-size:15.5px;font-weight:400;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin:0 0 26px}
+.card{background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);margin-bottom:18px}
+.card-header{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:6px}
+.card-label{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;color:var(--ink)}
+.live-tag{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--acc);text-align:right}
+.card-hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin-bottom:12px;line-height:1.5}
+.q{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-dim);margin:14px 0 8px}
+.pills{display:flex;flex-wrap:wrap;gap:8px}
+.pill{font-family:'JetBrains Mono',monospace;font-size:12px;padding:9px 13px;border-radius:999px;border:1px solid var(--line);background:#12160F;color:var(--ink-dim);cursor:pointer;transition:all .2s;flex:1 1 auto;text-align:center}
+.pill[aria-pressed="true"]{background:rgba(var(--acc-rgb),.1);border-color:var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.canvas-wrapper{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1);margin-top:12px}
+.canvas-wrapper canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.canvas-overlay{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:14px;text-transform:uppercase;color:var(--acc);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.aa-row{display:flex;justify-content:space-between;align-items:baseline;font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin:16px 0 8px}
+.aa-row b{color:var(--ink);font-weight:500;font-size:12px}
+.aa-slider{width:100%;height:4px;-webkit-appearance:none;appearance:none;border-radius:3px;outline:none;margin:0;background:linear-gradient(90deg,var(--acc) var(--fill,0%),#23291f var(--fill,0%))}
+.aa-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.aa-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.aa-slider::-webkit-slider-thumb:hover{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.aa-slider::-moz-range-thumb:hover{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.ticks{position:relative;height:14px;margin-top:8px}
+.ticks span{position:absolute;top:0;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink-dim);transform:translateX(-50%)}
+.ticks span:first-child{transform:none}
+.ticks span:last-child{transform:translateX(-100%)}
+.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px;padding-top:14px;margin-top:12px;border-top:1px solid var(--line)}
+.stat-label{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:5px}
+.stat-value{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500;line-height:1.1}
+.stat-acc{color:var(--acc)} .stat-amb{color:var(--amb)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-family:'JetBrains Mono',monospace;font-size:11px;padding:6px 10px;border-radius:999px;border:1px solid var(--line);color:var(--ink-dim);transition:all .2s}
+.chip.on{border-color:rgba(var(--acc-rgb),.5);color:var(--acc);background:rgba(var(--acc-rgb),.08)}
+.chip.lit{border-color:var(--acc);box-shadow:0 0 18px rgba(var(--acc-rgb),.35)}
+.chip.off{text-decoration:line-through;opacity:.75}
+.verdict{font-size:14.5px;line-height:1.6;color:var(--ink);margin:12px 0 0}
+.fit{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.08em;padding:3px 9px;border-radius:999px;margin-right:8px;border:1px solid;white-space:nowrap}
+.fit-good{color:var(--acc);border-color:var(--acc)}
+.fit-partial{color:var(--amb);border-color:var(--amb)}
+.fit-poor{color:var(--ink-dim);border-color:var(--line)}
+.toggle-row{display:flex;gap:10px}
+.toggle-btn{flex:1;font-family:'JetBrains Mono',monospace;font-size:14.5px;padding:12px;border-radius:999px;border:1px solid var(--line);background:#12160F;color:var(--ink-dim);cursor:pointer;transition:all .2s}
+.toggle-btn[aria-pressed="true"]{background:rgba(var(--acc-rgb),.1);border-color:var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.knowdrop{border-top:1px solid var(--line);padding-top:16px;margin-top:16px}
+.knowdrop p{font-size:14.5px;font-weight:400;line-height:1.65;color:var(--ink);margin:0}
+.know-this{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));border-radius:0 12px 12px 0;margin:0}
+.know-tag-row{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.know-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:kpulse 2.4s ease-in-out infinite}
+.know-tag{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.15em;color:var(--acc)}
+.know-body{font-size:17.4px;font-weight:400;line-height:1.55;color:var(--ink);margin:0}
+@keyframes kpulse{0%,100%{opacity:1}50%{opacity:.45}}
+@media (prefers-reduced-motion:reduce){.know-dot{animation:none}.pill,.toggle-btn,.chip{transition:none}}
+@media (max-width:380px){.toggle-row{flex-direction:column}}
+@media (max-width:480px){.canvas-wrapper{aspect-ratio:4/5}.canvas-overlay{font-size:12px}}
 </style>
 
-<div class="container">
-  <h2 class="sr-only">Activity Analysis and Test Selection Interactive Widget</h2>
-  
-  <h1>The wrong test measures <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">nothing</span></h1>
-  
-  <p class="intro">A beep test won't tell you anything useful about a powerlifter. A bench press max won't predict a marathon time. Activity analysis first identifies what fitness components actually matter for the sport — then you select valid, reliable tests that measure those specific demands. Drag the slider to match sport demands with appropriate tests.</p>
+<div class="aa-wrap">
+  <h2 class="sr-only">Activity analysis and test selection: heart-rate trace, work-to-rest bar and skill tallies for one quarter, with a chosen fitness test laid underneath for comparison</h2>
 
-  <div class="card">
+  <h1>The sport doesn't pick the test. The <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">data</span> does.</h1>
+
+  <p class="intro">An activity analysis of one quarter records four things: how often each skill happens, what kind of movement fills the time, what the heart rate does, and how long each effort lasts compared with the recovery after it. Those numbers name the fitness components the player really uses, and a test earns its place only by measuring one of them with a protocol that looks like the sport. Switch between the three players, shorten the window to see single efforts, and watch the work-to-rest bar, then choose a test and see whether its pattern lines up.</p>
+
+  <section class="card">
     <div class="card-header">
-      <span class="card-label">Test Selection Matrix</span>
-      <span class="live-tag" id="matchTag">Poor Match</span>
+      <span class="card-label">Activity analysis · one quarter</span>
+      <span class="live-tag" id="liveTag">AFL midfielder</span>
     </div>
-    <div class="card-hint">Align sport demands with appropriate test methods</div>
-    
-    <div class="canvas-wrapper">
-      <canvas id="matchCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">MISMATCH: AEROBIC SPORT ↔ POWER TEST</div>
+    <div class="card-hint">Change the player and the window analysed. Then choose a test and compare its protocol bar with the player's bar above it.</div>
+
+    <div class="q">Whose quarter?</div>
+    <div class="pills" role="group" aria-label="Player analysed" id="sportGroup">
+      <button class="pill" type="button" data-i="0" aria-pressed="true">AFL midfielder</button>
+      <button class="pill" type="button" data-i="1" aria-pressed="false">Netball shooter</button>
+      <button class="pill" type="button" data-i="2" aria-pressed="false">10 km runner</button>
     </div>
 
-    <div class="slider-control">
-      <input aria-label="Sport and test match" type="range" min="0" max="100" value="0" class="match-slider" id="matchSlider">
+    <div class="canvas-wrapper" id="wrap">
+      <canvas id="aaCanvas" aria-label="Heart-rate trace, work-to-rest bar, movement pattern and skill frequency tallies for the chosen player, with the chosen test protocol underneath"></canvas>
+      <div class="canvas-overlay" id="overlay">W:R 1:3.4 · MEAN 165 · PEAK 184</div>
     </div>
-    <div class="tick-labels">
-      <span class="tick-label">Mismatch</span>
-      <span class="tick-label">Partial</span>
-      <span class="tick-label">Optimal</span>
+
+    <div class="aa-row"><span>Window analysed</span><b id="winV">6 min</b></div>
+    <input type="range" class="aa-slider" id="win" aria-label="Window analysed in minutes" min="1" max="20" step="1" value="6">
+    <div class="ticks">
+      <span style="left:0%">1 min</span>
+      <span style="left:21.05%">5</span>
+      <span style="left:47.37%">10</span>
+      <span style="left:73.68%">15</span>
+      <span style="left:100%">20 min</span>
     </div>
 
     <div class="stat-row">
-      <div class="stat">
-        <div class="stat-label">Test Validity</div>
-        <div class="stat-value" id="validityStat" style="color:var(--acc)">23%</div>
-      </div>
-      <div class="stat">
-        <div class="stat-label">Match Quality</div>
-        <div class="stat-value" id="matchStat" style="color:var(--amb)">Poor</div>
-      </div>
+      <div><div class="stat-label">Work : rest</div><div class="stat-value stat-acc" id="stRatio">1 : 3.4</div></div>
+      <div><div class="stat-label">Mean heart rate</div><div class="stat-value stat-amb" id="stMean">165 bpm</div></div>
+      <div><div class="stat-label">Peak heart rate</div><div class="stat-value stat-acc" id="stPeak">184 bpm</div></div>
+      <div><div class="stat-label">Dominant movement</div><div class="stat-value stat-amb" id="stMove">Jog 52%</div></div>
     </div>
-  </div>
 
-  <div class="toggle-card">
-    <div class="toggle-buttons">
-      <button class="toggle-btn active" id="directBtn">Direct Testing</button>
-      <button class="toggle-btn" id="indirectBtn">Indirect Testing</button>
+    <div class="q">Demands this data points to</div>
+    <div class="chips" id="demChips" aria-live="polite"></div>
+
+    <div class="q">Which test fits?</div>
+    <div class="pills" role="group" aria-label="Fitness test to compare" id="testGroup">
+      <button class="pill" type="button" data-id="beep" aria-pressed="true">Beep test</button>
+      <button class="pill" type="button" data-id="yoyo" aria-pressed="false">Yo-Yo IR1</button>
+      <button class="pill" type="button" data-id="vj" aria-pressed="false">Vertical jump</button>
+      <button class="pill" type="button" data-id="lab" aria-pressed="false">Lab VO₂ max</button>
     </div>
-    
-    <div class="knowdrop-section">
-      <p class="knowdrop-text" id="knowdropText">Direct testing measures the actual performance outcome in real conditions — a 3km time trial for a distance runner, a 1RM squat for a powerlifter, a Yo-Yo test for a footballer. These tests have high validity because they mirror the sport demands exactly. The downside? They require full effort, create fatigue, and need careful recovery planning. You're essentially asking the athlete to perform at competition intensity just to get data. Some direct tests also require expensive equipment or controlled environments — VO₂ max testing in a lab, for instance, is the gold standard for aerobic capacity but needs a metabolic cart and trained technicians.</p>
+    <p class="verdict" id="verdict" aria-live="polite"></p>
+  </section>
+
+  <section class="card">
+    <div class="toggle-row" role="group" aria-label="Testing method">
+      <button class="toggle-btn" type="button" data-k="direct" aria-pressed="true">Direct tests</button>
+      <button class="toggle-btn" type="button" data-k="indirect" aria-pressed="false">Indirect tests</button>
     </div>
-  </div>
+    <div class="knowdrop"><p id="knowdrop"></p></div>
+  </section>
 
   <div class="know-this">
-    <span class="know-tag">Know This</span>
-    <p class="know-body"><span style="color:var(--acc)">Activity analysis</span> identifies the specific physiological demands of a sport, which then determines which <span style="color:var(--acc)">fitness components</span> need testing — only then can you select <span style="color:var(--acc)">valid and reliable tests</span> that actually measure what matters for performance.</p>
+    <div class="know-tag-row"><span class="know-dot"></span><span class="know-tag">Know This</span></div>
+    <p class="know-body">An <span style="color:var(--acc)">activity analysis</span> records skill frequencies, movement patterns, heart rates and <span style="color:var(--acc)">work-to-rest ratios</span>, and the test you choose must measure the <span style="color:var(--acc)">component those numbers name</span>.</p>
   </div>
 </div>
 
 <script>
-const canvas = document.getElementById('matchCanvas');
-const ctx = canvas.getContext('2d', { alpha: false });
-const slider = document.getElementById('matchSlider');
-const matchTag = document.getElementById('matchTag');
-const canvasOverlay = document.getElementById('canvasOverlay');
-const validityStat = document.getElementById('validityStat');
-const matchStat = document.getElementById('matchStat');
-const directBtn = document.getElementById('directBtn');
-const indirectBtn = document.getElementById('indirectBtn');
-const knowdropText = document.getElementById('knowdropText');
+(function(){
+"use strict";
+const CSS=getComputedStyle(document.documentElement);
+const ACC=CSS.getPropertyValue("--acc").trim();
+const RGB=CSS.getPropertyValue("--acc-rgb").trim();
+const AMB=CSS.getPropertyValue("--amb").trim();
+const DIM=CSS.getPropertyValue("--ink-dim").trim();
+const INK=CSS.getPropertyValue("--ink").trim();
+const reduced=!!(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+const MONO="'JetBrains Mono', monospace";
 
-const dpr = Math.min(window.devicePixelRatio || 1, 2);
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d', { alpha: false });
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
 
-let match = 0;
-let particles = [];
-let time = 0;
+const TOTAL=1200;
+const TYPES={sprint:{label:"Sprint",work:true},jump:{label:"Jump",work:true},run:{label:"Run",work:true},jog:{label:"Jog",work:false},walk:{label:"Walk",work:false},stand:{label:"Stand",work:false}};
+function seg(type,dur,int){return {type:type,dur:Math.max(1,Math.round(dur)),int:int};}
 
-const directText = "Direct testing measures the actual performance outcome in real conditions — a 3km time trial for a distance runner, a 1RM squat for a powerlifter, a Yo-Yo test for a footballer. These tests have high validity because they mirror the sport demands exactly. The downside? They require full effort, create fatigue, and need careful recovery planning. You're essentially asking the athlete to perform at competition intensity just to get data. Some direct tests also require expensive equipment or controlled environments — VO₂ max testing in a lab, for instance, is the gold standard for aerobic capacity but needs a metabolic cart and trained technicians.";
+const PROFILES=[
+ {short:"Midfielder",name:"AFL midfielder",seed:11,hr0:128,base:95,gain:95,tauUp:6,tauDown:28,
+  next:function(r,last){
+    if(last===null) return seg("jog",8,0.5);
+    if(last==="sprint"){const u=r(); if(u<0.62) return seg("jog",10+r()*8,0.5); if(u<0.88) return seg("walk",14+r()*16,0.2); return seg("stand",6+r()*10,0.05);}
+    if((last==="walk"||last==="stand")&&r()<0.5) return seg("jog",6+r()*8,0.5);
+    return seg("sprint",3+r()*3,0.9+r()*0.1);
+  },
+  skills:[{name:"Handball",rate:0.35},{name:"Kick",rate:0.3},{name:"Tackle",rate:0.2},{name:"Mark",rate:0.15}]},
+ {short:"Goal shooter",name:"Netball goal shooter",seed:23,hr0:125,base:92,gain:90,tauUp:6,tauDown:28,
+  next:function(r,last){
+    if(last===null) return seg("stand",6,0.05);
+    if(last==="sprint"||last==="jump"){const u=r(); if(u<0.55) return seg("stand",5+r()*9,0.05); return seg("walk",4+r()*6,0.22);}
+    const u=r(); if(u<0.3) return seg("stand",4+r()*8,0.05); if(u<0.5) return seg("walk",3+r()*5,0.22); if(u<0.8) return seg("sprint",1+Math.round(r()),0.9); return seg("jump",1,0.85);
+  },
+  skills:[{name:"Pass",rate:1.3},{name:"Shot",rate:0.8},{name:"Rebound",rate:0.3}]},
+ {short:"10 km runner",name:"10 km road runner",seed:37,hr0:130,base:95,gain:95,tauUp:20,tauDown:30,
+  next:function(r){ return seg("run",20+r()*40,0.76+r()*0.08); },
+  skills:[]}
+];
 
-const indirectText = "Indirect testing estimates fitness components through submaximal protocols or prediction equations — a 1.6km walk test to predict VO₂ max, skinfold measurements for body composition, or a vertical jump to infer lower body power. These tests are practical: less fatigue, easier to administer, cheaper equipment, and you can test multiple athletes quickly. The trade-off is reduced validity. Prediction equations are built on population averages, so individual variation means the estimate might be off. A vertical jump correlates with power, but it's not the same as measuring force output directly on a force plate. Indirect tests work well for monitoring trends over time or screening large groups, but elite athletes often need direct measures for precision.";
+function gen(p){
+  const r=mulberry32(p.seed); const segs=[]; let t=0,last=null;
+  while(t<TOTAL){ const s=p.next(r,last); s.start=t; s.end=Math.min(TOTAL,t+s.dur); segs.push(s); t=s.end; last=s.type; }
+  const hr=new Float32Array(TOTAL); let H=p.hr0, si=0;
+  for(let i=0;i<TOTAL;i++){ while(segs[si].end<=i) si++; const target=p.base+segs[si].int*p.gain; const tau=target>H?p.tauUp:p.tauDown; H+=(target-H)*(1-Math.exp(-1/tau)); hr[i]=H+(r()-0.5)*2; }
+  const skills=p.skills.map(function(s){ const times=[]; let tt=0; for(;;){ tt+=-Math.log(1-r())*60/s.rate; if(tt>=TOTAL) break; times.push(tt);} return {name:s.name,times:times}; });
+  return {p:p,segs:segs,hr:hr,skills:skills};
+}
+const DATA=PROFILES.map(gen);
 
-function resize() {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+const TESTS={
+ beep:{short:"BEEP TEST",name:"Beep test",component:"aerobic power",direct:false,bout:Infinity,rest:0,workFrac:1,patt:"CONTINUOUS",pattLong:"continuous 20 m shuttles with no rest"},
+ yoyo:{short:"YO-YO",name:"Yo-Yo IR1",component:"aerobic power",direct:false,bout:8,rest:10,workFrac:8/18,patt:"8 S ON · 10 S OFF",pattLong:"2 × 20 m shuttles of about 8 s with 10 s of active recovery"},
+ vj:{short:"JUMP",name:"Vertical jump",component:"muscular power",direct:false,bout:1,rest:60,workFrac:1/61,patt:"1 S ON · 60 S OFF",pattLong:"three single 1 s jumps about a minute apart"},
+ lab:{short:"LAB VO₂",name:"Lab VO₂ max",component:"aerobic power",direct:true,bout:Infinity,rest:0,workFrac:1,patt:"GRADED TO 12 MIN",pattLong:"a continuous graded treadmill run of 8 to 12 min"}
+};
+
+function stats(d,W){
+  const n=W*60; let work=0,rest=0,sum=0,peak=0,peakI=0,cur=0; const share={}; const bouts=[];
+  for(let k=0;k<d.segs.length;k++){ const s=d.segs[k]; if(s.start>=n) break; const dur=Math.min(s.end,n)-s.start; share[s.type]=(share[s.type]||0)+dur; if(TYPES[s.type].work){work+=dur;cur+=dur;} else {rest+=dur; if(cur>0){bouts.push(cur);cur=0;}} }
+  if(cur>0) bouts.push(cur);
+  for(let i=0;i<n;i++){ sum+=d.hr[i]; if(d.hr[i]>peak){peak=d.hr[i];peakI=i;} }
+  const meanBout=bouts.length?bouts.reduce(function(a,b){return a+b;},0)/bouts.length:0;
+  const shares=Object.keys(share).map(function(k){return {type:k,label:TYPES[k].label,frac:share[k]/n};}).sort(function(a,b){return b.frac-a.frac;});
+  return {n:n,work:work,rest:rest,mean:sum/n,peak:peak,peakI:peakI,workFrac:work/n,meanBout:meanBout,continuous:rest===0&&work>0,ratioX:work>0?rest/work:0,shares:shares,
+    skills:d.skills.map(function(s){return {name:s.name,count:s.times.filter(function(t){return t<n;}).length};})};
+}
+function ratioLabel(st){ if(st.work===0) return "0:1"; if(st.continuous) return "1:0"; return "1:"+st.ratioX.toFixed(1); }
+function demands(st){
+  if(st.workFrac>0.85) return ["aerobic power"];
+  if(st.meanBout<=2.5&&st.workFrac<0.3) return ["muscular power","agility"];
+  return ["anaerobic capacity","aerobic power"];
+}
+function fit(st,t){
+  const dem=demands(st); const compOK=dem.indexOf(t.component)>=0;
+  const contS=st.workFrac>0.85, contT=t.workFrac>0.85; let pat;
+  if(contS&&contT) pat=true; else if(contS!==contT) pat=false;
+  else pat=Math.abs(Math.log(Math.max(st.meanBout,0.5)/t.bout))<0.9&&Math.abs(st.workFrac-t.workFrac)<0.35;
+  return compOK?(pat?"good":"partial"):"poor";
+}
+function sportPattern(st){
+  if(st.work===0) return "no high-intensity effort in this window";
+  if(st.continuous) return "continuous work with no rest";
+  return "efforts of about "+(Math.round(st.meanBout*10)/10)+" s, work:rest "+ratioLabel(st);
+}
+function testSegs(t,n){
+  const out=[];
+  if(t.workFrac>0.85){ const end=t.bout===Infinity&&t.name.indexOf("Lab")===0?Math.min(n,720):n; out.push({s:0,e:end,work:true}); if(end<n) out.push({s:end,e:n,over:true}); return out; }
+  if(t.rest>=60){ for(let k=0;k<3;k++){ const s=k*(t.bout+t.rest); if(s>=n) break; out.push({s:s,e:Math.min(n,s+t.bout),work:true}); if(k<2&&s+t.bout<n) out.push({s:s+t.bout,e:Math.min(n,s+t.bout+t.rest),work:false}); } const done=2*(t.bout+t.rest)+t.bout; if(done<n) out.push({s:done,e:n,over:true}); return out; }
+  let tt=0; while(tt<n){ out.push({s:tt,e:Math.min(n,tt+t.bout),work:true}); tt+=t.bout; if(tt<n){ out.push({s:tt,e:Math.min(n,tt+t.rest),work:false}); tt+=t.rest; } }
+  return out;
 }
 
-function initParticles() {
-  particles = [];
-  for (let i = 0; i < 80; i++) {
-    particles.push({
-      x: Math.random(),
-      y: Math.random(),
-      vx: (Math.random() - 0.5) * 0.3,
-      vy: (Math.random() - 0.5) * 0.3,
-      side: Math.random() < 0.5 ? 'sport' : 'test',
-      r: Math.random() * 2.5 + 1.5
+// state
+let cur=DATA[0], prev=null, W=6, curTest=TESTS.beep, curStats=stats(cur,W), prevStats=null, curFit="partial";
+let anim=1, animStart=0, raf=0;
+
+// canvas
+const canvas=document.getElementById("aaCanvas"); const ctx=canvas.getContext("2d");
+const wrap=document.getElementById("wrap");
+const dpr=Math.min(window.devicePixelRatio||1,2);
+const buf=document.createElement("canvas"); const bctx=buf.getContext("2d");
+function resize(){
+  const rect=wrap.getBoundingClientRect(); if(!rect.width||!rect.height) return;
+  canvas.width=Math.round(rect.width*dpr); canvas.height=Math.round(rect.height*dpr);
+  buf.width=canvas.width; buf.height=canvas.height; ctx.setTransform(dpr,0,0,dpr,0,0);
+  draw();
+}
+function ease(t){ return 1-Math.pow(1-t,3); }
+function font(px){ ctx.font="500 "+px+"px "+MONO; }
+
+function draw(){
+  const w=canvas.width/dpr, h=canvas.height/dpr; if(w<10||h<10) return;
+  ctx.setTransform(dpr,0,0,dpr,0,0); ctx.globalCompositeOperation="source-over"; ctx.globalAlpha=1; ctx.filter="none";
+  ctx.fillStyle="rgba(0,0,0,1)"; ctx.fillRect(0,0,w,h);
+  const e=ease(anim), mixing=!!(prev&&e<1);
+  const n=W*60;
+  const x0=38, x1=w-12, xw=x1-x0;
+  const top=22, botRes=38, avail=h-top-botRes;
+  const panH=Math.max(16+12*4,avail*0.36);
+  const rowH=Math.max(20,Math.min(30,avail*0.12)); const barsH=rowH*2;
+  const hrY0=top, hrH=Math.max(40,avail-panH-barsH-10);
+  const barsY0=hrY0+hrH+6, panY0=barsY0+barsH+4;
+  const xOf=function(s){return x0+(s/n)*xw;}; const yOf=function(b){return hrY0+hrH*(1-(b-80)/120);};
+  ctx.textBaseline="alphabetic"; font(11);
+
+  // header labels
+  ctx.fillStyle=ACC; ctx.textAlign="left"; ctx.fillText("HEART RATE · BPM",x0,14);
+  ctx.fillStyle=DIM; ctx.textAlign="right"; ctx.fillText("0–"+W+" MIN",x1,14);
+
+  // grids
+  ctx.lineWidth=1; ctx.strokeStyle="rgba(255,255,255,0.06)";
+  for(let m=1;m<W;m++){ const x=Math.round(xOf(m*60))+0.5; ctx.beginPath(); ctx.moveTo(x,hrY0); ctx.lineTo(x,hrY0+hrH); ctx.stroke(); }
+  [100,140,180].forEach(function(b){ const y=Math.round(yOf(b))+0.5; ctx.strokeStyle="rgba(255,255,255,0.07)"; ctx.beginPath(); ctx.moveTo(x0,y); ctx.lineTo(x1,y); ctx.stroke(); if(hrH>=120){ ctx.fillStyle=DIM; ctx.textAlign="right"; ctx.fillText(String(b),x0-5,y+4);} });
+  // 160 line
+  (function(){ const y=Math.round(yOf(160))+0.5; ctx.save(); ctx.setLineDash([4,4]); ctx.strokeStyle=AMB; ctx.globalAlpha=0.6; ctx.beginPath(); ctx.moveTo(x0,y); ctx.lineTo(x1,y); ctx.stroke(); ctx.restore(); ctx.fillStyle=AMB; ctx.textAlign="right"; ctx.fillText("160",x0-5,y+4); })();
+
+  // work shading
+  function shade(d,a){ ctx.fillStyle="rgba("+RGB+","+(0.11*a).toFixed(3)+")"; for(let k=0;k<d.segs.length;k++){ const s=d.segs[k]; if(s.start>=n) break; if(!TYPES[s.type].work) continue; const xa=xOf(s.start), xb=xOf(Math.min(s.end,n)); ctx.fillRect(xa,hrY0,Math.max(1,xb-xa),hrH);} }
+  if(mixing) shade(prev,1-e); shade(cur,mixing?e:1);
+
+  // trace
+  const pts=[];
+  for(let i=0;i<n;i++){ const v=mixing?prev.hr[i]*(1-e)+cur.hr[i]*e:cur.hr[i]; pts.push([xOf(i),yOf(v)]); }
+  ctx.beginPath(); pts.forEach(function(p,i){ if(i===0) ctx.moveTo(p[0],p[1]); else ctx.lineTo(p[0],p[1]); });
+  ctx.lineTo(pts[pts.length-1][0],hrY0+hrH); ctx.lineTo(x0,hrY0+hrH); ctx.closePath();
+  const fg=ctx.createLinearGradient(0,hrY0,0,hrY0+hrH); fg.addColorStop(0,"rgba("+RGB+",0.26)"); fg.addColorStop(1,"rgba("+RGB+",0)"); ctx.fillStyle=fg; ctx.fill();
+  ctx.beginPath(); pts.forEach(function(p,i){ if(i===0) ctx.moveTo(p[0],p[1]); else ctx.lineTo(p[0],p[1]); });
+  ctx.strokeStyle=ACC; ctx.lineWidth=1.8; ctx.lineJoin="round"; ctx.stroke();
+
+  // mean line + peak marker (from the plotted data)
+  (function(){ const y=Math.round(yOf(curStats.mean))+0.5; ctx.save(); ctx.setLineDash([2,5]); ctx.strokeStyle=ACC; ctx.globalAlpha=0.55; ctx.beginPath(); ctx.moveTo(x0,y); ctx.lineTo(x1,y); ctx.stroke(); ctx.restore();
+    ctx.fillStyle=ACC; ctx.textAlign="right"; ctx.fillText("MEAN "+Math.round(curStats.mean),x1-4,y-4);
+    const px=xOf(curStats.peakI), py=yOf(curStats.peak);
+    ctx.save(); ctx.globalCompositeOperation="lighter"; ctx.fillStyle=AMB; ctx.globalAlpha=0.35; ctx.beginPath(); ctx.arc(px,py,7,0,Math.PI*2); ctx.fill(); ctx.restore();
+    ctx.fillStyle=AMB; ctx.beginPath(); ctx.arc(px,py,3,0,Math.PI*2); ctx.fill(); })();
+
+  // bars band
+  const barH=Math.max(6,Math.min(10,rowH*0.34));
+  const r1y=barsY0+11; ctx.textAlign="left"; ctx.fillStyle=ACC; ctx.fillText(cur.p.short.toUpperCase()+" · W:R "+ratioLabel(curStats),x0,r1y);
+  if(cur.skills.length){ const lab="SKILLS"; const tw=ctx.measureText(lab).width; ctx.fillStyle=AMB; ctx.textAlign="right"; ctx.fillText(lab,x1,r1y); ctx.fillRect(x1-tw-9,r1y-9,3,10); }
+  const b1y=barsY0+rowH-barH-2;
+  function bar(d,y,a){ for(let k=0;k<d.segs.length;k++){ const s=d.segs[k]; if(s.start>=n) break; const xa=xOf(s.start), xb=xOf(Math.min(s.end,n)); let col; if(TYPES[s.type].work) col="rgba("+RGB+","+(0.95*a).toFixed(3)+")"; else if(s.type==="jog") col="rgba("+RGB+","+(0.4*a).toFixed(3)+")"; else if(s.type==="walk") col="rgba("+RGB+","+(0.18*a).toFixed(3)+")"; else col="rgba(255,255,255,"+(0.09*a).toFixed(3)+")"; ctx.fillStyle=col; ctx.fillRect(xa,y,Math.max(1,xb-xa),barH);} }
+  if(mixing) bar(prev,b1y,1-e); bar(cur,b1y,mixing?e:1);
+  ctx.save(); ctx.globalAlpha=mixing?e:1; ctx.fillStyle=AMB;
+  cur.skills.forEach(function(sk){ for(let k=0;k<sk.times.length;k++){ const t=sk.times[k]; if(t>=n) break; ctx.fillRect(xOf(t)-0.75,b1y-3,1.5,barH+6);} }); ctx.restore();
+
+  const fitCol=curFit==="good"?ACC:curFit==="partial"?AMB:"rgba(255,255,255,0.45)";
+  const r2y=barsY0+rowH+11; ctx.fillStyle=fitCol; ctx.textAlign="left";
+  ctx.fillText(curTest.short+" · "+curTest.patt,x0,r2y); ctx.textAlign="right"; ctx.fillText(curFit.toUpperCase(),x1,r2y);
+  const b2y=barsY0+rowH+rowH-barH-2;
+  testSegs(curTest,n).forEach(function(s){ const xa=xOf(s.s), xb=xOf(s.e); if(s.over){ ctx.fillStyle="rgba(255,255,255,0.04)"; ctx.fillRect(xa,b2y,xb-xa,barH); } else { ctx.fillStyle=s.work?fitCol:"rgba(255,255,255,0.09)"; ctx.fillRect(xa,b2y,Math.max(1,xb-xa),barH);} });
+
+  // bottom panels
+  const colGap=14, colW=(xw-colGap)/2, cL=x0, cR=x0+colW+colGap;
+  const step=Math.max(12,Math.min(18,(panH-16)/4));
+  ctx.fillStyle=DIM; ctx.textAlign="left"; ctx.fillText("MOVEMENT · % TIME",cL,panY0+10); ctx.fillText(colW<150?"SKILLS · N · /MIN":"SKILLS · COUNT · /MIN",cR,panY0+10);
+  const rows=curStats.shares.slice(0,4);
+  rows.forEach(function(r,i){
+    const yb=panY0+14+step*(i+1);
+    let pf=0; if(mixing&&prevStats){ const m=prevStats.shares.filter(function(q){return q.type===r.type;})[0]; pf=m?m.frac:0; }
+    const frac=mixing?pf*(1-e)+r.frac*e:r.frac;
+    ctx.fillStyle=INK; ctx.textAlign="left"; ctx.fillText(r.label,cL,yb);
+    ctx.fillStyle=ACC; ctx.textAlign="right"; ctx.fillText(Math.round(r.frac*100)+"%",cL+colW,yb);
+    const ba=cL+48, bb=cL+colW-30; if(bb-ba>=16){ ctx.fillStyle="rgba(255,255,255,0.06)"; ctx.fillRect(ba,yb-7,bb-ba,5); ctx.fillStyle="rgba("+RGB+","+(TYPES[r.type].work?0.85:0.4)+")"; ctx.fillRect(ba,yb-7,(bb-ba)*frac,5); }
+  });
+  if(!cur.skills.length){
+    ctx.fillStyle=INK; ctx.textAlign="left"; ctx.fillText("NONE COUNTED",cR,panY0+14+step);
+    ctx.fillStyle=DIM; ctx.fillText("Cyclic running, no",cR,panY0+14+step*2); ctx.fillText("discrete skills",cR,panY0+14+step*3);
+  } else {
+    const mx=Math.max(1,Math.max.apply(null,curStats.skills.map(function(s){return s.count;})));
+    curStats.skills.slice(0,4).forEach(function(s,i){
+      const yb=panY0+14+step*(i+1); const val=s.count+" · "+(s.count/W).toFixed(1)+(colW<150?"":"/min");
+      ctx.fillStyle=INK; ctx.textAlign="left"; ctx.fillText(s.name,cR,yb);
+      ctx.fillStyle=AMB; ctx.textAlign="right"; ctx.fillText(val,cR+colW,yb);
+      const vw=ctx.measureText(val).width, ba=cR+54, bb=cR+colW-vw-8; if(bb-ba>=16){ ctx.fillStyle="rgba(255,255,255,0.06)"; ctx.fillRect(ba,yb-7,bb-ba,5); ctx.fillStyle="rgba(250,199,117,0.7)"; ctx.fillRect(ba,yb-7,(bb-ba)*(s.count/mx),5); }
     });
   }
+
+  // bloom
+  bctx.setTransform(1,0,0,1,0,0); bctx.clearRect(0,0,buf.width,buf.height); (canvas.width&&canvas.height)&&bctx.drawImage(canvas,0,0);
+  ctx.save(); ctx.globalCompositeOperation="lighter"; ctx.globalAlpha=0.38; ctx.filter="blur(7px)"; (buf.width&&buf.height)&&ctx.drawImage(buf,0,0,w,h); ctx.restore();
+  // vignette
+  const cx=w/2, cy=h/2; const vig=ctx.createRadialGradient(cx,cy,h*0.28,cx,cy,w*0.72); vig.addColorStop(0,"rgba(0,0,0,0)"); vig.addColorStop(1,"rgba(0,0,0,0.52)"); ctx.fillStyle=vig; ctx.fillRect(0,0,w,h);
 }
 
-slider.addEventListener('input', (e) => {
-  match = parseInt(e.target.value);
-  const fillPct = match + '%';
-  slider.style.setProperty('--fill', fillPct);
-  
-  const validity = Math.round(23 + (match * 0.77));
-  validityStat.textContent = validity + '%';
-  
-  if (match < 35) {
-    matchStat.textContent = 'Poor';
-    matchTag.textContent = 'Poor Match';
-    canvasOverlay.textContent = 'MISMATCH: AEROBIC SPORT ↔ POWER TEST';
-  } else if (match < 70) {
-    matchStat.textContent = 'Moderate';
-    matchTag.textContent = 'Partial Match';
-    canvasOverlay.textContent = 'PARTIAL: SOME COMPONENTS ALIGNED';
-  } else {
-    matchStat.textContent = 'Strong';
-    matchTag.textContent = 'Optimal Match';
-    canvasOverlay.textContent = 'OPTIMAL: SPORT DEMANDS ↔ TEST SELECTION';
-  }
-});
+function stepAnim(now){ anim=Math.min(1,(now-animStart)/520); draw(); if(anim<1) raf=requestAnimationFrame(stepAnim); else { raf=0; prev=null; prevStats=null; } }
+function startAnim(){ if(reduced){ anim=1; prev=null; prevStats=null; draw(); return; } anim=0; animStart=performance.now(); if(!raf) raf=requestAnimationFrame(stepAnim); }
 
-directBtn.addEventListener('click', () => {
-  directBtn.classList.add('active');
-  indirectBtn.classList.remove('active');
-  knowdropText.textContent = directText;
-});
-
-indirectBtn.addEventListener('click', () => {
-  indirectBtn.classList.add('active');
-  directBtn.classList.remove('active');
-  knowdropText.textContent = indirectText;
-});
-
-function draw() {
-  time += 0.016;
-  
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, w, h);
-  
-  const cx = w / 2;
-  const cy = h / 2;
-  const alignment = match / 100;
-  
-  // Draw connection field
-  const connectionStrength = alignment * 0.6;
-  
-  // Update particles
-  particles.forEach(p => {
-    p.x += p.vx * 0.01;
-    p.y += p.vy * 0.01;
-    
-    if (p.x < 0 || p.x > 1) p.vx *= -1;
-    if (p.y < 0 || p.y > 1) p.vy *= -1;
-    
-    p.x = Math.max(0, Math.min(1, p.x));
-    p.y = Math.max(0, Math.min(1, p.y));
-  });
-  
-  // Draw connection lines with alignment-based intensity
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  
-  const sportParticles = particles.filter(p => p.side === 'sport');
-  const testParticles = particles.filter(p => p.side === 'test');
-  
-  for (let i = 0; i < Math.min(sportParticles.length, testParticles.length); i++) {
-    if (Math.random() > alignment * 0.4) continue;
-    
-    const sp = sportParticles[i];
-    const tp = testParticles[i];
-    
-    const sx = sp.x * w;
-    const sy = sp.y * h;
-    const tx = tp.x * w;
-    const ty = tp.y * h;
-    
-    const grad = ctx.createLinearGradient(sx, sy, tx, ty);
-    grad.addColorStop(0, `rgba(232,106,50,${connectionStrength * 0.3})`);
-    grad.addColorStop(0.5, `rgba(232,106,50,${connectionStrength * 0.5})`);
-    grad.addColorStop(1, `rgba(250,199,117,${connectionStrength * 0.3})`);
-    
-    ctx.strokeStyle = grad;
-    ctx.lineWidth = 1.2;
-    ctx.beginPath();
-    ctx.moveTo(sx, sy);
-    ctx.lineTo(tx, ty);
-    ctx.stroke();
-  }
-  ctx.restore();
-  
-  // Draw particles
-  particles.forEach(p => {
-    const px = p.x * w;
-    const py = p.y * h;
-    
-    const color = p.side === 'sport' ? 'rgba(232,106,50,0.8)' : 'rgba(250,199,117,0.8)';
-    const glowColor = p.side === 'sport' ? 'rgba(232,106,50,0.3)' : 'rgba(250,199,117,0.3)';
-    
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    
-    // Glow
-    const glow = ctx.createRadialGradient(px, py, 0, px, py, p.r * 4);
-    glow.addColorStop(0, glowColor);
-    glow.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = glow;
-    ctx.beginPath();
-    ctx.arc(px, py, p.r * 4, 0, Math.PI * 2);
-    ctx.fill();
-    
-    ctx.restore();
-    
-    // Core
-    ctx.fillStyle = color;
-    ctx.beginPath();
-    ctx.arc(px, py, p.r, 0, Math.PI * 2);
-    ctx.fill();
-  });
-  
-  // Center convergence zone when aligned
-  if (alignment > 0.3) {
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    
-    const zoneR = 40 + alignment * 30;
-    const zoneGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, zoneR);
-    zoneGrad.addColorStop(0, `rgba(232,106,50,${alignment * 0.4})`);
-    zoneGrad.addColorStop(0.5, `rgba(232,106,50,${alignment * 0.2})`);
-    zoneGrad.addColorStop(1, 'rgba(232,106,50,0)');
-    
-    ctx.fillStyle = zoneGrad;
-    ctx.beginPath();
-    ctx.arc(cx, cy, zoneR, 0, Math.PI * 2);
-    ctx.fill();
-    
-    ctx.restore();
-  }
-  
-  // Labels
-  ctx.font = '500 13px "JetBrains Mono"';
-  ctx.textAlign = 'left';
-  ctx.fillStyle = 'rgba(232,106,50,0.9)';
-  ctx.fillText('SPORT DEMANDS', 16, 24);
-  
-  ctx.textAlign = 'right';
-  ctx.fillStyle = 'rgba(250,199,117,0.9)';
-  ctx.fillText('TEST METHODS', w - 16, 24);
-  
-  // Bloom
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
-  
-  // Vignette
-  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-  
-  requestAnimationFrame(draw);
+// readouts
+const liveTag=document.getElementById("liveTag"), overlay=document.getElementById("overlay");
+const stRatio=document.getElementById("stRatio"), stMean=document.getElementById("stMean"), stPeak=document.getElementById("stPeak"), stMove=document.getElementById("stMove");
+const demChips=document.getElementById("demChips"), verdict=document.getElementById("verdict");
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;"); }
+function updateReadouts(){
+  curStats=stats(cur,W); curFit=fit(curStats,curTest);
+  liveTag.textContent=cur.p.name;
+  overlay.textContent="W:R "+ratioLabel(curStats)+" · MEAN "+Math.round(curStats.mean)+" · PEAK "+Math.round(curStats.peak);
+  stRatio.textContent=ratioLabel(curStats).replace(":"," : ");
+  stMean.textContent=Math.round(curStats.mean)+" bpm";
+  stPeak.textContent=Math.round(curStats.peak)+" bpm";
+  const top=curStats.shares[0]; stMove.textContent=top?top.label+" "+Math.round(top.frac*100)+"%":"—";
+  const dem=demands(curStats); let html="";
+  dem.forEach(function(d){ const lit=d===curTest.component; html+="<span class=\"chip on"+(lit?" lit":"")+"\">"+esc(d)+(lit?" · measured by this test":"")+"</span>"; });
+  if(dem.indexOf(curTest.component)<0) html+="<span class=\"chip off\">"+esc(curTest.component)+" · not in this data</span>";
+  demChips.innerHTML=html;
+  const sp=sportPattern(curStats), t=curTest, kind=t.direct?"direct laboratory":"indirect field";
+  let v;
+  if(curFit==="good") v=`${t.name} is a ${kind} measure of ${t.component}, which this data names as a demand, and its protocol (${t.pattLong}) resembles the player's pattern (${sp}).`;
+  else if(curFit==="partial") v=`${t.name} is a ${kind} measure of ${t.component}, a demand this data shows, but its protocol (${t.pattLong}) does not look like the player's pattern (${sp}), so the score describes a work pattern the player does not use.`;
+  else v=`${t.name} is a ${kind} measure of ${t.component}. This data points to ${dem.join(" and ")} instead (${sp}), so a result here would not describe what this player needs.`;
+  verdict.innerHTML="<span class=\"fit fit-"+curFit+"\">"+curFit+" fit</span>"+esc(v);
 }
 
-window.addEventListener('resize', resize);
+// controls
+const slider=document.getElementById("win"), winV=document.getElementById("winV");
+function setFill(){ slider.style.setProperty("--fill",((W-1)/19*100).toFixed(1)+"%"); }
+slider.addEventListener("input",function(){ W=parseInt(slider.value,10)||1; winV.textContent=W+" min"; setFill(); updateReadouts(); draw(); });
+
+const sportGroup=document.getElementById("sportGroup");
+sportGroup.addEventListener("click",function(ev){
+  const b=ev.target.closest("button"); if(!b) return; const i=parseInt(b.getAttribute("data-i"),10);
+  sportGroup.querySelectorAll("button").forEach(function(x){ x.setAttribute("aria-pressed",x===b?"true":"false"); });
+  if(DATA[i]===cur) return;
+  prev=cur; prevStats=stats(prev,W); cur=DATA[i]; updateReadouts(); startAnim();
+});
+const testGroup=document.getElementById("testGroup");
+testGroup.addEventListener("click",function(ev){
+  const b=ev.target.closest("button"); if(!b) return; const id=b.getAttribute("data-id");
+  testGroup.querySelectorAll("button").forEach(function(x){ x.setAttribute("aria-pressed",x===b?"true":"false"); });
+  curTest=TESTS[id]; updateReadouts(); draw();
+});
+
+// knowdrop
+const KD={
+ direct:"A direct test measures the fitness component itself, usually in a laboratory. VO₂ max on a metabolic cart is the clearest example: the athlete runs a graded treadmill protocol while expired gas is analysed breath by breath, so the result is a measured value in mL/kg/min, not a prediction. Force plates for leg power and blood lactate sampling for anaerobic thresholds work the same way. Direct tests give the most accurate figure, but they need expensive equipment, trained staff and one athlete at a time, so coaches rarely use them for a whole squad. Even a direct test is only valid if the component it measures is one the activity analysis identified.",
+ indirect:"An indirect test estimates a component from performance in a field setting and converts the result with a prediction equation or a norm table. The multistage fitness test (beep test) and the Yo-Yo intermittent recovery test predict aerobic power from the level reached; the vertical jump predicts leg power from jump height; a 20 m sprint predicts speed. Field tests are cheap, sport-specific and can run a whole team at once, which is why they dominate school and club testing. The price is a wider error margin, because the equation is built on population averages. The test still has to match the data: a Yo-Yo IR1 suits an intermittent midfielder, a beep test suits a continuous distance runner, and neither tells a goal shooter anything about their jumping power."
+};
+const kd=document.getElementById("knowdrop"); kd.textContent=KD.direct;
+document.querySelectorAll(".toggle-btn").forEach(function(b){ b.addEventListener("click",function(){ document.querySelectorAll(".toggle-btn").forEach(function(x){ x.setAttribute("aria-pressed",x===b?"true":"false"); }); kd.textContent=KD[b.getAttribute("data-k")]; }); });
+
+// boot
+setFill(); updateReadouts();
+window.addEventListener("resize",resize);
+if(window.ResizeObserver){ new ResizeObserver(function(){ resize(); }).observe(wrap); }
 resize();
-initParticles();
-draw();
-
-slider.style.setProperty('--fill', '0%');
+if(document.fonts&&document.fonts.ready) document.fonts.ready.then(function(){ draw(); });
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'activity-analysis-and-test-selection'},'*');}catch(e){}}

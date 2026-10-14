@@ -4,649 +4,527 @@ body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
-
-:root {
-  --bg: #0B0D0C;
-  --bg2: #12160F;
-  --acc: #5CCE63;
-  --acc-rgb: 92, 206, 99;
-  --ag: rgba(var(--acc-rgb), 0.7);
-  --ag1: rgba(var(--acc-rgb), 0.12);
-  --ag2: rgba(var(--acc-rgb), 0.45);
-  --amb: #FAC775;
-  --ink: #EDEDE8;
-  --ink-dim: #8C9389;
-  --line: #262B26;
+:root{
+  --bg:#0B0D0C;--bg2:#12160F;--acc:#5CCE63;--acc-rgb:92, 206, 99;
+  --ag:rgba(var(--acc-rgb),.7);--ag1:rgba(var(--acc-rgb),.12);--ag2:rgba(var(--acc-rgb),.45);
+  --amb:#FAC775;--amb-rgb:250,199,117;--ink:#EDEDE8;--ink-dim:#8C9389;--line:#262B26;
 }
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
-}
-
-body {
-  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
-  font-family: 'Geist', sans-serif;
-  color: var(--ink);
-  min-height: 100vh;
-  padding: 40px 16px 0;
-  line-height: 1.5;
-}
-
-.container {
-  max-width: 720px;
-  margin: 0 auto;
-}
-
-h1 {
-  font-size: clamp(26px, 6.5vw, 44px);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
-  margin-bottom: 16px;
-}
-
-.intro {
-  font-size: 15.5px;
-  color: var(--ink-dim);
-  max-width: 58ch;
-  line-height: 1.55;
-  margin-bottom: 32px;
-}
-
-.card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,0.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 20px;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
-}
-
-.card-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  color: white;
-}
-
-.live-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--acc);
-}
-
-.card-hint {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--ink-dim);
-  margin-bottom: 14px;
-}
-
-.canvas-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16/9;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
-  box-shadow: inset 0 0 0 1px var(--ag1);
-  margin-bottom: 16px;
-}
-
-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.canvas-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(4px);
-  padding: 9px 16px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  text-transform: uppercase;
-  color: var(--acc);
-  text-align: center;
-}
-
-.slider-container {
-  margin-bottom: 12px;
-}
-
-.slider-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 10px;
-}
-
-.flow-slider {
-  width: 100%;
-  height: 4px;
-  border-radius: 3px;
-  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
-  outline: none;
-  -webkit-appearance: none;
-  appearance: none;
-  cursor: pointer;
-}
-
-.flow-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  transition: box-shadow 0.15s;
-  cursor: grab;
-}
-
-.flow-slider::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.flow-slider::-webkit-slider-thumb:active {
-  cursor: grabbing;
-}
-
-.flow-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  transition: box-shadow 0.15s;
-  cursor: grab;
-}
-
-.flow-slider::-moz-range-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.flow-slider::-moz-range-thumb:active {
-  cursor: grabbing;
-}
-
-.tick-labels {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 6px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--ink-dim);
-}
-
-.stat-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-}
-
-.stat {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.stat-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-}
-
-.stat-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 24px;
-  font-weight: 500;
-}
-
-.stat-value.accent { color: var(--acc); }
-.stat-value.amber { color: var(--amb); }
-
-.toggle-section {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.toggle-buttons {
-  display: flex;
-  gap: 10px;
-}
-
-.toggle-btn {
-  flex: 1;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14.5px;
-  padding: 12px;
-  border-radius: 11px;
-  border: 1px solid var(--line);
-  background: #12160F;
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.toggle-btn.active {
-  background: rgba(var(--acc-rgb), 0.1);
-  border-color: var(--acc);
-  color: var(--acc);
-  box-shadow: 0 0 22px rgba(var(--acc-rgb), 0.18);
-}
-
-.knowdrop {
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-  font-size: 14.5px;
-  line-height: 1.65;
-  color: var(--ink);
-}
-
-.know-this {
-  border-left: 3px solid var(--acc);
-  padding: 16px 18px;
-  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
-  border-radius: 0 12px 12px 0;
-  margin-top: 20px;
-  margin-bottom: 0;
-}
-
-.know-this-tag {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  margin-bottom: 12px;
-}
-
-.pulse-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--acc);
-  box-shadow: 0 0 8px var(--acc);
-  animation: pulse 2.4s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.45; }
-}
-
-.know-this-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--acc);
-}
-
-.know-this-body {
-  font-size: 17.4px;
-  line-height: 1.55;
-  color: var(--ink);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-@media (max-width: 360px) {
-  body {
-    padding: 32px 12px 0;
-  }
-  .card {
-    padding: 14px;
-  }
-}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C 55%);font-family:'Geist',sans-serif;color:var(--ink);min-height:100vh;padding:40px 16px 0}
+.nf-wrap{max-width:720px;margin:0 auto}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+h1{font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin:0 0 14px}
+.nf-intro{font-size:15.5px;font-weight:400;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin:0 0 28px}
+.nf-card{background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);margin-bottom:18px}
+.nf-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.nf-label{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;color:#fff}
+.nf-live{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--acc);text-align:right}
+.nf-hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin:4px 0 14px}
+.nf-gtitle{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-dim);margin:0 0 8px}
+.nf-pills{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+@media(min-width:560px){.nf-pills.four{grid-template-columns:repeat(4,1fr)}}
+.nf-pill{font-family:'JetBrains Mono',monospace;font-size:12px;padding:9px 10px;border-radius:999px;background:#12160F;border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:background .2s,color .2s,border-color .2s,box-shadow .2s;white-space:nowrap}
+.nf-pill[aria-pressed="true"]{background:rgba(var(--acc-rgb),.1);border-color:var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.nf-note{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);line-height:1.55;margin:10px 0 12px}
+.nf-cwrap{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1)}
+.nf-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.nf-ovl{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:14px;text-transform:uppercase;color:var(--acc);text-align:center}
+@media(max-width:559px){.nf-ovl{font-size:11px;padding:5px 10px}}
+.nf-row{display:flex;justify-content:space-between;align-items:baseline;font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin:16px 0 8px}
+.nf-row b{color:var(--ink);font-weight:500;font-size:12px}
+.nf-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;background:linear-gradient(90deg,var(--acc) var(--fill,0%),#23291f var(--fill,0%));outline:none;margin:0;display:block}
+.nf-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.nf-slider::-webkit-slider-thumb:hover{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.nf-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.nf-slider::-moz-range-thumb:hover{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.nf-ticks{position:relative;height:14px;margin:6px 0 16px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-dim)}
+.nf-ticks span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}
+.nf-ticks span:first-child{transform:none}
+.nf-ticks span:last-child{left:auto !important;right:0;transform:none}
+.nf-ticks .max{color:var(--amb)}
+.nf-stats{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:4px;padding-top:16px;border-top:1px solid var(--line)}
+.nf-stat-l{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:4px}
+.nf-stat-v{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500;line-height:1.1}
+.nf-stat-v.acc{color:var(--acc)}.nf-stat-v.amb{color:var(--amb)}
+.nf-stat-s{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-dim);margin-top:4px;line-height:1.4}
+.nf-kd-pills{display:flex;gap:10px}
+.nf-kd-pills .nf-pill{flex:1;font-size:13px;padding:11px 12px}
+.nf-kd{border-top:1px solid var(--line);margin-top:16px;padding-top:16px;font-size:14.5px;font-weight:400;line-height:1.65;color:var(--ink)}
+.nf-kd p{margin:0}
+.nf-know{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));border-radius:0 12px 12px 0;margin:0;padding-bottom:16px}
+.nf-know-tag{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.nf-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:nfPulse 2.4s ease-in-out infinite}
+@keyframes nfPulse{0%,100%{opacity:1}50%{opacity:.45}}
+.nf-know-lab{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.15em;color:var(--acc)}
+.nf-know-body{font-size:17.4px;font-weight:400;line-height:1.55;color:var(--ink);margin:0}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}}
 </style>
 
-<div class="container">
-  <h2 class="sr-only">Network Flow and Maximum-Flow Minimum-Cut Theorem Interactive Widget</h2>
+<div class="nf-wrap">
+  <h2 class="sr-only">Interactive oil pipe network showing flow from a tank to a terminal, with four selectable cuts to compare against the maximum flow</h2>
+  <h1>The obvious bottleneck is rarely the real <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">bottleneck</span></h1>
+  <p class="nf-intro">An oil tank feeds a terminal through five pipes. The tank can release 24 units an hour, so 24 should arrive. Raise the attempted flow and watch where it stalls, then pick a cut and compare its capacity with what actually gets through.</p>
 
-  <h1>The tightest squeeze sets the <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">maximum</span></h1>
-  
-  <p class="intro">Every network has a bottleneck — the narrowest point that limits total flow. Surprisingly, the max flow you can push through equals the capacity of the tightest cut you can make. Drag the slider to watch flow pile up at the network's true limit.</p>
-
-  <div class="card">
-    <div class="card-header">
-      <div class="card-label">Network Flow</div>
-      <div class="live-tag" id="liveTag">Attempting 0 units/sec</div>
+  <div class="nf-card">
+    <div class="nf-head">
+      <div class="nf-label">Flow network</div>
+      <div class="nf-live" id="nfLive" aria-live="polite">Through 18 of 23</div>
     </div>
-    <div class="card-hint">Drag slider to increase attempted flow</div>
-    
-    <div class="canvas-wrapper">
-      <canvas id="flowCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasTag">Bottleneck at cut: 0 / 0 capacity</div>
+    <div class="nf-hint">Raise the flow. Pick a cut.</div>
+
+    <div class="nf-gtitle">Choose a cut</div>
+    <div class="nf-pills four" role="group" aria-label="Which source–sink partition to draw">
+      <button type="button" class="nf-pill" data-cut="0" aria-pressed="true">{S} | {A,B,T}</button>
+      <button type="button" class="nf-pill" data-cut="1" aria-pressed="false">{S,A} | {B,T}</button>
+      <button type="button" class="nf-pill" data-cut="2" aria-pressed="false">{S,B} | {A,T}</button>
+      <button type="button" class="nf-pill" data-cut="3" aria-pressed="false">{S,A,B} | {T}</button>
+    </div>
+    <p class="nf-note" id="nfCutNote"></p>
+
+    <div class="nf-cwrap" id="nfWrap">
+      <canvas class="nf-canvas" id="nfCanvas" role="img" aria-label="Pipe network from tank S through A and B to terminal T with a dashed cut line"></canvas>
+      <div class="nf-ovl" id="nfOvl"></div>
     </div>
 
-    <div class="slider-container">
-      <div class="slider-label">Attempted Flow</div>
-      <input type="range" min="0" max="100" value="0" class="flow-slider" id="flowSlider">
-      <div class="tick-labels">
-        <span>0</span>
-        <span>50</span>
-        <span>100</span>
+    <div class="nf-row"><span>Attempted flow</span><b id="nfFlowV">18</b></div>
+    <input type="range" class="nf-slider" id="nfSlider" aria-label="Attempted flow out of the tank" min="0" max="30" step="1" value="18">
+    <div class="nf-ticks">
+      <span style="left:0%">0</span>
+      <span style="left:33.333%">10</span>
+      <span style="left:66.667%">20</span>
+      <span class="max" style="left:76.667%">23 max</span>
+      <span style="left:100%">30</span>
+    </div>
+
+    <div class="nf-gtitle">A→B pipe capacity</div>
+    <div class="nf-pills" role="group" aria-label="Capacity of the pipe from A to B">
+      <button type="button" class="nf-pill" data-pipe="4" aria-pressed="true">A→B = 4</button>
+      <button type="button" class="nf-pill" data-pipe="40" aria-pressed="false">A→B = 40</button>
+    </div>
+    <p class="nf-note" id="nfPipeNote"></p>
+
+    <div class="nf-stats">
+      <div>
+        <div class="nf-stat-l">Flow through</div>
+        <div class="nf-stat-v acc" id="nfFlowStat">18</div>
+        <div class="nf-stat-s" id="nfFlowSub"></div>
       </div>
-    </div>
-
-    <div class="stat-row">
-      <div class="stat">
-        <div class="stat-label">Actual Flow</div>
-        <div class="stat-value accent" id="actualFlow">0</div>
-      </div>
-      <div class="stat">
-        <div class="stat-label">Min Cut Capacity</div>
-        <div class="stat-value amber" id="minCutCap">24</div>
+      <div>
+        <div class="nf-stat-l">This cut</div>
+        <div class="nf-stat-v amb" id="nfCutStat">24</div>
+        <div class="nf-stat-s" id="nfCutSub"></div>
       </div>
     </div>
   </div>
 
-  <div class="card">
-    <div class="toggle-section">
-      <div class="toggle-buttons">
-        <button class="toggle-btn active" data-mode="theorem">The Theorem</button>
-        <button class="toggle-btn" data-mode="finding">Finding Max Flow</button>
-      </div>
-      <div class="knowdrop" id="knowdropText">
-        The max-flow min-cut theorem states that the maximum amount of flow you can push from source to sink equals the minimum capacity of any cut separating them. A cut is a partition of the network into two sets — one containing the source, one containing the sink — and its capacity is the sum of edge capacities crossing from source side to sink side. Why does this work? Because flow is conserved at every node (what comes in must go out), so all flow must cross any cut you make. The tightest cut is therefore the absolute ceiling. This principle applies to water pipes, road networks, data transmission, electrical grids, and evacuation routes — the bottleneck always wins.
-      </div>
+  <div class="nf-card">
+    <div class="nf-pills nf-kd-pills" role="group" aria-label="Which explanation to read">
+      <button type="button" class="nf-pill" data-k="theorem" aria-pressed="true">The theorem</button>
+      <button type="button" class="nf-pill" data-k="steps" aria-pressed="false">Step by step</button>
     </div>
+    <div class="nf-kd"><p id="nfKd"></p></div>
   </div>
 
-  <div class="know-this">
-    <div class="know-this-tag">
-      <div class="pulse-dot"></div>
-      <div class="know-this-label">Know This</div>
-    </div>
-    <div class="know-this-body">
-      The <span style="color:var(--acc)">maximum flow</span> through any network always equals the capacity of its <span style="color:var(--acc)">minimum cut</span>, because every unit of flow must cross every cut separating <span style="color:var(--acc)">source from sink</span>.
-    </div>
+  <div class="nf-know">
+    <div class="nf-know-tag"><div class="nf-dot"></div><div class="nf-know-lab">Know This</div></div>
+    <p class="nf-know-body">The <span style="color:var(--acc)">maximum flow</span> equals the capacity of the <span style="color:var(--acc)">minimum cut</span>, so value every <span style="color:var(--acc)">source–sink partition</span> before you trust the obvious bottleneck.</p>
   </div>
 </div>
 
 <script>
-const canvas = document.getElementById('flowCanvas');
-const ctx = canvas.getContext('2d', { alpha: false });
-const slider = document.getElementById('flowSlider');
-const liveTag = document.getElementById('liveTag');
-const canvasTag = document.getElementById('canvasTag');
-const actualFlowEl = document.getElementById('actualFlow');
-const minCutCapEl = document.getElementById('minCutCap');
-const knowdropText = document.getElementById('knowdropText');
-const toggleBtns = document.querySelectorAll('.toggle-btn');
+(function(){
+  const CSS = getComputedStyle(document.documentElement);
+  const ACC = CSS.getPropertyValue("--acc").trim();
+  const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+  const AMB = CSS.getPropertyValue("--amb").trim();
+  const AMBRGB = CSS.getPropertyValue("--amb-rgb").trim();
+  const INK = CSS.getPropertyValue("--ink").trim();
+  const DIM = CSS.getPropertyValue("--ink-dim").trim();
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const MONO = "'JetBrains Mono', monospace";
 
-const CSS = getComputedStyle(document.documentElement);
-const ACC = CSS.getPropertyValue('--acc').trim();
-const RGB = CSS.getPropertyValue('--acc-rgb').trim();
-const AMB = CSS.getPropertyValue('--amb').trim();
+  const canvas = document.getElementById("nfCanvas");
+  const wrap = document.getElementById("nfWrap");
+  const ctx = canvas.getContext("2d");
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const buf = document.createElement("canvas");
+  const bctx = buf.getContext("2d");
 
-const dpr = Math.min(window.devicePixelRatio || 1, 2);
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d', { alpha: false });
+  const slider = document.getElementById("nfSlider");
+  const flowV = document.getElementById("nfFlowV");
+  const live = document.getElementById("nfLive");
+  const ovl = document.getElementById("nfOvl");
+  const flowStat = document.getElementById("nfFlowStat");
+  const flowSub = document.getElementById("nfFlowSub");
+  const cutStat = document.getElementById("nfCutStat");
+  const cutSub = document.getElementById("nfCutSub");
+  const cutNote = document.getElementById("nfCutNote");
+  const pipeNote = document.getElementById("nfPipeNote");
+  const kd = document.getElementById("nfKd");
 
-let attemptedFlow = 0;
-let time = 0;
-let particles = [];
+  const NODES = {
+    S:{x:0.12, y:0.5, label:"S", big:true},
+    A:{x:0.44, y:0.24, label:"A", big:false},
+    B:{x:0.44, y:0.76, label:"B", big:false},
+    T:{x:0.88, y:0.5, label:"T", big:true}
+  };
+  const EDGES = [
+    {id:"SA", from:"S", to:"A", cap:10, lx:0.335, ly:0.20},
+    {id:"SB", from:"S", to:"B", cap:14, lx:0.335, ly:0.80},
+    {id:"AB", from:"A", to:"B", cap:4,  lx:0.50,  ly:0.36},
+    {id:"AT", from:"A", to:"T", cap:7,  lx:0.74,  ly:0.30},
+    {id:"BT", from:"B", to:"T", cap:16, lx:0.74,  ly:0.70}
+  ];
+  const E = {};
+  EDGES.forEach(e => { E[e.id] = e; });
 
-// Network structure: source -> A, B -> sink
-// Edges: S->A(10), S->B(14), A->sink(18), B->sink(6)
-// Min cut is {S,A} vs {B,sink} with capacity 14+18=32? No.
-// Actually: S->A(10), S->B(14), A->B(4), A->sink(10), B->sink(14)
-// Min cut: {S} vs rest = 10+14=24
-const edges = [
-  { from: 'S', to: 'A', cap: 10, flow: 0, x1: 0.15, y1: 0.5, x2: 0.4, y2: 0.3 },
-  { from: 'S', to: 'B', cap: 14, flow: 0, x1: 0.15, y1: 0.5, x2: 0.4, y2: 0.7 },
-  { from: 'A', to: 'B', cap: 4, flow: 0, x1: 0.4, y1: 0.3, x2: 0.4, y2: 0.7 },
-  { from: 'A', to: 'T', cap: 10, flow: 0, x1: 0.4, y1: 0.3, x2: 0.85, y2: 0.5 },
-  { from: 'B', to: 'T', cap: 14, flow: 0, x1: 0.4, y1: 0.7, x2: 0.85, y2: 0.5 }
-];
+  const CUTS = [
+    {name:"{S} | {A,B,T}", short:"{S}|{A,B,T}", src:["S"], fwd:["SA","SB"], back:[],
+     lead:"Every pipe leaving the tank: the obvious bottleneck.",
+     pts:[[0.25,0.04],[0.23,0.5],[0.25,0.96]]},
+    {name:"{S,A} | {B,T}", short:"{S,A}|{B,T}", src:["S","A"], fwd:["SB","AB","AT"], back:[],
+     lead:"S and A on the tank side, B and T on the terminal side.",
+     pts:[[0.66,0.04],[0.64,0.34],[0.52,0.48],[0.44,0.5],[0.24,0.70],[0.16,0.96]]},
+    {name:"{S,B} | {A,T}", short:"{S,B}|{A,T}", src:["S","B"], fwd:["SA","BT"], back:["AB"],
+     lead:"S and B on the tank side, A and T on the terminal side.",
+     pts:[[0.16,0.04],[0.24,0.30],[0.44,0.5],[0.52,0.52],[0.64,0.66],[0.66,0.96]]},
+    {name:"{S,A,B} | {T}", short:"{S,A,B}|{T}", src:["S","A","B"], fwd:["AT","BT"], back:[],
+     lead:"Only the terminal on the far side: the two pipes into T.",
+     pts:[[0.64,0.04],[0.62,0.5],[0.64,0.96]]}
+  ];
 
-const nodes = {
-  S: { x: 0.15, y: 0.5, label: 'Source' },
-  A: { x: 0.4, y: 0.3, label: 'A' },
-  B: { x: 0.4, y: 0.7, label: 'B' },
-  T: { x: 0.85, y: 0.5, label: 'Sink' }
-};
+  const KD = {
+    theorem: "A cut is any split of the nodes into two groups, one holding the source and one holding the sink, and its capacity is the total of the pipes that cross from the source group towards the sink group. Pipes that cross the line the other way carry nothing towards the terminal, so they are left out: that is why A→B counts in the {S,A} cut but not in the {S,B} cut. Every unit of oil that reaches the terminal has to cross every one of these lines somewhere, so no flow can ever beat the smallest cut. The max-flow min-cut theorem says the two numbers are not just bounded but equal: the largest flow you can push is exactly the capacity of the tightest cut. In this network the tank can release 24, but only 23 can be received, because the two pipes into the terminal add to 23. Widening any pipe that is not in the minimum cut, like A→B, changes nothing.",
+    steps: "A small-scale question gives you a network and asks for the maximum flow with a reason. Start at the source and keep pushing oil along paths that still have spare room: S→A→T can take 7, S→B→T can take 14, and S→A→B→T squeezes a final 2 through the cross pipe, for 23 in total. Then show you cannot do better by finding a cut worth 23: list every way to divide the nodes with S on one side and T on the other, add up only the forward pipes, and take the smallest. With A→B at 4, the cuts {S}|{A,B,T}, {S,A}|{B,T}, {S,B}|{A,T} and {S,A,B}|{T} come to 24, 25, 26 and 23. A flow of 23 and a cut of 23 together prove that 23 is the maximum. Writing both halves, the flow and the matching cut, is what makes the reasoning complete."
+  };
 
-const minCutCapacity = 24; // S->A(10) + S->B(14)
+  let sel = 0, pipe = 4, attempted = 18, actual = 0, flows = {SA:0,SB:0,AB:0,AT:0,BT:0};
+  let MAX = 23, cutT = 1, last = performance.now();
+  const parts = [];
+  const accum = {};
 
-function resize() {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  bctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
-
-function updateFlow() {
-  attemptedFlow = parseInt(slider.value);
-  const actualFlow = Math.min(attemptedFlow, minCutCapacity);
-  
-  slider.style.setProperty('--fill', (attemptedFlow) + '%');
-  liveTag.textContent = `Attempting ${attemptedFlow} units/sec`;
-  actualFlowEl.textContent = actualFlow;
-  canvasTag.textContent = `Bottleneck at cut: ${actualFlow} / ${minCutCapacity} capacity`;
-  
-  // Distribute flow through network (simplified)
-  const flowRatio = actualFlow / minCutCapacity;
-  edges[0].flow = Math.min(10, actualFlow * 0.42); // S->A
-  edges[1].flow = Math.min(14, actualFlow * 0.58); // S->B
-  edges[2].flow = Math.min(4, edges[0].flow - Math.min(10, actualFlow * 0.42)); // A->B
-  edges[3].flow = Math.min(10, edges[0].flow); // A->T
-  edges[4].flow = Math.min(14, edges[1].flow + edges[2].flow); // B->T
-}
-
-function spawnParticle(edge) {
-  if (edge.flow > 0 && Math.random() < edge.flow / edge.cap * 0.15) {
-    particles.push({
-      edge,
-      progress: 0,
-      speed: 0.008 + Math.random() * 0.004,
-      size: 2 + Math.random() * 1.5
-    });
+  function edgeName(id){ return id[0] + "→" + id[1]; }
+  function cutCap(c){ return c.fwd.reduce((s,id) => s + E[id].cap, 0); }
+  function minCut(){
+    let m = null;
+    CUTS.forEach(c => { const v = cutCap(c); if (!m || v < m.v) m = {c:c, v:v}; });
+    return m;
   }
-}
+  function computeFlows(f){
+    const AT = Math.round(f * 7 / 23), AB = Math.round(f * 2 / 23);
+    const SA = AT + AB, SB = f - SA, BT = SB + AB;
+    return {SA:SA, SB:SB, AB:AB, AT:AT, BT:BT};
+  }
 
-function draw() {
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, w, h);
-  
-  // Draw edges
-  edges.forEach(edge => {
-    const x1 = edge.x1 * w;
-    const y1 = edge.y1 * h;
-    const x2 = edge.x2 * w;
-    const y2 = edge.y2 * h;
-    
-    const flowRatio = edge.flow / edge.cap;
-    const baseWidth = 3;
-    const flowWidth = baseWidth + flowRatio * 6;
-    
-    // Base edge
-    ctx.strokeStyle = '#1a1f1a';
-    ctx.lineWidth = flowWidth + 4;
-    ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
-    ctx.stroke();
-    
-    // Flow overlay
-    if (flowRatio > 0) {
-      const grad = ctx.createLinearGradient(x1, y1, x2, y2);
-      grad.addColorStop(0, 'rgba(' + RGB + ',' + flowRatio * 0.7 + ')');
-      grad.addColorStop(1, 'rgba(' + RGB + ',' + flowRatio * 0.3 + ')');
-      ctx.strokeStyle = grad;
-      ctx.lineWidth = flowWidth;
-      ctx.beginPath();
-      ctx.moveTo(x1, y1);
-      ctx.lineTo(x2, y2);
-      ctx.stroke();
+  function update(){
+    E.AB.cap = pipe;
+    const mc = minCut();
+    MAX = mc.v;
+    attempted = parseInt(slider.value, 10);
+    actual = Math.min(attempted, MAX);
+    const stalled = attempted - actual;
+    flows = computeFlows(actual);
+
+    slider.style.setProperty("--fill", (attempted / 30 * 100) + "%");
+    flowV.textContent = String(attempted);
+    live.textContent = stalled > 0 ? `Through ${actual} · ${stalled} stalled` : `Through ${actual} of ${MAX}`;
+    flowStat.textContent = String(actual);
+    flowSub.textContent = stalled > 0 ? `${stalled} of ${attempted} wait at the tank` : `of ${attempted} attempted · max ${MAX}`;
+
+    const c = CUTS[sel];
+    const cap = cutCap(c);
+    ovl.textContent = `Cut ${c.short}: ${c.fwd.map(id => E[id].cap).join("+")} = ${cap}`;
+    cutStat.textContent = String(cap);
+    cutSub.textContent = cap === MAX ? "the minimum cut" : `loses to min cut ${MAX}`;
+
+    let note = c.lead + " Forward pipes: " + c.fwd.map(id => edgeName(id) + " " + E[id].cap).join(", ") + ".";
+    if (c.back.length) {
+      note += " " + c.back.map(edgeName).join(", ") + " also crosses the line but points back towards the S side, so it is not counted.";
     }
-    
-    // Capacity label
-    ctx.font = '10px JetBrains Mono';
-    ctx.fillStyle = '#8C9389';
-    const mx = (x1 + x2) / 2;
-    const my = (y1 + y2) / 2;
-    const label = Math.round(edge.flow) + '/' + edge.cap;
-    const metrics = ctx.measureText(label);
-    ctx.fillText(label, mx - metrics.width / 2, my - 8);
-  });
-  
-  // Draw nodes
-  Object.entries(nodes).forEach(([key, node]) => {
-    const x = node.x * w;
-    const y = node.y * h;
-    const r = key === 'S' || key === 'T' ? 18 : 14;
-    
-    // Glow for source/sink
-    if (key === 'S' || key === 'T') {
-      ctx.save();
-      ctx.globalCompositeOperation = 'lighter';
-      const glow = ctx.createRadialGradient(x, y, 0, x, y, r * 2.2);
-      glow.addColorStop(0, 'rgba(' + RGB + ',0.35)');
-      glow.addColorStop(1, 'rgba(' + RGB + ',0)');
-      ctx.fillStyle = glow;
+    note += cap === MAX
+      ? ` Total ${cap}: this is the minimum cut, and it equals the maximum flow.`
+      : ` Total ${cap}, which loses to the minimum cut ${mc.c.short} at ${MAX}.`;
+    cutNote.textContent = note;
+
+    if (pipe === 4) {
+      pipeNote.textContent = "Predict first: if the A→B pipe grew from 4 to 40, would more oil reach the terminal?";
+    } else {
+      pipeNote.textContent = `No. The {S,A}|{B,T} cut jumped to ${cutCap(CUTS[1])}, but the minimum cut ${mc.c.short} is still ${MAX} and never used A→B, so the flow through stays ${MAX}.`;
+    }
+  }
+
+  function resize(){
+    const rect = wrap.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    buf.width = canvas.width; buf.height = canvas.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function geom(e, w, h, rS, rM){
+    const a = NODES[e.from], b = NODES[e.to];
+    const ax = a.x * w, ay = a.y * h, bx = b.x * w, by = b.y * h;
+    const dx = bx - ax, dy = by - ay, L = Math.hypot(dx, dy), ux = dx / L, uy = dy / L;
+    const ra = (a.big ? rS : rM) + 2, rb = (b.big ? rS : rM) + 2;
+    return {x1:ax + ux * ra, y1:ay + uy * ra, x2:bx - ux * rb, y2:by - uy * rb, ux:ux, uy:uy};
+  }
+
+  function cutPath(pts, w, h){
+    const P = pts.map(p => [p[0] * w, p[1] * h]);
+    ctx.beginPath();
+    ctx.moveTo(P[0][0], P[0][1]);
+    for (let i = 1; i < P.length - 1; i++) {
+      const mx = (P[i][0] + P[i + 1][0]) / 2, my = (P[i][1] + P[i + 1][1]) / 2;
+      ctx.quadraticCurveTo(P[i][0], P[i][1], mx, my);
+    }
+    const L = P[P.length - 1];
+    ctx.lineTo(L[0], L[1]);
+  }
+
+  function rrect(x, y, w, h, r){
+    ctx.beginPath();
+    ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+  }
+
+  function stepParticles(dt){
+    EDGES.forEach(e => {
+      const f = flows[e.id] || 0;
+      if (f === 0) { accum[e.id] = 0; return; }
+      accum[e.id] = (accum[e.id] || 0) + f * 0.45 * dt;
+      while (accum[e.id] >= 1 && parts.length < 400) { accum[e.id] -= 1; parts.push({e:e.id, t:0}); }
+    });
+    for (let i = parts.length - 1; i >= 0; i--) {
+      parts[i].t += 0.55 * dt;
+      if (parts[i].t > 1) parts.splice(i, 1);
+    }
+  }
+
+  function draw(dt){
+    const w = canvas.width / dpr, h = canvas.height / dpr;
+    if (!w || !h) return;
+    const rS = Math.max(14, Math.min(22, h * 0.085));
+    const rM = rS * 0.82;
+    const sc = Math.max(1, Math.min(1.5, h / 220));
+    const c = CUTS[sel];
+    const ease = 1 - Math.pow(1 - cutT, 3);
+    const G = {};
+    EDGES.forEach(e => { G[e.id] = geom(e, w, h, rS, rM); });
+
+    ctx.fillStyle = "rgba(0,0,0,1)";
+    ctx.fillRect(0, 0, w, h);
+
+    EDGES.forEach(e => {
+      const g = G[e.id];
+      const W = (3 + Math.min(e.cap, 20) * 0.4) * sc;
+      const f = flows[e.id] || 0;
+      const ratio = e.cap ? f / e.cap : 0;
+      const inCut = c.fwd.indexOf(e.id) >= 0;
+      ctx.lineCap = "round";
+
+      if (inCut && ease > 0) {
+        ctx.save();
+        ctx.globalCompositeOperation = "lighter";
+        ctx.strokeStyle = "rgba(" + AMBRGB + "," + (0.38 * ease) + ")";
+        ctx.lineWidth = W + 7;
+        ctx.beginPath(); ctx.moveTo(g.x1, g.y1); ctx.lineTo(g.x2, g.y2); ctx.stroke();
+        ctx.restore();
+      }
+
+      ctx.strokeStyle = "rgba(255,255,255,0.10)";
+      ctx.lineWidth = W;
+      ctx.beginPath(); ctx.moveTo(g.x1, g.y1); ctx.lineTo(g.x2, g.y2); ctx.stroke();
+
+      if (ratio > 0) {
+        ctx.strokeStyle = "rgba(" + RGB + "," + (0.25 + 0.55 * ratio) + ")";
+        ctx.lineWidth = Math.max(1.6, W * ratio);
+        ctx.beginPath(); ctx.moveTo(g.x1, g.y1); ctx.lineTo(g.x2, g.y2); ctx.stroke();
+      }
+      if (e.cap > 0 && f === e.cap) {
+        ctx.strokeStyle = ACC;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(g.x1, g.y1); ctx.lineTo(g.x2, g.y2); ctx.stroke();
+      }
+
+      const ah = 7 * sc;
+      const px = -g.uy, py = g.ux;
+      ctx.fillStyle = inCut ? "rgba(" + AMBRGB + ",0.9)" : "rgba(255,255,255,0.55)";
       ctx.beginPath();
-      ctx.arc(x, y, r * 2.2, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.moveTo(g.x2 + g.ux * 3, g.y2 + g.uy * 3);
+      ctx.lineTo(g.x2 - g.ux * ah + px * ah * 0.65, g.y2 - g.uy * ah + py * ah * 0.65);
+      ctx.lineTo(g.x2 - g.ux * ah - px * ah * 0.65, g.y2 - g.uy * ah - py * ah * 0.65);
+      ctx.closePath(); ctx.fill();
+    });
+
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    if (reduced) {
+      EDGES.forEach(e => {
+        const g = G[e.id], n = flows[e.id] || 0;
+        for (let i = 0; i < n; i++) {
+          const t = (i + 0.5) / n;
+          ctx.fillStyle = "rgba(" + RGB + ",0.85)";
+          ctx.beginPath(); ctx.arc(g.x1 + (g.x2 - g.x1) * t, g.y1 + (g.y2 - g.y1) * t, 2.2 * sc, 0, Math.PI * 2); ctx.fill();
+        }
+      });
+    } else {
+      parts.forEach(p => {
+        const g = G[p.e];
+        const x = g.x1 + (g.x2 - g.x1) * p.t, y = g.y1 + (g.y2 - g.y1) * p.t;
+        ctx.fillStyle = "rgba(" + RGB + "," + (0.35 + 0.6 * Math.sin(p.t * Math.PI)) + ")";
+        ctx.beginPath(); ctx.arc(x, y, 2.3 * sc, 0, Math.PI * 2); ctx.fill();
+      });
+    }
+    ctx.restore();
+
+    const stalled = attempted - actual;
+    if (stalled > 0) {
+      const sx = NODES.S.x * w, sy = NODES.S.y * h;
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      for (let i = 0; i < stalled; i++) {
+        const y = sy + (i - (stalled - 1) / 2) * 9 * sc;
+        ctx.fillStyle = "rgba(" + AMBRGB + ",0.85)";
+        ctx.beginPath(); ctx.arc(sx - rS - 11 * sc, y, 3 * sc, 0, Math.PI * 2); ctx.fill();
+      }
       ctx.restore();
     }
-    
-    // Node circle
-    ctx.fillStyle = key === 'S' || key === 'T' ? ACC : '#12160F';
-    ctx.strokeStyle = key === 'S' || key === 'T' ? ACC : '#262B26';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.arc(x, y, r, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.stroke();
-    
-    // Label
-    ctx.font = key === 'S' || key === 'T' ? 'bold 11px JetBrains Mono' : '10px JetBrains Mono';
-    ctx.fillStyle = key === 'S' || key === 'T' ? '#0B0D0C' : '#EDEDE8';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(node.label, x, y);
-  });
-  
-  // Spawn and draw particles
-  edges.forEach(edge => spawnParticle(edge));
-  
-  particles = particles.filter(p => {
-    p.progress += p.speed;
-    if (p.progress > 1) return false;
-    
-    const x1 = p.edge.x1 * w;
-    const y1 = p.edge.y1 * h;
-    const x2 = p.edge.x2 * w;
-    const y2 = p.edge.y2 * h;
-    
-    const x = x1 + (x2 - x1) * p.progress;
-    const y = y1 + (y2 - y1) * p.progress;
-    
-    const alpha = Math.sin(p.progress * Math.PI) * 0.9;
-    
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.fillStyle = 'rgba(' + RGB + ',' + alpha + ')';
-    ctx.beginPath();
-    ctx.arc(x, y, p.size, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-    
-    return true;
-  });
-  
-  // Bloom
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
-  
-  // Vignette
-  const vig = ctx.createRadialGradient(w / 2, h / 2, h * 0.28, w / 2, h / 2, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-  
-  time += 0.016;
-  requestAnimationFrame(draw);
-}
 
-slider.addEventListener('input', updateFlow);
+    Object.keys(NODES).forEach(k => {
+      const n = NODES[k];
+      const x = n.x * w, y = n.y * h, r = n.big ? rS : rM;
+      if (n.big) {
+        ctx.save();
+        ctx.globalCompositeOperation = "lighter";
+        const glow = ctx.createRadialGradient(x, y, 0, x, y, r * 2.4);
+        glow.addColorStop(0, "rgba(" + RGB + ",0.4)");
+        glow.addColorStop(1, "rgba(" + RGB + ",0)");
+        ctx.fillStyle = glow;
+        ctx.beginPath(); ctx.arc(x, y, r * 2.4, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+      }
+      ctx.fillStyle = n.big ? ACC : "rgba(18,22,15,1)";
+      ctx.strokeStyle = n.big ? ACC : "rgba(255,255,255,0.22)";
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      if (c.src.indexOf(k) >= 0 && ease > 0) {
+        ctx.strokeStyle = "rgba(" + AMBRGB + "," + (0.9 * ease) + ")";
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(x, y, r + 4, 0, Math.PI * 2); ctx.stroke();
+      }
+    });
 
-toggleBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    toggleBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    
-    const mode = btn.dataset.mode;
-    if (mode === 'theorem') {
-      knowdropText.textContent = "The max-flow min-cut theorem states that the maximum amount of flow you can push from source to sink equals the minimum capacity of any cut separating them. A cut is a partition of the network into two sets — one containing the source, one containing the sink — and its capacity is the sum of edge capacities crossing from source side to sink side. Why does this work? Because flow is conserved at every node (what comes in must go out), so all flow must cross any cut you make. The tightest cut is therefore the absolute ceiling. This principle applies to water pipes, road networks, data transmission, electrical grids, and evacuation routes — the bottleneck always wins.";
-    } else {
-      knowdropText.textContent = "To find maximum flow, start with zero flow everywhere. Look for any path from source to sink with available capacity (an augmenting path). Push as much flow as possible along that path — the limiting edge sets how much. Update the flows, then repeat: find another augmenting path, push flow, update. When no augmenting path exists, you have reached maximum flow. The Ford-Fulkerson algorithm automates this process. The final flow equals the min cut capacity because the algorithm stops exactly when flow saturates the bottleneck cut. Real applications use this for traffic routing, pipeline design, evacuation planning, and network bandwidth allocation.";
+    if (ease > 0) {
+      ctx.save();
+      ctx.setLineDash([8, 6]);
+      ctx.lineCap = "butt";
+      ctx.globalCompositeOperation = "lighter";
+      ctx.strokeStyle = "rgba(" + AMBRGB + "," + (0.25 * ease) + ")";
+      ctx.lineWidth = 7;
+      cutPath(c.pts, w, h); ctx.stroke();
+      ctx.restore();
+      ctx.save();
+      ctx.setLineDash([8, 6]);
+      ctx.strokeStyle = "rgba(" + AMBRGB + "," + (0.95 * ease) + ")";
+      ctx.lineWidth = 2;
+      cutPath(c.pts, w, h); ctx.stroke();
+      ctx.restore();
     }
-  });
-});
 
-window.addEventListener('resize', resize);
-resize();
-updateFlow();
-draw();
+    bctx.setTransform(1, 0, 0, 1, 0, 0);
+    bctx.clearRect(0, 0, buf.width, buf.height);
+    if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    ctx.globalAlpha = 0.38;
+    ctx.filter = "blur(7px)";
+    if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+    ctx.restore();
+
+    const vig = ctx.createRadialGradient(w / 2, h / 2, h * 0.28, w / 2, h / 2, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)");
+    vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig;
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.font = "500 11px " + MONO;
+    EDGES.forEach(e => {
+      const lx = e.lx * w, ly = e.ly * h;
+      const txt = (flows[e.id] || 0) + "/" + e.cap;
+      const tw = ctx.measureText(txt).width;
+      ctx.fillStyle = "rgba(0,0,0,0.65)";
+      rrect(lx - tw / 2 - 5, ly - 8, tw + 10, 16, 6); ctx.fill();
+      const inCut = c.fwd.indexOf(e.id) >= 0, isBack = c.back.indexOf(e.id) >= 0;
+      ctx.fillStyle = inCut ? AMB : (isBack ? DIM : INK);
+      ctx.fillText(txt, lx, ly);
+    });
+
+    Object.keys(NODES).forEach(k => {
+      const n = NODES[k];
+      const x = n.x * w, y = n.y * h, r = n.big ? rS : rM;
+      ctx.font = "500 12px " + MONO;
+      ctx.fillStyle = n.big ? "rgba(11,13,12,1)" : INK;
+      ctx.fillText(n.label, x, y);
+      if (n.big) {
+        ctx.font = "400 11px " + MONO;
+        ctx.fillStyle = DIM;
+        ctx.fillText(k === "S" ? "SOURCE" : "SINK", x, y + r + 13);
+        if (k === "S" && stalled > 0) {
+          ctx.fillStyle = AMB;
+          ctx.fillText(stalled + " WAITING", x, y + r + 26);
+        }
+      }
+    });
+  }
+
+  function frame(now){
+    const dt = Math.min(now - last, 50) / 1000;
+    last = now;
+    if (cutT < 1) cutT = Math.min(1, cutT + dt / 0.35);
+    if (!reduced) stepParticles(dt);
+    draw(dt);
+    requestAnimationFrame(frame);
+  }
+
+  slider.addEventListener("input", update);
+
+  document.querySelectorAll("[data-cut]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      sel = parseInt(btn.getAttribute("data-cut"), 10);
+      cutT = reduced ? 1 : 0;
+      document.querySelectorAll("[data-cut]").forEach(b => b.setAttribute("aria-pressed", b === btn ? "true" : "false"));
+      update();
+    });
+  });
+
+  document.querySelectorAll("[data-pipe]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      pipe = parseInt(btn.getAttribute("data-pipe"), 10);
+      document.querySelectorAll("[data-pipe]").forEach(b => b.setAttribute("aria-pressed", b === btn ? "true" : "false"));
+      update();
+    });
+  });
+
+  document.querySelectorAll("[data-k]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("[data-k]").forEach(b => b.setAttribute("aria-pressed", b === btn ? "true" : "false"));
+      kd.textContent = KD[btn.getAttribute("data-k")];
+    });
+  });
+  kd.textContent = KD.theorem;
+
+  window.addEventListener("resize", resize);
+  if ("ResizeObserver" in window) { new ResizeObserver(resize).observe(wrap); }
+  resize();
+  update();
+  requestAnimationFrame(frame);
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'network-flow-and-the-maximum-flow-minimum-cut-theorem'},'*');}catch(e){}}

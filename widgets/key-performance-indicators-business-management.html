@@ -298,11 +298,11 @@ canvas {
   
   <h1>The invisible becomes <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">measurable</span></h1>
   
-  <p class="intro">Every business is doing something — but is it actually performing? KPIs turn invisible work into measurable indicators that diagnose whether you're winning or just busy. Drag the slider to see how KPIs reveal the real performance story.</p>
+  <p class="intro">Every business is doing something — but is it actually performing? KPIs turn invisible work into measurable indicators that diagnose whether you're winning or just busy. Raise the business activity level: past a point, more activity keeps lifting market share while profit and productivity fall. That gap is busy, not winning.</p>
 
   <div class="card">
     <div class="card-header">
-      <span class="card-label">Performance Dashboard</span>
+      <span class="card-label">Performance dashboard</span>
       <span class="live-tag" id="liveTag">3 KPIs tracked</span>
     </div>
     <div class="card-hint">Higher on the chart means a better result for that KPI</div>
@@ -392,9 +392,13 @@ function resize() {
 
 function updateKPIs(value) {
   const normalized = value / 100;
+  /* activity is not results: market share keeps rising with activity, but past the middle the business is
+     overstretched (overtime, wastage, rushed work), so net profit and productivity growth turn down */
   const marketVal = Math.round(15 + normalized * 25);
-  const profitVal = Math.round(80 + normalized * 200);
-  const prodVal = 0.5 + normalized * 3;
+  const profitVal = Math.round(80 + 520 * normalized * (1 - normalized));
+  const prodVal = 0.5 + 8 * normalized * (1 - normalized);
+  const profitSlope = 520 * (1 - 2 * normalized); /* change in $k profit per unit of activity, from the same model */
+  liveTag.textContent = profitSlope > 60 ? "Activity is lifting results" : (profitSlope < -60 ? "Busy, not performing" : "Best balance of activity and results");
   /* the plotted height comes from the same numbers as the readouts */
   kpis[0].targetY = marketVal / 50;
   kpis[1].targetY = profitVal / 300;

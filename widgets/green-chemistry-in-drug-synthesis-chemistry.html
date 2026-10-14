@@ -118,8 +118,8 @@ canvas{
   backdrop-filter:blur(4px);
   padding:9px 16px;
   font-family:'JetBrains Mono',monospace;
-  font-size:14px;
-  text-transform:uppercase;
+  font-size:13px;
+  text-transform:none;
   color:var(--acc);
   text-align:center;
 }
@@ -176,7 +176,7 @@ canvas{
   display:flex;
   justify-content:space-between;
   font-family:'JetBrains Mono',monospace;
-  font-size:9px;
+  font-size:10px;
   color:var(--ink-dim);
   padding:0 2px;
 }
@@ -281,18 +281,18 @@ canvas{
 <div class="container">
   <h1>The best pharma waste plan is to <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">never create it</span></h1>
   
-  <p class="intro">Pharmaceutical synthesis generates more waste per kilogram of product than almost any other industry. Traditional chemistry cleans up afterwards; green chemistry redesigns the equation itself. Move the slider to compare a four-step traditional synthesis against streamlined catalytic routes.</p>
+  <p class="intro">Pharmaceutical synthesis generates more waste per kilogram of product than almost any other industry. Traditional chemistry cleans up afterwards; green chemistry redesigns the equation itself. Add more steps and watch the waste pile up as a route gets longer.</p>
 
   <div class="card">
     <div class="card-header">
       <span class="card-label">Synthesis pathway</span>
       <span class="live-tag" id="stepTag">4 STEPS</span>
     </div>
-    <div class="card-hint">Drag to reduce synthetic steps</div>
+    <div class="card-hint">Change the number of steps. 100 kg of reactants go in; each step keeps 60% of the mass.</div>
     
     <div class="canvas-wrapper">
       <canvas id="synCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasTag">TRADITIONAL ROUTE</div>
+      <div class="canvas-overlay" id="canvasTag">100 kg of reactants → 13 kg of drug + 87 kg of waste</div>
     </div>
 
     <div class="slider-wrapper">
@@ -309,11 +309,11 @@ canvas{
     <div class="stat-row">
       <div class="stat">
         <div class="stat-label">Atom economy</div>
-        <div class="stat-value" id="atomEcon">38%</div>
+        <div class="stat-value" id="atomEcon">13%</div>
       </div>
       <div class="stat">
         <div class="stat-label">Waste generated</div>
-        <div class="stat-value" id="wasteVal">84 kg</div>
+        <div class="stat-value" id="wasteVal">87 kg</div>
       </div>
     </div>
   </div>
@@ -325,7 +325,7 @@ canvas{
     </div>
 
     <div class="knowdrop-divider">
-      <p class="knowdrop-text" id="knowdropText">Atom economy measures what fraction of all reactant atoms end up in your desired product. Traditional synthesis stacks reagents that achieve the transformation but leave molecular debris behind—protecting groups, stoichiometric oxidants, coupling agents that become side-products. Green chemistry asks: can you design a reaction where every atom you add lands in the final molecule? Catalytic routes excel here because the catalyst cycles back, leaving only product atoms. A four-step synthesis with 60% atom economy at each step delivers an overall economy under 13%; a single catalytic step can approach 90% or higher. The equation itself becomes the design constraint.</p>
+      <p class="knowdrop-text" id="knowdropText">Atom economy measures what fraction of all reactant atoms end up in your desired product. Traditional synthesis stacks reagents that achieve the transformation but leave molecular debris behind: protecting groups, stoichiometric oxidants, coupling agents that become side-products. Green chemistry asks: can you design a reaction where every atom you add lands in the final molecule? In the picture each step keeps 60% of the mass and the losses multiply: four steps keep 0.6 × 0.6 × 0.6 × 0.6, about 13%, and one step keeps 60%. Catalytic routes do better still, because the catalyst cycles back and is not part of the waste; a well-designed catalytic step can reach 90% or higher. The equation itself becomes the design constraint.</p>
     </div>
   </div>
 
@@ -336,27 +336,30 @@ canvas{
 </div>
 
 <script>
-const canvas=document.getElementById('synCanvas');
-const ctx=canvas.getContext('2d',{alpha:false});
-const slider=document.getElementById('stepSlider');
-const stepTag=document.getElementById('stepTag');
-const canvasTag=document.getElementById('canvasTag');
-const atomEcon=document.getElementById('atomEcon');
-const wasteVal=document.getElementById('wasteVal');
-const btnAtom=document.getElementById('btnAtom');
-const btnSolvent=document.getElementById('btnSolvent');
-const knowdropText=document.getElementById('knowdropText');
+const canvas=document.getElementById("synCanvas");
+const ctx=canvas.getContext("2d",{alpha:false});
+const slider=document.getElementById("stepSlider");
+const stepTag=document.getElementById("stepTag");
+const canvasTag=document.getElementById("canvasTag");
+const atomEcon=document.getElementById("atomEcon");
+const wasteVal=document.getElementById("wasteVal");
+const btnAtom=document.getElementById("btnAtom");
+const btnSolvent=document.getElementById("btnSolvent");
+const knowdropText=document.getElementById("knowdropText");
 
 const dpr=Math.min(window.devicePixelRatio||1,2);
-const buf=document.createElement('canvas');
-const bctx=buf.getContext('2d',{alpha:false});
 
-let steps=4;
+/* The model: FEED kg of reactants go in at the start; every step keeps KEEP of the mass that enters it
+   in the next molecule and the rest leaves as by-product waste. Step economies multiply. */
+const FEED=100, KEEP=0.6;
 let targetSteps=4;
+function productKg(n){return FEED*Math.pow(KEEP,n);}
+function wasteKg(n){return FEED-productKg(n);}
+function fmtKg(x){return x>=10?String(Math.round(x)):(Math.round(x*10)/10).toFixed(1);}
 
 const atomText={
-  atom:"Atom economy measures what fraction of all reactant atoms end up in your desired product. Traditional synthesis stacks reagents that achieve the transformation but leave molecular debris behind—protecting groups, stoichiometric oxidants, coupling agents that become side-products. Green chemistry asks: can you design a reaction where every atom you add lands in the final molecule? Catalytic routes excel here because the catalyst cycles back, leaving only product atoms. A four-step synthesis with 60% atom economy at each step delivers an overall economy under 13%; a single catalytic step can approach 90% or higher. The equation itself becomes the design constraint.",
-  solvent:"Pharmaceutical synthesis traditionally relied on chlorinated solvents, benzene derivatives, and petrochemical feedstocks—effective but toxic, flammable, and environmentally persistent. Green alternatives include water, ethanol, supercritical CO₂, and bio-derived solvents like cyrene or 2-methyltetrahydrofuran. Water is the ultimate green solvent when chemistry permits it; many modern catalysts are now designed specifically to work in aqueous media. Solvent accounts for 80–90% of total mass in a typical pharmaceutical process, so switching from dichloromethane to ethanol in a single step can cut hazardous waste by tens of tonnes per batch. The twelve principles of green chemistry place solvent choice second only to waste prevention itself."
+  atom:`Atom economy measures what fraction of all reactant atoms end up in your desired product. Traditional synthesis stacks reagents that achieve the transformation but leave molecular debris behind: protecting groups, stoichiometric oxidants, coupling agents that become side-products. Green chemistry asks: can you design a reaction where every atom you add lands in the final molecule? In the picture each step keeps 60% of the mass and the losses multiply: four steps keep 0.6 × 0.6 × 0.6 × 0.6, about 13%, and one step keeps 60%. Catalytic routes do better still, because the catalyst cycles back and is not part of the waste; a well-designed catalytic step can reach 90% or higher. The equation itself becomes the design constraint.`,
+  solvent:`Pharmaceutical synthesis traditionally relied on chlorinated solvents, benzene derivatives and petrochemical feedstocks: effective but toxic, flammable and environmentally persistent. Green alternatives include water, ethanol, supercritical CO₂ and bio-derived solvents such as 2-methyltetrahydrofuran. Water is the ultimate green solvent when the chemistry permits it, and many modern catalysts are designed to work in water. Solvent is often 80–90% of the total mass used in a pharmaceutical process, so every step you remove also removes its solvent and clean-up. Atom economy is a different lever: it is set by the balanced equation, so a greener solvent cannot win back atoms the equation throws away.`
 };
 
 function resize(){
@@ -364,195 +367,182 @@ function resize(){
   if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
   canvas.width=Math.round(rect.width*dpr);
   canvas.height=Math.round(rect.height*dpr);
-  buf.width=canvas.width;
-  buf.height=canvas.height;
   ctx.setTransform(dpr,0,0,dpr,0,0);
 }
-
 resize();
-window.addEventListener('resize',resize);
+window.addEventListener("resize",resize);
 
 function updateStats(){
-  const econ=[90,72,54,38];
-  const waste=[4,18,42,84];
-  atomEcon.textContent=econ[targetSteps-1]+'%';
-  wasteVal.textContent=waste[targetSteps-1]+' kg';
-  stepTag.textContent=targetSteps+(targetSteps===1?' STEP':' STEPS');
-  if(targetSteps===1){
-    canvasTag.textContent='CATALYTIC ROUTE';
-  }else if(targetSteps===2){
-    canvasTag.textContent='STREAMLINED SYNTHESIS';
-  }else{
-    canvasTag.textContent='TRADITIONAL ROUTE';
-  }
+  const n=targetSteps;
+  const p=productKg(n), wst=wasteKg(n);
+  atomEcon.textContent=Math.round(p/FEED*100)+"%";
+  wasteVal.textContent=Math.round(wst)+" kg";
+  stepTag.textContent=n+(n===1?" STEP":" STEPS");
+  canvasTag.textContent="100 kg of reactants → "+fmtKg(p)+" kg of drug + "+Math.round(wst)+" kg of waste";
 }
 
-slider.addEventListener('input',e=>{
-  const val=parseInt(e.target.value);
+slider.addEventListener("input",e=>{
+  const val=parseInt(e.target.value,10);
   targetSteps=val;
-  const pct=(val-1)/3*100;
-  slider.style.setProperty('--fill',pct+'%');
+  slider.style.setProperty("--fill",((val-1)/3*100)+"%");
   updateStats();
 });
 
-btnAtom.addEventListener('click',()=>{
-  btnAtom.classList.add('active');
-  btnSolvent.classList.remove('active');
+btnAtom.addEventListener("click",()=>{
+  btnAtom.classList.add("active");
+  btnSolvent.classList.remove("active");
   knowdropText.textContent=atomText.atom;
 });
-
-btnSolvent.addEventListener('click',()=>{
-  btnSolvent.classList.add('active');
-  btnAtom.classList.remove('active');
+btnSolvent.addEventListener("click",()=>{
+  btnSolvent.classList.add("active");
+  btnAtom.classList.remove("active");
   knowdropText.textContent=atomText.solvent;
 });
 
-slider.style.setProperty('--fill','100%');
+slider.value=String(targetSteps);
+slider.style.setProperty("--fill",((targetSteps-1)/3*100)+"%");
+knowdropText.textContent=atomText.atom;
 updateStats();
 
-let time=0;
-const particles=[];
+/* ---------- drawing ---------- */
+const ACC="#3E9AD6", AMB="#FAC775", INK="#EDEDE8", DIM="#8C9389";
+const ELEM=[{c:"#d8dcd4",k:"C"},{c:"#d8dcd4",k:"C"},{c:"#ff5d73",k:"O"},{c:"#8fb4ff",k:"N"},{c:"#f2f2ee",k:"H"}];
+let atoms=[];
+let shownWaste=wasteKg(4), shownProd=productKg(4);
+let lastN=0, spawnAcc=0, lastT=0, t=0;
 
-for(let i=0;i<80;i++){
-  particles.push({
-    x:Math.random(),
-    y:Math.random(),
-    vx:(Math.random()-0.5)*0.15,
-    vy:(Math.random()-0.5)*0.15,
-    r:Math.random()*1.8+0.6,
-    phase:Math.random()*Math.PI*2,
-    speed:0.4+Math.random()*0.8
-  });
+function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+function wrap(text,maxW){const words=text.split(" ");const lines=[];let cur="";for(const wd of words){const tr=cur?cur+" "+wd:wd;if(ctx.measureText(tr).width>maxW&&cur){lines.push(cur);cur=wd;}else cur=tr;}if(cur)lines.push(cur);return lines;}
+
+function overlayH(){
+  /* the caption bar sits over the canvas on wide screens; on a phone the app moves it below */
+  const o=canvasTag; if(!o) return 0;
+  const cs=getComputedStyle(o); return cs.position==="absolute"?o.getBoundingClientRect().height:0;
+}
+function layout(w,h,n){
+  const fs=Math.max(10,Math.min(13,Math.min(w,h)/30));
+  const nodes=n+2; /* feed, steps, product */
+  let padX=Math.max(14,w*0.04);
+  let gap=(w-2*padX)/(nodes-1);
+  const prodW=Math.max(34,Math.min(gap*0.75,90));
+  const box=Math.max(30,Math.min(gap*0.62,h*0.16,74));
+  padX=Math.max(padX,prodW/2+6,box*0.5+6,fs*2.2);
+  gap=(w-2*padX)/(nodes-1);
+  const flowY=h*0.33;
+  const tankTop=h*0.56, tankBot=h-Math.max(10,h*0.04)-overlayH();
+  const xs=[];for(let i=0;i<nodes;i++)xs.push(padX+i*gap);
+  const wasteL=xs[1]-box*0.6, wasteR=Math.min(xs[n]+box*0.6, xs[n+1]-prodW/2-10);
+  return {fs,padX,gap,flowY,tankTop,tankBot,xs,box,prodW,wasteL,wasteR,n};
 }
 
-function draw(){
-  const w=canvas.width/dpr;
-  const h=canvas.height/dpr;
+function spawnAtom(L){
+  const e=ELEM[Math.floor(Math.random()*ELEM.length)];
+  const u=Math.random();
+  let fate=L.n+1; /* survives every step: reaches the product */
+  for(let k=1;k<=L.n;k++){ if(u>=Math.pow(KEEP,k)){fate=k;break;} }
+  atoms.push({x:L.xs[0], y:L.flowY+(Math.random()-0.5)*L.box*0.5, seg:0, fate, phase:"flow", c:e.c, r:Math.max(2,L.fs*0.22), a:1,
+    jy:(Math.random()-0.5)*L.box*0.45, tx:0, ty:0, vy:0});
+}
 
-  ctx.fillStyle='#000';
-  ctx.fillRect(0,0,w,h);
+function draw(ts){
+  const now=(ts||0)/1000; const dt=Math.min(0.05,lastT?now-lastT:0.016); lastT=now; t+=dt;
+  const w=canvas.width/dpr, h=canvas.height/dpr;
+  ctx.fillStyle="#000"; ctx.fillRect(0,0,w,h);
+  if(w<40||h<40){requestAnimationFrame(draw);return;}
+  const n=targetSteps; const L=layout(w,h,n);
+  if(n!==lastN){atoms=[];lastN=n;}
+  shownWaste+=(wasteKg(n)-shownWaste)*Math.min(1,dt*4);
+  shownProd+=(productKg(n)-shownProd)*Math.min(1,dt*4);
+  const fs=L.fs;
 
-  const diff=targetSteps-steps;
-  if(Math.abs(diff)>0.01){
-    steps+=(diff)*0.08;
-  }else{
-    steps=targetSteps;
-  }
+  /* legend */
+  ctx.font="500 "+fs+"px Geist, sans-serif"; ctx.textAlign="left"; ctx.textBaseline="top";
+  const leg=wrap("Each step keeps 60% of the mass that goes in. The other 40% leaves as by-products.",w-2*L.padX);
+  ctx.fillStyle=DIM; leg.slice(0,2).forEach((ln,i)=>ctx.fillText(ln,L.padX,h*0.04+i*fs*1.3));
 
-  const stageW=w/(steps+1);
-  const marginX=stageW*0.5;
-  const cy=h*0.5;
+  /* flow line */
+  ctx.strokeStyle="rgba(62, 154, 214,0.35)"; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(L.xs[0],L.flowY); ctx.lineTo(L.xs[n+1],L.flowY); ctx.stroke();
 
-  const rAccHex='3AADA0';
-  const rAccR=58,rAccG=173,rAccB=160;
-  const rAmb='FAC775';
-
-  for(let i=0;i<=steps;i++){
-    const cx=marginX+i*stageW;
-    const isProduct=(i===steps);
-    const rad=isProduct?h*0.13:h*0.095;
-
-    const grad=ctx.createRadialGradient(cx,cy,0,cx,cy,rad*2.4);
-    if(isProduct){
-      grad.addColorStop(0,'rgba('+rAccR+','+rAccG+','+rAccB+',0.5)');
-      grad.addColorStop(0.35,'rgba('+rAccR+','+rAccG+','+rAccB+',0.18)');
-      grad.addColorStop(1,'rgba('+rAccR+','+rAccG+','+rAccB+',0)');
-    }else{
-      grad.addColorStop(0,'rgba(138,138,138,0.3)');
-      grad.addColorStop(0.4,'rgba(138,138,138,0.1)');
-      grad.addColorStop(1,'rgba(138,138,138,0)');
-    }
-    ctx.save();
-    ctx.globalCompositeOperation='lighter';
-    ctx.fillStyle=grad;
-    ctx.beginPath();
-    ctx.arc(cx,cy,rad*2.4,0,Math.PI*2);
-    ctx.fill();
-    ctx.restore();
-
-    ctx.fillStyle=isProduct?'#'+rAccHex:'#4a4a4a';
-    ctx.beginPath();
-    ctx.arc(cx,cy,rad,0,Math.PI*2);
-    ctx.fill();
-
-    ctx.strokeStyle=isProduct?'rgba('+rAccR+','+rAccG+','+rAccB+',0.6)':'rgba(138,138,138,0.5)';
-    ctx.lineWidth=1.5;
-    ctx.stroke();
-
-    if(i<steps){
-      const nx=marginX+(i+1)*stageW;
-      ctx.strokeStyle='rgba('+rAccR+','+rAccG+','+rAccB+',0.25)';
-      ctx.lineWidth=1.2;
-      ctx.setLineDash([4,4]);
-      ctx.beginPath();
-      ctx.moveTo(cx+rad,cy);
-      ctx.lineTo(nx-rad,cy);
-      ctx.stroke();
-      ctx.setLineDash([]);
-
-      const arX=nx-rad-8;
-      ctx.fillStyle='rgba('+rAccR+','+rAccG+','+rAccB+',0.35)';
-      ctx.beginPath();
-      ctx.moveTo(arX,cy);
-      ctx.lineTo(arX-6,cy-4);
-      ctx.lineTo(arX-6,cy+4);
-      ctx.closePath();
-      ctx.fill();
-    }
-
-    ctx.save();
-    ctx.fillStyle=isProduct?'#000':'#0B0D0C';
-    ctx.font='600 11px JetBrains Mono';
-    ctx.textAlign='center';
-    ctx.textBaseline='middle';
-    ctx.fillText(isProduct?'P':(i+1),cx,cy);
-    ctx.restore();
-  }
-
-  particles.forEach(p=>{
-    p.x+=p.vx*0.015;
-    p.y+=p.vy*0.015;
-    if(p.x<0||p.x>1){p.vx*=-1;p.x=Math.max(0,Math.min(1,p.x))}
-    if(p.y<0||p.y>1){p.vy*=-1;p.y=Math.max(0,Math.min(1,p.y))}
-
-    const px=p.x*w;
-    const py=p.y*h;
-    const life=0.3+0.3*Math.sin(time*p.speed+p.phase);
-
-    ctx.save();
-    ctx.globalCompositeOperation='lighter';
-    ctx.fillStyle='rgba('+rAccR+','+rAccG+','+rAccB+','+life*0.22+')';
-    ctx.beginPath();
-    ctx.arc(px,py,p.r,0,Math.PI*2);
-    ctx.fill();
-    ctx.restore();
+  /* tanks: same scale, full height = 100 kg */
+  const TH=L.tankBot-L.tankTop;
+  const wW=L.wasteR-L.wasteL;
+  ctx.strokeStyle="rgba(250,199,117,0.55)"; ctx.lineWidth=1.5; rr(L.wasteL,L.tankTop,wW,TH,6); ctx.stroke();
+  const wf=TH*shownWaste/FEED;
+  ctx.fillStyle="rgba(250,199,117,0.28)"; rr(L.wasteL+2,L.tankBot-wf,wW-4,Math.max(0,wf-2),4); ctx.fill();
+  ctx.fillStyle="rgba(250,199,117,0.9)"; ctx.fillRect(L.wasteL+2,L.tankBot-wf,wW-4,2);
+  const px=L.xs[n+1]-L.prodW/2;
+  ctx.strokeStyle="rgba(62, 154, 214,0.7)"; rr(px,L.tankTop,L.prodW,TH,6); ctx.stroke();
+  const pf=TH*shownProd/FEED;
+  ctx.fillStyle="rgba(62, 154, 214,0.35)"; rr(px+2,L.tankBot-pf,L.prodW-4,Math.max(0,pf-2),4); ctx.fill();
+  ctx.fillStyle=ACC; ctx.fillRect(px+2,L.tankBot-pf,L.prodW-4,2);
+  /* atoms */
+  spawnAcc+=dt*26; while(spawnAcc>1){spawnAcc-=1; spawnAtom(L);}
+  const sp=Math.max(40,L.gap*0.9);
+  atoms=atoms.filter(p=>{
+    if(p.phase==="flow"){
+      const tgt=p.seg+1; const tx=L.xs[tgt];
+      p.x+=sp*dt; p.y+=((L.flowY+p.jy*0.4)-p.y)*Math.min(1,dt*3);
+      if(p.x>=tx){
+        p.x=tx; p.seg=tgt;
+        if(tgt===p.fate){ p.phase="drop"; p.c=AMB; p.tx=L.wasteL+6+Math.random()*(wW-12); p.ty=L.tankBot-TH*shownWaste/FEED+4+Math.random()*Math.max(4,TH*shownWaste/FEED-8); }
+        else if(tgt===L.n+1){ p.phase="drop"; p.c=ACC; p.tx=px+6+Math.random()*(L.prodW-12); p.ty=L.tankBot-Math.max(6,pf)+3+Math.random()*Math.max(3,pf-6); }
+      }
+    }else if(p.phase==="drop"){
+      p.vy+=dt*400; p.y+=p.vy*dt; p.x+=(p.tx-p.x)*Math.min(1,dt*3);
+      if(p.y>=p.ty){p.y=p.ty;p.phase="settle";}
+    }else{ p.a-=dt*0.9; }
+    if(p.a<=0) return false;
+    ctx.globalAlpha=Math.max(0,p.a); ctx.fillStyle=p.c; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1;
+    return true;
   });
 
-  bctx.setTransform(1,0,0,1,0,0);
-  bctx.clearRect(0,0,buf.width,buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas,0,0);
-  ctx.save();
-  ctx.globalCompositeOperation='lighter';
-  ctx.globalAlpha=0.38;
-  ctx.filter='blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf,0,0,w,h);
-  ctx.restore();
+  /* tank labels */
+  ctx.textAlign="center"; ctx.textBaseline="bottom"; ctx.font="600 "+fs+"px JetBrains Mono, monospace";
+  ctx.fillStyle=AMB; ctx.fillText("Waste "+Math.round(wasteKg(n))+" kg",(L.wasteL+L.wasteR)/2,L.tankTop-4);
+  ctx.fillStyle=ACC;
+  const pl=fmtKg(productKg(n))+" kg";
+  ctx.fillText("Drug",L.xs[n+1],L.tankTop-4-fs*1.2); ctx.fillText(pl,L.xs[n+1],L.tankTop-4);
+  /* 100 kg scale mark */
+  ctx.textAlign="left"; ctx.textBaseline="middle"; ctx.font=fs+"px JetBrains Mono, monospace"; ctx.fillStyle=DIM;
 
-  const cx=w*0.5;
-  const cy2=h*0.5;
-  const vig=ctx.createRadialGradient(cx,cy2,h*0.28,cx,cy2,w*0.72);
-  vig.addColorStop(0,'rgba(0,0,0,0)');
-  vig.addColorStop(1,'rgba(0,0,0,0.52)');
-  ctx.fillStyle=vig;
-  ctx.fillRect(0,0,w,h);
+  /* feed node */
+  ctx.fillStyle="rgba(237,237,232,0.08)"; ctx.strokeStyle="rgba(237,237,232,0.45)"; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.arc(L.xs[0],L.flowY,L.box*0.45,0,Math.PI*2); ctx.fill(); ctx.stroke();
+  ctx.fillStyle=INK; ctx.textAlign="center"; ctx.textBaseline="top"; ctx.font="600 "+fs+"px JetBrains Mono, monospace";
+  ctx.fillText("100 kg",L.xs[0],L.flowY+L.box*0.5+4);
+  ctx.fillStyle=DIM; ctx.font=fs+"px Geist, sans-serif"; ctx.fillText("in",L.xs[0],L.flowY+L.box*0.5+4+fs*1.25);
 
-  time+=0.016;
+  /* steps */
+  for(let k=1;k<=n;k++){
+    const x=L.xs[k], b=L.box;
+    ctx.fillStyle="#0e1512"; ctx.strokeStyle="rgba(62, 154, 214,0.8)"; ctx.lineWidth=1.5;
+    rr(x-b/2,L.flowY-b/2,b,b,8); ctx.fill(); ctx.stroke();
+    ctx.fillStyle=INK; ctx.font="600 "+fs+"px JetBrains Mono, monospace"; ctx.textAlign="center"; ctx.textBaseline="middle";
+    ctx.fillText("Step "+k,x,L.flowY-fs*0.6); ctx.fillStyle=ACC; ctx.fillText("×0.6",x,L.flowY+fs*0.7);
+    /* drop chute to waste */
+    const lost=FEED*Math.pow(KEEP,k-1)*(1-KEEP);
+    ctx.strokeStyle="rgba(250,199,117,0.35)"; ctx.setLineDash([3,4]); ctx.beginPath();
+    ctx.moveTo(x,L.flowY+b/2); ctx.lineTo(x,L.tankTop-fs*1.6); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle=AMB; ctx.font=fs+"px JetBrains Mono, monospace"; ctx.textBaseline="middle";
+    ctx.fillText("−"+fmtKg(lost)+" kg",x,(L.flowY+b/2+L.tankTop-fs*1.6)/2+fs*0.2);
+    /* mass carried forward */
+    const kept=FEED*Math.pow(KEEP,k);
+    const mx=(x+L.xs[k+1])/2;
+    if(L.gap-L.box>=fs*2.6){ ctx.fillStyle=DIM; ctx.textBaseline="bottom"; ctx.fillText(fmtKg(kept),mx,L.flowY-5); }
+  }
+  /* product node */
+  const pxn=L.xs[n+1];
+  ctx.fillStyle="rgba(62, 154, 214,0.25)"; ctx.strokeStyle=ACC; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.arc(pxn,L.flowY,L.box*0.42,0,Math.PI*2); ctx.fill(); ctx.stroke();
+  ctx.fillStyle=INK; ctx.textBaseline="middle"; ctx.font="700 "+fs+"px JetBrains Mono, monospace"; ctx.fillText("Drug",pxn,L.flowY);
+  ctx.strokeStyle="rgba(62, 154, 214,0.4)"; ctx.setLineDash([3,4]); ctx.beginPath(); ctx.moveTo(pxn,L.flowY+L.box*0.42); ctx.lineTo(pxn,L.tankTop-fs*2.6); ctx.stroke(); ctx.setLineDash([]);
+
   requestAnimationFrame(draw);
 }
-
-draw();
-updateStats();
+requestAnimationFrame(draw);
 </script>
+
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'green-chemistry-in-drug-synthesis'},'*');}catch(e){}}
 if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

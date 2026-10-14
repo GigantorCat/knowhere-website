@@ -71,14 +71,14 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 <h2 class="sr-only">Interactive demonstration of how GABA dysfunction creates runaway fear in phobias</h2>
 
 <h1>Your brain's brake pedal gets weaker every time you <span class="acc">panic</span></h1>
-<p class="intro">GABA is the neurotransmitter that stops fear signals from spiralling out of control. When it's dysfunctional, each fear response carves the pathway deeper through long-term potentiation — a vicious cycle that makes phobias harder to break. Drag the slider to see how GABA dysfunction removes the brake.</p>
+<p class="intro">GABA is the neurotransmitter that stops fear signals from spiralling out of control. When it's dysfunctional, each fear response carves the pathway deeper through long-term potentiation — a vicious cycle that makes phobias harder to break. Raise GABA dysfunction and watch how far each fear pulse travels.</p>
 
 <div class="card">
   <div class="card-header">
     <span class="card-label">Fear Response Pathway</span>
     <span class="card-live" id="live-tag">GABA NORMAL</span>
   </div>
-  <div class="card-hint">GABA inhibits → Fear signal dampens quickly</div>
+  <div class="card-hint">Raise GABA dysfunction. Watch how far each fear pulse gets.</div>
   <div class="canvas-wrapper">
     <canvas id="canvas"></canvas>
     <div class="canvas-tag" id="canvas-tag">Inhibition strength: 100%</div>
@@ -142,7 +142,6 @@ let activationCount = 0;
 let pulses = [];
 let time = 0;
 let lastPulse = 0;
-let lastQuiet = 0;
 
 const knowdropContent = {
   gaba: "GABA (gamma-aminobutyric acid) is the brain's primary inhibitory neurotransmitter — it puts the brakes on neural activity. In phobias, GABA dysfunction means the amygdala's fear response can't be shut down properly. When the usual threat signal arrives, there's insufficient inhibition to dampen it. The fear cascade activates unchecked: cortisol floods the system, the sympathetic nervous system fires up, heart rate spikes, and the person experiences full-blown panic even when the threat is minor or imagined. Without GABA's brake, the fear response becomes a runaway train.",
@@ -212,6 +211,14 @@ function draw() {
   ctx.arc(cortexX, cortexY, nodeR, 0, Math.PI * 2);
   ctx.fill();
 
+  // Labels so the two nodes and the line can be read without the hint
+  ctx.fillStyle = '#8C9389';
+  ctx.font = '11px JetBrains Mono, monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText("Amygdala · fear", amyX, amyY + nodeR + 18);
+  ctx.fillText("GABA · inhibition", cortexX, cortexY + nodeR + 18);
+  ctx.fillText(inhibStrength > 0.5 ? "Signal damped" : "Signal gets through", cx, cy - 14);
+
   // Connection line (gets brighter with dysfunction)
   const lineAlpha = 0.15 + dysfunction * 0.35;
   ctx.strokeStyle = `rgba(250,199,117,${lineAlpha})`;
@@ -223,23 +230,13 @@ function draw() {
 
   // Fear pulses travelling from amygdala to cortex
   const pathwayStrength = 1 + activationCount * 0.15;
-  const pulseInterval = Math.max(800, 2000 - dysfunction * 1500);
+  const pulseInterval = 1400;
   
-  if (time - lastPulse > pulseInterval && dysfunction > 0.1) {
-    pulses.push({ x: amyX, born: time, speed: 0.15 + dysfunction * 0.25 });
+  if (time - lastPulse > pulseInterval) {
+    pulses.push({ x: amyX, born: time, speed: 0.25 });
     lastPulse = time;
-    activationCount++;
   }
 
-  // With inhibition restored the amygdala is not firing, and a fear pathway
-  // that is not being reinforced weakens. Without this the two figures stuck
-  // at their peak while the live tag beside them read GABA NORMAL - the card
-  // contradicting itself. Both belong to the state of the circuit now, so
-  // they are written every frame, not only on the frames a pulse fires.
-  if (dysfunction <= 0.1 && activationCount > 0 && time - lastQuiet > 700) {
-    activationCount--;
-    lastQuiet = time;
-  }
   activationStat.textContent = activationCount;
   strengthStat.textContent = (1 + activationCount * 0.15).toFixed(1) + '×';
 
@@ -248,10 +245,14 @@ function draw() {
     p.x += p.speed * 16;
     
     const progress = (p.x - amyX) / (cortexX - amyX);
-    if (progress > 1) return false;
+    if (progress > 1) {
+      // Only a signal that got past inhibition potentiates the pathway
+      if (dysfunction >= 0.5) activationCount++;
+      return false;
+    }
 
     const py = amyY;
-    const size = 6 + pathwayStrength * 2;
+    const size = Math.min(nodeR * 0.8, 6 + pathwayStrength * 2);
     
     // If GABA strong, pulse fades before reaching cortex
     const fadeStart = 0.5 - inhibStrength * 0.3;
@@ -312,11 +313,11 @@ function updateUI() {
   const inhibPct = Math.round((1 - dysfunction) * 100);
   canvasTag.textContent = `Inhibition strength: ${inhibPct}%`;
 
-  if (dysfunction < 0.25) {
+  if (dysfunction < 0.33) {
     liveTag.textContent = 'GABA NORMAL';
-  } else if (dysfunction < 0.55) {
+  } else if (dysfunction < 0.67) {
     liveTag.textContent = 'MILD DYSFUNCTION';
-  } else if (dysfunction < 0.8) {
+  } else if (dysfunction < 0.85) {
     liveTag.textContent = 'MODERATE DYSFUNCTION';
   } else {
     liveTag.textContent = 'SEVERE DYSFUNCTION';

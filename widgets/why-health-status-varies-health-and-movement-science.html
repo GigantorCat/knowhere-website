@@ -22,6 +22,8 @@ h1{font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-
 .live-tag{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--acc);white-space:nowrap}
 .card-hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin-bottom:14px}
 .canvas-wrapper{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1);margin-bottom:10px}
+@media (max-width:520px){.canvas-wrapper{aspect-ratio:3/4}}
+@media (max-width:380px){.canvas-wrapper{aspect-ratio:2/3}} /* six lanes plus a four-line caption need the extra height on the narrowest phones */
 .canvas-wrapper canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .canvas-overlay{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:14px;text-transform:uppercase;color:var(--acc);text-align:center}
 .hs-key{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-dim);line-height:1.5;margin-bottom:16px}
@@ -121,6 +123,7 @@ h1{font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-
     five: [
       {id: "broad", name: "Broad features of society", up: true},
       {id: "soc", name: "Socioeconomic characteristics", up: true},
+      {id: "sc", name: "Sociocultural factors", up: true, dashed: true},
       {id: "env", name: "Environmental factors", up: true},
       {id: "beh", name: "Health behaviours", up: false},
       {id: "bio", name: "Biomedical factors", up: false}
@@ -136,11 +139,11 @@ h1{font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-
 
   const F = [
     {n: "Income", five: "soc", three: "sc", link: "less money for fresh food and dental care", gap: "Low income", role: "gap"},
-    {n: "Peer group", five: "broad", three: "sc", link: "friends make vaping or sport feel normal"},
+    {n: "Peer group", five: "sc", three: "sc", link: "friends make vaping or sport feel normal"},
     {n: "Housing", five: "env", three: "env", link: "crowded, damp homes spread infections", gap: "Crowded housing", role: "gap"},
     {n: "Blood pressure", five: "bio", three: "bio", link: "high blood pressure raises stroke risk"},
     {n: "Education", five: "soc", three: "sc", link: "schooling shapes jobs, income and know-how", gap: "Unequal schooling", role: "gap"},
-    {n: "Family", five: "soc", three: "sc", link: "meals, rules and support at home set habits"},
+    {n: "Family", five: "sc", three: "sc", link: "meals, rules and support at home set habits"},
     {n: "Smoking", five: "beh", three: "beh", link: "raises lung cancer and heart disease risk", gap: "Smoking", role: "gap"},
     {n: "Health literacy", five: "soc", three: "sc", link: "finding, judging and using health information"},
     {n: "Racism", five: "broad", three: "sc", link: "adds stress and keeps people away from care", gap: "Racism", role: "gap"},
@@ -148,11 +151,11 @@ h1{font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-
     {n: "Body weight", five: "bio", three: "bio", link: "excess weight raises type 2 diabetes risk"},
     {n: "Culture and connection", five: "broad", three: "sc", link: "culture, kin and community protect health", gap: "Culture and Country", role: "strength"}
   ];
-  const TYPE5 = {broad: "broad features of society", soc: "socioeconomic", env: "environmental", beh: "health behaviour", bio: "biomedical"};
+  const TYPE5 = {broad: "broad features of society", soc: "socioeconomic", sc: "sociocultural", env: "environmental", beh: "health behaviour", bio: "biomedical"};
   const TYPE3 = {sc: "sociocultural", env: "environmental", beh: "behaviour", bio: "biological"};
 
   const DROPS = {
-    five: "The determinants of health run from upstream to downstream. Broad features of society, such as culture, inclusion and racism, sit furthest upstream; socioeconomic characteristics (income, education, family) and environmental factors (housing, transport) come next. These shape health behaviours like smoking, which in turn shape biomedical factors such as blood pressure and body weight. Downstream factors act most directly on the body, but upstream factors decide who is exposed to them. To discuss a determinant, name its type, explain how it leads to a health outcome, and say which groups it affects most.",
+    five: "The determinants of health run from upstream to downstream. Broad features of society, such as culture, inclusion and racism, sit furthest upstream; socioeconomic characteristics (income, education) and environmental factors (housing, transport) come next. Peer group and family are sociocultural factors, not one of the five determinant groups, so they sit in the dashed lane. These shape health behaviours like smoking, which in turn shape biomedical factors such as blood pressure and body weight. Downstream factors act most directly on the body, but upstream factors decide who is exposed to them. To discuss a determinant, name its type, explain how it leads to a health outcome, and say which groups it affects most.",
     three: "The same factors can also be sorted into three types. Biological factors belong to the body, such as blood pressure, body weight and genetics. Sociocultural factors come from the people and society around you; for young people that means peer group, family, education, income and health literacy, which shape habits, choices and access to care. Environmental factors are the physical surroundings, such as housing, roads and transport. Behaviours like smoking sit in between, because all three types shape them. A disease such as diabetes is an outcome, never a factor, so classify the cause, then link it to the outcome.",
     gap: "Health status varies between population groups because each group meets a different mix of these factors. Aboriginal and Torres Strait Islander people live with a health gap rooted in colonisation, dispossession and racism, not in their biology. National reports find that social determinants such as income, education, employment and housing explain about a third of the gap, more than risk factors such as smoking. Culture, family, community and connection to Country are strengths that protect health, and community-controlled health services build on them. The same reasoning explains gaps for rural and remote people and for people on low incomes."
   };
@@ -208,11 +211,14 @@ h1{font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-
       need += head + rows[l.id] * (pillH + gap) + 8;
     });
     const avail = bottom - top;
+    /* six lanes in the five lens: trim the lane padding when the lanes would run past the overlay */
+    const pad = need > avail ? 3 : 8;
+    need -= (8 - pad) * lanes.length;
     const extra = Math.max(0, (avail - need) / lanes.length);
     let y = top;
     const geo = [];
     lanes.forEach(l => {
-      const lh = head + rows[l.id] * (pillH + gap) + 8 + extra;
+      const lh = head + rows[l.id] * (pillH + gap) + pad + extra;
       geo.push({lane: l, y, h: lh});
       const innerTop = y + head + Math.max(0, (lh - head - rows[l.id] * (pillH + gap) - 4) / 2);
       placed[l.id].forEach(p => {
@@ -323,7 +329,7 @@ h1{font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-
       tag.textContent = "Five determinants";
       ovl.textContent = f.n + " → " + TYPE5[f.five] + " · " + f.link;
       s2l.textContent = "Upstream factors";
-      s2.textContent = String(sorted.filter(x => x.five === "broad" || x.five === "soc" || x.five === "env").length);
+      s2.textContent = String(sorted.filter(x => x.five === "broad" || x.five === "soc" || x.five === "sc" || x.five === "env").length);
       key.textContent = "Lanes run from upstream (top) to downstream (bottom). The newest factor is filled; earlier ones are outlined.";
     } else if (mode === "three") {
       tag.textContent = "Three factor types";

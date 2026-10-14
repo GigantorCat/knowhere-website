@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Exchange Rates — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Exchange rates — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -9,32 +9,20 @@ body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body
   --bg: #0B0D0C;
   --bg2: #12160F;
   --acc: #F187B6;
-  --ag: rgba(241, 135, 182, .7);
-  --ag1: rgba(241, 135, 182, .12);
-  --ag2: rgba(241, 135, 182, .45);
+  --acc-rgb: 241, 135, 182;
+  --ag:  rgba(var(--acc-rgb),.7);
+  --ag1: rgba(var(--acc-rgb),.12);
+  --ag2: rgba(var(--acc-rgb),.45);
   --amb: #FAC775;
+  --amb-rgb: 250, 199, 117;
   --ink: #EDEDE8;
   --ink-dim: #8C9389;
   --line: #262B26;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
-}
+.sr-only { position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0; }
 
 body {
   background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
@@ -44,10 +32,7 @@ body {
   padding: 40px 16px 0;
 }
 
-.container {
-  max-width: 720px;
-  margin: 0 auto;
-}
+.fx-wrap { max-width: 720px; margin: 0 auto; }
 
 h1 {
   font-size: clamp(26px, 6.5vw, 44px);
@@ -57,7 +42,7 @@ h1 {
   margin-bottom: 14px;
 }
 
-.intro {
+.fx-intro {
   font-size: 15.5px;
   font-weight: 400;
   color: var(--ink-dim);
@@ -66,7 +51,7 @@ h1 {
   margin-bottom: 32px;
 }
 
-.card {
+.fx-card {
   background: linear-gradient(180deg, #12160F, #0d100b);
   border: 1px solid var(--line);
   border-radius: 18px;
@@ -75,588 +60,370 @@ h1 {
   margin-bottom: 18px;
 }
 
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 4px;
+.fx-head { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:4px; }
+.fx-label { font-family:'JetBrains Mono',monospace; font-size:13px; text-transform:uppercase; color:#fff; }
+.fx-live { font-family:'JetBrains Mono',monospace; font-size:11px; text-transform:uppercase; color:var(--acc); white-space:nowrap; }
+.fx-hint { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-dim); margin-bottom:14px; }
+
+.fx-canvas-wrap {
+  position: relative; width: 100%; aspect-ratio: 16/9; border-radius: 12px; overflow: hidden;
+  background: #000; box-shadow: inset 0 0 0 1px var(--ag1); margin-bottom: 16px;
+}
+.fx-canvas-wrap canvas { position:absolute; inset:0; width:100%; height:100%; display:block; }
+.fx-overlay {
+  position:absolute; left:0; right:0; bottom:0;
+  background: rgba(0,0,0,0.55); backdrop-filter: blur(4px); padding: 9px 16px;
+  font-family:'JetBrains Mono',monospace; font-size:14px; text-transform:uppercase; color:var(--acc); text-align:center;
+  line-height:1.3;
 }
 
-.card-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  color: white;
-}
-
-.live-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--acc);
-}
-
-.rate-read {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;
-  line-height: 1.6;
-  color: var(--ink);
-  margin: 4px 0 14px;
-}
-.rate-read b { color: var(--acc); font-weight: 500; }
-
-.card-hint {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--ink-dim);
-  margin-bottom: 14px;
-}
-
-.canvas-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16/9;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
-  box-shadow: inset 0 0 0 1px var(--ag1);
-  margin-bottom: 16px;
-}
-
-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.canvas-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(4px);
-  padding: 9px 16px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  text-transform: uppercase;
-  color: var(--acc);
-  text-align: center;
-}
-
-.slider-container {
-  margin-bottom: 10px;
-}
-
-.slider-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
+.fx-ctrl { margin-bottom: 8px; }
+.fx-row {
+  display:flex; justify-content:space-between; align-items:baseline;
+  font-family:'JetBrains Mono',monospace; font-size:10.5px; text-transform:uppercase; color:var(--ink-dim);
   margin-bottom: 8px;
 }
+.fx-row b { font-size:13px; font-weight:500; color:var(--acc); text-transform:none; }
 
-.exr-slider {
-  width: 100%;
-  height: 4px;
-  -webkit-appearance: none;
-  appearance: none;
-  background: linear-gradient(90deg, var(--acc) var(--fill, 50%), #23291f var(--fill, 50%));
-  border-radius: 3px;
-  outline: none;
-  cursor: pointer;
+.fx-slider {
+  width:100%; height:4px; -webkit-appearance:none; appearance:none;
+  background: linear-gradient(90deg, var(--acc) var(--fill,40%), #23291f var(--fill,40%));
+  border-radius:3px; outline:none; cursor:pointer; display:block;
 }
+.fx-slider::-webkit-slider-thumb {
+  -webkit-appearance:none; appearance:none; width:20px; height:20px; border-radius:50%;
+  background:#0B0D0C; border:2px solid var(--acc);
+  box-shadow:0 0 16px var(--ag), 0 0 4px var(--ag); cursor:pointer; transition:box-shadow .15s;
+}
+.fx-slider::-webkit-slider-thumb:hover { box-shadow:0 0 24px var(--acc), 0 0 8px var(--ag); }
+.fx-slider::-moz-range-thumb {
+  width:20px; height:20px; border-radius:50%; background:#0B0D0C; border:2px solid var(--acc);
+  box-shadow:0 0 16px var(--ag), 0 0 4px var(--ag); cursor:pointer; transition:box-shadow .15s;
+}
+.fx-slider::-moz-range-thumb:hover { box-shadow:0 0 24px var(--acc), 0 0 8px var(--ag); }
 
-.exr-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow .15s;
-}
+.fx-ticks { position:relative; height:14px; margin-top:6px; font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--ink-dim); }
+.fx-ticks span { position:absolute; top:0; transform:translateX(-50%); white-space:nowrap; }
 
-.exr-slider::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
+.fx-read { font-family:'JetBrains Mono',monospace; font-size:12px; line-height:1.7; color:var(--ink); margin:12px 0 14px; }
+.fx-read b { color:var(--acc); font-weight:500; }
+.fx-read small { display:block; font-size:11px; color:var(--ink-dim); margin-top:4px; }
 
-.exr-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow .15s;
-}
+.fx-stats { display:grid; grid-template-columns:1fr 1fr; gap:16px; padding-top:16px; border-top:1px solid var(--line); }
+.fx-stat { text-align:center; }
+.fx-stat-label { font-family:'JetBrains Mono',monospace; font-size:10.5px; text-transform:uppercase; color:var(--ink-dim); margin-bottom:6px; line-height:1.4; }
+.fx-stat-val { font-family:'JetBrains Mono',monospace; font-size:24px; font-weight:500; }
+.fx-stat:first-child .fx-stat-val { color:var(--acc); }
+.fx-stat:last-child .fx-stat-val { color:var(--amb); }
 
-.exr-slider::-moz-range-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+.fx-tog-title { font-family:'JetBrains Mono',monospace; font-size:10.5px; text-transform:uppercase; color:var(--ink-dim); margin-bottom:10px; }
+.fx-togs { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:16px; }
+.fx-tog {
+  flex:1 1 calc(50% - 5px); min-width:0;
+  font-family:'JetBrains Mono',monospace; font-size:12px; padding:12px 10px; border-radius:999px;
+  background:#12160F; border:1px solid var(--line); color:var(--ink-dim); cursor:pointer; transition:all .2s;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
+.fx-tog[aria-pressed="true"] {
+  background: rgba(var(--acc-rgb),.1); border:1px solid var(--acc); color:var(--acc);
+  box-shadow: 0 0 22px rgba(var(--acc-rgb),.18);
+}
+@media (min-width: 560px) { .fx-tog { flex:1 1 0; } }
 
-.tick-labels {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--ink-dim);
-  position: relative;
-  height: 14px;
-}
-.tick-labels > span {
-  position: absolute;
-  top: 0;
-  transform: translateX(-50%);
-  white-space: nowrap;
-}
+.fx-drop { border-top:1px solid var(--line); padding-top:16px; }
+.fx-drop p { font-size:14.5px; font-weight:400; line-height:1.65; color:var(--ink); }
 
-.stat-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-}
-
-.stat {
-  text-align: center;
-}
-
-.stat-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 6px;
-}
-
-.stat-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 24px;
-  font-weight: 500;
-}
-
-.stat:first-child .stat-value {
-  color: var(--acc);
-}
-
-.stat:last-child .stat-value {
-  color: var(--amb);
-}
-
-.toggle-container {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.toggle-btn {
-  flex: 1;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14.5px;
-  padding: 12px 8px;
-  border-radius: 11px;
-  background: #12160F;
-  border: 1px solid var(--line);
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: all .2s;
-}
-
-.toggle-btn.active {
-  background: rgba(241,135,182,.1);
-  border: 1px solid var(--acc);
-  color: var(--acc);
-  box-shadow: 0 0 22px rgba(241,135,182,.18);
-}
-
-.knowdrop-section {
-  border-top: 1px solid var(--line);
-  padding-top: 16px;
-}
-
-.knowdrop-body {
-  font-size: 14.5px;
-  font-weight: 400;
-  line-height: 1.65;
-  color: var(--ink);
-}
-
-.know-this {
-  border-left: 3px solid var(--acc);
-  padding: 16px 18px;
+.fx-know {
+  border-left:3px solid var(--acc); padding:16px 18px;
   background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
-  border-radius: 0 12px 12px 0;
-  margin-bottom: 0;
+  border-radius:0 12px 12px 0; margin-bottom:0; padding-bottom:16px;
 }
-
-.know-this-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--acc);
-  margin-bottom: 10px;
-}
-
-.know-this-body {
-  font-size: 17.4px;
-  font-weight: 400;
-  line-height: 1.55;
-  color: var(--ink);
-}
+.fx-know-tag { display:flex; align-items:center; gap:9px; margin-bottom:10px; font-family:'JetBrains Mono',monospace; font-size:13px; text-transform:uppercase; letter-spacing:0.15em; color:var(--acc); }
+.fx-dot { width:6px; height:6px; border-radius:50%; background:var(--acc); box-shadow:0 0 8px var(--acc); animation: fxpulse 2.4s ease-in-out infinite; }
+@keyframes fxpulse { 0%,100%{opacity:1} 50%{opacity:.45} }
+.fx-know-body { font-size:17.4px; font-weight:400; line-height:1.55; color:var(--ink); }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
+  *, *::before, *::after { animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; }
 }
-
-@media (max-width: 360px) {
-  body {
-    padding: 24px 12px 0;
-  }
-  .card {
-    padding: 14px;
-  }
-}
+@media (max-width: 360px) { body { padding:24px 12px 0; } .fx-card { padding:14px; } }
 </style>
 
-<div class="container">
-  <h2 class="sr-only">Exchange Rate Interactive Widget – Understand how currency appreciation hurts Australian exports while depreciation boosts them</h2>
-  
-  <h1>A stronger Aussie dollar makes our exports <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">uncompetitive</span></h1>
-  
-  <p class="intro">When the AUD appreciates against other currencies, Australian wine, minerals and education suddenly become dearer for foreign buyers — while imports get cheaper for us. Drag the slider to see how exchange rate movements flip the competitiveness of our trade flows.</p>
+<div class="fx-wrap">
+  <h2 class="sr-only">Exchange rates: how the Australian dollar to US dollar rate changes what a US buyer pays for Australian exports and what an Australian pays for US imports</h2>
 
-  <div class="card">
-    <div class="card-header">
-      <span class="card-label">Exchange Rate Simulator</span>
-      <span class="live-tag" id="liveTag">AUD @ 0.70 USD</span>
+  <h1>A stronger dollar is a pay rise for importers and a pay cut for <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">exporters</span></h1>
+
+  <p class="fx-intro">An exchange rate is just a price: how many US dollars one Australian dollar buys. That single number sets what foreigners pay for our goods and what we pay for theirs, and it pulls those two prices in opposite directions. Raise the exchange rate and watch what a US buyer pays for our exports and what we pay for theirs.</p>
+
+  <div class="fx-card">
+    <div class="fx-head">
+      <span class="fx-label">Bilateral rate: A$1 in US$</span>
+      <span class="fx-live" id="fxLive">A$1 = US$0.70</span>
     </div>
-    <div class="card-hint">Drag to adjust the AUD exchange rate</div>
-    
-    <div class="canvas-wrapper">
-      <canvas id="canvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">EXPORT COMPETITIVENESS: MODERATE</div>
+    <div class="fx-hint">Raise or lower the AUD rate. Watch both bars.</div>
+
+    <div class="fx-canvas-wrap">
+      <canvas id="fxCanvas"></canvas>
+      <div class="fx-overlay" id="fxOverlay" aria-live="polite">Raise or lower the rate</div>
     </div>
 
-    <div class="slider-container">
-      <div class="slider-label">AUD Exchange Rate (USD)</div>
-      <input type="range" min="50" max="100" value="70" class="exr-slider" id="exrSlider">
-      <div class="tick-labels">
-        <span style="left: calc(10px + (100% - 20px) * 0.0)">0.50</span>
-        <span style="left: calc(10px + (100% - 20px) * 0.3)">0.65</span>
-        <span style="left: calc(10px + (100% - 20px) * 0.6)">0.80</span>
-        <span style="left: calc(10px + (100% - 20px) * 1.0)">1.00</span>
+    <div class="fx-ctrl">
+      <div class="fx-row"><span>AUD/USD exchange rate</span><b id="fxRateV">0.70</b></div>
+      <input type="range" class="fx-slider" id="fxRate" aria-label="AUD to USD exchange rate" min="50" max="100" step="1" value="70">
+      <div class="fx-ticks">
+        <span style="left:calc(10px + (100% - 20px) * 0)">0.50</span>
+        <span style="left:calc(10px + (100% - 20px) * 0.2)">0.60</span>
+        <span style="left:calc(10px + (100% - 20px) * 0.4)">0.70</span>
+        <span style="left:calc(10px + (100% - 20px) * 0.6)">0.80</span>
+        <span style="left:calc(10px + (100% - 20px) * 0.8)">0.90</span>
+        <span style="left:calc(10px + (100% - 20px) * 1)">1.00</span>
       </div>
     </div>
 
-    <div class="rate-read" id="rateRead" aria-live="polite"></div>
+    <div class="fx-read" id="fxRead"></div>
 
-    <div class="stat-row">
-      <div class="stat">
-        <div class="stat-label">Export Price Impact</div>
-        <div class="stat-value" id="exportImpact">Neutral</div>
+    <div class="fx-stats">
+      <div class="fx-stat">
+        <div class="fx-stat-label">US buyer pays for A$100 of exports</div>
+        <div class="fx-stat-val" id="fxExpV">US$70</div>
       </div>
-      <div class="stat">
-        <div class="stat-label">Import Price Impact</div>
-        <div class="stat-value" id="importImpact">Neutral</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="toggle-container">
-      <button class="toggle-btn active" id="btnRead">Reading a rate</button>
-      <button class="toggle-btn" id="btnDrivers">Drivers</button>
-      <button class="toggle-btn" id="btnImpacts">Impacts</button>
-    </div>
-    
-    <div class="knowdrop-section">
-      <div class="knowdrop-body" id="knowdropText">
-        An exchange rate is the price of one currency in terms of another. A bilateral rate compares two currencies: A$1 = US$0.70 means one Australian dollar buys 70 US cents, and one US dollar buys about A$1.43 (1 ÷ 0.70). If the number rises the Australian dollar has appreciated; if it falls it has depreciated. Trade and investment need a rate because buyers and sellers use different money: an American buying Australian wheat, a student paying Australian fees, or a firm investing here must first swap their currency for Australian dollars, and Australians buying overseas goods or assets do the reverse.
+      <div class="fx-stat">
+        <div class="fx-stat-label">Australian pays for US$100 of imports</div>
+        <div class="fx-stat-val" id="fxImpV">A$143</div>
       </div>
     </div>
   </div>
 
-  <div class="know-this">
-    <div class="know-this-tag">Know This</div>
-    <div class="know-this-body"><span style="color:var(--acc)">Appreciation</span> raises the AUD's value, making exports <span style="color:var(--acc)">dearer</span> abroad but imports <span style="color:var(--acc)">cheaper</span> at home; <span style="color:var(--acc)">depreciation</span> reverses this, boosting export competitiveness while raising import costs and potentially stoking <span style="color:var(--acc)">inflation</span>.</div>
+  <div class="fx-card">
+    <div class="fx-tog-title">What to read</div>
+    <div class="fx-togs" role="group" aria-label="Which part of exchange rates the paragraph explains">
+      <button class="fx-tog" data-key="read" aria-pressed="true">Reading a rate</button>
+      <button class="fx-tog" data-key="drivers" aria-pressed="false">Drivers</button>
+      <button class="fx-tog" data-key="regimes" aria-pressed="false">Regimes and RBA</button>
+      <button class="fx-tog" data-key="effects" aria-pressed="false">Effects</button>
+    </div>
+    <div class="fx-drop">
+      <p id="fxDrop"></p>
+    </div>
+  </div>
+
+  <div class="fx-know">
+    <div class="fx-know-tag"><span class="fx-dot"></span><span>Know This</span></div>
+    <div class="fx-know-body"><span style="color:var(--acc)">Appreciation</span> makes our exports dearer abroad and our imports cheaper at home, <span style="color:var(--acc)">depreciation</span> does the reverse, and both are read straight off the <span style="color:var(--acc)">bilateral rate</span>.</div>
   </div>
 </div>
 
 <script>
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-const liveTag = document.getElementById('liveTag');
-const canvasOverlay = document.getElementById('canvasOverlay');
-const slider = document.getElementById('exrSlider');
-const exportImpact = document.getElementById('exportImpact');
-const importImpact = document.getElementById('importImpact');
-const btnDrivers = document.getElementById('btnDrivers');
-const btnRead = document.getElementById('btnRead');
-const rateRead = document.getElementById('rateRead');
-const readText = "An exchange rate is the price of one currency in terms of another. A bilateral rate compares two currencies: A$1 = US$0.70 means one Australian dollar buys 70 US cents, and one US dollar buys about A$1.43 (1 ÷ 0.70). If the number rises the Australian dollar has appreciated; if it falls it has depreciated. Trade and investment need a rate because buyers and sellers use different money: an American buying Australian wheat, a student paying Australian fees, or a firm investing here must first swap their currency for Australian dollars, and Australians buying overseas goods or assets do the reverse.";
-const btnImpacts = document.getElementById('btnImpacts');
-const knowdropText = document.getElementById('knowdropText');
+(function(){
+  const CSS = getComputedStyle(document.documentElement);
+  const ACC = CSS.getPropertyValue("--acc").trim();
+  const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+  const AMB = CSS.getPropertyValue("--amb").trim();
+  const AMBRGB = CSS.getPropertyValue("--amb-rgb").trim();
+  const INK = CSS.getPropertyValue("--ink").trim();
+  const DIM = CSS.getPropertyValue("--ink-dim").trim();
+  const BG = CSS.getPropertyValue("--bg").trim();
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-const dpr = Math.min(window.devicePixelRatio || 1, 2);
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d');
+  const canvas = document.getElementById("fxCanvas");
+  const ctx = canvas.getContext("2d");
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const buf = document.createElement("canvas");
+  const bctx = buf.getContext("2d");
 
-let rate = 0.70;
-let particles = [];
-let time = 0;
+  const slider = document.getElementById("fxRate");
+  const rateV = document.getElementById("fxRateV");
+  const live = document.getElementById("fxLive");
+  const overlay = document.getElementById("fxOverlay");
+  const read = document.getElementById("fxRead");
+  const expV = document.getElementById("fxExpV");
+  const impV = document.getElementById("fxImpV");
+  const drop = document.getElementById("fxDrop");
+  const togs = Array.from(document.querySelectorAll(".fx-tog"));
 
-const driversText = "The AUD exchange rate is driven by four primary forces: interest rate differentials (higher RBA rates attract capital inflows, pushing the AUD up), terms of trade (when commodity prices rise, demand for AUD increases to pay Australian exporters), capital flows (foreign investment seeking Australian assets appreciates the currency), and market confidence (geopolitical stability and economic growth forecasts shift demand). These drivers interact continuously in global foreign exchange markets where the AUD is traded 24/7, with supply and demand determining the clearing price against major currencies like the USD, EUR and CNY.";
+  let rate = 0.70;
+  let tExp = 70, tImp = 100 / 0.70;      // targets from the model
+  let cExp = tExp, cImp = tImp;          // eased bar values
+  let gExp = tExp, gImp = tImp;          // ghost: where bars sat before the last change
+  let lastInput = 0;
+  let anim = null, last = 0;
 
-const impactsText = "Exchange rate movements ripple through the entire economy. Appreciation lowers import prices (reducing cost-push inflation and improving purchasing power for consumers and businesses buying foreign inputs), but it simultaneously prices Australian exports out of international markets, potentially widening the current account deficit and slowing GDP growth. Depreciation does the reverse: exports become more competitive globally (boosting mining, agriculture, tourism and education revenues), but imports become dearer, raising inflation and squeezing real incomes. The RBA monitors exchange rate effects on inflation when setting the cash rate, and governments consider competitiveness impacts when framing trade and industry policy.";
-
-function resize() {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
-
-window.addEventListener('resize', resize);
-resize();
-
-// Create particles representing export/import flows
-function createParticles() {
-  particles = [];
-  for (let i = 0; i < 40; i++) {
-    particles.push({
-      x: Math.random(),
-      y: Math.random(),
-      vx: (Math.random() - 0.5) * 0.002,
-      vy: (Math.random() - 0.5) * 0.002,
-      r: Math.random() * 2 + 1,
-      type: Math.random() > 0.5 ? 'export' : 'import',
-      phase: Math.random() * Math.PI * 2
-    });
+  function resize() {
+    const rect = canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    buf.width = canvas.width; buf.height = canvas.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    draw();
   }
-}
 
-createParticles();
-
-function updateSlider() {
-  rate = slider.value / 100;
-  const fillPercent = ((slider.value - 50) / 50) * 100;
-  slider.style.setProperty('--fill', fillPercent + '%');
-  
-  liveTag.textContent = `AUD @ ${rate.toFixed(2)} USD`;
-  /* reading the bilateral rate, computed from the slider */
-  rateRead.innerHTML = `A$1 buys <b>US$${rate.toFixed(2)}</b> · US$1 buys <b>A$${(1 / rate).toFixed(2)}</b><br>A$100 of Australian exports costs a US buyer <b>US$${(100 * rate).toFixed(0)}</b>`;
-  
-  // Update export impact
-  if (rate < 0.60) {
-    exportImpact.textContent = 'Highly Competitive';
-    canvasOverlay.textContent = 'EXPORT COMPETITIVENESS: VERY HIGH';
-  } else if (rate < 0.70) {
-    exportImpact.textContent = 'Competitive';
-    canvasOverlay.textContent = 'EXPORT COMPETITIVENESS: HIGH';
-  } else if (rate < 0.80) {
-    exportImpact.textContent = 'Neutral';
-    canvasOverlay.textContent = 'EXPORT COMPETITIVENESS: MODERATE';
-  } else if (rate < 0.90) {
-    exportImpact.textContent = 'Challenged';
-    canvasOverlay.textContent = 'EXPORT COMPETITIVENESS: LOW';
-  } else {
-    exportImpact.textContent = 'Uncompetitive';
-    canvasOverlay.textContent = 'EXPORT COMPETITIVENESS: VERY LOW';
-  }
-  
-  // Update import impact
-  if (rate < 0.60) {
-    importImpact.textContent = 'Expensive';
-  } else if (rate < 0.70) {
-    importImpact.textContent = 'Costly';
-  } else if (rate < 0.80) {
-    importImpact.textContent = 'Neutral';
-  } else if (rate < 0.90) {
-    importImpact.textContent = 'Affordable';
-  } else {
-    importImpact.textContent = 'Cheap';
-  }
-}
-
-slider.addEventListener('input', updateSlider);
-updateSlider();
-
-btnRead.addEventListener('click', () => {
-  btnRead.classList.add('active');
-  btnDrivers.classList.remove('active');
-  btnImpacts.classList.remove('active');
-  knowdropText.textContent = readText;
-});
-
-btnDrivers.addEventListener('click', () => {
-  btnDrivers.classList.add('active');
-  btnRead.classList.remove('active');
-  btnImpacts.classList.remove('active');
-  knowdropText.textContent = driversText;
-});
-
-btnImpacts.addEventListener('click', () => {
-  btnImpacts.classList.add('active');
-  btnDrivers.classList.remove('active');
-  btnRead.classList.remove('active');
-  knowdropText.textContent = impactsText;
-});
-
-function draw() {
-  time += 0.016;
-  
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  const cx = w / 2;
-  const cy = h / 2;
-  
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, w, h);
-  
-  // Draw grid background
-  ctx.strokeStyle = 'rgba(241,135,182,0.08)';
-  ctx.lineWidth = 0.5;
-  const gridSize = 40;
-  for (let x = 0; x <= w; x += gridSize) {
+  function rrect(x, y, wd, ht, r) {
+    r = Math.min(r, ht / 2, Math.abs(wd) / 2);
     ctx.beginPath();
-    ctx.moveTo(x, 0);
-    ctx.lineTo(x, h);
-    ctx.stroke();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + wd - r, y);
+    ctx.quadraticCurveTo(x + wd, y, x + wd, y + r);
+    ctx.lineTo(x + wd, y + ht - r);
+    ctx.quadraticCurveTo(x + wd, y + ht, x + wd - r, y + ht);
+    ctx.lineTo(x + r, y + ht);
+    ctx.quadraticCurveTo(x, y + ht, x, y + ht - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
   }
-  for (let y = 0; y <= h; y += gridSize) {
-    ctx.beginPath();
-    ctx.moveTo(0, y);
-    ctx.lineTo(w, y);
-    ctx.stroke();
-  }
-  
-  // Central rate indicator
-  const rateY = cy + (0.75 - rate) * h * 0.8;
-  
-  // Rate line
-  ctx.strokeStyle = 'rgba(241,135,182,0.6)';
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(0, rateY);
-  ctx.lineTo(w, rateY);
-  ctx.stroke();
-  
-  // Rate glow
-  const rateGlow = ctx.createLinearGradient(0, rateY - 20, 0, rateY + 20);
-  rateGlow.addColorStop(0, 'rgba(241,135,182,0)');
-  rateGlow.addColorStop(0.5, 'rgba(241,135,182,0.15)');
-  rateGlow.addColorStop(1, 'rgba(241,135,182,0)');
-  ctx.fillStyle = rateGlow;
-  ctx.fillRect(0, rateY - 20, w, 40);
-  
-  // Update and draw particles
-  particles.forEach((p, i) => {
-    p.x += p.vx;
-    p.y += p.vy;
-    
-    // Wrap around
-    if (p.x < 0) p.x = 1;
-    if (p.x > 1) p.x = 0;
-    if (p.y < 0) p.y = 1;
-    if (p.y > 1) p.y = 0;
-    
-    const px = p.x * w;
-    const py = p.y * h;
-    
-    // Particle behaviour based on rate
-    const targetY = p.type === 'export' ? rateY : cy;
-    const dy = targetY - py;
-    p.vy += dy * 0.00008;
-    p.vy *= 0.98;
-    
-    // Draw particle
-    const alpha = 0.5 + 0.5 * Math.sin(time * 2 + p.phase);
-    if (p.type === 'export') {
-      ctx.fillStyle = `rgba(241,135,182,${alpha * 0.7})`;
-    } else {
-      ctx.fillStyle = `rgba(250,199,117,${alpha * 0.6})`;
+
+  function draw() {
+    const w = canvas.width / dpr, h = canvas.height / dpr;
+    if (!w || !h) return;
+    const cx = w / 2, cy = h / 2;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.globalAlpha = 1; ctx.filter = "none"; ctx.globalCompositeOperation = "source-over";
+    ctx.fillStyle = "rgba(0,0,0,1)";
+    ctx.fillRect(0, 0, w, h);
+
+    const reserve = Math.max(h * 0.22, 44);        // overlay tag lives here
+    const U = h - reserve - 16;                     // drawing height above the scale row
+    const x0 = w * 0.06, x1 = w * 0.94;
+    const vx = v => x0 + (v / 200) * (x1 - x0);
+    const t = Math.min(U * 0.22, 64);
+    const b1y = U * 0.20, b2y = U * 0.68;
+    const scaleY = U + 13;
+
+    // faint scale lines every 50
+    ctx.lineWidth = 1;
+    for (let v = 0; v <= 200; v += 50) {
+      ctx.strokeStyle = v === 100 ? "rgba(" + RGB + ",0.0)" : "rgba(" + RGB + ",0.10)";
+      ctx.beginPath(); ctx.moveTo(vx(v), U * 0.08); ctx.lineTo(vx(v), U + 2); ctx.stroke();
     }
-    
+    // parity line at 100 (price in its own currency)
     ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.beginPath();
-    ctx.arc(px, py, p.r, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.setLineDash([4, 5]);
+    ctx.strokeStyle = DIM; ctx.globalAlpha = 0.7; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(vx(100), U * 0.08); ctx.lineTo(vx(100), U + 2); ctx.stroke();
     ctx.restore();
-  });
-  
-  // Draw export zone indicator (top half)
-  ctx.fillStyle = 'rgba(241,135,182,0.06)';
-  ctx.fillRect(0, 0, w, rateY);
-  ctx.font = '11px JetBrains Mono';
-  ctx.fillStyle = 'rgba(241,135,182,0.5)';
-  ctx.textAlign = 'left';
-  ctx.fillText('EXPORTS', 12, 20);
-  
-  // Draw import zone indicator (bottom half)
-  ctx.fillStyle = 'rgba(250,199,117,0.06)';
-  ctx.fillRect(0, rateY, w, h - rateY);
-  ctx.fillStyle = 'rgba(250,199,117,0.5)';
-  ctx.fillText('IMPORTS', 12, h - 12);
-  
-  // Flow arrows showing direction
-  const arrowY = rateY - 30;
-  const arrowCount = 5;
-  for (let i = 0; i < arrowCount; i++) {
-    const offset = (time * 30 + i * 60) % w;
-    const arrowAlpha = 0.3 + 0.3 * Math.sin(time * 2 + i);
-    
-    // Export arrows (moving right = exports leaving Australia)
-    ctx.strokeStyle = `rgba(241,135,182,${arrowAlpha})`;
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(offset, arrowY);
-    ctx.lineTo(offset + 15, arrowY);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(offset + 15, arrowY);
-    ctx.lineTo(offset + 10, arrowY - 4);
-    ctx.moveTo(offset + 15, arrowY);
-    ctx.lineTo(offset + 10, arrowY + 4);
-    ctx.stroke();
-  }
-  
-  // Bloom effect
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
-  
-  // Vignette
-  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-  
-  requestAnimationFrame(draw);
-}
 
-draw();
+    // scale row
+    ctx.font = "500 11px 'JetBrains Mono', monospace";
+    ctx.fillStyle = DIM; ctx.textBaseline = "alphabetic";
+    ctx.textAlign = "left"; ctx.fillText("0", x0, scaleY);
+    ctx.textAlign = "center"; ctx.fillText("100 = parity", vx(100), scaleY);
+    ctx.textAlign = "right"; ctx.fillText("200", x1, scaleY);
+
+    // bar helper
+    function bar(y, val, ghost, fill, glowRGB, prefix, textCol) {
+      const xe = vx(val);
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      ctx.fillStyle = "rgba(" + glowRGB + ",0.18)";
+      rrect(x0, y - 6, xe - x0 + 6, t + 12, 10); ctx.fill();
+      ctx.restore();
+      ctx.fillStyle = fill;
+      rrect(x0, y, xe - x0, t, 6); ctx.fill();
+      // ghost tick: where the bar sat before the last change
+      if (Math.abs(ghost - val) > 0.5) {
+        const gx = vx(ghost);
+        ctx.strokeStyle = INK; ctx.globalAlpha = 0.75; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(gx, y - 5); ctx.lineTo(gx, y + t + 5); ctx.stroke();
+        ctx.globalAlpha = 1;
+      }
+      // value inside the right end
+      ctx.font = "500 13px 'JetBrains Mono', monospace";
+      ctx.textAlign = "right"; ctx.textBaseline = "middle";
+      ctx.fillStyle = textCol;
+      ctx.fillText(prefix + Math.round(val), xe - 8, y + t / 2 + 1);
+    }
+
+    // labels above bars
+    ctx.font = "500 11px 'JetBrains Mono', monospace";
+    ctx.textBaseline = "alphabetic"; ctx.textAlign = "left";
+    const lab = (s, y, col) => { const mw = ctx.measureText(s).width; ctx.fillStyle = "#000"; ctx.fillRect(x0 - 3, y - 11, mw + 6, 15); ctx.fillStyle = col; ctx.fillText(s, x0, y); };
+    lab("A$100 OF EXPORTS · US BUYER PAYS", b1y - 8, ACC);
+    lab("US$100 OF IMPORTS · AUSTRALIAN PAYS", b2y - 8, AMB);
+
+    bar(b1y, cExp, gExp, ACC, RGB, "US$", INK);
+    bar(b2y, cImp, gImp, AMB, AMBRGB, "A$", BG);
+
+    // bloom
+    bctx.setTransform(1, 0, 0, 1, 0, 0);
+    bctx.clearRect(0, 0, buf.width, buf.height);
+    if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
+    if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+    ctx.restore();
+
+    // vignette
+    const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
+  }
+
+  function tick(now) {
+    const dt = Math.min(now - last, 50); last = now;
+    const k = 1 - Math.pow(0.001, dt / 480);
+    cExp += (tExp - cExp) * k;
+    cImp += (tImp - cImp) * k;
+    if (Math.abs(tExp - cExp) < 0.05 && Math.abs(tImp - cImp) < 0.05) {
+      cExp = tExp; cImp = tImp; draw(); anim = null; return;
+    }
+    draw();
+    anim = requestAnimationFrame(tick);
+  }
+
+  function kick() {
+    if (reduced) { cExp = tExp; cImp = tImp; draw(); return; }
+    if (!anim) { last = performance.now(); anim = requestAnimationFrame(tick); }
+  }
+
+  function readouts(dir) {
+    const inv = 1 / rate;
+    rateV.textContent = rate.toFixed(2);
+    live.textContent = "A$1 = US$" + rate.toFixed(2);
+    expV.textContent = "US$" + Math.round(tExp);
+    impV.textContent = "A$" + Math.round(tImp);
+    read.innerHTML = `A$1 buys <b>US$${rate.toFixed(2)}</b> · US$1 buys <b>A$${inv.toFixed(2)}</b><br>A$100 of exports costs a US buyer <b>US$${Math.round(tExp)}</b> · US$100 of imports costs an Australian <b>A$${Math.round(tImp)}</b><small>Pale tick on each bar = where it sat before your last change.</small>`;
+    if (dir > 0) overlay.textContent = "Appreciation · exports dearer";
+    else if (dir < 0) overlay.textContent = "Depreciation · exports cheaper";
+  }
+
+  function onInput() {
+    const now = performance.now();
+    const newRate = slider.value / 100;
+    if (now - lastInput > 700) { gExp = tExp; gImp = tImp; }   // new gesture: remember the start
+    lastInput = now;
+    const dir = Math.sign(newRate - rate);
+    rate = newRate;
+    tExp = 100 * rate;
+    tImp = 100 / rate;
+    slider.style.setProperty("--fill", ((slider.value - 50) / 50) * 100 + "%");
+    readouts(dir);
+    kick();
+  }
+
+  slider.addEventListener("input", onInput);
+  slider.style.setProperty("--fill", "40%");
+  readouts(0);
+
+  const texts = {
+    read: "An exchange rate is the price of one currency in another. The bilateral rate A$1 = US$0.70 means one Australian dollar buys 70 US cents, so one US dollar costs A$1.43 (1 ÷ 0.70). Appreciation is a rise in that number and depreciation is a fall. Because Australia trades with many countries, the Reserve Bank also publishes the trade-weighted index (TWI), which averages the dollar against the currencies of our main trading partners, weighted by how much we trade with each, so one big move against the US dollar does not misrepresent the whole picture. Every export sale, overseas student fee or foreign purchase of an Australian asset starts with a swap into Australian dollars, and every import or offshore investment by an Australian is a swap out, which is how the rate links trade and investment flows across borders.",
+    drivers: "Under a floating rate the price is set by demand for and supply of Australian dollars in the foreign exchange market. Demand rises when foreigners want to buy our exports, invest in Australian assets or chase higher Australian interest rates; supply rises when Australians buy imports, invest overseas or traders sell the dollar. The drivers to know are relative interest rates, commodity prices and the terms of trade, demand for exports and imports, foreign investment flows, relative inflation rates, Australia's credit rating and speculation about where the rate is heading. A rise in iron ore prices, for example, means buyers need more Australian dollars to pay our miners, so the dollar appreciates; higher inflation here than abroad erodes what the dollar buys, so it tends to depreciate. Speculators amplify both directions by buying ahead of an expected rise and selling ahead of an expected fall.",
+    regimes: "Governments can let the market set the rate, fix it or sit in between. Under a fixed rate the central bank announces a value and buys or sells its own currency with its foreign reserves to hold it there. Under a flexible (floating) rate, which Australia has used since December 1983, supply and demand set the price and it moves minute by minute. A managed float sits between the two: the rate floats, but the central bank intervenes when it judges moves disorderly. The Reserve Bank of Australia rarely intervenes directly today, yet its cash rate decisions still shift the dollar: a higher cash rate relative to other countries attracts foreign capital seeking the better return, raising demand for Australian dollars and appreciating the currency, while a cut does the reverse.",
+    effects: "Movements in the rate reach every part of the economy. Appreciation makes imports cheaper in Australian dollars, easing imported inflation and lifting the real purchasing power of households and firms that buy foreign inputs. But it also prices exporters out of foreign markets, cuts their Australian-dollar revenue and can widen the current account deficit and slow growth and employment in trade-exposed industries such as mining, agriculture, tourism and education. Depreciation does the reverse: exports become cheaper abroad and import-competing firms gain, but import prices and the Australian-dollar value of foreign-currency debt both rise, adding to inflation. The Reserve Bank watches this pass-through when it sets the cash rate, and businesses weighing overseas markets, overseas competitors or offshoring plan partly on where they expect the dollar to sit."
+  };
+
+  function setTog(key) {
+    togs.forEach(b => b.setAttribute("aria-pressed", b.dataset.key === key ? "true" : "false"));
+    drop.textContent = texts[key];
+  }
+  togs.forEach(b => b.addEventListener("click", () => setTog(b.dataset.key)));
+  setTog("read");
+
+  window.addEventListener("resize", resize);
+  resize();
+  if (document.fonts && document.fonts.ready) { document.fonts.ready.then(draw); }
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'exchange-rates'},'*');}catch(e){}}

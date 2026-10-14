@@ -1,0 +1,648 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Trends across the periodic table — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{
+  --bg:#0B0D0C;
+  --bg2:#12160F;
+  --acc:#3E9AD6;
+  --acc-rgb:62, 154, 214;
+  --ag:rgba(var(--acc-rgb),.7);
+  --ag1:rgba(var(--acc-rgb),.12);
+  --ag2:rgba(var(--acc-rgb),.45);
+  --amb:#FAC775;
+  --ink:#EDEDE8;
+  --ink-dim:#8C9389;
+  --line:#262B26;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C 55%);font-family:'Geist',sans-serif;color:var(--ink);min-height:100vh;padding:40px 16px 0;box-sizing:border-box}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.pt-wrap{max-width:720px;margin:0 auto;padding-bottom:0}
+.pt-h1{font-family:'Geist',sans-serif;font-weight:800;font-size:clamp(26px,6.5vw,44px);letter-spacing:-0.03em;line-height:1.05;margin:0 0 14px;color:var(--ink)}
+.pt-intro{font-size:15.5px;font-weight:400;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin:0 0 24px}
+.pt-card{background:linear-gradient(180deg,var(--bg2),#0d100b);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);margin-bottom:18px}
+.pt-card2{border-radius:14px}
+.pt-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.pt-label{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;color:var(--ink);letter-spacing:.04em}
+.pt-live{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--acc);letter-spacing:.06em}
+.pt-hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin:6px 0 12px}
+.pt-props{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:10px;margin-bottom:10px}
+.pt-btn{font-family:'JetBrains Mono',monospace;font-size:14.5px;padding:12px;border-radius:11px;background:var(--bg2);border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:background .2s,border-color .2s,color .2s,box-shadow .2s;line-height:1.2;min-width:0}
+.pt-btn:hover{border-color:var(--ag2);color:var(--ink)}
+.pt-btn.on{background:rgba(var(--acc-rgb),.1);border:1px solid var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.pt-btn:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.pt-legend{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);line-height:1.5;margin:0 0 12px;min-height:3em}
+.pt-legend b{color:var(--amb);font-weight:500}
+.pt-cv{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1)}
+.pt-cv canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.pt-tag{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:14px;text-transform:uppercase;color:var(--acc);text-align:center;letter-spacing:.04em;line-height:1.3}
+.pt-srow{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-top:16px;flex-wrap:wrap}
+.pt-slab{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);letter-spacing:.06em}
+.pt-slab.v{color:var(--acc)}
+.pt-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;background:linear-gradient(90deg,var(--acc) var(--fill,0%),#23291f var(--fill,0%));outline:none;margin:14px 0 10px;cursor:pointer}
+.pt-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:var(--bg);border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s}
+.pt-slider::-webkit-slider-thumb:hover{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.pt-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--bg);border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s}
+.pt-slider::-moz-range-thumb:hover{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.pt-slider:focus-visible{outline:2px solid var(--acc);outline-offset:6px}
+.pt-ticks{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink-dim);gap:6px}
+.pt-stats{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:14px;border-top:1px solid var(--line);margin-top:16px;padding-top:14px}
+.pt-sl{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);letter-spacing:.05em;margin-bottom:6px}
+.pt-sv{font-family:'JetBrains Mono',monospace;font-size:clamp(16px,5vw,24px);font-weight:500;overflow-wrap:anywhere;line-height:1.15}
+.pt-sv.acc{color:var(--acc)}
+.pt-sv.amb{color:var(--amb)}
+.pt-sub{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin-top:6px;overflow-wrap:anywhere;line-height:1.4}
+.pt-tog{display:flex;gap:10px}
+.pt-tog .pt-btn{flex:1}
+.pt-drop{border-top:1px solid var(--line);padding-top:16px;margin:16px 0 0;font-family:'Geist',sans-serif;font-size:14.5px;font-weight:400;line-height:1.65;color:var(--ink)}
+.pt-know{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));border-radius:0 12px 12px 0;margin:8px 0 0;margin-bottom:0}
+.pt-ktag{display:flex;align-items:center;gap:9px;font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:0.15em;color:var(--acc);margin-bottom:10px}
+.pt-kdot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:ptk 2.4s ease-in-out infinite;flex:none}
+@keyframes ptk{0%,100%{opacity:1}50%{opacity:.45}}
+.pt-kbody{font-family:'Geist',sans-serif;font-size:17.4px;font-weight:400;line-height:1.55;color:var(--ink);margin:0;padding-bottom:0}
+@media (prefers-reduced-motion:reduce){.pt-kdot{animation:none}.pt-btn,.pt-slider::-webkit-slider-thumb{transition:none}}
+</style>
+
+<div class="pt-wrap">
+  <h2 class="sr-only">Trends across the periodic table: an interactive table of the main-group elements, periods 1 to 6, that recolours by atomic radius, first ionisation energy, electronegativity, state at room temperature or reactivity with water, where you can step through the elements in order of atomic number and see a bar chart of the trend across a period or down a group.</h2>
+
+  <h1 class="pt-h1">Add protons and atoms get <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">smaller</span></h1>
+  <p class="pt-intro">Step across a period and every element has one more proton and one more electron than the last, yet the atom shrinks. Step down a group and it swells again. Those two gradients run under every trend across the periodic table. Pick a property to recolour the table, then step through the elements and watch the radius shrink across each period.</p>
+
+  <section class="pt-card" aria-label="Periodic table trends explorer">
+    <div class="pt-head">
+      <span class="pt-label">Periodic table trends</span>
+      <span class="pt-live" id="ptLive">Radius · Na</span>
+    </div>
+    <div class="pt-hint">Pick a property, then step through the elements and watch the trend</div>
+    <div class="pt-props" role="group" aria-label="Property to colour the table by">
+      <button class="pt-btn pt-prop on" data-p="r" aria-pressed="true">Radius</button>
+      <button class="pt-btn pt-prop" data-p="ie" aria-pressed="false">1st IE</button>
+      <button class="pt-btn pt-prop" data-p="en" aria-pressed="false">Electroneg.</button>
+      <button class="pt-btn pt-prop" data-p="st" aria-pressed="false">State 25 °C</button>
+      <button class="pt-btn pt-prop" data-p="w" aria-pressed="false">With water</button>
+    </div>
+    <div class="pt-legend" id="ptLegend" aria-live="polite"></div>
+    <div class="pt-cv">
+      <canvas id="ptCanvas" role="img" aria-label="Periodic table of main-group elements coloured by the chosen property, with a bar chart of the selected period or group"></canvas>
+      <div class="pt-tag" id="ptTag">Across period 3 · radius shrinks</div>
+    </div>
+    <div class="pt-srow">
+      <span class="pt-slab">Element</span>
+      <span class="pt-slab v" id="ptZ">Z = 11 · sodium</span>
+    </div>
+    <input type="range" class="pt-slider" id="ptSlider" min="0" max="41" step="1" value="10" aria-label="Choose an element, in order of atomic number">
+    <div class="pt-ticks"><span>H · Z 1</span><span>atomic number →</span><span>Rn · Z 86</span></div>
+    <div class="pt-stats">
+      <div>
+        <div class="pt-sl" id="ptSL1">Na · atomic radius</div>
+        <div class="pt-sv acc" id="ptSV1">166 pm</div>
+      </div>
+      <div>
+        <div class="pt-sl" id="ptSL2">Na · electron shells</div>
+        <div class="pt-sv amb" id="ptSV2">2,8,1</div>
+        <div class="pt-sub" id="ptSub">1s² 2s² 2p⁶ 3s¹</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pt-card pt-card2" aria-label="Why the trends run this way">
+    <div class="pt-tog" role="group" aria-label="Trend direction">
+      <button class="pt-btn pt-dir on" data-d="p" aria-pressed="true">Across a period</button>
+      <button class="pt-btn pt-dir" data-d="g" aria-pressed="false">Down a group</button>
+    </div>
+    <p class="pt-drop" id="ptDrop"></p>
+  </section>
+
+  <div class="pt-know">
+    <div class="pt-ktag"><span class="pt-kdot"></span>Know This</div>
+    <p class="pt-kbody">Across a period rising <span style="color:var(--acc)">core charge</span> pulls the outer shell in, down a group each <span style="color:var(--acc)">extra electron shell</span> pushes it out, and that distance decides how tightly an atom holds its <span style="color:var(--acc)">outer electrons</span>.</p>
+  </div>
+</div>
+
+<script>
+(function(){
+  const CSS = getComputedStyle(document.documentElement);
+  const V = n => CSS.getPropertyValue(n).trim();
+  const ACC = V("--acc");
+  const RGB = V("--acc-rgb");
+  function toRGB(c){ c = String(c).replace("#", ""); if (c.length === 3) c = c.split("").map(x => x + x).join(""); const n = parseInt(c, 16); if (isNaN(n)) return RGB; return ((n >> 16) & 255) + "," + ((n >> 8) & 255) + "," + (n & 255); }
+  const AMBR = toRGB(V("--amb"));
+  const INKR = toRGB(V("--ink"));
+  const DIMR = toRGB(V("--ink-dim"));
+  const LINE = V("--line");
+
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* sym, Z, period, group, covalent radius pm, 1st IE kJ/mol, electronegativity (Pauling), state at 25 C (0 s, 1 l, 2 g), water reactivity 0-10, name, class (0 metal, 1 metalloid, 2 non-metal) */
+  const E = [
+    ["H",1,1,1,31,1312,2.20,2,0,"hydrogen",2],
+    ["He",2,1,18,28,2372,null,2,0,"helium",2],
+    ["Li",3,2,1,128,520,0.98,0,5,"lithium",0],
+    ["Be",4,2,2,96,899,1.57,0,0,"beryllium",0],
+    ["B",5,2,13,84,801,2.04,0,0,"boron",1],
+    ["C",6,2,14,76,1086,2.55,0,0,"carbon",2],
+    ["N",7,2,15,71,1402,3.04,2,0,"nitrogen",2],
+    ["O",8,2,16,66,1314,3.44,2,0,"oxygen",2],
+    ["F",9,2,17,57,1681,3.98,2,8,"fluorine",2],
+    ["Ne",10,2,18,58,2081,null,2,0,"neon",2],
+    ["Na",11,3,1,166,496,0.93,0,7.5,"sodium",0],
+    ["Mg",12,3,2,141,738,1.31,0,1.5,"magnesium",0],
+    ["Al",13,3,13,121,578,1.61,0,0,"aluminium",0],
+    ["Si",14,3,14,111,787,1.90,0,0,"silicon",1],
+    ["P",15,3,15,107,1012,2.19,0,0,"phosphorus",2],
+    ["S",16,3,16,105,1000,2.58,0,0,"sulfur",2],
+    ["Cl",17,3,17,102,1251,3.16,2,2.5,"chlorine",2],
+    ["Ar",18,3,18,106,1521,null,2,0,"argon",2],
+    ["K",19,4,1,203,419,0.82,0,8.5,"potassium",0],
+    ["Ca",20,4,2,176,590,1.00,0,4.5,"calcium",0],
+    ["Ga",31,4,13,122,579,1.81,0,0,"gallium",0],
+    ["Ge",32,4,14,120,762,2.01,0,0,"germanium",1],
+    ["As",33,4,15,119,947,2.18,0,0,"arsenic",1],
+    ["Se",34,4,16,120,941,2.55,0,0,"selenium",2],
+    ["Br",35,4,17,120,1140,2.96,1,1.5,"bromine",2],
+    ["Kr",36,4,18,116,1351,null,2,0,"krypton",2],
+    ["Rb",37,5,1,220,403,0.82,0,9.3,"rubidium",0],
+    ["Sr",38,5,2,195,550,0.95,0,5.5,"strontium",0],
+    ["In",49,5,13,142,558,1.78,0,0,"indium",0],
+    ["Sn",50,5,14,139,709,1.96,0,0,"tin",0],
+    ["Sb",51,5,15,139,834,2.05,0,0,"antimony",1],
+    ["Te",52,5,16,138,869,2.10,0,0,"tellurium",1],
+    ["I",53,5,17,139,1008,2.66,0,0.5,"iodine",2],
+    ["Xe",54,5,18,140,1170,null,2,0,"xenon",2],
+    ["Cs",55,6,1,244,376,0.79,0,10,"caesium",0],
+    ["Ba",56,6,2,215,503,0.89,0,6.5,"barium",0],
+    ["Tl",81,6,13,145,589,1.62,0,0,"thallium",0],
+    ["Pb",82,6,14,146,716,1.87,0,0,"lead",0],
+    ["Bi",83,6,15,148,703,2.02,0,0,"bismuth",0],
+    ["Po",84,6,16,140,812,2.00,0,0,"polonium",0],
+    ["At",85,6,17,150,899,2.20,0,0,"astatine",1],
+    ["Rn",86,6,18,150,1037,null,2,0,"radon",2]
+  ];
+  const COLS = [1,2,13,14,15,16,17,18];
+  const STATE = ["solid","liquid","gas"];
+  function waterWord(v){ if (v <= 0) return "no reaction"; if (v < 2) return "very slow"; if (v < 4) return "slow"; if (v < 6) return "steady fizz"; if (v < 8) return "vigorous"; if (v < 9.6) return "violent"; return "explosive"; }
+  const clamp01 = x => Math.max(0, Math.min(1, x));
+
+  const P = {
+    r:  { name: "atomic radius", short: "radius", word: "radius", up: "grows", dn: "shrinks", i: 4, lo: 20, hi: 250, fmt: v => v + " pm",
+          leg: "Circle size = covalent radius in pm. The biggest atoms sit bottom left, the smallest top right." },
+    ie: { name: "1st ionisation energy", short: "1st IE", word: "IE", up: "rises", dn: "falls", i: 5, lo: 300, hi: 2400, fmt: v => v + " kJ/mol",
+          leg: "Brighter = more energy (kJ/mol) to pull the first electron off a gaseous atom. Look for the small dips at groups 13 and 16." },
+    en: { name: "electronegativity", short: "EN", word: "EN", up: "rises", dn: "falls", i: 6, lo: 0.6, hi: 4.0, fmt: v => (v === null ? "no value" : v.toFixed(2)),
+          leg: "Brighter = stronger pull on a shared pair of electrons (Pauling scale). Noble gases rarely bond, so they get no value." },
+    st: { name: "state at 25 °C", short: "state", word: "state", i: 7, fmt: v => STATE[v],
+          leg: "Filled square = solid, amber = liquid, open ring = gas. Bromine is the only liquid here; the gases cluster top right." },
+    w:  { name: "reactivity with water", short: "water", word: "reactivity", up: "rises", dn: "falls", i: 8, lo: 0, hi: 10, fmt: v => waterWord(v),
+          leg: "Brighter = more violent with water. Group 1 and 2 metals get more reactive down the group; halogens run the other way." }
+  };
+  const META = " <b>Dashed amber outline = metalloid.</b> Metals sit to its left, non-metals to its right.";
+
+  const DROP = {
+    p: "Moving left to right across a period, each element adds one proton to the nucleus and one electron to the same outer shell. The inner electrons shield about the same amount at every step, so the outer electrons feel a steadily stronger pull, called the core charge or effective nuclear charge. That pull drags the shell inward, so atomic radius shrinks, and it holds electrons more tightly, so first ionisation energy and electronegativity both rise. Metallic character falls with it: period 3 runs from soft, water-reactive sodium, through the metalloid silicon, to non-metals and argon, a gas at room temperature. The small dips in ionisation energy at groups 13 and 16 come from subshells: the first p electron sits in a higher-energy subshell, and the first paired p electron is repelled by its partner, so each is a little easier to remove.",
+    g: "Moving down a group, each element adds a whole new electron shell but keeps the same number of outer-shell electrons, which is why members of a group react alike. The outer electrons now sit further from the nucleus, behind more inner shells that shield them, so atomic radius grows. A more distant, better-shielded outer electron is easier to pull off, so first ionisation energy and electronegativity both fall. For metals that means reactivity with water climbs: lithium fizzes steadily, sodium darts across the surface, potassium ignites with a lilac flame and caesium reacts explosively. Halogens run the other way because they react by gaining an electron, so small, highly electronegative fluorine is the most reactive of them."
+  };
+
+  /* electron configurations built by the filling order */
+  const ORDER = ["1s","2s","2p","3s","3p","4s","3d","4p","5s","4d","5p","6s","4f","5d","6p"];
+  const CAP = { s: 2, p: 6, d: 10, f: 14 };
+  const LORD = { s: 0, p: 1, d: 2, f: 3 };
+  const SUP = "⁰¹²³⁴⁵⁶⁷⁸⁹";
+  const sup = n => String(n).split("").map(d => SUP[+d]).join("");
+  const CORES = [[54,"Xe"],[36,"Kr"],[18,"Ar"],[10,"Ne"],[2,"He"]];
+  function config(Z){
+    let left = Z; const subs = [];
+    for (const o of ORDER){ if (left <= 0) break; const c = Math.min(CAP[o[1]], left); subs.push({ n: +o[0], l: o[1], c: c }); left -= c; }
+    const shells = []; for (const s of subs){ shells[s.n - 1] = (shells[s.n - 1] || 0) + s.c; }
+    let core = null, skip = 0;
+    if (Z > 20){ for (const cr of CORES){ if (cr[0] < Z){ core = cr; break; } } }
+    let rest = subs;
+    if (core){ let sum = 0; for (skip = 0; skip < subs.length && sum < core[0]; skip++) sum += subs[skip].c; rest = subs.slice(skip); }
+    rest = rest.slice().sort((a, b) => a.n - b.n || LORD[a.l] - LORD[b.l]);
+    const txt = (core ? "[" + core[1] + "] " : "") + rest.map(s => s.n + s.l + sup(s.c)).join(" ");
+    return { shells: shells.map(x => x || 0).join(","), sub: txt };
+  }
+
+  function target(prop, e){
+    const v = e[P[prop].i];
+    if (prop === "st"){
+      if (v === 0) return { t: 0.32, s: 1, o: 0, a: 0, g: 0, n: 0, b: 0.8 };
+      if (v === 1) return { t: 0.8, s: 1, o: 0, a: 1, g: 0, n: 0, b: 0.8 };
+      return { t: 0.85, s: 0.82, o: 1, a: 0, g: 1, n: 0, b: 0.8 };
+    }
+    if (v === null) return { t: 0, s: 1, o: 0, a: 0, g: 0, n: 1, b: 0 };
+    const t = clamp01((v - P[prop].lo) / (P[prop].hi - P[prop].lo));
+    if (prop === "r") return { t: t, s: 0.2 + 0.8 * (v / 250), o: 1, a: 0, g: 0, n: 0, b: t };
+    return { t: t, s: 1, o: 0, a: 0, g: 0, n: 0, b: Math.max(t, 0.02) };
+  }
+  const KEYS = ["t","s","o","a","g","n","b"];
+
+  let prop = "r", dir = "p", sel = 10;
+  const cur = E.map(e => { const r = target("r", e); r.t = 0; r.b = 0; return r; });
+  const anim = { band: 0, bandT: 0, grow: 0, growT: 1 };
+
+  const cv = document.getElementById("ptCanvas");
+  const ctx = cv.getContext("2d");
+  const tag = document.getElementById("ptTag");
+  const slider = document.getElementById("ptSlider");
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const buf = document.createElement("canvas");
+  const bctx = buf.getContext("2d");
+
+  function resize(){
+    const rect = cv.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    cv.width = Math.round(rect.width * dpr); cv.height = Math.round(rect.height * dpr);
+    buf.width = cv.width; buf.height = cv.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function rrect(c, x, y, w, h, r){
+    r = Math.max(0, Math.min(r, w / 2, h / 2));
+    c.beginPath(); c.moveTo(x + r, y); c.lineTo(x + w - r, y); c.arcTo(x + w, y, x + w, y + r, r);
+    c.lineTo(x + w, y + h - r); c.arcTo(x + w, y + h, x + w - r, y + h, r); c.lineTo(x + r, y + h);
+    c.arcTo(x, y + h, x, y + h - r, r); c.lineTo(x, y + r); c.arcTo(x, y, x + r, y, r); c.closePath();
+  }
+
+  function paintShape(x, y, wd, ht, R, radius){
+    const al = 0.1 + 0.78 * R.t * (1 - R.n);
+    const fillK = 1 - 0.8 * R.g;
+    rrect(ctx, x, y, wd, ht, radius);
+    ctx.fillStyle = "rgba(" + RGB + "," + (al * (1 - R.a) * fillK).toFixed(3) + ")"; ctx.fill();
+    if (R.a > 0.01){ ctx.fillStyle = "rgba(" + AMBR + "," + (al * R.a).toFixed(3) + ")"; ctx.fill(); }
+    if (R.g > 0.01){ ctx.lineWidth = 1.6; ctx.strokeStyle = "rgba(" + RGB + "," + (0.95 * R.g).toFixed(3) + ")"; ctx.stroke(); }
+    if (R.n > 0.01){ ctx.save(); ctx.setLineDash([2, 3]); ctx.lineWidth = 1; ctx.strokeStyle = "rgba(" + DIMR + "," + (0.7 * R.n).toFixed(3) + ")"; ctx.stroke(); ctx.restore(); }
+  }
+
+  function seriesOf(){
+    const s = E[sel];
+    const idx = [];
+    E.forEach((e, i) => { if (dir === "p" ? e[2] === s[2] : e[3] === s[3]) idx.push(i); });
+    idx.sort((a, b) => dir === "p" ? COLS.indexOf(E[a][3]) - COLS.indexOf(E[b][3]) : E[a][2] - E[b][2]);
+    return idx;
+  }
+
+  function trendText(){
+    const s = E[sel], idx = seriesOf();
+    const where = dir === "p" ? "across period " + s[2] : "down group " + s[3];
+    const pp = P[prop];
+    if (prop === "st"){
+      const st = idx.map(i => E[i][7]);
+      const same = st.every(x => x === st[0]);
+      return where + " · " + (same ? "all " + STATE[st[0]] : STATE[st[0]] + " → " + STATE[st[st.length - 1]]);
+    }
+    const vals = idx.map(i => E[i][pp.i]).filter(v => v !== null);
+    if (vals.length < 2) return where + " · no " + pp.word + " values";
+    if (prop === "w" && vals.every(v => v === 0)) return where + " · no reaction with water";
+    const d = vals[vals.length - 1] - vals[0];
+    if (Math.abs(d) < 1e-9) return where + " · " + pp.word + " flat";
+    return where + " · " + pp.word + " " + (d > 0 ? pp.up : pp.dn);
+  }
+
+  function draw(){
+    const w = cv.width / dpr, h = cv.height / dpr;
+    if (!w || !h) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.globalCompositeOperation = "source-over"; ctx.globalAlpha = 1; ctx.filter = "none";
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = "rgba(0,0,0,1)"; ctx.fillRect(0, 0, w, h);
+    if (h > w * 0.8){ drawTall(w, h); finish(w, h, true); return; }
+
+    const narrow = w < 480;
+    const tagH = tag.offsetHeight || 0;
+    const top = h * 0.08;
+    const bot = h - Math.max(h * 0.08, tagH + h * 0.04);
+    const gp = anim.grow;
+
+    /* ---------- table ---------- */
+    const tx0 = w * 0.03, tx1 = w * (narrow ? 0.6 : 0.585);
+    const labW = Math.max(10, w * 0.028), labH = Math.max(9, (bot - top) * 0.09);
+    const units = 8.4;
+    const pitch = Math.max(4, Math.min((tx1 - tx0 - labW) / units, (bot - top - labH) / 6));
+    const gridW = pitch * units, gridH = pitch * 6;
+    const gx0 = tx0 + labW + ((tx1 - tx0 - labW) - gridW) / 2;
+    const gy0 = top + labH + ((bot - top - labH) - gridH) / 2;
+    const colX = ci => gx0 + (ci + (ci >= 2 ? 0.4 : 0)) * pitch;
+    const rowY = p => gy0 + (p - 1) * pitch;
+    const lab = Math.max(7, Math.min(11, pitch * 0.3));
+
+    ctx.font = "400 " + lab + "px JetBrains Mono, monospace";
+    ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
+    ctx.fillStyle = "rgba(" + DIMR + ",0.9)";
+    COLS.forEach((g, ci) => ctx.fillText(String(g), colX(ci) + pitch / 2, gy0 - lab * 0.45));
+    ctx.textAlign = "right"; ctx.textBaseline = "middle";
+    for (let p = 1; p <= 6; p++) ctx.fillText(String(p), gx0 - lab * 0.5, rowY(p) + pitch / 2);
+
+    /* d-block gap marker */
+    ctx.save(); ctx.setLineDash([2, 3]); ctx.strokeStyle = "rgba(" + DIMR + ",0.45)"; ctx.lineWidth = 1;
+    const dx = gx0 + 2.2 * pitch; ctx.beginPath(); ctx.moveTo(dx, rowY(4) + pitch * 0.1); ctx.lineTo(dx, rowY(7) - pitch * 0.1); ctx.stroke(); ctx.restore();
+    if (pitch > 16){ ctx.save(); ctx.translate(dx - pitch * 0.12, rowY(5) + pitch / 2); ctx.rotate(-Math.PI / 2); ctx.textAlign = "center"; ctx.textBaseline = "bottom"; ctx.fillStyle = "rgba(" + DIMR + ",0.8)"; ctx.font = "400 " + Math.max(6, lab * 0.8) + "px JetBrains Mono, monospace"; ctx.fillText("d-block", 0, 0); ctx.restore(); }
+
+    /* direction bands (period row fades to group column) */
+    const s = E[sel], sci = COLS.indexOf(s[3]);
+    const rowA = 1 - anim.band, colA = anim.band;
+    if (rowA > 0.01){
+      rrect(ctx, gx0 - pitch * 0.08, rowY(s[2]) - pitch * 0.04, gridW + pitch * 0.16, pitch * 1.08, pitch * 0.2);
+      ctx.fillStyle = "rgba(" + RGB + "," + (0.12 * rowA).toFixed(3) + ")"; ctx.fill();
+      ctx.lineWidth = 1; ctx.strokeStyle = "rgba(" + RGB + "," + (0.5 * rowA).toFixed(3) + ")"; ctx.stroke();
+    }
+    if (colA > 0.01){
+      rrect(ctx, colX(sci) - pitch * 0.04, gy0 - pitch * 0.08, pitch * 1.08, gridH + pitch * 0.16, pitch * 0.2);
+      ctx.fillStyle = "rgba(" + RGB + "," + (0.12 * colA).toFixed(3) + ")"; ctx.fill();
+      ctx.lineWidth = 1; ctx.strokeStyle = "rgba(" + RGB + "," + (0.5 * colA).toFixed(3) + ")"; ctx.stroke();
+    }
+
+    /* cells */
+    const symF = Math.max(6.5, pitch * 0.36);
+    E.forEach((e, i) => {
+      const ci = COLS.indexOf(e[3]);
+      const x = colX(ci), y = rowY(e[2]);
+      const cx = x + pitch / 2, cy = y + pitch / 2;
+      rrect(ctx, x + pitch * 0.05, y + pitch * 0.05, pitch * 0.9, pitch * 0.9, pitch * 0.14);
+      ctx.lineWidth = 1; ctx.strokeStyle = LINE; ctx.stroke();
+      const R = cur[i];
+      const side = pitch * 0.86 * R.s;
+      const radius = pitch * 0.14 + (side / 2 - pitch * 0.14) * R.o;
+      paintShape(cx - side / 2, cy - side / 2, side, side, R, radius);
+      if (e[10] === 1){
+        ctx.save(); ctx.setLineDash([3, 2]); ctx.lineWidth = 1.2; ctx.strokeStyle = "rgba(" + AMBR + ",0.75)";
+        rrect(ctx, x + pitch * 0.02, y + pitch * 0.02, pitch * 0.96, pitch * 0.96, pitch * 0.16); ctx.stroke(); ctx.restore();
+      }
+      ctx.font = "600 " + symF + "px Geist, sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillStyle = "rgba(" + INKR + "," + (i === sel ? 1 : 0.88) + ")";
+      ctx.fillText(e[0], cx, cy + (pitch > 22 ? -pitch * 0.04 : 0));
+      if (pitch > 22){
+        ctx.font = "400 " + Math.max(6, pitch * 0.17) + "px JetBrains Mono, monospace";
+        ctx.fillStyle = "rgba(" + DIMR + ",0.95)";
+        ctx.textAlign = "left"; ctx.textBaseline = "top"; ctx.fillText(String(e[1]), x + pitch * 0.11, y + pitch * 0.09);
+        if (prop === "st"){ ctx.textAlign = "right"; ctx.textBaseline = "bottom"; ctx.fillText(STATE[e[7]][0], x + pitch * 0.89, y + pitch * 0.93); }
+      }
+    });
+
+    /* selected element glow */
+    {
+      const x = colX(sci), y = rowY(s[2]), cx = x + pitch / 2, cy = y + pitch / 2;
+      ctx.save(); ctx.globalCompositeOperation = "lighter";
+      const gl = ctx.createRadialGradient(cx, cy, 0, cx, cy, pitch * 1.2);
+      gl.addColorStop(0, "rgba(" + RGB + ",0.35)"); gl.addColorStop(1, "rgba(" + RGB + ",0)");
+      ctx.fillStyle = gl; ctx.beginPath(); ctx.arc(cx, cy, pitch * 1.2, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+      rrect(ctx, x, y, pitch, pitch, pitch * 0.18); ctx.lineWidth = 2; ctx.strokeStyle = ACC; ctx.stroke();
+    }
+
+    /* ---------- trend chart ---------- */
+    const rx0 = w * (narrow ? 0.64 : 0.63), rx1 = w * 0.97;
+    const tf = Math.max(8, Math.min(13, w * 0.019));
+    ctx.font = "500 " + tf + "px JetBrains Mono, monospace"; ctx.textAlign = "left"; ctx.textBaseline = "top";
+    ctx.fillStyle = ACC;
+    ctx.fillText((dir === "p" ? "ACROSS PERIOD " + s[2] : "DOWN GROUP " + s[3]), rx0, top);
+    ctx.fillStyle = "rgba(" + DIMR + ",0.95)";
+    ctx.font = "400 " + Math.max(7, tf * 0.8) + "px JetBrains Mono, monospace";
+    ctx.fillText(P[prop].short.toUpperCase() + (dir === "p" ? "  left → right" : "  top → bottom"), rx0, top + tf * 1.35);
+
+    const idx = seriesOf();
+    const symH = Math.max(9, tf * 1.1);
+    const cy0 = top + tf * 3.1 + (narrow ? 0 : tf * 0.9), cy1 = bot - symH * 1.5;
+    const n = idx.length, slot = (rx1 - rx0) / Math.max(n, 1), bw = Math.min(slot * 0.64, pitch * 1.4);
+    ctx.strokeStyle = "rgba(" + DIMR + ",0.5)"; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(rx0, cy1 + 0.5); ctx.lineTo(rx1, cy1 + 0.5); ctx.stroke();
+    const tops = [];
+    idx.forEach((ei, k) => {
+      const R = cur[ei], e = E[ei];
+      const bx = rx0 + slot * k + (slot - bw) / 2;
+      const hh = Math.max(1.5, (cy1 - cy0) * R.b * gp);
+      paintShape(bx, cy1 - hh, bw, hh, R, Math.min(bw * 0.18, 5));
+      if (ei === sel){ rrect(ctx, bx - 2, cy1 - hh - 2, bw + 4, hh + 4, 5); ctx.lineWidth = 2; ctx.strokeStyle = ACC; ctx.stroke(); }
+      ctx.font = (ei === sel ? "700 " : "500 ") + symH + "px Geist, sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "top";
+      ctx.fillStyle = ei === sel ? ACC : "rgba(" + INKR + ",0.85)";
+      ctx.fillText(e[0], bx + bw / 2, cy1 + symH * 0.3);
+      const v = e[P[prop].i];
+      if (!narrow && n <= 8 && gp > 0.6){
+        let lbl = v === null ? "—" : (prop === "r" ? String(v) : prop === "ie" ? String(v) : prop === "en" ? v.toFixed(1) : prop === "st" ? STATE[v][0] : (v <= 0 ? "0" : String(Math.round(v))));
+        ctx.font = "400 " + Math.max(7, tf * 0.72) + "px JetBrains Mono, monospace"; ctx.textBaseline = "bottom";
+        ctx.fillStyle = "rgba(" + DIMR + "," + ((gp - 0.6) / 0.4).toFixed(3) + ")";
+        ctx.fillText(lbl, bx + bw / 2, cy1 - hh - 3);
+      }
+      if (prop !== "st" && v !== null) tops.push([bx + bw / 2, cy1 - hh]);
+    });
+    if (tops.length > 1){
+      ctx.save(); ctx.globalCompositeOperation = "lighter";
+      ctx.strokeStyle = "rgba(" + AMBR + ",0.75)"; ctx.lineWidth = 1.5; ctx.beginPath();
+      tops.forEach((pt, k) => (k ? ctx.lineTo(pt[0], pt[1]) : ctx.moveTo(pt[0], pt[1]))); ctx.stroke();
+      ctx.fillStyle = "rgba(" + AMBR + ",0.9)";
+      tops.forEach(pt => { ctx.beginPath(); ctx.arc(pt[0], pt[1], 2.2, 0, Math.PI * 2); ctx.fill(); });
+      ctx.restore();
+    }
+    finish(w, h, false);
+  }
+
+  /* bloom and vignette; the tall phone stage gets a softer vignette so the labels in its corners stay readable */
+  function finish(w, h, tall){
+    /* bloom */
+    bctx.setTransform(1, 0, 0, 1, 0, 0); bctx.clearRect(0, 0, buf.width, buf.height);
+    if (cv.width && cv.height) bctx.drawImage(cv, 0, 0);
+    ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
+    (buf.width&&buf.height)&&ctx.drawImage(buf, 0, 0, w, h); ctx.restore();
+
+    /* vignette */
+    const vcx = w / 2, vcy = h / 2;
+    const vig = tall ? ctx.createRadialGradient(vcx, vcy, Math.hypot(w, h) * 0.36, vcx, vcy, Math.hypot(w, h) * 0.62) : ctx.createRadialGradient(vcx, vcy, h * 0.28, vcx, vcy, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, tall ? "rgba(0,0,0,0.4)" : "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
+  }
+
+  /* Tall phone stage (Cat, 8 Oct phone check: "change to vertical layout"). The table fills the top of the frame and the
+     trend chart runs the full width under it, with the value of each bar over it. In each cell the atomic number sits in the
+     top corner and the symbol in the lower half, so the 10 px label floor of the phone layer cannot push them into each other.
+     A wide canvas never comes here: desktop draws exactly as before. */
+  function drawTall(w, h){
+    const f = Math.max(10.5, Math.min(13, w * 0.029)), fl = Math.max(10.5, f * 0.93), pad = Math.round(f * 0.8);
+    const H = h - (getComputedStyle(tag).position === "absolute" ? (tag.offsetHeight || 0) : 0);
+    const chartH = Math.max(H * 0.35, f * 9.5);
+    const labW = f * 1.3, labH = f * 1.35, units = 8.5;
+    const pitch = Math.max(4, Math.min((w - pad * 2 - labW) / units, (H - chartH - pad * 2 - labH) / 6));
+    const gridW = pitch * units, gridH = pitch * 6;
+    const gx0 = (w - labW - gridW) / 2 + labW, gy0 = pad + labH;
+    const colX = ci => gx0 + (ci + (ci >= 2 ? 0.5 : 0)) * pitch;
+    const rowY = p => gy0 + (p - 1) * pitch;
+    const gp = anim.grow;
+    const mono = px => "400 " + px + "px JetBrains Mono, monospace";
+
+    /* group and period numbers */
+    ctx.font = mono(fl); ctx.fillStyle = "rgba(" + DIMR + ",0.95)";
+    ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
+    COLS.forEach((g, ci) => ctx.fillText(String(g), colX(ci) + pitch / 2, gy0 - fl * 0.4));
+    ctx.textAlign = "right"; ctx.textBaseline = "middle";
+    for (let p = 1; p <= 6; p++) ctx.fillText(String(p), gx0 - fl * 0.45, rowY(p) + pitch / 2);
+
+    /* d-block gap: the label sits in the gap, the dashed marker runs above and below it */
+    const dx = gx0 + 2.25 * pitch, dy = rowY(5) + pitch / 2, dl = ctx.measureText("d-block").width;
+    ctx.save(); ctx.setLineDash([2, 3]); ctx.strokeStyle = "rgba(" + DIMR + ",0.45)"; ctx.lineWidth = 1; ctx.beginPath();
+    ctx.moveTo(dx, rowY(4) + pitch * 0.1); ctx.lineTo(dx, dy - dl / 2 - 4);
+    ctx.moveTo(dx, dy + dl / 2 + 4); ctx.lineTo(dx, rowY(7) - pitch * 0.1); ctx.stroke(); ctx.restore();
+    ctx.save(); ctx.translate(dx, dy); ctx.rotate(-Math.PI / 2); ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillStyle = "rgba(" + DIMR + ",0.9)"; ctx.fillText("d-block", 0, 0); ctx.restore();
+
+    /* direction bands */
+    const s = E[sel], sci = COLS.indexOf(s[3]);
+    const rowA = 1 - anim.band, colA = anim.band;
+    if (rowA > 0.01){
+      rrect(ctx, gx0 - pitch * 0.08, rowY(s[2]) - pitch * 0.04, gridW + pitch * 0.16, pitch * 1.08, pitch * 0.2);
+      ctx.fillStyle = "rgba(" + RGB + "," + (0.12 * rowA).toFixed(3) + ")"; ctx.fill();
+      ctx.lineWidth = 1; ctx.strokeStyle = "rgba(" + RGB + "," + (0.5 * rowA).toFixed(3) + ")"; ctx.stroke();
+    }
+    if (colA > 0.01){
+      rrect(ctx, colX(sci) - pitch * 0.04, gy0 - pitch * 0.08, pitch * 1.08, gridH + pitch * 0.16, pitch * 0.2);
+      ctx.fillStyle = "rgba(" + RGB + "," + (0.12 * colA).toFixed(3) + ")"; ctx.fill();
+      ctx.lineWidth = 1; ctx.strokeStyle = "rgba(" + RGB + "," + (0.5 * colA).toFixed(3) + ")"; ctx.stroke();
+    }
+
+    /* cells: number top left, state letter top right, symbol low in the cell */
+    const symF = Math.max(10.5, pitch * 0.38), numF = 10;
+    E.forEach((e, i) => {
+      const ci = COLS.indexOf(e[3]);
+      const x = colX(ci), y = rowY(e[2]);
+      const cx = x + pitch / 2, cy = y + pitch / 2;
+      rrect(ctx, x + pitch * 0.05, y + pitch * 0.05, pitch * 0.9, pitch * 0.9, pitch * 0.14);
+      ctx.lineWidth = 1; ctx.strokeStyle = LINE; ctx.stroke();
+      const R = cur[i];
+      const side = pitch * 0.86 * R.s;
+      const radius = pitch * 0.14 + (side / 2 - pitch * 0.14) * R.o;
+      paintShape(cx - side / 2, cy - side / 2, side, side, R, radius);
+      if (e[10] === 1){
+        ctx.save(); ctx.setLineDash([3, 2]); ctx.lineWidth = 1.2; ctx.strokeStyle = "rgba(" + AMBR + ",0.75)";
+        rrect(ctx, x + pitch * 0.02, y + pitch * 0.02, pitch * 0.96, pitch * 0.96, pitch * 0.16); ctx.stroke(); ctx.restore();
+      }
+      ctx.font = "600 " + symF + "px Geist, sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillStyle = "rgba(" + INKR + "," + (i === sel ? 1 : 0.9) + ")";
+      ctx.fillText(e[0], cx, y + pitch * 0.63);
+      ctx.font = mono(numF); ctx.fillStyle = "rgba(" + INKR + ",0.7)";
+      ctx.textAlign = "left"; ctx.textBaseline = "top"; ctx.fillText(String(e[1]), x + pitch * 0.1, y + pitch * 0.08);
+      if (prop === "st"){ ctx.textAlign = "right"; ctx.fillText(STATE[e[7]][0], x + pitch * 0.9, y + pitch * 0.08); }
+    });
+
+    /* selected element glow */
+    {
+      const x = colX(sci), y = rowY(s[2]), cx = x + pitch / 2, cy = y + pitch / 2;
+      ctx.save(); ctx.globalCompositeOperation = "lighter";
+      const gl = ctx.createRadialGradient(cx, cy, 0, cx, cy, pitch * 1.2);
+      gl.addColorStop(0, "rgba(" + RGB + ",0.35)"); gl.addColorStop(1, "rgba(" + RGB + ",0)");
+      ctx.fillStyle = gl; ctx.beginPath(); ctx.arc(cx, cy, pitch * 1.2, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+      rrect(ctx, x, y, pitch, pitch, pitch * 0.18); ctx.lineWidth = 2; ctx.strokeStyle = ACC; ctx.stroke();
+    }
+
+    /* trend chart, full width under the table */
+    const rx0 = pad, rx1 = w - pad;
+    const cTop = gy0 + gridH + pitch * 0.25 + f * 0.5;
+    ctx.font = "500 " + f + "px JetBrains Mono, monospace"; ctx.textAlign = "left"; ctx.textBaseline = "top"; ctx.fillStyle = ACC;
+    ctx.fillText((dir === "p" ? "ACROSS PERIOD " + s[2] : "DOWN GROUP " + s[3]), rx0, cTop);
+    ctx.fillStyle = "rgba(" + DIMR + ",0.95)"; ctx.font = mono(fl); ctx.textAlign = "right";
+    ctx.fillText(P[prop].short.toUpperCase() + (dir === "p" ? "  left → right" : "  top → bottom"), rx1, cTop + (f - fl) / 2);
+    const idx = seriesOf();
+    const symH = f * 1.1;
+    const cy0 = cTop + f * 1.35 + fl * 1.4, cy1 = H - pad * 0.6 - symH * 1.35;
+    const n = idx.length, slot = (rx1 - rx0) / Math.max(n, 1), bw = Math.min(slot * 0.62, pitch * 1.3);
+    ctx.strokeStyle = "rgba(" + DIMR + ",0.5)"; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(rx0, cy1 + 0.5); ctx.lineTo(rx1, cy1 + 0.5); ctx.stroke();
+    const tops = [];
+    idx.forEach((ei, k) => {
+      const R = cur[ei], e = E[ei];
+      const bx = rx0 + slot * k + (slot - bw) / 2;
+      const hh = Math.max(1.5, (cy1 - cy0) * R.b * gp);
+      paintShape(bx, cy1 - hh, bw, hh, R, Math.min(bw * 0.18, 5));
+      if (ei === sel){ rrect(ctx, bx - 2, cy1 - hh - 2, bw + 4, hh + 4, 5); ctx.lineWidth = 2; ctx.strokeStyle = ACC; ctx.stroke(); }
+      ctx.font = (ei === sel ? "700 " : "500 ") + symH + "px Geist, sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "top";
+      ctx.fillStyle = ei === sel ? ACC : "rgba(" + INKR + ",0.85)";
+      ctx.fillText(e[0], bx + bw / 2, cy1 + symH * 0.3);
+      const v = e[P[prop].i];
+      if (gp > 0.6){
+        const lbl = v === null ? "—" : (prop === "r" ? String(v) : prop === "ie" ? String(v) : prop === "en" ? v.toFixed(1) : prop === "st" ? STATE[v][0] : (v <= 0 ? "0" : String(Math.round(v))));
+        ctx.font = mono(fl); ctx.textBaseline = "bottom";
+        ctx.fillStyle = "rgba(" + INKR + "," + (0.75 * (gp - 0.6) / 0.4).toFixed(3) + ")";
+        ctx.fillText(lbl, bx + bw / 2, cy1 - hh - 5);
+      }
+      if (prop !== "st" && v !== null) tops.push([bx + bw / 2, cy1 - hh]);
+    });
+    if (tops.length > 1){
+      ctx.save(); ctx.globalCompositeOperation = "lighter";
+      ctx.strokeStyle = "rgba(" + AMBR + ",0.75)"; ctx.lineWidth = 1.5; ctx.beginPath();
+      tops.forEach((pt, k) => (k ? ctx.lineTo(pt[0], pt[1]) : ctx.moveTo(pt[0], pt[1]))); ctx.stroke();
+      ctx.fillStyle = "rgba(" + AMBR + ",0.9)";
+      tops.forEach(pt => { ctx.beginPath(); ctx.arc(pt[0], pt[1], 2.2, 0, Math.PI * 2); ctx.fill(); });
+      ctx.restore();
+    }
+  }
+
+  /* ---------- settle-to-rest animation ---------- */
+  let raf = 0, last = 0;
+  function settled(){
+    for (let i = 0; i < E.length; i++){ const T = target(prop, E[i]); for (const k of KEYS) if (Math.abs(cur[i][k] - T[k]) > 0.002) return false; }
+    return Math.abs(anim.band - anim.bandT) < 0.002 && Math.abs(anim.grow - anim.growT) < 0.002;
+  }
+  function snap(){
+    for (let i = 0; i < E.length; i++){ const T = target(prop, E[i]); for (const k of KEYS) cur[i][k] = T[k]; }
+    anim.band = anim.bandT; anim.grow = anim.growT;
+  }
+  function step(now){
+    const dt = Math.min(now - last, 50); last = now;
+    const f = 1 - Math.exp(-dt / 95);
+    for (let i = 0; i < E.length; i++){ const T = target(prop, E[i]); for (const k of KEYS) cur[i][k] += (T[k] - cur[i][k]) * f; }
+    anim.band += (anim.bandT - anim.band) * f;
+    anim.grow += (anim.growT - anim.grow) * f;
+    if (settled()){ snap(); draw(); raf = 0; return; }
+    draw();
+    raf = requestAnimationFrame(step);
+  }
+  function kick(){
+    if (reduce){ snap(); draw(); return; }
+    if (!raf){ last = performance.now(); raf = requestAnimationFrame(step); }
+  }
+
+  /* ---------- text ---------- */
+  const $ = id => document.getElementById(id);
+  function updateText(){
+    const e = E[sel], pp = P[prop], v = e[pp.i], cf = config(e[1]);
+    $("ptLive").textContent = pp.short + " · " + e[0];
+    tag.textContent = trendText();
+    $("ptZ").textContent = "Z = " + e[1] + " · " + e[9];
+    $("ptSL1").textContent = e[0] + " · " + pp.name;
+    $("ptSV1").textContent = pp.fmt(v);
+    $("ptSL2").textContent = e[0] + " · electron shells";
+    $("ptSV2").textContent = cf.shells;
+    $("ptSub").textContent = cf.sub + "  ·  period " + e[2] + ", group " + e[3] + ", " + ["metal","metalloid","non-metal"][e[10]];
+    $("ptLegend").innerHTML = pp.leg + META;
+    $("ptDrop").textContent = DROP[dir];
+    const pct = (sel / (E.length - 1)) * 100;
+    slider.style.setProperty("--fill", pct + "%");
+  }
+
+  document.querySelectorAll(".pt-prop").forEach(b => b.addEventListener("click", () => {
+    prop = b.dataset.p;
+    document.querySelectorAll(".pt-prop").forEach(x => { const on = x === b; x.classList.toggle("on", on); x.setAttribute("aria-pressed", on ? "true" : "false"); });
+    updateText(); kick();
+  }));
+  document.querySelectorAll(".pt-dir").forEach(b => b.addEventListener("click", () => {
+    const nd = b.dataset.d;
+    if (nd !== dir){ dir = nd; anim.bandT = dir === "p" ? 0 : 1; anim.grow = 0; anim.growT = 1; }
+    document.querySelectorAll(".pt-dir").forEach(x => { const on = x === b; x.classList.toggle("on", on); x.setAttribute("aria-pressed", on ? "true" : "false"); });
+    updateText(); kick();
+  }));
+  slider.addEventListener("input", () => {
+    sel = Math.max(0, Math.min(E.length - 1, Math.round(+slider.value)));
+    updateText();
+    if (!raf) draw();
+  });
+
+  window.addEventListener("resize", () => { resize(); draw(); });
+  updateText();
+  resize();
+  draw();
+  kick();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { resize(); draw(); }).catch(() => {});
+})();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'trends-across-the-periodic-table'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

@@ -91,7 +91,7 @@ h1{font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-
 
     <div class="canvas-wrapper">
       <canvas id="bgCanvas" role="img" aria-label="The blood carries glucose past the pancreas, muscle and liver. The pancreas releases insulin or glucagon, the liver stores glucose as glycogen or releases it, and a graph shows blood glucose over five hours with the healthy range shaded and the current time marked"></canvas>
-      <div class="canvas-overlay" id="bgOverlay">1.0 h · 7.8 mmol/L</div>
+      <div class="canvas-overlay" id="bgOverlay">1.0 h · 7.5 mmol/L</div>
     </div>
 
     <div class="bg-row"><span>Time since start</span><b id="bgTV">1.0 h</b></div>
@@ -99,7 +99,7 @@ h1{font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-
     <div class="bg-ticks" id="bgTT"></div>
 
     <div class="stat-row">
-      <div class="stat"><div class="stat-label">Blood glucose</div><div class="stat-value acc" id="bgG">7.8<small>mmol/L</small></div></div>
+      <div class="stat"><div class="stat-label">Blood glucose</div><div class="stat-value acc" id="bgG">7.5<small>mmol/L</small></div></div>
       <div class="stat"><div class="stat-label">Liver glycogen</div><div class="stat-value amb" id="bgGly">60%</div></div>
     </div>
 
@@ -145,7 +145,7 @@ function sim(body, ev){
     const adr = ev === "stress" && t >= STRESS_AT ? Math.exp(-(t - STRESS_AT) / 45) : 0;  /* adrenaline: fast, short */
     const cort = ev === "stress" && t >= STRESS_AT ? Math.min(1, (t - STRESS_AT) / 60) * Math.exp(-Math.max(0, t - 150) / 120) : 0; /* cortisol: slow, long */
     let sec;
-    if (body === "healthy") sec = 0.12 + 0.4 * Math.max(0, G - 4.6);
+    if (body === "healthy") sec = 0.12 + 0.6 * Math.max(0, G - 4.6);   /* healthy beta cells: a meal peaks about 7.5, inside the 7.8 limit */
     else if (body === "t2") sec = 0.3 + 0.35 * Math.max(0, G - 4.6);
     else if (body === "t1") sec = 0;
     else { sec = 0.2; if (ev === "meal" && t >= 10){ const v = t - 10; sec += 1.6 * v / 3600 * Math.exp(-v / 60) * 60; } }  /* injected: set by the dose, not by glucose */
@@ -237,6 +237,8 @@ function loopNow(){
   let resp;
   if (r.G < LOW && tr !== "rising") { resp = "Glucose keeps falling: hypoglycaemia"; broken = true; }
   else if (r.G > HIGH && tr !== "falling") { resp = "Glucose keeps rising: hyperglycaemia"; broken = true; }
+  else if (hi && tr === "falling" && body === "t1") { resp = "Glucose drifts down only as " + (r.G > 10 ? "the kidneys spill it, " : "") + "the brain uses it" + (r.ex ? " and working muscle takes it up" : "") + ": no insulin, so no feedback"; broken = true; }
+  else if (hi && tr === "falling" && body === "t1ins") resp = "Glucose falls while the injected dose lasts: insulin, but not feedback from glucose";
   else if (hi && tr === "falling") resp = "Glucose falls back toward the set point: negative feedback";
   else if (lo && tr === "rising") resp = "Glucose rises back toward the set point: negative feedback";
   else if (hi || lo) resp = "Glucose " + tr + ", not yet corrected";

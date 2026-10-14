@@ -1,633 +1,581 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Linear Relationships — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Linear relationships — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
-:root {
-  --bg: #0B0D0C;
-  --bg2: #12160F;
-  --acc: #7ED97A;
-  --ag: rgba(126, 217, 122, .7);
-  --ag1: rgba(126, 217, 122, .12);
-  --ag2: rgba(126, 217, 122, .45);
-  --amb: #FAC775;
-  --ink: #EDEDE8;
-  --ink-dim: #8C9389;
-  --line: #262B26;
+:root{
+  --bg:#0B0D0C; --bg2:#12160F; --bg3:#0d100b; --bgtop:#11160F; --track:#23291f;
+  --acc:#7ED97A; --acc-rgb:126, 217, 122;
+  --ag:rgba(var(--acc-rgb),.7); --ag1:rgba(var(--acc-rgb),.12); --ag2:rgba(var(--acc-rgb),.45);
+  --amb:#FAC775; --amb-rgb:250, 199, 117;
+  --ink:#EDEDE8; --ink-dim:#8C9389; --line:#262B26;
 }
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
-}
-
-body {
-  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
-  font-family: 'Geist', sans-serif;
-  min-height: 100vh;
-  padding: 40px 16px 72px;
-  color: var(--ink);
-}
-
-.container { max-width: 720px; margin: 0 auto; }
-
-h1 {
-  font-size: clamp(30px, 8vw, 52px);
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1.02;
-  margin-bottom: 14px;
-}
-
-.intro {
-  font-size: 15.5px;
-  font-weight: 400;
-  color: var(--ink-dim);
-  line-height: 1.55;
-  max-width: 58ch;
-  margin-bottom: 28px;
-}
-
-.card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 18px;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
-}
-
-.card-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  color: white;
-}
-
-.live-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--acc);
-}
-
-.card-hint {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--ink-dim);
-  margin-bottom: 14px;
-}
-
-.canvas-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16/9;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
-  box-shadow: inset 0 0 0 1px var(--ag1);
-  margin-bottom: 16px;
-}
-
-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.canvas-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(4px);
-  padding: 9px 16px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  text-transform: uppercase;
-  color: var(--acc);
-  text-align: center;
-}
-
-.slider-wrapper { margin-bottom: 10px; }
-
-.lr-slider {
-  width: 100%;
-  height: 4px;
-  -webkit-appearance: none;
-  appearance: none;
-  border-radius: 3px;
-  outline: none;
-  background: linear-gradient(90deg, var(--acc) var(--fill, 50%), #23291f var(--fill, 50%));
-  cursor: pointer;
-}
-
-.lr-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow .15s;
-}
-
-.lr-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow .15s;
-}
-
-.lr-slider::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.lr-slider::-moz-range-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.tick-labels {
-  display: flex;
-  justify-content: space-between;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--ink-dim);
-  padding: 0 4px;
-}
-
-.stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  border-top: 1px solid var(--line);
-  padding-top: 16px;
-}
-
-.stat-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 6px;
-}
-
-.stat-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 24px;
-  font-weight: 500;
-}
-
-.stat-value.acc { color: var(--acc); }
-.stat-value.amb { color: var(--amb); }
-
-.toggle-card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 18px;
-}
-
-.toggle-buttons {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.toggle-btn {
-  flex: 1;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14.5px;
-  padding: 12px;
-  border-radius: 11px;
-  border: 1px solid var(--line);
-  background: #12160F;
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: all .2s;
-}
-
-.toggle-btn.active {
-  background: rgba(126, 217, 122,.1);
-  border: 1px solid var(--acc);
-  color: var(--acc);
-  box-shadow: 0 0 22px rgba(126, 217, 122,.18);
-}
-
-.knowdrop-divider {
-  border-top: 1px solid var(--line);
-  margin-bottom: 16px;
-}
-
-.knowdrop-text {
-  font-size: 14.5px;
-  font-weight: 400;
-  line-height: 1.65;
-  color: var(--ink);
-}
-
-.know-this {
-  border-left: 3px solid var(--acc);
-  padding: 16px 18px;
-  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
-  border-radius: 0 12px 12px 0;
-  margin-bottom: 34px;
-}
-
-.know-this-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--acc);
-  margin-bottom: 12px;
-}
-
-.know-this-body {
-  font-size: 17.4px;
-  font-weight: 400;
-  line-height: 1.55;
-  color: var(--ink);
-}
-
-.know-this-body .hl {
-  color: var(--acc);
-}
-
-.footer {
-  margin-top: 34px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.pulse-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--acc);
-  box-shadow: 0 0 10px var(--acc);
-  animation: lrPulse 2.4s ease-in-out infinite;
-}
-
-@keyframes lrPulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.35; transform: scale(0.6); }
-}
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
-}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:radial-gradient(120% 80% at 50% -10%,var(--bgtop) 0%,var(--bg) 55%);font-family:'Geist',sans-serif;min-height:100vh;padding:40px 16px 0;color:var(--ink)}
+.lr-wrap{max-width:720px;margin:0 auto}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+h1{font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin-bottom:14px}
+.lr-intro{font-size:15.5px;font-weight:400;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin-bottom:26px}
+.lr-card{background:linear-gradient(180deg,var(--bg2),var(--bg3));border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);margin-bottom:18px}
+.lr-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap}
+.lr-label{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;color:#fff}
+.lr-live{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--acc)}
+.lr-eq{text-transform:none}
+.lr-hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin-bottom:14px}
+.lr-canvas-wrap{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1);margin-bottom:16px}
+.lr-canvas-wrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.lr-overlay{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:14px;text-transform:uppercase;color:var(--acc);text-align:center;line-height:1.25}
+.lr-row{display:flex;justify-content:space-between;align-items:baseline;font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:6px}
+.lr-row b{font-weight:500;font-size:13px;color:var(--ink);text-transform:none}
+.lr-field{margin-bottom:14px}
+.lr-slider{width:100%;height:4px;-webkit-appearance:none;appearance:none;border-radius:3px;outline:none;display:block;background:linear-gradient(90deg,var(--acc) var(--fill,0%),var(--track) var(--fill,0%));cursor:pointer}
+.lr-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:var(--bg);border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.lr-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--bg);border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.lr-slider::-webkit-slider-thumb:hover{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.lr-slider::-moz-range-thumb:hover{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.lr-ticks{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink-dim);margin-top:5px}
+.lr-stats{display:grid;grid-template-columns:1fr 1fr;gap:16px;border-top:1px solid var(--line);padding-top:16px;margin-top:4px}
+.lr-stat-label{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:6px}
+.lr-stat-value{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500;word-break:break-word}
+.lr-stat-value.acc{color:var(--acc)}
+.lr-stat-value.amb{color:var(--amb)}
+.lr-group-title{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:10px}
+.lr-pills{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.lr-pill{flex:1 1 auto;font-family:'JetBrains Mono',monospace;font-size:12px;padding:10px 14px;border-radius:999px;border:1px solid var(--line);background:var(--bg2);color:var(--ink-dim);cursor:pointer;transition:all .2s}
+.lr-pill[aria-pressed="true"]{background:rgba(var(--acc-rgb),.1);border:1px solid var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.lr-divider{border-top:1px solid var(--line);margin-bottom:16px}
+.lr-drop{font-size:14.5px;font-weight:400;line-height:1.65;color:var(--ink)}
+.lr-know{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));border-radius:0 12px 12px 0;margin-bottom:0;padding-bottom:16px}
+.lr-know-tag{display:flex;align-items:center;gap:9px;font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.15em;color:var(--acc);margin-bottom:12px}
+.lr-know-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:lrKnowPulse 2.4s ease-in-out infinite;flex:0 0 auto}
+@keyframes lrKnowPulse{0%,100%{opacity:1}50%{opacity:.45}}
+.lr-know-body{font-size:17.4px;font-weight:400;line-height:1.55;color:var(--ink)}
+@media (max-width:420px){.lr-overlay{font-size:12px}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 
-<div class="container">
-  <h2 class="sr-only">Interactive linear relationship parameter explorer showing how gradient and y-intercept control line position</h2>
-  
-  <h1>Two numbers control <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">infinity</span></h1>
-  
-  <p class="intro">Every straight line — from taxi fares to depreciation — is completely defined by just two parameters: gradient m and y-intercept c. Change one slider and watch the entire line rotate or shift. The maths is simple. The power is absolute.</p>
-  
-  <div class="card">
-    <div class="card-header">
-      <span class="card-label">Linear Control</span>
-      <span class="live-tag" id="liveTag">m = 1.0 • c = 0</span>
+<div class="lr-wrap">
+  <h2 class="sr-only">Interactive graph of a straight line y = mx + c with controls for gradient and intercept, showing both intercepts, a rise over run triangle, and a second line that is parallel, perpendicular or intersecting, with the point of intersection marked and solved</h2>
+
+  <h1>Two rules, two lines, one shared <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">point</span></h1>
+  <p class="lr-intro">Every non-vertical line is y = mx + c: m is the rate of change, c is the value at x = 0. Put a second line on the same axes and the pair can meet once, never, or everywhere. Raise the gradient, then the intercept, and watch where the green line cuts the axes and where it meets the amber one.</p>
+
+  <section class="lr-card">
+    <div class="lr-head">
+      <span class="lr-label">Line explorer</span>
+      <span class="lr-live">Rule · <span class="lr-eq" id="lrEq">y = x</span></span>
     </div>
-    <div class="card-hint">Drag sliders to reshape the line</div>
-    
-    <div class="canvas-wrapper">
-      <canvas id="canvas"></canvas>
-      <div class="canvas-overlay" id="overlayTag">y = 1.0x + 0</div>
+    <div class="lr-hint">Raise the gradient, then the intercept, and watch the line.</div>
+
+    <div class="lr-canvas-wrap" id="lrWrap">
+      <canvas id="lrCanvas"></canvas>
+      <div class="lr-overlay" id="lrOverlay"></div>
     </div>
-    
-    <div class="slider-wrapper">
-      <input aria-label="Gradient m" type="range" class="lr-slider" id="mSlider" min="-3" max="3" step="0.1" value="1" style="--fill: 66.67%">
-      <div class="tick-labels">
-        <span>m = -3</span>
-        <span>Gradient</span>
-        <span>m = 3</span>
-      </div>
+
+    <div class="lr-field">
+      <div class="lr-row"><span>Gradient m</span><b id="lrMVal">1</b></div>
+      <input type="range" class="lr-slider" id="lrM" aria-label="Gradient m" min="-3" max="3" step="0.1" value="1" style="--fill:66.67%">
+      <div class="lr-ticks"><span>−3</span><span>0</span><span>3</span></div>
     </div>
-    
-    <div class="slider-wrapper">
-      <input aria-label="Y-intercept c" type="range" class="lr-slider" id="cSlider" min="-4" max="4" step="0.5" value="0" style="--fill: 50%">
-      <div class="tick-labels">
-        <span>c = -4</span>
-        <span>Y-Intercept</span>
-        <span>c = 4</span>
-      </div>
+    <div class="lr-field">
+      <div class="lr-row"><span>Intercept c</span><b id="lrCVal">0</b></div>
+      <input type="range" class="lr-slider" id="lrC" aria-label="Intercept c" min="-4" max="4" step="0.5" value="0" style="--fill:50%">
+      <div class="lr-ticks"><span>−4</span><span>0</span><span>4</span></div>
     </div>
-    
-    <div class="stats">
+
+    <div class="lr-stats">
       <div>
-        <div class="stat-label">Rise per run</div>
-        <div class="stat-value acc" id="riseRun">+1.0</div>
+        <div class="lr-stat-label" id="lrStatL">Gradient m · rate</div>
+        <div class="lr-stat-value acc" id="lrStatLv">+1</div>
       </div>
       <div>
-        <div class="stat-label">Starting value</div>
-        <div class="stat-value amb" id="startVal">0</div>
+        <div class="lr-stat-label" id="lrStatR">Intercept c · start</div>
+        <div class="lr-stat-value amb" id="lrStatRv">0</div>
       </div>
     </div>
-  </div>
-  
-  <div class="toggle-card">
-    <div class="toggle-buttons">
-      <button class="toggle-btn active" id="btnParallel">Parallel</button>
-      <button class="toggle-btn" id="btnPerp">Perpendicular</button>
+  </section>
+
+  <section class="lr-card">
+    <div class="lr-group-title">Second line (dashed amber)</div>
+    <div class="lr-pills" role="group" aria-label="Second line">
+      <button class="lr-pill" type="button" data-mode="parallel" aria-pressed="true">Parallel</button>
+      <button class="lr-pill" type="button" data-mode="perp" aria-pressed="false">Perpendicular</button>
+      <button class="lr-pill" type="button" data-mode="intersect" aria-pressed="false">Intersect</button>
     </div>
-    <div class="knowdrop-divider"></div>
-    <div class="knowdrop-text" id="knowdropText">
-      Parallel lines are mathematical clones: they share identical gradients but live at different heights. If one line has m = 2, every parallel line also has m = 2, regardless of their y-intercepts. They'll never intersect because they're climbing at exactly the same rate. In real-world terms, this models scenarios where processes grow at the same rate but start from different baselines — think two taxi fares with the same charge per kilometre but different flagfalls, or two savings jars that each get the same $20 a week but start with different amounts. The dashed line shows a parallel partner: same m, different c.
-    </div>
-  </div>
-  
-  <div class="know-this">
-    <div class="know-this-tag">Know This</div>
-    <div class="know-this-body">
-      The equation <span class="hl">y = mx + c</span> isn't just describing a line — it's predicting every single point that line will ever touch, using only two numbers.
-    </div>
-  </div>
-  
-  <div class="footer">
-    <div class="pulse-dot"></div>
-  </div>
+    <div class="lr-divider"></div>
+    <p class="lr-drop" id="lrDrop"></p>
+  </section>
+
+  <aside class="lr-know">
+    <div class="lr-know-tag"><span class="lr-know-dot"></span><span>Know This</span></div>
+    <div class="lr-know-body">Two lines meet where both rules give the same y: set <span style="color:var(--acc)">mx + c</span> equal to the other rule, solve for x, substitute to find y, and that <span style="color:var(--acc)">point of intersection</span> is the <span style="color:var(--acc)">simultaneous solution</span>.</div>
+  </aside>
 </div>
 
 <script>
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-const mSlider = document.getElementById('mSlider');
-const cSlider = document.getElementById('cSlider');
-const liveTag = document.getElementById('liveTag');
-const overlayTag = document.getElementById('overlayTag');
-const riseRun = document.getElementById('riseRun');
-const startVal = document.getElementById('startVal');
-const btnParallel = document.getElementById('btnParallel');
-const btnPerp = document.getElementById('btnPerp');
-const knowdropText = document.getElementById('knowdropText');
+(function(){
+  const CSS = getComputedStyle(document.documentElement);
+  const ACC = CSS.getPropertyValue("--acc").trim();
+  const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+  const AMB = CSS.getPropertyValue("--amb").trim();
+  const AMBRGB = CSS.getPropertyValue("--amb-rgb").trim();
+  const reduce = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 
-const dpr = Math.min(window.devicePixelRatio || 1, 2);
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d');
+  const wrap = document.getElementById("lrWrap");
+  const canvas = document.getElementById("lrCanvas");
+  const ctx = canvas.getContext("2d");
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const buf = document.createElement("canvas");
+  const bctx = buf.getContext("2d");
 
-let m = parseFloat(mSlider.value);
-let c = parseFloat(cSlider.value);
-let mode = 'parallel';
+  const mIn = document.getElementById("lrM");
+  const cIn = document.getElementById("lrC");
+  const mVal = document.getElementById("lrMVal");
+  const cVal = document.getElementById("lrCVal");
+  const eqEl = document.getElementById("lrEq");
+  const overlay = document.getElementById("lrOverlay");
+  const statL = document.getElementById("lrStatL");
+  const statLv = document.getElementById("lrStatLv");
+  const statR = document.getElementById("lrStatR");
+  const statRv = document.getElementById("lrStatRv");
+  const drop = document.getElementById("lrDrop");
+  const pills = Array.from(document.querySelectorAll(".lr-pill"));
 
-const parallelText = "Parallel lines are mathematical clones: they share identical gradients but live at different heights. If one line has m = 2, every parallel line also has m = 2, regardless of their y-intercepts. They'll never intersect because they're climbing at exactly the same rate. In real-world terms, this models scenarios where processes grow at the same rate but start from different baselines — think two taxi fares with the same charge per kilometre but different flagfalls, or two savings jars that each get the same $20 a week but start with different amounts. The dashed line shows a parallel partner: same m, different c.";
+  const FIX_M2 = -1, FIX_C2 = 2, YR = 5;
+  let mode = "parallel";
+  let vert = false;
+  const tgt = { m: 1, c: 0, m2: 1, c2: 2 };
+  const cur = { m: 1, c: 0, m2: 1, c2: 2 };
 
-const perpText = "Perpendicular lines meet at perfect right angles, and their gradients multiply to exactly -1. If one line has gradient m, the perpendicular line has gradient -1/m. A line with m = 2 is perpendicular to a line with m = -0.5 because 2 × (-0.5) = -1. This relationship is fundamental in geometry and physics: velocity and perpendicular force, river flow and bank erosion, architectural supports and load distribution all rely on this -1 product rule. The dashed line is the perpendicular partner through the same y-intercept.";
-
-function resize() {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  draw();
-}
-
-function draw() {
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, w, h);
-  
-  const cx = w / 2;
-  const cy = h / 2;
-  const yRange = 6;
-  /* Equal scales on both axes, so the drawn slope matches the readout */
-  const yScale = h / (2 * yRange);
-  const xScale = yScale;
-  const xRange = Math.ceil(w / (2 * xScale));
-  
-  // Grid
-  ctx.strokeStyle = 'rgba(255,255,255,0.08)';
-  ctx.lineWidth = 0.8;
-  for (let x = -xRange; x <= xRange; x++) {
-    const sx = cx + x * xScale;
-    ctx.beginPath();
-    ctx.moveTo(sx, 0);
-    ctx.lineTo(sx, h);
-    ctx.stroke();
+  function num(v, d){
+    if (Math.abs(v) < 1e-9) v = 0;
+    let s = Math.abs(v).toFixed(d);
+    if (s.indexOf(".") >= 0) s = s.replace(/\.?0+$/, "");
+    return (v < 0 ? "−" : "") + s;
   }
-  for (let y = -yRange; y <= yRange; y++) {
-    const sy = cy - y * yScale;
-    ctx.beginPath();
-    ctx.moveTo(0, sy);
-    ctx.lineTo(w, sy);
-    ctx.stroke();
+  function term(a){
+    if (Math.abs(a) < 1e-9) return "";
+    if (Math.abs(a - 1) < 1e-9) return "x";
+    if (Math.abs(a + 1) < 1e-9) return "−x";
+    return num(a, 2) + "x";
   }
-  
-  // Axes
-  ctx.strokeStyle = 'rgba(255,255,255,0.2)';
-  ctx.lineWidth = 1.5;
-  ctx.beginPath();
-  ctx.moveTo(0, cy);
-  ctx.lineTo(w, cy);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(cx, 0);
-  ctx.lineTo(cx, h);
-  ctx.stroke();
-  
-  // Axis numbers (every 2 units)
-  ctx.fillStyle = 'rgba(237,237,232,0.45)';
-  ctx.font = '10px JetBrains Mono, monospace';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'top';
-  for (let x = -xRange; x <= xRange; x++) {
-    if (x === 0 || x % 2 !== 0) continue;
-    const sx = cx + x * xScale;
-    if (sx < 8 || sx > w - 8) continue;
-    ctx.fillText(String(x), sx, cy + 4);
+  function rhs(a, b){
+    const t = term(a);
+    if (!t) return num(b, 2);
+    if (Math.abs(b) < 1e-9) return t;
+    return t + (b > 0 ? " + " : " − ") + num(Math.abs(b), 2);
   }
-  ctx.textAlign = 'right';
-  ctx.textBaseline = 'middle';
-  for (let y = -yRange; y <= yRange; y++) {
-    if (y === 0 || y % 2 !== 0) continue;
-    const sy = cy - y * yScale;
-    if (sy < 8 || sy > h - 8) continue;
-    ctx.fillText(String(y), cx - 5, sy);
+  function eq(a, b){ return "y = " + rhs(a, b); }
+
+  function meet(m, c){
+    const d = m - FIX_M2;
+    if (Math.abs(d) < 1e-9) return { kind: Math.abs(c - FIX_C2) < 1e-9 ? "same" : "none" };
+    const x = (FIX_C2 - c) / d;
+    return { kind: "point", x: x, y: m * x + c };
   }
 
-  // Partner line: parallel (same m, c shifted by 2) or perpendicular (gradient -1/m, same c)
-  ctx.save();
-  ctx.strokeStyle = 'rgba(250,199,117,0.75)';
-  ctx.lineWidth = 2;
-  ctx.setLineDash([6, 5]);
-  ctx.beginPath();
-  if (mode === 'parallel') {
-    const c2 = c <= 2 ? c + 2 : c - 2;
-    ctx.moveTo(cx + (-xRange - 1) * xScale, cy - (m * (-xRange - 1) + c2) * yScale);
-    ctx.lineTo(cx + (xRange + 1) * xScale, cy - (m * (xRange + 1) + c2) * yScale);
-  } else if (Math.abs(m) < 1e-9) {
-    ctx.moveTo(cx, 0);
-    ctx.lineTo(cx, h);
-  } else {
-    const mp = -1 / m;
-    const xr = Math.max(xRange + 1, (yRange + Math.abs(c) + 1) * Math.abs(m) + 1);
-    ctx.moveTo(cx - xr * xScale, cy - (mp * -xr + c) * yScale);
-    ctx.lineTo(cx + xr * xScale, cy - (mp * xr + c) * yScale);
-  }
-  ctx.stroke();
-  ctx.restore();
-
-  // Main line
-  ctx.save();
-  ctx.strokeStyle = 'rgba(126, 217, 122,0.9)';
-  ctx.lineWidth = 2.8;
-  ctx.shadowColor = 'rgba(126, 217, 122,0.6)';
-  ctx.shadowBlur = 14;
-  ctx.beginPath();
-  const x1 = -xRange - 1;
-  const y1 = m * x1 + c;
-  const x2 = xRange + 1;
-  const y2 = m * x2 + c;
-  const sx1 = cx + x1 * xScale;
-  const sy1 = cy - y1 * yScale;
-  const sx2 = cx + x2 * xScale;
-  const sy2 = cy - y2 * yScale;
-  ctx.moveTo(sx1, sy1);
-  ctx.lineTo(sx2, sy2);
-  ctx.stroke();
-  ctx.restore();
-  
-  // Y-intercept marker
-  const yIntY = cy - c * yScale;
-  if (yIntY >= 0 && yIntY <= h) {
-    ctx.save();
-    ctx.fillStyle = 'rgba(250,199,117,0.9)';
-    ctx.shadowColor = 'rgba(250,199,117,0.6)';
-    ctx.shadowBlur = 12;
-    ctx.beginPath();
-    ctx.arc(cx, yIntY, 5, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-  }
-  
-  // Flowing dots along line
-  const numDots = 12;
-  const time = Date.now() * 0.0008;
-  for (let i = 0; i < numDots; i++) {
-    const offset = (time + i / numDots) % 1;
-    const lx = -xRange + offset * (2 * xRange);
-    const ly = m * lx + c;
-    const sx = cx + lx * xScale;
-    const sy = cy - ly * yScale;
-    if (sx >= 0 && sx <= w && sy >= 0 && sy <= h) {
-      ctx.save();
-      ctx.globalCompositeOperation = 'lighter';
-      const grad = ctx.createRadialGradient(sx, sy, 0, sx, sy, 8);
-      grad.addColorStop(0, 'rgba(126, 217, 122,0.7)');
-      grad.addColorStop(1, 'rgba(126, 217, 122,0)');
-      ctx.fillStyle = grad;
-      ctx.beginPath();
-      ctx.arc(sx, sy, 8, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
+  function partner(){
+    const m = tgt.m, c = tgt.c;
+    vert = false;
+    if (mode === "parallel"){
+      tgt.m2 = m; tgt.c2 = c <= 0 ? c + 2 : c - 2;
+    } else if (mode === "perp"){
+      tgt.c2 = c;
+      if (Math.abs(m) < 1e-9){ vert = true; cur.m2 = tgt.m2; }
+      else {
+        tgt.m2 = -1 / m;
+        if (Math.sign(tgt.m2) !== Math.sign(cur.m2) && Math.abs(tgt.m2) > 2) cur.m2 = tgt.m2;
+      }
+    } else {
+      tgt.m2 = FIX_M2; tgt.c2 = FIX_C2;
     }
   }
-  
-  // Bloom
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
-  
-  // Vignette
-  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-  
-  requestAnimationFrame(draw);
-}
 
-function updateUI() {
-  const mStr = m.toFixed(1);
-  const cStr = c >= 0 ? '+' + c.toFixed(1) : c.toFixed(1);
-  const eqStr = `y = ${mStr}x ${c >= 0 ? '+' : ''}${c.toFixed(1)}`;
-  
-  liveTag.textContent = `m = ${mStr} • c = ${c.toFixed(1)}`;
-  overlayTag.textContent = eqStr;
-  riseRun.textContent = m >= 0 ? '+' + mStr : mStr;
-  startVal.textContent = c.toFixed(1);
-  
-  const mFill = ((m + 3) / 6) * 100;
-  mSlider.style.setProperty('--fill', mFill + '%');
-  
-  const cFill = ((c + 4) / 8) * 100;
-  cSlider.style.setProperty('--fill', cFill + '%');
-}
+  const parallelText = "A parallel partner keeps the same gradient m and changes only the intercept c, so both lines rise at the same rate and never meet. Two phone plans that charge the same per gigabyte but different monthly fees are parallel: the gap between them is the difference in c, and it never closes. Here the dashed amber line has the same m as the green line and an intercept 2 units away, so tilting the gradient tilts both lines together. Try to solve the pair by setting the rules equal and the x terms cancel, leaving a false statement such as 2 = 0. A false statement with no x left in it is the algebra saying there is no solution.";
 
-mSlider.addEventListener('input', (e) => {
-  m = parseFloat(e.target.value);
+  const perpText = "A perpendicular partner crosses the green line at a right angle, and its gradient is −1 divided by m, so the two gradients multiply to −1. A gradient of 2 pairs with −0.5, because 2 × (−0.5) = −1, and a gradient of −3 pairs with 1/3. The right angle only looks right when both axes use the same scale, which this picture does. The dashed amber line is drawn through the same y-intercept, so the two lines meet at (0, c) on the vertical axis and that point is their one shared solution. Set m to 0 and the partner becomes the vertical line x = 0: a vertical line has no gradient, so the product rule has nothing to multiply, but the two lines are still perpendicular.";
+
+  function intersectText(){
+    const m = tgt.m, c = tgt.c;
+    const mt = meet(m, c);
+    const g = eq(m, c), a = eq(FIX_M2, FIX_C2);
+    if (mt.kind === "same"){
+      return `The green rule ${g} is the same as the amber rule ${a}, so the green line sits exactly on top of the amber one. Setting the rules equal gives −x + 2 = −x + 2, which is true for every value of x. Every point on the line satisfies both equations, so the pair has infinitely many solutions. Solving simultaneous equations always asks the same question: for which x do both rules give the same y? Here the answer is all of them.`;
+    }
+    if (mt.kind === "none"){
+      return `The green line is ${g} and the amber line is ${a}: both have gradient −1, so they are parallel. Setting the rules equal gives ${rhs(m, c)} = −x + 2, and adding x to both sides leaves ${num(c, 2)} = 2, which is false. A false statement with no x left in it means no value of x makes both rules agree, so the pair has no solution. On the graph that is two lines that never meet. Equal gradients with different intercepts always produce this result.`;
+    }
+    const d = m - FIX_M2, r = FIX_C2 - c;
+    const cStr = Math.abs(c) < 1e-9 ? "" : (c > 0 ? ` − ${num(c, 2)}` : ` + ${num(-c, 2)}`);
+    const cSub = Math.abs(c) < 1e-9 ? "" : (c > 0 ? ` + ${num(c, 2)}` : ` − ${num(-c, 2)}`);
+    const xs = num(mt.x, 2), ys = num(mt.y, 2);
+    let solve;
+    if (Math.abs(d - 1) < 1e-9){
+      solve = cStr ? `Move every x to the left and every number to the right: x = 2${cStr} = ${xs}.` : `Move the x to the left and the number to the right: x = 2.`;
+    } else {
+      solve = `Move every x to the left and every number to the right: ${term(d)} = 2${cStr}, so x = ${num(r, 2)} ÷ ${num(d, 2)} = ${xs}.`;
+    }
+    const off = Math.abs(mt.x) > currentXR() || Math.abs(mt.y) > YR;
+    const tail = off ? ` It lies beyond the edge of this picture, but the algebra still finds it.` : "";
+    return `The green line is ${g} and the amber line is fixed at ${a}. Where they cross, both rules give the same y for the same x, so set them equal: ${rhs(m, c)} = −x + 2. ${solve} Substitute into the green rule: y = ${num(m, 2)} × (${xs})${cSub} = ${ys}. Check in the amber rule: −(${xs}) + 2 = ${num(FIX_M2 * mt.x + FIX_C2, 2)}. The point (${xs}, ${ys}) is the intersection on the graph and the solution of the simultaneous equations.${tail}`;
+  }
+
+  function currentXR(){
+    const w = canvas.width / dpr, h = canvas.height / dpr;
+    if (!w || !h) return 8;
+    return w * YR / h;
+  }
+
+  function draw(){
+    const w = canvas.width / dpr, h = canvas.height / dpr;
+    if (!w || !h) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.globalCompositeOperation = "source-over";
+    ctx.globalAlpha = 1;
+    ctx.filter = "none";
+    ctx.fillStyle = "rgb(0,0,0)";
+    ctx.fillRect(0, 0, w, h);
+
+    const cx = w / 2, cy = h / 2;
+    const S = h / (2 * YR);
+    const XR = w / (2 * S);
+    const X = x => cx + x * S;
+    const Y = y => cy - y * S;
+    const m = cur.m, c = cur.c, m2 = cur.m2, c2 = cur.c2;
+    const texts = [];
+
+    function segPts(a, b){
+      if (Math.abs(a) <= 1){
+        const x1 = -XR - 1, x2 = XR + 1;
+        return [[X(x1), Y(a * x1 + b)], [X(x2), Y(a * x2 + b)]];
+      }
+      const y1 = -YR - 1, y2 = YR + 1;
+      return [[X((y1 - b) / a), Y(y1)], [X((y2 - b) / a), Y(y2)]];
+    }
+    function strokeSeg(p){ ctx.beginPath(); ctx.moveTo(p[0][0], p[0][1]); ctx.lineTo(p[1][0], p[1][1]); ctx.stroke(); }
+
+    // grid
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = "rgba(255,255,255,0.07)";
+    for (let gx = Math.ceil(-XR); gx <= Math.floor(XR); gx++){
+      if (gx === 0) continue;
+      ctx.beginPath(); ctx.moveTo(X(gx), 0); ctx.lineTo(X(gx), h); ctx.stroke();
+    }
+    for (let gy = -YR; gy <= YR; gy++){
+      if (gy === 0) continue;
+      ctx.beginPath(); ctx.moveTo(0, Y(gy)); ctx.lineTo(w, Y(gy)); ctx.stroke();
+    }
+    // axes
+    ctx.lineWidth = 1.4;
+    ctx.strokeStyle = "rgba(255,255,255,0.28)";
+    ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(w, cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, h); ctx.stroke();
+
+    // partner line (dashed amber)
+    ctx.save();
+    ctx.setLineDash([7, 5]);
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = `rgba(${AMBRGB},0.8)`;
+    if (vert){ ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, h); ctx.stroke(); }
+    else strokeSeg(segPts(m2, c2));
+    ctx.restore();
+
+    // main line
+    ctx.save();
+    ctx.lineWidth = 2.8;
+    ctx.strokeStyle = ACC;
+    ctx.shadowColor = `rgba(${RGB},0.65)`;
+    ctx.shadowBlur = 14;
+    strokeSeg(segPts(m, c));
+    ctx.restore();
+
+    const hasXint = Math.abs(m) > 1e-9;
+    const xint = hasXint ? -c / m : null;
+
+    // rise over run triangle
+    if (mode !== "intersect"){
+      const cands = [4, 3, 5, 2, 6, -2, -3, -4, -5, 1, -6];
+      let x0 = null;
+      for (const cand of cands){
+        const yA = m * cand + c, yB = m * (cand + 1) + c;
+        if (Math.abs(yA) < YR - 0.8 && Math.abs(yB) < YR - 0.8 && cand + 1 < XR - 0.3 && cand > -XR + 0.3){
+          if (hasXint && xint > cand - 0.3 && xint < cand + 1.3) continue;
+          x0 = cand; break;
+        }
+      }
+      if (x0 !== null){
+        const yA = m * x0 + c;
+        ctx.save();
+        ctx.setLineDash([3, 3]);
+        ctx.lineWidth = 1.3;
+        ctx.strokeStyle = `rgba(${RGB},0.6)`;
+        ctx.beginPath();
+        ctx.moveTo(X(x0), Y(yA)); ctx.lineTo(X(x0 + 1), Y(yA)); ctx.lineTo(X(x0 + 1), Y(yA + m));
+        ctx.stroke();
+        ctx.restore();
+        texts.push({ t: "run 1", color: `rgba(${RGB},0.85)`, pos: [
+          m >= 0 ? { x: X(x0 + 0.5), y: Y(yA) + 4, align: "center", base: "top" } : { x: X(x0 + 0.5), y: Y(yA) - 4, align: "center", base: "bottom" }
+        ]});
+        if (Math.abs(m) * S >= 12){
+          texts.push({ t: "rise " + num(m, 1), color: `rgba(${RGB},0.85)`, pos: [
+            { x: X(x0 + 1) + 6, y: Y(yA + m / 2), align: "left", base: "middle" }
+          ]});
+        }
+      }
+    }
+
+    // intersection (intersect mode)
+    const mt = mode === "intersect" ? meet(m, c) : null;
+    let meetLabel = null;
+    if (mt && mt.kind === "point" && Math.abs(mt.x) <= XR && Math.abs(mt.y) <= YR){
+      const px = X(mt.x), py = Y(mt.y);
+      ctx.save();
+      ctx.setLineDash([2, 4]);
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = `rgba(${AMBRGB},0.5)`;
+      ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px, cy); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(cx, py); ctx.stroke();
+      ctx.restore();
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      ctx.strokeStyle = AMB;
+      ctx.lineWidth = 2;
+      ctx.shadowColor = `rgba(${AMBRGB},0.8)`;
+      ctx.shadowBlur = 14;
+      ctx.beginPath(); ctx.arc(px, py, 7, 0, Math.PI * 2); ctx.stroke();
+      ctx.fillStyle = ACC;
+      ctx.beginPath(); ctx.arc(px, py, 2.5, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+      meetLabel = { t: `(${num(mt.x, 2)}, ${num(mt.y, 2)})`, color: AMB, pos: [
+        { x: px + 11, y: py - 8, align: "left", base: "middle" },
+        { x: px - 11, y: py - 8, align: "right", base: "middle" },
+        { x: px + 11, y: py + 10, align: "left", base: "middle" },
+        { x: px - 11, y: py + 10, align: "right", base: "middle" }
+      ]};
+    }
+
+    // y-intercept dot
+    const yiY = Y(c);
+    ctx.save();
+    ctx.fillStyle = AMB;
+    ctx.shadowColor = `rgba(${AMBRGB},0.7)`;
+    ctx.shadowBlur = 12;
+    ctx.beginPath(); ctx.arc(cx, yiY, 4.5, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+    // x-intercept dot
+    const showXint = hasXint && Math.abs(c) > 1e-9 && Math.abs(xint) <= XR;
+    if (showXint){
+      ctx.save();
+      ctx.fillStyle = ACC;
+      ctx.shadowColor = `rgba(${RGB},0.7)`;
+      ctx.shadowBlur = 12;
+      ctx.beginPath(); ctx.arc(X(xint), cy, 4.5, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+    }
+
+    // label order: intersection, intercepts, partner, axis titles, numbers
+    const ordered = [];
+    if (meetLabel) ordered.push(meetLabel);
+    ordered.push({ t: `(0, ${num(c, 1)})`, color: AMB, pos: [
+      { x: cx + 9, y: yiY, align: "left", base: "middle" },
+      { x: cx + 9, y: yiY - 12, align: "left", base: "middle" },
+      { x: cx - 9, y: yiY, align: "right", base: "middle" }
+    ]});
+    if (showXint && mode !== "intersect"){
+      ordered.push({ t: `(${num(xint, 1)}, 0)`, color: ACC, pos: [
+        { x: X(xint), y: cy + 6, align: "center", base: "top" },
+        { x: X(xint), y: cy - 6, align: "center", base: "bottom" }
+      ]});
+    }
+    // partner label
+    if (vert){
+      ordered.push({ t: "x = 0", color: AMB, pos: [
+        { x: cx + 6, y: 6, align: "left", base: "top" },
+        { x: cx - 6, y: 6, align: "right", base: "top" }
+      ]});
+    } else {
+      const pt = mode === "parallel" ? eq(m2, c2) : mode === "perp" ? ("m = " + num(m2, 2)) : eq(FIX_M2, FIX_C2);
+      const cands = [4, 3, 5, 2, -2, -3, -4, 1, 6, -5];
+      for (const cand of cands){
+        const yv = m2 * cand + c2;
+        if (Math.abs(yv) < YR - 0.9 && Math.abs(cand) < XR - 0.5 && Y(yv) < h - 40){
+          const px = X(cand), py = Y(yv);
+          ordered.push({ t: pt, color: AMB, pos: m2 > 0
+            ? [{ x: px + 6, y: py + 6, align: "left", base: "top" }, { x: px - 6, y: py - 6, align: "right", base: "bottom" }]
+            : [{ x: px + 6, y: py - 6, align: "left", base: "bottom" }, { x: px - 6, y: py + 6, align: "right", base: "top" }] });
+          break;
+        }
+      }
+    }
+    ordered.push({ t: "x", color: "rgba(237,237,232,0.7)", pos: [
+      { x: w - 6, y: cy - 5, align: "right", base: "bottom" },
+      { x: w - 6, y: cy + 5, align: "right", base: "top" }
+    ]});
+    ordered.push({ t: "y", color: "rgba(237,237,232,0.7)", pos: [
+      { x: cx + 6, y: 5, align: "left", base: "top" },
+      { x: cx - 6, y: 5, align: "right", base: "top" }
+    ]});
+    const step = S >= 34 ? 1 : 2;
+    for (let k = -Math.floor(XR); k <= Math.floor(XR); k++){
+      if (k === 0 || k % step !== 0) continue;
+      ordered.push({ t: num(k, 0), color: "rgba(237,237,232,0.5)", pos: [{ x: X(k), y: cy + 5, align: "center", base: "top" }] });
+    }
+    for (let k = -YR; k <= YR; k++){
+      if (k === 0 || k % step !== 0) continue;
+      ordered.push({ t: num(k, 0), color: "rgba(237,237,232,0.5)", pos: [{ x: cx - 5, y: Y(k), align: "right", base: "middle" }] });
+    }
+
+    // bloom
+    bctx.setTransform(1, 0, 0, 1, 0, 0);
+    bctx.clearRect(0, 0, buf.width, buf.height);
+    if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    ctx.globalAlpha = 0.38;
+    ctx.filter = "blur(7px)";
+    if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+    ctx.restore();
+
+    // vignette
+    const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)");
+    vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig;
+    ctx.fillRect(0, 0, w, h);
+
+    // crisp text with collision avoidance
+    ctx.font = `11px "JetBrains Mono", monospace`;
+    const placed = [];
+    const HT = 12, PAD = 2;
+    function fits(r){
+      if (r.x < 2 || r.x + r.w > w - 2 || r.y < 2 || r.y + r.h > h - 36) return false;
+      for (const p of placed){
+        if (r.x < p.x + p.w + PAD && r.x + r.w + PAD > p.x && r.y < p.y + p.h + PAD && r.y + r.h + PAD > p.y) return false;
+      }
+      return true;
+    }
+    for (const item of ordered){
+      const wd = ctx.measureText(item.t).width;
+      for (const p of item.pos){
+        const rx = p.align === "left" ? p.x : p.align === "right" ? p.x - wd : p.x - wd / 2;
+        const ry = p.base === "top" ? p.y : p.base === "bottom" ? p.y - HT : p.y - HT / 2;
+        const r = { x: rx, y: ry, w: wd, h: HT };
+        if (fits(r)){
+          placed.push(r);
+          ctx.fillStyle = item.color;
+          ctx.textAlign = p.align;
+          ctx.textBaseline = p.base;
+          ctx.fillText(item.t, p.x, p.y);
+          break;
+        }
+      }
+    }
+  }
+
+  // one eased transition to rest, then stop
+  let raf = null, last = 0;
+  function step(now){
+    const dt = Math.min(now - last, 50);
+    last = now;
+    const k = 1 - Math.exp(-dt / 70);
+    let done = true;
+    ["m", "c", "m2", "c2"].forEach(key => {
+      const d = tgt[key] - cur[key];
+      if (Math.abs(d) < 0.0015){ cur[key] = tgt[key]; }
+      else { cur[key] += d * k; done = false; }
+    });
+    draw();
+    raf = done ? null : requestAnimationFrame(step);
+  }
+  function kick(){
+    if (reduce){ Object.assign(cur, tgt); draw(); return; }
+    if (raf === null){ last = performance.now(); raf = requestAnimationFrame(step); }
+  }
+
+  function updateUI(){
+    const m = tgt.m, c = tgt.c;
+    mVal.textContent = num(m, 1);
+    cVal.textContent = num(c, 1);
+    mIn.style.setProperty("--fill", ((m + 3) / 6 * 100) + "%");
+    cIn.style.setProperty("--fill", ((c + 4) / 8 * 100) + "%");
+    eqEl.textContent = eq(m, c);
+
+    if (mode === "intersect"){
+      const mt = meet(m, c);
+      statL.textContent = "Intersection x";
+      statR.textContent = "Intersection y";
+      if (mt.kind === "point"){
+        statLv.textContent = num(mt.x, 2);
+        statRv.textContent = num(mt.y, 2);
+        const off = Math.abs(mt.x) > currentXR() || Math.abs(mt.y) > YR;
+        overlay.textContent = `Meet at (${num(mt.x, 2)}, ${num(mt.y, 2)})` + (off ? " · off picture" : "");
+      } else if (mt.kind === "none"){
+        statLv.textContent = "none";
+        statRv.textContent = "none";
+        overlay.textContent = "Parallel · no solution";
+      } else {
+        statLv.textContent = "every x";
+        statRv.textContent = "on line";
+        overlay.textContent = "Same line · infinite solutions";
+      }
+      drop.textContent = intersectText();
+    } else {
+      statL.textContent = "Gradient m · rate";
+      statR.textContent = "Intercept c · start";
+      statLv.textContent = (m > 0 ? "+" : "") + num(m, 1);
+      statRv.textContent = num(c, 1);
+      if (mode === "parallel"){
+        overlay.innerHTML = `<span class="lr-eq">${eq(tgt.m2, tgt.c2)}</span> · no solution`;
+        drop.textContent = parallelText;
+      } else {
+        if (vert){
+          overlay.innerHTML = `Partner <span class="lr-eq">x = 0</span> · meet at (0, ${num(c, 1)})`;
+        } else {
+          overlay.innerHTML = `Meet at (0, ${num(c, 1)}) · <span class="lr-eq">${num(m, 1)} × ${num(tgt.m2, 2)} = −1</span>`;
+        }
+        drop.textContent = perpText;
+      }
+    }
+  }
+
+  mIn.addEventListener("input", e => {
+    tgt.m = parseFloat(e.target.value);
+    partner(); updateUI(); kick();
+  });
+  cIn.addEventListener("input", e => {
+    tgt.c = parseFloat(e.target.value);
+    partner(); updateUI(); kick();
+  });
+  pills.forEach(btn => {
+    btn.addEventListener("click", () => {
+      mode = btn.getAttribute("data-mode");
+      pills.forEach(b => b.setAttribute("aria-pressed", b === btn ? "true" : "false"));
+      partner(); updateUI(); kick();
+    });
+  });
+
+  function resize(){
+    const rect = wrap.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    buf.width = canvas.width;
+    buf.height = canvas.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    draw();
+    updateUI();
+  }
+  if (window.ResizeObserver){
+    new ResizeObserver(() => resize()).observe(wrap);
+  }
+  window.addEventListener("resize", resize);
+
+  partner();
+  Object.assign(cur, tgt);
+  resize();
   updateUI();
-});
-
-cSlider.addEventListener('input', (e) => {
-  c = parseFloat(e.target.value);
-  updateUI();
-});
-
-btnParallel.addEventListener('click', () => {
-  btnParallel.classList.add('active');
-  btnPerp.classList.remove('active');
-  knowdropText.textContent = parallelText;
-  mode = 'parallel';
-});
-
-btnPerp.addEventListener('click', () => {
-  btnPerp.classList.add('active');
-  btnParallel.classList.remove('active');
-  knowdropText.textContent = perpText;
-  mode = 'perp';
-});
-
-window.addEventListener('resize', resize);
-resize();
-updateUI();
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'linear-relationships'},'*');}catch(e){}}

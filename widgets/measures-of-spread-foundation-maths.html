@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Measures of Spread — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Measures of spread — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -315,29 +315,30 @@ canvas {
   0%, 100% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.35; transform: scale(0.6); }
 }
+.canvas-wrapper { min-height: 250px; }
 </style>
 
 <div class="container">
-  <h2 class="sr-only">Measures of Spread Interactive Widget</h2>
+  <h2 class="sr-only">Measures of spread: range, standard deviation and IQR</h2>
   
-  <h1>Two Outliers Can Make Your Data Look <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">Perfectly Scattered</span></h1>
+  <h1>Two outliers can make your data look <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">perfectly scattered</span></h1>
   
-  <p class="intro">Range and standard deviation are both pulled hard by extreme values — range uses only the two edges, and standard deviation squares every distance from the mean. The interquartile range (IQR) uses only the middle half, so it barely moves. Drag the slider below to add outliers and watch how each measure reacts to the same dataset.</p>
+  <p class="intro">Range and standard deviation are both pulled hard by extreme values — range uses only the two edges, and standard deviation squares every distance from the mean. The interquartile range (IQR) uses only the middle half, so it barely moves. Add outliers to 20 bus waiting times and watch how each measure reacts.</p>
   
   <div class="card">
     <div class="card-header">
-      <span class="card-label">Dataset Viewer</span>
-      <span class="live-tag" id="liveTag">20 points clustered</span>
+      <span class="card-label">Dataset viewer</span>
+      <span class="live-tag" id="liveTag">20 values</span>
     </div>
-    <p class="card-hint">Each value is a point’s distance from the centre. The slider adds up to four extreme outliers.</p>
+    <p class="card-hint">Each dot is one day: minutes waited for the bus. Add up to four extreme days.</p>
     
     <div class="canvas-wrapper">
-      <canvas id="canvas"></canvas>
-      <div class="canvas-overlay" id="overlayTag">All points within 2 units of centre</div>
+      <canvas id="canvas" role="img" aria-label="Dot plot of bus waiting times on a number line from 0 to 30 minutes, with the range, IQR and standard deviation marked"></canvas>
+      <div class="canvas-overlay" id="overlayTag">20 days, no outliers</div>
     </div>
     
     <div class="slider-group">
-      <label class="slider-label" for="spreadSlider">Outlier Count</label>
+      <label class="slider-label" for="spreadSlider">Outlier count</label>
       <input type="range" id="spreadSlider" class="spread-slider" min="0" max="4" value="0" step="1">
       <div class="ticks" aria-hidden="true">
         <span style="left:calc(10px + 0 * (100% - 20px))">0</span>
@@ -351,15 +352,15 @@ canvas {
     <div class="stat-row">
       <div class="stat">
         <div class="stat-label">Range</div>
-        <div class="stat-value" id="rangeValue">4.0</div>
+        <div class="stat-value" id="rangeValue">7.0</div>
       </div>
       <div class="stat">
-        <div class="stat-label">Std dev</div>
-        <div class="stat-value" id="sdValue" style="color:var(--amb)">0.6</div>
+        <div class="stat-label">Std dev (÷ n)</div>
+        <div class="stat-value" id="sdValue" style="color:var(--amb)">1.8</div>
       </div>
       <div class="stat">
         <div class="stat-label">IQR</div>
-        <div class="stat-value" id="iqrValue" style="color:var(--ink)">0.5</div>
+        <div class="stat-value" id="iqrValue" style="color:var(--ink)">3.0</div>
       </div>
     </div>
   </div>
@@ -371,7 +372,7 @@ canvas {
     </div>
     
     <div class="knowdrop" id="knowdrop">
-      Range is the simplest measure of spread — you just subtract the minimum value from the maximum value. While it's easy to calculate and understand, range has a critical weakness: it's completely determined by only two data points, the extremes. If a dataset has 1000 values tightly clustered around the mean but one outlier far away, the range will be huge even though 99.9% of the data shows minimal variation. This makes range useful for understanding the full extent of your data, but unreliable for describing typical spread when outliers are present.
+      Range is the simplest measure of spread — you just subtract the minimum value from the maximum value. While it is easy to calculate and understand, range has a critical weakness: it is completely determined by only two data points, the extremes. If a dataset has 1000 values tightly clustered around the mean but one outlier far away, the range will be huge even though 99.9% of the data shows minimal variation. This makes range useful for understanding the full extent of your data, but unreliable for describing typical spread when outliers are present.
     </div>
   </div>
   
@@ -386,264 +387,154 @@ canvas {
 </div>
 
 <script>
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d', { alpha: false });
-const liveTag = document.getElementById('liveTag');
-const overlayTag = document.getElementById('overlayTag');
-const rangeValue = document.getElementById('rangeValue');
-const sdValue = document.getElementById('sdValue');
-const iqrValue = document.getElementById('iqrValue');
-const slider = document.getElementById('spreadSlider');
-const knowdrop = document.getElementById('knowdrop');
-const toggleBtns = document.querySelectorAll('.toggle-btn');
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d", { alpha: false });
+const liveTag = document.getElementById("liveTag");
+const overlayTag = document.getElementById("overlayTag");
+const rangeValue = document.getElementById("rangeValue");
+const sdValue = document.getElementById("sdValue");
+const iqrValue = document.getElementById("iqrValue");
+const slider = document.getElementById("spreadSlider");
+const knowdrop = document.getElementById("knowdrop");
+const toggleBtns = document.querySelectorAll(".toggle-btn");
 
 const dpr = Math.min(window.devicePixelRatio || 1, 2);
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d', { alpha: false });
 
-let points = [];
+/* 20 ordinary days (minutes waited for the bus), then up to four extreme days added in this order */
+const CORE = [8, 9, 9, 10, 10, 10, 11, 11, 11, 11, 12, 12, 12, 12, 13, 13, 13, 14, 14, 15];
+const EXTRA = [27, 1, 29, 25];
+const LO = 0, HI = 30;
 let outlierCount = 0;
-let time = 0;
-let animFrame;
 
 const knowdropContent = {
-  range: "Range is the simplest measure of spread — you just subtract the minimum value from the maximum value. While it's easy to calculate and understand, range has a critical weakness: it's completely determined by only two data points, the extremes. If a dataset has 1000 values tightly clustered around the mean but one outlier far away, the range will be huge even though 99.9% of the data shows minimal variation. This makes range useful for understanding the full extent of your data, but unreliable for describing typical spread when outliers are present.",
-  iqr: "The interquartile range (IQR) measures the spread of the middle 50% of your data by subtracting the first quartile (Q1) from the third quartile (Q3). Because IQR only considers the central half of the distribution, it's resistant to outliers — extreme values beyond the quartiles don't affect it at all. This makes IQR particularly valuable when working with skewed distributions or datasets contaminated by measurement errors. In box plots, IQR is the height of the box itself, and values more than 1.5 × IQR beyond the quartiles are often flagged as potential outliers."
+  range: "Range is the simplest measure of spread — you just subtract the minimum value from the maximum value. While it is easy to calculate and understand, range has a critical weakness: it is completely determined by only two data points, the extremes. If a dataset has 1000 values tightly clustered around the mean but one outlier far away, the range will be huge even though 99.9% of the data shows minimal variation. This makes range useful for understanding the full extent of your data, but unreliable for describing typical spread when outliers are present.",
+  iqr: "The interquartile range (IQR) measures the spread of the middle 50% of your data by subtracting the first quartile (Q1) from the third quartile (Q3). Because IQR only considers the central half of the distribution, it is resistant to outliers: an extreme value can only nudge the quartiles by shifting which values sit in the middle half, never by its size. This makes IQR particularly valuable when working with skewed distributions or datasets with measurement errors. In box plots, IQR is the length of the box itself, and values more than 1.5 × IQR beyond the quartiles are often flagged as potential outliers."
 };
+
+function med(arr) {
+  const m = Math.floor(arr.length / 2);
+  return arr.length % 2 ? arr[m] : (arr[m - 1] + arr[m]) / 2;
+}
+
+function stats() {
+  const values = CORE.concat(EXTRA.slice(0, outlierCount));
+  const sorted = values.slice().sort((a, b) => a - b);
+  const n = values.length;
+  const min = sorted[0], max = sorted[n - 1];
+  const mean = values.reduce((a, b) => a + b, 0) / n;
+  const sd = Math.sqrt(values.reduce((s, v) => s + (v - mean) * (v - mean), 0) / n);
+  /* quartiles: median of the lower half and of the upper half (median left out when n is odd) */
+  const half = Math.floor(n / 2);
+  const q1 = med(sorted.slice(0, half));
+  const q3 = med(sorted.slice(n - half));
+  return { values, sorted, n, min, max, range: max - min, mean, sd, q1, q3, iqr: q3 - q1 };
+}
 
 function resize() {
   const rect = canvas.getBoundingClientRect();
   if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
   canvas.width = Math.round(rect.width * dpr);
   canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  draw();
 }
 
-function initPoints() {
-  points = [];
-  // Core cluster: 20 points
-  for (let i = 0; i < 20; i++) {
-    points.push({
-      x: (Math.random() - 0.5) * 2,
-      y: (Math.random() - 0.5) * 2,
-      vx: (Math.random() - 0.5) * 0.3,
-      vy: (Math.random() - 0.5) * 0.3,
-      outlier: false
-    });
-  }
-}
-
-function updatePoints() {
-  const targetOutliers = outlierCount;
-  const currentOutliers = points.filter(p => p.outlier).length;
-  
-  if (currentOutliers < targetOutliers) {
-    for (let i = currentOutliers; i < targetOutliers; i++) {
-      // Keep outliers within 30 degrees of horizontal so every one stays on the canvas
-      const angle = (Math.random() < 0.5 ? 0 : Math.PI) + (Math.random() - 0.5) * Math.PI / 3;
-      const dist = 8 + Math.random() * 4;
-      points.push({
-        x: Math.cos(angle) * dist,
-        y: Math.sin(angle) * dist,
-        vx: (Math.random() - 0.5) * 0.15,
-        vy: (Math.random() - 0.5) * 0.15,
-        outlier: true
-      });
-    }
-  } else if (currentOutliers > targetOutliers) {
-    points = points.filter((p, idx) => {
-      if (p.outlier && currentOutliers - points.slice(0, idx).filter(pp => pp.outlier).length > targetOutliers) {
-        return false;
-      }
-      return true;
-    });
-  }
-  
-  // Update positions with gentle drift
-  points.forEach(p => {
-    p.x += p.vx * 0.016;
-    p.y += p.vy * 0.016;
-    
-    if (!p.outlier) {
-      // Keep core points near centre
-      const dx = -p.x * 0.02;
-      const dy = -p.y * 0.02;
-      p.vx += dx;
-      p.vy += dy;
-      p.vx *= 0.98;
-      p.vy *= 0.98;
-    } else {
-      // Outliers drift slowly
-      p.vx *= 0.995;
-      p.vy *= 0.995;
-    }
-  });
-  
-  // Calculate stats
-  const values = points.map(p => Math.hypot(p.x, p.y));
-  const min = Math.min(...values);
-  const max = Math.max(...values);
-  const range = max - min;
-  
-  const mean = values.reduce((a, b) => a + b, 0) / values.length;
-  const variance = values.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / values.length;
-  const sd = Math.sqrt(variance);
-  
-  // IQR: median of the lower half to median of the upper half
-  const sorted = values.slice().sort((a, b) => a - b);
-  const half = Math.floor(sorted.length / 2);
-  const med = arr => {
-    const m = Math.floor(arr.length / 2);
-    return arr.length % 2 ? arr[m] : (arr[m - 1] + arr[m]) / 2;
-  };
-  const iqr = med(sorted.slice(sorted.length - half)) - med(sorted.slice(0, half));
-  
-  rangeValue.textContent = range.toFixed(1);
-  sdValue.textContent = sd.toFixed(1);
-  iqrValue.textContent = iqr.toFixed(1);
-  
-  liveTag.textContent = `${points.length} points${outlierCount > 0 ? ' + outliers' : ' clustered'}`;
-  
-  if (outlierCount === 0) {
-    overlayTag.textContent = 'All points within 2 units of centre';
-  } else {
-    overlayTag.textContent = `${outlierCount} outlier${outlierCount > 1 ? 's' : ''} · IQR holds`;
-  }
-}
+function fmt1(x) { return (Math.round(x * 10) / 10).toFixed(1); }
 
 function draw() {
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  const cx = w / 2;
-  const cy = h / 2;
-  
-  ctx.fillStyle = '#000';
+  const w = canvas.width / dpr, h = canvas.height / dpr;
+  if (!w || !h) return;
+  const st = stats();
+  ctx.fillStyle = "#000";
   ctx.fillRect(0, 0, w, h);
-  
-  // Grid
-  ctx.strokeStyle = 'rgba(126, 217, 122,0.08)';
-  ctx.lineWidth = 1;
-  const spacing = w / 16;
-  for (let i = -8; i <= 8; i++) {
-    ctx.beginPath();
-    ctx.moveTo(cx + i * spacing, 0);
-    ctx.lineTo(cx + i * spacing, h);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(0, cy + i * spacing);
-    ctx.lineTo(w, cy + i * spacing);
-    ctx.stroke();
-  }
-  
-  // Axes
-  ctx.strokeStyle = 'rgba(126, 217, 122,0.2)';
+
+  const pad = 22, axisY = h - 72;
+  const xOf = v => pad + (v - LO) / (HI - LO) * (w - 2 * pad);
+  ctx.font = "10px \"JetBrains Mono\", monospace";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+
+  /* number line with a labelled scale */
+  ctx.strokeStyle = "rgba(126, 217, 122,0.35)";
   ctx.lineWidth = 1.5;
-  ctx.beginPath();
-  ctx.moveTo(0, cy);
-  ctx.lineTo(w, cy);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(cx, 0);
-  ctx.lineTo(cx, h);
-  ctx.stroke();
-  
-  // Draw points
-  const scale = w / 24;
-  points.forEach(p => {
-    const px = cx + p.x * scale;
-    const py = cy + p.y * scale;
-    
-    if (p.outlier) {
-      // Outliers: amber with glow
-      const grad = ctx.createRadialGradient(px, py, 0, px, py, 8);
-      grad.addColorStop(0, 'rgba(250,199,117,0.8)');
-      grad.addColorStop(0.5, 'rgba(250,199,117,0.4)');
-      grad.addColorStop(1, 'rgba(250,199,117,0)');
-      ctx.save();
-      ctx.globalCompositeOperation = 'lighter';
-      ctx.fillStyle = grad;
-      ctx.beginPath();
-      ctx.arc(px, py, 8, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-      
-      ctx.fillStyle = '#FAC775';
-      ctx.beginPath();
-      ctx.arc(px, py, 3, 0, Math.PI * 2);
-      ctx.fill();
-    } else {
-      // Core points: accent with glow
-      const grad = ctx.createRadialGradient(px, py, 0, px, py, 6);
-      grad.addColorStop(0, 'rgba(126, 217, 122,0.9)');
-      grad.addColorStop(0.5, 'rgba(126, 217, 122,0.4)');
-      grad.addColorStop(1, 'rgba(126, 217, 122,0)');
-      ctx.save();
-      ctx.globalCompositeOperation = 'lighter';
-      ctx.fillStyle = grad;
-      ctx.beginPath();
-      ctx.arc(px, py, 6, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-      
-      ctx.fillStyle = '#7ED97A';
-      ctx.beginPath();
-      ctx.arc(px, py, 2.5, 0, Math.PI * 2);
-      ctx.fill();
-    }
+  ctx.beginPath(); ctx.moveTo(xOf(LO), axisY); ctx.lineTo(xOf(HI), axisY); ctx.stroke();
+  for (let v = LO; v <= HI; v++) {
+    const x = xOf(v), major = v % 5 === 0;
+    ctx.strokeStyle = major ? "rgba(237,237,232,0.5)" : "rgba(126, 217, 122,0.2)";
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(x, axisY); ctx.lineTo(x, axisY + (major ? 6 : 3)); ctx.stroke();
+    if (major) { ctx.fillStyle = "#8C9389"; ctx.fillText(String(v), x, axisY + 14); }
+  }
+  ctx.fillStyle = "#8C9389";
+  ctx.textAlign = "right"; ctx.fillText("minutes", xOf(HI), axisY + 26); ctx.textAlign = "center";
+
+  /* stacked dots, one per day */
+  const counts = {};
+  const r = Math.max(2.5, Math.min(5, (w - 2 * pad) / (HI - LO) / 2.4));
+  const core = CORE.length;
+  st.values.forEach((v, i) => {
+    counts[v] = (counts[v] || 0) + 1;
+    const y = axisY - r - 2 - (counts[v] - 1) * (2 * r + 1);
+    ctx.beginPath(); ctx.arc(xOf(v), y, r, 0, Math.PI * 2);
+    ctx.fillStyle = i >= core ? "#FAC775" : "#7ED97A";
+    ctx.fill();
   });
-  
-  // Bloom
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
-  
-  // Vignette
-  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-  
-  time += 0.016;
+
+  /* brackets: range (accent), IQR (ink), mean ± 1 SD band (amber) */
+  function bracket(a, b, y, color, label) {
+    const xa = xOf(a), xb = xOf(b);
+    ctx.strokeStyle = color; ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(xa, y + 5); ctx.lineTo(xa, y); ctx.lineTo(xb, y); ctx.lineTo(xb, y + 5);
+    ctx.stroke();
+    ctx.fillStyle = color;
+    ctx.fillText(label, Math.min(Math.max((xa + xb) / 2, 50), w - 50), y - 8);
+  }
+  bracket(st.min, st.max, 18, "#7ED97A", "range " + st.min + " to " + st.max + " = " + fmt1(st.range));
+  bracket(st.q1, st.q3, 46, "#EDEDE8", "IQR " + st.q1 + " to " + st.q3 + " = " + fmt1(st.iqr));
+  const sdA = Math.max(LO, st.mean - st.sd), sdB = Math.min(HI, st.mean + st.sd);
+  ctx.fillStyle = "rgba(250,199,117,0.12)";
+  ctx.fillRect(xOf(sdA), 62, xOf(sdB) - xOf(sdA), axisY - 62);
+  ctx.strokeStyle = "rgba(250,199,117,0.8)"; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(xOf(st.mean), 62); ctx.lineTo(xOf(st.mean), axisY); ctx.stroke();
+  ctx.fillStyle = "#FAC775";
+  ctx.fillText("mean ± 1 SD", Math.min(Math.max(xOf(st.mean), 40), w - 40), 72);
+
+  setReadouts(st);
 }
 
-function animate() {
-  updatePoints();
+/* readouts come from the model, whatever the canvas size (a picture that loads hidden still shows the true numbers) */
+function setReadouts(st) {
+  rangeValue.textContent = fmt1(st.range);
+  sdValue.textContent = fmt1(st.sd);
+  iqrValue.textContent = fmt1(st.iqr);
+  liveTag.textContent = st.n + " values";
+  overlayTag.textContent = outlierCount === 0
+    ? "20 days, no outliers"
+    : outlierCount + " extreme day" + (outlierCount > 1 ? "s" : "") + " added · IQR " + fmt1(st.iqr);
+}
+
+slider.addEventListener("input", (e) => {
+  outlierCount = parseInt(e.target.value, 10);
+  slider.style.setProperty("--fill", (outlierCount / 4) * 100 + "%");
+  setReadouts(stats());
   draw();
-  animFrame = requestAnimationFrame(animate);
-}
-
-slider.addEventListener('input', (e) => {
-  const val = parseInt(e.target.value);
-  outlierCount = val;
-  const pct = (val / 4) * 100;
-  slider.style.setProperty('--fill', pct + '%');
 });
 
 toggleBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    toggleBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const mode = btn.dataset.mode;
-    knowdrop.textContent = knowdropContent[mode];
+  btn.addEventListener("click", () => {
+    toggleBtns.forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    knowdrop.textContent = knowdropContent[btn.dataset.mode];
   });
 });
 
-window.addEventListener('resize', resize);
-
-initPoints();
+window.addEventListener("resize", resize);
+slider.style.setProperty("--fill", "0%");
+setReadouts(stats());
 resize();
-slider.style.setProperty('--fill', '0%');
-animate();
 </script>
+
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'measures-of-spread'},'*');}catch(e){}}
 if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

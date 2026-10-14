@@ -109,6 +109,10 @@ h1 {
   margin-bottom: 16px;
 }
 
+@media (max-width: 480px) {
+  .canvas-wrapper { aspect-ratio: 4/3; }
+}
+
 canvas {
   position: absolute;
   inset: 0;
@@ -332,21 +336,21 @@ canvas {
 <div class="container">
   <h1>The past is not neutral — it always <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">serves</span></h1>
   
-  <p class="intro">History is not a passive record. The same event can be memorial to one group, a lesson to another, identity to a third, and a weapon to a fourth. Use the slider to see how each purpose reshapes what the past "says."</p>
+  <p class="intro">History is not a passive record. The same event can be memorial to one group, a lesson to another, identity to a third, and a weapon to a fourth. Change the purpose to see how each one reshapes what the past "says."</p>
 
   <div class="card">
     <div class="card-header">
-      <span class="card-label">September 11, 2001</span>
+      <span class="card-label">Attacks of 11 September 2001</span>
       <span class="live-tag" id="activeZone">Memorial</span>
     </div>
-    <p class="hint">Slide to change purpose — watch how the framing transforms</p>
+    <p class="hint">Switch the purpose. Watch what the same event is made to say.</p>
     
     <div class="canvas-wrapper">
       <canvas id="canvas"></canvas>
     </div>
 
     <div class="slider-container">
-      <label class="slider-label" for="purposeSlider">Historical Purpose</label>
+      <label class="slider-label" for="purposeSlider">Historical purpose</label>
       <div class="slider-wrapper">
         <input type="range" min="0" max="3" value="0" step="1" class="slider" id="purposeSlider">
         <div class="slider-labels">
@@ -372,9 +376,9 @@ canvas {
 
   <div class="card">
     <div class="toggle-section">
-      <div class="toggle-buttons">
-        <button class="toggle-btn active" data-toggle="perspectives">Perspectives</button>
-        <button class="toggle-btn" data-toggle="debate">Debate</button>
+      <div class="toggle-buttons" role="group">
+        <button class="toggle-btn active" data-toggle="perspectives" aria-pressed="true">Perspectives</button>
+        <button class="toggle-btn" data-toggle="debate" aria-pressed="false">Debate</button>
       </div>
     </div>
     
@@ -406,25 +410,29 @@ const purposes = [
     name: "Memorial", 
     color: "#B583E6", 
     emphasis: "Grief",
-    example: "USA mourns the loss of New Yorkers lost in the towers."
+    producer: "Victims' families and a memorial trust",
+    example: "Every name is read aloud each year; the dead are the story, not the politics."
   },
   { 
     name: "Lesson", 
     color: "#FAC775", 
     emphasis: "Pattern",
-    example: "Security failures allowed the attack; vigilance prevents terror."
+    producer: "An official inquiry",
+    example: "A failure of imagination by security agencies; reform so it cannot happen again."
   },
   { 
     name: "Identity", 
     color: "#8257CB", 
     emphasis: "Belonging",
-    example: "We are a resilient nation, united in the face of adversity."
+    producer: "A head of government's address",
+    example: "We were attacked because of who we are; a united nation that will not be broken."
   },
   { 
     name: "Weapon", 
     color: "#EB5757", 
     emphasis: "Power",
-    example: "The attack justifies our war on terror and foreign intervention."
+    producer: "A government urging war, and its critics",
+    example: "This justifies invading another country. Critics reply: that country had no part in it."
   }
 ];
 
@@ -507,11 +515,11 @@ function initParticles() {
     if (type === 'memorial') {
       animationParticles.push(new Particle(type, Math.random() * w, Math.random() * h));
     } else if (type === 'lesson') {
-      const gridSize = 5;
-      const spacing = Math.min(w, h) / gridSize;
-      const row = Math.floor(i / gridSize);
-      const col = i % gridSize;
-      animationParticles.push(new Particle(type, col * spacing + spacing / 2, row * spacing + spacing / 2));
+      const gridCols = 8;
+      const gridRows = 5;
+      const row = Math.floor(i / gridCols);
+      const col = i % gridCols;
+      animationParticles.push(new Particle(type, col * (w / gridCols) + w / (gridCols * 2), row * (h / gridRows) + h / (gridRows * 2)));
     } else if (type === 'identity') {
       animationParticles.push(new Particle(type, Math.random() * w, Math.random() * h));
     } else if (type === 'weapon') {
@@ -639,42 +647,50 @@ function draw() {
   ctx.fillStyle = bgGrad;
   ctx.fillRect(0, 0, w, h);
 
+  // Text scale: 1 at the full-width canvas, smaller on narrow screens
+  const s = Math.max(0.7, Math.min(1, h / 387));
+
   // Event title
-  ctx.font = "700 28px Geist, sans-serif";
+  ctx.font = `700 ${28 * s}px Geist, sans-serif`;
   ctx.fillStyle = "#EDEDE8";
   ctx.textAlign = "center";
-  ctx.fillText("September 11, 2001", w / 2, h * 0.18);
+  ctx.fillText("11 September 2001", w / 2, h * 0.18);
 
   // Event subtitle
-  ctx.font = "400 14px Geist, sans-serif";
+  ctx.font = `400 ${14 * s}px Geist, sans-serif`;
   ctx.fillStyle = "rgba(237, 237, 232, 0.6)";
-  ctx.fillText("Terrorist attacks on World Trade Center", w / 2, h * 0.24);
+  ctx.fillText("Four hijacked aircraft; nearly 3,000 dead.", w / 2, h * 0.24);
 
   // Purpose badge
   const badgeY = h * 0.38;
-  ctx.font = "500 13px 'JetBrains Mono', monospace";
+  ctx.font = `500 ${13 * s}px 'JetBrains Mono', monospace`;
   ctx.fillStyle = purpose.color;
   ctx.fillText(purpose.name.toUpperCase(), w / 2, badgeY);
 
   // Focus label
-  ctx.font = "400 11px 'JetBrains Mono', monospace";
+  ctx.font = `400 ${Math.max(9, 11 * s)}px 'JetBrains Mono', monospace`;
   ctx.fillStyle = "rgba(237, 237, 232, 0.5)";
-  ctx.fillText("FOCUS ON:", w / 2, badgeY + 28);
+  ctx.fillText("FOCUS ON:", w / 2, badgeY + 28 * s);
+
+  // Producer line
+  ctx.fillText("TOLD BY: " + purpose.producer.toUpperCase(), w / 2, badgeY + 42 * s);
 
   // Emphasis
-  ctx.font = "600 22px Geist, sans-serif";
+  const emphasisY = badgeY + 70 * s;
+  ctx.font = `600 ${22 * s}px Geist, sans-serif`;
   ctx.fillStyle = purpose.color;
-  ctx.fillText(purpose.emphasis.toUpperCase(), w / 2, badgeY + 56);
+  ctx.fillText(purpose.emphasis.toUpperCase(), w / 2, emphasisY);
 
   // Example text box
   const boxPadding = 24;
   const boxWidth = w - boxPadding * 2;
-  const boxY = h * 0.62;
+  let boxY = Math.max(h * 0.62, emphasisY + 14 * s);
   
-  ctx.font = "400 15px Geist, sans-serif";
-  const lines = wrapText(purpose.example, boxWidth - 40);
-  const lineHeight = 24;
-  const boxHeight = lines.length * lineHeight + 32;
+  ctx.font = `400 ${15 * s}px Geist, sans-serif`;
+  const lines = wrapText(purpose.example, boxWidth - 40 * s);
+  const lineHeight = 24 * s;
+  const boxHeight = lines.length * lineHeight + 32 * s;
+  if (boxY + boxHeight > h - 8) boxY = h - 8 - boxHeight;
 
   // Box background
   ctx.fillStyle = "rgba(18, 22, 15, 0.8)";
@@ -689,7 +705,7 @@ function draw() {
   ctx.fillStyle = "#EDEDE8";
   ctx.textAlign = "center";
   lines.forEach((line, i) => {
-    ctx.fillText(line, w / 2, boxY + 28 + i * lineHeight);
+    ctx.fillText(line, w / 2, boxY + 28 * s + i * lineHeight);
   });
 
   // Decorative glow
@@ -773,8 +789,12 @@ const content = {
 
 toggleBtns.forEach(btn => {
   btn.addEventListener("click", () => {
-    toggleBtns.forEach(b => b.classList.remove("active"));
+    toggleBtns.forEach(b => {
+      b.classList.remove("active");
+      b.setAttribute("aria-pressed", "false");
+    });
     btn.classList.add("active");
+    btn.setAttribute("aria-pressed", "true");
     const key = btn.dataset.toggle;
     knowdropText.textContent = content[key];
   });

@@ -312,18 +312,18 @@ canvas {
   
   <h1>The same $100,000 can last 15 years or <span class="acc" style="text-shadow:0 0 26px var(--ag2)">forever</span></h1>
   
-  <p class="intro">An annuity depletes your principal with each payment. A perpetuity never touches it—you only ever spend the interest, so the principal lasts infinitely. Same money, wildly different timelines. Drag the slider to adjust annual withdrawal and watch what happens.</p>
+  <p class="intro">An annuity depletes your principal with each payment. A perpetuity never touches it—you only ever spend the interest, so the principal lasts infinitely. Same money, wildly different timelines. Raise the annual withdrawal and watch how quickly the principal runs out.</p>
 
   <div class="card">
     <div class="card-header">
       <span class="card-label">Financial Model</span>
-      <span class="live-tag" id="modeTag">Annuity • Depleting</span>
+      <span class="live-tag" id="modeTag">Annuity • Constant</span>
     </div>
-    <div class="card-hint">Drag slider to change annual withdrawal amount</div>
+    <div class="card-hint">Change the annual withdrawal and watch the years remaining</div>
     
     <div class="canvas-wrapper">
       <canvas id="canvas"></canvas>
-      <div class="canvas-overlay" id="overlayTag">Withdrawal: $5,000/year • Years remaining: 20</div>
+      <div class="canvas-overlay" id="overlayTag">Withdrawal: $5,000/year • Principal: Constant (withdrawal = interest)</div>
     </div>
 
     <div class="slider-row">
@@ -339,11 +339,11 @@ canvas {
     <div class="stat-row">
       <div class="stat">
         <div class="stat-label">Years Until Depleted</div>
-        <div class="stat-value acc" id="yearsValue">20</div>
+        <div class="stat-value acc" id="yearsValue">∞</div>
       </div>
       <div class="stat">
         <div class="stat-label">Principal Status</div>
-        <div class="stat-value" id="statusValue" style="color:var(--amb)">Depleting</div>
+        <div class="stat-value" id="statusValue" style="color:var(--acc)">Constant</div>
       </div>
     </div>
   </div>
@@ -409,7 +409,7 @@ function calculate() {
       modeTag.textContent = 'Perpetuity • Eternal';
       overlayTag.textContent = `Withdrawal: $${withdrawal.toLocaleString()}/year • Principal: Forever intact`;
     } else {
-      const yearsLeft = Math.floor(principal / (withdrawal - interestEarned));
+      const yearsLeft = Math.ceil(Math.log(withdrawal / (withdrawal - interestEarned)) / Math.log(1 + interestRate));
       yearsValue.textContent = yearsLeft;
       statusValue.textContent = 'Depleting';
       statusValue.style.color = 'var(--amb)';
@@ -417,17 +417,23 @@ function calculate() {
       overlayTag.textContent = `Withdrawal: $${withdrawal.toLocaleString()}/year • Years remaining: ${yearsLeft}`;
     }
   } else {
-    // Annuity calculation (simplified)
-    // Using basic depletion model: years = principal / (withdrawal - interest)
+    // Annuity calculation
+    // Solves principal(1+r)^n = W((1+r)^n - 1)/r for n
     const netWithdrawal = withdrawal - interestEarned;
-    if (netWithdrawal <= 0) {
+    if (netWithdrawal === 0) {
+      yearsValue.textContent = '∞';
+      statusValue.textContent = 'Constant';
+      statusValue.style.color = 'var(--acc)';
+      modeTag.textContent = 'Annuity • Constant';
+      overlayTag.textContent = `Withdrawal: $${withdrawal.toLocaleString()}/year • Principal: Constant (withdrawal = interest)`;
+    } else if (netWithdrawal < 0) {
       yearsValue.textContent = '∞';
       statusValue.textContent = 'Growing';
       statusValue.style.color = 'var(--acc)';
       modeTag.textContent = 'Annuity • Growing';
       overlayTag.textContent = `Withdrawal: $${withdrawal.toLocaleString()}/year • Principal: Growing`;
     } else {
-      const yearsLeft = Math.floor(principal / netWithdrawal);
+      const yearsLeft = Math.ceil(Math.log(withdrawal / (withdrawal - interestEarned)) / Math.log(1 + interestRate));
       yearsValue.textContent = yearsLeft;
       statusValue.textContent = 'Depleting';
       statusValue.style.color = 'var(--amb)';
@@ -480,10 +486,12 @@ function draw() {
     if (netWithdrawal <= 0) {
       principalLevel = 1; // growing
     } else {
-      // Simulate depletion over time
-      const yearsToDeplete = principal / netWithdrawal;
+      // Simulate depletion over time (balance after n years with compounding)
+      const yearsToDeplete = Math.log(withdrawal / (withdrawal - interestEarned)) / Math.log(1 + interestRate);
       const simulatedYear = (time / 60) % (yearsToDeplete + 2);
-      principalLevel = Math.max(0, 1 - simulatedYear / yearsToDeplete);
+      const g = Math.pow(1 + interestRate, simulatedYear);
+      const bal = principal * g - withdrawal * (g - 1) / interestRate;
+      principalLevel = Math.max(0, Math.min(1, bal / principal));
     }
   }
   

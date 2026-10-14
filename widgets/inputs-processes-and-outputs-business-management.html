@@ -9,65 +9,54 @@ body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body
   --bg: #0B0D0C;
   --bg2: #12160F;
   --acc: #E85D97;
-  --ag: rgba(232, 93, 151, .7);
-  --ag1: rgba(232, 93, 151, .12);
-  --ag2: rgba(232, 93, 151, .45);
+  --acc-rgb: 232, 93, 151;
+  --ag:  rgba(var(--acc-rgb),.7);
+  --ag1: rgba(var(--acc-rgb),.12);
+  --ag2: rgba(var(--acc-rgb),.45);
   --amb: #FAC775;
   --ink: #EDEDE8;
   --ink-dim: #8C9389;
   --line: #262B26;
+  --ink-rgb: 237,237,232;
+  --amb-rgb: 250,199,117;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
+  margin: 0;
   background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
   font-family: 'Geist', sans-serif;
   min-height: 100vh;
-  padding: 40px 16px 72px;
+  padding: 40px 16px 0;
   color: var(--ink);
 }
 
 .sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;
 }
 
-.container {
-  max-width: 720px;
-  margin: 0 auto;
-}
+.ipo-wrap { max-width: 720px; margin: 0 auto; }
 
-h1 {
-  font-size: clamp(30px,8vw,52px);
-  font-weight: 700;
+.ipo-h1 {
+  font-size: clamp(26px,6.5vw,44px);
+  font-weight: 800;
   letter-spacing: -0.03em;
-  line-height: 1.02;
-  margin-bottom: 18px;
+  line-height: 1.05;
+  margin: 0 0 16px;
 }
 
-.intro {
+.ipo-intro {
   font-size: 15.5px;
   font-weight: 400;
   color: var(--ink-dim);
-  line-height: 1.55;
   max-width: 58ch;
-  margin-bottom: 32px;
+  line-height: 1.55;
+  margin: 0 0 28px;
 }
 
-.card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
+.ipo-card {
+  background: linear-gradient(180deg,#12160F,#0d100b);
   border: 1px solid var(--line);
   border-radius: 18px;
   padding: 16px;
@@ -75,35 +64,75 @@ h1 {
   margin-bottom: 20px;
 }
 
-.card-header {
+.ipo-head {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 4px;
 }
-
-.card-label {
+.ipo-label {
   font-family: 'JetBrains Mono', monospace;
   font-size: 13px;
   text-transform: uppercase;
-  color: var(--ink);
+  color: #fff;
 }
-
-.live-tag {
+.ipo-live {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
   text-transform: uppercase;
   color: var(--acc);
+  white-space: nowrap;
 }
-
-.card-hint {
+.ipo-hint {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
   color: var(--ink-dim);
-  margin-bottom: 16px;
+  margin-bottom: 14px;
+  line-height: 1.5;
 }
 
-.canvas-wrapper {
+.ipo-sub {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin: 0 0 8px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  letter-spacing: 0.04em;
+}
+.ipo-sub b { font-weight: 500; color: var(--acc); }
+
+.ipo-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.ipo-pill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  padding: 9px 14px;
+  border-radius: 999px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: background .2s, color .2s, border-color .2s, box-shadow .2s;
+  line-height: 1.2;
+}
+.ipo-pill[aria-pressed="true"] {
+  background: rgba(var(--acc-rgb),.1);
+  border-color: var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(var(--acc-rgb),.18);
+}
+.ipo-pill:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
+.ipo-group.ipo-modes .ipo-pill { flex: 1; text-align: center; }
+
+.ipo-canvas-wrap {
   position: relative;
   width: 100%;
   aspect-ratio: 16/9;
@@ -111,22 +140,18 @@ h1 {
   overflow: hidden;
   background: #000;
   box-shadow: inset 0 0 0 1px var(--ag1);
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
-
-canvas {
+.ipo-canvas-wrap canvas {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   display: block;
 }
-
-.canvas-overlay {
+.ipo-overlay {
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  left: 0; right: 0; bottom: 0;
   background: rgba(0,0,0,0.55);
   backdrop-filter: blur(4px);
   padding: 9px 16px;
@@ -135,74 +160,67 @@ canvas {
   text-transform: uppercase;
   color: var(--acc);
   text-align: center;
+  line-height: 1.2;
 }
 
-.slider-row {
-  margin-top: 16px;
-  padding-top: 16px;
+.ipo-slide {
+  margin-top: 4px;
+  padding-top: 14px;
   border-top: 1px solid var(--line);
 }
-
-.slider-label {
+.ipo-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
   font-family: 'JetBrains Mono', monospace;
   font-size: 10.5px;
   text-transform: uppercase;
   color: var(--ink-dim);
   margin-bottom: 10px;
 }
+.ipo-row b { font-weight: 500; color: var(--acc); font-size: 12px; }
 
 .ipo-slider {
-  width: 100%;
-  height: 4px;
   -webkit-appearance: none;
   appearance: none;
+  width: 100%;
+  height: 4px;
   border-radius: 3px;
   outline: none;
+  margin: 6px 0 8px;
   background: linear-gradient(90deg, var(--acc) var(--fill,0%), #23291f var(--fill,0%));
-  margin-bottom: 8px;
 }
-
 .ipo-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
+  width: 20px; height: 20px; border-radius: 50%;
   background: #0B0D0C;
   border: 2px solid var(--acc);
   box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
   transition: box-shadow .15s;
+  cursor: pointer;
 }
-
-.ipo-slider::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
+.ipo-slider::-webkit-slider-thumb:hover { box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag); }
 .ipo-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
+  width: 20px; height: 20px; border-radius: 50%;
   background: #0B0D0C;
   border: 2px solid var(--acc);
   box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
   transition: box-shadow .15s;
+  cursor: pointer;
 }
+.ipo-slider::-moz-range-thumb:hover { box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag); }
+.ipo-slider:focus-visible { outline: 2px solid var(--acc); outline-offset: 4px; }
 
-.ipo-slider::-moz-range-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.tick-labels {
+.ipo-ticks {
   display: flex;
   justify-content: space-between;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
+  font-size: 10px;
   color: var(--ink-dim);
 }
 
-.stat-row {
+.ipo-stats {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
@@ -210,81 +228,44 @@ canvas {
   padding-top: 16px;
   border-top: 1px solid var(--line);
 }
-
-.stat {
-  text-align: center;
-}
-
-.stat-label {
+.ipo-stat { text-align: center; }
+.ipo-stat-label {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10.5px;
   text-transform: uppercase;
   color: var(--ink-dim);
   margin-bottom: 6px;
 }
-
-.stat-value {
+.ipo-stat-val {
   font-family: 'JetBrains Mono', monospace;
   font-size: 24px;
   font-weight: 500;
 }
+.ipo-stat-val.acc { color: var(--acc); }
+.ipo-stat-val.amb { color: var(--amb); }
 
-.stat-value.acc { color: var(--acc); }
-.stat-value.amb { color: var(--amb); }
-
-.toggle-card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 20px;
-}
-
-.toggle-buttons {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.toggle-btn {
-  flex: 1;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14.5px;
-  padding: 12px;
-  border-radius: 11px;
-  background: #12160F;
-  border: 1px solid var(--line);
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: all .2s;
-}
-
-.toggle-btn.active {
-  background: rgba(232,93,151,.1);
-  border: 1px solid var(--acc);
-  color: var(--acc);
-  box-shadow: 0 0 22px rgba(232,93,151,.18);
-}
-
-.knowdrop {
-  padding-top: 16px;
+.ipo-drop {
   border-top: 1px solid var(--line);
+  padding-top: 16px;
   font-size: 14.5px;
   font-weight: 400;
   line-height: 1.65;
   color: var(--ink);
+  margin: 0;
 }
 
-.know-this {
+.ipo-know {
   border-left: 3px solid var(--acc);
   padding: 16px 18px;
   background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
   border-radius: 0 12px 12px 0;
-  margin-bottom: 20px;
+  margin-bottom: 0;
+  padding-bottom: 16px;
 }
-
-.know-this-tag {
+.ipo-know-tag {
+  display: flex;
+  align-items: center;
+  gap: 9px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 13px;
   text-transform: uppercase;
@@ -292,323 +273,575 @@ canvas {
   color: var(--acc);
   margin-bottom: 10px;
 }
-
-.know-this-body {
+.ipo-know-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 8px var(--acc);
+  animation: ipoKnowPulse 2.4s ease-in-out infinite;
+}
+@keyframes ipoKnowPulse { 0%,100%{opacity:1} 50%{opacity:.45} }
+.ipo-know-body {
   font-size: 17.4px;
   font-weight: 400;
   line-height: 1.55;
   color: var(--ink);
-}
-
-.footer {
-  margin-top: 34px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.pulse-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--acc);
-  box-shadow: 0 0 10px var(--acc);
-  animation: ipoPulse 2.4s ease-in-out infinite;
-}
-
-@keyframes ipoPulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: .35; transform: scale(.6); }
+  margin: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pulse-dot { animation: none; }
+  .ipo-know-dot { animation: none; }
+  .ipo-pill, .ipo-slider::-webkit-slider-thumb, .ipo-slider::-moz-range-thumb { transition: none; }
 }
 </style>
 
-<div class="container">
-  <h2 class="sr-only">Interactive visualization of inputs, processes, and outputs in operations management</h2>
-  
-  <h1>Your business doesn't make <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">products</span></h1>
-  
-  <p class="intro">It transforms inputs through processes. Most managers focus on the middle step—efficiency, speed, automation—but the breakthrough comes from mapping the entire flow system. Adjust the slider to see how input volume cascades through transformation into finished outputs.</p>
-  
-  <div class="card">
-    <div class="card-header">
-      <div class="card-label">Operations Flow</div>
-      <div class="live-tag" id="liveTag">Input Volume: 35%</div>
+<div class="ipo-wrap">
+  <h2 class="sr-only">Interactive visualisation of an operations system: five labelled inputs flow through three process stages with hourly capacities into one output, for a car plant or an emergency department</h2>
+
+  <h1 class="ipo-h1">A hospital and a car plant run the same <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">system</span></h1>
+
+  <p class="ipo-intro">Every operation takes inputs (materials, labour, capital, information and time) and transforms them through processes into an output. The only real difference is whether that output is a good you can stack in a warehouse or a service that is used the moment it is made. Switch between the car plant and the emergency department, light each input type to find it in the flow, then push arrivals past the slowest stage and watch where the queue forms.</p>
+
+  <div class="ipo-card">
+    <div class="ipo-head">
+      <div class="ipo-label">Operations system</div>
+      <div class="ipo-live" id="ipoLive">10/h arriving</div>
     </div>
-    <div class="card-hint">Drag slider to adjust raw material flow rate</div>
-    
-    <div class="canvas-wrapper">
-      <canvas id="flowCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">Processing 42 units → 38 outputs</div>
+    <div class="ipo-hint">Pick a system, light each input type, then raise the arrivals above the slowest stage.</div>
+
+    <div class="ipo-sub"><span>Which operation</span></div>
+    <div class="ipo-group ipo-modes" role="group" aria-label="Which operation to draw">
+      <button class="ipo-pill" type="button" data-mode="mfg" aria-pressed="true">Manufacturing</button>
+      <button class="ipo-pill" type="button" data-mode="svc" aria-pressed="false">Service</button>
     </div>
-    
-    <div class="slider-row">
-      <div class="slider-label">Input Volume</div>
-      <input type="range" min="0" max="100" value="35" class="ipo-slider" id="volumeSlider">
-      <div class="tick-labels">
-        <span>Low</span>
-        <span>Medium</span>
-        <span>High</span>
+
+    <div class="ipo-canvas-wrap" id="ipoWrap">
+      <canvas id="ipoCanvas" aria-label="Flow of inputs through process stages to an output"></canvas>
+      <div class="ipo-overlay" id="ipoOverlay" aria-live="polite">10/h in · 10/h out · no queue</div>
+    </div>
+
+    <div class="ipo-sub"><span>Which input types can you find?</span><b id="ipoLit" aria-live="polite">0 of 5 lit</b></div>
+    <div class="ipo-group" role="group" aria-label="Input types to light in the picture" data-kw-multi>
+      <button class="ipo-pill" type="button" data-cat="materials" aria-pressed="false">Materials</button>
+      <button class="ipo-pill" type="button" data-cat="labour" aria-pressed="false">Labour</button>
+      <button class="ipo-pill" type="button" data-cat="capital" aria-pressed="false">Capital</button>
+      <button class="ipo-pill" type="button" data-cat="information" aria-pressed="false">Information</button>
+      <button class="ipo-pill" type="button" data-cat="time" aria-pressed="false">Time</button>
+    </div>
+
+    <div class="ipo-slide">
+      <div class="ipo-row"><span>Inputs arriving</span><b id="ipoRateV">10/h</b></div>
+      <input type="range" class="ipo-slider" id="ipoRate" aria-label="Inputs arriving per hour" min="0" max="20" step="1" value="10">
+      <div class="ipo-ticks"><span>0/h</span><span>5/h</span><span>10/h</span><span>15/h</span><span>20/h</span></div>
+    </div>
+
+    <div class="ipo-stats">
+      <div class="ipo-stat">
+        <div class="ipo-stat-label">Finished per hour</div>
+        <div class="ipo-stat-val acc" id="ipoOut">10/h</div>
       </div>
-    </div>
-    
-    <div class="stat-row">
-      <div class="stat">
-        <div class="stat-label">Throughput Rate</div>
-        <div class="stat-value acc" id="throughput">42</div>
-      </div>
-      <div class="stat">
-        <div class="stat-label">Process Efficiency</div>
-        <div class="stat-value amb" id="efficiency">91%</div>
+      <div class="ipo-stat">
+        <div class="ipo-stat-label">Queue change per hour</div>
+        <div class="ipo-stat-val amb" id="ipoQ">0/h</div>
       </div>
     </div>
   </div>
-  
-  <div class="toggle-card">
-    <div class="toggle-buttons">
-      <button class="toggle-btn active" data-view="manufacturing">Manufacturing</button>
-      <button class="toggle-btn" data-view="service">Service</button>
+
+  <div class="ipo-card">
+    <div class="ipo-sub"><span>Read about each element</span></div>
+    <div class="ipo-group" role="group" aria-label="Which element to read about">
+      <button class="ipo-pill" type="button" data-drop="inputs" aria-pressed="true">Inputs</button>
+      <button class="ipo-pill" type="button" data-drop="processes" aria-pressed="false">Processes</button>
+      <button class="ipo-pill" type="button" data-drop="outputs" aria-pressed="false">Outputs</button>
+      <button class="ipo-pill" type="button" data-drop="goods" aria-pressed="false">Goods vs services</button>
     </div>
-    <div class="knowdrop" id="knowdrop">In manufacturing operations, inputs include raw materials, component parts, machinery, labor hours, and energy. These flow into the transformation process where assembly lines, quality control stations, and packaging systems convert them into finished goods. Each stage adds value: steel sheets become car panels, panels become vehicles, vehicles become customer deliveries. The key insight is that every bottleneck in this flow—a slow supplier, a breakdown-prone machine, an undertrained team—ripples through the entire system, affecting output volume and quality standards.</div>
+    <p class="ipo-drop" id="ipoDrop">Inputs are the resources a business uses to produce goods or services. The course names five types: materials (raw materials and components such as steel or medicines), labour (the people and their skills, from line workers to nurses), capital (equipment and facilities such as robots or scanners), information (the knowledge the operation runs on, such as order specifications or patient records) and time (the hours and minutes the process consumes). Information and time are the two that are most often left off a list, yet an emergency department with no patient records and no consulting time has nothing to transform. Light each input type above and check that both systems have all five.</p>
   </div>
-  
-  <div class="know-this">
-    <div class="know-this-tag">Know This</div>
-    <div class="know-this-body">Every operation is a <span style="color:var(--acc)">transformation system</span> where <span style="color:var(--acc)">inputs</span> (materials, labor, capital, information) flow through structured <span style="color:var(--acc)">processes</span> to create measurable <span style="color:var(--acc)">outputs</span> (goods or services) for customers.</div>
-  </div>
-  
-  <div class="footer">
-    <div class="pulse-dot"></div>
+
+  <div class="ipo-know">
+    <div class="ipo-know-tag"><span class="ipo-know-dot"></span><span>Know This</span></div>
+    <p class="ipo-know-body"><span style="color:var(--acc)">Information and time</span> are inputs just like materials and labour, and every operations system turns them into outputs through <span style="color:var(--acc)">transformation processes</span> whose <span style="color:var(--acc)">slowest stage</span> sets the pace for everything that leaves.</p>
   </div>
 </div>
 
 <script>
-const canvas = document.getElementById('flowCanvas');
-const ctx = canvas.getContext('2d', { alpha: false });
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d', { alpha: false });
-const slider = document.getElementById('volumeSlider');
-const liveTag = document.getElementById('liveTag');
-const canvasOverlay = document.getElementById('canvasOverlay');
-const throughputEl = document.getElementById('throughput');
-const efficiencyEl = document.getElementById('efficiency');
-
-let volume = 35;
-let time = 0;
-let particles = [];
-
-function resize() {
+(function(){
+  const canvas = document.getElementById("ipoCanvas");
+  const wrap = document.getElementById("ipoWrap");
+  const ctx = canvas.getContext("2d");
+  const buf = document.createElement("canvas");
+  const bctx = buf.getContext("2d");
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
+  const CSS = getComputedStyle(document.documentElement);
+  const ACC = CSS.getPropertyValue("--acc").trim();
+  const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+  const INK = CSS.getPropertyValue("--ink-rgb").trim();
+  const AMB = CSS.getPropertyValue("--amb-rgb").trim();
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const HOUR = 8000;
 
-class Particle {
-  constructor() {
-    this.x = 0;
-    this.stage = 0; // 0=input, 1=process, 2=output
-    this.y = Math.random() * 0.5 + 0.25;
-    this.speed = 0.004 + Math.random() * 0.003;
-    this.size = 2 + Math.random() * 2;
-    this.hue = Math.random() * 30 - 15;
-    this.alive = true;
-  }
-  
-  update(dt) {
-    this.x += this.speed * dt * (volume / 35);
-    
-    if (this.x > 1 && this.alive) {
-      this.alive = false;
+  const SYSTEMS = {
+    mfg: {
+      name: "Car plant",
+      outName: ["Finished", "car"],
+      outKind: "Good",
+      outNote: "can be stored",
+      doneWord: "made",
+      inputs: [
+        { cat: "materials", label: "Steel, parts" },
+        { cat: "labour", label: "Line workers" },
+        { cat: "capital", label: "Robots, plant" },
+        { cat: "information", label: "Order specs" },
+        { cat: "time", label: "Shift hours" }
+      ],
+      stages: [
+        { name: "Cutting", cap: 20 },
+        { name: "Assembly", cap: 12 },
+        { name: "Quality check", cap: 18 }
+      ]
+    },
+    svc: {
+      name: "Emergency department",
+      outName: ["Treated", "patient"],
+      outKind: "Service",
+      outNote: "used as made",
+      doneWord: "treated",
+      inputs: [
+        { cat: "materials", label: "Medicines" },
+        { cat: "labour", label: "Medical staff" },
+        { cat: "capital", label: "Beds, scanners" },
+        { cat: "information", label: "Patient records" },
+        { cat: "time", label: "Consult time" }
+      ],
+      stages: [
+        { name: "Triage", cap: 20 },
+        { name: "Diagnosis", cap: 8 },
+        { name: "Treatment", cap: 15 }
+      ]
     }
+  };
+
+  const DROPS = {
+    inputs: "Inputs are the resources a business uses to produce goods or services. The course names five types: materials (raw materials and components such as steel or medicines), labour (the people and their skills, from line workers to nurses), capital (equipment and facilities such as robots or scanners), information (the knowledge the operation runs on, such as order specifications or patient records) and time (the hours and minutes the process consumes). Information and time are the two that are most often left off a list, yet an emergency department with no patient records and no consulting time has nothing to transform. Light each input type above and check that both systems have all five.",
+    processes: "Processes are the actions that transform inputs into outputs: cutting and assembling steel, or triaging and diagnosing a patient. Each stage has a capacity, the number of units it can handle per hour, and the slowest stage sets the pace for the whole system. Push arrivals above that capacity and the inputs do not vanish; they wait, and the queue grows by exactly the difference every hour. That waiting stage is the bottleneck, and easing it is where operations strategies such as technology, materials management and lean management earn their place in the course.",
+    outputs: "Outputs are the finished goods or completed services that leave the transformation process. A finished car is a good: tangible, standardised, and able to be stored as inventory and sold later. A treated patient is a service: intangible, customised to the person, and produced and consumed in the same moment. Outputs are judged against the operations objectives of quality, cost, speed and flexibility, and customer feedback loops back into the system as a new information input. Watch the output node: in the car plant finished units pile up as stock, in the department they go home as soon as they are treated.",
+    goods: "Manufacturing and service businesses run the same input, process, output system but differ in what comes out. Goods are tangible, can be stored as inventory, are usually standardised and involve little customer contact during production. Services are intangible, cannot be stored, are often customised and are produced with the customer present, so a demand peak turns straight into a waiting room. That is why the hospital queue in the picture matters more than the factory one: a half-built car can wait on the line overnight, a patient waits in person. Many businesses, such as a cafe or a car dealership, deliver both at once."
+  };
+
+  let mode = "mfg";
+  let rate = 10;
+  const lit = new Set();
+  let particles = [], queues = [[], [], []], busyUntil = [0, 0, 0];
+  let finished = 0, spawnAcc = 0, spawnN = 0, simNow = 0, flashT = -9999;
+  let running = false, last = 0;
+
+  function sys() { return SYSTEMS[mode]; }
+  function bottleneck() {
+    const s = sys().stages; let b = 0;
+    for (let k = 1; k < s.length; k++) if (s[k].cap < s[b].cap) b = k;
+    return b;
   }
-  
-  draw(w, h) {
-    if (!this.alive) return;
-    
-    let cx, cy, color;
-    
-    if (this.x < 0.28) {
-      // Input zone
-      this.stage = 0;
-      cx = this.x * w * 3.57;
-      cy = this.y * h;
-      color = `hsl(${198 + this.hue}, 70%, 60%)`;
-    } else if (this.x < 0.72) {
-      // Process zone
-      this.stage = 1;
-      const t = (this.x - 0.28) / 0.44;
-      cx = 0.28 * w + t * 0.44 * w;
-      cy = this.y * h + Math.sin(t * Math.PI * 3) * h * 0.08;
-      const hueShift = Math.floor(t * 40);
-      color = `hsl(${330 + hueShift + this.hue}, 75%, 65%)`;
+  function resetSim() {
+    particles = []; queues = [[], [], []]; busyUntil = [0, 0, 0];
+    finished = 0; spawnAcc = 0; spawnN = 0; flashT = -9999;
+  }
+
+  function resize() {
+    const r = wrap.getBoundingClientRect();
+    if (!r.width || !r.height) return;
+    canvas.width = Math.round(r.width * dpr);
+    canvas.height = Math.round(r.height * dpr);
+    buf.width = canvas.width; buf.height = canvas.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    draw();
+  }
+
+  function step(dt) {
+    simNow += dt;
+    const S = sys();
+    if (rate > 0) {
+      const interval = HOUR / rate;
+      spawnAcc += dt;
+      while (spawnAcc >= interval) {
+        spawnAcc -= interval;
+        particles.push({ phase: "in", t: 0, dur: 1100, pill: spawnN % 5, stage: 0, dead: false });
+        spawnN++;
+      }
     } else {
-      // Output zone
-      this.stage = 2;
-      const t = (this.x - 0.72) / 0.28;
-      cx = 0.72 * w + t * 0.28 * w;
-      cy = this.y * h;
-      color = `hsl(${310 + this.hue}, 80%, 70%)`;
+      spawnAcc = 0;
     }
-    
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.fillStyle = color;
-    ctx.beginPath();
-    ctx.arc(cx, cy, this.size, 0, Math.PI * 2);
-    ctx.fill();
-    
-    // Glow
-    const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, this.size * 3);
-    glow.addColorStop(0, color.replace('65%', '50%').replace('60%', '45%').replace('70%', '55%'));
-    glow.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = glow;
-    ctx.beginPath();
-    ctx.arc(cx, cy, this.size * 3, 0, Math.PI * 2);
-    ctx.fill();
+    for (const p of particles) {
+      if (p.phase === "wait") continue;
+      p.t += dt / p.dur;
+      if (p.t >= 1) {
+        if (p.phase === "in") { p.phase = "wait"; p.stage = 0; queues[0].push(p); }
+        else if (p.phase === "proc") {
+          if (p.stage < 2) { p.phase = "link"; p.t = 0; p.dur = 320; }
+          else { p.phase = "out"; p.t = 0; p.dur = 520; }
+        }
+        else if (p.phase === "link") { p.stage++; p.phase = "wait"; queues[p.stage].push(p); }
+        else if (p.phase === "out") { p.dead = true; finished++; flashT = simNow; }
+      }
+    }
+    for (let k = 0; k < 3; k++) {
+      if (busyUntil[k] <= simNow && queues[k].length) {
+        const p = queues[k].shift();
+        p.phase = "proc"; p.t = 0; p.dur = HOUR / S.stages[k].cap;
+        busyUntil[k] = simNow + p.dur;
+      }
+    }
+    particles = particles.filter(p => !p.dead);
+  }
+
+  function rr(x, y, w, h, r) {
+    r = Math.min(r, w / 2, h / 2);
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+  function bez(a, b, c, d, t) {
+    const u = 1 - t;
+    return {
+      x: u * u * u * a.x + 3 * u * u * t * b.x + 3 * u * t * t * c.x + t * t * t * d.x,
+      y: u * u * u * a.y + 3 * u * u * t * b.y + 3 * u * t * t * c.y + t * t * t * d.y
+    };
+  }
+
+  function layout(w, h, S) {
+    const fs = Math.max(11, Math.min(13, w * 0.034));
+    const top = h * 0.06, bot = h - 38;
+    const headY = top + fs;
+    ctx.font = fs + "px Geist, sans-serif";
+    let maxT = 0;
+    S.inputs.forEach(it => { maxT = Math.max(maxT, ctx.measureText(it.label).width); });
+    const pillX = w * 0.025;
+    const pillW = Math.min(Math.max(maxT + 14, w * 0.24), w * 0.34);
+    const pTop = headY + 8;
+    const slot = (bot - pTop) / 5;
+    const twoLine = slot >= 2.6 * fs + 10;
+    const pillH = twoLine ? Math.min(2.3 * fs + 8, slot * 0.84) : Math.min(fs + 9, slot * 0.82);
+    const pills = S.inputs.map((it, i) => ({ x: pillX, y: pTop + (i + 0.5) * slot, w: pillW, h: pillH }));
+    const sx = pillX + pillW + w * 0.045, ex = w * 0.745, gap = w * 0.03;
+    const boxW = (ex - sx - 2 * gap) / 3;
+    const cy = (top + bot) / 2;
+    let boxH = Math.min((bot - top) * 0.3, 64);
+    const by = Math.max(cy - boxH / 2, top + 4 * fs + 18);
+    boxH = Math.max(22, Math.min(boxH, bot - by - fs - 30));
+    const boxes = S.stages.map((s, k) => {
+      const x = sx + k * (boxW + gap);
+      return { x: x, y: by, w: boxW, h: boxH, cx: x + boxW / 2 };
+    });
+    const bm = by + boxH / 2;
+    const ox = (ex + w) / 2 + w * 0.01, oR = Math.min(h * 0.07, 16);
+    return { fs, top, bot, headY, pills, boxes, bm, ox, oR, sx, ex, gap, twoLine };
+  }
+
+  function draw() {
+    const w = canvas.width / dpr, h = canvas.height / dpr;
+    if (!w || !h) return;
+    const S = sys(), L = layout(w, h, S), bi = bottleneck();
+    const fs = L.fs, bm = L.bm;
+    const geist = fs + "px Geist, sans-serif";
+    const mono = fs + "px \"JetBrains Mono\", monospace";
+    const r = Math.max(2.2, w * 0.0075);
+
+    ctx.fillStyle = "rgba(0,0,0,1)";
+    ctx.fillRect(0, 0, w, h);
+
+    // process zone wash
+    ctx.fillStyle = "rgba(" + RGB + ",0.05)";
+    ctx.fillRect(L.sx - L.gap / 2, 0, (L.ex - L.sx) + L.gap, h);
+
+    // zone headers
+    ctx.font = mono;
+    ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
+    ctx.fillStyle = "rgba(" + INK + ",0.5)";
+    ctx.fillText("INPUTS", L.pills[0].x + L.pills[0].w / 2, L.headY);
+    ctx.fillText("PROCESSES", (L.sx + L.ex) / 2, L.headY);
+    ctx.fillText("OUTPUT", L.ox, L.headY);
+
+    // input lines
+    const B0 = L.boxes[0];
+    L.pills.forEach((P, i) => {
+      const on = lit.has(S.inputs[i].cat);
+      const a = { x: P.x + P.w, y: P.y }, d = { x: B0.x, y: bm };
+      const mx = (a.x + d.x) / 2;
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.bezierCurveTo(mx, a.y, mx, d.y, d.x, d.y);
+      ctx.strokeStyle = on ? "rgba(" + RGB + ",0.6)" : "rgba(" + INK + ",0.13)";
+      ctx.lineWidth = on ? 1.5 : 1;
+      ctx.stroke();
+    });
+
+    // input pills
+    L.pills.forEach((P, i) => {
+      const it = S.inputs[i], on = lit.has(it.cat);
+      ctx.save();
+      if (on) { ctx.shadowColor = ACC; ctx.shadowBlur = 14; }
+      ctx.beginPath(); rr(P.x, P.y - P.h / 2, P.w, P.h, P.h / 2);
+      ctx.fillStyle = on ? "rgba(" + RGB + ",0.18)" : "rgba(" + INK + ",0.04)";
+      ctx.fill();
+      ctx.lineWidth = on ? 1.4 : 1;
+      ctx.strokeStyle = on ? ACC : "rgba(" + INK + ",0.22)";
+      ctx.stroke();
+      ctx.restore();
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      if (L.twoLine) {
+        ctx.font = mono;
+        ctx.fillStyle = on ? ACC : "rgba(" + INK + ",0.4)";
+        ctx.fillText(it.cat.toUpperCase(), P.x + P.w / 2, P.y - fs * 0.6);
+        ctx.font = geist;
+        ctx.fillStyle = on ? "rgba(" + INK + ",0.98)" : "rgba(" + INK + ",0.62)";
+        ctx.fillText(it.label, P.x + P.w / 2, P.y + fs * 0.65);
+      } else {
+        ctx.font = geist;
+        ctx.fillStyle = on ? "rgba(" + INK + ",0.98)" : "rgba(" + INK + ",0.62)";
+        ctx.fillText(it.label, P.x + P.w / 2, P.y + 0.5);
+      }
+    });
+    ctx.textBaseline = "alphabetic";
+
+    // stage links and boxes
+    L.boxes.forEach((B, k) => {
+      const st = S.stages[k], isB = k === bi, q = queues[k].length;
+      if (k < 2) {
+        const N = L.boxes[k + 1];
+        ctx.beginPath(); ctx.moveTo(B.x + B.w, bm); ctx.lineTo(N.x - 1, bm);
+        ctx.strokeStyle = "rgba(" + RGB + ",0.5)"; ctx.lineWidth = 1.2; ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(N.x - 5, bm - 3.5); ctx.lineTo(N.x - 1, bm); ctx.lineTo(N.x - 5, bm + 3.5); ctx.stroke();
+      }
+      ctx.save();
+      if (isB && q > 0) { ctx.shadowColor = "rgba(" + AMB + ",0.8)"; ctx.shadowBlur = 12; }
+      ctx.beginPath(); rr(B.x, B.y, B.w, B.h, 6);
+      ctx.fillStyle = "rgba(" + RGB + ",0.08)"; ctx.fill();
+      ctx.lineWidth = 1.2;
+      ctx.strokeStyle = isB && q > 0 ? "rgba(" + AMB + ",0.9)" : "rgba(" + RGB + ",0.55)";
+      ctx.stroke();
+      ctx.restore();
+      ctx.textAlign = "center";
+      const capY = B.y - 7;
+      const nameY = capY - fs - 3 - (k % 2 === 0 ? fs + 2 : 0);
+      ctx.font = geist; ctx.fillStyle = "rgba(" + INK + ",0.92)";
+      ctx.fillText(st.name, B.cx, nameY);
+      ctx.font = mono; ctx.fillStyle = isB ? "rgba(" + AMB + ",0.95)" : "rgba(" + INK + ",0.55)";
+      ctx.fillText(st.cap + "/h", B.cx, capY);
+    });
+
+    // link to output
+    const B2 = L.boxes[2];
+    ctx.beginPath(); ctx.moveTo(B2.x + B2.w, bm); ctx.lineTo(L.ox - L.oR - 3, bm);
+    ctx.strokeStyle = "rgba(" + RGB + ",0.5)"; ctx.lineWidth = 1.2; ctx.stroke();
+
+    // queue tower below the bottleneck
+    const qb = queues[bi].length;
+    if (qb > 0) {
+      const B = L.boxes[bi];
+      const tTop = B.y + B.h + 8, tBot = L.bot - fs - 6;
+      const span = Math.max(tBot - tTop, 4);
+      const sp = Math.max(1.4, Math.min(r * 2 + 1.2, span / qb));
+      ctx.save(); ctx.globalCompositeOperation = "lighter";
+      ctx.fillStyle = "rgba(" + AMB + ",0.9)";
+      for (let j = 0; j < qb; j++) {
+        const y = tTop + j * sp; if (y > tBot) break;
+        ctx.beginPath(); ctx.arc(B.cx, y, r, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.restore();
+      ctx.font = mono; ctx.fillStyle = "rgba(" + AMB + ",0.95)"; ctx.textAlign = "center";
+      ctx.fillText(qb + " waiting", B.cx, L.bot);
+    }
+
+    // particles in motion
+    ctx.save(); ctx.globalCompositeOperation = "lighter";
+    for (const p of particles) {
+      let pos = null;
+      if (p.phase === "in") {
+        const P = L.pills[p.pill];
+        const a = { x: P.x + P.w, y: P.y }, d = { x: B0.x, y: bm }, mx = (a.x + d.x) / 2;
+        pos = bez(a, { x: mx, y: a.y }, { x: mx, y: d.y }, d, Math.min(p.t, 1));
+      } else if (p.phase === "proc") {
+        const B = L.boxes[p.stage];
+        pos = { x: B.x + r + Math.min(p.t, 1) * (B.w - 2 * r), y: bm };
+      } else if (p.phase === "link") {
+        const B = L.boxes[p.stage], N = L.boxes[p.stage + 1];
+        pos = { x: (B.x + B.w) + Math.min(p.t, 1) * (N.x - B.x - B.w), y: bm };
+      } else if (p.phase === "out") {
+        const x0 = B2.x + B2.w, x1 = L.ox - L.oR - 3;
+        pos = { x: x0 + Math.min(p.t, 1) * (x1 - x0), y: bm };
+      } else if (p.phase === "wait" && p.stage !== bi) {
+        const B = L.boxes[p.stage];
+        pos = { x: B.x - r - 2, y: bm };
+      }
+      if (!pos) continue;
+      const g = ctx.createRadialGradient(pos.x, pos.y, 0, pos.x, pos.y, r * 3.2);
+      g.addColorStop(0, "rgba(" + RGB + ",0.4)");
+      g.addColorStop(1, "rgba(" + RGB + ",0)");
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(pos.x, pos.y, r * 3.2, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = ACC;
+      ctx.beginPath(); ctx.arc(pos.x, pos.y, r, 0, Math.PI * 2); ctx.fill();
+    }
     ctx.restore();
+
+    // output node
+    const ox = L.ox, oR = L.oR;
+    const flash = reduce ? 0 : Math.max(0, 1 - (simNow - flashT) / 450);
+    if (flash > 0) {
+      ctx.save(); ctx.globalCompositeOperation = "lighter";
+      const fr = oR * (1.6 + flash * 1.4);
+      const fg = ctx.createRadialGradient(ox, bm, 0, ox, bm, fr);
+      fg.addColorStop(0, "rgba(" + RGB + "," + (0.5 * flash) + ")");
+      fg.addColorStop(1, "rgba(" + RGB + ",0)");
+      ctx.fillStyle = fg; ctx.beginPath(); ctx.arc(ox, bm, fr, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+    }
+    ctx.lineWidth = 1.5; ctx.strokeStyle = ACC; ctx.fillStyle = "rgba(" + RGB + ",0.2)";
+    if (mode === "mfg") {
+      ctx.beginPath(); rr(ox - oR, bm - oR * 0.8, oR * 2, oR * 1.6, 4); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(ox - oR, bm - oR * 0.2); ctx.lineTo(ox + oR, bm - oR * 0.2); ctx.stroke();
+      // stock accrues beside the good
+      const n = Math.min(finished, 4), mw = oR * 0.5;
+      for (let j = 0; j < n; j++) {
+        ctx.beginPath(); rr(ox + oR + 4, bm + oR * 0.8 - (j + 1) * (mw + 1.5), mw, mw, 1.5);
+        ctx.fillStyle = "rgba(" + RGB + ",0.3)"; ctx.fill(); ctx.stroke();
+      }
+    } else {
+      ctx.beginPath(); ctx.arc(ox, bm - oR * 0.45, oR * 0.42, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.arc(ox, bm + oR * 0.8, oR * 0.85, Math.PI, 0); ctx.closePath(); ctx.fill(); ctx.stroke();
+    }
+    ctx.textAlign = "center";
+    ctx.font = mono; ctx.fillStyle = ACC;
+    ctx.fillText(finished + " " + S.doneWord, ox, bm - oR - 8);
+    const lg = (L.bot - bm - oR) >= 3 * fs + 8 ? fs + 2 : fs;
+    let y = bm + oR + lg;
+    ctx.font = geist; ctx.fillStyle = "rgba(" + INK + ",0.92)";
+    ctx.fillText(S.outName[0], ox, y); y += lg;
+    ctx.fillText(S.outName[1], ox, y); y += lg + 1;
+    ctx.font = mono; ctx.fillStyle = ACC;
+    ctx.fillText(S.outKind.toUpperCase(), ox, y);
+    if (y + fs + 2 <= L.bot) {
+      y += fs + 2;
+      ctx.font = geist; ctx.fillStyle = "rgba(" + INK + ",0.55)";
+      ctx.fillText(S.outNote, ox, y);
+    }
+
+    // bloom
+    bctx.setTransform(1, 0, 0, 1, 0, 0);
+    bctx.clearRect(0, 0, buf.width, buf.height);
+    if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
+    if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+    ctx.restore();
+
+    // vignette
+    const cx = w / 2, cyv = h / 2;
+    const vig = ctx.createRadialGradient(cx, cyv, h * 0.28, cx, cyv, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
   }
-}
 
-function draw() {
-  const w = canvas.width / Math.min(window.devicePixelRatio || 1, 2);
-  const h = canvas.height / Math.min(window.devicePixelRatio || 1, 2);
-  
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, w, h);
-  
-  // Zone backgrounds
-  ctx.fillStyle = 'rgba(100, 180, 220, 0.04)';
-  ctx.fillRect(0, 0, w * 0.28, h);
-  
-  ctx.fillStyle = 'rgba(232, 93, 151, 0.06)';
-  ctx.fillRect(w * 0.28, 0, w * 0.44, h);
-  
-  ctx.fillStyle = 'rgba(250, 199, 117, 0.04)';
-  ctx.fillRect(w * 0.72, 0, w * 0.28, h);
-  
-  // Zone dividers
-  ctx.strokeStyle = 'rgba(232, 93, 151, 0.2)';
-  ctx.lineWidth = 1.5;
-  ctx.setLineDash([4, 4]);
-  ctx.beginPath();
-  ctx.moveTo(w * 0.28, 0);
-  ctx.lineTo(w * 0.28, h);
-  ctx.stroke();
-  
-  ctx.beginPath();
-  ctx.moveTo(w * 0.72, 0);
-  ctx.lineTo(w * 0.72, h);
-  ctx.stroke();
-  ctx.setLineDash([]);
-  
-  // Zone labels
-  ctx.font = '10px "JetBrains Mono"';
-  ctx.textAlign = 'center';
-  ctx.fillStyle = 'rgba(237, 237, 232, 0.3)';
-  ctx.fillText('INPUTS', w * 0.14, h - 12);
-  ctx.fillText('PROCESSES', w * 0.5, h - 12);
-  ctx.fillText('OUTPUTS', w * 0.86, h - 12);
-  
-  // Update and draw particles
-  const dt = 1;
-  particles.forEach(p => {
-    p.update(dt);
-    p.draw(w, h);
-  });
-  
-  particles = particles.filter(p => p.alive);
-  
-  // Spawn new particles
-  const spawnRate = Math.floor(volume / 10) + 1;
-  if (Math.random() < spawnRate * 0.08) {
-    particles.push(new Particle());
+  const els = {
+    live: document.getElementById("ipoLive"),
+    overlay: document.getElementById("ipoOverlay"),
+    out: document.getElementById("ipoOut"),
+    q: document.getElementById("ipoQ"),
+    lit: document.getElementById("ipoLit"),
+    rateV: document.getElementById("ipoRateV"),
+    drop: document.getElementById("ipoDrop")
+  };
+  const cache = {};
+  function setText(key, txt) {
+    if (cache[key] === txt) return;
+    cache[key] = txt; els[key].textContent = txt;
   }
-  
-  // Bloom
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
-  
-  // Vignette
-  const cx = w / 2;
-  const cy = h / 2;
-  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-  
-  time += 0.016;
-  requestAnimationFrame(draw);
-}
 
-function updateStats() {
-  const inputParticles = particles.filter(p => p.stage === 0).length;
-  const processParticles = particles.filter(p => p.stage === 1).length;
-  const outputParticles = particles.filter(p => p.stage === 2).length;
-  
-  const throughput = Math.min(Math.floor(volume * 1.2), 100);
-  const eff = Math.max(85, Math.min(96, 91 + (volume - 35) * 0.1));
-  
-  throughputEl.textContent = throughput;
-  efficiencyEl.textContent = Math.round(eff) + '%';
-  
-  const totalIn = inputParticles + processParticles;
-  const totalOut = Math.floor(totalIn * (eff / 100));
-  
-  canvasOverlay.textContent = `Processing ${totalIn} units → ${totalOut} outputs`;
-}
+  function readouts() {
+    const S = sys(), bi = bottleneck();
+    const cap = S.stages[bi].cap, name = S.stages[bi].name, q = queues[bi].length;
+    const out = q > 0 ? cap : Math.min(rate, cap), diff = rate - cap;
+    let qTxt;
+    if (diff > 0) qTxt = "+" + diff + "/h";
+    else if (diff < 0 && q > 0) qTxt = "\u2212" + (-diff) + "/h";
+    else qTxt = "0/h";
+    let ov;
+    if (rate === 0) ov = q > 0 ? "No inputs \u00b7 queue drains " + cap + "/h" : "No inputs \u00b7 nothing to transform";
+    else if (diff > 0) ov = name + " " + cap + "/h \u00b7 " + diff + "/h queue up";
+    else if (diff < 0 && q > 0) ov = rate + "/h in \u00b7 queue drains " + (-diff) + "/h";
+    else if (q > 0) ov = rate + "/h in \u00b7 " + cap + "/h out \u00b7 queue holds";
+    else ov = rate + "/h in \u00b7 " + out + "/h out \u00b7 no queue";
+    setText("live", rate + "/h arriving");
+    setText("overlay", ov);
+    setText("out", out + "/h");
+    setText("q", qTxt);
+    setText("lit", lit.size + " of 5 lit");
+    setText("rateV", rate + "/h");
+  }
 
-slider.addEventListener('input', (e) => {
-  volume = parseInt(e.target.value);
-  const fill = volume + '%';
-  slider.style.setProperty('--fill', fill);
-  liveTag.textContent = `Input Volume: ${volume}%`;
-  updateStats();
-});
+  function frame(now) {
+    const dt = Math.min(now - last, 50);
+    last = now;
+    step(dt);
+    draw();
+    readouts();
+    const idle = rate === 0 && particles.length === 0 && (reduce || simNow - flashT > 500);
+    if (idle) { running = false; return; }
+    requestAnimationFrame(frame);
+  }
+  function ensureRunning() {
+    if (running) return;
+    running = true; last = performance.now();
+    requestAnimationFrame(frame);
+  }
 
-// Initial fill
-slider.style.setProperty('--fill', '35%');
-
-// Toggle buttons
-const toggleBtns = document.querySelectorAll('.toggle-btn');
-const knowdrop = document.getElementById('knowdrop');
-
-const content = {
-  manufacturing: "In manufacturing operations, inputs include raw materials, component parts, machinery, labor hours, and energy. These flow into the transformation process where assembly lines, quality control stations, and packaging systems convert them into finished goods. Each stage adds value: steel sheets become car panels, panels become vehicles, vehicles become customer deliveries. The key insight is that every bottleneck in this flow—a slow supplier, a breakdown-prone machine, an undertrained team—ripples through the entire system, affecting output volume and quality standards.",
-  
-  service: "Service operations transform different inputs: customer requests, employee expertise, information systems, time, and physical facilities. A hospital converts patient information and medical staff knowledge into healthcare outcomes. A consulting firm transforms client data and analyst skills into strategic recommendations. Unlike manufacturing, service outputs are often intangible and consumed simultaneously with production—you can't stockpile a haircut or store a flight. This simultaneity means service process design must account for customer presence, variability in demand, and quality perception at the moment of delivery."
-};
-
-toggleBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    toggleBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const view = btn.dataset.view;
-    knowdrop.textContent = content[view];
+  // slider
+  const slider = document.getElementById("ipoRate");
+  function setFill() { slider.style.setProperty("--fill", (rate / 20 * 100) + "%"); }
+  slider.addEventListener("input", function () {
+    rate = parseInt(slider.value, 10) || 0;
+    setFill(); readouts(); ensureRunning();
   });
-});
 
-resize();
-window.addEventListener('resize', resize);
-setInterval(updateStats, 200);
-draw();
+  // mode toggle
+  const modeBtns = Array.from(document.querySelectorAll("[data-mode]"));
+  modeBtns.forEach(btn => {
+    btn.addEventListener("click", function () {
+      mode = btn.dataset.mode;
+      modeBtns.forEach(b => b.setAttribute("aria-pressed", b === btn ? "true" : "false"));
+      resetSim(); readouts(); draw(); ensureRunning();
+    });
+  });
+
+  // input type multi-select
+  const catBtns = Array.from(document.querySelectorAll("[data-cat]"));
+  catBtns.forEach(btn => {
+    btn.addEventListener("click", function () {
+      const c = btn.dataset.cat;
+      if (lit.has(c)) lit.delete(c); else lit.add(c);
+      btn.setAttribute("aria-pressed", lit.has(c) ? "true" : "false");
+      readouts(); draw();
+    });
+  });
+
+  // knowdrop
+  const dropBtns = Array.from(document.querySelectorAll("[data-drop]"));
+  dropBtns.forEach(btn => {
+    btn.addEventListener("click", function () {
+      dropBtns.forEach(b => b.setAttribute("aria-pressed", b === btn ? "true" : "false"));
+      els.drop.textContent = DROPS[btn.dataset.drop];
+    });
+  });
+
+  setFill();
+  resize();
+  readouts();
+  ensureRunning();
+  window.addEventListener("resize", resize);
+  if (window.ResizeObserver) { new ResizeObserver(resize).observe(wrap); }
+  if (document.fonts && document.fonts.ready) { document.fonts.ready.then(draw); }
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'inputs-processes-and-outputs'},'*');}catch(e){}}

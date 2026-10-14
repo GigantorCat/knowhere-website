@@ -10,32 +10,20 @@ body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body
   --bg2: #12160F;
   --acc: #5AADD4;
   --acc-rgb: 90, 173, 212;
-  --ag: rgba(var(--acc-rgb), 0.7);
-  --ag1: rgba(var(--acc-rgb), 0.12);
-  --ag2: rgba(var(--acc-rgb), 0.45);
+  --ag:  rgba(var(--acc-rgb),.7);
+  --ag1: rgba(var(--acc-rgb),.12);
+  --ag2: rgba(var(--acc-rgb),.45);
   --amb: #FAC775;
+  --amb-rgb: 250, 199, 117;
   --ink: #EDEDE8;
   --ink-dim: #8C9389;
+  --dim-rgb: 140, 147, 137;
   --line: #262B26;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
-}
+.sr-only { position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0; }
 
 body {
   background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
@@ -46,10 +34,7 @@ body {
   line-height: 1.5;
 }
 
-.container {
-  max-width: 720px;
-  margin: 0 auto;
-}
+.pg-container { max-width: 720px; margin: 0 auto; }
 
 h1 {
   font-size: clamp(26px, 6.5vw, 44px);
@@ -59,561 +44,454 @@ h1 {
   margin-bottom: 16px;
 }
 
-.intro {
+.pg-intro {
   font-size: 15.5px;
   font-weight: 400;
   color: var(--ink-dim);
   max-width: 58ch;
   line-height: 1.55;
-  margin-bottom: 32px;
+  margin-bottom: 30px;
 }
 
-.card {
+.pg-card {
   background: linear-gradient(180deg, #12160F, #0d100b);
   border: 1px solid var(--line);
   border-radius: 18px;
   padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,0.5), inset 0 1px 0 var(--ag1);
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
   margin-bottom: 18px;
 }
 
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
-}
+.pg-head { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:6px; }
+.pg-label { font-family:'JetBrains Mono', monospace; font-size:13px; text-transform:uppercase; color:#fff; }
+.pg-live { font-family:'JetBrains Mono', monospace; font-size:11px; text-transform:uppercase; color:var(--acc); white-space:nowrap; }
+.pg-hint { font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--ink-dim); margin-bottom:14px; }
 
-.card-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  color: var(--ink);
-}
-
-.live-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--acc);
-}
-
-.card-hint {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--ink-dim);
-  margin-bottom: 14px;
-}
-
-.canvas-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16/9;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
+.pg-wrap {
+  position: relative; width: 100%; aspect-ratio: 16/9;
+  border-radius: 12px; overflow: hidden; background: #000;
   box-shadow: inset 0 0 0 1px var(--ag1);
-  margin-bottom: 16px;
 }
-
-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.canvas-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(4px);
+.pg-wrap canvas { position:absolute; inset:0; width:100%; height:100%; display:block; }
+.pg-overlay {
+  position:absolute; left:0; right:0; bottom:0;
+  background: rgba(0,0,0,0.55); backdrop-filter: blur(4px);
   padding: 9px 16px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  text-transform: uppercase;
-  color: var(--acc);
-  text-align: center;
+  font-family:'JetBrains Mono', monospace; font-size:14px; line-height:1.3;
+  text-transform:uppercase; color:var(--acc); text-align:center;
 }
 
-.slider-row {
-  margin-top: 18px;
+.pg-mode-title { font-family:'JetBrains Mono', monospace; font-size:10.5px; text-transform:uppercase; color:var(--ink-dim); margin:16px 0 8px; }
+.pg-pills { display:flex; gap:10px; }
+.pg-pill {
+  flex:1; font-family:'JetBrains Mono', monospace; font-size:12px; padding:10px 12px;
+  border-radius:999px; background:#12160F; border:1px solid var(--line); color:var(--ink-dim);
+  cursor:pointer; transition: background .2s, color .2s, border-color .2s, box-shadow .2s;
+}
+.pg-pill[aria-pressed="true"] {
+  background: rgba(var(--acc-rgb),.1); border:1px solid var(--acc); color:var(--acc);
+  box-shadow: 0 0 22px rgba(var(--acc-rgb),.18);
 }
 
-.slider-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 8px;
+.pg-slide { margin-top: 16px; }
+.pg-row { display:flex; justify-content:space-between; align-items:baseline; font-family:'JetBrains Mono', monospace; font-size:10.5px; text-transform:uppercase; color:var(--ink-dim); margin-bottom:8px; }
+.pg-row b { font-weight:500; color:var(--ink); font-size:12px; }
+
+.pg-slider {
+  -webkit-appearance:none; appearance:none; width:100%; height:4px; border-radius:3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill,0%), #23291f var(--fill,0%));
+  outline:none; margin: 6px 0 8px;
+}
+.pg-slider::-webkit-slider-thumb {
+  -webkit-appearance:none; appearance:none; width:20px; height:20px; border-radius:50%;
+  background:#0B0D0C; border:2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag); cursor:pointer; transition: box-shadow .15s;
+}
+.pg-slider::-webkit-slider-thumb:hover { box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag); }
+.pg-slider::-moz-range-thumb {
+  width:20px; height:20px; border-radius:50%; background:#0B0D0C; border:2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag); cursor:pointer; transition: box-shadow .15s;
+}
+.pg-slider::-moz-range-thumb:hover { box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag); }
+
+.pg-ticks { position:relative; height:14px; font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--ink-dim); }
+.pg-ticks span { position:absolute; top:0; transform:translateX(-50%); }
+.pg-ticks span:first-child { transform:none; }
+.pg-ticks span:last-child { transform:translateX(-100%); }
+
+.pg-run {
+  margin-top:14px; width:100%; font-family:'JetBrains Mono', monospace; font-size:14.5px; padding:12px;
+  border-radius:11px; background:rgba(var(--acc-rgb),.1); border:1px solid var(--acc); color:var(--acc);
+  cursor:pointer; box-shadow: 0 0 22px rgba(var(--acc-rgb),.18);
 }
 
-.pop-slider {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  height: 4px;
-  border-radius: 3px;
-  background: linear-gradient(90deg, var(--acc) var(--fill, 30%), #23291f var(--fill, 30%));
-  outline: none;
-  margin-bottom: 8px;
-}
+.pg-stats { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px; padding-top:16px; border-top:1px solid var(--line); }
+.pg-stat-label { font-family:'JetBrains Mono', monospace; font-size:10.5px; text-transform:uppercase; color:var(--ink-dim); margin-bottom:4px; }
+.pg-stat-value { font-family:'JetBrains Mono', monospace; font-size:24px; font-weight:500; }
+.pg-cap { font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--ink-dim); margin-top:12px; line-height:1.5; }
 
-.pop-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow 0.15s;
-}
+.pg-kd-divider { border-top:1px solid var(--line); padding-top:16px; margin-top:16px; }
+.pg-kd-text { font-family:'Geist', sans-serif; font-size:14.5px; font-weight:400; line-height:1.65; color:var(--ink); }
 
-.pop-slider::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.pop-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow 0.15s;
-}
-
-.pop-slider::-moz-range-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.tick-labels {
-  display: flex;
-  justify-content: space-between;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--ink-dim);
-}
-
-.stat-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-  margin-top: 16px;
-}
-
-.stat {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.stat-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-}
-
-.stat-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 24px;
-  font-weight: 500;
-}
-
-.toggle-card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,0.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 18px;
-}
-
-.toggle-buttons {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.toggle-btn {
-  flex: 1;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14.5px;
-  padding: 12px;
-  border-radius: 11px;
-  background: #12160F;
-  border: 1px solid var(--line);
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.toggle-btn.active {
-  background: rgba(var(--acc-rgb), 0.1);
-  border: 1px solid var(--acc);
-  color: var(--acc);
-  box-shadow: 0 0 22px rgba(var(--acc-rgb), 0.18);
-}
-
-.knowdrop-divider {
-  border-top: 1px solid var(--line);
-  padding-top: 16px;
-}
-
-.knowdrop-text {
-  font-family: 'Geist', sans-serif;
-  font-size: 14.5px;
-  font-weight: 400;
-  line-height: 1.65;
-  color: var(--ink);
-}
-
-.know-this {
-  border-left: 3px solid var(--acc);
-  padding: 16px 18px;
+.pg-know {
+  border-left:3px solid var(--acc); padding:16px 18px;
   background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
-  border-radius: 0 12px 12px 0;
-  margin-bottom: 0;
+  border-radius: 0 12px 12px 0; margin-bottom:0; padding-bottom:16px;
 }
+.pg-know-tag { display:flex; align-items:center; gap:9px; margin-bottom:12px; }
+.pg-dot { width:6px; height:6px; border-radius:50%; background:var(--acc); box-shadow:0 0 8px var(--acc); animation: pgPulse 2.4s ease-in-out infinite; }
+@keyframes pgPulse { 0%,100% { opacity:1; } 50% { opacity:.45; } }
+.pg-know-label { font-family:'JetBrains Mono', monospace; font-size:13px; text-transform:uppercase; letter-spacing:0.15em; color:var(--acc); }
+.pg-know-body { font-family:'Geist', sans-serif; font-size:17.4px; font-weight:400; line-height:1.55; color:var(--ink); }
 
-.know-this-tag {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  margin-bottom: 12px;
-}
-
-.pulse-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--acc);
-  box-shadow: 0 0 8px var(--acc);
-  animation: pulse 2.4s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.45; transform: scale(0.6); }
-}
-
-.know-this-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--acc);
-}
-
-.know-this-body {
-  font-family: 'Geist', sans-serif;
-  font-size: 17.4px;
-  font-weight: 400;
-  line-height: 1.55;
-  color: var(--ink);
-}
-
-.know-this-body span {
-  color: var(--acc);
+@media (max-width: 480px) {
+  .pg-wrap { aspect-ratio: 4/3; }
+  .pg-overlay { font-size: 12px; padding: 8px 10px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
+  *, *::before, *::after { animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; }
 }
 </style>
 
-<div class="container">
-  <h2 class="sr-only">Population genetics interactive widget showing how random genetic drift affects allele frequencies in populations of different sizes</h2>
+<div class="pg-container">
+  <h2 class="sr-only">Genetic drift simulation: the frequency of allele A over eighty generations for a founding population you set, compared with a large population of five hundred, with founder and bottleneck scenarios</h2>
 
-  <h1>A single generation can erase <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">genes</span></h1>
-  
-  <p class="intro">When a small group founds a new population, rare alleles can vanish or surge to dominance purely by chance—no selection required. Watch how population size determines whether genetic diversity survives random drift across generations.</p>
+  <h1>Chance alone can delete an <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">allele</span></h1>
+  <p class="pg-intro">Genetic drift is sampling error. Each generation, the alleles of the newborns are a random draw from the parents' gene pool, and a small draw misses things. Lower the founding size and watch one colour take over the chart; raise it and watch the frequency barely move while the generations tick by.</p>
 
-  <div class="card">
-    <div class="card-header">
-      <div class="card-label">Gene Pool Simulation</div>
-      <div class="live-tag" id="liveTag">Generation 1</div>
+  <div class="pg-card">
+    <div class="pg-head">
+      <div class="pg-label">Drift simulator</div>
+      <div class="pg-live" id="pgLive">Gen 0 of 80</div>
     </div>
-    <div class="card-hint">Drag to change founding population size</div>
-    
-    <div class="canvas-wrapper">
-      <canvas id="popCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">30 Founders · 2 Alleles Active</div>
+    <div class="pg-hint">Change the founding size and watch the two colours.</div>
+
+    <div class="pg-wrap" id="pgWrap">
+      <canvas id="pgCanvas" aria-label="Allele dots for the current generation above a chart of allele A frequency against generation"></canvas>
+      <div class="pg-overlay" id="pgOverlay">N 20 · gen 0 · p 0.50 · 2pq 0.50</div>
     </div>
 
-    <div class="slider-row">
-      <div class="slider-label">Founding Population Size</div>
-      <input type="range" min="10" max="200" value="30" class="pop-slider" id="popSlider">
-      <div class="tick-labels">
-        <span>10</span>
-        <span>50</span>
-        <span>100</span>
-        <span>200</span>
+    <div class="pg-mode-title">Scenario</div>
+    <div class="pg-pills" role="group" aria-label="Which scenario the model runs" id="pgModes">
+      <button class="pg-pill" type="button" data-mode="founder" aria-pressed="true">Founders</button>
+      <button class="pg-pill" type="button" data-mode="bottleneck" aria-pressed="false">Bottleneck</button>
+    </div>
+
+    <div class="pg-slide">
+      <div class="pg-row"><span>Founding size N</span><b id="pgNV">20</b></div>
+      <input type="range" class="pg-slider" id="pgSlider" aria-label="Founding size N" min="10" max="200" step="10" value="20">
+      <div class="pg-ticks">
+        <span style="left:0">10</span>
+        <span style="left:21.05%">50</span>
+        <span style="left:47.37%">100</span>
+        <span style="left:100%">200</span>
       </div>
     </div>
 
-    <div class="stat-row">
-      <div class="stat">
-        <div class="stat-label">Allele A Frequency</div>
-        <div class="stat-value" style="color:var(--acc)" id="freqA">50%</div>
+    <button class="pg-run" type="button" id="pgRun">▶ Run again</button>
+
+    <div class="pg-stats">
+      <div>
+        <div class="pg-stat-label">Allele A frequency p</div>
+        <div class="pg-stat-value" style="color:var(--acc)" id="pgStatP">0.50</div>
       </div>
-      <div class="stat">
-        <div class="stat-label">Diversity Index</div>
-        <div class="stat-value" style="color:var(--amb)" id="diversity">1.00</div>
+      <div>
+        <div class="pg-stat-label">Heterozygosity 2pq</div>
+        <div class="pg-stat-value" style="color:var(--amb)" id="pgStatH">0.50</div>
       </div>
+    </div>
+    <div class="pg-cap" id="pgCap"></div>
+  </div>
+
+  <div class="pg-card">
+    <div class="pg-pills" role="group" aria-label="Which side of the idea the paragraph explains" id="pgKd">
+      <button class="pg-pill" type="button" data-kd="vanish" aria-pressed="true">Alleles vanish</button>
+      <button class="pg-pill" type="button" data-kd="scale" aria-pressed="false">Studies need scale</button>
+    </div>
+    <div class="pg-kd-divider">
+      <p class="pg-kd-text" id="pgKdText"></p>
     </div>
   </div>
 
-  <div class="toggle-card">
-    <div class="toggle-buttons">
-      <button class="toggle-btn active" id="btnBottleneck">Bottleneck</button>
-      <button class="toggle-btn" id="btnFounder">Founder Effect</button>
+  <div class="pg-know">
+    <div class="pg-know-tag">
+      <div class="pg-dot"></div>
+      <div class="pg-know-label">Know This</div>
     </div>
-    
-    <div class="knowdrop-divider">
-      <p class="knowdrop-text" id="knowdropText">A population bottleneck occurs when a large population suddenly crashes—disease, natural disaster, or habitat loss—leaving only a small number of survivors to rebuild. The surviving group carries only a fraction of the original genetic diversity, and rare alleles are often lost forever. Even if the population later rebounds to millions, it can never recover the genetic variants that disappeared in the bottleneck. This happened to cheetahs around 10,000 years ago: today every cheetah is so genetically similar they can accept skin grafts from unrelated individuals, making the entire species vulnerable to the same diseases.</p>
-    </div>
-  </div>
-
-  <div class="know-this">
-    <div class="know-this-tag">
-      <div class="pulse-dot"></div>
-      <div class="know-this-label">Know This</div>
-    </div>
-    <p class="know-this-body">Small populations lose <span>rare alleles</span> to random drift faster than selection can preserve them, which is why <span>founder effects</span> and <span>bottlenecks</span> permanently reduce genetic diversity regardless of later population growth.</p>
+    <p class="pg-know-body">Genetic drift is <span style="color:var(--acc)">sampling error</span>: small populations lose <span style="color:var(--acc)">alleles</span> by chance, and large-scale studies need huge samples so real patterns rise above the same <span style="color:var(--acc)">noise</span>.</p>
   </div>
 </div>
 
 <script>
-const canvas = document.getElementById('popCanvas');
-const ctx = canvas.getContext('2d');
-const slider = document.getElementById('popSlider');
-const liveTag = document.getElementById('liveTag');
-const canvasOverlay = document.getElementById('canvasOverlay');
-const freqA = document.getElementById('freqA');
-const diversity = document.getElementById('diversity');
-const btnBottleneck = document.getElementById('btnBottleneck');
-const btnFounder = document.getElementById('btnFounder');
-const knowdropText = document.getElementById('knowdropText');
+(function(){
+  const canvas = document.getElementById("pgCanvas");
+  const ctx = canvas.getContext("2d");
+  const wrap = document.getElementById("pgWrap");
+  const ovl = document.getElementById("pgOverlay");
+  const liveTag = document.getElementById("pgLive");
+  const nV = document.getElementById("pgNV");
+  const slider = document.getElementById("pgSlider");
+  const statP = document.getElementById("pgStatP");
+  const statH = document.getElementById("pgStatH");
+  const capEl = document.getElementById("pgCap");
+  const runBtn = document.getElementById("pgRun");
+  const modeGroup = document.getElementById("pgModes");
+  const kdGroup = document.getElementById("pgKd");
+  const kdText = document.getElementById("pgKdText");
 
-const CSS = getComputedStyle(document.documentElement);
-const ACC = CSS.getPropertyValue('--acc').trim();
-const RGB = CSS.getPropertyValue('--acc-rgb').trim();
-const AMB = CSS.getPropertyValue('--amb').trim();
+  const CSS = getComputedStyle(document.documentElement);
+  const ACC = CSS.getPropertyValue("--acc").trim();
+  const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+  const AMB = CSS.getPropertyValue("--amb").trim();
+  const AMB_RGB = CSS.getPropertyValue("--amb-rgb").trim();
+  const DIM_RGB = CSS.getPropertyValue("--dim-rgb").trim();
+  const DIM = "rgba(" + DIM_RGB + ",0.95)";
+  const RM = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-const dpr = Math.min(window.devicePixelRatio || 1, 2);
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d');
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const buf = document.createElement("canvas");
+  const bctx = buf.getContext("2d");
 
-let popSize = 30;
-let generation = 1;
-let individuals = [];
-let animFrame = 0;
+  const MAXGEN = 80, CRASH = 20, BIG = 200, REF = 500, STEP_MS = 260;
+  let N = 20, mode = "founder", gen = 0, pop = [], hist = [], refHist = [], refP = 0.5;
+  let rafId = null, last = 0, acc = 0;
 
-function resize() {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
+  function sampleInd(p){ return [Math.random() < p ? 1 : 0, Math.random() < p ? 1 : 0]; }
+  function makePop(n, p){ const a = []; for (let i = 0; i < n; i++) a.push(sampleInd(p)); return a; }
+  function freq(arr){ let c = 0; for (const d of arr) c += d[0] + d[1]; return arr.length ? c / (2 * arr.length) : 0; }
+  function binom(n, p){ let c = 0; for (let i = 0; i < n; i++) if (Math.random() < p) c++; return c / n; }
+  function sizeAt(g){ return (mode === "bottleneck" && g < CRASH) ? BIG : N; }
 
-function initPopulation() {
-  individuals = [];
-  for (let i = 0; i < popSize; i++) {
-    individuals.push({
-      allele: Math.random() < 0.5 ? 'A' : 'B',
-      x: Math.random(),
-      y: Math.random(),
-      vx: (Math.random() - 0.5) * 0.002,
-      vy: (Math.random() - 0.5) * 0.002,
-      phase: Math.random() * Math.PI * 2
-    });
+  function reset(){
+    gen = 0;
+    pop = makePop(sizeAt(0), 0.5);
+    hist = [freq(pop)];
+    refP = binom(2 * REF, 0.5);
+    refHist = [refP];
   }
-  generation = 1;
-}
-
-function reproduce() {
-  const parents = [...individuals];
-  const newGen = [];
-  for (let i = 0; i < popSize; i++) {
-    const parent = parents[Math.floor(Math.random() * parents.length)];
-    newGen.push({
-      allele: parent.allele,
-      x: Math.random(),
-      y: Math.random(),
-      vx: (Math.random() - 0.5) * 0.002,
-      vy: (Math.random() - 0.5) * 0.002,
-      phase: Math.random() * Math.PI * 2
-    });
+  function step(){
+    const p = freq(pop);
+    gen++;
+    pop = makePop(sizeAt(gen), p);
+    hist.push(freq(pop));
+    refP = binom(2 * REF, refP);
+    refHist.push(refP);
   }
-  individuals = newGen;
-  generation++;
-}
 
-function draw() {
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, w, h);
+  function resize(){
+    const r = wrap.getBoundingClientRect();
+    if (!r.width || !r.height) return;
+    canvas.width = Math.round(r.width * dpr);
+    canvas.height = Math.round(r.height * dpr);
+    buf.width = canvas.width; buf.height = canvas.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    draw();
+  }
 
-  // Update positions
-  individuals.forEach(ind => {
-    ind.x += ind.vx;
-    ind.y += ind.vy;
-    if (ind.x < 0 || ind.x > 1) ind.vx *= -1;
-    if (ind.y < 0 || ind.y > 1) ind.vy *= -1;
-    ind.x = Math.max(0, Math.min(1, ind.x));
-    ind.y = Math.max(0, Math.min(1, ind.y));
-  });
+  function halfDot(x, y, r, leftCol, rightCol){
+    ctx.fillStyle = leftCol; ctx.beginPath(); ctx.arc(x, y, r, Math.PI / 2, Math.PI * 1.5); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = rightCol; ctx.beginPath(); ctx.arc(x, y, r, -Math.PI / 2, Math.PI / 2); ctx.closePath(); ctx.fill();
+  }
 
-  // Draw connections between nearby individuals
-  const connectionDist = 0.15;
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  individuals.forEach((ind1, i) => {
-    individuals.slice(i + 1).forEach(ind2 => {
-      const dx = ind2.x - ind1.x;
-      const dy = ind2.y - ind1.y;
-      const dist = Math.hypot(dx, dy);
-      if (dist < connectionDist) {
-        const alpha = (1 - dist / connectionDist) * 0.12;
-        ctx.strokeStyle = ind1.allele === ind2.allele 
-          ? `rgba(${RGB}, ${alpha})` 
-          : `rgba(140, 147, 137, ${alpha * 0.5})`;
-        ctx.lineWidth = 0.8;
-        ctx.beginPath();
-        ctx.moveTo(ind1.x * w, ind1.y * h);
-        ctx.lineTo(ind2.x * w, ind2.y * h);
-        ctx.stroke();
-      }
-    });
-  });
-  ctx.restore();
+  function draw(){
+    const w = canvas.width / dpr, h = canvas.height / dpr;
+    if (!w || !h || !hist.length) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = "rgba(0,0,0,1)"; ctx.fillRect(0, 0, w, h);
+    const mono = "11px 'JetBrains Mono', monospace";
+    const ovH = ovl.offsetHeight || 32;
+    const curN = pop.length;
 
-  // Draw individuals
-  individuals.forEach(ind => {
-    const pulse = 0.7 + 0.3 * Math.sin(animFrame * 0.03 + ind.phase);
-    const size = 3.5 * pulse;
-    const x = ind.x * w;
-    const y = ind.y * h;
-    
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    
-    // Glow
-    const glow = ctx.createRadialGradient(x, y, 0, x, y, size * 3);
-    if (ind.allele === 'A') {
-      glow.addColorStop(0, `rgba(${RGB}, ${0.25 * pulse})`);
-      glow.addColorStop(1, `rgba(${RGB}, 0)`);
-    } else {
-      glow.addColorStop(0, `rgba(250, 199, 117, ${0.25 * pulse})`);
-      glow.addColorStop(1, `rgba(250, 199, 117, 0)`);
+    /* ── top band: the current generation as split-allele dots ── */
+    const by0 = h * 0.06, by1 = h * 0.34, bandH = by1 - by0;
+    ctx.font = mono; ctx.textBaseline = "middle"; ctx.textAlign = "left";
+    const lx = w * 0.03;
+    const legY = [by0 + bandH * 0.2, by0 + bandH * 0.5, by0 + bandH * 0.8];
+    halfDot(lx + 5, legY[0], 4.5, ACC, ACC); ctx.fillStyle = DIM; ctx.fillText("A", lx + 15, legY[0]);
+    halfDot(lx + 5, legY[1], 4.5, AMB, AMB); ctx.fillStyle = DIM; ctx.fillText("a", lx + 15, legY[1]);
+    halfDot(lx + 5, legY[2], 4.5, ACC, AMB); ctx.fillStyle = DIM; ctx.fillText("Aa", lx + 15, legY[2]);
+
+    const gx0 = w * 0.17, gx1 = w * 0.97, bandW = gx1 - gx0;
+    const cols = Math.max(1, Math.ceil(Math.sqrt(curN * bandW / bandH)));
+    const rows = Math.max(1, Math.ceil(curN / cols));
+    const cell = Math.min(bandW / cols, bandH / rows);
+    const r = Math.max(1.5, Math.min(cell * 0.4, h * 0.05));
+    const sx = gx0 + (bandW - cols * cell) / 2 + cell / 2;
+    const sy = by0 + (bandH - rows * cell) / 2 + cell / 2;
+    for (let i = 0; i < curN; i++){
+      const c = i % cols, rr = Math.floor(i / cols);
+      halfDot(sx + c * cell, sy + rr * cell, r, pop[i][0] ? ACC : AMB, pop[i][1] ? ACC : AMB);
     }
-    ctx.fillStyle = glow;
-    ctx.beginPath();
-    ctx.arc(x, y, size * 3, 0, Math.PI * 2);
-    ctx.fill();
-    
-    // Core
-    ctx.fillStyle = ind.allele === 'A' ? ACC : AMB;
-    ctx.beginPath();
-    ctx.arc(x, y, size, 0, Math.PI * 2);
-    ctx.fill();
-    
+
+    /* ── gap row: axis title and series legend ── */
+    const gy = h * 0.41;
+    ctx.font = mono; ctx.textBaseline = "middle";
+    ctx.textAlign = "left"; ctx.fillStyle = DIM; ctx.fillText("p of allele A", w * 0.03, gy);
+    const t2 = "·· N " + REF, t1 = "— N " + curN;
+    ctx.textAlign = "right"; ctx.fillStyle = DIM; ctx.fillText(t2, w * 0.97, gy);
+    const w2 = ctx.measureText(t2).width;
+    ctx.fillStyle = ACC; ctx.fillText(t1, w * 0.97 - w2 - 10, gy);
+
+    /* ── chart: p against generation ── */
+    const cx0 = w * 0.10, cx1 = w * 0.97, cy0 = h * 0.47, cy1 = h - ovH - 18;
+    const xOf = g => cx0 + (g / MAXGEN) * (cx1 - cx0);
+    const yOf = p => cy1 - p * (cy1 - cy0);
+
+    [0, 0.5, 1].forEach(p => {
+      ctx.beginPath(); ctx.setLineDash(p === 0.5 ? [3, 4] : []);
+      ctx.strokeStyle = "rgba(" + DIM_RGB + ",0.3)"; ctx.lineWidth = 1;
+      ctx.moveTo(cx0, yOf(p)); ctx.lineTo(cx1, yOf(p)); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = DIM; ctx.textAlign = "right"; ctx.textBaseline = "middle";
+      ctx.fillText(p === 0.5 ? "0.5" : String(p), cx0 - 6, yOf(p));
+    });
+    ctx.textBaseline = "top"; ctx.fillStyle = DIM;
+    for (let g = 0; g <= MAXGEN; g += 20){
+      ctx.textAlign = g === 0 ? "left" : (g === MAXGEN ? "right" : "center");
+      ctx.fillText(g === 0 ? "gen 0" : String(g), xOf(g), cy1 + 5);
+    }
+
+    if (mode === "bottleneck"){
+      const xc = xOf(CRASH);
+      ctx.beginPath(); ctx.setLineDash([3, 3]); ctx.strokeStyle = "rgba(" + AMB_RGB + ",0.6)"; ctx.lineWidth = 1;
+      ctx.moveTo(xc, cy0); ctx.lineTo(xc, cy1); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = AMB; ctx.textAlign = "right"; ctx.textBaseline = "top";
+      ctx.fillText("crash", xc - 5, cy0 + 3);
+    }
+
+    function strokePath(arr, col, lw, dash){
+      if (arr.length < 2) return;
+      ctx.beginPath(); ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.setLineDash(dash);
+      ctx.lineJoin = "round"; ctx.lineCap = "round";
+      for (let i = 0; i < arr.length; i++){ const x = xOf(i), y = yOf(arr[i]); if (i) ctx.lineTo(x, y); else ctx.moveTo(x, y); }
+      ctx.stroke(); ctx.setLineDash([]);
+    }
+
+    strokePath(refHist, "rgba(" + DIM_RGB + ",0.75)", 1.3, [4, 3]);
+    ctx.save(); ctx.globalCompositeOperation = "lighter";
+    strokePath(hist, "rgba(" + RGB + ",0.28)", 6, []);
     ctx.restore();
+    strokePath(hist, ACC, 2, []);
+
+    const gi = hist.length - 1, pe = hist[gi];
+    const ex = xOf(gi), ey = yOf(pe);
+    ctx.save(); ctx.globalCompositeOperation = "lighter";
+    const cor = ctx.createRadialGradient(ex, ey, 0, ex, ey, 12);
+    cor.addColorStop(0, "rgba(" + RGB + ",0.6)"); cor.addColorStop(1, "rgba(" + RGB + ",0)");
+    ctx.fillStyle = cor; ctx.beginPath(); ctx.arc(ex, ey, 12, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+    ctx.fillStyle = ACC; ctx.beginPath(); ctx.arc(ex, ey, 3.5, 0, Math.PI * 2); ctx.fill();
+
+    const fi = hist.findIndex(v => v === 0 || v === 1);
+    if (fi >= 0){
+      const fx = xOf(fi), fixed = hist[fi] === 1;
+      const txt = (fixed ? "A fixed" : "A lost") + " · gen " + fi;
+      ctx.font = mono; ctx.fillStyle = ACC;
+      ctx.textBaseline = fixed ? "top" : "bottom";
+      const right = fx > cx1 - 100;
+      ctx.textAlign = right ? "right" : "left";
+      ctx.fillText(txt, fx + (right ? -6 : 6), fixed ? cy0 + 3 : cy1 - 3);
+    }
+
+    /* ── bloom ── */
+    bctx.setTransform(1, 0, 0, 1, 0, 0); bctx.clearRect(0, 0, buf.width, buf.height);
+    if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+    ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
+    (buf.width&&buf.height)&&ctx.drawImage(buf, 0, 0, w, h); ctx.restore();
+
+    /* ── vignette ── */
+    const vig = ctx.createRadialGradient(w / 2, h / 2, h * 0.28, w / 2, h / 2, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
+  }
+
+  function updateReadouts(){
+    const p = hist[hist.length - 1], q = 1 - p, H = 2 * p * q, curN = pop.length;
+    statP.textContent = p.toFixed(2);
+    statH.textContent = H.toFixed(2);
+    const se = Math.sqrt(p * q / (2 * curN));
+    capEl.textContent = "Expected random step in p next generation ≈ ±" + se.toFixed(2) + " (√(pq ÷ 2N) with N = " + curN + ")";
+    liveTag.textContent = "Gen " + gen + " of " + MAXGEN;
+    const fi = hist.findIndex(v => v === 0 || v === 1);
+    let s;
+    if (fi >= 0){
+      s = "N " + curN + " · A " + (hist[fi] === 1 ? "fixed" : "lost") + " at gen " + fi + " · 2pq 0.00";
+    } else if (mode === "bottleneck" && gen < CRASH){
+      s = "N " + curN + " until gen " + CRASH + " · gen " + gen + " · p " + p.toFixed(2);
+    } else if (mode === "bottleneck"){
+      s = "N " + curN + " since gen " + CRASH + " · gen " + gen + " · p " + p.toFixed(2);
+    } else {
+      s = "N " + curN + " · gen " + gen + " · p " + p.toFixed(2) + " · 2pq " + H.toFixed(2);
+    }
+    ovl.textContent = s;
+  }
+
+  function render(){ draw(); updateReadouts(); }
+
+  function loop(now){
+    const dt = Math.min(now - last, 50); last = now; acc += dt;
+    let stepped = false;
+    while (acc >= STEP_MS && gen < MAXGEN){ step(); acc -= STEP_MS; stepped = true; }
+    if (stepped) render();
+    if (gen >= MAXGEN){ rafId = null; runBtn.textContent = "▶ Run again"; return; }
+    rafId = requestAnimationFrame(loop);
+  }
+
+  function startRun(){
+    if (rafId){ cancelAnimationFrame(rafId); rafId = null; }
+    reset();
+    if (RM){
+      while (gen < MAXGEN) step();
+      runBtn.textContent = "▶ Run again";
+      render();
+      return;
+    }
+    runBtn.textContent = "Running…";
+    acc = 0; last = performance.now();
+    render();
+    rafId = requestAnimationFrame(loop);
+  }
+
+  function setPressed(group, btn){
+    group.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b === btn ? "true" : "false"));
+  }
+
+  const KD = {
+    vanish: "Genetic drift is what happens when the next generation is a random sample of the last one. In a population of ten, the twenty alleles passed on are a small draw, so the frequency of an allele lurches from one generation to the next and sooner or later hits 0 or 1: the allele is lost or fixed, and heterozygosity 2pq collapses to zero. A founder effect does this from the first generation: the handful of individuals who colonise an island or a valley carry only a sample of the source gene pool, which is why Ellis–van Creveld syndrome, rare worldwide, is hundreds of times more common among the Old Order Amish, who descend from a few hundred founders including one couple carrying the allele. A bottleneck is the same loss in a population that was once large: northern elephant seals were hunted down to a few dozen animals in the 1890s and today number well over 100,000, yet show almost no variation at the genes studied, because the alleles lost in the crash never came back.",
+    scale: "The same arithmetic runs the other way in a large-scale collaborative study. An allele frequency measured from 2N chromosomes carries a sampling error of about √(pq ÷ 2N): roughly ±0.11 from ten people, ±0.025 from two hundred, but only ±0.0005 from the 500,000 participants of UK Biobank. Many alleles linked to common conditions such as type 2 diabetes differ by only a percentage point or two in frequency between people with and without the condition, so a genome-wide association study (GWAS) can only pull that pattern out of the noise by pooling genomes across many hospitals and countries, the way the Human Genome Project and the 1000 Genomes Project pooled sequencing effort. The trends that emerge are associations, not proof of cause, and because most participants so far have European ancestry the findings may not transfer to everyone. That scale also raises the ethics of consent for future uses, re-identification of relatives from shared DNA and who controls the data; in Australia the National Centre for Indigenous Genomics is governed by an Indigenous-majority board so that communities decide how their genomic data are used."
+  };
+
+  modeGroup.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+    setPressed(modeGroup, b);
+    mode = b.dataset.mode;
+    startRun();
+  }));
+
+  kdGroup.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+    setPressed(kdGroup, b);
+    kdText.textContent = KD[b.dataset.kd];
+  }));
+
+  slider.addEventListener("input", e => {
+    N = parseInt(e.target.value, 10);
+    nV.textContent = String(N);
+    slider.style.setProperty("--fill", ((N - 10) / 190 * 100) + "%");
+    startRun();
   });
 
-  // Bloom
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
+  runBtn.addEventListener("click", startRun);
 
-  // Vignette
-  const vig = ctx.createRadialGradient(w/2, h/2, h * 0.28, w/2, h/2, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
+  if (window.ResizeObserver){ new ResizeObserver(() => resize()).observe(wrap); }
+  window.addEventListener("resize", resize);
 
-  animFrame++;
-  requestAnimationFrame(draw);
-}
-
-function updateStats() {
-  const countA = individuals.filter(ind => ind.allele === 'A').length;
-  const freqAVal = countA / individuals.length;
-  const freqBVal = 1 - freqAVal;
-  
-  // Diversity index: Shannon diversity simplified (0 = no diversity, 1 = max)
-  const diversityVal = freqAVal > 0 && freqBVal > 0 
-    ? Math.min(freqAVal, freqBVal) * 2 
-    : 0;
-  
-  freqA.textContent = Math.round(freqAVal * 100) + '%';
-  diversity.textContent = diversityVal.toFixed(2);
-  
-  const activeAlleles = (freqAVal > 0 ? 1 : 0) + (freqBVal > 0 ? 1 : 0);
-  canvasOverlay.textContent = `${popSize} Founders · ${activeAlleles} Allele${activeAlleles !== 1 ? 's' : ''} Active`;
-  liveTag.textContent = `Generation ${generation}`;
-  
-  // Update fill
-  const fillPercent = ((popSize - 10) / (200 - 10)) * 100;
-  slider.style.setProperty('--fill', fillPercent + '%');
-}
-
-slider.addEventListener('input', (e) => {
-  popSize = parseInt(e.target.value);
-  initPopulation();
-  updateStats();
-});
-
-// Auto-advance generations
-setInterval(() => {
-  reproduce();
-  updateStats();
-}, 2400);
-
-btnBottleneck.addEventListener('click', () => {
-  btnBottleneck.classList.add('active');
-  btnFounder.classList.remove('active');
-  knowdropText.textContent = "A population bottleneck occurs when a large population suddenly crashes—disease, natural disaster, or habitat loss—leaving only a small number of survivors to rebuild. The surviving group carries only a fraction of the original genetic diversity, and rare alleles are often lost forever. Even if the population later rebounds to millions, it can never recover the genetic variants that disappeared in the bottleneck. This happened to cheetahs around 10,000 years ago: today every cheetah is so genetically similar they can accept skin grafts from unrelated individuals, making the entire species vulnerable to the same diseases.";
-});
-
-btnFounder.addEventListener('click', () => {
-  btnFounder.classList.add('active');
-  btnBottleneck.classList.remove('active');
-  knowdropText.textContent = "The founder effect happens when a small group breaks away from a larger population to colonize a new area—an island, a valley beyond a mountain range, or even a new continent. The founders carry only a sample of the original gene pool, and whatever alleles they happen to bring become the new normal. If one founder carries a rare disease allele, it can become common in the new population within a few generations. This explains why certain genetic conditions are far more prevalent in isolated populations: Ellis-van Creveld syndrome is 5,000 times more common among the Amish than the general population because one founding couple in the 1700s both carried the mutation.";
-});
-
-window.addEventListener('resize', resize);
-resize();
-initPopulation();
-updateStats();
-draw();
+  kdText.textContent = KD.vanish;
+  nV.textContent = String(N);
+  slider.style.setProperty("--fill", ((N - 10) / 190 * 100) + "%");
+  reset();
+  resize();
+  startRun();
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'population-genetics-and-large-scale-studies'},'*');}catch(e){}}

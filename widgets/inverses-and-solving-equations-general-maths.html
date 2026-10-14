@@ -313,27 +313,52 @@ canvas {
 .know-body .hl {
   color: var(--acc);
 }
+.mx-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 4px 0 14px; }
+.mx-box { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.mx-name { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; text-transform: uppercase; color: var(--ink-dim); }
+.mx { display: inline-grid; grid-template-columns: auto auto; gap: 2px 14px; padding: 6px 10px; border-left: 2px solid var(--ink-dim); border-right: 2px solid var(--ink-dim); border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 16px; color: var(--ink); justify-self: start; width: max-content; }
+.mx span { text-align: right; }
+.mx .live { color: var(--amb); }
+.mx-note { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--ink-dim); line-height: 1.45; }
+.mx-none { font-family: 'JetBrains Mono', monospace; font-size: 15px; color: var(--amb); padding: 6px 0; }
+.area-line { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-dim); margin: 0 0 14px; line-height: 1.5; }
+.area-line b { color: var(--acc); font-weight: 500; }
+.mx[hidden], .mx-none[hidden] { display: none; }
 </style>
 
-<h2 class="sr-only">Interactive matrix inverse demonstration showing how changing matrix values affects invertibility and equation solving</h2>
+<h2 class="sr-only">Matrix inverses: change d in A, see A and its inverse, and the shaded area that equals the determinant</h2>
 
 <div class="container">
   <h1>Division doesn't exist for matrices — but <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">inverses</span> do</h1>
   
-  <p class="intro">You can't divide by a matrix, but if it has an inverse, you can multiply by that instead. The inverse "undoes" the original matrix like a reciprocal undoes a number. Watch what happens when you change the bottom-right value and cross the point where the matrix loses its inverse.</p>
+  <p class="intro">You can't divide by a matrix, but if it has an inverse, you can multiply by that instead. The inverse "undoes" the original matrix like a reciprocal undoes a number. Here A = [[2, 1], [1, d]]. Change d, the bottom-right value, and watch A, its inverse and the determinant ad − bc change, right up to the point where the inverse disappears.</p>
 
   <div class="card">
     <div class="card-header">
-      <div class="card-label">Matrix Transform</div>
+      <div class="card-label">A and its inverse</div>
       <div class="live-tag" id="statusTag">Invertible</div>
     </div>
-    <div class="card-hint">Drag to change d in A = [[2, 1], [1, d]]</div>
+    <div class="card-hint">Change d in A = [[2, 1], [1, d]]</div>
     
     <div class="canvas-wrapper">
-      <canvas id="matrixCanvas"></canvas>
+      <canvas id="matrixCanvas" role="img" aria-label="The unit square and the parallelogram A turns it into; the shaded area equals the size of the determinant"></canvas>
       <div class="canvas-overlay" id="overlayTag">A = [[2, 1], [1, 4.0]] · det(A) = 7.00</div>
     </div>
 
+    <p class="area-line" id="areaLine">A turns the white unit square (area 1) into the shaded shape. Its area is the size of the determinant: <b>7.00</b> square units.</p>
+    <div class="mx-row">
+      <div class="mx-box">
+        <div class="mx-name">A</div>
+        <div class="mx"><span>2</span><span>1</span><span>1</span><span class="live" id="aD">4.0</span></div>
+        <div class="mx-note" id="detLine">det = 2 × 4.0 − 1 × 1 = 7.00</div>
+      </div>
+      <div class="mx-box">
+        <div class="mx-name">A⁻¹</div>
+        <div class="mx" id="invBox"><span id="i11">0.57</span><span id="i12">−0.14</span><span id="i21">−0.14</span><span id="i22">0.29</span></div>
+        <div class="mx-none" id="invNone" hidden>No inverse: det = 0</div>
+        <div class="mx-note" id="invLine">= (1/7.00) × [[4.0, −1], [−1, 2]]</div>
+      </div>
+    </div>
     <div class="slider-group">
       <label class="slider-label" for="dSlider">Matrix element d</label>
       <input type="range" id="dSlider" class="matrix-slider" min="-3" max="8" step="0.1" value="4" style="--fill: 63.6%">
@@ -411,9 +436,28 @@ function resize() {
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 
+const el = id => document.getElementById(id);
+const sgn = x => (Math.abs(x) < 0.005 ? "0.00" : x < 0 ? "−" + Math.abs(x).toFixed(2) : x.toFixed(2));
+function updateMatrices(det) {
+  el("aD").textContent = d.toFixed(1);
+  el("detLine").textContent = "det = 2 × " + d.toFixed(1) + " − 1 × 1 = " + sgn(det);
+  const singular = Math.abs(det) < 0.01;
+  el("invBox").hidden = singular;
+  el("invNone").hidden = !singular;
+  el("areaLine").innerHTML = singular
+    ? "A squashes the unit square (area 1) flat onto a line: area <b>0</b>, so nothing can undo it."
+    : "A turns the white unit square (area 1) into the shaded shape. Its area is the size of the determinant: <b>" + Math.abs(det).toFixed(2) + "</b> square units.";
+  if (singular) { el("invLine").textContent = "1/det would mean dividing by 0"; return; }
+  el("i11").textContent = sgn(d / det);
+  el("i12").textContent = sgn(-1 / det);
+  el("i21").textContent = sgn(-1 / det);
+  el("i22").textContent = sgn(2 / det);
+  el("invLine").textContent = "= (1/" + sgn(det) + ") × [[" + d.toFixed(1) + ", −1], [−1, 2]]";
+}
 function updateSlider() {
   d = parseFloat(slider.value);
   const det = 2 * d - 1;
+  updateMatrices(det);
   
   detValue.textContent = det.toFixed(2);
   overlayTag.textContent = `A = [[2, 1], [1, ${d.toFixed(1)}]] · det(A) = ${det.toFixed(2)}`;
@@ -433,15 +477,20 @@ function updateSlider() {
 function draw() {
   const w = canvas.width / dpr;
   const h = canvas.height / dpr;
-  const cx = w / 2;
-  const cy = h / 2;
+  let cx = w / 2;
+  let cy = h / 2;
   
   ctx.fillStyle = '#000';
   ctx.fillRect(0, 0, w, h);
   
   const det = 2 * d - 1;
-  const gridSize = Math.min(w, h) * 0.32;
-  const spacing = gridSize / 5;
+  /* fit the unit square and the parallelogram (corners (0,0), (2,1), (3,1+d), (1,d)) inside the canvas */
+  const ys = [0, 1, 1 + d, d], minY = Math.min(...ys), maxY = Math.max(...ys);
+  const unitPx = Math.min((h - 62) / (maxY - minY + 0.6), (w - 40) / 3.8); /* keep clear of the caption strip */
+  const spacing = unitPx / 1.2;
+  const gridSize = spacing * 5;
+  const cx0 = w / 2 - 1.5 * unitPx, cy0 = 12 + (maxY + 0.3) * unitPx;
+  cx = cx0; cy = cy0;
   
   // Draw coordinate grid (faint)
   ctx.strokeStyle = 'rgba(79, 198, 90,0.08)';
@@ -560,8 +609,8 @@ function draw() {
     ctx.fillText(label, endX + 8, endY - 8);
   }
   
-  drawVector(i_x, i_y, 'rgba(79, 198, 90,0.9)', 'i\'');
-  drawVector(j_x, j_y, 'rgba(250,199,117,0.9)', 'j\'');
+  drawVector(i_x, i_y, "rgba(79, 198, 90,0.9)", "i′");
+  drawVector(j_x, j_y, "rgba(250,199,117,0.9)", "j′");
   
   // Bloom effect
   bctx.setTransform(1, 0, 0, 1, 0, 0);

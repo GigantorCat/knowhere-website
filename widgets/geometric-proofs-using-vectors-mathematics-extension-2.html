@@ -4,577 +4,423 @@ body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
-
 :root {
   --bg: #0B0D0C;
   --bg2: #12160F;
   --acc: #23833F;
   --acc-rgb: 35, 131, 63;
-  --ag: rgba(var(--acc-rgb), 0.7);
-  --ag1: rgba(var(--acc-rgb), 0.12);
-  --ag2: rgba(var(--acc-rgb), 0.45);
+  --ag: rgba(var(--acc-rgb),.7);
+  --ag1: rgba(var(--acc-rgb),.12);
+  --ag2: rgba(var(--acc-rgb),.45);
   --amb: #FAC775;
   --ink: #EDEDE8;
   --ink-dim: #8C9389;
   --line: #262B26;
 }
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
-  font-family: 'Geist', sans-serif;
-  min-height: 100vh;
-  padding: 40px 16px 0;
-  color: var(--ink);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-.container {
-  max-width: 720px;
-  margin: 0 auto;
-}
-
-h1 {
-  font-size: clamp(26px, 6.5vw, 44px);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
-  margin-bottom: 14px;
-}
-
-.intro {
-  font-size: 15.5px;
-  font-weight: 400;
-  color: var(--ink-dim);
-  max-width: 58ch;
-  line-height: 1.55;
-  margin-bottom: 32px;
-}
-
-.card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,0.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 18px;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
-}
-
-.card-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  color: var(--ink);
-}
-
-.live-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--acc);
-}
-
-.card-hint {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--ink-dim);
-  margin-bottom: 14px;
-}
-
-.canvas-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16/9;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
-  box-shadow: inset 0 0 0 1px var(--ag1);
-  margin-bottom: 16px;
-}
-
-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.canvas-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(4px);
-  padding: 9px 16px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  text-transform: uppercase;
-  color: var(--acc);
-  text-align: center;
-}
-
-.slider-section {
-  margin-bottom: 14px;
-}
-
-.slider-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 10px;
-  display: block;
-}
-
-.vec-slider {
-  width: 100%;
-  height: 4px;
-  -webkit-appearance: none;
-  appearance: none;
-  border-radius: 3px;
-  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
-  outline: none;
-  margin-bottom: 8px;
-}
-
-.vec-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow 0.15s;
-}
-
-.vec-slider::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.vec-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow 0.15s;
-}
-
-.vec-slider::-moz-range-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.tick-labels {
-  display: flex;
-  justify-content: space-between;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--ink-dim);
-}
-
-.stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  padding-top: 14px;
-  border-top: 1px solid var(--line);
-}
-
-.stat {
-  text-align: center;
-}
-
-.stat-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 6px;
-}
-
-.stat-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 24px;
-  font-weight: 500;
-}
-
-.stat:first-child .stat-value {
-  color: var(--acc);
-}
-
-.stat:last-child .stat-value {
-  color: var(--amb);
-}
-
-.toggle-section {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.toggle-btn {
-  flex: 1;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14.5px;
-  padding: 12px;
-  border-radius: 11px;
-  background: #12160F;
-  border: 1px solid var(--line);
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.toggle-btn.active {
-  background: rgba(var(--acc-rgb), 0.1);
-  border: 1px solid var(--acc);
-  color: var(--acc);
-  box-shadow: 0 0 22px rgba(var(--acc-rgb), 0.18);
-}
-
-.knowdrop {
-  border-top: 1px solid var(--line);
-  padding-top: 16px;
-  font-size: 14.5px;
-  font-weight: 400;
-  line-height: 1.65;
-  color: var(--ink);
-}
-
-.know-this {
-  border-left: 3px solid var(--acc);
-  padding: 16px 18px;
-  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
-  border-radius: 0 12px 12px 0;
-  margin-bottom: 0;
-}
-
-.know-tag-row {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  margin-bottom: 11px;
-}
-
-.know-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--acc);
-  box-shadow: 0 0 8px var(--acc);
-  animation: pulse 2.4s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.45; }
-}
-
-.know-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--acc);
-}
-
-.know-body {
-  font-size: 17.4px;
-  font-weight: 400;
-  line-height: 1.55;
-  color: var(--ink);
-}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C 55%);font-family:'Geist',sans-serif;min-height:100vh;padding:40px 16px 0;color:var(--ink)}
+.gp-wrap{max-width:720px;margin:0 auto}
+h1{font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin-bottom:14px}
+.gp-intro{font-size:15.5px;font-weight:400;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin-bottom:30px}
+.gp-card{background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);margin-bottom:18px}
+.gp-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+.gp-label{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;color:#fff}
+.gp-live{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--acc);text-align:right}
+.gp-hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin-bottom:12px;line-height:1.5}
+.gp-grouplabel{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:8px}
+.gp-pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.gp-pill{font-family:'JetBrains Mono',monospace;font-size:12px;padding:8px 13px;border-radius:999px;background:#12160F;border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:background .2s,color .2s,border-color .2s,box-shadow .2s}
+.gp-pill[aria-pressed="true"]{background:rgba(var(--acc-rgb),.1);border-color:var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.gp-pill.wide{flex:1;font-size:13px;padding:10px 12px}
+.gp-canvas-wrap{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1);margin-bottom:16px}
+.gp-canvas-wrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.gp-tag{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:14px;line-height:1.3;color:var(--acc);text-align:center;text-transform:none}
+.gp-row{display:flex;justify-content:space-between;align-items:baseline;font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:10px}
+.gp-row b{font-weight:500;font-size:13px;color:var(--ink)}
+.gp-slider{width:100%;height:4px;-webkit-appearance:none;appearance:none;border-radius:3px;background:linear-gradient(90deg,var(--acc) var(--fill,0%),#23291f var(--fill,0%));outline:none;margin-bottom:8px;display:block}
+.gp-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);cursor:pointer;transition:box-shadow .15s}
+.gp-slider::-webkit-slider-thumb:hover{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.gp-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);cursor:pointer;transition:box-shadow .15s}
+.gp-slider::-moz-range-thumb:hover{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.gp-ticks{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-dim);margin-bottom:14px}
+.gp-stats{display:grid;grid-template-columns:1fr 1fr;gap:14px 16px;padding-top:14px;border-top:1px solid var(--line)}
+.gp-stat{text-align:center}
+.gp-stat .l{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:6px}
+.gp-stat .v{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500}
+.gp-stat:nth-child(odd) .v{color:var(--acc)}
+.gp-stat:nth-child(even) .v{color:var(--amb)}
+.gp-drop{border-top:1px solid var(--line);padding-top:16px;font-size:14.5px;line-height:1.65;color:var(--ink)}
+.gp-know{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));border-radius:0 12px 12px 0;margin-bottom:0;padding-bottom:16px}
+.gp-know-row{display:flex;align-items:center;gap:9px;margin-bottom:11px}
+.gp-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:gpPulse 2.4s ease-in-out infinite}
+@keyframes gpPulse{0%,100%{opacity:1}50%{opacity:.45}}
+.gp-know-tag{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.15em;color:var(--acc)}
+.gp-know-body{font-size:17.4px;font-weight:400;line-height:1.55;color:var(--ink)}
+@media (prefers-reduced-motion: reduce){.gp-dot{animation:none}.gp-pill{transition:none}}
+@media (max-width:640px){.gp-canvas-wrap{aspect-ratio:4/3}.gp-tag{font-size:11px;padding:7px 10px}}
+@media (max-width:420px){.gp-canvas-wrap{aspect-ratio:1/1}}
 </style>
+<h2 class="sr-only">Interactive vector geometry: a rhombus with side vectors u and v and its diagonals u + v and v − u, and a triangle showing medians, altitudes, perpendicular bisectors and angle bisectors, with the angle at A as the control</h2>
+<div class="gp-wrap">
+  <h1>Perpendicular is not an angle you measure. It is a <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">zero</span></h1>
+  <p class="gp-intro">A vector proof never measures anything. Write each point as a position vector and the geometry turns into algebra: equal sides become equal magnitudes, a midpoint becomes an average, and a right angle becomes a scalar product that equals zero. Change the angle at A and watch the two diagonal lengths and the number AC · BD; then switch the picture to a triangle and watch where its medians, altitudes and bisectors meet.</p>
 
-<h2 class="sr-only">Interactive vector geometry proof visualisation showing how algebraic methods replace diagram-based reasoning</h2>
-
-<div class="container">
-  <h1>Geometry becomes algebra when you turn points into <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">vectors</span></h1>
-  
-  <p class="intro">No diagrams, no "by inspection", no appeals to symmetry. Position vectors turn classical theorems into algebraic identities that work in any dimension. Drag the slider to morph a quadrilateral and watch the diagonals stay perpendicular — the rhombus condition enforced by the scalar product.</p>
-
-  <div class="card">
-    <div class="card-header">
-      <span class="card-label">Rhombus Diagonal Test</span>
-      <span class="live-tag" id="shapeTag">Square</span>
+  <div class="gp-card">
+    <div class="gp-head">
+      <span class="gp-label">Vector proof on screen</span>
+      <span class="gp-live" id="gpLive">Rhombus • scalar product</span>
     </div>
-    <div class="card-hint">Drag to adjust side ratio • scalar product stays zero</div>
-    
-    <div class="canvas-wrapper">
-      <canvas id="vecCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasTag">AC · BD = 0</div>
+    <div class="gp-hint" id="gpHint">Change the angle at A. Watch the two diagonal lengths and the number AC · BD.</div>
+    <div class="gp-grouplabel">Which proof the picture shows</div>
+    <div class="gp-pills" role="group" aria-label="Which proof the picture shows">
+      <button class="gp-pill" data-mode="rhombus" aria-pressed="true">Rhombus</button>
+      <button class="gp-pill" data-mode="medians" aria-pressed="false">Medians</button>
+      <button class="gp-pill" data-mode="altitudes" aria-pressed="false">Altitudes</button>
+      <button class="gp-pill" data-mode="perp" aria-pressed="false">Perpendicular bisectors</button>
+      <button class="gp-pill" data-mode="angle" aria-pressed="false">Angle bisectors</button>
     </div>
-
-    <div class="slider-section">
-      <label class="slider-label" for="ratioSlider">Side length ratio</label>
-      <input type="range" id="ratioSlider" class="vec-slider" min="0" max="100" value="50" step="1">
-      <div class="tick-labels">
-        <span>0.5</span>
-        <span>1.0</span>
-        <span>1.5</span>
-        <span>2.0</span>
-      </div>
+    <div class="gp-canvas-wrap" id="gpWrap">
+      <canvas id="gpCanvas"></canvas>
+      <div class="gp-tag" id="gpTag" aria-live="polite">AC · BD = |v|² − |u|² = 0.00 • |u × v| = sin θ = 0.87</div>
     </div>
-
-    <div class="stats">
-      <div class="stat">
-        <div class="stat-label">Diagonal AC length</div>
-        <div class="stat-value" id="ac">1.41</div>
-      </div>
-      <div class="stat">
-        <div class="stat-label">Diagonal BD length</div>
-        <div class="stat-value" id="bd">1.41</div>
-      </div>
+    <div class="gp-row"><span>Angle at A</span><b id="angV">60°</b></div>
+    <input type="range" class="gp-slider" id="gpAngle" aria-label="Angle at A" min="30" max="150" step="1" value="60">
+    <div class="gp-ticks"><span>30°</span><span>60°</span><span>90°</span><span>120°</span><span>150°</span></div>
+    <div class="gp-stats">
+      <div class="gp-stat"><div class="l" id="sl0">Diagonal AC</div><div class="v" id="sv0">1.73</div></div>
+      <div class="gp-stat"><div class="l" id="sl1">Diagonal BD</div><div class="v" id="sv1">1.00</div></div>
+      <div class="gp-stat"><div class="l" id="sl2">AC · BD</div><div class="v" id="sv2">0.00</div></div>
+      <div class="gp-stat"><div class="l" id="sl3">Area |u × v|</div><div class="v" id="sv3">0.87</div></div>
     </div>
   </div>
 
-  <div class="card">
-    <div class="toggle-section">
-      <button class="toggle-btn active" data-proof="medians">Medians Concur</button>
-      <button class="toggle-btn" data-proof="rhombus">Rhombus Diagonals</button>
+  <div class="gp-card">
+    <div class="gp-grouplabel">Read the picture as a proof</div>
+    <div class="gp-pills" role="group" aria-label="Which text to read">
+      <button class="gp-pill wide" data-tab="proof" aria-pressed="true">The proof</button>
+      <button class="gp-pill wide" data-tab="writing" aria-pressed="false">Writing it up</button>
     </div>
-    
-    <div class="knowdrop" id="knowdrop">
-      Given triangle ABC with position vectors <strong>a</strong>, <strong>b</strong>, <strong>c</strong>, the medians meet at the centroid <strong>G</strong> = (<strong>a</strong> + <strong>b</strong> + <strong>c</strong>)/3. To prove: show that <strong>G</strong> lies on each median. The midpoint of BC is <strong>m</strong> = (<strong>b</strong> + <strong>c</strong>)/2. The median from A is the line <strong>r</strong> = <strong>a</strong> + λ(<strong>m</strong> − <strong>a</strong>). Substitute <strong>G</strong>: we need (<strong>a</strong> + <strong>b</strong> + <strong>c</strong>)/3 = <strong>a</strong> + λ((<strong>b</strong> + <strong>c</strong>)/2 − <strong>a</strong>). Solving gives λ = 2/3, confirming <strong>G</strong> lies on this median. The other two medians follow by symmetry. No diagram needed — the algebra forces concurrency.
-    </div>
+    <div class="gp-drop" id="gpDrop"></div>
   </div>
 
-  <div class="know-this">
-    <div class="know-tag-row">
-      <div class="know-dot"></div>
-      <div class="know-tag">Know This</div>
-    </div>
-    <div class="know-body">Vector proofs replace geometric intuition with <span style="color:var(--acc)">algebraic identities</span>: equal sides become <span style="color:var(--acc)">equal magnitudes</span>, perpendicular lines become <span style="color:var(--acc)">zero scalar products</span>.</div>
+  <div class="gp-know">
+    <div class="gp-know-row"><div class="gp-dot"></div><div class="gp-know-tag">Know This</div></div>
+    <div class="gp-know-body">In a vector proof, <span style="color:var(--acc)">equal lengths</span> become equal magnitudes, a <span style="color:var(--acc)">right angle</span> becomes a scalar product of zero, and a <span style="color:var(--acc)">midpoint</span> becomes the average of two position vectors.</div>
   </div>
 </div>
-
 <script>
-const canvas = document.getElementById('vecCanvas');
-const ctx = canvas.getContext('2d');
-const slider = document.getElementById('ratioSlider');
-const shapeTag = document.getElementById('shapeTag');
-const canvasTag = document.getElementById('canvasTag');
-const acStat = document.getElementById('ac');
-const bdStat = document.getElementById('bd');
-const knowdrop = document.getElementById('knowdrop');
-const toggleBtns = document.querySelectorAll('.toggle-btn');
+(function(){
+const canvas=document.getElementById("gpCanvas");
+const wrap=document.getElementById("gpWrap");
+const ctx=canvas.getContext("2d");
+const slider=document.getElementById("gpAngle");
+const angV=document.getElementById("angV");
+const tag=document.getElementById("gpTag");
+const live=document.getElementById("gpLive");
+const hint=document.getElementById("gpHint");
+const drop=document.getElementById("gpDrop");
+const stats=[0,1,2,3].map(i=>({l:document.getElementById("sl"+i),v:document.getElementById("sv"+i)}));
+const modeBtns=Array.from(document.querySelectorAll("[data-mode]"));
+const tabBtns=Array.from(document.querySelectorAll("[data-tab]"));
+const CSS=getComputedStyle(document.documentElement);
+const ACC=CSS.getPropertyValue("--acc").trim();
+const RGB=CSS.getPropertyValue("--acc-rgb").trim();
+const AMB=CSS.getPropertyValue("--amb").trim();
+const INK=CSS.getPropertyValue("--ink").trim();
+function hexRGB(hex){const n=parseInt(hex.slice(1),16);return ((n>>16)&255)+","+((n>>8)&255)+","+(n&255);}
+const AMBRGB=hexRGB(AMB);
+const MONO=`"JetBrains Mono", monospace`;
+const font=px=>px+"px "+MONO;
+const dpr=Math.min(window.devicePixelRatio||1,2);
+const buf=document.createElement("canvas");const bctx=buf.getContext("2d");
 
-const CSS = getComputedStyle(document.documentElement);
-const ACC = CSS.getPropertyValue('--acc').trim();
-const RGB = CSS.getPropertyValue('--acc-rgb').trim();
-const AMB = CSS.getPropertyValue('--amb').trim();
+let theta=60, mode="rhombus", tab="proof";
 
-const dpr = Math.min(window.devicePixelRatio || 1, 2);
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d');
+const V=(x,y)=>({x,y});
+const add=(p,q)=>V(p.x+q.x,p.y+q.y), sub=(p,q)=>V(p.x-q.x,p.y-q.y), mul=(p,k)=>V(p.x*k,p.y*k);
+const dot=(p,q)=>p.x*q.x+p.y*q.y, len=p=>Math.hypot(p.x,p.y), unit=p=>{const L=len(p);return L>1e-9?mul(p,1/L):V(0,-1);}, perp=p=>V(-p.y,p.x);
+const cross=(p,q)=>p.x*q.y-p.y*q.x;
+const deg=r=>r*180/Math.PI;
+function angleAt(P,Q,R){const u=sub(P,Q),v=sub(R,Q);return Math.acos(Math.max(-1,Math.min(1,dot(u,v)/(len(u)*len(v)))));}
+function fmt(x){if(Math.abs(x)<0.005)x=0;return x.toFixed(2);}
+const near=p=>p.x>-1.6&&p.x<3.2&&p.y>-1.1&&p.y<2.4;
 
-let ratio = 1.0;
-
-function resize() {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  draw();
-}
-
-function draw() {
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, w, h);
-  
-  const cx = w / 2;
-  const cy = h / 2;
-  const scale = Math.min(w, h) * 0.28;
-  
-  // Define rhombus vertices as position vectors
-  // A at origin, B along x, D along y-axis rotated
-  const angle = Math.PI / 3; // 60 degrees for visual appeal
-  const baseLen = ratio;
-  
-  // Position vectors (centered for display)
-  const A = { x: cx, y: cy + scale * 0.5 };
-  const B = { x: cx + scale * baseLen, y: cy + scale * 0.5 };
-  const D = { x: cx + scale * Math.cos(angle), y: cy + scale * 0.5 - scale * Math.sin(angle) };
-  const C = { x: B.x + (D.x - A.x), y: B.y + (D.y - A.y) };
-  
-  // Draw rhombus
-  ctx.strokeStyle = 'rgba(' + RGB + ', 0.4)';
-  ctx.lineWidth = 1.5;
-  ctx.beginPath();
-  ctx.moveTo(A.x, A.y);
-  ctx.lineTo(B.x, B.y);
-  ctx.lineTo(C.x, C.y);
-  ctx.lineTo(D.x, D.y);
-  ctx.closePath();
-  ctx.stroke();
-  
-  // Draw diagonals AC and BD
-  ctx.save();
-  ctx.strokeStyle = ACC;
-  ctx.lineWidth = 2;
-  ctx.globalCompositeOperation = 'lighter';
-  
-  // Diagonal AC
-  ctx.beginPath();
-  ctx.moveTo(A.x, A.y);
-  ctx.lineTo(C.x, C.y);
-  ctx.stroke();
-  
-  // Diagonal BD
-  ctx.beginPath();
-  ctx.moveTo(B.x, B.y);
-  ctx.lineTo(D.x, D.y);
-  ctx.stroke();
-  ctx.restore();
-  
-  // Intersection point (midpoint of both diagonals in a rhombus)
-  const M = { x: (A.x + C.x) / 2, y: (A.y + C.y) / 2 };
-  
-  // Draw intersection glow
-  const glow = ctx.createRadialGradient(M.x, M.y, 0, M.x, M.y, 20);
-  glow.addColorStop(0, 'rgba(' + RGB + ', 0.6)');
-  glow.addColorStop(0.5, 'rgba(' + RGB + ', 0.2)');
-  glow.addColorStop(1, 'rgba(' + RGB + ', 0)');
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.fillStyle = glow;
-  ctx.beginPath();
-  ctx.arc(M.x, M.y, 20, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
-  
-  // Draw vertices
-  [A, B, C, D].forEach((p, i) => {
-    ctx.fillStyle = ACC;
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
-    ctx.fill();
-    
-    // Labels
-    ctx.fillStyle = 'rgba(' + RGB + ', 0.8)';
-    ctx.font = '12px "JetBrains Mono"';
-    ctx.textAlign = 'center';
-    const labels = ['A', 'B', 'C', 'D'];
-    const offsets = [
-      { x: 0, y: 18 },
-      { x: 18, y: 18 },
-      { x: 0, y: -8 },
-      { x: -18, y: -8 }
-    ];
-    ctx.fillText(labels[i], p.x + offsets[i].x, p.y + offsets[i].y);
-  });
-  
-  // Calculate diagonal vectors and scalar product
-  const AC = { x: C.x - A.x, y: C.y - A.y };
-  const BD = { x: D.x - B.x, y: D.y - B.y };
-  const dotProduct = AC.x * BD.x + AC.y * BD.y;
-  
-  // Calculate lengths
-  const acLen = Math.sqrt(AC.x * AC.x + AC.y * AC.y) / scale;
-  const bdLen = Math.sqrt(BD.x * BD.x + BD.y * BD.y) / scale;
-  
-  acStat.textContent = acLen.toFixed(2);
-  bdStat.textContent = bdLen.toFixed(2);
-  
-  // Update tags
-  canvasTag.textContent = 'AC · BD = ' + dotProduct.toFixed(1);
-  
-  if (Math.abs(ratio - 1.0) < 0.05) {
-    shapeTag.textContent = 'Square';
-  } else {
-    shapeTag.textContent = 'Rhombus';
-  }
-  
-  // Bloom effect
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
-  
-  // Vignette
-  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-}
-
-slider.addEventListener('input', (e) => {
-  const val = parseFloat(e.target.value);
-  ratio = 0.5 + (val / 100) * 1.5;
-  slider.style.setProperty('--fill', val + '%');
-  draw();
-});
-
-// Initial slider fill
-slider.style.setProperty('--fill', '50%');
-
-const proofs = {
-  medians: `Given triangle ABC with position vectors <strong>a</strong>, <strong>b</strong>, <strong>c</strong>, the medians meet at the centroid <strong>G</strong> = (<strong>a</strong> + <strong>b</strong> + <strong>c</strong>)/3. To prove: show that <strong>G</strong> lies on each median. The midpoint of BC is <strong>m</strong> = (<strong>b</strong> + <strong>c</strong>)/2. The median from A is the line <strong>r</strong> = <strong>a</strong> + λ(<strong>m</strong> − <strong>a</strong>). Substitute <strong>G</strong>: we need (<strong>a</strong> + <strong>b</strong> + <strong>c</strong>)/3 = <strong>a</strong> + λ((<strong>b</strong> + <strong>c</strong>)/2 − <strong>a</strong>). Solving gives λ = 2/3, confirming <strong>G</strong> lies on this median. The other two medians follow by symmetry. No diagram needed — the algebra forces concurrency.`,
-  
-  rhombus: `Given rhombus ABCD with position vectors <strong>a</strong>, <strong>b</strong>, <strong>c</strong>, <strong>d</strong>, all sides equal means |<strong>AB</strong>| = |<strong>BC</strong>| = |<strong>CD</strong>| = |<strong>DA</strong>|. The diagonals are <strong>AC</strong> = <strong>c</strong> − <strong>a</strong> and <strong>BD</strong> = <strong>d</strong> − <strong>b</strong>. To prove perpendicularity, show <strong>AC</strong> · <strong>BD</strong> = 0. Since <strong>c</strong> = <strong>b</strong> + (<strong>d</strong> − <strong>a</strong>) in a rhombus, we have (<strong>c</strong> − <strong>a</strong>) · (<strong>d</strong> − <strong>b</strong>) = (<strong>b</strong> + <strong>d</strong> − 2<strong>a</strong>) · (<strong>d</strong> − <strong>b</strong>). Expanding and using |<strong>AB</strong>|² = |<strong>BC</strong>|² gives the scalar product zero. Perpendicularity emerges from equal side lengths alone.`
+const HINTS={
+  rhombus:"Change the angle at A. Watch the two diagonal lengths and the number AC · BD.",
+  medians:"Change the angle at A. Watch the three medians and the ratio AG ÷ GM.",
+  altitudes:"Change the angle at A. Watch where the three altitudes meet as the largest angle passes 90°.",
+  perp:"Change the angle at A. Watch where the three perpendicular bisectors meet and the circle they fix.",
+  angle:"Change the angle at A. Watch the point where the angle bisectors meet and the circle it holds."
 };
+const LIVE={rhombus:"Rhombus • scalar product",medians:"Medians • centroid G",altitudes:"Altitudes • orthocentre H",perp:"Perpendicular bisectors • circumcentre O",angle:"Angle bisectors • incentre I"};
+const PROOFS={
+  rhombus:"Let u = AB and v = AD, with |u| = |v| because the sides of a rhombus are equal. Then AC = u + v and BD = v − u, since C sits at u + v and D sits at v. Form the scalar product: (u + v) · (v − u) = v · v − u · u = |v|² − |u|² = 0. A zero scalar product between two non-zero vectors means they are perpendicular, so the diagonals meet at right angles at every angle you set. The shaded area is a different product: |u × v| = |u||v| sin θ is the area of the parallelogram on u and v, and the vector u × v points straight out of the plane, perpendicular to both.",
+  medians:"A median joins a vertex to the midpoint of the opposite side, so the median from A runs from a to m = (b + c)/2, and every point on it is a + λ(m − a). Put λ = 2/3: a + (2/3)((b + c)/2 − a) = (a + b + c)/3. Repeat from B and from C with the letters relabelled and each lands on the same point, so all three medians pass through G = (a + b + c)/3. Because λ = 2/3, G divides every median 2 : 1 from the vertex, whatever shape the triangle takes. The ratio in the stat row never moves even though the median length does.",
+  altitudes:"An altitude is the line through a vertex perpendicular to the opposite side, so the altitude from A is the set of points p with (p − a) · (c − b) = 0, and the altitude from B is (p − b) · (c − a) = 0. Suppose h lies on both. Subtracting the two equations and collecting terms gives (h − c) · (a − b) = 0, which says h also lies on the altitude from C. The three altitudes therefore concur at the orthocentre H. When the largest angle passes 90° the feet leave the sides and H leaves the triangle, but the algebra is unchanged: the dashed extensions show the sides the feet now sit on.",
+  perp:"The perpendicular bisector of BC is the line through the midpoint (b + c)/2 that is perpendicular to c − b, so its points satisfy (p − (b + c)/2) · (c − b) = 0, which rearranges to |p − b| = |p − c|. A point on two bisectors is equidistant from all three vertices, |o − a| = |o − b| = |o − c|, so it lies on the third bisector as well. This common point O is the circumcentre, and the common distance is the radius of the circle through A, B and C. O sits inside the triangle only while every angle is acute; past 90° it crosses a side and the lines meet outside.",
+  angle:"The angle bisector from A heads in the direction (b − a)/|b − a| + (c − a)/|c − a|, the sum of the unit vectors along AB and AC, which makes equal angles with both sides. Every point on it is equidistant from the lines AB and AC, so a point on two bisectors is equidistant from all three sides and must lie on the third. The common point is the incentre I = (αa + βb + γc)/(α + β + γ), where α = |BC|, β = |CA| and γ = |AB| are the side lengths opposite each vertex. The common distance is the inradius r, and the circle of radius r about I touches all three sides; the dashed segment is that distance to AB."
+};
+const WRITING="Start by naming your vectors: write a, b, c for the position vectors of the vertices and say what each line is in those letters, such as m = (b + c)/2 for the midpoint of BC. State the test before you use it: perpendicular means scalar product zero, parallel or collinear means one vector is a scalar multiple of another, equal length means equal magnitude. Carry the algebra through in vectors, not coordinates, so the proof works in any dimension. Finish by saying what the result means geometrically: λ = 2/3 is not the end of the proof until you write that G divides the median 2 : 1 from the vertex.";
 
-toggleBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    toggleBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const proof = btn.dataset.proof;
-    knowdrop.innerHTML = proofs[proof];
-  });
-});
+function model(){
+  const t=theta*Math.PI/180;
+  if(mode==="rhombus"){const u=V(1,0),v=V(Math.cos(t),Math.sin(t));return {A:V(0,0),B:u,C:add(u,v),D:v,u,v};}
+  return {A:V(0,0),B:V(1.6,0),C:V(1.3*Math.cos(t),1.3*Math.sin(t))};
+}
+function triStuff(M){
+  const {A,B,C}=M;
+  const a=len(sub(C,B)),b=len(sub(C,A)),c=len(sub(B,A));
+  const angA=angleAt(B,A,C),angB=angleAt(A,B,C),angC=angleAt(A,C,B);
+  const area=0.5*Math.abs(cross(sub(B,A),sub(C,A)));
+  const G=mul(add(add(A,B),C),1/3);
+  const Ma=mul(add(B,C),0.5),Mb=mul(add(A,C),0.5),Mc=mul(add(A,B),0.5);
+  const H=V(C.x,-C.x*(C.x-B.x)/C.y);
+  const foot=(P,Q,R)=>{const d=sub(R,Q);const t=dot(sub(P,Q),d)/dot(d,d);return {p:add(Q,mul(d,t)),t};};
+  const Fa=foot(A,B,C),Fb=foot(B,A,C),Fc=foot(C,A,B);
+  const O=V(B.x/2,(dot(C,C)/2-(B.x/2)*C.x)/C.y);
+  const R=len(sub(O,A));
+  const per=a+b+c;
+  const I=mul(add(add(mul(A,a),mul(B,b)),mul(C,c)),1/per);
+  const r=2*area/per;
+  const Pa=mul(add(mul(B,b),mul(C,c)),1/(b+c));
+  const Pb=mul(add(mul(A,a),mul(C,c)),1/(a+c));
+  const Pc=mul(add(mul(A,a),mul(B,b)),1/(a+b));
+  return {a,b,c,angA,angB,angC,largest:Math.max(angA,angB,angC),area,G,Ma,Mb,Mc,H,Fa,Fb,Fc,O,R,I,r,Pa,Pb,Pc};
+}
 
-window.addEventListener('resize', resize);
-resize();
+function fitter(pts,w,h,padT,padB){
+  const padX=Math.max(48,w*0.1);
+  let minx=Infinity,maxx=-Infinity,miny=Infinity,maxy=-Infinity;
+  pts.forEach(p=>{minx=Math.min(minx,p.x);maxx=Math.max(maxx,p.x);miny=Math.min(miny,p.y);maxy=Math.max(maxy,p.y);});
+  const bw=Math.max(maxx-minx,0.4),bh=Math.max(maxy-miny,0.4);
+  const s=Math.min((w-2*padX)/bw,(h-padT-padB)/bh);
+  const cxU=(minx+maxx)/2,cyU=(miny+maxy)/2,ox=w/2,oy=padT+(h-padT-padB)/2;
+  return p=>V(ox+(p.x-cxU)*s,oy-(p.y-cyU)*s);
+}
+let P=null;
+function lineU(p,q,style,width,dash,glow){
+  const a=P(p),b=P(q);
+  ctx.save();
+  if(glow)ctx.globalCompositeOperation="lighter";
+  ctx.strokeStyle=style;ctx.lineWidth=width;ctx.setLineDash(dash||[]);
+  ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
+  ctx.restore();
+}
+function arrow(p,q,color,width,hl){
+  const d=sub(q,p),L=len(d);if(L<2)return;const ud=mul(d,1/L),n=perp(ud);
+  ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=width;
+  const end=sub(q,mul(ud,hl*0.6));
+  ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(end.x,end.y);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(q.x,q.y);
+  ctx.lineTo(q.x-ud.x*hl+n.x*hl*0.45,q.y-ud.y*hl+n.y*hl*0.45);
+  ctx.lineTo(q.x-ud.x*hl-n.x*hl*0.45,q.y-ud.y*hl-n.y*hl*0.45);
+  ctx.closePath();ctx.fill();
+}
+function rightAngle(p,d1,d2,sz,color){
+  ctx.save();ctx.strokeStyle=color;ctx.lineWidth=1.2;ctx.setLineDash([]);
+  ctx.beginPath();
+  ctx.moveTo(p.x+d1.x*sz,p.y+d1.y*sz);
+  ctx.lineTo(p.x+(d1.x+d2.x)*sz,p.y+(d1.y+d2.y)*sz);
+  ctx.lineTo(p.x+d2.x*sz,p.y+d2.y*sz);
+  ctx.stroke();ctx.restore();
+}
+function dotS(p,color,r){ctx.fillStyle=color;ctx.beginPath();ctx.arc(p.x,p.y,r,0,Math.PI*2);ctx.fill();}
+function glowDot(p,r,halo){
+  const g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,halo);
+  g.addColorStop(0,"rgba("+RGB+",0.65)");g.addColorStop(0.5,"rgba("+RGB+",0.2)");g.addColorStop(1,"rgba("+RGB+",0)");
+  ctx.save();ctx.globalCompositeOperation="lighter";ctx.fillStyle=g;ctx.beginPath();ctx.arc(p.x,p.y,halo,0,Math.PI*2);ctx.fill();ctx.restore();
+  dotS(p,ACC,r);
+}
+function label(txt,p,dir,color,px,gap){
+  const d=unit(dir),g=gap||12;
+  ctx.font=font(px||12);ctx.fillStyle=color;
+  ctx.textAlign=d.x<-0.35?"right":d.x>0.35?"left":"center";
+  ctx.textBaseline=d.y<-0.35?"bottom":d.y>0.35?"top":"middle";
+  ctx.fillText(txt,p.x+d.x*g,p.y+d.y*g);
+}
+function stack(lines,colors,tip,dir,gap){
+  const d=unit(dir),ax=tip.x+d.x*gap,ay=tip.y+d.y*gap;
+  ctx.textAlign="center";ctx.textBaseline="middle";
+  ctx.font=font(12);ctx.fillStyle=colors[0];ctx.fillText(lines[0],ax,ay-7);
+  ctx.font=font(12);ctx.fillStyle=colors[1];ctx.fillText(lines[1],ax,ay+8);
+}
+function bestDir(dirs){
+  let best=V(1,0),bs=-1;
+  for(let k=0;k<12;k++){
+    const a=k*Math.PI/6,cand=V(Math.cos(a),Math.sin(a));
+    let sc=Infinity;
+    dirs.forEach(dd=>{const u=unit(dd);sc=Math.min(sc,Math.abs(cross(cand,u)));});
+    if(sc>bs){bs=sc;best=cand;}
+  }
+  return best;
+}
+function circle(p,r,style,width,dash){
+  if(!(r>0)||r>5000)return;
+  ctx.save();ctx.strokeStyle=style;ctx.lineWidth=width;ctx.setLineDash(dash||[]);
+  ctx.beginPath();ctx.arc(p.x,p.y,r,0,Math.PI*2);ctx.stroke();ctx.restore();
+}
+
+function drawRhombus(M,w,h,padB){
+  const {A,B,C,D,u,v}=M;
+  P=fitter([A,B,C,D],w,h,46,padB);
+  const a=P(A),b=P(B),c=P(C),d=P(D),m=P(mul(add(A,C),0.5));
+  ctx.fillStyle="rgba("+RGB+",0.12)";
+  ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.lineTo(c.x,c.y);ctx.lineTo(d.x,d.y);ctx.closePath();ctx.fill();
+  ctx.strokeStyle="rgba("+RGB+",0.4)";ctx.lineWidth=1.4;ctx.setLineDash([]);
+  ctx.beginPath();ctx.moveTo(b.x,b.y);ctx.lineTo(c.x,c.y);ctx.lineTo(d.x,d.y);ctx.stroke();
+  ctx.save();ctx.globalCompositeOperation="lighter";
+  arrow(a,b,ACC,2.2,10);arrow(a,d,ACC,2.2,10);
+  arrow(a,c,AMB,1.7,9);arrow(b,d,AMB,1.7,9);
+  ctx.restore();
+  rightAngle(m,unit(sub(c,a)),unit(sub(d,b)),9,AMB);
+  glowDot(m,4,18);
+  [a,b,c,d].forEach(p=>dotS(p,ACC,3.5));
+  label("A",a,sub(a,m),INK,12,15);
+  label("B",b,sub(b,m),INK,12,15);
+  stack(["C","u + v"],[INK,AMB],c,sub(c,a),26);
+  stack(["D","v − u"],[INK,AMB],d,sub(d,b),26);
+  const mab=V((a.x+b.x)/2,(a.y+b.y)/2),mad=V((a.x+d.x)/2,(a.y+d.y)/2);
+  label("u",mab,sub(mab,m),ACC,13,12);
+  label("v",mad,sub(mad,m),ACC,13,12);
+  const area=Math.abs(cross(u,v));
+  const ar=V((a.x+b.x+m.x)/3,(a.y+b.y+m.y)/3);
+  ctx.font=font(11);ctx.fillStyle="rgba("+RGB+",0.95)";ctx.textAlign="center";ctx.textBaseline="middle";
+  ctx.fillText((w<420?"area ":"|u × v| = ")+fmt(area),ar.x,ar.y);
+  const AC=add(u,v),BD=sub(v,u),dp=dot(AC,BD);
+  return {
+    tag:"AC · BD = |v|² − |u|² = "+fmt(dp)+" • |u × v| = sin θ = "+fmt(area),
+    stats:[["Diagonal AC",fmt(len(AC))],["Diagonal BD",fmt(len(BD))],["AC · BD",fmt(dp)],["Area |u × v|",fmt(area)]]
+  };
+}
+
+function drawTriangle(M,w,h,padB){
+  const T=triStuff(M);const {A,B,C}=M;
+  const pts=[A,B,C];
+  let centre=T.G;
+  if(mode==="altitudes"){centre=T.H;[T.Fa.p,T.Fb.p,T.Fc.p].forEach(f=>{if(near(f))pts.push(f);});}
+  else if(mode==="perp")centre=T.O;
+  else if(mode==="angle")centre=T.I;
+  if(near(centre))pts.push(centre);
+  P=fitter(pts,w,h,30,padB);
+  const s=len(sub(P(V(1,0)),P(V(0,0))));
+  const a=P(A),b=P(B),c=P(C),g=P(T.G);
+  ctx.fillStyle="rgba("+RGB+",0.07)";
+  ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.lineTo(c.x,c.y);ctx.closePath();ctx.fill();
+  ctx.strokeStyle="rgba("+RGB+",0.6)";ctx.lineWidth=1.6;ctx.setLineDash([]);
+  ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.lineTo(c.x,c.y);ctx.closePath();ctx.stroke();
+  const strong="rgba("+RGB+",0.95)",dim="rgba("+RGB+",0.35)",ambDim="rgba("+AMBRGB+",0.5)";
+  const inside=T.largest<Math.PI/2-1e-9;
+  let out;
+  if(mode==="medians"){
+    [[A,T.Ma],[B,T.Mb],[C,T.Mc]].forEach(pr=>lineU(pr[0],pr[1],strong,1.6,null,true));
+    [[T.Ma,"(b+c)/2"],[T.Mb,"(a+c)/2"],[T.Mc,"(a+b)/2"]].forEach(pr=>{const q=P(pr[0]);dotS(q,AMB,3);label(pr[1],q,sub(q,g),AMB,11,13);});
+    glowDot(g,4.5,20);
+    label("G",g,bestDir([sub(a,g),sub(b,g),sub(c,g)]),INK,12,13);
+    const AG=len(sub(T.G,A)),GM=len(sub(T.Ma,T.G));
+    out={tag:"G = (a+b+c)/3 • λ = 2/3 on every median",
+      stats:[["AG ÷ GM",fmt(AG/GM)],["Median AM",fmt(len(sub(T.Ma,A)))],["Area ½|AB × AC|",fmt(T.area)],["Largest angle",deg(T.largest).toFixed(1)+"°"]]};
+  } else if(mode==="altitudes"){
+    [[A,T.Fa,B,C],[B,T.Fb,A,C],[C,T.Fc,A,B]].forEach(it=>{
+      const Vt=it[0],F=it[1],Q=it[2],R=it[3];
+      if(F.t<0)lineU(Q,F.p,dim,1,[4,4]);else if(F.t>1)lineU(R,F.p,dim,1,[4,4]);
+      const d=sub(F.p,Vt),tH=dot(sub(T.H,Vt),d)/dot(d,d);
+      const t1=Math.min(0,1,tH),t2=Math.max(0,1,tH);
+      lineU(add(Vt,mul(d,t1)),add(Vt,mul(d,t2)),strong,1.6,null,true);
+      const fS=P(F.p);
+      rightAngle(fS,unit(sub(P(Vt),fS)),unit(sub(P(R),P(Q))),8,AMB);
+      dotS(fS,AMB,3);
+    });
+    const hS=P(T.H);
+    if(near(T.H)){glowDot(hS,4.5,20);label("H",hS,bestDir([sub(a,hS),sub(b,hS),sub(c,hS)]),INK,12,13);}
+    const chk=dot(sub(T.H,A),sub(C,B));
+    out={tag:"(H−A) · (C−B) = "+fmt(chk)+" • H "+(inside?"inside the triangle":"outside the triangle")+(near(T.H)?"":" (off the frame)"),
+      stats:[["(H−A) · (C−B)",fmt(chk)],["Altitude from C",fmt(C.y)],["Area ½|AB × AC|",fmt(T.area)],["Largest angle",deg(T.largest).toFixed(1)+"°"]]};
+  } else if(mode==="perp"){
+    [[B,C],[A,C],[A,B]].forEach(pr=>{
+      const Q=pr[0],R=pr[1],Mi=mul(add(Q,R),0.5),n=unit(perp(sub(R,Q))),tO=dot(sub(T.O,Mi),n);
+      const t1=Math.min(0,tO)-0.22,t2=Math.max(0,tO)+0.22;
+      lineU(add(Mi,mul(n,t1)),add(Mi,mul(n,t2)),strong,1.6,null,true);
+      const mS=P(Mi);
+      rightAngle(mS,unit(sub(P(R),P(Q))),unit(sub(P(add(Mi,n)),mS)),8,AMB);
+      dotS(mS,AMB,3);
+    });
+    const oS=P(T.O);
+    circle(oS,T.R*s,ambDim,1,[3,5]);
+    if(near(T.O)){glowDot(oS,4.5,20);label("O",oS,bestDir([sub(P(T.Ma),oS),sub(P(T.Mb),oS),sub(P(T.Mc),oS)]),INK,12,13);}
+    const chk=dot(sub(T.O,T.Ma),sub(C,B));
+    out={tag:"|OA| = |OB| = |OC| = "+fmt(T.R)+" • O "+(inside?"inside the triangle":"outside the triangle")+(near(T.O)?"":" (off the frame)"),
+      stats:[["OA = OB = OC",fmt(T.R)],["(O−M) · (C−B)",fmt(chk)],["Area ½|AB × AC|",fmt(T.area)],["Largest angle",deg(T.largest).toFixed(1)+"°"]]};
+  } else {
+    [[A,T.Pa],[B,T.Pb],[C,T.Pc]].forEach(pr=>lineU(pr[0],pr[1],strong,1.6,null,true));
+    const iS=P(T.I);
+    circle(iS,T.r*s,"rgba("+AMBRGB+",0.7)",1.2,null);
+    const footAB=V(T.I.x,0);
+    lineU(T.I,footAB,ambDim,1,[3,3]);
+    rightAngle(P(footAB),unit(sub(iS,P(footAB))),unit(sub(b,a)),7,AMB);
+    const angAB=Math.atan2(b.y-a.y,b.x-a.x),angAC=Math.atan2(c.y-a.y,c.x-a.x);
+    ctx.save();ctx.strokeStyle=AMB;ctx.lineWidth=1.1;ctx.setLineDash([]);
+    ctx.beginPath();ctx.arc(a.x,a.y,18,angAB,angAC,true);ctx.stroke();
+    [0.25,0.75].forEach(f=>{const an=angAB+(angAC-angAB)*f;ctx.beginPath();ctx.moveTo(a.x+Math.cos(an)*14,a.y+Math.sin(an)*14);ctx.lineTo(a.x+Math.cos(an)*22,a.y+Math.sin(an)*22);ctx.stroke();});
+    ctx.restore();
+    glowDot(iS,4.5,20);
+    label("I",iS,bestDir([sub(a,iS),sub(b,iS),sub(c,iS)]),INK,12,13);
+    out={tag:"I = (αa+βb+γc)/(α+β+γ) • distance to each side r = "+fmt(T.r),
+      stats:[["Inradius r",fmt(T.r)],["Half-angle at A",(theta/2).toFixed(1)+"°"],["Area ½|AB × AC|",fmt(T.area)],["Largest angle",deg(T.largest).toFixed(1)+"°"]]};
+  }
+  [a,b,c].forEach(p=>dotS(p,ACC,3.5));
+  label("A",a,sub(a,g),INK,12,14);
+  label("B",b,sub(b,g),INK,12,14);
+  label("C",c,sub(c,g),INK,12,14);
+  return out;
+}
+
+function draw(){
+  const w=canvas.width/dpr,h=canvas.height/dpr;if(!w||!h)return;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.globalCompositeOperation="source-over";ctx.globalAlpha=1;ctx.filter="none";ctx.setLineDash([]);
+  ctx.fillStyle="rgb(0,0,0)";ctx.fillRect(0,0,w,h);
+  const padB=(tag.offsetHeight||40)+30;
+  const M=model();
+  const out=mode==="rhombus"?drawRhombus(M,w,h,padB):drawTriangle(M,w,h,padB);
+  bctx.setTransform(1,0,0,1,0,0);bctx.clearRect(0,0,buf.width,buf.height);
+  if(canvas.width&&canvas.height)bctx.drawImage(canvas,0,0);
+  ctx.save();ctx.globalCompositeOperation="lighter";ctx.globalAlpha=0.38;ctx.filter="blur(7px)";
+  if(buf.width&&buf.height)ctx.drawImage(buf,0,0,w,h);
+  ctx.restore();
+  const vig=ctx.createRadialGradient(w/2,h/2,h*0.28,w/2,h/2,w*0.72);
+  vig.addColorStop(0,"rgba(0,0,0,0)");vig.addColorStop(1,"rgba(0,0,0,0.52)");
+  ctx.fillStyle=vig;ctx.fillRect(0,0,w,h);
+  if(tag.textContent!==out.tag)tag.textContent=out.tag;
+  out.stats.forEach((st,i)=>{stats[i].l.textContent=st[0];stats[i].v.textContent=st[1];});
+  live.textContent=LIVE[mode];
+  hint.textContent=HINTS[mode];
+}
+function resize(){
+  const r=wrap.getBoundingClientRect();if(!r.width||!r.height)return;
+  canvas.width=Math.round(r.width*dpr);canvas.height=Math.round(r.height*dpr);
+  buf.width=canvas.width;buf.height=canvas.height;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  draw();
+}
+function setFill(){const v=parseFloat(slider.value);slider.style.setProperty("--fill",((v-30)/120*100)+"%");angV.textContent=Math.round(v)+"°";}
+slider.addEventListener("input",()=>{theta=Math.round(parseFloat(slider.value));setFill();draw();});
+function updateDrop(){drop.innerHTML=tab==="proof"?PROOFS[mode]:WRITING;}
+modeBtns.forEach(btn=>btn.addEventListener("click",()=>{
+  mode=btn.dataset.mode;
+  modeBtns.forEach(b=>b.setAttribute("aria-pressed",b===btn?"true":"false"));
+  updateDrop();draw();
+}));
+tabBtns.forEach(btn=>btn.addEventListener("click",()=>{
+  tab=btn.dataset.tab;
+  tabBtns.forEach(b=>b.setAttribute("aria-pressed",b===btn?"true":"false"));
+  updateDrop();
+}));
+window.addEventListener("resize",resize);
+if(window.ResizeObserver){new ResizeObserver(()=>resize()).observe(wrap);}
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(()=>draw());}
+setFill();updateDrop();resize();
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'geometric-proofs-using-vectors'},'*');}catch(e){}}

@@ -99,6 +99,10 @@ h1 {
   margin-bottom: 14px;
 }
 
+.arc { display: block; width: 100%; height: auto; margin: 0 0 14px; }
+.arc .track { fill: rgba(237,237,232,0.05); }
+.arc .seg { fill: rgba(237,237,232,0.16); transition: fill .3s, y .3s, height .3s; }
+.arc .axl { fill: var(--ink-dim); font-family: 'JetBrains Mono', monospace; font-size: 13px; dominant-baseline: middle; }
 .passage-container {
   background: #000;
   border-radius: 12px;
@@ -337,16 +341,16 @@ h1 {
 <div class="container">
   <h2 class="sr-only">Interactive passage analysis demonstrating how rhetorical strategies construct persuasion through ethos, logos and pathos, plus inclusive language, figurative devices, and tone manipulation across the writer's stance toward subject and audience</h2>
 
-  <h1>Every Persuasive Text Is Secretly <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">Manipulating</span> You</h1>
+  <h1>Every persuasive text is secretly <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">manipulating</span> you</h1>
   
-  <p class="intro">Writers don't just present ideas—they construct careful frameworks that guide your thinking before you even notice. Click each lens to see how one passage deploys the three appeals — ethos, logos, pathos — alongside <strong>inclusive language</strong> that quietly enrols you and <strong>figurative devices</strong> that do the arguing for it. Then read the tone: every text takes a stance toward its subject and its audience, and it can sit anywhere from objective and formal to openly passionate.</p>
+  <p class="intro">Writers don't just present ideas—they construct careful frameworks that guide your thinking before you even notice. Open each lens to see how one passage deploys the three appeals — ethos, logos, pathos — alongside <strong>inclusive language</strong> that quietly enrols you and <strong>figurative devices</strong> that do the arguing for it. Then read the tone: every text takes a stance toward its subject and its audience, and it can sit anywhere from objective and formal to openly passionate.</p>
 
   <div class="card">
     <div class="card-header">
-      <span class="card-label">Interactive Passage</span>
+      <span class="card-label">Interactive passage</span>
       <span class="live-tag" id="liveTag">Select a lens</span>
     </div>
-    <div class="card-hint">Click buttons to highlight rhetorical strategies</div>
+    <div class="card-hint">Pick a strategy and watch it light up in the passage</div>
 
     <div class="lens-buttons" role="group" aria-label="Choose a rhetorical lens">
       <button class="lens-btn" data-lens="ethos">Ethos</button>
@@ -356,9 +360,16 @@ h1 {
       <button class="lens-btn" data-lens="figurative">Figurative</button>
     </div>
 
+    <svg class="arc" id="arc" viewBox="0 0 600 70" role="img" aria-label="Passage map from start to end: each highlighted phrase sits where it falls in the passage, and the active lens lights its phrases, showing where in the argument each strategy appears">
+      <rect class="track" x="0" y="22" width="600" height="26" rx="6"/>
+      <g id="arcSegs"></g>
+      <text class="axl" x="0" y="62">start</text>
+      <text class="axl" x="600" y="62" text-anchor="end">end</text>
+    </svg>
+
     <div class="passage-container">
       <div class="passage" id="passage">
-        <span data-ethos>As a climate scientist with thirty years of field research</span>, I've witnessed firsthand the accelerating changes in <span data-inclusive>our polar regions</span>. <span data-logos>Arctic sea ice has declined by 13% per decade since 1979, a rate unprecedented in recorded history</span>. But <span data-pathos>imagine your grandchildren asking why their generation inherited an irreversibly altered planet</span>—<span data-ethos data-inclusive>we who understand the data have a moral obligation</span> to act on what <span data-logos>the evidence unequivocally demonstrates</span>. <span data-figurative>The ice is not retreating; it is being evicted</span>, and <span data-figurative>the ledger it keeps balances only once</span>. <span data-pathos data-figurative>The window for meaningful intervention is closing</span>, and with it, <span data-inclusive data-pathos>the future we promised ourselves we'd protect</span>.
+        <span data-ethos>As a climate scientist with thirty years of field research</span>, I've witnessed firsthand the accelerating changes in <span data-inclusive>our polar regions</span>. <span data-logos>The September minimum of Arctic sea ice has shrunk by about 12 to 13% per decade since 1979, a rate unprecedented in recorded history</span>. But <span data-pathos>imagine your grandchildren asking why their generation inherited an irreversibly altered planet</span>—<span data-ethos data-inclusive>we who understand the data have a moral obligation</span> to act on what <span data-logos>the evidence unequivocally demonstrates</span>. <span data-figurative>The ice is not retreating; it is being evicted</span>, and <span data-figurative>the ledger it keeps balances only once</span>. <span data-pathos data-figurative>The window for meaningful intervention is closing</span>, and with it, <span data-inclusive data-pathos>the future we promised ourselves we'd protect</span>.
       </div>
     </div>
 
@@ -366,11 +377,11 @@ h1 {
 
     <div class="stat-row">
       <div class="stat">
-        <div class="stat-label">Active Strategy</div>
+        <div class="stat-label">Active strategy</div>
         <div class="stat-value" id="strategyName">—</div>
       </div>
       <div class="stat">
-        <div class="stat-label">Instances Found</div>
+        <div class="stat-label">Instances found</div>
         <div class="stat-value" id="instanceCount">0</div>
       </div>
     </div>
@@ -378,9 +389,9 @@ h1 {
 
   <div class="toggle-card">
     <div class="toggle-buttons" role="group" aria-label="Choose a reading mode">
-      <button class="toggle-btn active" data-toggle="construct" aria-pressed="true">Constructive Reading</button>
-      <button class="toggle-btn" data-toggle="critical" aria-pressed="false">Critical Reading</button>
-      <button class="toggle-btn" data-toggle="tone" aria-pressed="false">Reading Tone</button>
+      <button class="toggle-btn active" data-toggle="construct" aria-pressed="true">Constructive reading</button>
+      <button class="toggle-btn" data-toggle="critical" aria-pressed="false">Critical reading</button>
+      <button class="toggle-btn" data-toggle="tone" aria-pressed="false">Reading tone</button>
     </div>
     <div class="knowdrop" id="knowdrop">
       When analysing persuasive texts, constructive reading means identifying what rhetorical techniques the writer employs and understanding how each functions within the argument's architecture. You're mapping the blueprint—recognising where ethos establishes authority, where logos builds logical scaffolding, and where pathos creates emotional resonance. This reading mode asks "how does this text work?" rather than "do I agree?" Critical reading then evaluates the effectiveness and ethics of these choices: does the emotional appeal substitute for weak evidence? Does the credibility claim rest on genuine expertise or borrowed authority? Are logical connections sound or merely plausible-sounding? Both modes are essential—you must first understand the mechanism before you can assess its integrity.
@@ -408,7 +419,7 @@ const instanceCount = document.getElementById('instanceCount');
 
 const annotations = {
   ethos: "Ethos establishes credibility through expertise ('thirty years of field research'), shared values ('moral obligation'), and authority positioning. Notice how the writer leverages both professional credentials and ethical framing to position themselves as a trustworthy source whose claims deserve consideration.",
-  logos: "Logos employs empirical evidence ('13% per decade since 1979') and logical reasoning ('unprecedented in recorded history', 'unequivocally demonstrates') to construct a rational foundation. These appeals create an impression of objectivity and scientific rigor that makes the argument appear factually grounded rather than opinion-based.",
+  logos: "Logos employs empirical evidence ('about 12 to 13% per decade since 1979') and logical reasoning ('unprecedented in recorded history', 'unequivocally demonstrates') to construct a rational foundation. These appeals create an impression of objectivity and scientific rigour that makes the argument appear factually grounded rather than opinion-based.",
   pathos: "Pathos targets emotional responses through evocative scenarios ('imagine your grandchildren asking') and urgency framing ('window...is closing'). These appeals bypass rational evaluation by creating visceral reactions—guilt, fear, protective instinct—that predispose readers toward agreement before they've assessed the logical claims."
 };
 
@@ -428,6 +439,39 @@ const HL = {
 
 let activeLens = null;
 
+/* Passage map: each marked phrase drawn where it falls in the passage (by character position) */
+const ARC_COL = { 'active-ethos': '#BB6FE2', 'active-logos': '#FAC775', 'active-pathos': '#9370DB' };
+const arcSegs = document.getElementById('arcSegs');
+const arcMarks = (() => {
+  const full = passage.textContent.length || 1;
+  const out = [];
+  let pos = 0;
+  const walk = node => {
+    node.childNodes.forEach(n => {
+      if (n.nodeType === 3) { pos += n.textContent.length; return; }
+      const start = pos; walk(n);
+      if (n.tagName === 'SPAN') {
+        const r = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        r.setAttribute('class', 'seg');
+        r.setAttribute('x', (600 * start / full).toFixed(1));
+        r.setAttribute('width', Math.max(4, 600 * (pos - start) / full - 2).toFixed(1));
+        r.setAttribute('y', '27'); r.setAttribute('height', '16'); r.setAttribute('rx', '3');
+        arcSegs.appendChild(r); out.push({ span: n, rect: r });
+      }
+    });
+  };
+  walk(passage);
+  return out;
+})();
+function drawArc(lens) {
+  arcMarks.forEach(m => {
+    const on = lens && m.span.hasAttribute('data-' + lens);
+    m.rect.style.fill = on ? ARC_COL[HL[lens]] : 'rgba(237,237,232,0.16)';
+    m.rect.setAttribute('y', on ? '18' : '27');
+    m.rect.setAttribute('height', on ? '34' : '16');
+  });
+}
+
 lenses.forEach(btn => {
   btn.addEventListener('click', () => {
     const lens = btn.dataset.lens;
@@ -443,6 +487,7 @@ lenses.forEach(btn => {
       liveTag.textContent = "Select a lens";
       strategyName.textContent = "—";
       instanceCount.textContent = "0";
+      drawArc(null);
     } else {
       // Activate new lens
       activeLens = lens;
@@ -468,6 +513,7 @@ lenses.forEach(btn => {
       liveTag.textContent = `${lens.charAt(0).toUpperCase() + lens.slice(1)} Active`;
       strategyName.textContent = lens.charAt(0).toUpperCase() + lens.slice(1);
       instanceCount.textContent = count;
+      drawArc(lens);
     }
   });
 });
@@ -478,10 +524,10 @@ const knowdrop = document.getElementById('knowdrop');
 
 const knowdropContent = {
   construct: "When analysing persuasive texts, constructive reading means identifying what rhetorical techniques the writer employs and understanding how each functions within the argument's architecture. You're mapping the blueprint—recognising where ethos establishes authority, where logos builds logical scaffolding, and where pathos creates emotional resonance. This reading mode asks \"how does this text work?\" rather than \"do I agree?\" Critical reading then evaluates the effectiveness and ethics of these choices: does the emotional appeal substitute for weak evidence? Does the credibility claim rest on genuine expertise or borrowed authority? Are logical connections sound or merely plausible-sounding? Both modes are essential—you must first understand the mechanism before you can assess its integrity.",
-  critical: "Critical reading interrogates not just what strategies are present, but whether they're deployed ethically and effectively. When you encounter ethos, ask: is this credibility earned through genuine expertise, or is it borrowed authority masquerading as qualification? Does logos present sound reasoning with valid evidence, or does it rely on correlation-as-causation, cherry-picked data, or false dichotomies? Does pathos enhance understanding through relatable scenarios, or does it manipulate by substituting emotional reaction for rational assessment? A text can be technically skillful in its rhetoric while being intellectually or ethically compromised. Your job isn't to be impressed by technique—it's to determine whether the persuasive architecture supports a sound argument or disguises a weak one. The most dangerous texts are those that deploy sophisticated rhetoric in service of flawed reasoning."
+  critical: "Critical reading interrogates not just what strategies are present, but whether they're deployed ethically and effectively. When you encounter ethos, ask: is this credibility earned through genuine expertise, or is it borrowed authority masquerading as qualification? Does logos present sound reasoning with valid evidence, or does it rely on correlation-as-causation, cherry-picked data, or false dichotomies? Does pathos enhance understanding through relatable scenarios, or does it manipulate by substituting emotional reaction for rational assessment? A text can be technically skilful in its rhetoric while being intellectually or ethically compromised. Your job isn't to be impressed by technique—it's to determine whether the persuasive architecture supports a sound argument or disguises a weak one. The most dangerous texts are those that deploy sophisticated rhetoric in service of flawed reasoning."
 };
 
-knowdropContent.tone = "Tone is not a mood word you attach at the end — it is the writer's stance, and it points in two directions at once. Toward the SUBJECT: is this treated as a technical problem, a tragedy, a scandal, a routine matter? Toward the AUDIENCE: are you being briefed, warned, recruited, scolded, or trusted? The register runs from objective and formal at one end, through measured and collegial, to openly passionate at the other, and a text can sit at different points for its subject and its audience — clinical about the ice, passionate toward you. Track this passage's movement: it opens objective and credentialled ('thirty years of field research', a percentage with a date), and closes passionate and second-person ('imagine your grandchildren'). That drift is the argument's actual shape, and it is deliberate — evidence first to earn the right to be emotional later. Naming tone earns nothing on its own. Say what the tone is toward the subject, what it is toward the audience, where it shifts, and what the shift buys.";
+knowdropContent.tone = "Tone is not a mood word you attach at the end — it is the writer's stance, and it points in two directions at once. Toward the SUBJECT: is this treated as a technical problem, a tragedy, a scandal, a routine matter? Toward the AUDIENCE: are you being briefed, warned, recruited, scolded, or trusted? The register runs from objective and formal at one end, through measured and collegial, to openly passionate at the other, and a text can sit at different points for its subject and its audience — measured about the data, urgent toward you. Track this passage's movement: it opens with credentials and personal testimony ('thirty years of field research', 'I've witnessed firsthand') and a statistic with a date; mid-passage it turns to second person with an image ('imagine your grandchildren'); and it closes on inclusive 'we' and metaphor ('the window ... is closing', 'the future we promised ourselves'). That drift is the argument's actual shape, and it is deliberate — credentials and evidence first, to earn the right to be emotional later. Naming tone is not enough on its own. Say what the tone is toward the subject, what it is toward the audience, where it shifts, and what the shift buys.";
 
 toggleBtns.forEach(btn => {
   btn.addEventListener('click', () => {

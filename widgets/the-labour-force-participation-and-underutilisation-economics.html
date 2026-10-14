@@ -338,18 +338,18 @@ canvas {
   
   <h1>You can have falling unemployment <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">and rising underutilisation</span></h1>
   
-  <p class="intro">The headline unemployment rate is just one slice of a three-part population: employed, unemployed, and not in the labour force. Movement between these categories — and who gets counted where — determines both the participation rate and the underutilisation rate. Use the three sliders to recompose the labour force and watch how the official rates respond. They start close to recent Australian figures.</p>
+  <p class="intro">The headline unemployment rate is just one slice of a three-part population: employed, unemployed, and not in the labour force. Movement between these categories — and who gets counted where — determines both the participation rate and the underutilisation rate. Set the participation rate, unemployment and underemployment to recompose the labour force and watch how the official rates respond. They start close to recent Australian figures.</p>
 
   <div class="card">
     <div class="card-header">
       <div class="card-label">Labour force composition</div>
       <div class="live-tag" id="liveTag">67% participation</div>
     </div>
-    <div class="card-hint">Each dot is a person aged 15 and over. Pink: employed (full hours) · amber: underemployed · white: unemployed · grey: not in the labour force.</div>
+    <div class="card-hint">Each dot is a person aged 15 and over. Pink: employed (hours they want) · amber: underemployed · white: unemployed · grey: not in the labour force.</div>
     
     <div class="canvas-wrapper">
       <canvas id="lfCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">64% employed · 33% not in labour force</div>
+      <div class="canvas-overlay" id="canvasOverlay">Of all people 15+: 64% employed · 3% unemployed · 33% not in labour force</div>
     </div>
 
     <div class="slider-container">
@@ -379,6 +379,7 @@ canvas {
         <span>16%</span>
       </div>
     </div>
+    <button type="button" id="discourageBtn" style="width:100%;margin-bottom:14px;font-family:'JetBrains Mono',monospace;font-size:13px;padding:11px;border-radius:11px;background:#12160F;border:1px solid var(--line);color:var(--ink-dim);cursor:pointer">Discourage 20 job seekers</button>
 
     <div class="stat-row">
       <div class="stat">
@@ -436,7 +437,7 @@ const knowdropText = document.getElementById('knowdropText');
 
 const knowdrops = {
   measurement: "The official unemployment definition requires active job search in the past four weeks. This measurement design creates systematic blind spots: discouraged workers who've stopped searching disappear from the labour force entirely, shrinking both the numerator and denominator. A person working one hour per week counts as employed, not unemployed. Marginal attachment and underemployment vanish from the headline rate. This is why rising employment can coincide with falling participation — workers exit the labour force faster than jobs are created — and why the unemployment rate can fall while labour market slack actually increases.",
-  underemployment: "Underemployment captures workers in the labour force who want more hours than they're getting — part-time workers seeking full-time work, or workers in roles below their skill level. The underutilisation rate adds these underemployed workers to the unemployed count, revealing hidden slack the headline rate ignores. During economic downturns, firms cut hours before cutting jobs, so underemployment spikes first. A falling unemployment rate paired with rising underutilisation signals that job creation is happening, but mostly in part-time or precarious forms — the quality of employment is deteriorating even as the quantity improves."
+  underemployment: "Underemployment captures employed people, often part-time, who want more hours and are available to work them. It is measured in hours, not skill: someone working below their qualifications but on the hours they want is not underemployed. The underutilisation rate adds these underemployed workers to the unemployed count, revealing hidden slack the headline rate ignores. During economic downturns, firms cut hours before cutting jobs, so underemployment spikes first. A falling unemployment rate paired with rising underutilisation signals that job creation is happening, but mostly in part-time or precarious forms — the quality of employment is deteriorating even as the quantity improves."
 };
 
 toggleBtns.forEach(btn => {
@@ -488,12 +489,14 @@ let unemploymentFrac = 0.045; // of labour force, set by its own slider
 let underemploymentFrac = 0.06; // of labour force, set by its own slider
 const uSlider = document.getElementById('uSlider');
 const ueSlider = document.getElementById('ueSlider');
+let discouraged = 0; /* job seekers who have stopped searching and left the labour force */
 
 function updateParticles() {
   const lfSize = Math.round(TOTAL_POP * participation);
   const unemployedCount = Math.round(lfSize * unemploymentFrac);
   const underemployedCount = Math.round(lfSize * underemploymentFrac);
   const employedCount = lfSize - unemployedCount - underemployedCount;
+  const stillSearching = unemployedCount - discouraged;
   const nilfCount = TOTAL_POP - lfSize;
 
   // Sort particles to assign states
@@ -504,7 +507,7 @@ function updateParticles() {
   for (let i = 0; i < underemployedCount; i++) {
     particles[idx++].state = 'underemployed';
   }
-  for (let i = 0; i < unemployedCount; i++) {
+  for (let i = 0; i < stillSearching; i++) {
     particles[idx++].state = 'unemployed';
   }
   while (idx < TOTAL_POP) {
@@ -545,8 +548,8 @@ function draw() {
       col = '#EDEDE8';
       alpha = 0.95;
     } else {
-      col = '#4A4A4A';
-      alpha = 0.25;
+      col = '#8C9389';
+      alpha = 0.6;
     }
 
     ctx.save();
@@ -597,26 +600,38 @@ function updateStats() {
   const lfSize = Math.round(TOTAL_POP * participation);
   const unemployedCount = Math.round(lfSize * unemploymentFrac);
   const underemployedCount = Math.round(lfSize * underemploymentFrac);
+  // Discouraged job seekers leave both the unemployed count and the labour force
+  const lfNow = lfSize - discouraged;
+  const uNow = unemployedCount - discouraged;
   // Unemployment rate = unemployed / labour force
-  const uRate = lfSize > 0 ? (unemployedCount / lfSize) * 100 : 0;
+  const uRate = lfNow > 0 ? (uNow / lfNow) * 100 : 0;
   // Underutilisation = (unemployed + underemployed) / labour force
-  const uuRate = lfSize > 0 ? ((unemployedCount + underemployedCount) / lfSize) * 100 : 0;
+  const uuRate = lfNow > 0 ? ((uNow + underemployedCount) / lfNow) * 100 : 0;
 
   unemploymentRate.textContent = uRate.toFixed(1) + '%';
   underutilRate.textContent = uuRate.toFixed(1) + '%';
 
   const employedPct = ((lfSize - unemployedCount) / TOTAL_POP * 100).toFixed(0); /* underemployed people are employed */
-  const nilfPct = ((TOTAL_POP - lfSize) / TOTAL_POP * 100).toFixed(0);
+  const nilfPct = ((TOTAL_POP - lfNow) / TOTAL_POP * 100).toFixed(0);
 
-  liveTag.textContent = (participation * 100).toFixed(0) + '% participation';
-  canvasOverlay.textContent = employedPct + '% employed · ' + nilfPct + '% not in labour force';
+  liveTag.textContent = (lfNow / TOTAL_POP * 100).toFixed(0) + '% participation';
+  /* the three groups share the whole population, so the shown shares add to 100 */
+  const unemployedPct = Math.max(0, 100 - Number(employedPct) - Number(nilfPct));
+  canvasOverlay.textContent = "Of all people 15+: " + employedPct + '% employed · ' + unemployedPct + '% unemployed · ' + nilfPct + '% not in labour force';
 
   updateParticles();
 }
 
-slider.addEventListener('input', updateStats);
-uSlider.addEventListener('input', updateStats);
-ueSlider.addEventListener('input', updateStats);
+function onSliderInput() { discouraged = 0; updateStats(); }
+slider.addEventListener('input', onSliderInput);
+uSlider.addEventListener('input', onSliderInput);
+ueSlider.addEventListener('input', onSliderInput);
+document.getElementById('discourageBtn').addEventListener('click', () => {
+  const lf0 = Math.round(TOTAL_POP * participation);
+  const u0 = Math.round(lf0 * unemploymentFrac);
+  discouraged = Math.min(discouraged + 20, u0);
+  updateStats();
+});
 updateStats();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */

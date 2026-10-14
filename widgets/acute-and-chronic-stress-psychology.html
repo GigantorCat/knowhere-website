@@ -261,17 +261,17 @@ canvas{
 }
 </style>
 
-<h2 class="sr-only">Acute versus chronic stress response interactive visualization</h2>
+<h2 class="sr-only">Acute versus chronic stress response interactive visualisation</h2>
 
 <div class="container">
   <h1>Your survival mechanism becomes your <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">damage</span></h1>
   
-  <p class="intro">Acute stress is a sprint your body was built for. Chronic stress is that same system left switched on — and the machinery that saves you over minutes damages you over months. Drag the slider to watch the same response system shift from adaptive to destructive.</p>
+  <p class="intro">Acute stress is a sprint your body was built for. Chronic stress is that same system left switched on — and the machinery that saves you over minutes damages you over months. Stretch the stress from minutes to months and watch the same response system shift from adaptive to destructive.</p>
 
   <div class="card">
     <div class="card-header">
-      <div class="card-label">Stress Response Timeline</div>
-      <div class="live-tag" id="durationTag">Acute Phase</div>
+      <div class="card-label">Stress response timeline</div>
+      <div class="live-tag" id="durationTag">Acute phase</div>
     </div>
     <div class="card-hint">Watch how hormone dominance and immune function shift over time</div>
     
@@ -291,11 +291,11 @@ canvas{
 
     <div class="stat-row">
       <div class="stat">
-        <div class="stat-label">Dominant Hormone</div>
+        <div class="stat-label">Dominant hormone</div>
         <div class="stat-value" style="color:var(--acc)" id="hormoneValue">Adrenaline</div>
       </div>
       <div class="stat">
-        <div class="stat-label">Immune Function</div>
+        <div class="stat-label">Immune function (index)</div>
         <div class="stat-value" style="color:var(--amb)" id="immuneValue">100%</div>
       </div>
     </div>
@@ -303,12 +303,12 @@ canvas{
 
   <div class="card">
     <div class="toggle-section">
-      <button class="toggle-btn active" id="acuteBtn">Acute Stress</button>
-      <button class="toggle-btn" id="chronicBtn">Chronic Stress</button>
+      <button class="toggle-btn active" id="acuteBtn">Acute stress</button>
+      <button class="toggle-btn" id="chronicBtn">Chronic stress</button>
     </div>
     
     <div class="knowdrop" id="knowdropText">
-      Acute stress is sudden, intense, and short-lived — your body's adaptive response to immediate threat. When you encounter danger, adrenaline floods your system within seconds: heart rate spikes, pupils dilate, blood rushes to muscles, and glucose floods your bloodstream. This is the fight-or-flight response, refined over millions of years to give you maximum performance in the moment. The system is designed to switch on hard, then switch off completely once the threat passes. Your immune system actually gets a temporary boost during acute stress, preparing to fight potential infections from injuries. This is your body working exactly as evolved — a brief, intense mobilization that saves your life.
+      Acute stress is sudden, intense, and short-lived — your body's adaptive response to immediate threat. When you encounter danger, adrenaline floods your system within seconds: heart rate spikes, pupils dilate, blood rushes to muscles, and glucose floods your bloodstream. This is the flight-or-fight-or-freeze response — freeze is the tonic immobility that can occur when neither fleeing nor fighting looks possible — refined over millions of years to give you maximum performance in the moment. The system is designed to switch on hard, then switch off completely once the threat passes. Your immune system actually gets a temporary boost during acute stress, preparing to fight potential infections from injuries. This is your body working exactly as evolved — a brief, intense mobilisation that saves your life.
     </div>
   </div>
 
@@ -339,7 +339,10 @@ const bctx = buf.getContext('2d');
 let time = 0;
 let stressValue = 15;
 
-const acuteText = "Acute stress is sudden, intense, and short-lived — your body's adaptive response to immediate threat. When you encounter danger, adrenaline floods your system within seconds: heart rate spikes, pupils dilate, blood rushes to muscles, and glucose floods your bloodstream. This is the fight-or-flight response, refined over millions of years to give you maximum performance in the moment. The system is designed to switch on hard, then switch off completely once the threat passes. Your immune system actually gets a temporary boost during acute stress, preparing to fight potential infections from injuries. This is your body working exactly as evolved — a brief, intense mobilization that saves your life.";
+const adrAt = t => Math.max(0, Math.exp(-t * 8) * (t < 0.15 ? t / 0.15 : 1)) / 0.306;
+const corAt = t => Math.min(1, t * 2.5) * (t > 0.3 ? 1 : t / 0.3);
+
+const acuteText = "Acute stress is sudden, intense, and short-lived — your body's adaptive response to immediate threat. When you encounter danger, adrenaline floods your system within seconds: heart rate spikes, pupils dilate, blood rushes to muscles, and glucose floods your bloodstream. This is the flight-or-fight-or-freeze response — freeze is the tonic immobility that can occur when neither fleeing nor fighting looks possible — refined over millions of years to give you maximum performance in the moment. The system is designed to switch on hard, then switch off completely once the threat passes. Your immune system actually gets a temporary boost during acute stress, preparing to fight potential infections from injuries. This is your body working exactly as evolved — a brief, intense mobilisation that saves your life.";
 
 const chronicText = "Chronic stress is persistent, ongoing, and wearing — the same response system left activated day after day. When stress becomes chronic, cortisol takes over as the dominant hormone, flooding your bloodstream continuously instead of in brief pulses. Unlike adrenaline's quick spike and crash, cortisol stays elevated for hours or days, suppressing your immune system, disrupting sleep, and breaking down muscle tissue to fuel constant alertness. Your body interprets unrelenting work pressure, relationship conflict, or financial worry the same way it interprets a predator — but the threat never ends, so the system never shuts off. Over weeks and months, this continuous activation degrades the very systems that acute stress was designed to protect. The sprint response becomes a forced marathon your body cannot win.";
 
@@ -356,25 +359,28 @@ function resize() {
 function updateStats() {
   const v = stressValue;
   
+  const t = v / 100;
+  const adrDom = adrAt(t) * 0.38 > corAt(t) * 0.30;
+  
   if (v < 25) {
-    durationTag.textContent = 'Acute Phase';
-    canvasTag.textContent = 'Minutes: Adrenaline dominant';
-    hormoneValue.textContent = 'Adrenaline';
+    durationTag.textContent = 'Acute phase';
+    canvasTag.textContent = adrDom ? 'Minutes: Adrenaline dominant' : 'Hours: Cortisol rising';
+    hormoneValue.textContent = adrDom ? 'Adrenaline' : 'Mixed';
     immuneValue.textContent = '100%';
   } else if (v < 50) {
     durationTag.textContent = 'Transition';
-    canvasTag.textContent = 'Hours: Cortisol rising';
-    hormoneValue.textContent = 'Mixed';
+    canvasTag.textContent = adrDom ? 'Hours: Adrenaline still dominant' : 'Hours: Cortisol rising';
+    hormoneValue.textContent = adrDom ? 'Adrenaline' : 'Mixed';
     const immune = Math.round(100 - (v - 25) * 0.8);
     immuneValue.textContent = immune + '%';
   } else if (v < 75) {
-    durationTag.textContent = 'Early Chronic';
+    durationTag.textContent = 'Early chronic';
     canvasTag.textContent = 'Days: Cortisol dominant';
     hormoneValue.textContent = 'Cortisol';
     const immune = Math.round(80 - (v - 50) * 1.2);
     immuneValue.textContent = immune + '%';
   } else {
-    durationTag.textContent = 'Chronic Phase';
+    durationTag.textContent = 'Chronic phase';
     canvasTag.textContent = 'Weeks–Months: Immune suppression';
     hormoneValue.textContent = 'Cortisol';
     const immune = Math.round(50 - (v - 75) * 1.2);
@@ -402,11 +408,11 @@ function draw() {
   
   // Time markers
   const markers = [
-    { x: 0.1, label: 'Min' },
-    { x: 0.3, label: 'Hrs' },
+    { x: 0, label: 'Min' },
+    { x: 0.25, label: 'Hrs' },
     { x: 0.5, label: 'Days' },
-    { x: 0.7, label: 'Wks' },
-    { x: 0.9, label: 'Mon' }
+    { x: 0.75, label: 'Wks' },
+    { x: 1, label: 'Mon' }
   ];
   
   ctx.font = '9px JetBrains Mono';
@@ -433,8 +439,7 @@ function draw() {
   for (let i = 0; i <= 100; i++) {
     const t = i / 100;
     const x = 40 + (w - 80) * t;
-    const adrenalineLevel = Math.max(0, Math.exp(-t * 8) * (t < 0.15 ? t / 0.15 : 1));
-    const y = cy - adrenalineLevel * (h * 0.35);
+    const y = cy - adrAt(t) * (h * 0.38);
     if (i === 0) ctx.moveTo(x, y);
     else ctx.lineTo(x, y);
   }
@@ -443,8 +448,8 @@ function draw() {
   // Adrenaline label
   ctx.font = '11px JetBrains Mono';
   ctx.fillStyle = '#6A60D4';
-  ctx.textAlign = 'left';
-  ctx.fillText('ADRENALINE', 45, cy - h * 0.32);
+  ctx.textAlign = 'center';
+  ctx.fillText('ADRENALINE', 40 + (w - 80) * 0.125, cy - h * 0.38 - 6);
   
   // Cortisol curve (slow rise, sustained plateau)
   ctx.strokeStyle = '#FAC775';
@@ -453,8 +458,7 @@ function draw() {
   for (let i = 0; i <= 100; i++) {
     const t = i / 100;
     const x = 40 + (w - 80) * t;
-    const cortisolLevel = Math.min(1, t * 2.5) * (t > 0.3 ? 1 : t / 0.3);
-    const y = cy - cortisolLevel * (h * 0.28);
+    const y = cy - corAt(t) * (h * 0.30);
     if (i === 0) ctx.moveTo(x, y);
     else ctx.lineTo(x, y);
   }
@@ -463,7 +467,7 @@ function draw() {
   // Cortisol label
   ctx.fillStyle = '#FAC775';
   ctx.textAlign = 'right';
-  ctx.fillText('CORTISOL', w - 45, cy - h * 0.24);
+  ctx.fillText('CORTISOL', w - 45, cy - h * 0.30 - 6);
   
   // Current position pulse
   const pulseSize = 12 + Math.sin(time * 2.8) * 3;

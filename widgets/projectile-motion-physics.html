@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Projectile Motion — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Projectile motion — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -171,7 +171,7 @@ canvas{
   display:flex;
   justify-content:space-between;
   font-family:'JetBrains Mono',monospace;
-  font-size:9px;
+  font-size:10px;
   color:var(--ink-dim);
   text-transform:uppercase;
   letter-spacing:0.05em
@@ -341,7 +341,7 @@ canvas{
 
   <div class="know-this">
     <span class="know-this-tag">Know This</span>
-    <p class="know-this-text">Horizontal and vertical motion are <span style="color:var(--acc)">completely independent</span>—they share only <span style="color:var(--acc)">time</span>, which lets you solve them as two separate one-dimensional problems.</p>
+    <p class="know-this-text">Ignoring air resistance, horizontal and vertical motion are <span style="color:var(--acc)">completely independent</span>—they share only <span style="color:var(--acc)">time</span>, which lets you solve them as two separate one-dimensional problems.</p>
   </div>
 </div>
 
@@ -375,9 +375,9 @@ function flight(deg, drag) {
   const vx0 = V0 * Math.cos(rad);
   const vy0 = V0 * Math.sin(rad);
   if (!drag) {
-    return { range: vx0 * 2 * vy0 / G, peak: vy0 * vy0 / (2 * G) };
+    return { range: vx0 * 2 * vy0 / G, peak: vy0 * vy0 / (2 * G), t: 2 * vy0 / G };
   }
-  let x = 0, y = 0, vx = vx0, vy = vy0, peak = 0, px = 0, py = 0;
+  let x = 0, y = 0, vx = vx0, vy = vy0, peak = 0, px = 0, py = 0, t = 0;
   const dt = 0.001;
   while (y >= 0) {
     const v = Math.sqrt(vx * vx + vy * vy);
@@ -386,10 +386,17 @@ function flight(deg, drag) {
     vy += (-G - DRAG_K * v * vy) * dt;
     x += vx * dt;
     y += vy * dt;
+    t += dt;
     if (y > peak) peak = y;
   }
   const f = py / (py - y);
-  return { range: px + (x - px) * f, peak: peak };
+  return { range: px + (x - px) * f, peak: peak, t: t - dt + dt * f };
+}
+/* Best angle with drag, found from the same model by trying every whole degree on the slider */
+let BEST_AIR = 45, BEST_AIR_RANGE = 0;
+for (let a = 15; a <= 75; a++) {
+  const r = flight(a, true).range;
+  if (r > BEST_AIR_RANGE) { BEST_AIR_RANGE = r; BEST_AIR = a; }
 }
 let airMode = false;
 let time = 0;
@@ -421,6 +428,8 @@ function setTag() {
     canvasTag.textContent = "Maximum range at 45°";
   } else if (angle === 45) {
     canvasTag.textContent = "Drag shortens the range";
+  } else if (airMode && angle === BEST_AIR) {
+    canvasTag.textContent = "Longest range with drag: " + BEST_AIR + "°";
   } else if (angle < 45) {
     canvasTag.textContent = "Lower trajectory • Shorter flight time";
   } else {
@@ -457,7 +466,7 @@ btnAir.addEventListener('click', () => {
   btnAir.classList.add('active');
   btnNoAir.classList.remove('active');
   updateStats();
-  knowdropText.textContent = "Air resistance changes everything. It acts opposite to the velocity vector, so it reduces both horizontal and vertical components—but not equally. The horizontal velocity is no longer constant; it decays throughout the flight. The trajectory becomes asymmetric: the descent is steeper than the ascent because the projectile is slower on the way down, giving air resistance more time to act vertically. Range is always shortened, and the optimal launch angle drops below 45°. Maximum height is also reduced because upward deceleration combines gravity with drag. Real projectiles—golf balls, footballs, bullets—all experience this asymmetry.";
+  knowdropText.textContent = "Air resistance changes everything. It acts opposite to the velocity vector, so it reduces both horizontal and vertical components—but not equally. The horizontal velocity is no longer constant; it decays throughout the flight. The trajectory becomes asymmetric: the descent is steeper than the ascent because drag has already taken much of the horizontal speed by the time it comes down. Range is always shortened, and the best launch angle drops below 45°: here about " + BEST_AIR + "°, which beats 45° by only a little because the range barely changes near the best angle. Maximum height is also reduced because upward deceleration combines gravity with drag. Real projectiles—golf balls, footballs, bullets—all experience this asymmetry. The drag here is strong, like a light table-tennis ball, so the effect is easy to see.";
 });
 
 function draw() {
@@ -535,9 +544,9 @@ function draw() {
     }
   } else {
     // Air resistance simulation
-    const k = 0.15; // drag coefficient
+    const k = DRAG_K; // drag coefficient, same as the readouts
     let x = 0, y = 0, vx = vx0, vy = vy0;
-    const dt = 0.01;
+    const dt = 0.002;
     
     ctx.moveTo(launchX, groundY);
     
@@ -558,9 +567,35 @@ function draw() {
         ctx.lineTo(px, py);
       }
     }
+    ctx.lineTo(launchX + flight(angle, true).range * scale, groundY);
   }
   
   ctx.stroke();
+
+  // With drag on: the no-air arc stays as a faint dashed ghost, so the lower peak and shorter range show
+  if (airMode) {
+    ctx.save();
+    ctx.setLineDash([4, 5]);
+    ctx.strokeStyle = 'rgba(58,111,200,0.45)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    for (let i = 0; i <= steps; i++) {
+      const t = (tFlight * i) / steps;
+      const gx = launchX + vx0 * t * scale;
+      const gy = groundY - (vy0 * t - 0.5 * g * t * t) * scale;
+      if (i === 0) ctx.moveTo(gx, gy); else ctx.lineTo(gx, gy);
+    }
+    ctx.stroke();
+    ctx.restore();
+    ctx.fillStyle = 'rgba(237,237,232,0.8)';
+    ctx.font = '11px "JetBrains Mono"';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'top';
+    ctx.fillText("Best with drag: " + BEST_AIR + "° → " + BEST_AIR_RANGE.toFixed(1) + " m", w - 10, 8);
+    ctx.fillStyle = 'rgba(58,111,200,0.9)';
+    ctx.fillText("- - no air", w - 10, 22);
+    ctx.textBaseline = 'alphabetic';
+  }
   
   // Landing marker, from the same flight model as the Range readout
   const land = flight(angle, airMode).range;
@@ -579,7 +614,7 @@ function draw() {
   // Animated projectile
   const cycleTime = 3000;
   const phase = (time % cycleTime) / cycleTime;
-  const tCurrent = phase * tFlight;
+  const tCurrent = phase * (airMode ? flight(angle, true).t : tFlight);
   
   let projX, projY, projVx, projVy;
   
@@ -590,9 +625,9 @@ function draw() {
     projVy = vy0 - g * tCurrent;
   } else {
     // Simulate to current time with drag
-    const k = 0.15;
+    const k = DRAG_K;
     let x = 0, y = 0, vx = vx0, vy = vy0;
-    const dt = 0.01;
+    const dt = 0.002;
     let elapsed = 0;
     
     while (elapsed < tCurrent && y >= 0) {

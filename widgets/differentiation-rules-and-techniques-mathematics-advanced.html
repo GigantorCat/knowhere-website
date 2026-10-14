@@ -57,16 +57,17 @@ body{margin:0;background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C
 .dr .kt p{font-size:17.4px;line-height:1.55;color:var(--ink);margin:0}
 @keyframes drpulse{0%,100%{opacity:1}50%{opacity:.45}}
 @media (prefers-reduced-motion:reduce){.dr .kt-dot{animation:none}.dr .tg button{transition:none}}
+@media (max-width:560px){.dr .wrap{aspect-ratio:1/1}}
 </style>
 
 <div class="dr" id="drRoot">
-  <h2 class="sr-only">Differentiation rules and techniques: pick a function, identify whether it needs the product, quotient or chain rule, then move a point along the curve and see the rule build the gradient of the tangent</h2>
-  <h1>The slope of a product is not the product of the <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">slopes</span></h1>
-  <p class="intro">Multiply two functions and the gradient is two pieces added, not two slopes multiplied. Divide them and a minus sign appears; put one inside another and the slopes really do multiply. Pick a function, name the rule it needs, then move the point along the curve and watch each piece of the gradient change.</p>
+  <h2 class="sr-only">Differentiation rules and techniques: pick a function and decide first whether it needs the product, quotient or chain rule. Once you name the right rule, the working and the pieces of the gradient appear, and you can move a point along the curve to see the rule build the gradient of the tangent</h2>
+  <h1>Name the rule first, and the working <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">follows</span></h1>
+  <p class="intro">The algebra is the easy part once you know which rule you need. So decide first: is the whole thing a product, a quotient or a function inside a function? Pick a function and name its rule. The working only opens once you get it right; then move the point and watch the pieces of the gradient change.</p>
 
   <div class="card">
     <div class="hdr"><span class="hdr-l">Build the gradient</span><span class="live" id="live">gradient 3.25</span></div>
-    <div class="hint">Pick a function. Name its rule. Then move the point.</div>
+    <div class="hint">Pick a function. Name its rule first. Then move the point.</div>
 
     <div class="qlab" id="qEx">The function h(x)</div>
     <div class="tg two" role="group" aria-label="Choose the function to differentiate" aria-describedby="qEx" id="exGroup">
@@ -87,7 +88,7 @@ body{margin:0;background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C
 
     <div class="eq" id="eq"></div>
 
-    <div class="wrap"><canvas id="cv" aria-label="Graph of h(x) with its parts and the tangent at the chosen point, beside bars showing each piece of the gradient"></canvas><div class="ovl" id="ovl"></div></div>
+    <div class="wrap"><canvas id="cv" aria-label="Graph of h(x) with its parts and the tangent at the chosen point, beside bars showing each piece of the gradient once the right rule is named"></canvas><div class="ovl" id="ovl"></div></div>
 
     <div class="sl">
       <div class="dr-row"><span>Point on the curve</span><b id="xVal">x = 0.5</b></div>
@@ -143,7 +144,7 @@ body{margin:0;background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C
   /* ---------- the model: every function, its parts and their derivatives ---------- */
   const EX = {
     prod: {
-      rule: "prod", h: x => x * x * (3 * x + 1),
+      rule: "prod", show: "h(x) = x²(3x + 1)", h: x => x * x * (3 * x + 1),
       parts: [ { name: "u = x²", f: x => x * x, col: "amb" }, { name: "v = 3x + 1", f: x => 3 * x + 1, col: "dim" } ],
       eq: "<span class=\"k\">h(x) =</span> <span class=\"u\">x²</span> × (3x + 1)<br><span class=\"k\">u = x², u′ = 2x · v = 3x + 1, v′ = 3</span><br><span class=\"h\">h′(x) = 2x(3x + 1) + 3x² = 9x² + 2x</span>",
       pieces: x => { const u = x * x, du = 2 * x, v = 3 * x + 1, dv = 3; return { rows: [ { lab: "u′v", val: du * v }, { lab: "uv′", val: u * dv } ], op: "+", total: du * v + u * dv,
@@ -151,7 +152,7 @@ body{margin:0;background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C
       why: "x² is multiplied by (3x + 1). Two factors multiplied means the product rule, u′v + uv′."
     },
     quot: {
-      rule: "quot", h: x => (2 * x + 1) / (x * x + 1),
+      rule: "quot", show: "h(x) = (2x + 1)/(x² + 1)", h: x => (2 * x + 1) / (x * x + 1),
       parts: [ { name: "u = 2x + 1", f: x => 2 * x + 1, col: "amb" }, { name: "v = x² + 1", f: x => x * x + 1, col: "dim" } ],
       eq: "<span class=\"k\">h(x) =</span> <span class=\"u\">(2x + 1)</span> ÷ (x² + 1)<br><span class=\"k\">u = 2x + 1, u′ = 2 · v = x² + 1, v′ = 2x</span><br><span class=\"h\">h′(x) = (2(x² + 1) − 2x(2x + 1))/(x² + 1)² = (2 − 2x − 2x²)/(x² + 1)²</span>",
       pieces: x => { const u = 2 * x + 1, du = 2, v = x * x + 1, dv = 2 * x; const top = v * du - u * dv; return { rows: [ { lab: "vu′", val: v * du }, { lab: "−uv′", val: -u * dv }, { lab: "÷ v²", val: v * v } ], op: "q", total: top / (v * v),
@@ -159,7 +160,7 @@ body{margin:0;background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C
       why: "(2x + 1) is divided by (x² + 1), so the quotient rule, (vu′ − uv′)/v²."
     },
     chain: {
-      rule: "chain", h: x => Math.pow(x * x - 1, 3),
+      rule: "chain", show: "h(x) = (x² − 1)³", h: x => Math.pow(x * x - 1, 3),
       parts: [ { name: "inside g = x² − 1", f: x => x * x - 1, col: "amb" } ],
       eq: "<span class=\"k\">h(x) = f(g(x)) with</span> <span class=\"u\">g(x) = x² − 1</span> <span class=\"k\">inside f(w) = w³</span><br><span class=\"k\">f′(w) = 3w² · g′(x) = 2x</span><br><span class=\"h\">h′(x) = 3(x² − 1)² × 2x = 6x(x² − 1)²</span>",
       pieces: x => { const g = x * x - 1, dg = 2 * x, fo = 3 * g * g; return { rows: [ { lab: "f′(g(x))", val: fo }, { lab: "g′(x)", val: dg } ], op: "×", total: fo * dg,
@@ -167,7 +168,7 @@ body{margin:0;background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C
       why: "x² − 1 sits inside the cube, so the chain rule: the outside slope times the inside slope."
     },
     combo: {
-      rule: "combo", h: x => x * Math.pow(x * x - 1, 2),
+      rule: "combo", show: "h(x) = x(x² − 1)²", h: x => x * Math.pow(x * x - 1, 2),
       parts: [ { name: "u = x", f: x => x, col: "amb" }, { name: "v = (x² − 1)²", f: x => Math.pow(x * x - 1, 2), col: "dim" } ],
       eq: "<span class=\"k\">h(x) =</span> <span class=\"u\">x</span> × (x² − 1)²<br><span class=\"k\">u = x, u′ = 1 · v = (x² − 1)², v′ = 2(x² − 1) × 2x by the chain rule</span><br><span class=\"h\">h′(x) = (x² − 1)² + 4x²(x² − 1) = (x² − 1)(5x² − 1)</span>",
       pieces: x => { const u = x, du = 1, v = Math.pow(x * x - 1, 2), dv = 2 * (x * x - 1) * 2 * x; return { rows: [ { lab: "u′v", val: du * v }, { lab: "uv′", val: u * dv } ], op: "+", total: du * v + u * dv,
@@ -177,6 +178,7 @@ body{margin:0;background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C
   };
   const RULE_NAME = { prod: "product rule", quot: "quotient rule", chain: "chain rule", combo: "product and chain rules" };
   const S = { ex: "prod", x: 0.5, guess: null };
+  const solved = () => S.guess === EX[S.ex].rule;
   const XR = [-1.25, 1.25];
   const chord = x => { const e = EX[S.ex]; return (e.h(x + 0.001) - e.h(x - 0.001)) / 0.002; };
 
@@ -198,7 +200,7 @@ body{margin:0;background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C
     const e = EX[S.ex], pc = e.pieces(S.x);
     ctx.fillStyle = "#000"; ctx.fillRect(0, 0, W, H);
     const stacked = W < 560;
-    const ovH = Math.max(H * 0.08, 42);
+    const ovH = Math.max(H * 0.08, 42, (document.getElementById("ovl").offsetHeight || 0) + 6);
     /* graph box and bar box: side by side when wide, stacked when narrow */
     let G, Bx;
     if (stacked){
@@ -255,7 +257,14 @@ body{margin:0;background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C
     e.parts.forEach(p => { ctx.fillStyle = p.col === "amb" ? AMB : DIM; ctx.fillText("dashed " + p.name, G.L + 4, ly); ly += 15; });
     ctx.fillStyle = INK; ctx.fillText("tangent, gradient " + fmt(m), G.L + 4, ly);
 
-    /* bars: each piece of the gradient, then the total */
+    /* bars: each piece of the gradient, then the total, once the rule is named */
+    if (!solved()){
+      ctx.fillStyle = DIM; ctx.font = "12px 'JetBrains Mono', monospace"; ctx.textAlign = "left"; ctx.textBaseline = "top";
+      ctx.fillText("pieces of the gradient", Bx.L, Bx.T);
+      ctx.fillText("appear when you", Bx.L, Bx.T + 18);
+      ctx.fillText("name the right rule", Bx.L, Bx.T + 36);
+      ctx.fillStyle = ACC; ctx.fillText("h′(x) = " + fmt(pc.total), Bx.L, Bx.T + 64);
+    } else {
     const rows = pc.rows.slice();
     rows.push({ lab: "h′(x)", val: pc.total, tot: true });
     ctx.fillStyle = DIM; ctx.font = "11px 'JetBrains Mono', monospace"; ctx.textAlign = "left"; ctx.textBaseline = "top";
@@ -279,6 +288,7 @@ body{margin:0;background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C
       ctx.fillText(r.lab, Bx.L, cy);
       ctx.textAlign = "right"; ctx.fillText(fmt(r.val), Bx.R, cy);
     });
+    }
     /* bloom + vignette */
     bctx.setTransform(1, 0, 0, 1, 0, 0); bctx.clearRect(0, 0, buf.width, buf.height); (cv.width&&cv.height)&&bctx.drawImage(cv, 0, 0);
     ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)"; (buf.width&&buf.height)&&ctx.drawImage(buf, 0, 0, W, H); ctx.restore();
@@ -292,14 +302,14 @@ body{margin:0;background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C
     const e = EX[S.ex], pc = e.pieces(S.x);
     document.getElementById("xVal").textContent = "x = " + fmt(S.x);
     document.getElementById("live").textContent = "gradient " + fmt(pc.total);
-    document.getElementById("ovl").textContent = "x = " + fmt(S.x) + " · " + pc.say;
+    document.getElementById("ovl").textContent = "x = " + fmt(S.x) + " · " + (solved() ? pc.say : "gradient " + fmt(pc.total) + " · name the rule");
     document.getElementById("sRule").textContent = fmt(pc.total);
     document.getElementById("sRuleS").textContent = pc.total > 0.005 ? "positive: h is increasing here" : pc.total < -0.005 ? "negative: h is decreasing here" : "zero: the tangent is flat here";
     document.getElementById("sChord").textContent = fmt(chord(S.x));
   }
   function feedback(){
     const e = EX[S.ex], fb = document.getElementById("fb");
-    if (!S.guess){ fb.innerHTML = "Look at the outermost operation, then pick a rule."; return; }
+    if (!S.guess){ fb.innerHTML = "Look at the outermost operation, then pick a rule. The working opens when you name the right one."; return; }
     let msg;
     if (S.guess === e.rule) msg = "<b>Yes.</b> " + e.why;
     else if (S.ex === "quot" && S.guess === "combo") msg = "<b class=\"no\">That route works</b> if you rewrite it as (2x + 1)(x² + 1)⁻¹, but the quotient rule is the direct one. " + e.why;
@@ -308,7 +318,11 @@ body{margin:0;background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C
     else msg = "<b class=\"no\">Not this one.</b> " + e.why;
     fb.innerHTML = msg;
   }
-  function render(){ document.getElementById("eq").innerHTML = EX[S.ex].eq; readout(); feedback(); draw(); }
+  function showEq(){
+    const e = EX[S.ex];
+    document.getElementById("eq").innerHTML = solved() ? e.eq : "<span class=\"u\">" + e.show + "</span><br><span class=\"k\">Which rule first? Name it above to open the working.</span>";
+  }
+  function render(){ showEq(); readout(); feedback(); draw(); }
 
   /* ---------- controls ---------- */
   function press(group, btn){ group.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b === btn ? "true" : "false")); }
@@ -318,7 +332,7 @@ body{margin:0;background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C
     ruleGroup.querySelectorAll("button").forEach(r => r.setAttribute("aria-pressed", "false"));
     render();
   }));
-  ruleGroup.querySelectorAll("button").forEach(b => b.addEventListener("click", () => { press(ruleGroup, b); S.guess = b.dataset.rule; feedback(); }));
+  ruleGroup.querySelectorAll("button").forEach(b => b.addEventListener("click", () => { press(ruleGroup, b); S.guess = b.dataset.rule; render(); }));
   const xs = document.getElementById("xs");
   function setFill(el){ el.style.setProperty("--fill", ((+el.value - +el.min) / (+el.max - +el.min) * 100) + "%"); }
   xs.addEventListener("input", () => { S.x = Math.round(+xs.value * 100) / 100; setFill(xs); readout(); draw(); });
@@ -330,7 +344,7 @@ body{margin:0;background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C
   const KD = {
     prod: "Use the product rule when the function is one expression multiplied by another, like y = x²(3x + 1). Name the factors u = x² and v = 3x + 1, then find u′ = 2x and v′ = 3. The rule is dy/dx = u′v + uv′: each factor takes a turn being differentiated while the other stays as it is. That gives 2x(3x + 1) + 3x² = 9x² + 2x, which matches expanding to 3x³ + x² first. Multiplying u′ by v′ would give 6x, which is wrong, and the bars show why: the two pieces are added, not multiplied.",
     quot: "Use the quotient rule when one expression is divided by another, like y = (2x + 1)/(x² + 1). With u = 2x + 1 on top and v = x² + 1 underneath, u′ = 2 and v′ = 2x. The rule is dy/dx = (vu′ − uv′)/v², and the order matters because of the minus sign: bottom times the derivative of the top comes first. That gives (2(x² + 1) − 2x(2x + 1))/(x² + 1)², which simplifies to (2 − 2x − 2x²)/(x² + 1)². The rule needs v to be non-zero, and x² + 1 is never zero, so here it works for every x.",
-    chain: "Use the chain rule when one function sits inside another, like y = (3x² + 1)⁵. Call the inside u = 3x² + 1, so y = u⁵. Then dy/dx = dy/du × du/dx = 5u⁴ × 6x = 30x(3x² + 1)⁴. The common slip is stopping at 5(3x² + 1)⁴: that is only the outside derivative, and it ignores how fast the inside is changing. In the picture the outside slope and the inside slope multiply, so wherever the inside is flat the whole gradient is zero.",
+    chain: "Use the chain rule when one function sits inside another, like y = (x² − 1)³. Call the inside u = x² − 1, so y = u³. Then dy/dx = dy/du × du/dx = 3u² × 2x = 6x(x² − 1)². The same pattern handles y = (3x² + 1)⁵: with u = 3x² + 1, dy/dx = 5u⁴ × 6x = 30x(3x² + 1)⁴. The common slip is stopping at 5(3x² + 1)⁴: that is only the outside derivative, and it ignores how fast the inside is changing. In the picture the outside slope and the inside slope multiply, so wherever the inside is flat the whole gradient is zero.",
     combo: "Some functions need two rules at once, like y = x(x² − 1)². Read the outermost operation first: it is x times something, so start with the product rule, with u = x and v = (x² − 1)². Finding v′ needs the chain rule: v′ = 2(x² − 1) × 2x = 4x(x² − 1). Then dy/dx = u′v + uv′ = (x² − 1)² + 4x²(x² − 1), which factorises to (x² − 1)(5x² − 1). Work from the outside in, and write down u, v, u′ and v′ before you combine anything."
   };
   const kdText = document.getElementById("kdText");

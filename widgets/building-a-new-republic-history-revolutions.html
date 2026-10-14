@@ -9,579 +9,489 @@ body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body
   --bg: #0B0D0C;
   --bg2: #12160F;
   --acc: #9A5FD2;
-  --ag: rgba(154, 95, 210, .7);
-  --ag1: rgba(154, 95, 210, .12);
-  --ag2: rgba(154, 95, 210, .45);
+  --acc-rgb: 154, 95, 210;
+  --ag:  rgba(var(--acc-rgb),.7);
+  --ag1: rgba(var(--acc-rgb),.12);
+  --ag2: rgba(var(--acc-rgb),.45);
   --amb: #FAC775;
+  --amb-rgb: 250,199,117;
   --ink: #EDEDE8;
   --ink-dim: #8C9389;
   --line: #262B26;
 }
 
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  background:radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family:'Geist',sans-serif;
+  min-height:100vh;
+  padding:40px 16px 0;
+  color:var(--ink);
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:0.01ms !important;animation-iteration-count:1 !important;transition-duration:0.01ms !important}
 }
 
-body {
-  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
-  font-family: 'Geist', sans-serif;
-  min-height: 100vh;
-  padding: 40px 16px 0;
-  color: var(--ink);
+.nr-container{max-width:720px;margin:0 auto}
+
+h1{font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin-bottom:14px}
+
+.nr-intro{font-size:15.5px;font-weight:400;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin-bottom:28px}
+
+.nr-card{
+  background:linear-gradient(180deg,#12160F,#0d100b);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:16px;
+  box-shadow:0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom:18px;
+}
+.nr-card.secondary{border-radius:14px}
+
+.nr-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+.nr-label{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;color:#fff}
+.nr-live{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--acc);text-align:right}
+.nr-hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin-bottom:14px}
+
+.nr-q{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:8px}
+.nr-group{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+.nr-pill{
+  flex:1 1 120px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;
+  padding:12px 10px;
+  border-radius:999px;
+  background:#12160F;
+  border:1px solid var(--line);
+  color:var(--ink-dim);
+  cursor:pointer;
+  transition:background .2s,color .2s,border-color .2s,box-shadow .2s;
+  text-align:center;
+}
+.nr-pill[aria-pressed="true"]{
+  background:rgba(var(--acc-rgb),.1);
+  border:1px solid var(--acc);
+  color:var(--acc);
+  box-shadow:0 0 22px rgba(var(--acc-rgb),.18);
+}
+.nr-pill:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+
+.nr-wrap{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1);margin-bottom:16px}
+@media (max-width:480px){.nr-wrap{aspect-ratio:1/1}}
+.nr-wrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.nr-overlay{
+  position:absolute;left:0;right:0;bottom:0;
+  background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);
+  padding:9px 16px;
+  font-family:'JetBrains Mono',monospace;font-size:14px;text-transform:uppercase;color:var(--acc);text-align:center;
+  line-height:1.2;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
+.nr-stats{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding-top:16px;border-top:1px solid var(--line)}
+.nr-stat{display:flex;flex-direction:column;gap:4px}
+.nr-stat-label{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim)}
+.nr-stat-value{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500}
 
-.container {
-  max-width: 720px;
-  margin: 0 auto;
-}
+.nr-divider{border-top:1px solid var(--line);margin:2px 0 16px}
+.nr-knowdrop{font-family:'Geist',sans-serif;font-size:14.5px;font-weight:400;line-height:1.65;color:var(--ink)}
 
-h1 {
-  font-size: clamp(26px, 6.5vw, 44px);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
-  margin-bottom: 14px;
+.nr-know{
+  border-left:3px solid var(--acc);
+  padding:16px 18px;
+  background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));
+  border-radius:0 12px 12px 0;
+  margin-bottom:0;
+  padding-bottom:16px;
 }
-
-.intro {
-  font-size: 15.5px;
-  font-weight: 400;
-  color: var(--ink-dim);
-  max-width: 58ch;
-  line-height: 1.55;
-  margin-bottom: 32px;
-}
-
-.card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 18px;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
-}
-
-.card-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  color: var(--ink);
-}
-
-.live-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--acc);
-}
-
-.card-hint {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--ink-dim);
-  margin-bottom: 14px;
-}
-
-.canvas-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16/9;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
-  box-shadow: inset 0 0 0 1px var(--ag1);
-  margin-bottom: 16px;
-}
-
-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.canvas-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(4px);
-  padding: 9px 16px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  text-transform: uppercase;
-  color: var(--acc);
-  text-align: center;
-}
-
-.slider-wrapper {
-  margin-bottom: 8px;
-}
-
-.slider-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 10px;
-}
-
-.strength-slider {
-  width: 100%;
-  height: 4px;
-  -webkit-appearance: none;
-  appearance: none;
-  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
-  border-radius: 3px;
-  outline: none;
-  cursor: pointer;
-}
-
-.strength-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  transition: box-shadow .15s;
-  cursor: pointer;
-}
-
-.strength-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  transition: box-shadow .15s;
-  cursor: pointer;
-}
-
-.strength-slider::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.strength-slider::-moz-range-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.tick-labels {
-  display: flex;
-  justify-content: space-between;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--ink-dim);
-  margin-top: 6px;
-}
-
-.stat-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-}
-
-.stat {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.stat-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-}
-
-.stat-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 24px;
-  font-weight: 500;
-}
-
-.toggle-wrapper {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.toggle-btn {
-  flex: 1;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14.5px;
-  padding: 12px;
-  border-radius: 11px;
-  background: #12160F;
-  border: 1px solid var(--line);
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: all .2s;
-}
-
-.toggle-btn.active {
-  background: rgba(154, 95, 210,.1);
-  border: 1px solid var(--acc);
-  color: var(--acc);
-  box-shadow: 0 0 22px rgba(154, 95, 210,.18);
-}
-
-.knowdrop-divider {
-  border-top: 1px solid var(--line);
-  margin-bottom: 16px;
-}
-
-.knowdrop-text {
-  font-family: 'Geist', sans-serif;
-  font-size: 14.5px;
-  font-weight: 400;
-  line-height: 1.65;
-  color: var(--ink);
-}
-
-.know-this {
-  border-left: 3px solid var(--acc);
-  padding: 16px 18px;
-  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
-  border-radius: 0 12px 12px 0;
-  margin-bottom: 0;
-}
-
-.know-this-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--acc);
-  margin-bottom: 10px;
-  display: block;
-}
-
-.know-this-body {
-  font-family: 'Geist', sans-serif;
-  font-size: 17.4px;
-  font-weight: 400;
-  line-height: 1.55;
-  color: var(--ink);
-}
+.nr-know-tag{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.nr-know-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:nrPulse 2.4s ease-in-out infinite}
+.nr-know-text{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:0.15em;color:var(--acc)}
+.nr-know-body{font-family:'Geist',sans-serif;font-size:17.4px;font-weight:400;line-height:1.55;color:var(--ink)}
+@keyframes nrPulse{0%,100%{opacity:1}50%{opacity:.45}}
 </style>
 
-<h2 class="sr-only">Interactive visualisation: The compromises in the American Constitution and how strengthening federal power meant entrenching slavery</h2>
+<h2 class="sr-only">Interactive picture: the powers Congress held under the Articles of Confederation of 1781 compared with the Constitution of 1787, the bargains that paid for the change, and the road from independence to ratification</h2>
 
-<div class="container">
-  <h1>The stronger the government, the deeper the <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">compromise</span></h1>
-  
-  <p class="intro">The founders scrapped the Articles of Confederation because they created a government too weak to function. But the Constitution that replaced it in 1787 wasn't a triumph of ideals — it was a patchwork of compromises, and the price of a stronger federal union was the entrenchment of slavery. Drag the slider to see how increasing federal power forced deeper compromise.</p>
+<div class="nr-container">
+  <h1>In 1781 Congress could declare war but could not collect a single <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">tax</span></h1>
 
-  <div class="card">
-    <div class="card-header">
-      <div class="card-label">Federal Power Spectrum</div>
-      <div class="live-tag" id="strengthTag">Weak Union</div>
+  <p class="nr-intro">The Articles of Confederation gave the new republic the grand powers and none of the practical ones: Congress could make war and peace, but it had to beg the states for money and could not make anyone obey. By 1787 unpaid debts, a half-honoured Treaty of Paris and Shays' Rebellion had shown what that cost. Switch from the Articles to the Constitution and watch which three powers the centre gains, and what the slaveholding states are promised in return.</p>
+
+  <div class="nr-card">
+    <div class="nr-head">
+      <div class="nr-label">Congress and the states</div>
+      <div class="nr-live" id="nrLive">Articles of Confederation</div>
     </div>
-    <div class="card-hint">More power = more stakeholders to satisfy</div>
-    
-    <div class="canvas-wrapper">
-      <canvas id="compromiseCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">Articles of Confederation</div>
+    <div class="nr-hint">Switch between 1781 and 1787. Watch both columns and the year marker.</div>
+
+    <div class="nr-q">Which founding document?</div>
+    <div class="nr-group" role="group" aria-label="Choose the founding document shown in the picture">
+      <button class="nr-pill" id="btnArt" aria-pressed="true">Articles 1781</button>
+      <button class="nr-pill" id="btnCon" aria-pressed="false">Constitution 1787</button>
     </div>
 
-    <div class="slider-wrapper">
-      <div class="slider-label">Federal Power</div>
-      <input type="range" min="0" max="100" value="0" class="strength-slider" id="strengthSlider">
-      <div class="tick-labels">
-        <span>Articles</span>
-        <span>Constitution</span>
-        <span>Modern</span>
+    <div class="nr-wrap">
+      <canvas id="nrCanvas" aria-label="Two columns: powers Congress holds, and what the states kept or were promised, with a timeline from 1781 to 1788"></canvas>
+      <div class="nr-overlay" id="nrOverlay">Congress holds 3 of 6 powers · no slavery clauses</div>
+    </div>
+
+    <div class="nr-stats" aria-live="polite">
+      <div class="nr-stat">
+        <div class="nr-stat-label">Powers gained since 1781</div>
+        <div class="nr-stat-value" style="color:var(--acc)" id="statGain">0</div>
       </div>
-    </div>
-
-    <div class="stat-row">
-      <div class="stat">
-        <div class="stat-label">Federal Authority</div>
-        <div class="stat-value" style="color:var(--acc)" id="authStat">0%</div>
-      </div>
-      <div class="stat">
-        <div class="stat-label">Compromise Depth</div>
-        <div class="stat-value" style="color:var(--amb)" id="compStat">0%</div>
+      <div class="nr-stat">
+        <div class="nr-stat-label">Slavery clauses</div>
+        <div class="nr-stat-value" style="color:var(--amb)" id="statSlav">0</div>
       </div>
     </div>
   </div>
 
-  <div class="card">
-    <div class="toggle-wrapper">
-      <button class="toggle-btn active" id="btnArticles">Articles</button>
-      <button class="toggle-btn" id="btnConstitution">Constitution</button>
+  <div class="nr-card secondary">
+    <div class="nr-q">The road from war to ratification</div>
+    <div class="nr-group" role="group" aria-label="Choose which episode the paragraph explains">
+      <button class="nr-pill nr-kd" data-key="treaty" aria-pressed="true">Treaty of Paris</button>
+      <button class="nr-pill nr-kd" data-key="shays" aria-pressed="false">Shays' Rebellion</button>
+      <button class="nr-pill nr-kd" data-key="ratify" aria-pressed="false">Ratification fight</button>
+      <button class="nr-pill nr-kd" data-key="rights" aria-pressed="false">Bill of Rights</button>
     </div>
-    <div class="knowdrop-divider"></div>
-    <div class="knowdrop-text" id="knowdropText">
-      The Articles of Confederation established a "league of friendship" where states retained sovereignty and the central government had no power to tax, regulate commerce, or enforce laws. Congress couldn't even compel states to contribute funds. This weakness made it impossible to pay war debts, quell uprisings like Shays' Rebellion, or conduct foreign policy. The system was designed to prevent tyranny, but it created paralysis instead. By 1787, the consensus was clear: a functioning nation needed a stronger centre.
-    </div>
+    <div class="nr-divider"></div>
+    <p class="nr-knowdrop" id="nrKnowdrop" aria-live="polite"></p>
   </div>
 
-  <div class="know-this">
-    <span class="know-this-tag">Know This</span>
-    <p class="know-this-body">The <span style="color:var(--acc)">Constitution of 1787</span> created a stronger federal system with the power to tax and regulate commerce, but the price was constitutional protection for <span style="color:var(--acc)">slavery</span> — the Three-Fifths Clause, the fugitive slave provision, and the 20-year protection of the slave trade were the compromises required to get Southern states to ratify.</p>
+  <div class="nr-know">
+    <div class="nr-know-tag"><span class="nr-know-dot"></span><span class="nr-know-text">Know This</span></div>
+    <p class="nr-know-body">The <span style="color:var(--acc)">Constitution of 1787</span> gave Congress the power to tax, regulate commerce and enforce its laws, and paid for it with the <span style="color:var(--acc)">Great Compromise</span> and three <span style="color:var(--acc)">slavery clauses</span>.</p>
   </div>
 </div>
 
 <script>
-const canvas = document.getElementById('compromiseCanvas');
-const ctx = canvas.getContext('2d', { alpha: false });
-const strengthSlider = document.getElementById('strengthSlider');
-const strengthTag = document.getElementById('strengthTag');
-const canvasOverlay = document.getElementById('canvasOverlay');
-const authStat = document.getElementById('authStat');
-const compStat = document.getElementById('compStat');
-const btnArticles = document.getElementById('btnArticles');
-const btnConstitution = document.getElementById('btnConstitution');
-const knowdropText = document.getElementById('knowdropText');
+(function(){
+  const canvas = document.getElementById("nrCanvas");
+  const ctx = canvas.getContext("2d");
+  const wrap = canvas.parentElement;
+  const overlay = document.getElementById("nrOverlay");
+  const liveTag = document.getElementById("nrLive");
+  const statGain = document.getElementById("statGain");
+  const statSlav = document.getElementById("statSlav");
+  const btnArt = document.getElementById("btnArt");
+  const btnCon = document.getElementById("btnCon");
+  const knowdrop = document.getElementById("nrKnowdrop");
+  const kdButtons = Array.prototype.slice.call(document.querySelectorAll(".nr-kd"));
 
-const dpr = Math.min(window.devicePixelRatio || 1, 2);
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d');
+  const CSS = getComputedStyle(document.documentElement);
+  const ACC = CSS.getPropertyValue("--acc").trim();
+  const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+  const AMB = CSS.getPropertyValue("--amb").trim();
+  const AMBRGB = CSS.getPropertyValue("--amb-rgb").trim();
+  const INK = CSS.getPropertyValue("--ink").trim();
+  const DIM = CSS.getPropertyValue("--ink-dim").trim();
+  const reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-let strength = 0;
-let targetStrength = 0;
-let animFrame;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const buf = document.createElement("canvas");
+  const bctx = buf.getContext("2d");
 
-const nodes = [
-  { label: 'States', x: 0.15, y: 0.35, key: true },
-  { label: 'Commerce', x: 0.35, y: 0.25, key: false },
-  { label: 'Taxation', x: 0.55, y: 0.28, key: false },
-  { label: 'Military', x: 0.72, y: 0.35, key: false },
-  { label: 'Foreign Policy', x: 0.88, y: 0.42, key: false },
-  { label: 'Slavery', x: 0.5, y: 0.72, compromise: true },
-  { label: 'Representation', x: 0.25, y: 0.68, compromise: true },
-  { label: 'Liberty', x: 0.75, y: 0.75, compromise: true }
-];
+  // ── Model: what Congress can do (held under [Articles, Constitution]) ──
+  const POWERS = [
+    { name: "Declare war",            short: "Declare war",   held: [true, true] },
+    { name: "Make treaties",          short: "Make treaties", held: [true, true] },
+    { name: "Coin and borrow money",  short: "Coin & borrow", held: [true, true] },
+    { name: "Levy taxes",             short: "Levy taxes",    held: [false, true] },
+    { name: "Regulate commerce",      short: "Regulate trade",held: [false, true] },
+    { name: "Enforce federal law",    short: "Enforce laws",  held: [false, true] }
+  ];
+  // ── Model: right column, per state ──
+  const RIGHT = [
+    [
+      { name: "State sovereignty",    short: "Sovereignty",      slavery: false },
+      { name: "One state, one vote",  short: "1 state, 1 vote",  slavery: false },
+      { name: "Unanimity to amend",   short: "All 13 to amend",  slavery: false }
+    ],
+    [
+      { name: "Great Compromise",        short: "Great Compromise", slavery: false },
+      { name: "Three-Fifths Clause",     short: "Three-Fifths",     slavery: true },
+      { name: "Fugitive slave clause",   short: "Fugitive slaves",  slavery: true },
+      { name: "Slave trade safe to 1808",short: "Trade to 1808",    slavery: true }
+    ]
+  ];
+  const RIGHT_HEAD = [
+    { name: "What the states kept", short: "States kept" },
+    { name: "The 1787 bargains",    short: "1787 bargains" }
+  ];
+  const TL = [
+    { year: "1781", name: "Articles in force",       short: "Articles" },
+    { year: "1783", name: "Treaty of Paris",         short: "Treaty" },
+    { year: "1786", name: "Shays' Rebellion",        short: "Shays'" },
+    { year: "1787", name: "Philadelphia Convention", short: "Philadelphia" },
+    { year: "1788", name: "Ratified, 9 states",      short: "Ratified" }
+  ];
+  const TL_INDEX = [0, 3];
 
-function resize() {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
+  function heldCount(s){ return POWERS.filter(function(p){ return p.held[s]; }).length; }
+  function slaveryCount(s){ return RIGHT[s].filter(function(b){ return b.slavery; }).length; }
+  const BASE_HELD = heldCount(0);
 
-function updateSlider() {
-  const val = parseFloat(strengthSlider.value);
-  strengthSlider.style.setProperty('--fill', val + '%');
-  targetStrength = val / 100;
+  // ── Animation state: one eased transition, then still ──
+  const anim = { from: 0, to: 0, p: 1 };
+  let raf = 0, last = 0;
+  function ease(t){ return 1 - Math.pow(1 - t, 3); }
 
-  if (val < 30) {
-    strengthTag.textContent = 'Weak Union';
-    canvasOverlay.textContent = 'Articles of Confederation';
-  } else if (val < 70) {
-    strengthTag.textContent = 'Federal Balance';
-    canvasOverlay.textContent = 'Constitution of 1787';
-  } else {
-    strengthTag.textContent = 'Strong Centre';
-    canvasOverlay.textContent = 'Modern Federal Power';
+  function resize(){
+    const rect = wrap.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    buf.width = canvas.width; buf.height = canvas.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
 
-  authStat.textContent = Math.round(val) + '%';
-  
-  const compVal = Math.round(20 + val * 0.7);
-  compStat.textContent = compVal + '%';
-}
-
-function draw(time) {
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  
-  strength += (targetStrength - strength) * 0.08;
-
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, w, h);
-
-  const centerX = w * 0.5;
-  const centerY = h * 0.45;
-
-  // Draw connections from power nodes to centre
-  nodes.forEach(node => {
-    if (node.compromise) return;
-    
-    const nx = node.x * w;
-    const ny = node.y * h;
-    const opacity = node.key ? 0.3 : strength * 0.7;
-    
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.strokeStyle = `rgba(154, 95, 210,${opacity})`;
-    ctx.lineWidth = 1.5;
+  function roundRect(x, y, w, h, r){
+    r = Math.min(r, w / 2, h / 2);
     ctx.beginPath();
-    ctx.moveTo(nx, ny);
-    ctx.lineTo(centerX, centerY);
-    ctx.stroke();
-    ctx.restore();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+  }
+  function fit(longText, shortText, maxW){
+    return ctx.measureText(longText).width <= maxW ? longText : shortText;
+  }
 
-    // Node glow
-    if (opacity > 0.1) {
-      const grad = ctx.createRadialGradient(nx, ny, 0, nx, ny, 18);
-      grad.addColorStop(0, `rgba(154, 95, 210,${opacity * 0.6})`);
-      grad.addColorStop(1, 'rgba(154, 95, 210,0)');
-      ctx.save();
-      ctx.globalCompositeOperation = 'lighter';
-      ctx.fillStyle = grad;
-      ctx.beginPath();
-      ctx.arc(nx, ny, 18, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-    }
-  });
-
-  // Compromise nodes - activate with strength
-  nodes.forEach(node => {
-    if (!node.compromise) return;
-    
-    const nx = node.x * w;
-    const ny = node.y * h;
-    const opacity = strength * 0.85;
-    
-    if (opacity > 0.1) {
-      ctx.save();
-      ctx.globalCompositeOperation = 'lighter';
-      ctx.strokeStyle = `rgba(250,199,117,${opacity})`;
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.moveTo(nx, ny);
-      ctx.lineTo(centerX, centerY);
-      ctx.stroke();
-      ctx.restore();
-
-      const grad = ctx.createRadialGradient(nx, ny, 0, nx, ny, 20);
-      grad.addColorStop(0, `rgba(250,199,117,${opacity * 0.7})`);
-      grad.addColorStop(1, 'rgba(250,199,117,0)');
-      ctx.save();
-      ctx.globalCompositeOperation = 'lighter';
-      ctx.fillStyle = grad;
-      ctx.beginPath();
-      ctx.arc(nx, ny, 20, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-    }
-  });
-
-  // Central convergence glow
-  const centralSize = 12 + strength * 30;
-  const grad = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, centralSize);
-  grad.addColorStop(0, `rgba(154, 95, 210,${0.4 + strength * 0.5})`);
-  grad.addColorStop(0.5, `rgba(154, 95, 210,${strength * 0.3})`);
-  grad.addColorStop(1, 'rgba(154, 95, 210,0)');
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.fillStyle = grad;
-  ctx.beginPath();
-  ctx.arc(centerX, centerY, centralSize, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
-
-  // Draw node circles
-  nodes.forEach(node => {
-    const nx = node.x * w;
-    const ny = node.y * h;
-    const r = 4;
-    
-    if (node.compromise) {
-      const opacity = strength * 0.9;
-      if (opacity > 0.1) {
-        ctx.fillStyle = `rgba(250,199,117,${opacity})`;
-        ctx.beginPath();
-        ctx.arc(nx, ny, r, 0, Math.PI * 2);
-        ctx.fill();
+  function tile(x, y, wd, hgt, item, held, rgb, alpha, glow, fs, mono){
+    if (alpha <= 0.01) return;
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    const boxed = hgt >= 14;
+    const pad = boxed ? 8 : 10;
+    if (boxed){
+      roundRect(x, y, wd, hgt, 6);
+      if (held){
+        ctx.fillStyle = "rgba(" + rgb + ",0.14)"; ctx.fill();
+        ctx.strokeStyle = "rgba(" + rgb + ",0.85)"; ctx.setLineDash([]);
+      } else {
+        ctx.fillStyle = "rgba(255,255,255,0.02)"; ctx.fill();
+        ctx.strokeStyle = "rgba(255,255,255,0.18)"; ctx.setLineDash([3, 3]);
       }
+      ctx.lineWidth = 1; ctx.stroke(); ctx.setLineDash([]);
     } else {
-      const opacity = node.key ? 0.5 : 0.3 + strength * 0.6;
-      ctx.fillStyle = `rgba(154, 95, 210,${opacity})`;
-      ctx.beginPath();
-      ctx.arc(nx, ny, r, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.fillStyle = held ? "rgba(" + rgb + ",0.9)" : "rgba(255,255,255,0.18)";
+      ctx.fillRect(x, y, 2, hgt);
     }
-  });
+    ctx.font = fs + "px 'JetBrains Mono', monospace";
+    ctx.textBaseline = "middle"; ctx.textAlign = "left";
+    const label = fit(item.name, item.short, wd - pad * 2);
+    ctx.fillStyle = held ? INK : DIM;
+    ctx.fillText(label, x + pad, y + hgt / 2);
+    if (!held){
+      const tw = ctx.measureText(label).width;
+      ctx.strokeStyle = DIM; ctx.lineWidth = 1; ctx.setLineDash([]);
+      ctx.beginPath(); ctx.moveTo(x + pad, y + hgt / 2 + 0.5); ctx.lineTo(x + pad + tw, y + hgt / 2 + 0.5); ctx.stroke();
+    }
+    if (glow && held){
+      ctx.globalCompositeOperation = "lighter";
+      roundRect(x, y, wd, hgt, 6);
+      ctx.fillStyle = "rgba(" + rgb + ",0.12)"; ctx.fill();
+    }
+    ctx.restore();
+  }
 
-  // Bloom
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
+  function draw(){
+    const w = canvas.width / dpr, h = canvas.height / dpr;
+    if (!w || !h) return;
+    const g = ease(anim.p);
+    const from = anim.from, to = anim.to;
+    const moving = from !== to && anim.p < 1;
 
-  // Vignette
-  const vig = ctx.createRadialGradient(centerX, centerY, h * 0.28, centerX, centerY, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.fillStyle = "rgba(0,0,0,1)";
+    ctx.fillRect(0, 0, w, h);
 
-  animFrame = requestAnimationFrame(draw);
-}
+    // ── Layout derived from w and h ──
+    const overlayH = overlay.offsetHeight || 34;
+    const usable = h - overlayH - 4;
+    const big = w > 560;
+    const fs = big ? 13 : 11;
+    const mono = fs + "px 'JetBrains Mono', monospace";
+    const top = Math.max(8, h * 0.03);
+    const headBase = top + fs;
+    const tilesY0 = headBase + 10;
+    const yearsH = fs + 4;
+    let full = true;
+    let tlH = (fs * 2 + 8) + 10 + yearsH;
+    let region = usable - tilesY0 - tlH - 6;
+    if (region / 6 < 14){ full = false; tlH = (fs + 4) + 10 + yearsH; region = usable - tilesY0 - tlH - 6; }
+    const rowH = Math.max(12, Math.min(36, region / 6));
+    const tileH = Math.max(11, rowH - 3);
 
-strengthSlider.addEventListener('input', updateSlider);
+    const gutter = w * 0.04;
+    const colW = (w - gutter * 3) / 2;
+    const lx = gutter, rx = gutter * 2 + colW;
 
-const knowdrops = {
-  articles: "The Articles of Confederation established a \"league of friendship\" where states retained sovereignty and the central government had no power to tax, regulate commerce, or enforce laws. Congress couldn't even compel states to contribute funds. This weakness made it impossible to pay war debts, quell uprisings like Shays' Rebellion, or conduct foreign policy. The system was designed to prevent tyranny, but it created paralysis instead. By 1787, the consensus was clear: a functioning nation needed a stronger centre.",
-  
-  constitution: "The Constitution of 1787 granted the federal government power to tax, regulate interstate commerce, and enforce national laws — but Southern states demanded concessions. The Three-Fifths Clause counted enslaved people as three-fifths of a person for representation, inflating Southern power in Congress. The fugitive slave clause required return of escaped slaves. The Constitution protected the international slave trade until 1808. These weren't oversights — they were deliberate bargains to secure ratification. The Bill of Rights protected individual liberties from federal overreach, but it didn't protect enslaved people at all."
-};
+    // ── Column headings ──
+    ctx.font = mono; ctx.textBaseline = "alphabetic"; ctx.textAlign = "left";
+    const heldNow = heldCount(to);
+    ctx.fillStyle = ACC;
+    ctx.fillText(fit("CONGRESS CAN · " + heldNow + " OF 6", "CONGRESS CAN", colW).toUpperCase(), lx, headBase);
+    // right heading crossfades
+    ctx.fillStyle = AMB;
+    if (moving){
+      ctx.save(); ctx.globalAlpha = 1 - g;
+      ctx.fillText(fit(RIGHT_HEAD[from].name, RIGHT_HEAD[from].short, colW).toUpperCase(), rx, headBase);
+      ctx.restore();
+      ctx.save(); ctx.globalAlpha = g;
+      ctx.fillText(fit(RIGHT_HEAD[to].name, RIGHT_HEAD[to].short, colW).toUpperCase(), rx, headBase);
+      ctx.restore();
+    } else {
+      ctx.fillText(fit(RIGHT_HEAD[to].name, RIGHT_HEAD[to].short, colW).toUpperCase(), rx, headBase);
+    }
 
-btnArticles.addEventListener('click', () => {
-  btnArticles.classList.add('active');
-  btnConstitution.classList.remove('active');
-  knowdropText.textContent = knowdrops.articles;
-});
+    // ── Left column: powers ──
+    for (let i = 0; i < POWERS.length; i++){
+      const p = POWERS[i];
+      const y = tilesY0 + i * rowH;
+      const hFrom = p.held[from], hTo = p.held[to];
+      if (hFrom === hTo || !moving){
+        tile(lx, y, colW, tileH, p, hTo, RGB, 1, hTo && !p.held[0] && to === 1, fs, mono);
+      } else {
+        tile(lx, y, colW, tileH, p, hFrom, RGB, 1 - g, false, fs, mono);
+        tile(lx, y, colW, tileH, p, hTo, RGB, g, hTo, fs, mono);
+      }
+    }
 
-btnConstitution.addEventListener('click', () => {
-  btnConstitution.classList.add('active');
-  btnArticles.classList.remove('active');
-  knowdropText.textContent = knowdrops.constitution;
-});
+    // ── Right column: what the states kept / 1787 bargains ──
+    function drawRight(s, alpha){
+      const set = RIGHT[s];
+      for (let i = 0; i < set.length; i++){
+        tile(rx, tilesY0 + i * rowH, colW, tileH, set[i], true, AMBRGB, alpha, set[i].slavery, fs, mono);
+      }
+    }
+    if (moving){ drawRight(from, 1 - g); drawRight(to, g); } else { drawRight(to, 1); }
 
-window.addEventListener('resize', resize);
-resize();
-updateSlider();
-draw(0);
+    // thin divider between columns
+    ctx.strokeStyle = "rgba(255,255,255,0.08)"; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(w / 2, tilesY0 - 2); ctx.lineTo(w / 2, tilesY0 + rowH * 6 - 4); ctx.stroke();
+
+    // ── Timeline ──
+    const yearBase = usable - 4;
+    const lineY = yearBase - yearsH - 2;
+    const nameBase2 = lineY - 8;
+    const nameBase1 = nameBase2 - fs - 3;
+    const tx0 = gutter + 14, tx1 = w - gutter - 14;
+    const xs = TL.map(function(_, i){ return tx0 + (tx1 - tx0) * i / (TL.length - 1); });
+    const spacing = xs[1] - xs[0];
+
+    ctx.strokeStyle = "rgba(255,255,255,0.15)"; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(tx0, lineY); ctx.lineTo(tx1, lineY); ctx.stroke();
+
+    const activeIdx = TL_INDEX[to];
+    const mx = xs[TL_INDEX[from]] + (xs[TL_INDEX[to]] - xs[TL_INDEX[from]]) * (moving ? g : 1);
+
+    ctx.font = mono; ctx.textBaseline = "alphabetic"; ctx.textAlign = "center";
+    for (let i = 0; i < TL.length; i++){
+      const isActive = i === activeIdx && !moving;
+      ctx.fillStyle = isActive ? INK : "rgba(255,255,255,0.35)";
+      ctx.beginPath(); ctx.arc(xs[i], lineY, 2.5, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = isActive ? INK : DIM;
+      ctx.fillText(TL[i].year, xs[i], yearBase);
+      if (full){
+        const label = fit(TL[i].name, TL[i].short, spacing * 2 - 12);
+        const tw = ctx.measureText(label).width;
+        const cx = Math.min(Math.max(xs[i], gutter + tw / 2), w - gutter - tw / 2);
+        ctx.fillStyle = isActive ? ACC : DIM;
+        ctx.fillText(label, cx, i % 2 === 0 ? nameBase2 : nameBase1);
+      }
+    }
+    if (!full){
+      const item = TL[activeIdx];
+      const label = fit(item.name, item.short, w - gutter * 2);
+      const tw = ctx.measureText(label).width;
+      const cx = Math.min(Math.max(mx, gutter + tw / 2), w - gutter - tw / 2);
+      ctx.save(); ctx.globalAlpha = moving ? g : 1;
+      ctx.fillStyle = ACC; ctx.fillText(label, cx, nameBase2);
+      ctx.restore();
+    }
+    // active year marker glow
+    ctx.save(); ctx.globalCompositeOperation = "lighter";
+    const halo = ctx.createRadialGradient(mx, lineY, 0, mx, lineY, 18);
+    halo.addColorStop(0, "rgba(" + RGB + ",0.6)");
+    halo.addColorStop(1, "rgba(" + RGB + ",0)");
+    ctx.fillStyle = halo; ctx.beginPath(); ctx.arc(mx, lineY, 18, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+    ctx.fillStyle = ACC; ctx.beginPath(); ctx.arc(mx, lineY, 4, 0, Math.PI * 2); ctx.fill();
+
+    // ── Bloom ──
+    bctx.setTransform(1, 0, 0, 1, 0, 0); bctx.clearRect(0, 0, buf.width, buf.height);
+    if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+    ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
+    (buf.width&&buf.height)&&ctx.drawImage(buf, 0, 0, w, h); ctx.restore();
+
+    // ── Vignette ──
+    const vig = ctx.createRadialGradient(w / 2, h / 2, h * 0.28, w / 2, h / 2, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
+  }
+
+  function step(now){
+    const dt = Math.min(now - (last || now), 50); last = now;
+    anim.p = Math.min(1, anim.p + dt / 650);
+    draw();
+    if (anim.p < 1){ raf = requestAnimationFrame(step); }
+    else { raf = 0; last = 0; anim.from = anim.to; }
+  }
+
+  function updateReadouts(s){
+    const held = heldCount(s), slav = slaveryCount(s);
+    liveTag.textContent = s === 0 ? "Articles of Confederation" : "Constitution of 1787";
+    overlay.textContent = "Congress holds " + held + " of 6 powers · " + (slav ? slav + " slavery clauses" : "no slavery clauses");
+    statGain.textContent = String(held - BASE_HELD);
+    statSlav.textContent = String(slav);
+    btnArt.setAttribute("aria-pressed", s === 0 ? "true" : "false");
+    btnCon.setAttribute("aria-pressed", s === 1 ? "true" : "false");
+  }
+
+  function setState(s){
+    if (s === anim.to) return;
+    anim.from = anim.to; anim.to = s;
+    anim.p = reduced ? 1 : 0;
+    updateReadouts(s);
+    if (raf){ cancelAnimationFrame(raf); raf = 0; last = 0; }
+    if (anim.p < 1){ raf = requestAnimationFrame(step); } else { anim.from = anim.to; draw(); }
+  }
+
+  btnArt.addEventListener("click", function(){ setState(0); });
+  btnCon.addEventListener("click", function(){ setState(1); });
+
+  // ── Knowdrops ──
+  const KD = {
+    treaty: "The Treaty of Paris, signed on 3 September 1783, ended the War of Independence: Britain recognised the United States and ceded land west to the Mississippi. Congress, under the Articles, then had to deliver its side: debts to British creditors were to be honoured and the states urged to restore confiscated Loyalist property. It could only urge. Several states ignored the terms, Britain used that as a reason to keep its forts on the Great Lakes, and the war debt to soldiers and foreign lenders went unpaid because Congress could not tax. The peace exposed the gap between the powers Congress had on paper and the powers it could use.",
+    shays: "In the winter of 1786–87 indebted farmers in western Massachusetts, many of them veterans led by Daniel Shays, shut the courts that were foreclosing on their land and marched on the federal arsenal at Springfield. Congress could not pay for an army to respond; the rising was put down by a Massachusetts militia funded by Boston merchants. To Washington, Madison and Hamilton it proved that a confederation which could not tax or enforce could not keep order either. The Annapolis meeting of September 1786 had already called for a convention; after Shays, Congress endorsed it and twelve states sent delegates to Philadelphia in May 1787.",
+    ratify: "The Constitution needed nine of thirteen state conventions. Federalists such as Hamilton, Madison and Jay argued in The Federalist that a strong union with separated powers would protect liberty rather than threaten it. Anti-federalists including Patrick Henry and George Mason feared a distant government with the power to tax and a standing army, and attacked the absence of a bill of rights. Delaware ratified first in December 1787; New Hampshire became the ninth in June 1788, and Virginia and New York followed only with recommended amendments attached. The fight was won by promising to add the rights the critics demanded.",
+    rights: "Madison kept the promise. In 1789 the first Congress sent twelve amendments to the states; ten were ratified by December 1791 and became the Bill of Rights, guaranteeing speech, press, assembly and trial by jury and limiting searches and punishments by the federal government. It answered the Anti-federalist charge and helped bring North Carolina and Rhode Island into the union. It did nothing for the people the Three-Fifths Clause had counted: the Three-Fifths and fugitive slave clauses stayed in force until the Civil War and the Thirteenth Amendment of 1865. Historians therefore weigh the new republic as both a consolidation of power and a compromise of ideals."
+  };
+  function setKD(key){
+    knowdrop.textContent = KD[key];
+    kdButtons.forEach(function(b){ b.setAttribute("aria-pressed", b.getAttribute("data-key") === key ? "true" : "false"); });
+  }
+  kdButtons.forEach(function(b){ b.addEventListener("click", function(){ setKD(b.getAttribute("data-key")); }); });
+  setKD("treaty");
+
+  // ── Resize: measure the wrapper, redraw still ──
+  function onResize(){ resize(); draw(); }
+  if (window.ResizeObserver){ new ResizeObserver(onResize).observe(wrap); }
+  window.addEventListener("resize", onResize);
+  if (document.fonts && document.fonts.ready){ document.fonts.ready.then(function(){ draw(); }); }
+
+  updateReadouts(0);
+  resize();
+  draw();
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'building-a-new-republic'},'*');}catch(e){}}

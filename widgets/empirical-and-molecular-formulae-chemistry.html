@@ -34,6 +34,7 @@ body{margin:0;background:radial-gradient(120% 80% at 50% -10%,var(--bg-top) 0%,v
 .ef .head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
 .ef .lbl{font-family:"JetBrains Mono",monospace;font-size:13px;text-transform:uppercase;color:var(--ink);letter-spacing:.04em}
 .ef .live{font-family:"JetBrains Mono",monospace;font-size:11px;text-transform:uppercase;color:var(--acc)}
+.ef .live .sym{text-transform:none}
 .ef .hint{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--ink-dim);margin:6px 0 12px;line-height:1.45}
 .ef .cv-wrap{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:var(--black);box-shadow:inset 0 0 0 1px var(--ag1)}
 .ef .cv-wrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
@@ -82,7 +83,7 @@ body{margin:0;background:radial-gradient(120% 80% at 50% -10%,var(--bg-top) 0%,v
   <div class="card">
     <div class="head">
       <span class="lbl">Empirical &amp; molecular formulae</span>
-      <span class="live" id="efLive">Live · n = 1</span>
+      <span class="live" id="efLive">Live · <span class="sym">n = 1</span></span>
     </div>
     <div class="hint">Pick a molar mass. Watch the top working and the atoms in one molecule.</div>
     <div class="cv-wrap">
@@ -273,7 +274,7 @@ body{margin:0;background:radial-gradient(120% 80% at 50% -10%,var(--bg-top) 0%,v
     label("ONE MOLECULE · " + NAMES[n - 1] + " · " + formula(n), w * 0.04, l1, w * 0.92, fs, INK, "left", "500");
     const line2 = st.mode === 2
       ? "100 g = 100 ÷ " + M.toFixed(1) + " = " + (100 / M).toFixed(3) + " mol = " + sci(100 / M * NA) + " molecules"
-      : "n = " + M.toFixed(1) + " ÷ " + MEMP.toFixed(2) + " = " + Math.round(M / MEMP) + " · every subscript × " + n;
+      : "n = " + M.toFixed(1) + " ÷ " + MEMP.toFixed(2) + " = " + Math.round(M / MEMP) + (n === 1 ? "" : " · every subscript × " + n);
     label(line2, w * 0.04, l2, w * 0.92, fs * 0.92, AMB, "left");
     const bTop = l2 + fs * 0.9, bBot = bot - fs * 0.4, bh = bBot - bTop;
     const slot = bh / 4;
@@ -321,16 +322,17 @@ body{margin:0;background:radial-gradient(120% 80% at 50% -10%,var(--bg-top) 0%,v
   function drops(n){
     const [C, H, O] = EL, M = molarOf(n), mol = 100 / M;
     return [
-      `Percentage composition is the mass of each element in 100 g of a compound: for ${EMP}, %C = ${C.M.toFixed(2)} ÷ ${MEMP.toFixed(2)} × 100 = ${C.pct.toFixed(1)}%. To go the other way, treat the percentages as grams in a 100 g sample: ${C.pct.toFixed(1)} g C, ${H.pct.toFixed(1)} g H and ${O.pct.toFixed(1)} g O. Divide each mass by its molar mass to get moles (n = m ÷ MM): ${C.mol.toFixed(2)}, ${H.mol.toFixed(2)} and ${O.mol.toFixed(2)} mol. Divide every amount by the smallest, ${SMALL.toFixed(2)}, to get ${C.ratio.toFixed(2)} : ${H.ratio.toFixed(2)} : ${O.ratio.toFixed(2)}, which is ${C.whole} : ${H.whole} : ${O.whole}, so the empirical formula is ${EMP}. If a ratio lands near 1.5 or 1.33, multiply every number by 2 or 3 rather than rounding.`,
+      `Percentage composition is the mass of each element in 100 g of a compound: for ${EMP}, %C = ${C.M.toFixed(2)} ÷ ${MEMP.toFixed(2)} × 100 = ${C.pct.toFixed(1)}%. To go the other way, treat the percentages as grams in a 100 g sample: ${C.pct.toFixed(1)} g C, ${H.pct.toFixed(1)} g H and ${O.pct.toFixed(1)} g O. Divide each mass by its molar mass to get moles (moles = m ÷ MM): ${C.mol.toFixed(2)}, ${H.mol.toFixed(2)} and ${O.mol.toFixed(2)} mol. Divide every amount by the smallest, ${SMALL.toFixed(2)}, to get ${C.ratio.toFixed(2)} : ${H.ratio.toFixed(2)} : ${O.ratio.toFixed(2)}, which is ${C.whole} : ${H.whole} : ${O.whole}, so the empirical formula is ${EMP}. If a ratio lands near 1.5 or 1.33, multiply every number by 2 or 3 rather than rounding.`,
       `Percentages cannot tell ${NAMES[0]} from ${NAMES[5]}: every compound in this family is ${C.pct.toFixed(1)}% carbon, because each has the same ${C.whole} : ${H.whole} : ${O.whole} ratio of atoms. A separately measured molar mass, for example from mass spectrometry, fixes how many empirical units make one molecule. Here n = ${M.toFixed(1)} ÷ ${MEMP.toFixed(2)} = ${n}, so the molecular formula of ${NAMES[n - 1]} is ${formula(n)}. Multiply every subscript in ${EMP} by n, and never write a subscript of 1. If n does not come out as a whole number, recheck the empirical formula.`,
-      `Moles link a mass to a count of particles. With n = m ÷ MM, 100 g of ${NAMES[n - 1]} is 100 ÷ ${M.toFixed(1)} = ${mol.toFixed(3)} mol, and multiplying by Avogadro's constant, 6.022 × 10²³ mol⁻¹, gives ${sci(mol * NA)} molecules. Each molecule holds ${n} carbon atom${n === 1 ? "" : "s"}, so 100 g holds ${sci(mol * n * NA)} carbon atoms, the same for every compound in this family because the percentages are the same. Bigger molecules just mean fewer of them. The same grams-to-moles step settles limiting reagent problems: compare moles against the balanced equation, never grams.`
+      `Moles link a mass to a count of particles. With moles = m ÷ MM, 100 g of ${NAMES[n - 1]} is 100 ÷ ${M.toFixed(1)} = ${mol.toFixed(3)} mol, and multiplying by Avogadro's constant, 6.022 × 10²³ mol⁻¹, gives ${sci(mol * NA)} molecules. Each molecule holds ${n} carbon atom${n === 1 ? "" : "s"}, so 100 g holds ${sci(mol * n * NA)} carbon atoms, the same for every compound in this family because the percentages are the same. Bigger molecules just mean fewer of them. The same grams-to-moles step settles limiting reagent problems: compare moles against the balanced equation, never grams.`
     ];
   }
 
   function updateText(){
     const n = st.n, M = molarOf(n), mol = 100 / M, F = formula(n);
     elVal.textContent = M.toFixed(1) + " g/mol";
-    elLive.textContent = "Live · n = " + n;
+    elLive.textContent = "Live · ";
+    const symN = document.createElement("span"); symN.className = "sym"; symN.textContent = "n = " + n; elLive.appendChild(symN);
     elF.textContent = F;
     elFSub.textContent = "n = " + n + " × " + EMP + " · " + NAMES[n - 1];
     elN.textContent = sci(mol * NA);

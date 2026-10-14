@@ -40,7 +40,7 @@ function shell({ pill, accent = '#7BEA5A', bodyHtml, footHtml, goat, unsub }) {
   </td></tr>
   <tr><td height="3" bgcolor="#7BEA5A" style="background:${accent};background:linear-gradient(90deg,${accent} 0%,rgba(123,234,90,0.06) 100%);font-size:0;line-height:0">&nbsp;</td></tr>
   <tr><td style="padding:34px 32px 30px">${bodyHtml}</td></tr>
-  <tr><td bgcolor="#E9E7E1" style="background:#E9E7E1;padding:16px 32px;font-family:'Geist',system-ui,Arial,sans-serif;font-size:11.5px;line-height:1.6;color:#6E6A60">${footHtml}<br>knowhere · Year 12, rebuilt around you<br><a href="${SITE}/privacy.html" style="color:#6E6A60;text-decoration:underline">Privacy</a>${unsub ? ` · <a href="${unsub}" style="color:#6E6A60;text-decoration:underline">Unsubscribe</a>` : ''}</td></tr>
+  <tr><td bgcolor="#E9E7E1" style="background:#E9E7E1;padding:16px 32px;font-family:'Geist',system-ui,Arial,sans-serif;font-size:11.5px;line-height:1.6;color:#6E6A60">${footHtml}<br>knowhere · Year 11 and 12, rebuilt around you<br><a href="${SITE}/privacy.html" style="color:#6E6A60;text-decoration:underline">Privacy</a>${unsub ? ` · <a href="${unsub}" style="color:#6E6A60;text-decoration:underline">Unsubscribe</a>` : ''}</td></tr>
 </table>
 </td></tr></table>
 </body></html>`;
@@ -133,7 +133,7 @@ const LNK = 'color:#7BEA5A;text-decoration:underline';
    dashboard, the exam window, Cat's line, and the one button. `where` tags the button's utm_content. */
 const PARENT_URL = where => `${SITE}/for-parents?as=parent&utm_source=handoff&utm_medium=email&utm_campaign=kw-launch-2026&utm_content=${encodeURIComponent(where || 'email')}`;
 function parentContext({ where, extra = '' }) {
-  return B.p(`knowhere is a Year 12 study app for the HSC and VCE. Every concept in 15 HSC and 16 VCE subjects is rebuilt as an interactive model, then reshaped to how your kid actually learns — what motivates them, how their brain processes things (ADHD, autism and dyslexia treated as operating systems, not deficits), and whether they think in pictures, sound or by doing. The curriculum never changes. Only the way in does.`)
+  return B.p(`knowhere is a Year 11 and 12 study app for the HSC and VCE. Every concept in 15 HSC and 16 VCE subjects is rebuilt as an interactive model, then reshaped to how your kid actually learns — what motivates them, how their brain processes things (ADHD, autism and dyslexia treated as operating systems, not deficits), and whether they think in pictures, sound or by doing. The curriculum never changes. Only the way in does.`)
     + `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 22px;border-bottom:1px solid #262B26">`
     + FACT('cost', 'The 2026 exam pass: free for a week, then $49 once. No subscription — it ends itself on Friday 20 November, after the last exam. Less than an hour of tutoring, for the whole run-in.')
     + FACT('the trial', 'Nothing today. The free week starts when you add a card, and nothing keeps running past 20 November.')

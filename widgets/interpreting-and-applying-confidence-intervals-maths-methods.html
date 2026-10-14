@@ -330,18 +330,18 @@ canvas {
 
   <h1>Your Confidence Interval Either Contains the True Mean or It <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">Doesn't</span></h1>
   
-  <p class="intro">A confidence interval is not a probability statement about one specific interval — it's a statement about the reliability of the method across repeated sampling. Once calculated, your interval either captures the parameter or it doesn't. Drag the slider to explore how confidence level changes precision.</p>
+  <p class="intro">A confidence interval is not a probability statement about one specific interval — it's a statement about the reliability of the method across repeated sampling. Once calculated, your interval either captures the parameter or it doesn't. Raise the confidence level and watch the intervals widen while fewer of them miss the true mean.</p>
 
   <div class="card">
     <div class="card-header">
       <div class="card-label">Interval Simulator</div>
       <div class="live-tag" id="liveTag">95% Confidence</div>
     </div>
-    <div class="card-hint">Drag to adjust confidence level</div>
+    <div class="card-hint">Change the confidence level and watch the width and capture count</div>
     
     <div class="canvas-wrapper">
       <canvas id="ciCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">Width: 10.0 cm</div>
+      <div class="canvas-overlay" id="canvasOverlay">Width: 9.8 cm</div>
     </div>
 
     <input aria-label="Confidence level (%)" type="range" min="80" max="99" value="95" class="ci-slider" id="ciSlider" step="1">
@@ -358,8 +358,8 @@ canvas {
         <div class="stat-value acc" id="confValue">95%</div>
       </div>
       <div class="stat">
-        <div class="stat-label">Precision</div>
-        <div class="stat-value amb" id="precValue">High</div>
+        <div class="stat-label">Captured</div>
+        <div class="stat-value amb" id="precValue">38/40</div>
       </div>
     </div>
   </div>
@@ -417,13 +417,10 @@ function resize() {
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 
+const zTable = {80:1.282,81:1.311,82:1.341,83:1.372,84:1.405,85:1.440,86:1.476,87:1.514,88:1.555,89:1.598,90:1.645,91:1.695,92:1.751,93:1.812,94:1.881,95:1.960,96:2.054,97:2.170,98:2.326,99:2.576};
+
 function zScore(conf) {
-  if (conf >= 99) return 2.576;
-  if (conf >= 98) return 2.326;
-  if (conf >= 95) return 1.96;
-  if (conf >= 90) return 1.645;
-  if (conf >= 85) return 1.440;
-  return 1.282;
+  return zTable[conf];
 }
 
 function generateIntervals() {
@@ -432,7 +429,8 @@ function generateIntervals() {
   const se = 2.5;
   
   for (let i = 0; i < 40; i++) {
-    const sm = trueMean + (Math.random() - 0.5) * 8;
+    const u = Math.random() || 1e-9, v = Math.random();
+    const sm = trueMean + se * Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
     const margin = z * se;
     const lower = sm - margin;
     const upper = sm + margin;
@@ -566,8 +564,8 @@ function draw() {
   // Label
   ctx.fillStyle = 'rgba(47, 169, 78,1)';
   ctx.font = '11px "JetBrains Mono"';
-  ctx.textAlign = 'center';
-  ctx.fillText('CURRENT', hMid, hY - 12);
+  ctx.textAlign = 'left';
+  ctx.fillText('CURRENT', hX2 + 8, Math.max(hY + 4, 10));
   
   // Bloom
   bctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -604,14 +602,12 @@ function update() {
   
   canvasOverlay.textContent = 'Width: ' + width.toFixed(1) + ' cm';
   
-  if (confidence >= 98) precValue.textContent = 'Low';
-  else if (confidence >= 92) precValue.textContent = 'Medium';
-  else precValue.textContent = 'High';
-  
   const fillPct = ((confidence - 80) / (99 - 80)) * 100;
   slider.style.setProperty('--fill', fillPct + '%');
   
   generateIntervals();
+  const hits = intervals.filter(iv => iv.contains).length;
+  precValue.textContent = hits + '/40';
 }
 
 slider.addEventListener('input', update);
@@ -632,7 +628,6 @@ window.addEventListener('resize', resize);
 
 resize();
 update();
-generateIntervals();
 
 function animate() {
   draw();

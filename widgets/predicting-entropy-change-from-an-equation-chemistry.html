@@ -1,0 +1,533 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Predicting entropy change from an equation — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #3E9AD6;
+  --acc-rgb: 62, 154, 214;
+  --ag: rgba(var(--acc-rgb),.7);
+  --ag1: rgba(var(--acc-rgb),.12);
+  --ag2: rgba(var(--acc-rgb),.45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 0;
+}
+.sr-only { position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0; }
+.en-wrap { max-width: 720px; margin: 0 auto; }
+.en-wrap h1 { font-size: clamp(26px,6.5vw,44px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; margin-bottom: 14px; }
+.en-intro { font-size: 15.5px; color: var(--ink-dim); max-width: 58ch; line-height: 1.55; margin-bottom: 28px; }
+.en-card {
+  background: linear-gradient(180deg,#12160F,#0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+.en-card.en-sec { border-radius: 14px; }
+.en-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 6px; }
+.en-label { font-family: 'JetBrains Mono', monospace; font-size: 13px; text-transform: uppercase; color: var(--ink); }
+.en-live { font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; color: var(--acc); white-space: nowrap; }
+.en-hint { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-dim); margin-bottom: 12px; line-height: 1.5; }
+.en-qtitle { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 8px; }
+.en-picks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
+@media (max-width: 560px) { .en-picks { grid-template-columns: repeat(2, 1fr); } }
+.en-tog {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  padding: 10px 12px;
+  border-radius: 999px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+  line-height: 1.2;
+}
+.en-tog[aria-pressed="true"] {
+  background: rgba(var(--acc-rgb),.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(var(--acc-rgb),.18);
+}
+.en-tog:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
+.en-stage {
+  position: relative; width: 100%; aspect-ratio: 16/9; border-radius: 12px; overflow: hidden;
+  background: #000; box-shadow: inset 0 0 0 1px var(--ag1);
+}
+.en-stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.en-over {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.55); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace; font-size: 14px; text-transform: none;
+  color: var(--acc); text-align: center;
+}
+.en-cap { font-size: 14.5px; line-height: 1.55; color: var(--ink); margin: 14px 0 4px; min-height: 3.1em; }
+.en-cap b { color: var(--acc); font-weight: 600; }
+.en-ctl { margin-top: 12px; }
+.en-row { display: flex; justify-content: space-between; align-items: baseline; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 10px; }
+.en-row b { color: var(--acc); font-weight: 500; font-size: 12px; }
+.en-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; border-radius: 3px; outline: none;
+  background: linear-gradient(90deg, var(--acc) var(--fill,0%), #23291f var(--fill,0%)); }
+.en-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%;
+  background: #0B0D0C; border: 2px solid var(--acc); box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag); transition: box-shadow .15s; cursor: pointer; }
+.en-slider::-webkit-slider-thumb:hover { box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag); }
+.en-slider::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: #0B0D0C; border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag); transition: box-shadow .15s; cursor: pointer; }
+.en-ticks { position: relative; height: 16px; margin: 8px 10px 0; font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--ink-dim); }
+.en-ticks span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
+.en-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); }
+.en-stat-l { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 4px; }
+.en-stat-v { font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 500; }
+.en-stat-v.a { color: var(--acc); }
+.en-stat-v.m { color: var(--amb); }
+.en-stat-s { font-size: 12px; color: var(--ink-dim); margin-top: 2px; }
+.en-tbtns { display: flex; gap: 10px; }
+.en-tbtns .en-tog { flex: 1; }
+.en-drop { border-top: 1px solid var(--line); padding-top: 16px; margin-top: 16px; font-size: 14.5px; line-height: 1.65; color: var(--ink); }
+.en-know {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+.en-know-tag { display: flex; align-items: center; gap: 9px; margin-bottom: 10px; }
+.en-know-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--acc); box-shadow: 0 0 8px var(--acc); animation: enPulse 2.4s ease-in-out infinite; }
+.en-know-txt { font-family: 'JetBrains Mono', monospace; font-size: 13px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--acc); }
+.en-know p { font-size: 17.4px; line-height: 1.55; color: var(--ink); }
+@keyframes enPulse { 0%,100% { opacity: 1; } 50% { opacity: .45; } }
+@media (prefers-reduced-motion: reduce) { .en-know-dot { animation: none; } .en-tog { transition: none; } }
+</style>
+
+<div class="en-wrap">
+  <h2 class="sr-only">Predicting entropy change from an equation: an interactive particle model. Pick a balanced equation, then raise the reaction progress to watch reactant particles turn into product particles in a closed container, and see whether the number of gas particles, and so the entropy, rises or falls.</h2>
+
+  <h1>You can call the sign of an entropy change without a single number: just count the <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">gas</span></h1>
+  <p class="en-intro">Entropy is a measure of how spread out particles and their energy are. Gas particles roam the whole container, so they carry far more entropy than a packed solid or a liquid. Pick a reaction, then raise the reaction progress and watch gas particles appear or vanish.</p>
+
+  <div class="en-card">
+    <div class="en-head">
+      <span class="en-label">Particle model</span>
+      <span class="en-live" id="enLive">0% reacted</span>
+    </div>
+    <p class="en-hint">Pick a reaction. Raise the progress. Count the gas.</p>
+
+    <div class="en-picks" role="group" aria-label="Which reaction is in the container" id="enPicks">
+      <button type="button" class="en-tog" data-rx="lime">Limestone heated</button>
+      <button type="button" class="en-tog" data-rx="nh3">Making ammonia</button>
+      <button type="button" class="en-tog" data-rx="ice">Ice melting</button>
+      <button type="button" class="en-tog" data-rx="salt">Salt dissolving</button>
+      <button type="button" class="en-tog" data-rx="burn">Burning hydrogen</button>
+      <button type="button" class="en-tog" data-rx="hcl">Making HCl</button>
+    </div>
+
+    <div class="en-stage" id="enStage">
+      <canvas id="enCanvas" role="img" aria-label="A closed container of reactant and product particles"></canvas>
+      <div class="en-over" id="enOver">equation</div>
+    </div>
+
+    <p class="en-cap" id="enCap" aria-live="polite">Caption</p>
+
+    <div class="en-ctl">
+      <div class="en-row"><span>Reaction progress</span><b id="enProgV">0%</b></div>
+      <input type="range" class="en-slider" id="enProg" aria-label="Reaction progress" min="0" max="100" step="25" value="0">
+      <div class="en-ticks" id="enTicks"></div>
+    </div>
+
+    <div class="en-stats">
+      <div>
+        <div class="en-stat-l">Gas moles in equation</div>
+        <div class="en-stat-v a" id="enGas">0 → 1</div>
+        <div class="en-stat-s" id="enGasS">reactants → products</div>
+      </div>
+      <div>
+        <div class="en-stat-l">Predicted ΔS</div>
+        <div class="en-stat-v m" id="enSign">+</div>
+        <div class="en-stat-s" id="enSignS">entropy increases</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="en-card en-sec">
+    <div class="en-qtitle">Which rule?</div>
+    <div class="en-tbtns" role="group" aria-label="Which prediction rule to read about" id="enRules">
+      <button class="en-tog" type="button" aria-pressed="true" data-k="gas">Count gas</button>
+      <button class="en-tog" type="button" aria-pressed="false" data-k="state">Change state</button>
+      <button class="en-tog" type="button" aria-pressed="false" data-k="tie">Tie cases</button>
+    </div>
+    <p class="en-drop" id="enDrop">Knowdrop</p>
+  </div>
+
+  <div class="en-know">
+    <div class="en-know-tag"><span class="en-know-dot"></span><span class="en-know-txt">Know this</span></div>
+    <p>A reaction that makes <span style="color:var(--acc)">more moles of gas</span> has a <span style="color:var(--acc)">positive ΔS</span>; when gas moles do not change, look at the <span style="color:var(--acc)">states and particle counts</span>.</p>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var CSS = getComputedStyle(document.documentElement);
+  var ACC = CSS.getPropertyValue("--acc").trim();
+  var RGB = CSS.getPropertyValue("--acc-rgb").trim();
+  var AMB = CSS.getPropertyValue("--amb").trim();
+  var INK = CSS.getPropertyValue("--ink").trim();
+  var DIM = CSS.getPropertyValue("--ink-dim").trim();
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* Species: atoms are [dx, dy, radius] in units of the particle size r. */
+  var SP = {
+    CaCO3: { f: "CaCO₃", ph: "s" },
+    CaO:   { f: "CaO", ph: "s" },
+    CO2:   { f: "CO₂", ph: "g", at: [[-1.02, 0, 0.52], [0, 0, 0.6], [1.02, 0, 0.52]] },
+    N2:    { f: "N₂", ph: "g", at: [[-0.5, 0, 0.6], [0.5, 0, 0.6]] },
+    H2:    { f: "H₂", ph: "g", at: [[-0.38, 0, 0.42], [0.38, 0, 0.42]] },
+    NH3:   { f: "NH₃", ph: "g", at: [[0, 0, 0.62], [-0.7, 0.48, 0.38], [0.7, 0.48, 0.38], [0, -0.74, 0.38]] },
+    O2:    { f: "O₂", ph: "g", at: [[-0.52, 0, 0.6], [0.52, 0, 0.6]] },
+    H2Ol:  { f: "H₂O", ph: "l", at: [[0, 0, 0.62], [-0.66, 0.5, 0.38], [0.66, 0.5, 0.38]] },
+    H2Os:  { f: "H₂O", ph: "s" },
+    NaCl:  { f: "NaCl", ph: "s" },
+    Na:    { f: "Na⁺", ph: "aq", ion: "+", rr: 0.55 },
+    Cl:    { f: "Cl⁻", ph: "aq", ion: "−", rr: 0.8 },
+    Cl2:   { f: "Cl₂", ph: "g", at: [[-0.58, 0, 0.68], [0.58, 0, 0.68]] },
+    HCl:   { f: "HCl", ph: "g", at: [[-0.32, 0, 0.68], [0.6, 0, 0.42]] }
+  };
+  var STATE = { s: "s", l: "l", g: "g", aq: "aq" };
+
+  /* Each reaction: reactants and products as [species, moles], and how many equation units sit in the box. */
+  var RX = [
+    { k: "lime", name: "Limestone heated", units: 8, R: [["CaCO3", 1]], P: [["CaO", 1], ["CO2", 1]] },
+    { k: "nh3", name: "Making ammonia", units: 4, R: [["N2", 1], ["H2", 3]], P: [["NH3", 2]] },
+    { k: "ice", name: "Ice melting", units: 8, R: [["H2Os", 1]], P: [["H2Ol", 1]] },
+    { k: "salt", name: "Salt dissolving", units: 8, R: [["NaCl", 1]], P: [["Na", 1], ["Cl", 1]], solvent: true },
+    { k: "burn", name: "Burning hydrogen", units: 4, R: [["H2", 2], ["O2", 1]], P: [["H2Ol", 2]] },
+    { k: "hcl", name: "Making HCl", units: 4, R: [["H2", 1], ["Cl2", 1]], P: [["HCl", 2]] }
+  ];
+
+  function stateOf(id) { var s = SP[id]; return s.ph; }
+  function term(pair) { var n = pair[1]; return (n > 1 ? n : "") + SP[pair[0]].f + "(" + STATE[stateOf(pair[0])] + ")"; }
+  function equation(rx) { return rx.R.map(term).join(" + ") + " → " + rx.P.map(term).join(" + "); }
+  function molesIn(side, phs) { var t = 0; side.forEach(function (p) { if (phs.indexOf(stateOf(p[0])) > -1) t += p[1]; }); return t; }
+  function allMoles(side) { var t = 0; side.forEach(function (p) { t += p[1]; }); return t; }
+
+  /* The prediction rule, applied to the equation itself. */
+  function predict(rx) {
+    var gR = molesIn(rx.R, ["g"]), gP = molesIn(rx.P, ["g"]);
+    if (gP > gR) return { s: "+", w: "Increase", why: "more moles of gas" };
+    if (gP < gR) return { s: "−", w: "Decrease", why: "fewer moles of gas" };
+    var sR = molesIn(rx.R, ["s"]), sP = molesIn(rx.P, ["s"]);
+    var fR = molesIn(rx.R, ["l", "aq"]), fP = molesIn(rx.P, ["l", "aq"]);
+    if (gR === 0 && sP < sR && fP > fR) return { s: "+", w: "Increase", why: "solid becomes liquid or aqueous" };
+    if (gR === 0 && sP > sR && fP < fR) return { s: "−", w: "Decrease", why: "liquid or aqueous becomes solid" };
+    return { s: "?", w: "Too close", why: "same gas moles, same states" };
+  }
+
+  var cv = document.getElementById("enCanvas"), ctx = cv.getContext("2d");
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
+  var buf = document.createElement("canvas"), bctx = buf.getContext("2d");
+  var stage = document.getElementById("enStage"), over = document.getElementById("enOver");
+  var slider = document.getElementById("enProg");
+  var cur = 0, prog = 0, parts = {}, raf = 0, last = 0;
+
+  /* R2 low-discrepancy sequence: even spread, no clumping by species */
+  function r2(i, axis) { var v = 0.5 + (i + 1) * (axis ? 0.5698402910 : 0.7548776662); return v - Math.floor(v); }
+
+  function geom() {
+    var w = cv.width / dpr, h = cv.height / dpr;
+    var oh = over.offsetHeight || 38;
+    var r = Math.max(5, Math.min(12, Math.min(w, h) * 0.034));
+    var top = h * 0.08 + 22;
+    var floor = h - oh - h * 0.05;
+    return { w: w, h: h, r: r, x0: w * 0.05, x1: w * 0.95, top: top, floor: floor };
+  }
+
+  /* Build the full list of particles (id, species, role, unit) for the reaction at this progress, with target positions. */
+  function layout() {
+    var rx = RX[cur], G = geom(), r = G.r;
+    var done = Math.round(prog / 100 * rx.units);
+    var out = [];
+    var cell = r * 2.25;
+    var hasCond = rx.R.concat(rx.P).some(function (p) { return stateOf(p[0]) !== "g"; });
+    var condRows = 2;
+    var condTop = hasCond ? G.floor - (rx.solvent ? Math.max(cell * 3.2, (G.floor - G.top) * 0.42) : cell * condRows) - r * 0.6 : G.floor;
+    var gasTop = G.top + r * 1.4, gasBot = condTop - r * 1.4, gx0 = G.x0 + r * 1.6, gx1 = G.x1 - r * 1.6;
+    var solidCols = 4, latW = solidCols * cell;
+    var solidSides = {};
+    var solidSpecies = rx.R.concat(rx.P).filter(function (p) { return stateOf(p[0]) === "s"; }).map(function (p) { return p[0]; });
+    solidSpecies.forEach(function (id, i) {
+      solidSides[id] = i === 0 ? G.x0 + r * 1.2 : G.x1 - r * 1.2 - latW;
+    });
+    var liqX0 = solidSpecies.length ? G.x0 + r * 1.2 + latW + cell * 0.9 : G.x0 + r * 1.6;
+    var liqX1 = (solidSpecies.length > 1) ? G.x1 - r * 1.2 - latW - cell * 0.6 : G.x1 - r * 1.6;
+    var liqCols = Math.max(3, Math.floor((liqX1 - liqX0) / (cell * 1.02)));
+
+    var gRm = molesIn(rx.R, ["g"]), gPm = molesIn(rx.P, ["g"]);
+    function place(id, role, k, j, n, gi, ai) {
+      var ph = stateOf(id), x, y;
+      if (ph === "g") {
+        var hx = r2(gi, 0), hy = r2(gi, 1);
+        x = gx0 + hx * (gx1 - gx0); y = gasTop + hy * Math.max(r, gasBot - gasTop);
+      } else if (ph === "s") {
+        var c = n % solidCols, rw = Math.floor(n / solidCols);
+        x = solidSides[id] + cell * (c + 0.5); y = G.floor - cell * (rw + 0.5);
+      } else if (ph === "l") {
+        var lc = n % liqCols, lr = Math.floor(n / liqCols);
+        x = liqX0 + cell * 1.02 * (lc + 0.5) + (lr % 2 ? cell * 0.45 : 0) + Math.sin(n * 2.3) * r * 0.12;
+        y = G.floor - cell * 0.92 * (lr + 0.5);
+      } else {
+        var ax0 = (solidSides.NaCl !== undefined ? solidSides.NaCl + latW + r * 1.2 : G.x0 + r * 1.4);
+        /* ions scattered on a jittered 7-column grid: odd columns mix the + and - ions */
+        var aqCols = 7, aqRows = Math.ceil(rx.units * allMoles(rx.P) / aqCols);
+        var cw = (G.x1 - r * 1.4 - ax0) / aqCols, ch = (G.floor - condTop - r * 1.6) / aqRows;
+        x = ax0 + cw * (ai % aqCols + 0.5) + Math.sin(ai * 12.9898) * cw * 0.28;
+        y = condTop + r * 0.8 + ch * (Math.floor(ai / aqCols) + 0.5) + Math.cos(ai * 78.233) * ch * 0.22;
+      }
+      out.push({ id: role + ":" + id + ":" + k + ":" + j, sp: id, role: role, unit: k, tx: x, ty: y });
+    }
+    for (var k = 0; k < rx.units; k++) {
+      var side = k < done ? rx.P : rx.R, role = k < done ? "P" : "R";
+      var gOff = 0, aOff = 0, nAll = allMoles(side);
+      side.forEach(function (p) {
+        for (var j = 0; j < p[1]; j++) {
+          var ph = stateOf(p[0]);
+          var gi = role === "R" ? k * gRm + gOff : rx.units * gRm + k * gPm + gOff;
+          place(p[0], role, k, j, role === "R" && ph === "s" ? rx.units * p[1] - 1 - (k * p[1] + j) : k * p[1] + j, gi, k * nAll + aOff);
+          if (ph === "g") gOff++;
+          aOff++;
+        }
+      });
+    }
+    return { list: out, G: G, condTop: hasCond ? condTop : null, done: done, rx: rx };
+  }
+
+  var L = null;
+  function sync(snap) {
+    L = layout();
+    var seen = {};
+    L.list.forEach(function (q) {
+      seen[q.id] = 1;
+      var p = parts[q.id];
+      if (!p) {
+        /* a new product starts where its reactant unit was, so it visibly comes out of it */
+        var src = null;
+        Object.keys(parts).forEach(function (id) { var o = parts[id]; if (!src && o.unit === q.unit && o.role !== q.role) src = o; });
+        p = parts[q.id] = { id: q.id, sp: q.sp, role: q.role, unit: q.unit, x: src ? src.x : q.tx, y: src ? src.y : q.ty, a: 0 };
+      }
+      p.tx = q.tx; p.ty = q.ty; p.ta = 1; p.gone = false;
+    });
+    Object.keys(parts).forEach(function (id) { if (!seen[id]) { parts[id].ta = 0; parts[id].gone = true; } });
+    if (snap || reduce) { Object.keys(parts).forEach(function (id) { var p = parts[id]; p.x = p.tx; p.y = p.ty; p.a = p.ta; if (p.gone) delete parts[id]; }); draw(); return; }
+    kick();
+  }
+
+  function kick() { if (!raf) { last = 0; raf = requestAnimationFrame(step); } }
+  function step(now) {
+    var dt = last ? Math.min(now - last, 50) : 16; last = now;
+    var k = 1 - Math.exp(-dt / 140), moving = false;
+    Object.keys(parts).forEach(function (id) {
+      var p = parts[id];
+      p.x += (p.tx - p.x) * k; p.y += (p.ty - p.y) * k; p.a += (p.ta - p.a) * Math.min(1, k * 1.3);
+      if (Math.abs(p.tx - p.x) > 0.3 || Math.abs(p.ty - p.y) > 0.3 || Math.abs(p.ta - p.a) > 0.01) moving = true;
+      else { p.x = p.tx; p.y = p.ty; p.a = p.ta; if (p.gone) delete parts[id]; }
+    });
+    draw();
+    if (moving) raf = requestAnimationFrame(step); else raf = 0;
+  }
+
+  function colourOf(role) { return role === "R" ? AMB : ACC; }
+
+  function drawMol(p, r) {
+    var s = SP[p.sp], col = colourOf(p.role), ph = s.ph;
+    ctx.save(); ctx.globalAlpha = Math.max(0, Math.min(1, p.a));
+    if (ph === "s") {
+      var e = r * 2.05;
+      ctx.fillStyle = col; ctx.globalAlpha *= 0.85;
+      roundRect(p.x - e / 2, p.y - e / 2, e, e, r * 0.35); ctx.fill();
+      ctx.globalAlpha = Math.max(0, Math.min(1, p.a));
+      ctx.strokeStyle = "rgba(0,0,0,0.55)"; ctx.lineWidth = 1; ctx.stroke();
+      ctx.fillStyle = "rgba(0,0,0,0.45)"; ctx.beginPath(); ctx.arc(p.x, p.y, r * 0.32, 0, Math.PI * 2); ctx.fill();
+    } else if (ph === "aq") {
+      var rr = r * s.rr;
+      ctx.fillStyle = col; ctx.beginPath(); ctx.arc(p.x, p.y, rr, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = "rgba(0,0,0,0.6)"; ctx.lineWidth = 1.6;
+      ctx.beginPath(); ctx.moveTo(p.x - rr * 0.5, p.y); ctx.lineTo(p.x + rr * 0.5, p.y);
+      if (s.ion === "+") { ctx.moveTo(p.x, p.y - rr * 0.5); ctx.lineTo(p.x, p.y + rr * 0.5); }
+      ctx.stroke();
+    } else {
+      s.at.forEach(function (a) {
+        ctx.fillStyle = col;
+        ctx.beginPath(); ctx.arc(p.x + a[0] * r, p.y + a[1] * r, a[2] * r, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = "rgba(0,0,0,0.5)"; ctx.lineWidth = 1; ctx.stroke();
+      });
+      if (ph === "g") {
+        ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha *= 0.22;
+        var g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r * 2.4);
+        g.addColorStop(0, col); g.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(p.x, p.y, r * 2.4, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+      }
+    }
+    ctx.restore();
+  }
+
+  function roundRect(x, y, w, h, rad) {
+    ctx.beginPath(); ctx.moveTo(x + rad, y); ctx.lineTo(x + w - rad, y); ctx.quadraticCurveTo(x + w, y, x + w, y + rad);
+    ctx.lineTo(x + w, y + h - rad); ctx.quadraticCurveTo(x + w, y + h, x + w - rad, y + h); ctx.lineTo(x + rad, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - rad); ctx.lineTo(x, y + rad); ctx.quadraticCurveTo(x, y, x + rad, y); ctx.closePath();
+  }
+
+  function gasNow() { var n = 0; L.list.forEach(function (q) { if (stateOf(q.sp) === "g") n++; }); return n; }
+
+  function draw() {
+    if (!L) return;
+    var G = geom(), w = G.w, h = G.h, r = G.r, rx = RX[cur];
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = "rgba(0,0,0,1)"; ctx.fillRect(0, 0, w, h);
+
+    /* container */
+    var bx0 = G.x0, bx1 = G.x1, by0 = G.top - r * 0.2, by1 = G.floor + r * 0.5;
+    ctx.fillStyle = "rgba(" + RGB + ",0.035)"; ctx.fillRect(bx0, by0, bx1 - bx0, by1 - by0);
+    ctx.strokeStyle = "rgba(" + RGB + ",0.35)"; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(bx0, by0); ctx.lineTo(bx0, by1); ctx.lineTo(bx1, by1); ctx.lineTo(bx1, by0); ctx.stroke();
+    ctx.setLineDash([4, 5]); ctx.beginPath(); ctx.moveTo(bx0, by0); ctx.lineTo(bx1, by0); ctx.stroke(); ctx.setLineDash([]);
+
+    /* water as a solvent for dissolving */
+    if (rx.solvent && L.condTop !== null) {
+      ctx.fillStyle = "rgba(" + RGB + ",0.10)"; ctx.fillRect(bx0 + 1, L.condTop, bx1 - bx0 - 2, by1 - L.condTop);
+      ctx.strokeStyle = "rgba(" + RGB + ",0.4)"; ctx.beginPath(); ctx.moveTo(bx0, L.condTop); ctx.lineTo(bx1, L.condTop); ctx.stroke();
+      ctx.font = "11px 'JetBrains Mono', monospace"; ctx.fillStyle = DIM; ctx.textAlign = "right"; ctx.textBaseline = "bottom";
+      ctx.fillText("water (solvent)", bx1 - 6, L.condTop - 3);
+    }
+
+    Object.keys(parts).forEach(function (id) { var p = parts[id]; if (SP[p.sp].ph !== "g") drawMol(p, r); });
+    Object.keys(parts).forEach(function (id) { var p = parts[id]; if (SP[p.sp].ph === "g") drawMol(p, r); });
+
+    /* legend: one swatch per species, amber reactants, accent products */
+    ctx.font = "11px 'JetBrains Mono', monospace"; ctx.textBaseline = "middle"; ctx.textAlign = "left";
+    var items = rx.R.map(function (p) { return { t: SP[p[0]].f + "(" + stateOf(p[0]) + ")", c: AMB }; })
+      .concat(rx.P.map(function (p) { return { t: SP[p[0]].f + "(" + stateOf(p[0]) + ")", c: ACC }; }));
+    var lx = G.x0, ly = h * 0.08 - 2;
+    items.forEach(function (it) {
+      var tw = ctx.measureText(it.t).width;
+      ctx.fillStyle = it.c; ctx.beginPath(); ctx.arc(lx + 4, ly, 4, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = INK; ctx.fillText(it.t, lx + 12, ly);
+      lx += tw + 24;
+    });
+    var gtxt = "gas particles: " + gasNow();
+    ctx.textAlign = "right"; ctx.fillStyle = ACC;
+    if (lx + ctx.measureText(gtxt).width + 8 > G.x1) { ly += 16; }
+    ctx.fillText(gtxt, G.x1, ly);
+
+    /* bloom */
+    bctx.setTransform(1, 0, 0, 1, 0, 0); bctx.clearRect(0, 0, buf.width, buf.height); (cv.width&&cv.height)&&bctx.drawImage(cv, 0, 0);
+    ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
+    (buf.width&&buf.height)&&ctx.drawImage(buf, 0, 0, w, h); ctx.restore();
+    /* vignette */
+    var cx = w / 2, cy = h / 2;
+    var vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
+  }
+
+  function resize() {
+    var rect = cv.getBoundingClientRect();
+    if (!rect.width || !rect.height) return; /* f27c: refuse a zero measurement, keep the last good size */
+    cv.width = Math.max(1, Math.round(rect.width * dpr)); cv.height = Math.max(1, Math.round(rect.height * dpr));
+    buf.width = cv.width; buf.height = cv.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    sync(true);
+  }
+
+  /* text readouts, all computed from the reaction and the progress on screen */
+  function readouts() {
+    var rx = RX[cur], pr = predict(rx);
+    var gR = molesIn(rx.R, ["g"]), gP = molesIn(rx.P, ["g"]);
+    var startGas = gR * rx.units, nowGas = gasNow();
+    document.getElementById("enLive").textContent = prog + "% reacted";
+    document.getElementById("enProgV").textContent = prog + "%";
+    slider.style.setProperty("--fill", prog + "%");
+    over.textContent = equation(rx);
+    document.getElementById("enGas").textContent = gR + " → " + gP;
+    document.getElementById("enGasS").textContent = "Δn(gas) = " + (gP - gR > 0 ? "+" : "") + (gP - gR) + " mol";
+    document.getElementById("enSign").textContent = pr.s === "?" ? "?" : "ΔS " + pr.s;
+    document.getElementById("enSignS").textContent = pr.w.toLowerCase() + ": " + pr.why;
+    var unitsDone = L.done, cap;
+    var rN = allMoles(rx.R), pN = allMoles(rx.P);
+    if (unitsDone === 0) {
+      cap = "Nothing has reacted yet: the container holds " + rx.units + " sets of reactants, with <b>" + startGas + " gas particle" + (startGas === 1 ? "" : "s") + "</b>.";
+    } else if (nowGas !== startGas) {
+      cap = unitsDone + " of " + rx.units + " sets reacted. Gas particles went from " + startGas + " to <b>" + nowGas + "</b>, so the particles are " + (nowGas > startGas ? "more spread out: entropy is rising." : "less spread out: entropy is falling.");
+    } else if (pr.s === "+") {
+      cap = unitsDone + " of " + rx.units + " sets reacted. No gas either side, but ordered solid has become <b>" + (molesIn(rx.P, ["aq"]) ? "free-moving ions" : "free-moving liquid") + "</b>" + (pN > rN ? " with more particles" : "") + ", so entropy is rising.";
+    } else if (pr.s === "−") {
+      cap = unitsDone + " of " + rx.units + " sets reacted. Particles are locking into a solid, so entropy is falling.";
+    } else {
+      cap = unitsDone + " of " + rx.units + " sets reacted. Gas particles stay at <b>" + nowGas + "</b>: same gas, same states, so the equation alone cannot call the sign.";
+    }
+    document.getElementById("enCap").innerHTML = cap;
+    cv.setAttribute("aria-label", "Container for " + equation(rx) + " at " + prog + "% reacted, with " + nowGas + " gas particles. Reactants are amber, products are teal.");
+  }
+
+  /* reaction pick buttons */
+  var picks = document.getElementById("enPicks");
+  RX.forEach(function (rx, i) {
+    var b = picks.querySelector(`[data-rx="${rx.k}"]`) || picks.appendChild(document.createElement("button"));
+    b.type = "button"; b.className = "en-tog"; b.textContent = rx.name;
+    b.setAttribute("aria-pressed", i === cur ? "true" : "false");
+    b.addEventListener("click", function () {
+      cur = i;
+      [].forEach.call(picks.querySelectorAll("button"), function (x, j) { x.setAttribute("aria-pressed", j === i ? "true" : "false"); });
+      parts = {}; sync(false); readouts();
+    });
+  });
+
+  /* ticks at their true value */
+  var ticks = document.getElementById("enTicks");
+  [0, 25, 50, 75, 100].forEach(function (v) {
+    var s = document.createElement("span"); s.textContent = v + "%";
+    s.style.left = ((v - 0) / (100 - 0) * 100) + "%"; ticks.appendChild(s);
+  });
+
+  slider.addEventListener("input", function () { prog = Math.round(parseFloat(slider.value) || 0); sync(false); readouts(); });
+
+  var DROPS = {
+    gas: "Gas particles move freely through the whole container, so a mole of gas has far more possible arrangements than a mole of solid or liquid. That makes gas moles the biggest driver of entropy in most reactions. Write the balanced equation with state symbols, then add up only the (g) moles on each side. If the products have more moles of gas, ΔS is positive and entropy increases; if they have fewer, ΔS is negative and entropy decreases. In the ammonia reaction, 4 mol of gas becomes 2 mol, so entropy decreases.",
+    state: "When no gas is involved, look at the states. Particles in a solid are locked in a lattice; in a liquid they slide past each other; in a gas they spread through the whole space. So melting, boiling and subliming all increase entropy, and freezing and condensing decrease it. An ionic solid dissolving into aqueous ions usually increases entropy too, because the ions spread out through the water. Always read the state symbols before you decide.",
+    tie: "Sometimes the gas moles are equal on both sides, as in H₂(g) + Cl₂(g) → 2HCl(g). Then the change in entropy is small and the equation alone does not tell you its sign. Check whether the states or the total number of particles change; if neither does, say the change is too small to predict. The actual value has to come from measured standard entropies. Saying so, with your reason, is a stronger answer than guessing a sign."
+  };
+  var rules = document.getElementById("enRules"), drop = document.getElementById("enDrop");
+  [].forEach.call(rules.querySelectorAll("button"), function (b) {
+    b.addEventListener("click", function () {
+      [].forEach.call(rules.querySelectorAll("button"), function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+      drop.textContent = DROPS[b.getAttribute("data-k")];
+    });
+  });
+  drop.textContent = DROPS.gas;
+
+  slider.style.setProperty("--fill", "0%");
+  resize(); readouts();
+  var rt = 0;
+  window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(function () { resize(); readouts(); }, 60); });
+  if (window.ResizeObserver) { new ResizeObserver(function () { clearTimeout(rt); rt = setTimeout(function () { resize(); readouts(); }, 60); }).observe(stage); }
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { draw(); });
+})();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'predicting-entropy-change-from-an-equation'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

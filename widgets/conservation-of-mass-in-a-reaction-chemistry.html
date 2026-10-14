@@ -1,0 +1,361 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Conservation of mass in a reaction — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap");
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #3E9AD6;
+  --acc-rgb: 62, 154, 214;
+  --ag:  rgba(var(--acc-rgb),.7);
+  --ag1: rgba(var(--acc-rgb),.12);
+  --ag2: rgba(var(--acc-rgb),.45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+  --bg-top: #11160F;
+  --card-end: #0d100b;
+  --track: #23291f;
+  --black: #000;
+}
+body{margin:0;background:radial-gradient(120% 80% at 50% -10%,var(--bg-top) 0%,var(--bg) 55%);font-family:"Geist",sans-serif;color:var(--ink);min-height:100vh;padding:40px 16px 0;box-sizing:border-box}
+.cm{max-width:720px;margin:0 auto}
+.cm *{box-sizing:border-box}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.cm h1{font-family:"Geist",sans-serif;font-weight:800;font-size:clamp(26px,6.5vw,44px);letter-spacing:-0.03em;line-height:1.05;margin:0 0 14px}
+.cm .intro{font-size:15.5px;font-weight:400;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin:0 0 26px}
+.cm .card{background:linear-gradient(180deg,var(--bg2),var(--card-end));border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);margin-bottom:22px}
+.cm .card.sec{border-radius:14px}
+.cm .head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.cm .lbl{font-family:"JetBrains Mono",monospace;font-size:13px;text-transform:uppercase;color:var(--ink);letter-spacing:.04em}
+.cm .live{font-family:"JetBrains Mono",monospace;font-size:11px;text-transform:uppercase;color:var(--acc)}
+.cm .hint{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--ink-dim);margin:6px 0 12px;line-height:1.45}
+.cm .cv-wrap{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:var(--black);box-shadow:inset 0 0 0 1px var(--ag1)}
+.cm .cv-wrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.cm .ov{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);padding:9px 16px;font-family:"JetBrains Mono",monospace;font-size:14px;text-transform:uppercase;color:var(--acc);text-align:center;line-height:1.3}
+.cm .srow{margin-top:16px}
+.cm .slbl{display:flex;justify-content:space-between;gap:10px;font-family:"JetBrains Mono",monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:10px}
+.cm .slbl b{color:var(--acc);font-weight:500}
+.cm-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;outline:none;margin:6px 0;background:linear-gradient(90deg,var(--acc) var(--fill,0%),var(--track) var(--fill,0%))}
+.cm-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:var(--bg);border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.cm-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--bg);border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.cm-slider:hover::-webkit-slider-thumb{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.cm-slider:hover::-moz-range-thumb{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.cm-slider:focus-visible::-webkit-slider-thumb{outline:2px solid var(--acc);outline-offset:2px}
+.cm .ticks{display:flex;justify-content:space-between;gap:6px;font-family:"JetBrains Mono",monospace;font-size:9px;color:var(--ink-dim);margin-top:6px}
+.cm .stats{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+.cm .stat .k{font-family:"JetBrains Mono",monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:4px}
+.cm .stat .v{font-family:"JetBrains Mono",monospace;font-size:24px;font-weight:500;line-height:1.15}
+.cm .stat .s{font-family:"JetBrains Mono",monospace;font-size:10.5px;color:var(--ink-dim);margin-top:3px}
+.cm .stat.a .v{color:var(--acc)}
+.cm .stat.b .v{color:var(--amb)}
+.cm .tgs{display:flex;gap:10px}
+.cm .tg{flex:1;font-family:"JetBrains Mono",monospace;font-size:14.5px;padding:12px;border-radius:11px;background:var(--bg2);border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:all .2s;line-height:1.2}
+.cm .tg.on{background:rgba(var(--acc-rgb),.1);border:1px solid var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.cm .tg:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.cm .kd{border-top:1px solid var(--line);padding-top:16px;margin-top:16px}
+.cm .kd p{font-family:"Geist",sans-serif;font-size:14.5px;font-weight:400;line-height:1.65;color:var(--ink);margin:0}
+.cm .know{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));border-radius:0 12px 12px 0;margin-bottom:0}
+.cm .ktag{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.cm .kdot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:kpulse 2.4s ease-in-out infinite;flex:none}
+.cm .ktxt{font-family:"JetBrains Mono",monospace;font-size:13px;text-transform:uppercase;letter-spacing:0.15em;color:var(--acc)}
+.cm .know p{font-family:"Geist",sans-serif;font-size:17.4px;font-weight:400;line-height:1.55;color:var(--ink);margin:0}
+.cm > :last-child{margin-bottom:0;padding-bottom:16px}
+@keyframes kpulse{0%,100%{opacity:1}50%{opacity:.45}}
+@media (prefers-reduced-motion: reduce){.cm .kdot{animation:none}.cm .tg{transition:none}}
+@media (max-width:420px){.cm .stat .v{font-size:21px}.cm .tg{font-size:13px;padding:12px 8px}.cm .ov{font-size:12px;padding:8px 10px}}
+</style>
+<div class="cm">
+  <h2 class="sr-only">Interactive: conservation of mass in a reaction. Marble chips react with hydrochloric acid in a flask on a balance. Run the reaction and switch between a stoppered, sealed flask and an open beaker, while a graph tracks the balance reading and the volume of carbon dioxide made.</h2>
+  <h1>Mass that seems to vanish has just <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">escaped</span></h1>
+  <p class="intro">Drop 1.00 g of marble chips into hydrochloric acid and the balance reading falls. Seal the flask and the reading does not budge, because the carbon dioxide is trapped instead of drifting away. Run the reaction and watch the balance, then switch between a sealed flask and an open beaker.</p>
+
+  <div class="card">
+    <div class="head">
+      <span class="lbl">Weigh the reaction</span>
+      <span class="live" id="cmLive">Live · 35% reacted</span>
+    </div>
+    <div class="hint">CaCO₃(s) + 2HCl(aq) → CaCl₂(aq) + H₂O(l) + CO₂(g) · run it and watch the balance</div>
+    <div class="cv-wrap">
+      <canvas id="cmCanvas" aria-label="Flask on a balance beside a graph of mass and gas volume"></canvas>
+      <div class="ov" id="cmTag">Sealed · mass holds at 151.00 g</div>
+    </div>
+    <div class="srow">
+      <div class="slbl"><span>Reaction progress</span><b id="cmPct">35%</b></div>
+      <input type="range" class="cm-slider" id="cmSlider" min="0" max="100" step="1" value="35" aria-label="Reaction progress">
+      <div class="ticks"><span>0% · chips added</span><span>50%</span><span>100% · chips gone</span></div>
+    </div>
+    <div class="stats">
+      <div class="stat a"><div class="k">Balance reading</div><div class="v" id="cmMass">151.00 g</div><div class="s" id="cmMassSub">start 151.00 g · change 0.00 g</div></div>
+      <div class="stat b"><div class="k">CO₂ gas made</div><div class="v" id="cmVol">87 mL</div><div class="s" id="cmVolSub">0.15 g · 0.0035 mol</div></div>
+    </div>
+  </div>
+
+  <div class="card sec">
+    <div class="tgs">
+      <button class="tg on" id="cmSealed" type="button" aria-pressed="true">Sealed flask</button>
+      <button class="tg" id="cmOpen" type="button" aria-pressed="false">Open beaker</button>
+    </div>
+    <div class="kd"><p id="cmDrop"></p></div>
+  </div>
+
+  <div class="know">
+    <div class="ktag"><span class="kdot"></span><span class="ktxt">Know This</span></div>
+    <p>In a <span style="color:var(--acc)">closed system</span> the total mass never changes, so any drop on an open balance equals the <span style="color:var(--acc)">mass of gas</span> that escaped, which you can check against the <span style="color:var(--acc)">gas volume collected</span>.</p>
+  </div>
+</div>
+<script>
+(function(){
+  const canvas = document.getElementById("cmCanvas");
+  const ctx = canvas.getContext("2d");
+  const slider = document.getElementById("cmSlider");
+  const bSealed = document.getElementById("cmSealed");
+  const bOpen = document.getElementById("cmOpen");
+  const elLive = document.getElementById("cmLive"), elTag = document.getElementById("cmTag"), elPct = document.getElementById("cmPct");
+  const elMass = document.getElementById("cmMass"), elMassSub = document.getElementById("cmMassSub");
+  const elVol = document.getElementById("cmVol"), elVolSub = document.getElementById("cmVolSub");
+  const elDrop = document.getElementById("cmDrop");
+
+  const CSS = getComputedStyle(document.documentElement);
+  const ACC = CSS.getPropertyValue("--acc").trim();
+  const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+  const AMB = CSS.getPropertyValue("--amb").trim();
+  const INK = CSS.getPropertyValue("--ink").trim();
+  const DIM = CSS.getPropertyValue("--ink-dim").trim();
+  const LINE = CSS.getPropertyValue("--line").trim();
+  const BG2 = CSS.getPropertyValue("--bg2").trim();
+  const acc = a => "rgba(" + RGB + "," + a + ")";
+
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const buf = document.createElement("canvas"); const bctx = buf.getContext("2d");
+
+  /* the chemistry: 1.00 g CaCO3 (100.09 g/mol) with excess HCl, gas at 25 C and 100 kPa (24.79 L/mol) */
+  const START = 151.00, MOL = 1.00 / 100.09, CO2G = MOL * 44.01, CO2ML = MOL * 24790;
+
+  const DROPS = {
+    sealed: "The flask is closed with a stopper, so it is a rigid sealed container and the carbon dioxide has nowhere to go. Every atom that started on the pan is still there, just rearranged into calcium chloride, water and carbon dioxide, so the reading stays at 151.00 g from start to finish. Same mass before and after is conservation of mass, measured directly. The trapped gas raises the pressure inside, which is why only a small mass of chips is used. To measure the gas volume, run the reaction again with a gas syringe that is not on the balance: about 248 mL of CO₂ once all 1.00 g of chips has reacted at 25 °C and 100 kPa, which is 0.0100 mol, or 0.44 g. A syringe left on the pan would swell and push aside about 0.29 g of air, so the reading would dip slightly from buoyancy, not from lost mass.",
+    open: "Now the beaker is open, so carbon dioxide bubbles out of the acid and drifts off into the room. The balance only weighs what is still on the pan, so the reading falls as the reaction runs, ending 0.44 g lower at 150.56 g. No mass has been destroyed: the drop is exactly the mass of CO₂ that escaped, and 0.44 g ÷ 44.01 g/mol is the same 0.0100 mol the sealed flask collected. Recording mass against time from an open beaker is a common way to follow a reaction that gives off a gas. The reverse fools people too: burning magnesium in air gains mass because oxygen atoms from the air join the product."
+  };
+
+  const st = { p: 0.35, pv: 0.35, open: 0, mv: 0 };
+  let raf = 0, last = 0;
+
+  function hash(i, k){ const s = Math.sin(i * 127.1 + k * 311.7) * 43758.5453; return s - Math.floor(s); }
+
+  function resize(){
+    const r = canvas.getBoundingClientRect();
+    if (!r.width || !r.height) return; /* f27c: refuse a zero measurement, keep the last good size */
+    canvas.width = Math.max(1, Math.round(r.width * dpr)); canvas.height = Math.max(1, Math.round(r.height * dpr));
+    buf.width = canvas.width; buf.height = canvas.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    draw();
+  }
+
+  function rr(x, y, w, h, r){ ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+
+  function flaskPath(fx, by, fw, nw, fh){
+    const sh = by - fh * 0.62;
+    ctx.beginPath();
+    ctx.moveTo(fx - fw / 2, by); ctx.lineTo(fx + fw / 2, by);
+    ctx.lineTo(fx + nw / 2, sh); ctx.lineTo(fx + nw / 2, by - fh);
+    ctx.lineTo(fx - nw / 2, by - fh); ctx.lineTo(fx - nw / 2, sh); ctx.closePath();
+  }
+
+  function draw(){
+    const w = canvas.width / dpr, h = canvas.height / dpr;
+    if (w < 2 || h < 2) return;
+    const p = st.pv, mv = st.mv, seal = 1 - mv;
+    const mass = START - CO2G * p * mv, vol = CO2ML * p;
+    ctx.save(); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    const fs = Math.max(9, Math.min(13, h * 0.05));
+    const m = h * 0.08, baseY = h - Math.max(44, h * 0.11);
+    /* captions stay left of the graph. Sealed: at w * 0.29 when they fit, else from the left edge above the stoppered flask.
+       Open: the gas rises over the flask, so the caption stays at w * 0.29 and splits its second line, shrinking only if still too wide */
+    const capRight = w * 0.61 - 10;
+    function caption(head, sub, leftOk){
+      ctx.textAlign = "left"; ctx.textBaseline = "top";
+      let f1 = fs, f2 = fs * 0.85, subs = [sub];
+      const wid = () => { ctx.font = "500 " + f1 + "px JetBrains Mono, monospace"; let a = ctx.measureText(head).width; ctx.font = f2 + "px JetBrains Mono, monospace"; subs.forEach(t => { a = Math.max(a, ctx.measureText(t).width); }); return a; };
+      let x = w * 0.29;
+      if (x + wid() > capRight){
+        if (leftOk) x = w * 0.04; else subs = sub.split(" · ");
+        const k = Math.min(1, (capRight - x) / wid()); f1 *= k; f2 *= k;
+      }
+      const y = m + h * 0.04;
+      ctx.fillStyle = ACC; ctx.font = "500 " + f1 + "px JetBrains Mono, monospace"; ctx.fillText(head, x, y);
+      ctx.fillStyle = DIM; ctx.font = f2 + "px JetBrains Mono, monospace";
+      subs.forEach((t, i) => ctx.fillText(t, x, y + f1 * 1.4 + i * f2 * 1.25));
+    }
+    /* faint floor grid */
+    ctx.strokeStyle = LINE; ctx.lineWidth = 1; ctx.globalAlpha = 0.5;
+    for (let gx = 0; gx <= w; gx += w / 16){ ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke(); }
+    for (let gy = 0; gy <= h; gy += h / 9){ ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke(); }
+    ctx.globalAlpha = 1;
+
+    /* ---------- balance ---------- */
+    const bx0 = w * 0.04, bx1 = w * 0.54, hB = h * 0.14, panY = baseY - hB;
+    ctx.fillStyle = BG2; ctx.strokeStyle = DIM; ctx.lineWidth = 1.2;
+    rr(bx0, panY, bx1 - bx0, hB, 6); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = DIM; ctx.fillRect(bx0 + (bx1 - bx0) * 0.06, panY - 4, (bx1 - bx0) * 0.88, 4);
+    /* display */
+    const lx = bx0 + (bx1 - bx0) * 0.08, lw = (bx1 - bx0) * 0.5, ly = panY + hB * 0.18, lh = hB * 0.64;
+    ctx.fillStyle = "rgba(0,0,0,0.85)"; rr(lx, ly, lw, lh, 4); ctx.fill();
+    ctx.strokeStyle = acc(0.5); ctx.stroke();
+    ctx.fillStyle = ACC; ctx.font = "500 " + Math.max(10, lh * 0.62) + "px JetBrains Mono, monospace";
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText(mass.toFixed(2) + " g", lx + lw / 2, ly + lh / 2 + 1);
+    ctx.fillStyle = DIM; ctx.font = fs * 0.85 + "px JetBrains Mono, monospace"; ctx.textAlign = "left";
+    ctx.fillText("BALANCE", lx + lw + (bx1 - bx0) * 0.05, ly + lh / 2);
+
+    /* ---------- flask ---------- */
+    const fx = w * 0.16, by = panY - 4, fh = (by - m) * 0.7, fw = Math.min(w * 0.17, fh * 1.05), nw = fw * 0.3;
+    const top = by - fh, liqTop = by - fh * 0.34;
+    ctx.save(); flaskPath(fx, by, fw, nw, fh); ctx.clip();
+    ctx.fillStyle = acc(0.22); ctx.fillRect(fx - fw, liqTop, fw * 2, by - liqTop);
+    ctx.strokeStyle = acc(0.8); ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(fx - fw, liqTop); ctx.lineTo(fx + fw, liqTop); ctx.stroke();
+    /* marble chips shrink as they react */
+    const cr = fw * 0.07 * Math.cbrt(Math.max(0, 1 - p));
+    for (let i = 0; i < 6; i++){
+      if (cr < 0.6) break;
+      const cx = fx - fw * 0.32 + i * fw * 0.128, cy = by - cr - 2 - (i % 2) * cr * 0.6;
+      ctx.beginPath();
+      for (let k = 0; k < 6; k++){ const a = k / 6 * Math.PI * 2, rad = cr * (0.75 + 0.45 * hash(i, k)); const X = cx + Math.cos(a) * rad, Y = cy + Math.sin(a) * rad * 0.8; k ? ctx.lineTo(X, Y) : ctx.moveTo(X, Y); }
+      ctx.closePath(); ctx.fillStyle = INK; ctx.globalAlpha = 0.85; ctx.fill(); ctx.globalAlpha = 1;
+    }
+    /* bubbles: more while plenty of chips remain */
+    const nb = Math.round(14 * (1 - p));
+    ctx.globalCompositeOperation = "lighter";
+    for (let i = 0; i < nb; i++){
+      const bxp = fx + (hash(i, 9) - 0.5) * fw * 0.6, byp = by - 6 - hash(i, 3) * (by - liqTop - 10), br = 1.2 + hash(i, 5) * fw * 0.025;
+      ctx.beginPath(); ctx.arc(bxp, byp, br, 0, Math.PI * 2); ctx.strokeStyle = acc(0.9); ctx.lineWidth = 1; ctx.stroke();
+    }
+    ctx.globalCompositeOperation = "source-over";
+    ctx.restore();
+    flaskPath(fx, by, fw, nw, fh); ctx.strokeStyle = INK; ctx.lineWidth = 1.6; ctx.stroke();
+
+    /* ---------- sealed: a stopper makes the flask a rigid closed container (no syringe on the pan, so no buoyancy change) ---------- */
+    if (seal > 0.01){
+      ctx.save(); ctx.globalAlpha = seal;
+      const sh = fh * 0.1;
+      ctx.fillStyle = DIM; ctx.fillRect(fx - nw * 0.62, top - sh * 0.5, nw * 1.24, sh);
+      /* trapped CO2 molecules in the headspace above the acid */
+      ctx.globalCompositeOperation = "lighter";
+      const nT = Math.round(8 * p), rO = Math.max(1.4, fs * 0.18);
+      for (let i = 0; i < nT; i++){
+        const x = fx + (hash(i, 7) - 0.5) * nw * 0.5, y = top + sh + (liqTop - top - sh) * (0.15 + 0.7 * hash(i, 8));
+        ctx.fillStyle = acc(0.9); ctx.beginPath(); ctx.arc(x - rO * 1.7, y, rO, 0, Math.PI * 2); ctx.arc(x + rO * 1.7, y, rO, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = AMB; ctx.beginPath(); ctx.arc(x, y, rO * 0.9, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.globalCompositeOperation = "source-over";
+      caption("STOPPERED · CO₂ TRAPPED", (CO2G * p).toFixed(2) + " g · still on the pan", true);
+      ctx.restore();
+    }
+
+    /* ---------- open: CO2 molecules escaping upward ---------- */
+    if (mv > 0.01){
+      ctx.save(); ctx.globalAlpha = mv; ctx.globalCompositeOperation = "lighter";
+      const nm = Math.round(22 * p), span = top - m;
+      for (let i = 0; i < nm; i++){
+        const t = (i + 0.5) / 22, y = top - 4 - t * span * 0.95, x = fx + (hash(i, 1) - 0.5) * w * 0.2 * (0.3 + 0.7 * t), rO = Math.max(1.6, fs * 0.22);
+        ctx.fillStyle = acc(0.9); ctx.beginPath(); ctx.arc(x - rO * 1.7, y, rO, 0, Math.PI * 2); ctx.arc(x + rO * 1.7, y, rO, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = AMB; ctx.beginPath(); ctx.arc(x, y, rO * 0.9, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.restore();
+      ctx.save(); ctx.globalAlpha = mv;
+      caption("CO₂ ESCAPES", (CO2G * p).toFixed(2) + " g · not collected", false);
+      ctx.restore();
+    }
+
+    /* ---------- graph: balance reading (top band) and gas volume (lower band) ---------- */
+    const gx0 = w * 0.61, gx1 = w * 0.82, gy0 = m + fs * 1.6, gy1 = baseY - fs * 1.4, H = gy1 - gy0;
+    const X = q => gx0 + (gx1 - gx0) * q;
+    const YM = g => gy0 + fs + 8 + (START - g) / CO2G * H * 0.24;
+    const YV = v => gy1 - v / CO2ML * H * 0.4;
+    ctx.strokeStyle = DIM; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(gx0, gy0); ctx.lineTo(gx0, gy1); ctx.lineTo(gx1, gy1); ctx.stroke();
+    { ctx.font = fs * 0.85 + "px JetBrains Mono, monospace"; const tw = ctx.measureText("MASS ON PAN · CO₂ MADE").width, k = Math.min(1, (w - gx0 - 4) / tw); ctx.font = fs * 0.85 * k + "px JetBrains Mono, monospace"; }
+    ctx.textBaseline = "alphabetic";
+    ctx.textAlign = "left"; ctx.fillStyle = ACC; ctx.fillText("MASS ON PAN", gx0, gy0 - fs * 0.5);
+    ctx.fillStyle = AMB; ctx.fillText("· CO₂ MADE", gx0 + ctx.measureText("MASS ON PAN ").width, gy0 - fs * 0.5);
+    ctx.fillStyle = DIM; ctx.textAlign = "right"; ctx.textBaseline = "top"; ctx.fillText("progress →", gx1, gy1 + 4);
+    /* the two mass lines: sealed flat, open falling */
+    function massLine(openness, alpha, dashed){
+      ctx.save(); ctx.globalAlpha = alpha; ctx.strokeStyle = ACC; ctx.lineWidth = dashed ? 1 : 2.2;
+      if (dashed) ctx.setLineDash([4, 4]);
+      ctx.beginPath(); ctx.moveTo(X(0), YM(START)); ctx.lineTo(X(1), YM(START - CO2G * openness)); ctx.stroke(); ctx.restore();
+    }
+    massLine(0, 0.18 + 0.4 * seal, true); if (mv > 0.01) massLine(1, 0.58 * mv, true); /* the falling open-beaker line only shows once the beaker is opened */
+    ctx.save(); ctx.strokeStyle = ACC; ctx.lineWidth = 2.6; ctx.shadowColor = ACC; ctx.shadowBlur = 8;
+    ctx.beginPath(); ctx.moveTo(X(0), YM(START)); ctx.lineTo(X(p), YM(mass)); ctx.stroke(); ctx.restore();
+    ctx.save(); ctx.strokeStyle = AMB; ctx.lineWidth = 2.2; ctx.globalAlpha = 0.3; ctx.setLineDash([4, 4]);
+    ctx.beginPath(); ctx.moveTo(X(0), YV(0)); ctx.lineTo(X(1), YV(CO2ML)); ctx.stroke(); ctx.restore();
+    ctx.save(); ctx.strokeStyle = AMB; ctx.lineWidth = 2.4; ctx.beginPath(); ctx.moveTo(X(0), YV(0)); ctx.lineTo(X(p), YV(vol)); ctx.stroke(); ctx.restore();
+    /* now-line and markers */
+    ctx.save(); ctx.strokeStyle = INK; ctx.globalAlpha = 0.35; ctx.setLineDash([2, 4]); ctx.beginPath(); ctx.moveTo(X(p), gy0); ctx.lineTo(X(p), gy1); ctx.stroke(); ctx.restore();
+    ctx.globalCompositeOperation = "lighter";
+    ctx.fillStyle = ACC; ctx.beginPath(); ctx.arc(X(p), YM(mass), 4, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = AMB; ctx.beginPath(); ctx.arc(X(p), YV(vol), 4, 0, Math.PI * 2); ctx.fill();
+    ctx.globalCompositeOperation = "source-over";
+    ctx.font = "500 " + fs + "px JetBrains Mono, monospace";
+    /* labels sit right of the dots, on the side each line never crosses */
+    ctx.textAlign = "left";
+    const mT = mass.toFixed(2) + " g", vT = Math.round(vol) + " mL";
+    ctx.textBaseline = "bottom"; ctx.fillStyle = ACC; ctx.fillText(mT, Math.min(X(p) + 7, w - ctx.measureText(mT).width - 4), YM(mass) - 5);
+    ctx.textBaseline = "top"; ctx.fillStyle = AMB; ctx.fillText(vT, Math.min(X(p) + 7, w - ctx.measureText(vT).width - 4), YV(vol) + 5);
+
+    /* bloom */
+    bctx.setTransform(1, 0, 0, 1, 0, 0); bctx.clearRect(0, 0, buf.width, buf.height);
+    if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+    ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
+    (buf.width&&buf.height)&&ctx.drawImage(buf, 0, 0, w, h); ctx.restore();
+    /* vignette */
+    const cx = w / 2, cy = h / 2;
+    const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
+    ctx.restore();
+  }
+
+  function updateText(){
+    const p = st.p, open = st.open === 1;
+    const lost = open ? CO2G * p : 0, mass = START - lost, vol = CO2ML * p, pct = Math.round(p * 100);
+    elPct.textContent = pct + "%";
+    elLive.textContent = "Live · " + pct + "% reacted";
+    elMass.textContent = mass.toFixed(2) + " g";
+    elMassSub.textContent = "start 151.00 g · change " + (lost > 0.004 ? "−" : "") + lost.toFixed(2) + " g";
+    elVol.textContent = Math.round(vol) + " mL";
+    elVolSub.textContent = (CO2G * p).toFixed(2) + " g · " + (MOL * p).toFixed(4) + " mol";
+    elTag.textContent = open ? ("Open · " + lost.toFixed(2) + " g of CO₂ escaped") : ("Sealed · mass holds at " + mass.toFixed(2) + " g");
+    slider.style.setProperty("--fill", pct + "%");
+    bSealed.classList.toggle("on", !open); bOpen.classList.toggle("on", open);
+    bSealed.setAttribute("aria-pressed", String(!open)); bOpen.setAttribute("aria-pressed", String(open));
+    elDrop.textContent = open ? DROPS.open : DROPS.sealed;
+  }
+
+  function tick(now){
+    const dt = Math.min(now - last, 50); last = now;
+    const k = 1 - Math.exp(-dt / 110);
+    st.pv += (st.p - st.pv) * k; st.mv += (st.open - st.mv) * k;
+    if (Math.abs(st.p - st.pv) < 0.001 && Math.abs(st.open - st.mv) < 0.002){ st.pv = st.p; st.mv = st.open; draw(); raf = 0; return; }
+    draw(); raf = requestAnimationFrame(tick);
+  }
+  function kick(){
+    if (reduce){ st.pv = st.p; st.mv = st.open; draw(); return; }
+    if (!raf){ last = performance.now(); raf = requestAnimationFrame(tick); }
+  }
+
+  slider.addEventListener("input", () => { st.p = slider.value / 100; updateText(); kick(); });
+  bSealed.addEventListener("click", () => { st.open = 0; updateText(); kick(); });
+  bOpen.addEventListener("click", () => { st.open = 1; updateText(); kick(); });
+  window.addEventListener("resize", resize);
+  updateText(); resize();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(draw).catch(() => {});
+})();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'conservation-of-mass-in-a-reaction'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

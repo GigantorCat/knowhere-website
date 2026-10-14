@@ -324,18 +324,18 @@ canvas {
 </style>
 
 <div class="container">
-  <h2 class="sr-only">Interactive bearing and compass radial survey visualisation showing how three-digit bearings map direction and distance into surveyed area calculations</h2>
+  <h2 class="sr-only">Bearings from one point: change the true bearing of P and see the angle between two bearings and the area of the triangle they make</h2>
 
-  <h1>A single observer with a compass can map an entire <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">paddock</span></h1>
+  <h1>Two bearings from one point fix a <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">triangle</span></h1>
   
-  <p class="intro">Bearings aren't just compass directions — they're the foundation of radial surveying, where every bearing-and-distance pair from one point turns into a triangle you can measure. Here Q is fixed at 120°, 70 m from the observer. Drag the slider to swing the bearing to P (85 m away) and watch the angle between the bearings, and the surveyed area, change.</p>
+  <p class="intro">A true bearing gives a direction as three digits measured clockwise from north. Take two bearings and two distances from the same point and you have a triangle you can solve: the angle between the bearings, then the sides and area with trigonometry. Here Q is fixed at 120°, 70 m from the observer. Swing the bearing of P (85 m away) and watch the angle between the bearings, and the area of the triangle, change.</p>
 
   <div class="card">
     <div class="card-header">
-      <div class="card-label">Compass Radial Survey</div>
+      <div class="card-label">Bearings from one point</div>
       <div class="live-tag" id="liveTag">BEARING 045°</div>
     </div>
-    <div class="hint">Drag to change the bearing of P (000° to 360°)</div>
+    <div class="hint">Change the bearing of P (000° to 360°)</div>
     
     <div class="canvas-wrapper">
       <canvas id="compass"></canvas>
@@ -343,7 +343,7 @@ canvas {
     </div>
 
     <div class="slider-row">
-      <div class="slider-label">Bearing Angle</div>
+      <div class="slider-label">Bearing angle</div>
       <input aria-label="Bearing of P" type="range" min="0" max="360" value="45" class="bearing-slider" id="bearingSlider">
       <div class="tick-labels">
         <span>000°</span>
@@ -356,11 +356,11 @@ canvas {
 
     <div class="stats">
       <div class="stat">
-        <div class="stat-label">Current Bearing</div>
+        <div class="stat-label">Current bearing</div>
         <div class="stat-value" style="color:var(--acc)" id="bearingStat">045°</div>
       </div>
       <div class="stat">
-        <div class="stat-label">Triangle Area</div>
+        <div class="stat-label">Triangle area</div>
         <div class="stat-value" style="color:var(--amb)" id="areaStat">2874 m²</div>
       </div>
     </div>
@@ -382,7 +382,7 @@ canvas {
       <div class="know-this-label">Know This</div>
     </div>
     <div class="know-this-body">
-      <span style="color:var(--acc)">True bearings</span> are three-digit angles clockwise from north, <span style="color:var(--acc)">elevation angles</span> measure up from horizontal, and <span style="color:var(--acc)">compass radial surveys</span> calculate area by splitting the region into triangles from a single observation point.
+      <span style="color:var(--acc)">True bearings</span> are three-digit angles clockwise from north, <span style="color:var(--acc)">elevation angles</span> measure up from horizontal, and <span style="color:var(--acc)">two bearings from one point</span> give the angle between them, so the triangle they make can be solved, including its area, ½ab sin C.
     </div>
   </div>
 </div>
@@ -533,6 +533,7 @@ function draw() {
   const bearing2Rad = (bearing2 - 90) * Math.PI / 180;
   const p2x = cx + Math.cos(bearing2Rad) * dist2;
   const p2y = cy + Math.sin(bearing2Rad) * dist2;
+  const sv = surveyNow();
 
   // Draw survey triangle
   ctx.save();
@@ -629,6 +630,29 @@ function draw() {
   ctx.stroke();
   ctx.restore();
 
+  // Included angle at the observer: the angle between the two bearings that the area formula uses
+  const d = ((currentBearing - SURVEY.bearingQ) % 360 + 360) % 360;
+  ctx.save();
+  ctx.strokeStyle = AMB;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  if (d <= 180) {
+    ctx.arc(cx, cy, roseR * 0.4, bearing2Rad, bearing1Rad, false); /* clockwise from Q round to P */
+  } else {
+    ctx.arc(cx, cy, roseR * 0.4, bearing1Rad, bearing2Rad, false); /* clockwise from P round to Q */
+  }
+  ctx.stroke();
+  if (sv.between > 0) {
+    const midBearing = d <= 180 ? SURVEY.bearingQ + d / 2 : currentBearing + (360 - d) / 2;
+    const midRad = (midBearing - 90) * Math.PI / 180;
+    ctx.font = '500 11px "JetBrains Mono"';
+    ctx.fillStyle = AMB;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(`${Math.round(sv.between)}°`, cx + Math.cos(midRad) * roseR * 0.78, cy + Math.sin(midRad) * roseR * 0.78);
+  }
+  ctx.restore();
+
   // Bloom
   bctx.setTransform(1, 0, 0, 1, 0, 0);
   bctx.clearRect(0, 0, buf.width, buf.height);
@@ -648,7 +672,6 @@ function draw() {
   ctx.fillRect(0, 0, w, h);
 
   // Area from the two measured distances and the angle between the bearings
-  const sv = surveyNow();
   const area = Math.round(sv.area + 1e-6); /* guard float error at exact halves */
   canvasTag.textContent = `Area = ½ × ${SURVEY.dP} × ${SURVEY.dQ} × sin ${Math.round(sv.between)}° = ${area} m²`;
   areaStat.textContent = `${area} m²`;

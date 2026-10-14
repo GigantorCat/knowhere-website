@@ -92,7 +92,7 @@ h1 {
 .live-tag {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
-  text-transform: uppercase;
+  text-transform: none; /* "pH", not "PH" */
   color: var(--acc);
 }
 
@@ -132,7 +132,7 @@ h1 {
   padding: 9px 16px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 14px;
-  text-transform: uppercase;
+  text-transform: none; /* keeps pH, [H⁺] and 1.0e-7 style numbers in their true case */
   color: var(--acc);
   text-align: center;
 }
@@ -202,7 +202,7 @@ h1 {
 .stat-label {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10.5px;
-  text-transform: uppercase;
+  text-transform: none; /* "[H⁺] mol/L", not "[H⁺] MOL/L" */
   color: var(--ink-dim);
   margin-bottom: 4px;
 }
@@ -317,18 +317,18 @@ h1 {
   <h2 class="sr-only">Interactive pH and ion product demonstration showing how H+ and OH- concentrations are inversely linked in water</h2>
 
   <h1>Water secretly hides an <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">inverse</span></h1>
-  <p class="intro">Add acid and H⁺ soars while OH⁻ plummets—but their product stays locked at 1.0 × 10⁻¹⁴. Drag the slider to change pH and watch the ion concentrations dance around the invisible constant.</p>
+  <p class="intro">Add acid and H⁺ soars while OH⁻ plummets—but their product stays locked at 1.0 × 10⁻¹⁴. Change the pH and watch the ion concentrations dance around the invisible constant.</p>
 
   <div class="card">
     <div class="card-header">
-      <div class="card-label">Ion Balance</div>
+      <div class="card-label">Ion balance</div>
       <div class="live-tag" id="phTag">pH 7.0</div>
     </div>
-    <div class="card-hint">Drag slider to shift pH from 0 to 14 • dot counts follow the log scale, each pH unit is a 10× change in concentration</div>
+    <div class="card-hint">Shift the pH from 0 to 14 • dot counts follow the log scale, each pH unit is a 10× change in concentration</div>
     
     <div class="canvas-wrapper">
       <canvas id="ionCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasTag">Neutral solution • equal ions</div>
+      <div class="canvas-overlay" id="canvasTag">Neutral • [H⁺] = [OH⁻] • [H⁺][OH⁻] = 1.0 × 10⁻¹⁴</div>
     </div>
 
     <input type="range" min="0" max="140" value="70" class="ph-slider" id="phSlider" aria-label="pH value slider">
@@ -539,17 +539,15 @@ function updateStats() {
   ohStat.textContent = ohConc.toExponential(1);
   phTag.textContent = `pH ${pH.toFixed(1)}`;
   
-  /* tag follows the readouts: equal ions only when [H+] = [OH-], i.e. pH 7.0 at 25 C */
+  /* tag follows the readouts: equal ions only at pH 7.0 (25 °C); otherwise say by how much one ion outnumbers the other, [H⁺]/[OH⁻] = 10^(14 − 2pH) */
+  const ratio = Math.pow(10, Math.abs(14 - 2 * pH));
+  const fmt = r => r < 1000 ? String(Number(r.toPrecision(2))) : r.toExponential(1).replace("e+", "e");
   if (Math.abs(pH - 7) < 0.001) {
-    canvasTag.textContent = "Neutral solution • equal ions";
-  } else if (pH < 6.5) {
-    canvasTag.textContent = "Acidic • H⁺ dominant";
-  } else if (pH > 7.5) {
-    canvasTag.textContent = "Basic • OH⁻ dominant";
+    canvasTag.textContent = "Neutral • [H⁺] = [OH⁻]";
   } else if (pH < 7) {
-    canvasTag.textContent = "Close to neutral • more H⁺ than OH⁻";
+    canvasTag.textContent = `Acidic • [H⁺] is ${fmt(ratio)} × [OH⁻]`;
   } else {
-    canvasTag.textContent = "Close to neutral • more OH⁻ than H⁺";
+    canvasTag.textContent = `Basic • [OH⁻] is ${fmt(ratio)} × [H⁺]`;
   }
   canvasTag.textContent += ` • [H⁺][OH⁻] = ${(hConc * ohConc * 1e14).toFixed(1)} × 10⁻¹⁴`;
 }

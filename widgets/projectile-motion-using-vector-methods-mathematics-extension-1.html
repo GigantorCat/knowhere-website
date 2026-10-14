@@ -331,11 +331,11 @@ canvas {
 </style>
 
 <div class="container">
-  <h2 class="sr-only">Interactive projectile motion visualization using vector methods</h2>
+  <h2 class="sr-only">Interactive projectile motion visualisation using vector methods</h2>
   
   <h1>One Vector Equation Replaces All Those <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">Formulae</span></h1>
   
-  <p class="intro">Traditional projectile motion drowns you in separate horizontal and vertical equations. Vector methods compress everything into one truth: constant downward acceleration. Integrate twice and you've solved the entire problem. Drag the slider to change launch angle and watch the mathematics unfold in real time.</p>
+  <p class="intro">Traditional projectile motion drowns you in separate horizontal and vertical equations. Vector methods compress everything into one truth: constant downward acceleration. Integrate twice and you've solved the entire problem. Change the launch angle and watch the range and velocity arrows respond.</p>
 
   <div class="card">
     <div class="card-header">
@@ -346,7 +346,7 @@ canvas {
     
     <div class="canvas-wrapper">
       <canvas id="trajectoryCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">Horizontal velocity constant · Vertical velocity changes</div>
+      <div class="canvas-overlay" id="canvasOverlay">Range 10.2 m · Horizontal velocity constant</div>
     </div>
 
     <div class="slider-section">
@@ -362,11 +362,11 @@ canvas {
     <div class="stat-row">
       <div class="stat">
         <span class="stat-label">Time of Flight</span>
-        <span class="stat-value" id="timeValue">2.04s</span>
+        <span class="stat-value" id="timeValue">1.44s</span>
       </div>
       <div class="stat">
         <span class="stat-label">Max Height</span>
-        <span class="stat-value" id="heightValue">5.10m</span>
+        <span class="stat-value" id="heightValue">2.55m</span>
       </div>
     </div>
   </div>
@@ -380,7 +380,7 @@ canvas {
     <hr class="knowdrop-divider">
     
     <div class="knowdrop" id="knowdropText">
-      Starting from <strong style="color:var(--acc)">a = -g ĵ</strong> (acceleration vector pointing down), integrate once to get velocity: <strong style="color:var(--acc)">v = v₀ + at</strong>. The initial velocity v₀ splits into horizontal and vertical components based on launch angle. Integrate again to get position: <strong style="color:var(--acc)">r = r₀ + v₀t + ½at²</strong>. The horizontal component has zero acceleration, so it maintains constant velocity throughout the flight. The vertical component experiences constant downward acceleration g, creating the parabolic path. Time of flight comes from setting the vertical displacement to zero and solving for t. Every classic projectile result—range, maximum height, time of flight—emerges directly from these two integration steps. No memorizing separate equations for x and y motion.
+      Starting from <strong style="color:var(--acc)">a = -g ĵ</strong> (acceleration vector pointing down), integrate once to get velocity: <strong style="color:var(--acc)">v = v₀ + at</strong>. The initial velocity v₀ splits into horizontal and vertical components based on launch angle. Integrate again to get position: <strong style="color:var(--acc)">r = r₀ + v₀t + ½at²</strong>. The horizontal component has zero acceleration, so it maintains constant velocity throughout the flight. The vertical component experiences constant downward acceleration g, creating the parabolic path. Time of flight comes from setting the vertical displacement to zero and solving for t. Every classic projectile result—range, maximum height, time of flight—emerges directly from these two integration steps. No memorising separate equations for x and y motion.
     </div>
   </div>
 
@@ -405,6 +405,7 @@ const buf = document.createElement('canvas');
 const bctx = buf.getContext('2d', { alpha: false });
 
 let angle = 45;
+let view = 'integration';
 const g = 9.8;
 const v0 = 10;
 
@@ -427,6 +428,12 @@ function updateStats() {
   
   timeValue.textContent = timeOfFlight.toFixed(2) + 's';
   heightValue.textContent = maxHeight.toFixed(2) + 'm';
+}
+
+function updateOverlay() {
+  const rad = angle * Math.PI / 180;
+  const range = v0 * v0 * Math.sin(2 * rad) / g;
+  canvasOverlay.textContent = "Range " + range.toFixed(1) + " m · Horizontal velocity constant";
 }
 
 function draw() {
@@ -542,6 +549,37 @@ function draw() {
     ctx.moveTo(ex, ey);
     ctx.lineTo(ex - headLen * Math.cos(vAngle + headAngle), ey - headLen * Math.sin(vAngle + headAngle));
     ctx.stroke();
+    
+    if (view === 'components') {
+      // Horizontal component: same length at every dot
+      const hx = px + (vx0 / v0) * scale * 0.8;
+      ctx.strokeStyle = 'rgba(250,199,117,0.9)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(px, py);
+      ctx.lineTo(hx, py);
+      ctx.moveTo(hx, py);
+      ctx.lineTo(hx - headLen * Math.cos(headAngle), py - headLen * Math.sin(headAngle));
+      ctx.moveTo(hx, py);
+      ctx.lineTo(hx - headLen * Math.cos(headAngle), py + headLen * Math.sin(headAngle));
+      ctx.stroke();
+      
+      // Vertical component: shrinks to zero at the apex, then points down
+      const vLen = (Math.abs(vy) / v0) * scale * 0.8;
+      if (vLen > 1) {
+        const dir = vy > 0 ? -1 : 1;
+        const vyEnd = py + dir * vLen;
+        ctx.strokeStyle = 'rgba(46, 156, 76,0.95)';
+        ctx.beginPath();
+        ctx.moveTo(px, py);
+        ctx.lineTo(px, vyEnd);
+        ctx.moveTo(px, vyEnd);
+        ctx.lineTo(px - headLen * Math.sin(headAngle), vyEnd - dir * headLen * Math.cos(headAngle));
+        ctx.moveTo(px, vyEnd);
+        ctx.lineTo(px + headLen * Math.sin(headAngle), vyEnd - dir * headLen * Math.cos(headAngle));
+        ctx.stroke();
+      }
+    }
   }
   
   // Acceleration vector at origin
@@ -592,13 +630,7 @@ angleSlider.addEventListener('input', (e) => {
   angleSlider.style.setProperty('--fill', fillPct + '%');
   angleTag.textContent = angle + '° Launch';
   
-  if (angle < 30) {
-    canvasOverlay.textContent = 'Low angle · Longer range · Less height';
-  } else if (angle > 60) {
-    canvasOverlay.textContent = 'High angle · Shorter range · More height';
-  } else {
-    canvasOverlay.textContent = 'Horizontal velocity constant · Vertical velocity changes';
-  }
+  updateOverlay();
   
   updateStats();
   draw();
@@ -610,11 +642,12 @@ toggleBtns.forEach(btn => {
     toggleBtns.forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     
-    const view = btn.dataset.view;
+    view = btn.dataset.view;
+    draw();
     if (view === 'integration') {
-      knowdropText.innerHTML = `Starting from <strong style="color:var(--acc)">a = -g ĵ</strong> (acceleration vector pointing down), integrate once to get velocity: <strong style="color:var(--acc)">v = v₀ + at</strong>. The initial velocity v₀ splits into horizontal and vertical components based on launch angle. Integrate again to get position: <strong style="color:var(--acc)">r = r₀ + v₀t + ½at²</strong>. The horizontal component has zero acceleration, so it maintains constant velocity throughout the flight. The vertical component experiences constant downward acceleration g, creating the parabolic path. Time of flight comes from setting the vertical displacement to zero and solving for t. Every classic projectile result—range, maximum height, time of flight—emerges directly from these two integration steps. No memorizing separate equations for x and y motion.`;
+      knowdropText.innerHTML = `Starting from <strong style="color:var(--acc)">a = -g ĵ</strong> (acceleration vector pointing down), integrate once to get velocity: <strong style="color:var(--acc)">v = v₀ + at</strong>. The initial velocity v₀ splits into horizontal and vertical components based on launch angle. Integrate again to get position: <strong style="color:var(--acc)">r = r₀ + v₀t + ½at²</strong>. The horizontal component has zero acceleration, so it maintains constant velocity throughout the flight. The vertical component experiences constant downward acceleration g, creating the parabolic path. Time of flight comes from setting the vertical displacement to zero and solving for t. Every classic projectile result—range, maximum height, time of flight—emerges directly from these two integration steps. No memorising separate equations for x and y motion.`;
     } else {
-      knowdropText.innerHTML = `The horizontal and vertical components are completely independent—a crucial insight vector methods make obvious. Horizontally: <strong style="color:var(--acc)">aₓ = 0</strong>, so vₓ stays constant at v₀cos(θ) for the entire flight. Distance covered: <strong style="color:var(--acc)">x = vₓt</strong>. Vertically: <strong style="color:var(--acc)">aᵧ = -g</strong>, so vᵧ = v₀sin(θ) - gt and <strong style="color:var(--acc)">y = v₀sin(θ)t - ½gt²</strong>. At maximum height, vᵧ = 0 momentarily while vₓ continues unchanged. When the projectile returns to launch height, y = 0 again—solve for t to get time of flight: <strong style="color:var(--acc)">T = 2v₀sin(θ)/g</strong>. Substitute this back into x = vₓt to get range. The parabolic path is just the combination of constant horizontal motion and accelerated vertical motion. Vector notation keeps both components organized in a single equation instead of juggling separate formulas.`;
+      knowdropText.innerHTML = `The horizontal and vertical components are completely independent—a crucial insight vector methods make obvious. Horizontally: <strong style="color:var(--acc)">aₓ = 0</strong>, so vₓ stays constant at v₀cos(θ) for the entire flight. Distance covered: <strong style="color:var(--acc)">x = vₓt</strong>. Vertically: <strong style="color:var(--acc)">aᵧ = -g</strong>, so vᵧ = v₀sin(θ) - gt and <strong style="color:var(--acc)">y = v₀sin(θ)t - ½gt²</strong>. At maximum height, vᵧ = 0 momentarily while vₓ continues unchanged. When the projectile returns to launch height, y = 0 again—solve for t to get time of flight: <strong style="color:var(--acc)">T = 2v₀sin(θ)/g</strong>. Substitute this back into x = vₓt to get range. The parabolic path is just the combination of constant horizontal motion and accelerated vertical motion. Vector notation keeps both components organised in a single equation instead of juggling separate formulae.`;
     }
   });
 });
@@ -622,6 +655,7 @@ toggleBtns.forEach(btn => {
 window.addEventListener('resize', resize);
 resize();
 updateStats();
+updateOverlay();
 
 const fillPct = ((angle - 15) / (75 - 15)) * 100;
 angleSlider.style.setProperty('--fill', fillPct + '%');

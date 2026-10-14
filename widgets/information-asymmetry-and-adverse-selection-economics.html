@@ -4,574 +4,419 @@ body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
-
-:root {
-  --bg: #0B0D0C;
-  --bg2: #12160F;
-  --acc: #F187B6;
-  --ag: rgba(241, 135, 182, .7);
-  --ag1: rgba(241, 135, 182, .12);
-  --ag2: rgba(241, 135, 182, .45);
-  --amb: #FAC775;
-  --ink: #EDEDE8;
-  --ink-dim: #8C9389;
-  --line: #262B26;
+:root{
+  --bg:#0B0D0C;
+  --bg2:#12160F;
+  --acc:#F187B6;
+  --acc-rgb:241, 135, 182;
+  --ag:rgba(var(--acc-rgb),.7);
+  --ag1:rgba(var(--acc-rgb),.12);
+  --ag2:rgba(var(--acc-rgb),.45);
+  --amb:#FAC775;
+  --amb-rgb:250,199,117;
+  --ink:#EDEDE8;
+  --ink-dim:#8C9389;
+  --line:#262B26;
 }
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
-}
-
-body {
-  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
-  font-family: 'Geist', sans-serif;
-  color: var(--ink);
-  min-height: 100vh;
-  padding: 40px 16px 72px;
-}
-
-.container {
-  max-width: 720px;
-  margin: 0 auto;
-}
-
-h1 {
-  font-size: clamp(30px, 8vw, 52px);
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1.02;
-  margin-bottom: 16px;
-}
-
-.intro {
-  font-size: 15.5px;
-  font-weight: 400;
-  color: var(--ink-dim);
-  line-height: 1.55;
-  max-width: 58ch;
-  margin-bottom: 32px;
-}
-
-.card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 18px;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: 6px;
-}
-
-.card-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  color: var(--ink);
-}
-
-.live-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--acc);
-}
-
-.card-hint {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--ink-dim);
-  margin-bottom: 14px;
-}
-
-.canvas-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16/9;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
-  box-shadow: inset 0 0 0 1px var(--ag1);
-  margin-bottom: 16px;
-}
-
-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.canvas-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(4px);
-  padding: 9px 16px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  text-transform: uppercase;
-  color: var(--acc);
-  text-align: center;
-}
-
-.slider-wrapper {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-}
-
-.slider-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 10px;
-}
-
-.ia-slider {
-  -webkit-appearance: none;
-  width: 100%;
-  height: 4px;
-  border-radius: 3px;
-  background: linear-gradient(90deg, var(--acc) var(--fill, 50%), #23291f var(--fill, 50%));
-  outline: none;
-  margin-bottom: 8px;
-}
-
-.ia-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow .15s;
-}
-
-.ia-slider::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.ia-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow .15s;
-}
-
-.ia-slider::-moz-range-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.tick-labels {
-  display: flex;
-  justify-content: space-between;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--ink-dim);
-}
-
-.stat-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-  margin-top: 16px;
-}
-
-.stat {
-  text-align: center;
-}
-
-.stat-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 6px;
-}
-
-.stat-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 24px;
-  font-weight: 500;
-}
-
-.toggle-section {
-  margin-bottom: 18px;
-}
-
-.toggle-buttons {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.toggle-btn {
-  flex: 1;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14.5px;
-  padding: 12px;
-  border-radius: 11px;
-  background: #12160F;
-  border: 1px solid var(--line);
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: all .2s;
-}
-
-.toggle-btn.active {
-  background: rgba(241,135,182,.1);
-  border: 1px solid var(--acc);
-  color: var(--acc);
-  box-shadow: 0 0 22px rgba(241,135,182,.18);
-}
-
-.knowdrop-divider {
-  border-top: 1px solid var(--line);
-  padding-top: 16px;
-}
-
-.knowdrop-text {
-  font-size: 14.5px;
-  font-weight: 400;
-  line-height: 1.65;
-  color: var(--ink);
-}
-
-.know-this {
-  border-left: 3px solid var(--acc);
-  padding: 16px 18px;
-  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
-  border-radius: 0 12px 12px 0;
-  margin-bottom: 18px;
-}
-
-.know-this-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--acc);
-  margin-bottom: 10px;
-}
-
-.know-this-body {
-  font-size: 17.4px;
-  font-weight: 400;
-  line-height: 1.55;
-  color: var(--ink);
-}
-
-.know-this-body .acc {
-  color: var(--acc);
-}
-
-.footer {
-  margin-top: 34px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.pulse-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--acc);
-  box-shadow: 0 0 10px var(--acc);
-  animation: iaPulse 2.4s ease-in-out infinite;
-}
-
-@keyframes iaPulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: .35; transform: scale(.6); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
+*{margin:0;padding:0;box-sizing:border-box}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+body{background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C 55%);font-family:'Geist',sans-serif;color:var(--ink);min-height:100vh;padding:40px 16px 0;box-sizing:border-box}
+.ia-wrap{max-width:720px;margin:0 auto}
+.ia-wrap h1{font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin-bottom:14px}
+.ia-intro{font-size:15.5px;font-weight:400;color:var(--ink-dim);line-height:1.55;max-width:58ch;margin-bottom:28px}
+.ia-card{background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);margin-bottom:18px}
+.ia-card2{border-radius:14px}
+.ia-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:6px}
+.ia-label{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;color:#fff}
+.ia-live{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--acc);white-space:nowrap}
+.ia-hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin-bottom:14px}
+.ia-cwrap{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1)}
+.ia-cwrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.ia-overlay{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:14px;text-transform:uppercase;color:var(--acc);text-align:center;line-height:1.3}
+.ia-legend{display:flex;flex-wrap:wrap;gap:8px 16px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin-top:12px}
+.ia-legend span{display:inline-flex;align-items:center;gap:7px}
+.lg-good{width:11px;height:11px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--ag)}
+.lg-lemon{width:9px;height:9px;background:var(--amb);transform:rotate(45deg);outline:2px solid var(--bg)}
+.lg-line{width:16px;height:2px;background:var(--acc);box-shadow:0 0 8px var(--ag)}
+.ia-ctl{margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}
+.ia-row{display:flex;justify-content:space-between;align-items:baseline;font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:10px}
+.ia-row b{font-size:13px;font-weight:500;color:var(--acc)}
+.ia-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;background:linear-gradient(90deg,var(--acc) var(--fill,50%),#23291f var(--fill,50%));outline:none;display:block}
+.ia-slider::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--bg);border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);cursor:pointer;transition:box-shadow .15s}
+.ia-slider::-webkit-slider-thumb:hover{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.ia-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--bg);border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);cursor:pointer;transition:box-shadow .15s}
+.ia-slider::-moz-range-thumb:hover{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.ia-ticks{position:relative;height:14px;margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink-dim)}
+.ia-ticks span{position:absolute;top:0;white-space:nowrap}
+.ia-replay{margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:12px;padding:9px 14px;border-radius:999px;background:var(--bg2);border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:all .2s}
+.ia-replay:hover{border-color:var(--acc);color:var(--acc)}
+.ia-stats{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding-top:16px;border-top:1px solid var(--line);margin-top:16px}
+.ia-stat{text-align:center}
+.ia-slab{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:6px}
+.ia-sval{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500}
+.ia-qt{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:10px}
+.ia-toggles{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.ia-pill{font-family:'JetBrains Mono',monospace;font-size:12px;padding:10px 14px;border-radius:999px;background:var(--bg2);border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:all .2s;flex:1 1 auto;white-space:nowrap}
+.ia-pill[aria-pressed="true"]{background:rgba(var(--acc-rgb),.1);border:1px solid var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.ia-drop{border-top:1px solid var(--line);padding-top:16px}
+.ia-drop p{font-size:14.5px;font-weight:400;line-height:1.65;color:var(--ink)}
+.ia-know{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));border-radius:0 12px 12px 0;margin-bottom:0;padding-bottom:16px}
+.ia-ktag{display:flex;align-items:center;gap:9px;margin-bottom:10px;font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:0.15em;color:var(--acc)}
+.ia-kdot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:iaKnow 2.4s ease-in-out infinite}
+.ia-kbody{font-size:17.4px;font-weight:400;line-height:1.55;color:var(--ink)}
+@keyframes iaKnow{0%,100%{opacity:1}50%{opacity:.45}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
 
-<div class="container">
-  <h2 class="sr-only">Information Asymmetry Interactive Widget</h2>
-  
-  <h1>Hidden information can <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">kill a market</span></h1>
-  
-  <p class="intro">When sellers know their cars are lemons but buyers don't, rational buyers offer only low prices—which drives all quality sellers out of the market. This information asymmetry creates a death spiral where only the worst products remain for sale. Drag the slider to watch the market unravel as information gaps widen.</p>
-  
-  <div class="card">
-    <div class="card-header">
-      <div class="card-label">Used Car Market</div>
-      <div class="live-tag" id="liveTag">50% INFO ASYMMETRY</div>
+<div class="ia-wrap">
+  <h2 class="sr-only">Interactive used car market showing how a wider information gap makes the owners of the best cars walk away and the buyer offer fall</h2>
+
+  <h1>Paying the average price makes the best cars <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">vanish</span></h1>
+
+  <p class="ia-intro">A buyer who cannot check a used car protects themselves by offering the average value of everything on sale. The owner of a genuinely good car refuses that offer and keeps it, so the average falls, the offer falls and the next-best cars walk too. Widen the information gap and watch which cars leave first and where the offer line settles.</p>
+
+  <section class="ia-card">
+    <div class="ia-head">
+      <div class="ia-label">Used car market</div>
+      <div class="ia-live" id="liveTag">Gap 50%</div>
     </div>
-    <div class="card-hint">Quality sellers exit as buyers can't distinguish lemons from gems</div>
-    
-    <div class="canvas-wrapper">
-      <canvas id="marketCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">MIXED MARKET — 50% LEMONS</div>
+    <div class="ia-hint">Widen the gap. Watch the offer line and the top cars.</div>
+
+    <div class="ia-cwrap" id="cwrap">
+      <canvas id="iaCanvas" aria-label="Cars placed by true worth with a buyer offer line; cars above the walk-away line move to the kept column"></canvas>
+      <div class="ia-overlay" id="overlay">Offer $5.9k · 27/40 sell</div>
     </div>
-    
-    <div class="slider-wrapper">
-      <div class="slider-label">Information Gap</div>
-      <input type="range" min="0" max="100" value="50" class="ia-slider" id="asymSlider">
-      <div class="tick-labels">
-        <span>Perfect Info</span>
-        <span>Complete Asymmetry</span>
+    <div class="ia-legend" aria-label="Legend">
+      <span><i class="lg-good" aria-hidden="true"></i>Quality car ($8k–$20k)</span>
+      <span><i class="lg-lemon" aria-hidden="true"></i>Lemon ($2k–$7k)</span>
+      <span><i class="lg-line" aria-hidden="true"></i>Buyer offer = average on sale</span>
+      <span>Height = true worth · values illustrative</span>
+    </div>
+
+    <div class="ia-ctl">
+      <div class="ia-row"><span>Information gap</span><b id="gapV">50%</b></div>
+      <input type="range" class="ia-slider" id="gapSlider" aria-label="Information gap" min="0" max="100" step="5" value="50">
+      <div class="ia-ticks">
+        <span style="left:0">Perfect information</span>
+        <span style="left:50%;transform:translateX(-50%)">50%</span>
+        <span style="left:100%;transform:translateX(-100%)">Complete asymmetry</span>
+      </div>
+      <button class="ia-replay" id="replayBtn" type="button">▶ Replay the unravelling</button>
+    </div>
+
+    <div class="ia-stats">
+      <div class="ia-stat">
+        <div class="ia-slab">Buyer offer</div>
+        <div class="ia-sval" id="offerStat" style="color:var(--acc)">$5.9k</div>
+      </div>
+      <div class="ia-stat">
+        <div class="ia-slab">Quality cars on sale</div>
+        <div class="ia-sval" id="goodStat" style="color:var(--amb)">7 of 20</div>
       </div>
     </div>
-    
-    <div class="stat-row">
-      <div class="stat">
-        <div class="stat-label">Quality Cars Remaining</div>
-        <div class="stat-value" style="color:var(--acc)" id="qualityStat">50%</div>
-      </div>
-      <div class="stat">
-        <div class="stat-label">Market Efficiency</div>
-        <div class="stat-value" style="color:var(--amb)" id="efficiencyStat">75%</div>
-      </div>
+  </section>
+
+  <section class="ia-card ia-card2">
+    <div class="ia-qt">Hidden-information problems</div>
+    <div class="ia-toggles" role="group" aria-label="Which hidden-information problem the paragraph explains">
+      <button class="ia-pill" type="button" data-mode="adverse" aria-pressed="true">Adverse selection</button>
+      <button class="ia-pill" type="button" data-mode="principal" aria-pressed="false">Principal–agent</button>
+      <button class="ia-pill" type="button" data-mode="moral" aria-pressed="false">Moral hazard</button>
+      <button class="ia-pill" type="button" data-mode="policy" aria-pressed="false">Policy fixes</button>
     </div>
-  </div>
-  
-  <div class="card toggle-section">
-    <div class="toggle-buttons">
-      <button class="toggle-btn active" data-mode="principal">Principal-Agent</button>
-      <button class="toggle-btn" data-mode="moral">Moral Hazard</button>
-    </div>
-    <div class="knowdrop-divider">
-      <p class="knowdrop-text" id="knowdropText">Principal-agent problems arise when agents pursue self-interest against principal interests due to information gaps. A company shareholder (principal) cannot perfectly observe whether the CEO (agent) is maximising firm value or building a personal empire. The agent has hidden information about effort levels and hidden actions that benefit themselves at the principal's expense. This asymmetry means agents can shirk, take excessive risks, or prioritise short-term bonuses over long-term sustainability. Without monitoring mechanisms or incentive alignment, the agent's interests diverge from the principal's, creating allocative inefficiency and welfare loss.</p>
-    </div>
-  </div>
-  
-  <div class="know-this">
-    <div class="know-this-tag">Know This</div>
-    <div class="know-this-body">
-      <span class="acc">Information asymmetry</span> causes market failure when one party knows more than the other, leading to <span class="acc">adverse selection</span> (quality goods exit), <span class="acc">principal-agent problems</span> (hidden actions), and <span class="acc">moral hazard</span> (excessive risk-taking by insured parties).
-    </div>
-  </div>
-  
-  <div class="footer">
-    <div class="pulse-dot"></div>
+    <div class="ia-drop"><p id="dropText"></p></div>
+  </section>
+
+  <div class="ia-know">
+    <div class="ia-ktag"><span class="ia-kdot" aria-hidden="true"></span><span>Know This</span></div>
+    <div class="ia-kbody">When sellers do not disclose what they know, buyers pay the <span style="color:var(--acc)">average price</span>, the best cars leave and the average falls again: that unravelling is <span style="color:var(--acc)">adverse selection</span>, a <span style="color:var(--acc)">market failure</span> that leaves quality goods underprovided.</div>
   </div>
 </div>
 
 <script>
-const canvas = document.getElementById('marketCanvas');
-const ctx = canvas.getContext('2d', { alpha: false });
-const liveTag = document.getElementById('liveTag');
-const canvasOverlay = document.getElementById('canvasOverlay');
-const asymSlider = document.getElementById('asymSlider');
-const qualityStat = document.getElementById('qualityStat');
-const efficiencyStat = document.getElementById('efficiencyStat');
-const knowdropText = document.getElementById('knowdropText');
-const toggleBtns = document.querySelectorAll('.toggle-btn');
+(function(){
+  const CSS=getComputedStyle(document.documentElement);
+  const ACC=CSS.getPropertyValue("--acc").trim();
+  const RGB=CSS.getPropertyValue("--acc-rgb").trim();
+  const AMB=CSS.getPropertyValue("--amb").trim();
+  const AMBRGB=CSS.getPropertyValue("--amb-rgb").trim();
+  const DIM=CSS.getPropertyValue("--ink-dim").trim();
+  const INK=CSS.getPropertyValue("--ink").trim();
+  const LINE=CSS.getPropertyValue("--line").trim();
+  const BG=CSS.getPropertyValue("--bg").trim();
+  const reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-const dpr = Math.min(window.devicePixelRatio || 1, 2);
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d', { alpha: false });
+  const wrap=document.getElementById("cwrap");
+  const canvas=document.getElementById("iaCanvas");
+  const ctx=canvas.getContext("2d");
+  const dpr=Math.min(window.devicePixelRatio||1,2);
+  const buf=document.createElement("canvas");
+  const bctx=buf.getContext("2d");
 
-let asymmetry = 50; // 0-100
+  const slider=document.getElementById("gapSlider");
+  const gapV=document.getElementById("gapV");
+  const liveTag=document.getElementById("liveTag");
+  const overlay=document.getElementById("overlay");
+  const offerStat=document.getElementById("offerStat");
+  const goodStat=document.getElementById("goodStat");
+  const replayBtn=document.getElementById("replayBtn");
+  const dropText=document.getElementById("dropText");
+  const pills=document.querySelectorAll(".ia-pill");
 
-// Car data: 40 cars total, half quality half lemons initially
-const cars = [];
-for (let i = 0; i < 40; i++) {
-  cars.push({
-    x: Math.random(),
-    y: Math.random(),
-    vx: (Math.random() - 0.5) * 0.0008,
-    vy: (Math.random() - 0.5) * 0.0008,
-    quality: i < 20 ? 'good' : 'lemon',
-    opacity: 1,
-    targetOpacity: 1,
-    size: 8 + Math.random() * 4,
-    rank: i < 20 ? i : -1
-  });
-}
-const GOOD_TOTAL = 20, LEMON_TOTAL = 20;
-/* the one model behind the drawing and every readout: how many quality cars are still for sale */
-function goodShown() { return Math.round(GOOD_TOTAL * (1 - asymmetry / 100)); }
+  /* ---- the model: 20 quality cars, 20 lemons, true worth in $k ---- */
+  const GOOD=[8.2,8.8,9.4,10.0,10.6,11.3,11.9,12.5,13.1,13.8,14.4,15.0,15.7,16.3,16.9,17.6,18.2,18.8,19.4,20.0];
+  const LEMON=Array.from({length:20},(_,i)=>2+i*5/19);
+  const MARGIN=3;      /* a seller accepts up to $3k below true worth before keeping the car */
+  const VMAX=22;       /* top of the value axis in $k */
+  const ROUND_MS=560;
 
-function resize() {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
+  function frac(i){ return 0.07+((i*0.6180339887)%1)*0.86; }
+  const cars=[];
+  GOOD.forEach((v,i)=>cars.push({v:v,good:true,fx:frac(i*2+1),pos:0,tgt:0,round:-1}));
+  LEMON.forEach((v,i)=>cars.push({v:v,good:false,fx:frac(i*2),pos:0,tgt:0,round:-1}));
 
-function updateSlider() {
-  const pct = asymSlider.value;
-  asymSlider.style.setProperty('--fill', pct + '%');
-}
-
-function draw() {
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, w, h);
-  
-  // Update car positions and opacities based on asymmetry
-  // As asymmetry increases, quality cars exit (fade out)
-  const exitThreshold = asymmetry / 100; // 0 to 1
-  
-  cars.forEach(car => {
-    // Move cars
-    car.x += car.vx;
-    car.y += car.vy;
-    
-    // Bounce off edges
-    if (car.x < 0 || car.x > 1) car.vx *= -1;
-    if (car.y < 0 || car.y > 1) car.vy *= -1;
-    
-    car.x = Math.max(0, Math.min(1, car.x));
-    car.y = Math.max(0, Math.min(1, car.y));
-    
-    // Quality cars exit as asymmetry increases: exactly goodShown() of them stay on screen
-    car.targetOpacity = (car.quality === 'lemon' || car.rank < goodShown()) ? 1 : 0;
-    
-    // Smooth opacity transition
-    car.opacity += (car.targetOpacity - car.opacity) * 0.08;
-  });
-  
-  // Draw cars
-  cars.forEach(car => {
-    if (car.opacity < 0.02) return;
-    
-    const cx = car.x * w;
-    const cy = car.y * h;
-    const color = car.quality === 'good' ? '#F187B6' : '#FAC775';
-    
-    ctx.save();
-    ctx.globalAlpha = car.opacity;
-    
-    // Car body
-    ctx.fillStyle = color;
-    ctx.beginPath();
-    ctx.arc(cx, cy, car.size, 0, Math.PI * 2);
-    ctx.fill();
-    
-    // Glow
-    ctx.globalCompositeOperation = 'lighter';
-    const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, car.size * 2.5);
-    glow.addColorStop(0, car.quality === 'good' ? 'rgba(241,135,182,0.4)' : 'rgba(250,199,117,0.4)');
-    glow.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = glow;
-    ctx.beginPath();
-    ctx.arc(cx, cy, car.size * 2.5, 0, Math.PI * 2);
-    ctx.fill();
-    
-    ctx.restore();
-  });
-  
-  // Bloom
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
-  
-  // Vignette
-  const vig = ctx.createRadialGradient(w/2, h/2, h * 0.28, w/2, h/2, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-  
-  requestAnimationFrame(draw);
-}
-
-function updateUI() {
-  asymmetry = parseFloat(asymSlider.value);
-  
-  // Readouts worked out from the cars shown
-  const good = goodShown();
-  const qualityRemaining = Math.round(good / GOOD_TOTAL * 100);
-  qualityStat.textContent = qualityRemaining + '%';
-  
-  // Market efficiency: share of the 40 worthwhile sales that still happen (every car is worth trading with full information)
-  const efficiency = Math.round((good + LEMON_TOTAL) / (GOOD_TOTAL + LEMON_TOTAL) * 100);
-  efficiencyStat.textContent = efficiency + '%';
-  const lemonShare = Math.round(LEMON_TOTAL / (LEMON_TOTAL + good) * 100);
-  
-  // Update labels
-  liveTag.textContent = asymmetry.toFixed(0) + '% INFO ASYMMETRY';
-  
-  if (good === 0) {
-    canvasOverlay.textContent = "Adverse selection — only lemons remain";
-  } else if (asymmetry < 20) {
-    canvasOverlay.textContent = "Clear information — " + lemonShare + "% lemons";
-  } else if (lemonShare < 75) {
-    canvasOverlay.textContent = "Mixed market — " + lemonShare + "% lemons";
-  } else {
-    canvasOverlay.textContent = "Adverse selection — " + lemonShare + "% lemons";
-  }
-}
-
-asymSlider.addEventListener('input', () => {
-  updateSlider();
-  updateUI();
-});
-
-toggleBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    toggleBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    
-    const mode = btn.dataset.mode;
-    
-    if (mode === 'principal') {
-      knowdropText.textContent = "Principal-agent problems arise when agents pursue self-interest against principal interests due to information gaps. A company shareholder (principal) cannot perfectly observe whether the CEO (agent) is maximising firm value or building a personal empire. The agent has hidden information about effort levels and hidden actions that benefit themselves at the principal's expense. This asymmetry means agents can shirk, take excessive risks, or prioritise short-term bonuses over long-term sustainability. Without monitoring mechanisms or incentive alignment, the agent's interests diverge from the principal's, creating allocative inefficiency and welfare loss.";
-    } else {
-      knowdropText.textContent = "Moral hazard occurs after a deal is made, when insured parties take more risk because they do not bear the full consequences. After buying comprehensive car insurance, a driver might park in risky areas or drive less carefully because the insurer covers theft or damage. These are hidden actions: the insurer cannot fully monitor behaviour, so claims rise and premiums go up for everyone. (Adverse selection is different: it happens before the deal, from hidden information about quality or risk.) Excesses, no-claim bonuses and safety rules push some of the risk back onto the insured party.";
+  /* With the gap at g, a buyer pays (1-g) of true worth plus g of the average on sale.
+     A seller keeps the car when that price is more than MARGIN below true worth,
+     i.e. when worth > average + MARGIN/g. Remove them, recompute the average, repeat. */
+  function solve(g){
+    const onSale=cars.map(()=>true);
+    const exitRound=cars.map(()=>-1);
+    const rounds=[];
+    let round=0;
+    for(;;){
+      let sum=0,n=0;
+      cars.forEach((c,i)=>{ if(onSale[i]){ sum+=c.v; n++; } });
+      const m=sum/n;
+      const thr=g>0?m+MARGIN/g:Infinity;
+      rounds.push({offer:m,thr:thr});
+      let any=false;
+      cars.forEach((c,i)=>{ if(onSale[i]&&c.v>thr){ onSale[i]=false; exitRound[i]=round; any=true; } });
+      if(!any) break;
+      round++;
     }
+    return {rounds:rounds,exitRound:exitRound,onSale:onSale};
+  }
+
+  let g=0.5;
+  let sol=solve(g);
+  let dispOffer=sol.rounds[0].offer;
+  let dispThr=sol.rounds[0].thr;
+  let animStart=performance.now();
+  let raf=0, last=0, replaying=false;
+
+  function money(v){ return "$"+v.toFixed(1)+"k"; }
+
+  function updateReadouts(){
+    const fin=sol.rounds[sol.rounds.length-1];
+    const good=sol.onSale.filter((s,i)=>s&&cars[i].good).length;
+    const sold=good+20;
+    const pct=Math.round(g*100);
+    gapV.textContent=pct+"%";
+    liveTag.textContent="Gap "+pct+"%";
+    offerStat.textContent=money(fin.offer);
+    goodStat.textContent=good+" of 20";
+    if(good===20){
+      overlay.textContent="Offer "+money(fin.offer)+" · all 40 sell";
+    }else if(good===0){
+      overlay.textContent="Only lemons · "+money(fin.offer)+" · 20/40";
+    }else{
+      overlay.textContent="Offer "+money(fin.offer)+" · "+sold+"/40 sell";
+    }
+  }
+
+  function applyGap(val){
+    g=val/100;
+    sol=solve(g);
+    cars.forEach((c,i)=>{ c.round=sol.exitRound[i]; });
+    slider.style.setProperty("--fill",val+"%");
+    animStart=performance.now();
+    updateReadouts();
+    kick();
+  }
+
+  function replay(){
+    cars.forEach(c=>{ c.pos=0; });
+    dispOffer=sol.rounds[0].offer;
+    dispThr=sol.rounds[0].thr;
+    animStart=performance.now();
+    if(!reduce){ replaying=true; replayBtn.textContent="Running…"; }
+    kick();
+  }
+
+  function kick(){
+    if(!raf){ last=performance.now(); raf=requestAnimationFrame(tick); }
+  }
+
+  function tick(now){
+    raf=0;
+    const dt=Math.max(0,Math.min(now-last,50)); last=now;
+    const R=sol.rounds, lastK=R.length-1;
+    const k=reduce?lastK:Math.max(0,Math.min(lastK,Math.floor((now-animStart)/ROUND_MS)));
+    let busy=k<lastK;
+    const a=reduce?1:(1-Math.exp(-dt/150));
+    cars.forEach(c=>{
+      c.tgt=(c.round>=0&&c.round<=k-1)?1:0;
+      const d=c.tgt-c.pos;
+      if(Math.abs(d)<0.004){ c.pos=c.tgt; } else { c.pos+=d*a; busy=true; }
+    });
+    const tO=R[k].offer, dO=tO-dispOffer;
+    if(Math.abs(dO)<0.004){ dispOffer=tO; } else { dispOffer+=dO*a; busy=true; }
+    const tT=R[k].thr;
+    if(!isFinite(tT)||!isFinite(dispThr)){ dispThr=tT; }
+    else { const dT=tT-dispThr; if(Math.abs(dT)<0.004){ dispThr=tT; } else { dispThr+=dT*a; busy=true; } }
+    draw();
+    if(busy){ raf=requestAnimationFrame(tick); }
+    else if(replaying){ replaying=false; replayBtn.textContent="▶ Replay the unravelling"; }
+  }
+
+  function pill(text,x,y,align,color){
+    ctx.font="11px 'JetBrains Mono', monospace";
+    ctx.textBaseline="middle";
+    const tw=ctx.measureText(text).width;
+    let x0=x;
+    if(align==="right") x0=x-tw;
+    ctx.fillStyle="rgba(0,0,0,0.72)";
+    ctx.fillRect(x0-4,y-8,tw+8,16);
+    ctx.fillStyle=color;
+    ctx.textAlign="left";
+    ctx.fillText(text,x0,y);
+  }
+
+  function draw(){
+    const w=canvas.width/dpr, h=canvas.height/dpr;
+    if(!w||!h) return;
+    const narrow=w<560;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.globalAlpha=1; ctx.globalCompositeOperation="source-over"; ctx.filter="none";
+    ctx.fillStyle=BG; ctx.fillRect(0,0,w,h);
+
+    const padL=narrow?40:58;
+    const top=30, bottom=h-50;
+    const divX=Math.round(w*0.76);
+    const plotL=padL+6, plotR=divX-12;
+    const stripL=divX+8, stripR=w-10;
+    const yOf=v=>top+(VMAX-v)/VMAX*(bottom-top);
+    const r=narrow?4.5:6;
+
+    /* value grid and axis labels */
+    ctx.font="11px 'JetBrains Mono', monospace";
+    ctx.textBaseline="middle";
+    for(let v=0;v<=20;v+=5){
+      const y=yOf(v);
+      ctx.strokeStyle=LINE; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(stripR,y); ctx.stroke();
+      ctx.fillStyle=DIM; ctx.textAlign="right";
+      ctx.fillText("$"+v+"k",padL-5,y);
+    }
+
+    /* region labels */
+    ctx.fillStyle=DIM; ctx.textAlign="left";
+    ctx.fillText(narrow?"ON SALE":"ON SALE · HEIGHT = TRUE WORTH",plotL,13);
+    ctx.textAlign="right";
+    ctx.fillText(narrow?"KEPT":"WALKED AWAY",stripR,13);
+
+    /* divider between on sale and kept */
+    ctx.save();
+    ctx.setLineDash([4,5]); ctx.strokeStyle=DIM; ctx.globalAlpha=0.55; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(divX,top-8); ctx.lineTo(divX,bottom+6); ctx.stroke();
+    ctx.restore();
+
+    /* walk-away line: sellers above it keep their cars */
+    if(isFinite(dispThr)&&dispThr<VMAX-0.6){
+      const yT=yOf(dispThr);
+      ctx.save();
+      ctx.setLineDash([6,5]); ctx.strokeStyle=INK; ctx.globalAlpha=0.7; ctx.lineWidth=1.2;
+      ctx.beginPath(); ctx.moveTo(plotL-2,yT); ctx.lineTo(plotR+2,yT); ctx.stroke();
+      ctx.restore();
+      const ly=(yT-10<top-4)?yT+11:yT-10;
+      pill(narrow?"WALK AWAY ABOVE "+money(dispThr):"SELLERS ABOVE "+money(dispThr)+" WALK AWAY",plotL,ly,"left",INK);
+    }
+
+    /* buyer offer line: average worth of everything on sale */
+    const yO=yOf(dispOffer);
+    ctx.save();
+    ctx.globalCompositeOperation="lighter";
+    ctx.strokeStyle=ACC; ctx.lineWidth=2;
+    ctx.shadowColor=ACC; ctx.shadowBlur=12;
+    ctx.beginPath(); ctx.moveTo(plotL-2,yO); ctx.lineTo(plotR+2,yO); ctx.stroke();
+    ctx.restore();
+    pill("OFFER "+money(dispOffer),plotR,(yO+11>bottom+8)?yO-10:yO+11,"right",ACC);
+
+    /* cars */
+    cars.forEach(c=>{
+      const y=yOf(c.v);
+      const xIn=plotL+c.fx*(plotR-plotL);
+      const xOut=stripL+c.fx*(stripR-stripL);
+      const x=xIn+(xOut-xIn)*c.pos;
+      const alpha=1-0.62*c.pos;
+      ctx.save();
+      ctx.globalAlpha=alpha;
+      if(c.good){
+        ctx.fillStyle=ACC;
+        ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
+      }else{
+        const d=r*1.15;
+        ctx.fillStyle=AMB;
+        ctx.beginPath(); ctx.moveTo(x,y-d); ctx.lineTo(x+d,y); ctx.lineTo(x,y+d); ctx.lineTo(x-d,y); ctx.closePath(); ctx.fill();
+        ctx.lineWidth=1.5; ctx.strokeStyle=BG; ctx.stroke();
+      }
+      ctx.globalCompositeOperation="lighter";
+      const glow=ctx.createRadialGradient(x,y,0,x,y,r*2.6);
+      const rgb=c.good?RGB:AMBRGB;
+      glow.addColorStop(0,"rgba("+rgb+","+(0.42*alpha)+")");
+      glow.addColorStop(1,"rgba("+rgb+",0)");
+      ctx.fillStyle=glow;
+      ctx.beginPath(); ctx.arc(x,y,r*2.6,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+    });
+
+    /* bloom */
+    bctx.setTransform(1,0,0,1,0,0); bctx.clearRect(0,0,buf.width,buf.height);
+    if(canvas.width&&canvas.height) bctx.drawImage(canvas,0,0);
+    ctx.save(); ctx.globalCompositeOperation="lighter"; ctx.globalAlpha=0.38; ctx.filter="blur(7px)";
+    if(buf.width&&buf.height) ctx.drawImage(buf,0,0,w,h);
+    ctx.restore();
+
+    /* vignette */
+    const cx=w/2, cy=h/2;
+    const vig=ctx.createRadialGradient(cx,cy,h*0.28,cx,cy,w*0.72);
+    vig.addColorStop(0,"rgba(0,0,0,0)"); vig.addColorStop(1,"rgba(0,0,0,0.52)");
+    ctx.fillStyle=vig; ctx.fillRect(0,0,w,h);
+  }
+
+  function resize(){
+    const rect=wrap.getBoundingClientRect();
+    if(!rect.width||!rect.height) return;
+    canvas.width=Math.round(rect.width*dpr);
+    canvas.height=Math.round(rect.height*dpr);
+    buf.width=canvas.width; buf.height=canvas.height;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    draw();
+  }
+
+  /* knowdrop paragraphs */
+  const DROPS={
+    adverse:"Adverse selection happens before a deal is signed, because of hidden information about quality or risk. In the used car market the seller knows the car and the buyer does not, so the buyer offers the average value of what is on sale. Owners of better-than-average cars refuse that offer and keep their cars, which pulls the average down and drags the offer with it, so the next tier leaves too. Insurance unravels from the other side: people who know they are high risk are the keenest to buy cover at an average premium, so the pool fills with bad risks and premiums climb. The missing ingredient is disclosure: when sellers cannot credibly reveal what they know, good products are underprovided and the market has failed.",
+    principal:"A principal-agent problem is a hidden-information gap inside a relationship rather than a one-off sale. Shareholders (the principals) hire managers (the agents) but cannot watch how hard they work or whether a decision serves the firm or the manager. The agent knows more about effort and intentions, so self-interest can quietly replace the principal's interest: empire building, short-term bonuses, risky bets. Monitoring, performance pay and reporting rules try to shrink the information gap and realign incentives. It belongs to the same family as adverse selection: one side knows more, and the price or contract cannot fully correct for it.",
+    moral:"Moral hazard happens after the deal, because of hidden actions rather than hidden information. Once a driver holds comprehensive insurance, the insurer cannot see whether they park carelessly or skip the service, and the driver no longer bears the full cost of a crash, so risk-taking rises. Claims then climb and premiums rise for everyone in the pool. Excesses, no-claim bonuses and safety conditions push some of the risk back onto the insured party. The split to remember: adverse selection is who turns up before the contract; moral hazard is how they behave after it.",
+    policy:"Governments attack information failure by forcing information into the open. Mandatory disclosure laws (ingredient lists, product safety labels, vendor disclosure statements when a house is sold) make sellers reveal what they know. Licensing and registration of mechanics, builders and financial advisers screen out unqualified sellers before they can trade. Quality standards and roadworthy certificates give buyers a credible signal, so a good car can prove it is good and command its true price. Markets add their own fixes too: warranties, independent inspections and reputation systems. Each one narrows the gap and keeps quality sellers in the market."
+  };
+  dropText.textContent=DROPS.adverse;
+  pills.forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      pills.forEach(b=>b.setAttribute("aria-pressed",b===btn?"true":"false"));
+      dropText.textContent=DROPS[btn.dataset.mode]||DROPS.adverse;
+    });
   });
-});
 
-window.addEventListener('resize', resize);
+  slider.addEventListener("input",()=>applyGap(parseFloat(slider.value)));
+  replayBtn.addEventListener("click",replay);
+  window.addEventListener("resize",resize);
+  if(window.ResizeObserver){ new ResizeObserver(()=>resize()).observe(wrap); }
 
-resize();
-updateSlider();
-updateUI();
-draw();
+  resize();
+  applyGap(parseFloat(slider.value));
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'information-asymmetry-and-adverse-selection'},'*');}catch(e){}}

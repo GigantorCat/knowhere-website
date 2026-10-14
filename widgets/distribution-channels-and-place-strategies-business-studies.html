@@ -4,748 +4,314 @@ body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
-
-:root {
-  --bg: #0B0D0C;
-  --bg2: #12160F;
-  --acc: #E85D97;
-  --acc-rgb: 232, 93, 151;
-  --ag: rgba(var(--acc-rgb), 0.7);
-  --ag1: rgba(var(--acc-rgb), 0.12);
-  --ag2: rgba(var(--acc-rgb), 0.45);
-  --amb: #FAC775;
-  --ink: #EDEDE8;
-  --ink-dim: #8C9389;
-  --line: #262B26;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
-}
-
-body {
-  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
-  font-family: 'Geist', sans-serif;
-  color: var(--ink);
-  min-height: 100vh;
-  padding: 40px 16px 0;
-}
-
-.container {
-  max-width: 720px;
-  margin: 0 auto;
-}
-
-h1 {
-  font-size: clamp(26px, 6.5vw, 44px);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
-  margin-bottom: 16px;
-}
-
-.intro {
-  font-size: 15.5px;
-  font-weight: 400;
-  color: var(--ink-dim);
-  max-width: 58ch;
-  line-height: 1.55;
-  margin-bottom: 32px;
-}
-
-.card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,0.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 20px;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 4px;
-}
-
-.card-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  color: white;
-}
-
-.live-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--acc);
-}
-
-.card-hint {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--ink-dim);
-  margin-bottom: 14px;
-}
-
-.canvas-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16/9;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
-  box-shadow: inset 0 0 0 1px var(--ag1);
-  margin-bottom: 16px;
-}
-
-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.canvas-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(4px);
-  padding: 9px 16px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  text-transform: uppercase;
-  color: var(--acc);
-  text-align: center;
-}
-
-.slider-container {
-  margin-bottom: 8px;
-}
-
-.slider-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 10px;
-}
-
-.channel-slider {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  height: 4px;
-  border-radius: 3px;
-  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
-  outline: none;
-  margin-bottom: 6px;
-}
-
-.channel-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow 0.15s;
-}
-
-.channel-slider::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.channel-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow 0.15s;
-}
-
-.channel-slider::-moz-range-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.tick-labels {
-  display: flex;
-  justify-content: space-between;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--ink-dim);
-}
-
-.stat-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-}
-
-.stat {
-  text-align: center;
-}
-
-.stat-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 6px;
-}
-
-.stat-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 24px;
-  font-weight: 500;
-}
-
-.toggle-card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,0.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 20px;
-}
-
-.toggle-buttons {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.toggle-btn {
-  flex: 1;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14.5px;
-  padding: 12px;
-  border-radius: 11px;
-  background: #12160F;
-  border: 1px solid var(--line);
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.toggle-btn.active {
-  background: rgba(var(--acc-rgb), 0.1);
-  border: 1px solid var(--acc);
-  color: var(--acc);
-  box-shadow: 0 0 22px rgba(var(--acc-rgb), 0.18);
-}
-
-.knowdrop-divider {
-  border-top: 1px solid var(--line);
-  padding-top: 16px;
-}
-
-.knowdrop-text {
-  font-size: 14.5px;
-  font-weight: 400;
-  line-height: 1.65;
-  color: var(--ink);
-}
-
-.know-this {
-  border-left: 3px solid var(--acc);
-  padding: 16px 18px;
-  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
-  border-radius: 0 12px 12px 0;
-  margin-bottom: 0;
-}
-
-.know-this-tag {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  margin-bottom: 12px;
-}
-
-.pulse-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--acc);
-  box-shadow: 0 0 8px var(--acc);
-  animation: pulse 2.4s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.45; transform: scale(0.6); }
-}
-
-.know-this-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--acc);
-}
-
-.know-this-body {
-  font-size: 17.4px;
-  font-weight: 400;
-  line-height: 1.55;
-  color: var(--ink);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
+:root{--bg:#0B0D0C;--bg2:#12160F;--acc:#E85D97;--acc-rgb:232, 93, 151;--ag:rgba(var(--acc-rgb),.7);--ag1:rgba(var(--acc-rgb),.12);--ag2:rgba(var(--acc-rgb),.45);--amb:#FAC775;--ink:#EDEDE8;--ink-dim:#8C9389;--line:#262B26;}
+*{margin:0;padding:0;box-sizing:border-box}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+body{background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C 55%);font-family:'Geist',sans-serif;color:var(--ink);min-height:100vh;padding:40px 16px 0}
+.wrap{max-width:720px;margin:0 auto}
+h1{font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin-bottom:16px}
+.intro{font-size:15.5px;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin-bottom:28px}
+.card{background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);margin-bottom:20px}
+.hd{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:4px}
+.lbl{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;color:#fff}
+.tag{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--acc);text-align:right}
+.hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin-bottom:14px;line-height:1.5}
+.cw{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1);margin-bottom:16px}
+.cw canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.ov{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);padding:6px 12px;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.2;text-transform:uppercase;color:var(--acc);text-align:center}
+.gt{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:8px}
+.grp{display:flex;gap:10px}
+.pill{flex:1;font-family:'JetBrains Mono',monospace;font-size:12px;padding:10px 12px;border-radius:999px;background:#12160F;border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:all .2s}
+.pill[aria-pressed="true"]{background:rgba(var(--acc-rgb),.1);border-color:var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.cap{font-size:13px;color:var(--ink-dim);line-height:1.5;margin-top:12px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding-top:16px;margin-top:16px;border-top:1px solid var(--line)}
+.st{text-align:center}
+.sl{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:6px}
+.sv{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500}
+.pd-row{display:flex;justify-content:space-between;align-items:center;font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:10px}
+.pd-row b{font-weight:500;color:var(--ink);font-size:12px}
+.pd-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;background:linear-gradient(90deg,var(--acc) var(--fill,0%),#23291f var(--fill,0%));outline:none;margin-bottom:8px}
+.pd-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);cursor:pointer;transition:box-shadow .15s}
+.pd-slider::-webkit-slider-thumb:hover{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.pd-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);cursor:pointer}
+.ticks{position:relative;height:14px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-dim)}
+.ticks span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+.div{border-top:1px solid var(--line);padding-top:16px;margin-top:16px}
+.kd{font-size:14.5px;line-height:1.65;color:var(--ink)}
+.kt{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));border-radius:0 12px 12px 0;margin-bottom:0;padding-bottom:16px}
+.ktr{display:flex;align-items:center;gap:9px;margin-bottom:12px}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:kpulse 2.4s ease-in-out infinite}
+@keyframes kpulse{0%,100%{opacity:1}50%{opacity:.45}}
+.ktl{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.15em;color:var(--acc)}
+.ktb{font-size:17.4px;line-height:1.55;color:var(--ink)}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
 
-<div class="container">
-  <h2 class="sr-only">Distribution channel decision visualisation for Business Management</h2>
-  
-  <h1>More steps between you and the customer means less <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">control</span></h1>
-  
-  <p class="intro">Every intermediary you add to your distribution channel increases market reach but surrenders control over pricing, presentation, and customer experience. Slide to compare direct selling with multi-layer wholesale-retail chains and watch costs, control, and coverage shift.</p>
+<div class="wrap">
+  <h2 class="sr-only">Distribution channels and place strategies: an outlet grid showing intensive, selective and exclusive distribution, and a warehouse, transport and inventory model</h2>
+  <h1>Selling in fewer shops can make a brand worth <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">more</span></h1>
+  <p class="intro">Place is not just where a product is sold. It is how many doors the business chooses to open, and how the stock gets through them without running out or piling up. Choose an intensity for the market below and watch how many outlets light up and where the reach and control bars go. Then change the stock held and watch the warehouse, the trucks and the shelves.</p>
 
   <div class="card">
-    <div class="card-header">
-      <div class="card-label">Channel Pathway</div>
-      <div class="live-tag" id="channelTag">Direct to Customer</div>
+    <div class="hd"><div class="lbl">Market coverage</div><div class="tag" id="tag1">Intensive</div></div>
+    <div class="hint">Choose an intensity. Watch how many outlets light up and which way the two bars move.</div>
+    <div class="cw"><canvas id="cv1"></canvas><div class="ov" id="ov1">50 of 50 outlets · soft drinks</div></div>
+    <div class="gt">Channel intensity</div>
+    <div class="grp" role="group" aria-label="Channel intensity">
+      <button class="pill" data-mode="intensive" aria-pressed="true">Intensive</button>
+      <button class="pill" data-mode="selective" aria-pressed="false">Selective</button>
+      <button class="pill" data-mode="exclusive" aria-pressed="false">Exclusive</button>
     </div>
-    <div class="card-hint">Drag to add intermediaries between producer and customer</div>
-    
-    <div class="canvas-wrapper">
-      <canvas id="channelCanvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">Direct: Producer → Customer</div>
-    </div>
-
-    <div class="slider-container">
-      <div class="slider-label">Channel Complexity</div>
-      <input type="range" min="0" max="100" value="0" class="channel-slider" id="channelSlider">
-      <div class="tick-labels">
-        <span>Direct</span>
-        <span>Retail</span>
-        <span>Wholesale</span>
-        <span>Multi-tier</span>
-      </div>
-    </div>
-
-    <div class="stat-row">
-      <div class="stat">
-        <div class="stat-label">Control Level</div>
-        <div class="stat-value" style="color:var(--acc)" id="controlStat">100%</div>
-      </div>
-      <div class="stat">
-        <div class="stat-label">Market Reach</div>
-        <div class="stat-value" style="color:var(--amb)" id="reachStat">Low</div>
-      </div>
+    <p class="cap" id="cap1"></p>
+    <div class="stats">
+      <div class="st"><div class="sl">Outlets stocked</div><div class="sv" style="color:var(--acc)" id="st1a">50 / 50</div></div>
+      <div class="st"><div class="sl">Brand control</div><div class="sv" style="color:var(--amb)" id="st1b">Low</div></div>
     </div>
   </div>
 
-  <div class="toggle-card">
-    <div class="toggle-buttons">
-      <button class="toggle-btn active" id="intensiveBtn">Intensive</button>
-      <button class="toggle-btn" id="selectiveBtn">Selective</button>
-      <button class="toggle-btn" id="exclusiveBtn">Exclusive</button>
-    </div>
-    
-    <div class="knowdrop-divider">
-      <p class="knowdrop-text" id="knowdropText">Intensive distribution saturates the market by placing the product in every possible outlet—supermarkets, convenience stores, vending machines, online marketplaces. This strategy works for everyday items like soft drinks, newspapers, or batteries where customer convenience is paramount and brand differentiation happens through sheer visibility. The trade-off is minimal retailer support and fierce price competition, but for fast-moving consumer goods, accessibility outweighs everything else.</p>
+  <div class="card">
+    <div class="hd"><div class="lbl">Physical distribution</div><div class="tag" id="tag2">Stock held 10 days</div></div>
+    <div class="hint">Change the stock held. Watch the warehouse fill, the trucks on the road and the shop shelves. The model is illustrative.</div>
+    <div class="cw"><canvas id="cv2"></canvas><div class="ov" id="ov2">3 trips a month · stock-out risk medium</div></div>
+    <div class="pd-row"><span>Stock held</span><b id="stockV">10 days</b></div>
+    <input type="range" class="pd-slider" id="stock" aria-label="Stock held in days of demand" min="3" max="30" step="1" value="10">
+    <div class="ticks"><span style="left:0%;transform:none">3 days</span><span style="left:25.9%">10</span><span style="left:63%">20</span><span style="left:100%;transform:translateX(-100%)">30 days</span></div>
+    <div class="stats">
+      <div class="st"><div class="sl">Transport trips / month</div><div class="sv" style="color:var(--acc)" id="st2a">3</div></div>
+      <div class="st"><div class="sl">Stock-out risk</div><div class="sv" style="color:var(--amb)" id="st2b">Medium</div></div>
     </div>
   </div>
 
-  <div class="know-this">
-    <div class="know-this-tag">
-      <div class="pulse-dot"></div>
-      <div class="know-this-label">Know This</div>
+  <div class="card">
+    <div class="gt">Channel length: how many hands the product passes through</div>
+    <div class="grp" role="group" aria-label="Channel length">
+      <button class="pill" data-len="direct" aria-pressed="true">Direct</button>
+      <button class="pill" data-len="retail" aria-pressed="false">Via retailer</button>
+      <button class="pill" data-len="whole" aria-pressed="false">Via wholesaler</button>
     </div>
-    <p class="know-this-body">Channel choice balances <span style="color:var(--acc)">control</span> against <span style="color:var(--acc)">coverage</span>—direct channels preserve pricing power and customer relationships while intermediaries multiply <span style="color:var(--acc)">market reach</span> at the cost of margin and influence.</p>
+    <div class="div"><p class="kd" id="kd"></p></div>
+  </div>
+
+  <div class="kt">
+    <div class="ktr"><div class="dot"></div><div class="ktl">Know This</div></div>
+    <p class="ktb"><span style="color:var(--acc)">Intensity</span> decides how many outlets stock the product, <span style="color:var(--acc)">channel length</span> decides how many hands it passes through, and <span style="color:var(--acc)">physical distribution</span> decides whether it is on the shelf when the customer arrives.</p>
   </div>
 </div>
 
 <script>
-const canvas = document.getElementById('channelCanvas');
-const ctx = canvas.getContext('2d');
-const slider = document.getElementById('channelSlider');
-const channelTag = document.getElementById('channelTag');
-const canvasOverlay = document.getElementById('canvasOverlay');
-const controlStat = document.getElementById('controlStat');
-const reachStat = document.getElementById('reachStat');
+(function(){
+const CSS=getComputedStyle(document.documentElement);
+const ACC=CSS.getPropertyValue("--acc").trim();
+const RGB=CSS.getPropertyValue("--acc-rgb").trim();
+const AMB=CSS.getPropertyValue("--amb").trim();
+const INK="rgba(237,237,232,";
+const MONO="'JetBrains Mono', monospace";
+const RM=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const dpr=Math.min(window.devicePixelRatio||1,2);
 
-const intensiveBtn = document.getElementById('intensiveBtn');
-const selectiveBtn = document.getElementById('selectiveBtn');
-const exclusiveBtn = document.getElementById('exclusiveBtn');
-const knowdropText = document.getElementById('knowdropText');
-
-const CSS = getComputedStyle(document.documentElement);
-const ACC = CSS.getPropertyValue('--acc').trim();
-const RGB = CSS.getPropertyValue('--acc-rgb').trim();
-const AMB = CSS.getPropertyValue('--amb').trim();
-
-const dpr = Math.min(window.devicePixelRatio || 1, 2);
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d');
-
-let channelValue = 0;
-let particles = [];
-let animationId = null;
-
-function resize() {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+function mk(id){
+  const cv=document.getElementById(id);const ctx=cv.getContext("2d");
+  const buf=document.createElement("canvas");const bctx=buf.getContext("2d");
+  function resize(){const r=cv.getBoundingClientRect();if(!r.width||!r.height)return;cv.width=Math.round(r.width*dpr);cv.height=Math.round(r.height*dpr);buf.width=cv.width;buf.height=cv.height;ctx.setTransform(dpr,0,0,dpr,0,0);}
+  function post(w,h){
+    bctx.setTransform(1,0,0,1,0,0);bctx.clearRect(0,0,buf.width,buf.height);
+    if(cv.width&&cv.height)bctx.drawImage(cv,0,0);
+    ctx.save();ctx.globalCompositeOperation="lighter";ctx.globalAlpha=0.38;ctx.filter="blur(7px)";(buf.width&&buf.height)&&ctx.drawImage(buf,0,0,w,h);ctx.restore();
+    const vig=ctx.createRadialGradient(w/2,h/2,h*0.28,w/2,h/2,w*0.72);
+    vig.addColorStop(0,"rgba(0,0,0,0)");vig.addColorStop(1,"rgba(0,0,0,0.52)");
+    ctx.fillStyle=vig;ctx.fillRect(0,0,w,h);
+  }
+  return {cv:cv,ctx:ctx,resize:resize,post:post};
 }
 
-class Particle {
-  constructor(x, y, vx, vy, color) {
-    this.x = x;
-    this.y = y;
-    this.vx = vx;
-    this.vy = vy;
-    this.life = 1;
-    this.decay = 0.012 + Math.random() * 0.008;
-    this.color = color || RGB;
-  }
-  
-  update() {
-    this.x += this.vx;
-    this.y += this.vy;
-    this.vy += 0.05;
-    this.life -= this.decay;
-    return this.life > 0;
-  }
-  
-  draw(context) {
-    context.save();
-    context.globalCompositeOperation = 'lighter';
-    context.fillStyle = 'rgba(' + this.color + ',' + this.life * 0.7 + ')';
-    context.beginPath();
-    context.arc(this.x, this.y, 2.5, 0, Math.PI * 2);
-    context.fill();
-    context.restore();
-  }
-}
-
-function draw() {
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, w, h);
-  
-  const progress = channelValue / 100;
-  
-  // Draw balance visualization
-  const centerX = w * 0.5;
-  const pivotY = h * 0.35;
-  
-  // Fulcrum
-  ctx.fillStyle = 'rgba(' + RGB + ',0.3)';
-  ctx.beginPath();
-  ctx.moveTo(centerX - 10, pivotY);
-  ctx.lineTo(centerX + 10, pivotY);
-  ctx.lineTo(centerX, pivotY + 15);
-  ctx.closePath();
-  ctx.fill();
-  
-  // Balance beam
-  const beamWidth = w * 0.65;
-  const tiltAngle = (progress - 0.5) * 0.35;
-  
-  ctx.save();
-  ctx.translate(centerX, pivotY);
-  ctx.rotate(tiltAngle);
-  
-  // Beam glow
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  const beamGlow = ctx.createLinearGradient(-beamWidth/2, 0, beamWidth/2, 0);
-  beamGlow.addColorStop(0, 'rgba(250, 199, 117, 0.3)');
-  beamGlow.addColorStop(0.5, 'rgba(' + RGB + ',0.15)');
-  beamGlow.addColorStop(1, 'rgba(' + RGB + ',0.4)');
-  ctx.fillStyle = beamGlow;
-  ctx.fillRect(-beamWidth/2, -8, beamWidth, 16);
-  ctx.restore();
-  
-  // Beam
-  ctx.fillStyle = '#1a1f18';
-  ctx.strokeStyle = 'rgba(' + RGB + ',0.5)';
-  ctx.lineWidth = 2;
-  ctx.fillRect(-beamWidth/2, -6, beamWidth, 12);
-  ctx.strokeRect(-beamWidth/2, -6, beamWidth, 12);
-  
-  ctx.restore();
-  
-  // Left side - Control (decreases)
-  const leftX = centerX - beamWidth/2 * Math.cos(tiltAngle);
-  const leftY = pivotY - beamWidth/2 * Math.sin(tiltAngle);
-  const controlHeight = (1 - progress) * h * 0.22;
-  
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  const controlGlow = ctx.createRadialGradient(leftX, leftY, 0, leftX, leftY, 45);
-  controlGlow.addColorStop(0, 'rgba(' + RGB + ',0.4)');
-  controlGlow.addColorStop(1, 'rgba(' + RGB + ',0)');
-  ctx.fillStyle = controlGlow;
-  ctx.beginPath();
-  ctx.arc(leftX, leftY, 45, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
-  
-  ctx.fillStyle = 'rgba(' + RGB + ',0.2)';
-  ctx.strokeStyle = ACC;
-  ctx.lineWidth = 2;
-  ctx.fillRect(leftX - 30, leftY, 60, controlHeight);
-  ctx.strokeRect(leftX - 30, leftY, 60, controlHeight);
-  
-  ctx.fillStyle = ACC;
-  ctx.font = '11px "JetBrains Mono"';
-  ctx.textAlign = 'center';
-  ctx.fillText('CONTROL', leftX, leftY + controlHeight + 22);
-  ctx.font = '20px "JetBrains Mono"';
-  ctx.fillText(Math.round((1 - progress) * 100) + '%', leftX, leftY + controlHeight + 45);
-  
-  // Right side - Reach (increases)
-  const rightX = centerX + beamWidth/2 * Math.cos(tiltAngle);
-  const rightY = pivotY + beamWidth/2 * Math.sin(tiltAngle);
-  const reachHeight = progress * h * 0.22;
-  
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  const reachGlow = ctx.createRadialGradient(rightX, rightY, 0, rightX, rightY, 45);
-  reachGlow.addColorStop(0, 'rgba(250, 199, 117, 0.5)');
-  reachGlow.addColorStop(1, 'rgba(250, 199, 117, 0)');
-  ctx.fillStyle = reachGlow;
-  ctx.beginPath();
-  ctx.arc(rightX, rightY, 45, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
-  
-  ctx.fillStyle = 'rgba(250, 199, 117, 0.15)';
-  ctx.strokeStyle = AMB;
-  ctx.lineWidth = 2;
-  ctx.fillRect(rightX - 30, rightY, 60, reachHeight);
-  ctx.strokeRect(rightX - 30, rightY, 60, reachHeight);
-  
-  ctx.fillStyle = AMB;
-  ctx.font = '11px "JetBrains Mono"';
-  ctx.textAlign = 'center';
-  ctx.fillText('REACH', rightX, rightY + reachHeight + 22);
-  ctx.font = '20px "JetBrains Mono"';
-  ctx.fillText(Math.round(progress * 100) + '%', rightX, rightY + reachHeight + 45);
-  
-  // Channel markers below
-  const markerY = h * 0.8;
-  const markerSpacing = w * 0.18;
-  const startMarkerX = centerX - markerSpacing * 1.5;
-  
-  const channels = ['DIRECT', 'RETAIL', 'WHOLESALE', 'MULTI'];
-  const channelActive = Math.floor(progress * 4);
-  
-  channels.forEach((label, i) => {
-    const mx = startMarkerX + i * markerSpacing;
-    const active = i <= channelActive;
-    
-    if (active) {
-      ctx.save();
-      ctx.globalCompositeOperation = 'lighter';
-      const mg = ctx.createRadialGradient(mx, markerY, 0, mx, markerY, 25);
-      mg.addColorStop(0, 'rgba(' + RGB + ',0.3)');
-      mg.addColorStop(1, 'rgba(' + RGB + ',0)');
-      ctx.fillStyle = mg;
-      ctx.beginPath();
-      ctx.arc(mx, markerY, 25, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-    }
-    
-    ctx.fillStyle = active ? 'rgba(' + RGB + ',0.2)' : 'rgba(18, 22, 15, 0.5)';
-    ctx.strokeStyle = active ? ACC : 'rgba(' + RGB + ',0.2)';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.arc(mx, markerY, 16, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.stroke();
-    
-    ctx.fillStyle = active ? ACC : '#4a4f47';
-    ctx.font = '8px "JetBrains Mono"';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(label, mx, markerY);
-  });
-  
-  // Cost visualization - stacked bars
-  const costBarX = w * 0.08;
-  const costBarWidth = 15;
-  const costBarMaxHeight = h * 0.25;
-  const costBarY = h * 0.75;
-  
-  const numChannels = Math.floor(progress * 3) + 1;
-  const costPerChannel = costBarMaxHeight / 4;
-  
-  for (let i = 0; i < numChannels; i++) {
-    const opacity = 0.3 + (i * 0.15);
-    const barHeight = costPerChannel * (i + 1);
-    
-    ctx.fillStyle = 'rgba(' + RGB + ',' + opacity + ')';
-    ctx.fillRect(costBarX, costBarY - barHeight, costBarWidth, barHeight);
-    ctx.strokeStyle = 'rgba(' + RGB + ',0.6)';
-    ctx.lineWidth = 1;
-    ctx.strokeRect(costBarX, costBarY - barHeight, costBarWidth, barHeight);
-  }
-  
-  ctx.fillStyle = '#8C9389';
-  ctx.font = '9px "JetBrains Mono"';
-  ctx.textAlign = 'center';
-  ctx.fillText('COST', costBarX + costBarWidth/2, costBarY + 15);
-  
-  // Draw particles
-  particles = particles.filter(p => p.update());
-  particles.forEach(p => p.draw(ctx));
-  
-  // Emit particles from tilting side
-  if (Math.random() < 0.15) {
-    const emitX = progress > 0.5 ? rightX : leftX;
-    const emitY = progress > 0.5 ? rightY : leftY;
-    const color = progress > 0.5 ? '250, 199, 117' : RGB;
-    
-    for (let i = 0; i < 2; i++) {
-      particles.push(new Particle(
-        emitX + (Math.random() - 0.5) * 40,
-        emitY,
-        (Math.random() - 0.5) * 1.5,
-        -Math.random() * 2,
-        color
-      ));
-    }
-  }
-  
-  // Bloom
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.35;
-  ctx.filter = 'blur(8px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
-  
-  // Vignette
-  const cx = w * 0.5;
-  const cy = h * 0.5;
-  const vig = ctx.createRadialGradient(cx, cy, h * 0.3, cx, cy, w * 0.7);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.6)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-  
-  animationId = requestAnimationFrame(draw);
-}
-
-function updateChannel() {
-  channelValue = parseFloat(slider.value);
-  const fillPercent = channelValue;
-  slider.style.setProperty('--fill', fillPercent + '%');
-  
-  const control = Math.round(100 - channelValue);
-  controlStat.textContent = control + '%';
-  
-  let reach, tag, overlay;
-  
-  if (channelValue <= 25) {
-    reach = 'Low';
-    tag = 'Direct to Customer';
-    overlay = 'Direct: Producer → Customer';
-  } else if (channelValue <= 50) {
-    reach = 'Medium';
-    tag = 'Via Retail';
-    overlay = 'Retail: Producer → Retailer → Customer';
-  } else if (channelValue <= 75) {
-    reach = 'High';
-    tag = 'Via Wholesale';
-    overlay = 'Wholesale: Producer → Wholesaler → Retailer → Customer';
-  } else {
-    reach = 'Very High';
-    tag = 'Multi-tier Chain';
-    overlay = 'Multi-tier: Producer → Agent → Wholesaler → Retailer → Customer';
-  }
-  
-  reachStat.textContent = reach;
-  channelTag.textContent = tag;
-  canvasOverlay.textContent = overlay;
-}
-
-slider.addEventListener('input', updateChannel);
-
-const toggleData = {
-  intensive: "Intensive distribution saturates the market by placing the product in every possible outlet—supermarkets, convenience stores, vending machines, online marketplaces. This strategy works for everyday items like soft drinks, newspapers, or batteries where customer convenience is paramount and brand differentiation happens through sheer visibility. The trade-off is minimal retailer support and fierce price competition, but for fast-moving consumer goods, accessibility outweighs everything else.",
-  
-  selective: "Selective distribution curates a network of carefully chosen retailers who meet quality standards, provide trained staff, and maintain brand positioning. Premium electronics, cosmetics, and sporting goods use this approach to balance market presence with brand control. Manufacturers screen partners, monitor standards, and invest in point-of-sale materials. Customers perceive higher value when a product isn't universally available, and retailers commit more because they face less internal competition.",
-  
-  exclusive: "Exclusive distribution grants a single retailer territorial rights, creating a partnership where both parties invest heavily in market development. Luxury brands, high-end automobiles, and prestige fashion follow this model to maintain scarcity, control pricing absolutely, and deliver immersive customer experiences. The retailer becomes an extension of the brand itself, trained to communicate heritage and craft. Market coverage shrinks, but profit margins and brand equity maximize because no channel conflict exists."
+/* ---------- Card 1: market coverage ---------- */
+const K1=mk("cv1");
+const COLS=10,ROWS=5,N=COLS*ROWS;
+const SEL=[2,5,8,11,16,19,24,27,32,35,41,46];
+const EXC=24;
+const MODES={
+  intensive:{name:"Intensive",stocked:50,ctrl:0.25,word:"Low",ov:"50 of 50 outlets · soft drinks",
+    cap:"Suits convenience goods such as soft drinks, batteries and snacks: the buyer takes whatever is nearest, so every outlet counts, and the brand accepts discounting and little say over how it is displayed.",
+    set:function(i){return true;}},
+  selective:{name:"Selective",stocked:12,ctrl:0.62,word:"Medium",ov:"12 of 50 outlets · headphones",
+    cap:"Suits shopping goods such as headphones, cosmetics and sportswear: retailers are screened for trained staff and brand standards, so the brand gives up some reach to gain more control.",
+    set:function(i){return SEL.indexOf(i)>=0;}},
+  exclusive:{name:"Exclusive",stocked:1,ctrl:0.95,word:"High",ov:"1 of 50 outlets · luxury watch",
+    cap:"Suits luxury and specialty goods such as a prestige watch: one outlet per area, trained staff, prices held, and the scarcity itself becomes part of the brand.",
+    set:function(i){return i===EXC;}}
 };
+let mode="intensive";
+const alpha=new Array(N).fill(1), target=new Array(N).fill(1);
+let reachNow=1, ctrlNow=0.25, raf1=null;
 
-function setToggle(active) {
-  intensiveBtn.classList.remove('active');
-  selectiveBtn.classList.remove('active');
-  exclusiveBtn.classList.remove('active');
-  active.classList.add('active');
-  
-  if (active === intensiveBtn) {
-    knowdropText.textContent = toggleData.intensive;
-  } else if (active === selectiveBtn) {
-    knowdropText.textContent = toggleData.selective;
-  } else {
-    knowdropText.textContent = toggleData.exclusive;
+function draw1(){
+  const ctx=K1.ctx, w=K1.cv.width/dpr, h=K1.cv.height/dpr;
+  if(!w||!h)return;
+  ctx.fillStyle="#000";ctx.fillRect(0,0,w,h);
+  ctx.font="11px "+MONO;ctx.textBaseline="middle";
+  ctx.fillStyle=INK+"0.6)";ctx.textAlign="left";ctx.fillText("MARKET OF 50 OUTLETS",w*0.06,h*0.075);
+  ctx.textAlign="right";ctx.fillText("LIT = STOCKED",w*0.94,h*0.075);
+  const gx0=w*0.06,gx1=w*0.94,gy0=h*0.15,gy1=h*0.58;
+  const cw=(gx1-gx0)/COLS,ch=(gy1-gy0)/ROWS,r=Math.min(cw,ch)*0.28;
+  for(let i=0;i<N;i++){
+    const c=i%COLS,rw=Math.floor(i/COLS);
+    const cx=gx0+(c+0.5)*cw,cy=gy0+(rw+0.5)*ch,a=alpha[i];
+    if(mode==="exclusive"&&alpha[EXC]>0.3&&i>EXC&&i<=EXC+3)continue;
+    ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);
+    ctx.strokeStyle=INK+(0.18+0.1*(1-a))+")";ctx.lineWidth=1;ctx.stroke();
+    if(a>0.01){
+      ctx.save();ctx.globalCompositeOperation="lighter";
+      const g=ctx.createRadialGradient(cx,cy,0,cx,cy,r*3.2);
+      g.addColorStop(0,"rgba("+RGB+","+(0.45*a)+")");g.addColorStop(1,"rgba("+RGB+",0)");
+      ctx.fillStyle=g;ctx.beginPath();ctx.arc(cx,cy,r*3.2,0,Math.PI*2);ctx.fill();ctx.restore();
+      ctx.fillStyle="rgba("+RGB+","+a+")";ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.fill();
+    }
+    if(i===EXC&&mode==="exclusive"&&a>0.3){
+      ctx.strokeStyle="rgba("+RGB+","+(a*0.8)+")";ctx.lineWidth=1.5;
+      ctx.beginPath();ctx.arc(cx,cy,r*1.9,0,Math.PI*2);ctx.stroke();
+      ctx.fillStyle=INK+(a*0.9)+")";ctx.textAlign="left";ctx.font="11px "+MONO;
+      ctx.fillText("TRAINED STAFF",cx+r*2.4,cy-7);ctx.fillText("PRICE HELD",cx+r*2.4,cy+7);
+    }
   }
+  /* bars */
+  const bx0=w*0.26,bx1=w*0.94,bh=6;
+  function bar(y,frac,col,label,val){
+    ctx.font="11px "+MONO;ctx.textBaseline="middle";ctx.textAlign="left";ctx.fillStyle=INK+"0.7)";
+    ctx.fillText(label,w*0.06,y);
+    ctx.fillStyle=INK+"0.08)";rr(ctx,bx0,y-bh/2,bx1-bx0,bh,3);ctx.fill();
+    const fw=Math.max(2,(bx1-bx0)*frac);
+    ctx.save();ctx.globalCompositeOperation="lighter";ctx.shadowColor=col;ctx.shadowBlur=12;ctx.fillStyle=col;rr(ctx,bx0,y-bh/2,fw,bh,3);ctx.fill();ctx.restore();
+    ctx.textAlign="right";ctx.textBaseline="bottom";ctx.fillStyle=col;ctx.fillText(val,bx1,y-7);
+  }
+  bar(h*0.68,reachNow,ACC,"REACH",Math.round(reachNow*100)+"% OF OUTLETS");
+  bar(h*0.80,ctrlNow,AMB,"CONTROL",MODES[mode].word.toUpperCase());
+  K1.post(w,h);
 }
+function rr(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();}
 
-intensiveBtn.addEventListener('click', () => setToggle(intensiveBtn));
-selectiveBtn.addEventListener('click', () => setToggle(selectiveBtn));
-exclusiveBtn.addEventListener('click', () => setToggle(exclusiveBtn));
+function step1(){
+  let busy=false;const M=MODES[mode];
+  for(let i=0;i<N;i++){const d=target[i]-alpha[i];if(Math.abs(d)>0.004){alpha[i]+=d*0.16;busy=true;}else alpha[i]=target[i];}
+  const tr=M.stocked/N;let d=tr-reachNow;if(Math.abs(d)>0.002){reachNow+=d*0.14;busy=true;}else reachNow=tr;
+  d=M.ctrl-ctrlNow;if(Math.abs(d)>0.002){ctrlNow+=d*0.14;busy=true;}else ctrlNow=M.ctrl;
+  draw1();
+  if(busy)raf1=requestAnimationFrame(step1);else raf1=null;
+}
+function setMode(m){
+  mode=m;const M=MODES[m];
+  for(let i=0;i<N;i++)target[i]=M.set(i)?1:0;
+  document.getElementById("tag1").textContent=M.name;
+  document.getElementById("ov1").textContent=M.ov;
+  document.getElementById("cap1").textContent=M.cap;
+  document.getElementById("st1a").textContent=M.stocked+" / 50";
+  document.getElementById("st1b").textContent=M.word;
+  document.querySelectorAll("[data-mode]").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.mode===m?"true":"false");});
+  if(RM){for(let i=0;i<N;i++)alpha[i]=target[i];reachNow=M.stocked/N;ctrlNow=M.ctrl;draw1();return;}
+  if(!raf1)raf1=requestAnimationFrame(step1);
+}
+document.querySelectorAll("[data-mode]").forEach(function(b){b.addEventListener("click",function(){setMode(b.dataset.mode);});});
 
-window.addEventListener('resize', () => {
-  resize();
-  if (!animationId) {
-    draw();
+/* ---------- Card 2: physical distribution ---------- */
+const K2=mk("cv2");
+const slider=document.getElementById("stock");
+let stock=10,phase=0,last=0,raf2=null;
+function trips(s){return Math.max(1,Math.round(30/s));}
+function risk(s){return s<6?"High":(s<15?"Medium":"Low");}
+function hold(s){return s<10?"Low":(s<=20?"Medium":"High");}
+
+function draw2(){
+  const ctx=K2.ctx,w=K2.cv.width/dpr,h=K2.cv.height/dpr;
+  if(!w||!h)return;
+  const s=stock,n=trips(s);
+  ctx.fillStyle="#000";ctx.fillRect(0,0,w,h);
+  ctx.font="11px "+MONO;ctx.textBaseline="middle";ctx.textAlign="center";
+  const y0=h*0.24,y1=h*0.64,yt=h*0.12,yl1=h*0.72,yl2=h*0.80;
+  const xw0=w*0.04,xw1=w*0.29,xr0=w*0.34,xr1=w*0.66,xs0=w*0.71,xs1=w*0.96;
+  /* titles */
+  ctx.fillStyle="#fff";
+  ctx.fillText("WAREHOUSING",(xw0+xw1)/2,yt);ctx.fillText("TRANSPORT",(xr0+xr1)/2,yt);ctx.fillText("INVENTORY",(xs0+xs1)/2,yt);
+  /* chevrons */
+  ctx.fillStyle=INK+"0.45)";ctx.font="14px "+MONO;
+  ctx.fillText("›",(xw1+xr0)/2,(y0+y1)/2);ctx.fillText("›",(xr1+xs0)/2,(y0+y1)/2);
+  ctx.font="11px "+MONO;
+  /* warehouse */
+  const f=s/30;
+  ctx.fillStyle="rgba("+RGB+",0.22)";
+  ctx.fillRect(xw0,y1-(y1-y0)*f,xw1-xw0,(y1-y0)*f);
+  ctx.save();ctx.globalCompositeOperation="lighter";ctx.fillStyle="rgba("+RGB+",0.35)";ctx.fillRect(xw0,y1-(y1-y0)*f,xw1-xw0,2);ctx.restore();
+  ctx.strokeStyle=INK+"0.5)";ctx.lineWidth=1;ctx.strokeRect(xw0,y0,xw1-xw0,y1-y0);
+  ctx.beginPath();ctx.moveTo(xw0,y0);ctx.lineTo((xw0+xw1)/2,y0-h*0.05);ctx.lineTo(xw1,y0);ctx.stroke();
+  ctx.fillStyle="#fff";ctx.fillText(s+" DAYS",(xw0+xw1)/2,y0+h*0.07);
+  ctx.fillStyle=INK+"0.6)";ctx.fillText("HOLDING COST",(xw0+xw1)/2,yl1);
+  ctx.fillStyle=AMB;ctx.fillText(hold(s).toUpperCase(),(xw0+xw1)/2,yl2);
+  /* road */
+  const rh=h*0.18,yc=(y0+y1)/2;
+  ctx.fillStyle=INK+"0.06)";ctx.fillRect(xr0,yc-rh/2,xr1-xr0,rh);
+  ctx.strokeStyle=INK+"0.25)";ctx.setLineDash([6,6]);ctx.beginPath();ctx.moveTo(xr0,yc);ctx.lineTo(xr1,yc);ctx.stroke();ctx.setLineDash([]);
+  const L=xr1-xr0,sp=L/n,tw=Math.min(sp*0.72,10+s*1.1),th=Math.min(h*0.09,tw*0.55);
+  ctx.save();ctx.beginPath();ctx.rect(xr0,yc-rh/2,L,rh);ctx.clip();
+  for(let k=0;k<n;k++){
+    const p=((k/n)+phase)%1,x=xr0+p*L;
+    ctx.save();ctx.globalCompositeOperation="lighter";ctx.shadowColor=ACC;ctx.shadowBlur=10;
+    ctx.fillStyle="rgba("+RGB+",0.85)";rr(ctx,x-tw/2,yc-th/2,tw*0.72,th,2);ctx.fill();
+    ctx.fillStyle="rgba("+RGB+",0.5)";rr(ctx,x-tw/2+tw*0.74,yc-th/2+th*0.25,tw*0.26,th*0.75,2);ctx.fill();
+    ctx.restore();
   }
-});
+  ctx.restore();
+  ctx.fillStyle=ACC;ctx.fillText(n+" TRIPS/MONTH",(xr0+xr1)/2,yl1);
+  ctx.fillStyle=INK+"0.6)";ctx.fillText("LOT: "+s+" DAYS",(xr0+xr1)/2,yl2);
+  /* shelves */
+  const sh=(y1-y0)/3,sf=Math.min(1,s/20),hi=s<6;
+  for(let k=0;k<3;k++){
+    const sy=y0+k*sh+sh*0.18,shh=sh*0.64;
+    ctx.fillStyle=INK+"0.06)";ctx.fillRect(xs0,sy,xs1-xs0,shh);
+    ctx.fillStyle="rgba("+RGB+",0.6)";ctx.fillRect(xs0,sy,(xs1-xs0)*sf,shh);
+    ctx.strokeStyle=hi?AMB:INK+"0.35)";ctx.lineWidth=hi?1.5:1;ctx.strokeRect(xs0,sy,xs1-xs0,shh);
+  }
+  ctx.fillStyle=INK+"0.6)";ctx.fillText("STOCK-OUT RISK",(xs0+xs1)/2,yl1);
+  ctx.fillStyle=AMB;ctx.fillText(risk(s).toUpperCase(),(xs0+xs1)/2,yl2);
+  K2.post(w,h);
+}
+function loop2(now){
+  if(!last)last=now;const dt=Math.min(now-last,50);last=now;
+  phase=(phase+dt/6000)%1;
+  draw2();raf2=requestAnimationFrame(loop2);
+}
+function setStock(){
+  stock=parseInt(slider.value,10);
+  slider.style.setProperty("--fill",((stock-3)/27*100)+"%");
+  const n=trips(stock),rk=risk(stock);
+  document.getElementById("stockV").textContent=stock+" days";
+  document.getElementById("tag2").textContent="Stock held "+stock+" days";
+  document.getElementById("st2a").textContent=n;
+  document.getElementById("st2b").textContent=rk;
+  document.getElementById("ov2").textContent=n+(n===1?" trip":" trips")+" a month · stock-out risk "+rk.toLowerCase();
+  if(RM)draw2();
+}
+slider.addEventListener("input",setStock);
 
-resize();
-updateChannel();
-draw();
+/* ---------- Card 3: channel length knowdrop ---------- */
+const KD={
+  direct:"A direct channel runs producer to customer with no intermediary: a farm gate stall, a brand's own store or an online shop. The producer keeps the whole margin, sets the end price and owns the customer relationship and the data. In return it carries every job itself: order handling, storage, delivery and returns. E-commerce has made direct channels reach far more people than a single shop ever could, so a direct channel is no longer a small-reach channel. The trade-off is effort and logistics, not audience.",
+  retail:"Producer to retailer to customer adds one hand-off. The retailer buys at a trade price and sells at a higher end price, so the producer's margin per unit falls while the retailer takes on display, local stock and selling. The producer gains shelf presence it could not build alone but gives up some control over price and presentation. Selective and exclusive distribution are ways of keeping that control: fewer, screened retailers who agree to brand standards.",
+  whole:"Producer to wholesaler to retailer to customer is the long channel. The wholesaler buys in bulk, breaks it into smaller lots and supplies many retailers, so the producer sells large volumes with few transactions and a low distribution cost per unit. Each intermediary adds its own margin, so the end price rises and the producer's share of it shrinks, and the producer has the least say over how the product is finally sold. This is the usual route for intensive distribution of convenience goods, where coverage matters more than control."
+};
+function setLen(k){
+  document.getElementById("kd").textContent=KD[k];
+  document.querySelectorAll("[data-len]").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.len===k?"true":"false");});
+}
+document.querySelectorAll("[data-len]").forEach(function(b){b.addEventListener("click",function(){setLen(b.dataset.len);});});
+
+/* ---------- boot ---------- */
+function onResize(){K1.resize();K2.resize();draw1();draw2();}
+window.addEventListener("resize",onResize);
+K1.resize();K2.resize();
+setMode("intensive");
+setStock();
+setLen("direct");
+draw1();
+if(RM){phase=0.37;draw2();}else{raf2=requestAnimationFrame(loop2);}
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'distribution-channels-and-place-strategies'},'*');}catch(e){}}

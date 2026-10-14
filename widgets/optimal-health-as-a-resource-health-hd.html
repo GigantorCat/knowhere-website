@@ -5,561 +5,567 @@ body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
-}
-
 :root {
   --bg: #0B0D0C;
   --bg2: #12160F;
   --acc: #F0A04E;
-  --ag: rgba(240, 160, 78, .7);
-  --ag1: rgba(240, 160, 78, .12);
-  --ag2: rgba(240, 160, 78, .45);
+  --acc-rgb: 240, 160, 78;
+  --ag:  rgba(var(--acc-rgb),.7);
+  --ag1: rgba(var(--acc-rgb),.12);
+  --ag2: rgba(var(--acc-rgb),.45);
   --amb: #FAC775;
   --ink: #EDEDE8;
   --ink-dim: #8C9389;
   --line: #262B26;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  background:radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family:'Geist',sans-serif;
+  min-height:100vh;
+  padding:40px 16px 0;
+  color:var(--ink);
 }
 
-body {
-  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
-  font-family: 'Geist', sans-serif;
-  min-height: 100vh;
-  padding: 40px 16px 0;
-  color: var(--ink);
+.hr-wrap{max-width:720px;margin:0 auto}
+
+.hr-wrap h1{
+  font-size:clamp(26px,6.5vw,44px);
+  font-weight:800;
+  letter-spacing:-0.03em;
+  line-height:1.05;
+  margin-bottom:14px;
 }
 
-.container {
-  max-width: 720px;
-  margin: 0 auto;
+.hr-intro{
+  font-size:15.5px;
+  font-weight:400;
+  color:var(--ink-dim);
+  max-width:58ch;
+  line-height:1.55;
+  margin-bottom:30px;
 }
 
-h1 {
-  font-size: clamp(26px, 6.5vw, 44px);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
-  margin-bottom: 14px;
+.hr-card{
+  background:linear-gradient(180deg,#12160F,#0d100b);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:16px;
+  box-shadow:0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom:18px;
 }
 
-.intro {
-  font-size: 15.5px;
-  font-weight: 400;
-  color: var(--ink-dim);
-  max-width: 58ch;
-  line-height: 1.55;
-  margin-bottom: 32px;
+.hr-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+.hr-label{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;color:#fff}
+.hr-live{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--acc);text-align:right}
+.hr-hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin-bottom:14px}
+
+.hr-group-title{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:8px}
+.hr-group{display:flex;gap:8px;margin-bottom:14px}
+.hr-pill{
+  flex:1;
+  padding:11px 8px;
+  border-radius:999px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;
+  background:#12160F;
+  border:1px solid var(--line);
+  color:var(--ink-dim);
+  cursor:pointer;
+  transition:background .2s,border-color .2s,color .2s,box-shadow .2s;
+  white-space:nowrap;
+}
+.hr-pill[aria-pressed="true"]{
+  background:rgba(var(--acc-rgb),.1);
+  border-color:var(--acc);
+  color:var(--acc);
+  box-shadow:0 0 22px rgba(var(--acc-rgb),.18);
 }
 
-.card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 18px;
+.hr-canvas-wrap{
+  position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;
+  background:#000;box-shadow:inset 0 0 0 1px var(--ag1);margin-bottom:16px;
+}
+.hr-canvas-wrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hr-overlay{
+  position:absolute;left:0;right:0;bottom:0;
+  background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);padding:9px 16px;
+  font-family:'JetBrains Mono',monospace;font-size:14px;text-transform:uppercase;
+  color:var(--acc);text-align:center;
 }
 
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
-}
+.hr-row{display:flex;justify-content:space-between;align-items:baseline;font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:8px}
+.hr-row b{font-weight:500;color:var(--ink);font-size:12px}
 
-.card-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  color: white;
+.hr-slider{
+  width:100%;height:4px;border-radius:3px;
+  background:linear-gradient(90deg,var(--acc) var(--fill,60%),#23291f var(--fill,60%));
+  -webkit-appearance:none;appearance:none;outline:none;display:block;margin:6px 0 8px;
 }
-
-.live-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--acc);
+.hr-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;
+  background:#0B0D0C;border:2px solid var(--acc);
+  box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);cursor:pointer;transition:box-shadow .15s;
 }
-
-.card-hint {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--ink-dim);
-  margin-bottom: 14px;
+.hr-slider::-moz-range-thumb{
+  width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);
+  box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);cursor:pointer;transition:box-shadow .15s;
 }
+.hr-slider::-webkit-slider-thumb:hover{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.hr-slider::-moz-range-thumb:hover{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
 
-.canvas-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16/9;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
-  box-shadow: inset 0 0 0 1px var(--ag1);
-  margin-bottom: 16px;
+.hr-ticks{position:relative;height:14px;margin-bottom:14px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink-dim);text-transform:uppercase}
+.hr-ticks span{position:absolute;top:0;white-space:nowrap}
+
+.hr-stats{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding-top:16px;border-top:1px solid var(--line)}
+.hr-stat{text-align:center;min-width:0}
+.hr-stat-label{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:6px}
+.hr-stat-value{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.hr-kd-divider{border-top:1px solid var(--line);padding-top:16px}
+.hr-kd{font-size:14.5px;font-weight:400;line-height:1.65;color:var(--ink)}
+
+.hr-know{
+  border-left:3px solid var(--acc);
+  padding:16px 18px;
+  background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));
+  border-radius:0 12px 12px 0;
+  margin-bottom:0;padding-bottom:16px;
 }
+.hr-know-tag{display:flex;align-items:center;gap:9px;margin-bottom:10px;font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:0.15em;color:var(--acc)}
+.hr-know-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:hrKnowPulse 2.4s ease-in-out infinite;flex:0 0 auto}
+.hr-know-body{font-size:17.4px;font-weight:400;line-height:1.55;color:var(--ink)}
 
-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
+@keyframes hrKnowPulse{0%,100%{opacity:1}50%{opacity:.45}}
 
-.canvas-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(4px);
-  padding: 9px 16px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  text-transform: uppercase;
-  color: var(--acc);
-  text-align: center;
-}
-
-.health-slider {
-  width: 100%;
-  height: 4px;
-  border-radius: 3px;
-  background: linear-gradient(90deg, var(--acc) var(--fill, 50%), #23291f var(--fill, 50%));
-  -webkit-appearance: none;
-  appearance: none;
-  outline: none;
-  margin-bottom: 10px;
-}
-
-.health-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow .15s;
-}
-
-.health-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow .15s;
-}
-
-.health-slider::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.health-slider::-moz-range-thumb:hover {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.tick-labels {
-  display: flex;
-  justify-content: space-between;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--ink-dim);
-  margin-bottom: 14px;
-}
-
-.stat-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-}
-
-.stat {
-  text-align: center;
-}
-
-.stat-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 6px;
-}
-
-.stat-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 24px;
-  font-weight: 500;
-}
-
-.toggle-card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 18px;
-}
-
-.toggle-buttons {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.toggle-btn {
-  flex: 1;
-  padding: 12px;
-  border-radius: 11px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14.5px;
-  background: #12160F;
-  border: 1px solid var(--line);
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: all .2s;
-}
-
-.toggle-btn.active {
-  background: rgba(240,160,78,.1);
-  border: 1px solid var(--acc);
-  color: var(--acc);
-  box-shadow: 0 0 22px rgba(240,160,78,.18);
-}
-
-.knowdrop-divider {
-  border: 0;
-  border-top: 1px solid var(--line);
-  margin-bottom: 16px;
-}
-
-.knowdrop-text {
-  font-size: 14.5px;
-  font-weight: 400;
-  line-height: 1.65;
-  color: var(--ink);
-}
-
-.know-this {
-  border-left: 3px solid var(--acc);
-  padding: 16px 18px;
-  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
-  border-radius: 0 12px 12px 0;
-  margin-bottom: 0;
-}
-
-.know-this-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--acc);
-  margin-bottom: 10px;
-  display: block;
-}
-
-.know-this-body {
-  font-size: 17.4px;
-  font-weight: 400;
-  line-height: 1.55;
-  color: var(--ink);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-@media (max-width: 360px) {
-  body {
-    padding: 24px 12px 0;
-  }
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:0.01ms !important;animation-iteration-count:1 !important;transition-duration:0.01ms !important}
 }
 </style>
 
-<h2 class="sr-only">Interactive widget showing how health level affects individual and national capacity</h2>
+<h2 class="sr-only">Interactive picture of optimal health as a resource: choose a person, a nation or the world, raise the health level, and watch named benefits fill while named costs shrink</h2>
 
-<div class="container">
-  <h1>Your health isn't just yours — it powers the <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">economy</span></h1>
-  
-  <p class="intro">When you're healthy, you don't just feel better — you become a resource that drives productivity, lowers costs, and strengthens the nation. The exam tests whether you can separate what health does for you from what it does for everyone. Drag the slider to see how health level cascades through both scales.</p>
+<div class="hr-wrap">
+  <h1>Good health is not the finish line. It is the <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">fuel</span></h1>
+  <p class="hr-intro">We tend to treat health as the thing you get around to once the rest of life is sorted. The course flips that: optimal health and wellbeing is a resource that pays out three times over, to the person, to the nation and to the world. Choose a scale, raise the health level and watch which bars grow and which costs shrink.</p>
 
-  <div class="card">
-    <div class="card-header">
-      <span class="card-label">Health Resource Model</span>
-      <span class="live-tag" id="liveTag">Moderate Health</span>
+  <div class="hr-card">
+    <div class="hr-head">
+      <span class="hr-label">Health as a resource</span>
+      <span class="hr-live" id="hrLive">Health: good</span>
     </div>
-    <div class="card-hint">Drag to change population health level</div>
-    
-    <div class="canvas-wrapper">
-      <canvas id="canvas"></canvas>
-      <div class="canvas-overlay" id="canvasOverlay">Moderate Health</div>
-    </div>
+    <div class="hr-hint">Choose a scale. Raise the health level. Watch the three bars.</div>
 
-    <input type="range" min="0" max="100" value="50" class="health-slider" id="healthSlider" aria-label="Health level">
-    <div class="tick-labels">
-      <span>Poor</span>
-      <span>Moderate</span>
-      <span>Optimal</span>
+    <div class="hr-group-title" id="hrScaleTitle">Scale in view</div>
+    <div class="hr-group" role="group" aria-labelledby="hrScaleTitle">
+      <button type="button" class="hr-pill hr-scale" data-scale="individual" aria-pressed="true">Individual</button>
+      <button type="button" class="hr-pill hr-scale" data-scale="national" aria-pressed="false">National</button>
+      <button type="button" class="hr-pill hr-scale" data-scale="global" aria-pressed="false">Global</button>
     </div>
 
-    <div class="stat-row">
-      <div class="stat">
-        <div class="stat-label">Individual Output</div>
-        <div class="stat-value" id="individualStat" style="color:var(--acc)">50%</div>
+    <div class="hr-canvas-wrap" id="hrWrap">
+      <canvas id="hrCanvas" role="img" aria-label="A person, a crowd or a globe on the left, with three benefit bars that fill or shrink as the health level changes"></canvas>
+      <div class="hr-overlay" id="hrOverlay" aria-live="polite">One person · health 60/100</div>
+    </div>
+
+    <div class="hr-row"><span>Health level</span><b id="hrVal">60 / 100</b></div>
+    <input type="range" class="hr-slider" id="hrSlider" aria-label="Health level" min="0" max="100" step="1" value="60">
+    <div class="hr-ticks" aria-hidden="true">
+      <span style="left:0%">Poor</span>
+      <span style="left:25%">Fair</span>
+      <span style="left:50%">Good</span>
+      <span style="left:75%">Optimal</span>
+    </div>
+
+    <div class="hr-stats">
+      <div class="hr-stat">
+        <div class="hr-stat-label">Health level</div>
+        <div class="hr-stat-value" id="hrStatH" style="color:var(--acc)">60 / 100</div>
       </div>
-      <div class="stat">
-        <div class="stat-label">National Capacity</div>
-        <div class="stat-value" id="nationalStat" style="color:var(--amb)">50%</div>
+      <div class="hr-stat">
+        <div class="hr-stat-label">Scale in view</div>
+        <div class="hr-stat-value" id="hrStatS" style="color:var(--amb)">Person</div>
       </div>
     </div>
   </div>
 
-  <div class="toggle-card">
-    <div class="toggle-buttons">
-      <button class="toggle-btn active" id="btnIndividual">Individual</button>
-      <button class="toggle-btn" id="btnNational">National</button>
+  <div class="hr-card">
+    <div class="hr-group-title" id="hrLensTitle">What the paragraph explains</div>
+    <div class="hr-group" role="group" aria-labelledby="hrLensTitle">
+      <button type="button" class="hr-pill hr-lens" data-lens="benefits" aria-pressed="true">The benefits</button>
+      <button type="button" class="hr-pill hr-lens" data-lens="exam" aria-pressed="false">Writing it</button>
     </div>
-    
-    <hr class="knowdrop-divider">
-    
-    <p class="knowdrop-text" id="knowdropText">When health is optimal, the individual gains direct access to quality of life. You can work consistently, maintain relationships with energy and presence, and participate in activities that matter. Physical and mental capacity aren't drained by illness or limitation. The exam wants you identifying these personal outcomes — employment stability, social connection, autonomy in daily tasks. Health isn't an abstract metric; it's the resource that lets you show up for your own life and contribute to the lives around you.</p>
+    <div class="hr-kd-divider">
+      <p class="hr-kd" id="hrKd"></p>
+    </div>
   </div>
 
-  <div class="know-this">
-    <span class="know-this-tag">Know This</span>
-    <p class="know-this-body"><span style="color:var(--acc)">Optimal health enables participation and productivity</span> at both scales: individuals gain work capacity, relationship quality, and daily autonomy, while nations reduce healthcare costs and increase economic output — health is a <span style="color:var(--acc)">resource for everyday life</span>, not just an absence of disease.</p>
+  <div class="hr-know">
+    <div class="hr-know-tag"><span class="hr-know-dot"></span><span>Know This</span></div>
+    <p class="hr-know-body">Optimal health is a <span style="color:var(--acc)">resource</span>: it gives a person the energy to work and connect, saves a nation <span style="color:var(--acc)">health system costs</span>, and keeps <span style="color:var(--acc)">disease from crossing borders</span>.</p>
   </div>
 </div>
 
 <script>
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d', { alpha: false });
-const slider = document.getElementById('healthSlider');
-const liveTag = document.getElementById('liveTag');
-const canvasOverlay = document.getElementById('canvasOverlay');
-const individualStat = document.getElementById('individualStat');
-const nationalStat = document.getElementById('nationalStat');
-const btnIndividual = document.getElementById('btnIndividual');
-const btnNational = document.getElementById('btnNational');
-const knowdropText = document.getElementById('knowdropText');
+(function(){
+  const CSS = getComputedStyle(document.documentElement);
+  const ACC = CSS.getPropertyValue("--acc").trim();
+  const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+  const AMB = CSS.getPropertyValue("--amb").trim();
+  const INK = "237,237,232";
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-const dpr = Math.min(window.devicePixelRatio || 1, 2);
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d', { alpha: false });
+  const wrap = document.getElementById("hrWrap");
+  const canvas = document.getElementById("hrCanvas");
+  const ctx = canvas.getContext("2d");
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const buf = document.createElement("canvas");
+  const bctx = buf.getContext("2d");
 
-let healthLevel = 0.5;
-let time = 0;
+  const slider = document.getElementById("hrSlider");
+  const valEl = document.getElementById("hrVal");
+  const liveEl = document.getElementById("hrLive");
+  const overlayEl = document.getElementById("hrOverlay");
+  const statH = document.getElementById("hrStatH");
+  const statS = document.getElementById("hrStatS");
+  const kdEl = document.getElementById("hrKd");
+  const scaleBtns = Array.from(document.querySelectorAll(".hr-scale"));
+  const lensBtns = Array.from(document.querySelectorAll(".hr-lens"));
 
-const individuals = Array.from({length: 48}, (_, i) => ({
-  id: i,
-  baseX: (i % 8) / 7,
-  baseY: Math.floor(i / 8) / 5.5,
-  phase: Math.random() * Math.PI * 2,
-  speed: 0.6 + Math.random() * 0.8
-}));
+  const SCALES = {
+    individual: { name: "Person", benefits: [
+      { label: "Days able to work", up: true },
+      { label: "Energy for family", up: true },
+      { label: "Stress levels", up: false }
+    ]},
+    national: { name: "Nation", benefits: [
+      { label: "People in work", up: true },
+      { label: "Health system cost", up: false },
+      { label: "Tax revenue", up: true }
+    ]},
+    global: { name: "World", benefits: [
+      { label: "Disease spread", up: false },
+      { label: "Trade and tourism", up: true },
+      { label: "Peace and stability", up: true }
+    ]}
+  };
 
-function resize() {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
+  const KD = {
+    individual: {
+      benefits: "For one person, optimal health and wellbeing is the energy budget everything else is paid from. Good physical health means more days able to work, which means a steadier income and a wider choice of jobs. Good mental and emotional health means patience and presence for family and friends rather than running on empty. Lower stress and fewer sick days leave room for study, sport, community and rest. Being able to do your own shopping, cooking and travel is independence, and that is a resource too.",
+      exam: "An answer at the individual scale must name the benefit and say what it lets the person do. Write that optimal health gives a person the energy to attend work regularly, so they earn a reliable income. Or that lower stress means they can maintain relationships and take part in community life. The weak version lists feelings: happy, confident, fit. The strong version shows health being spent on something: time, money, participation or independence."
+    },
+    national: {
+      benefits: "Scale the same idea up to a country and the benefits change shape. When more people are well, more people are in work, so productivity and average incomes rise. A working population pays income tax, which funds schools, roads and the health system itself. At the same time, fewer hospital admissions and less chronic disease mean the government spends less of its budget treating illness, leaving more for prevention and other services. Healthy people also volunteer, vote and care for others, which strengthens social participation.",
+      exam: "The trap at the national scale is to write the individual answer with the word Australia in front. Instead, name a national benefit and give the chain: a healthier workforce means higher productivity and economic growth; more people earning means more tax revenue; less illness means lower health system costs. Use the words fewer or lower when the benefit is a cost that shrinks, and higher or more when it is a resource that grows. Linking one of these to how the money is then used is what shows understanding."
+    },
+    global: {
+      benefits: "Across the world, health is a shared resource because disease and prosperity both cross borders. When populations are healthy, infectious diseases have fewer hosts and spread more slowly between countries, so outbreaks are smaller and rarer. Healthy populations can produce, trade and travel, so tourism and trade between countries grow and economies become more connected. Countries whose people are well are more stable, with fewer resources tied up in crisis, which supports peace and security. Better health also helps progress on development goals such as poverty reduction and education.",
+      exam: "At the global scale the examiner looks for a benefit that only makes sense between countries. Reduced risk of disease transmission across borders is the clearest, because a disease controlled in one country protects its neighbours. Increased trade and tourism between countries, and greater peace and stability, are the other two to reach for. Avoid writing that the whole world becomes more productive; say instead which exchange between countries improves and why healthier populations make it possible."
+    }
+  };
 
-function updateLabels(h) {
-  let label = 'Poor Health';
-  if (h >= 0.66) label = 'Optimal Health';
-  else if (h >= 0.33) label = 'Moderate Health';
-  
-  liveTag.textContent = label;
-  canvasOverlay.textContent = label;
-  
-  const indPct = Math.round(h * 100);
-  const natPct = Math.round(Math.pow(h, 0.85) * 100);
-  
-  individualStat.textContent = indPct + '%';
-  nationalStat.textContent = natPct + '%';
-}
+  const ORDER = [7, 2, 13, 9, 0, 16, 4, 11, 6, 15, 1, 10, 17, 3, 8, 14, 5, 12];
+  const NATIONS = [[0.72,-0.38],[0.28,-0.62],[-0.42,-0.56],[-0.74,-0.08],[-0.52,0.42],[-0.04,0.7],[0.46,0.5],[0.7,0.12],[0.1,-0.12],[-0.18,0.16]];
+  const LINKS = [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,0],[8,9],[1,8],[4,9],[6,8]];
 
-function draw() {
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  const cx = w / 2;
-  const cy = h / 2;
-  
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, w, h);
-  
-  // Grid backdrop
-  ctx.strokeStyle = 'rgba(38,43,38,0.6)';
-  ctx.lineWidth = 0.8;
-  for (let gx = 0; gx < w; gx += w / 8) {
+  let scale = "individual";
+  let prevScale = "individual";
+  let fade = 1;
+  let lens = "benefits";
+  let targetH = 0.6;
+  let dispH = 0.6;
+  let raf = null;
+  let last = 0;
+
+  function resize(){
+    const rect = wrap.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    buf.width = canvas.width;
+    buf.height = canvas.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    draw();
+  }
+
+  function rr(x, y, w, h, r){
+    r = Math.min(r, h / 2, w / 2);
     ctx.beginPath();
-    ctx.moveTo(gx, 0);
-    ctx.lineTo(gx, h);
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.arc(x + w - r, y + r, r, -Math.PI / 2, Math.PI / 2);
+    ctx.lineTo(x + r, y + h);
+    ctx.arc(x + r, y + r, r, Math.PI / 2, Math.PI * 1.5);
+    ctx.closePath();
+  }
+
+  function drawPerson(x, top, size, p, col, lw, glow){
+    const headR = size * 0.1;
+    const lean = (1 - p) * size * 0.06;
+    const hx = x + lean;
+    const hy = top + headR + (1 - p) * size * 0.04;
+    const neckY = hy + headR;
+    const shY = neckY + size * 0.06;
+    const hipY = top + size * 0.6;
+    if (glow > 0){
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      const g = ctx.createRadialGradient(x, top + size * 0.45, 0, x, top + size * 0.45, size * 0.7);
+      g.addColorStop(0, "rgba(" + RGB + "," + (0.35 * glow) + ")");
+      g.addColorStop(1, "rgba(" + RGB + ",0)");
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(x, top + size * 0.45, size * 0.7, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+    }
+    ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = lw; ctx.lineCap = "round"; ctx.lineJoin = "round";
+    ctx.beginPath(); ctx.arc(hx, hy, headR, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(hx, neckY); ctx.lineTo(x, hipY); ctx.stroke();
+    const th = 1.2 - 1.9 * p;
+    const L = size * 0.3;
+    const sx = x + (hx - x) * 0.7;
+    ctx.beginPath();
+    ctx.moveTo(sx, shY); ctx.lineTo(sx + Math.cos(th) * L, shY + Math.sin(th) * L);
+    ctx.moveTo(sx, shY); ctx.lineTo(sx - Math.cos(th) * L, shY + Math.sin(th) * L);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x, hipY); ctx.lineTo(x - size * 0.14, top + size);
+    ctx.moveTo(x, hipY); ctx.lineTo(x + size * 0.14, top + size);
     ctx.stroke();
   }
-  for (let gy = 0; gy < h; gy += h / 6) {
-    ctx.beginPath();
-    ctx.moveTo(0, gy);
-    ctx.lineTo(w, gy);
-    ctx.stroke();
+
+  function sceneIndividual(rect, hv){
+    const size = Math.min(rect.h * 0.9, rect.w * 0.6);
+    const x = rect.x + rect.w / 2;
+    const top = rect.y + (rect.h - size) / 2;
+    ctx.strokeStyle = "rgba(" + INK + ",0.18)"; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(x - size * 0.45, top + size + 2); ctx.lineTo(x + size * 0.45, top + size + 2); ctx.stroke();
+    const a = 0.35 + 0.65 * hv;
+    drawPerson(x, top, size, hv, "rgba(" + RGB + "," + a + ")", Math.max(2, size * 0.04), hv);
   }
-  
-  // Individual nodes
-  individuals.forEach(ind => {
-    const x = ind.baseX * w * 0.88 + w * 0.06;
-    const y = ind.baseY * h * 0.82 + h * 0.09;
-    
-    const activity = healthLevel;
-    const wobble = Math.sin(time * ind.speed + ind.phase) * 3 * activity;
-    
-    const r = 4 + activity * 4;
-    const alpha = 0.3 + activity * 0.7;
-    
-    // Glow
-    const glow = ctx.createRadialGradient(x, y + wobble, 0, x, y + wobble, r * 3.5);
-    glow.addColorStop(0, `rgba(240,160,78,${alpha * 0.5})`);
-    glow.addColorStop(0.5, `rgba(240,160,78,${alpha * 0.2})`);
-    glow.addColorStop(1, 'rgba(240,160,78,0)');
-    
+
+  function sceneNational(rect, hv, stacked){
+    const cols = stacked ? 9 : 6;
+    const rows = stacked ? 2 : 3;
+    const N = 18;
+    const cw = rect.w / cols, rh = rect.h / rows;
+    const size = Math.min(cw * 0.72, rh * 0.8);
+    const lit = Math.round(hv * N);
+    const on = new Array(N).fill(false);
+    for (let k = 0; k < lit; k++) on[ORDER[k]] = true;
+    for (let i = 0; i < N; i++){
+      const c = i % cols, r = Math.floor(i / cols);
+      const x = rect.x + cw * (c + 0.5);
+      const top = rect.y + rh * r + (rh - size) / 2;
+      if (on[i]) drawPerson(x, top, size, 1, "rgba(" + RGB + ",0.95)", Math.max(1.5, size * 0.045), 0.6);
+      else drawPerson(x, top, size, 0, "rgba(" + INK + ",0.22)", Math.max(1.5, size * 0.045), 0);
+    }
+  }
+
+  function sceneGlobal(rect, hv){
+    const cx = rect.x + rect.w / 2, cy = rect.y + rect.h / 2;
+    const r = Math.min(rect.w, rect.h) * 0.44;
     ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.fillStyle = glow;
-    ctx.beginPath();
-    ctx.arc(x, y + wobble, r * 3.5, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.strokeStyle = "rgba(" + INK + ",0.16)"; ctx.lineWidth = 1;
+    [-0.66, -0.33, 0.33, 0.66].forEach(function(k){
+      ctx.beginPath(); ctx.ellipse(cx, cy, r * Math.abs(k), r, 0, 0, Math.PI * 2); ctx.stroke();
+    });
+    ctx.beginPath(); ctx.moveTo(cx, cy - r); ctx.lineTo(cx, cy + r); ctx.stroke();
+    [-0.6, -0.3, 0, 0.3, 0.6].forEach(function(lat){
+      const y = cy + lat * r; const hw = Math.sqrt(Math.max(0, r * r - lat * lat * r * r));
+      ctx.beginPath(); ctx.moveTo(cx - hw, y); ctx.lineTo(cx + hw, y); ctx.stroke();
+    });
+    ctx.strokeStyle = "rgba(" + INK + ",0.4)"; ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
     ctx.restore();
-    
-    // Core
-    ctx.fillStyle = `rgba(240,160,78,${alpha})`;
-    ctx.beginPath();
-    ctx.arc(x, y + wobble, r, 0, Math.PI * 2);
-    ctx.fill();
+
+    const lit = Math.round(hv * NATIONS.length);
+    const pts = NATIONS.map(function(n){ return { x: cx + n[0] * r, y: cy + n[1] * r }; });
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    ctx.strokeStyle = "rgba(" + RGB + "," + (0.25 + 0.55 * hv) + ")";
+    ctx.lineWidth = Math.max(1, r * 0.03);
+    LINKS.forEach(function(l){
+      if (l[0] < lit && l[1] < lit){
+        const a = pts[l[0]], b = pts[l[1]];
+        const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+        const dx = mx - cx, dy = my - cy; const d = Math.hypot(dx, dy) || 1;
+        const qx = mx + dx / d * r * 0.3, qy = my + dy / d * r * 0.3;
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.quadraticCurveTo(qx, qy, b.x, b.y); ctx.stroke();
+      }
+    });
+    ctx.restore();
+    const dot = Math.max(2.5, r * 0.07);
+    pts.forEach(function(p, i){
+      if (i < lit){
+        ctx.save(); ctx.globalCompositeOperation = "lighter";
+        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, dot * 3.5);
+        g.addColorStop(0, "rgba(" + RGB + ",0.6)"); g.addColorStop(1, "rgba(" + RGB + ",0)");
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(p.x, p.y, dot * 3.5, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+        ctx.fillStyle = ACC; ctx.beginPath(); ctx.arc(p.x, p.y, dot, 0, Math.PI * 2); ctx.fill();
+      } else {
+        ctx.fillStyle = AMB; ctx.globalAlpha *= 0.85;
+        ctx.beginPath(); ctx.arc(p.x, p.y, dot * 0.8, 0, Math.PI * 2); ctx.fill();
+        ctx.globalAlpha /= 0.85;
+        ctx.save(); ctx.strokeStyle = AMB; ctx.setLineDash([2, 3]); ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.arc(p.x, p.y, dot * 2.2, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+      }
+    });
+  }
+
+  function drawPanel(rect, key, hv, stacked){
+    const B = SCALES[key].benefits;
+    const rowH = rect.h / B.length;
+    const above = rowH >= 34;
+    ctx.textBaseline = "alphabetic";
+    B.forEach(function(b, i){
+      const y0 = rect.y + i * rowH;
+      const fill = b.up ? hv : 1 - hv;
+      const col = b.up ? ACC : AMB;
+      let bx, bw, by, bh;
+      ctx.font = "11px 'JetBrains Mono', monospace";
+      if (above){
+        ctx.fillStyle = "rgba(" + INK + ",0.9)"; ctx.textAlign = "left";
+        ctx.fillText(b.label, rect.x, y0 + 12);
+        ctx.fillStyle = "rgba(" + INK + ",0.5)"; ctx.textAlign = "right";
+        ctx.fillText(b.up ? "rises with health" : "falls with health", rect.x + rect.w, y0 + 12);
+        bx = rect.x; bw = rect.w; bh = Math.min(10, rowH * 0.28); by = y0 + 18 + (rowH - 18 - bh) * 0.35;
+      } else {
+        const lw = Math.min(Math.max(rect.w * 0.46, ctx.measureText(b.label + " \u2191").width + 8), rect.w * 0.62);
+        ctx.fillStyle = "rgba(" + INK + ",0.9)"; ctx.textAlign = "left";
+        ctx.fillText(b.label + (b.up ? " \u2191" : " \u2193"), rect.x, y0 + rowH / 2 + 4);
+        bx = rect.x + lw; bw = rect.w - lw; bh = Math.min(7, rowH * 0.4); by = y0 + rowH / 2 - bh / 2;
+      }
+      ctx.fillStyle = "rgba(" + INK + ",0.09)";
+      rr(bx, by, bw, bh, bh / 2); ctx.fill();
+      const fw = Math.max(bh, bw * fill);
+      ctx.save(); ctx.globalCompositeOperation = "lighter";
+      ctx.shadowColor = col; ctx.shadowBlur = 10;
+      ctx.fillStyle = col; rr(bx, by, fw, bh, bh / 2); ctx.fill();
+      ctx.restore();
+    });
+  }
+
+  function drawScale(key, hv, alpha, w, h, stacked){
+    const bottomPad = 42;
+    let scene, panel;
+    if (stacked){
+      scene = { x: 0, y: h * 0.04, w: w, h: h * 0.4 };
+      panel = { x: 14, y: h * 0.48, w: w - 28, h: h - bottomPad - h * 0.48 };
+    } else {
+      scene = { x: 0, y: h * 0.06, w: w * 0.42, h: h - bottomPad - h * 0.06 };
+      panel = { x: w * 0.46, y: h * 0.1, w: w * 0.5, h: h - bottomPad - h * 0.1 };
+    }
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    if (key === "individual") sceneIndividual(scene, hv);
+    else if (key === "national") sceneNational(scene, hv, stacked);
+    else sceneGlobal(scene, hv);
+    drawPanel(panel, key, hv, stacked);
+    ctx.restore();
+  }
+
+  function draw(){
+    const w = canvas.width / dpr, h = canvas.height / dpr;
+    if (!w || !h) return;
+    const stacked = w < 560;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = "rgba(0,0,0,1)";
+    ctx.fillRect(0, 0, w, h);
+    ctx.strokeStyle = "rgba(" + INK + ",0.045)"; ctx.lineWidth = 1;
+    for (let gx = 0; gx <= w; gx += w / 12){ ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke(); }
+    for (let gy = 0; gy <= h; gy += h / 6){ ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke(); }
+
+    if (fade < 1 && prevScale !== scale) drawScale(prevScale, dispH, 1 - fade, w, h, stacked);
+    drawScale(scale, dispH, fade, w, h, stacked);
+
+    bctx.setTransform(1, 0, 0, 1, 0, 0);
+    bctx.clearRect(0, 0, buf.width, buf.height);
+    if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
+    if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+    ctx.restore();
+
+    const cx = w / 2, cy = h / 2;
+    const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
+  }
+
+  function tick(now){
+    const dt = Math.min(now - last, 50); last = now;
+    let moving = false;
+    const dh = targetH - dispH;
+    if (Math.abs(dh) > 0.002){ dispH += dh * (1 - Math.exp(-dt / 110)); moving = true; } else dispH = targetH;
+    if (fade < 1){ fade = Math.min(1, fade + dt / 320); moving = true; }
+    draw();
+    if (moving) raf = requestAnimationFrame(tick); else raf = null;
+  }
+  function kick(){
+    if (reduce){ dispH = targetH; fade = 1; draw(); return; }
+    if (raf === null){ last = performance.now(); raf = requestAnimationFrame(tick); }
+  }
+
+  function band(v){ return v < 25 ? "poor" : v < 50 ? "fair" : v < 75 ? "good" : "optimal"; }
+
+  function updateReadouts(){
+    const v = Math.round(targetH * 100);
+    const S = SCALES[scale];
+    valEl.textContent = v + " / 100";
+    statH.textContent = v + " / 100";
+    statS.textContent = S.name;
+    liveEl.textContent = "Health: " + band(v);
+    let ov;
+    if (scale === "individual") ov = "One person \u00b7 health " + v + "/100";
+    else if (scale === "national") ov = "Nation \u00b7 " + Math.round(targetH * 18) + " of 18 people well";
+    else ov = "World \u00b7 " + Math.round(targetH * 10) + " of 10 nations well";
+    overlayEl.textContent = ov;
+    slider.setAttribute("aria-valuetext", v + " out of 100, " + band(v) + " health");
+  }
+
+  function updateKd(){ kdEl.textContent = KD[scale][lens]; }
+
+  slider.addEventListener("input", function(e){
+    const v = +e.target.value;
+    targetH = v / 100;
+    slider.style.setProperty("--fill", v + "%");
+    updateReadouts();
+    kick();
   });
-  
-  // Connection lines (representing social/economic links)
-  const connectionDensity = healthLevel;
-  ctx.strokeStyle = `rgba(240,160,78,${connectionDensity * 0.2})`;
-  ctx.lineWidth = 1;
-  
-  for (let i = 0; i < individuals.length; i++) {
-    if (Math.random() > connectionDensity * 0.4) continue;
-    
-    const a = individuals[i];
-    const b = individuals[Math.floor(Math.random() * individuals.length)];
-    
-    const x1 = a.baseX * w * 0.88 + w * 0.06;
-    const y1 = a.baseY * h * 0.82 + h * 0.09;
-    const x2 = b.baseX * w * 0.88 + w * 0.06;
-    const y2 = b.baseY * h * 0.82 + h * 0.09;
-    
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
-    ctx.stroke();
-    ctx.restore();
-  }
-  
-  // National capacity ring
-  const ringRadius = Math.min(w, h) * 0.42;
-  const ringThickness = 3 + healthLevel * 8;
-  const ringAlpha = 0.2 + healthLevel * 0.6;
-  
-  const ringGrad = ctx.createRadialGradient(cx, cy, ringRadius - ringThickness, cx, cy, ringRadius + ringThickness);
-  ringGrad.addColorStop(0, 'rgba(250,199,117,0)');
-  ringGrad.addColorStop(0.5, `rgba(250,199,117,${ringAlpha})`);
-  ringGrad.addColorStop(1, 'rgba(250,199,117,0)');
-  
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.strokeStyle = ringGrad;
-  ctx.lineWidth = ringThickness;
-  ctx.beginPath();
-  ctx.arc(cx, cy, ringRadius, 0, Math.PI * 2);
-  ctx.stroke();
-  ctx.restore();
-  
-  // Bloom
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
-  
-  // Vignette
-  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-}
 
-function animate() {
-  time += 0.016;
-  draw();
-  requestAnimationFrame(animate);
-}
+  scaleBtns.forEach(function(btn){
+    btn.addEventListener("click", function(){
+      const next = btn.getAttribute("data-scale");
+      if (next === scale) return;
+      prevScale = scale; scale = next; fade = 0;
+      scaleBtns.forEach(function(b){ b.setAttribute("aria-pressed", b === btn ? "true" : "false"); });
+      updateReadouts(); updateKd(); kick();
+    });
+  });
 
-slider.addEventListener('input', (e) => {
-  healthLevel = e.target.value / 100;
-  slider.style.setProperty('--fill', e.target.value + '%');
-  updateLabels(healthLevel);
-});
+  lensBtns.forEach(function(btn){
+    btn.addEventListener("click", function(){
+      lens = btn.getAttribute("data-lens");
+      lensBtns.forEach(function(b){ b.setAttribute("aria-pressed", b === btn ? "true" : "false"); });
+      updateKd();
+    });
+  });
 
-btnIndividual.addEventListener('click', () => {
-  btnIndividual.classList.add('active');
-  btnNational.classList.remove('active');
-  knowdropText.textContent = "When health is optimal, the individual gains direct access to quality of life. You can work consistently, maintain relationships with energy and presence, and participate in activities that matter. Physical and mental capacity aren't drained by illness or limitation. The exam wants you identifying these personal outcomes — employment stability, social connection, autonomy in daily tasks. Health isn't an abstract metric; it's the resource that lets you show up for your own life and contribute to the lives around you.";
-});
+  window.addEventListener("resize", resize);
+  if (window.ResizeObserver){ new ResizeObserver(function(){ resize(); }).observe(wrap); }
 
-btnNational.addEventListener('click', () => {
-  btnNational.classList.add('active');
-  btnIndividual.classList.remove('active');
-  knowdropText.textContent = "At the national scale, optimal health translates to measurable productivity and cost reduction. A healthier population works more days, requires fewer hospital admissions, and contributes to economic output for longer periods across the lifespan. Healthcare systems spend less on chronic disease management and acute intervention. The exam expects you to articulate these macro benefits — workforce participation rates, GDP contribution, reduced burden on Medicare and public health budgets. National capacity isn't just the sum of individual health; it's the infrastructure enabled when populations don't collapse under preventable disease.";
-});
-
-window.addEventListener('resize', resize);
-resize();
-updateLabels(healthLevel);
-slider.style.setProperty('--fill', '50%');
-animate();
+  slider.style.setProperty("--fill", "60%");
+  updateReadouts();
+  updateKd();
+  resize();
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'optimal-health-as-a-resource'},'*');}catch(e){}}

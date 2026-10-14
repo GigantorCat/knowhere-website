@@ -322,14 +322,14 @@ canvas {
 <div class="container">
   <h1>Density shrinks a city&rsquo;s footprint, but <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">consumption</span> sets most of it</h1>
   
-  <p class="intro">Compact design, mixed use and transit cut the land and energy a city needs for housing and travel. But food, goods and services make up most of a footprint, and they follow income and consumption, not density. So a dense, wealthy city is not automatically a small-footprint city. Drag the slider to see which parts of an illustrative footprint move.</p>
+  <p class="intro">Compact design, mixed use and transit cut the land and energy a city needs for housing and travel. But food, goods and services make up most of a footprint, and they follow income and consumption, not density. So a dense, wealthy city is not automatically a small-footprint city. Raise the density and watch which parts of the footprint move, and how far the bar still sits above the one-planet share.</p>
 
   <div class="card">
     <div class="card-header">
       <div class="card-label">Settlement pattern</div>
       <div class="live-tag" id="liveTag">Low-density sprawl</div>
     </div>
-    <div class="card-hint">Illustrative model, rounded values in global hectares (gha) per person</div>
+    <div class="card-hint">Raise the density. Amber parts stay; purple parts shrink. Values are illustrative, in global hectares (gha) per person.</div>
     
     <div class="canvas-wrapper">
       <canvas id="footprintCanvas"></canvas>
@@ -578,11 +578,11 @@ function drawBar(w, h) {
   const total0 = PARTS.reduce((s, p) => s + p.base, 0);
   const fixedCol = ["rgba(250,199,117,0.85)", "rgba(250,199,117,0.55)"];
   let x = x0;
-  const fs = Math.max(9, Math.round(h * 0.035));
+  const fs = Math.max(11, Math.round(h * 0.035));
   const narrow = w < 520;
   ctx.save();
   ctx.fillStyle = "rgba(0,0,0,0.72)";
-  ctx.fillRect(0, 0, w, y + bh + (narrow ? 2 * fs + 14 : fs + 12));
+  ctx.fillRect(0, 0, w, y + bh + (narrow ? 3 * fs + 18 : fs + 12));
   ctx.font = "500 " + fs + "px JetBrains Mono, monospace";
   ctx.textBaseline = "top";
   PARTS.forEach((p, i) => {
@@ -598,6 +598,23 @@ function drawBar(w, h) {
   ctx.setLineDash([4, 4]);
   ctx.strokeRect(x0, y, bw, bh);
   ctx.setLineDash([]);
+  /* one-planet share: world biocapacity per person, drawn as an amber marker on the bar */
+  const xb = x0 + bw * BIOCAP / total0;
+  ctx.beginPath();
+  ctx.moveTo(xb, y - 2);
+  ctx.lineTo(xb, y + bh + 2);
+  ctx.strokeStyle = "#000";
+  ctx.lineWidth = 4;
+  ctx.stroke();
+  ctx.strokeStyle = AMB;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.fillStyle = AMB;
+  if (narrow) {
+    ctx.fillText("amber line: 1.5 gha one-planet share", x0, y + bh + 12 + 2 * fs);
+  } else {
+    ctx.fillText("1.5 gha: one-planet share", xb + 4, y - fs - 3);
+  }
   ctx.fillStyle = "rgba(237,237,232,0.85)";
   ctx.fillStyle = "rgba(250,199,117,0.95)";
   ctx.fillText("food + goods: set by consumption", x0, y + bh + 4);

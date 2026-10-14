@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Nucleosynthesis in Stars — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Nucleosynthesis in stars — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
 @media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
 body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
@@ -312,21 +312,24 @@ canvas {
 .tick-labels>span.lo{left:0;transform:none}
 .tick-labels>span.hi{left:auto;right:0;transform:none}
 .tick-labels{height:14px}
+.tick-labels>span{font-size:10px}
+.stat-label .unit{text-transform:none;letter-spacing:0}
+.slider-label .nuc-out{text-transform:none;color:var(--ink);font-weight:500;margin-left:6px}
 </style>
 
 <div class="container">
-  <h2 class="sr-only">Nucleosynthesis in Stars Interactive Widget</h2>
+  <h2 class="sr-only">Nucleosynthesis in stars interactive widget</h2>
   
   <h1>Your body is made of <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">stardust</span></h1>
   
-  <p class="intro">Every atom heavier than helium was forged in a stellar furnace — the calcium in your bones, the iron in your blood, the oxygen you breathe. Stars fuse light elements into heavier ones, but there's a wall they can't cross. Drag the slider to build elements up the periodic table and watch where fusion stops paying dividends.</p>
+  <p class="intro">Nearly every atom heavier than helium was forged in a star — the calcium in your bones, the iron in your blood, the oxygen you breathe. Stars fuse light nuclei into heavier ones, but there's a wall they can't cross. Move the nucleus along the binding-energy curve and watch where fusion stops paying.</p>
 
   <div class="card">
     <div class="card-header">
-      <div class="card-label">Stellar Forge</div>
+      <div class="card-label">Stellar forge</div>
       <div class="live-tag" id="element-tag">H → He</div>
     </div>
-    <div class="card-hint">Building elements by fusion</div>
+    <div class="card-hint">Binding energy per nucleon against mass number</div>
     
     <div class="canvas-wrapper">
       <canvas id="nucCanvas"></canvas>
@@ -334,7 +337,7 @@ canvas {
     </div>
 
     <div class="slider-wrap">
-      <div class="slider-label">Nucleus (mass number)</div>
+      <div class="slider-label">Nucleus (mass number) <b class="nuc-out" id="nucOut">He-4</b></div>
       <input type="range" min="0" max="6" step="1" value="1" class="nuc-slider" id="massSlider" aria-label="Nucleus, from hydrogen-1 to uranium-238">
     </div>
     
@@ -350,11 +353,11 @@ canvas {
 
     <div class="stat-row">
       <div class="stat">
-        <div class="stat-label">Binding Energy</div>
+        <div class="stat-label">Binding energy <span class="unit">MeV/nucleon</span></div>
         <div class="stat-value acc" id="binding-val">7.1</div>
       </div>
       <div class="stat">
-        <div class="stat-label">Fusion Barrier</div>
+        <div class="stat-label">Fusion barrier</div>
         <div class="stat-value amb" id="barrier-val">Low</div>
       </div>
     </div>
@@ -362,13 +365,13 @@ canvas {
 
   <div class="card">
     <div class="toggle-section">
-      <button class="toggle-btn active" data-mode="fusion">Fusion Era</button>
-      <button class="toggle-btn" data-mode="death">Stellar Death</button>
+      <button class="toggle-btn active" data-mode="fusion">Fusion era</button>
+      <button class="toggle-btn" data-mode="death">Stellar death</button>
     </div>
     
     <div class="knowdrop-divider">
       <p class="knowdrop-text" id="knowdrop-content">
-        Stars spend most of their lives fusing hydrogen into helium, then climb the periodic table as their cores contract and heat up. Carbon, oxygen, neon, silicon — each fusion stage is shorter and hotter than the last. But at iron-56, the game ends. Iron has the highest binding energy per nucleon: fusing it costs energy instead of releasing it. A massive star builds an iron core that can't burn, and when it collapses, the rebound shockwave tears the star apart. Elements heavier than iron, such as uranium and gold, are not made by fusion: they are built by neutron capture in dying stars, supernovae and neutron-star mergers, and scattered into space to seed the next generation of stars and planets.
+        Stars spend most of their lives fusing hydrogen into helium. A Sun-like star goes one step further, fusing helium into carbon and oxygen, and stops there: its core never gets hot enough to go on. Only massive stars, more than about eight times the mass of the Sun, keep climbing the curve as their cores contract and heat up: oxygen burning makes silicon, and silicon burning makes iron. Each stage is shorter and hotter than the last. At iron-56 the curve peaks: iron has about the highest binding energy per nucleon, so fusing it costs energy instead of releasing it. A massive star builds an iron core that cannot burn, and when it collapses the rebound tears the star apart. Elements heavier than iron, such as uranium and gold, are not made by fusion: they are built by neutron capture in ageing giant stars, supernovae and neutron-star mergers, and scattered into space to seed the next generation of stars and planets.
       </p>
     </div>
   </div>
@@ -383,240 +386,271 @@ canvas {
 </div>
 
 <script>
-const canvas = document.getElementById('nucCanvas');
-const ctx = canvas.getContext('2d', { alpha: false });
-const slider = document.getElementById('massSlider');
-const elementTag = document.getElementById('element-tag');
-const overlayTag = document.getElementById('overlay-tag');
-const bindingVal = document.getElementById('binding-val');
-const barrierVal = document.getElementById('barrier-val');
-const knowdropContent = document.getElementById('knowdrop-content');
-const toggleBtns = document.querySelectorAll('.toggle-btn');
+const canvas = document.getElementById("nucCanvas");
+const ctx = canvas.getContext("2d", { alpha: false });
+const slider = document.getElementById("massSlider");
+const elementTag = document.getElementById("element-tag");
+const overlayTag = document.getElementById("overlay-tag");
+const bindingVal = document.getElementById("binding-val");
+const barrierVal = document.getElementById("barrier-val");
+const knowdropContent = document.getElementById("knowdrop-content");
+const toggleBtns = document.querySelectorAll(".toggle-btn");
+const nucOut = document.getElementById("nucOut");
+const overlayEl = document.getElementById("overlay-tag");
+let reserve = 34;   /* px kept clear for the caption strip when it sits over the canvas */
+let frames = 0;
 
 const CSS = getComputedStyle(document.documentElement);
-const ACC = CSS.getPropertyValue('--acc').trim();
-const RGB = CSS.getPropertyValue('--acc-rgb').trim();
-const AMB = CSS.getPropertyValue('--amb').trim();
+const ACC = CSS.getPropertyValue("--acc").trim() || "#3A6FC8";
+const RGB = CSS.getPropertyValue("--acc-rgb").trim() || "58, 111, 200";
+const AMB = CSS.getPropertyValue("--amb").trim() || "#FAC775";
 
 const dpr = Math.min(window.devicePixelRatio || 1, 2);
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d');
 
-let w, h, cx, cy;
-let currentMass = 4;
+let w = 0, h = 0;
+let idx = 1;
+let shown = 1;        /* eased marker position, in slider steps */
 let stars = [];
-let particles = [];
 let time = 0;
 
+/* The seven nuclei the slider snaps to. binding = binding energy per nucleon, MeV (measured nuclear masses). */
 const elements = [
-  { mass: 1, symbol: 'H', name: 'Hydrogen', binding: 0, process: 'Hydrogen burning', barrier: 'Low' },
-  { mass: 4, symbol: 'He', name: 'Helium', binding: 7.1, process: 'Hydrogen burning', barrier: 'Low' },
-  { mass: 12, symbol: 'C', name: 'Carbon', binding: 7.7, process: 'Helium burning', barrier: 'Medium' },
-  { mass: 16, symbol: 'O', name: 'Oxygen', binding: 7.98, process: 'Helium burning', barrier: 'Medium' },
-  { mass: 28, symbol: 'Si', name: 'Silicon', binding: 8.45, process: 'Oxygen burning', barrier: 'High' },
-  { mass: 56, symbol: 'Fe', name: 'Iron', binding: 8.79, process: 'Silicon burning: fusion stops here', barrier: 'Wall' },
-  { mass: 238, symbol: 'U', name: 'Uranium', binding: 7.57, process: 'Neutron capture, not fusion', barrier: 'No fusion' }
+  { mass: 1, symbol: "H", name: "Hydrogen", binding: 0, process: "A lone proton: nothing bound yet", barrier: "Low" },
+  { mass: 4, symbol: "He", name: "Helium", binding: 7.074, process: "Hydrogen burning", barrier: "Low" },
+  { mass: 12, symbol: "C", name: "Carbon", binding: 7.680, process: "Helium burning", barrier: "Medium" },
+  { mass: 16, symbol: "O", name: "Oxygen", binding: 7.976, process: "Helium burning", barrier: "Medium" },
+  { mass: 28, symbol: "Si", name: "Silicon", binding: 8.448, process: "Oxygen burning", barrier: "High" },
+  { mass: 56, symbol: "Fe", name: "Iron", binding: 8.790, process: "Silicon burning: fusion stops here", barrier: "Wall" },
+  { mass: 238, symbol: "U", name: "Uranium", binding: 7.570, process: "Neutron capture, not fusion", barrier: "No fusion" }
 ];
-/* binding = binding energy per nucleon in MeV. The slider steps through these real nuclides. */
 
-function getElementData(mass) {
-  return elements.find(e => e.mass === mass) || elements[0];
+/* Background curve: other stable nuclei, binding energy per nucleon in MeV. */
+const curve = [
+  [1, 0], [2, 1.112], [3, 2.573], [4, 7.074], [6, 5.332], [7, 5.606], [9, 6.463], [11, 6.928],
+  [12, 7.680], [14, 7.476], [16, 7.976], [20, 8.032], [24, 8.261], [28, 8.448], [32, 8.493],
+  [40, 8.551], [48, 8.723], [52, 8.776], [56, 8.790], [62, 8.795], [64, 8.736], [84, 8.717],
+  [90, 8.710], [120, 8.505], [138, 8.393], [166, 8.142], [184, 8.005], [208, 7.868], [238, 7.570]
+];
+
+const A_MAX = 250;
+const Y_MAX = 10;
+const X_TICKS = [1, 4, 16, 56, 100, 238];
+const Y_TICKS = [0, 2, 4, 6, 8, 10];
+
+function plotBox() {
+  const left = 30, right = 10, top = 12;
+  const bottom = reserve + 18;            /* caption strip (if over the canvas) + x tick labels */
+  return { x0: left, x1: w - right, y0: top, y1: h - bottom };
 }
+/* x axis: square-root scale of mass number, so the light nuclei are not crushed together */
+function ax(A, b) { return b.x0 + (Math.sqrt(A) - 1) / (Math.sqrt(A_MAX) - 1) * (b.x1 - b.x0); }
+function ay(v, b) { return b.y1 - v / Y_MAX * (b.y1 - b.y0); }
 
 function resize() {
   const rect = canvas.getBoundingClientRect();
   if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
   canvas.width = Math.round(rect.width * dpr);
   canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  
   w = canvas.width / dpr;
   h = canvas.height / dpr;
-  cx = w / 2;
-  cy = h / 2;
-
+  const ov = overlayEl.getBoundingClientRect();
+  reserve = (ov.height && ov.top < rect.bottom - 1 && ov.bottom > rect.top) ? Math.ceil(rect.bottom - ov.top) : 4;
   if (stars.length === 0) initStars();
 }
 
 function initStars() {
-  stars = Array.from({ length: 120 }, () => ({
-    x: Math.random(),
-    y: Math.random(),
-    r: Math.random() * 1.2 + 0.3,
-    tw: Math.random() * Math.PI * 2,
-    sp: 0.6 + Math.random() * 1.8,
-    h: Math.random() < 0.22
+  stars = Array.from({ length: 70 }, () => ({
+    x: Math.random(), y: Math.random(), r: Math.random() * 1.0 + 0.3,
+    tw: Math.random() * Math.PI * 2, sp: 0.6 + Math.random() * 1.8
   }));
 }
 
-function spawnParticles(n) {
-  const angle = Math.random() * Math.PI * 2;
-  const speed = 1.5 + Math.random() * 2.5;
-  for (let i = 0; i < n; i++) {
-    particles.push({
-      x: cx,
-      y: cy,
-      vx: Math.cos(angle + (Math.random() - 0.5) * 0.5) * speed,
-      vy: Math.sin(angle + (Math.random() - 0.5) * 0.5) * speed,
-      life: 1,
-      decay: 0.008 + Math.random() * 0.012,
-      size: 1.5 + Math.random() * 2
-    });
-  }
+function stepText(i) {
+  if (i === 0) return ["Start: one proton", "no binding energy yet"];
+  const prev = elements[i === 6 ? 5 : i - 1];
+  const cur = elements[i];
+  const d = cur.binding - prev.binding;
+  const from = (i === 6 ? "Past " : "From ") + prev.symbol + "-" + prev.mass + ": ";
+  const sign = d >= 0 ? "+" : "−";
+  return [from + sign + Math.abs(d).toFixed(2) + " MeV/nucleon",
+          d >= 0 ? "more tightly bound: energy released" : "less tightly bound: fusion costs energy"];
 }
 
-slider.addEventListener('input', (e) => {
-  const idx = parseInt(e.target.value);
-  const pct = idx / 6;
-  slider.style.setProperty('--fill', pct * 100 + '%');
+function update() {
+  idx = Math.max(0, Math.min(6, parseInt(slider.value, 10) || 0));
+  slider.style.setProperty("--fill", (idx / 6) * 100 + "%");
   const data = elements[idx];
-  currentMass = data.mass;
-  elementTag.textContent = `${data.name}-${data.mass}`;
+  elementTag.textContent = data.name + "-" + data.mass;
+  nucOut.textContent = data.symbol + "-" + data.mass;
   overlayTag.textContent = data.process;
   bindingVal.textContent = data.binding.toFixed(1);
   barrierVal.textContent = data.barrier;
+}
 
-  if (currentMass > 4 && Math.random() < 0.3) {
-    spawnParticles(3);
-  }
-});
-
-slider.dispatchEvent(new Event('input'));
+slider.addEventListener("input", update);
+update();
+shown = idx;
 
 toggleBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    toggleBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    
+  btn.addEventListener("click", () => {
+    toggleBtns.forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
     const mode = btn.dataset.mode;
-    if (mode === 'fusion') {
-      knowdropContent.textContent = "Stars spend most of their lives fusing hydrogen into helium, then climb the periodic table as their cores contract and heat up. Carbon, oxygen, neon, silicon — each fusion stage is shorter and hotter than the last. But at iron-56, the game ends. Iron has the highest binding energy per nucleon: fusing it costs energy instead of releasing it. A massive star builds an iron core that can't burn, and when it collapses, the rebound shockwave tears the star apart. Elements heavier than iron, such as uranium and gold, are not made by fusion: they are built by neutron capture in dying stars, supernovae and neutron-star mergers, and scattered into space to seed the next generation of stars and planets.";
+    if (mode === "fusion") {
+      knowdropContent.textContent = "Stars spend most of their lives fusing hydrogen into helium. A Sun-like star goes one step further, fusing helium into carbon and oxygen, and stops there: its core never gets hot enough to go on. Only massive stars, more than about eight times the mass of the Sun, keep climbing the curve as their cores contract and heat up: oxygen burning makes silicon, and silicon burning makes iron. Each stage is shorter and hotter than the last. At iron-56 the curve peaks: iron has about the highest binding energy per nucleon, so fusing it costs energy instead of releasing it. A massive star builds an iron core that cannot burn, and when it collapses the rebound tears the star apart. Elements heavier than iron, such as uranium and gold, are not made by fusion: they are built by neutron capture in ageing giant stars, supernovae and neutron-star mergers, and scattered into space to seed the next generation of stars and planets.";
     } else {
-      knowdropContent.textContent = "When a massive star exhausts its fuel, its iron core collapses in under a second. The rebound generates a shockwave and a flood of neutrons that slam into existing nuclei, building elements heavier than iron through rapid neutron capture. This r-process happens so fast that unstable isotopes don't have time to decay before capturing another neutron. Supernovae eject these freshly minted heavy elements — along with carbon, oxygen, and everything else the star built — into interstellar space. That gas cloud cools, collapses, and forms new stars and planets. Earth is made from the ashes of dead stars. Many heavy elements were spread by supernovae and other stellar deaths, and the very heaviest, such as gold, are made by rapid neutron capture in rare events like neutron-star mergers.";
+      knowdropContent.textContent = "When a massive star runs out of fuel, its iron core collapses in under a second. The rebound drives a shockwave that blasts the star apart as a supernova. Heavy elements are built by neutron capture: slowly, over thousands of years, in ageing giant stars, and very rapidly in extreme events such as neutron-star mergers, where nuclei grab neutrons faster than they can decay. Supernovae and stellar winds throw these elements, along with the carbon, oxygen and everything else the star built, into space. That gas cloud cools, collapses and forms new stars and planets. Earth is made from the ashes of dead stars.";
     }
   });
 });
 
 function draw() {
   time += 0.016;
-  
-  ctx.fillStyle = '#000';
+  frames++;
+  if (!w || !h || frames % 30 === 0) {
+    const rc = canvas.getBoundingClientRect();
+    if (rc.width && (!w || Math.round(rc.width * dpr) !== canvas.width || Math.round(rc.height * dpr) !== canvas.height || frames < 120)) resize();
+  }
+  if (!w || !h) { requestAnimationFrame(draw); return; }
+  shown += (idx - shown) * 0.12;
+
+  ctx.fillStyle = "#000";
   ctx.fillRect(0, 0, w, h);
 
-  const data = getElementData(currentMass);
-  const coreTemp = Math.min(currentMass / 100, 1);
-
-  // Stars
   stars.forEach(st => {
-    const twinkle = 0.5 + 0.5 * Math.sin(time * st.sp + st.tw);
-    ctx.fillStyle = st.h ? 'rgba(' + RGB + ',' + twinkle * 0.6 + ')' : 'rgba(237,237,232,' + twinkle * 0.3 + ')';
+    const tw = 0.5 + 0.5 * Math.sin(time * st.sp + st.tw);
+    ctx.fillStyle = "rgba(237,237,232," + (tw * 0.18) + ")";
     ctx.beginPath();
     ctx.arc(st.x * w, st.y * h, st.r, 0, Math.PI * 2);
     ctx.fill();
   });
 
-  // Central nucleus
-  const coreR = 18 + Math.min(currentMass, 100) * 0.18;
-  const coreGlow = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreR * 3);
-  coreGlow.addColorStop(0, 'rgba(' + RGB + ',0.7)');
-  coreGlow.addColorStop(0.4, 'rgba(' + RGB + ',0.25)');
-  coreGlow.addColorStop(1, 'rgba(' + RGB + ',0)');
-  
+  const b = plotBox();
+  const fe = elements[5];
+  const xFe = ax(fe.mass, b);
+
+  /* regions: fusion pays left of the iron peak, costs to the right */
+  ctx.fillStyle = "rgba(" + RGB + ",0.07)";
+  ctx.fillRect(b.x0, b.y0, xFe - b.x0, b.y1 - b.y0);
+  ctx.fillStyle = "rgba(250,199,117,0.05)";
+  ctx.fillRect(xFe, b.y0, b.x1 - xFe, b.y1 - b.y0);
+
+  /* gridlines and axes */
+  ctx.font = "10px JetBrains Mono, monospace";
+  ctx.textBaseline = "middle";
+  Y_TICKS.forEach(v => {
+    const y = ay(v, b);
+    ctx.strokeStyle = "rgba(237,237,232,0.07)";
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(b.x0, y); ctx.lineTo(b.x1, y); ctx.stroke();
+    ctx.fillStyle = "#8C9389";
+    ctx.textAlign = "right";
+    ctx.fillText(String(v), b.x0 - 5, y);
+  });
+  ctx.strokeStyle = "rgba(237,237,232,0.35)";
+  ctx.beginPath(); ctx.moveTo(b.x0, b.y0); ctx.lineTo(b.x0, b.y1); ctx.lineTo(b.x1, b.y1); ctx.stroke();
+  ctx.textAlign = "center";
+  ctx.textBaseline = "top";
+  X_TICKS.forEach(A => {
+    const x = ax(A, b);
+    ctx.strokeStyle = "rgba(237,237,232,0.35)";
+    ctx.beginPath(); ctx.moveTo(x, b.y1); ctx.lineTo(x, b.y1 + 4); ctx.stroke();
+    ctx.fillStyle = "#8C9389";
+    ctx.fillText(String(A), x, b.y1 + 6);
+  });
   ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.fillStyle = coreGlow;
-  ctx.beginPath();
-  ctx.arc(cx, cy, coreR * 3, 0, Math.PI * 2);
-  ctx.fill();
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  ctx.fillStyle = "#8C9389";
+  ctx.fillText("MeV per nucleon", b.x0 + 4, b.y0 + 1);
   ctx.restore();
 
-  ctx.fillStyle = currentMass >= 56 ? '#888' : ACC;
+  /* iron peak line */
+  ctx.save();
+  ctx.setLineDash([4, 4]);
+  ctx.strokeStyle = "rgba(250,199,117,0.45)";
+  ctx.beginPath(); ctx.moveTo(xFe, b.y0); ctx.lineTo(xFe, b.y1); ctx.stroke();
+  ctx.restore();
+
+  /* the curve */
+  ctx.save();
+  ctx.strokeStyle = "rgba(" + RGB + ",0.85)";
+  ctx.lineWidth = 2;
+  ctx.lineJoin = "round";
+  ctx.shadowColor = "rgba(" + RGB + ",0.8)";
+  ctx.shadowBlur = 8;
   ctx.beginPath();
-  ctx.arc(cx, cy, coreR, 0, Math.PI * 2);
-  ctx.fill();
+  curve.forEach(([A, v], i) => { const x = ax(A, b), y = ay(v, b); if (i) ctx.lineTo(x, y); else ctx.moveTo(x, y); });
+  ctx.stroke();
+  ctx.restore();
 
-  // Energy shells (orbiting particles during fusion)
-  if (currentMass < 56) {
-    for (let i = 0; i < 3; i++) {
-      const orbitR = coreR + 24 + i * 14;
-      const angle = time * (0.8 - i * 0.15) + i * Math.PI * 0.66;
-      const px = cx + Math.cos(angle) * orbitR;
-      const py = cy + Math.sin(angle) * orbitR;
-      
-      ctx.save();
-      ctx.globalCompositeOperation = 'lighter';
-      ctx.fillStyle = 'rgba(' + RGB + ',0.8)';
-      ctx.beginPath();
-      ctx.arc(px, py, 3, 0, Math.PI * 2);
-      ctx.fill();
-      
-      const particleGlow = ctx.createRadialGradient(px, py, 0, px, py, 10);
-      particleGlow.addColorStop(0, 'rgba(' + RGB + ',0.4)');
-      particleGlow.addColorStop(1, 'rgba(' + RGB + ',0)');
-      ctx.fillStyle = particleGlow;
-      ctx.beginPath();
-      ctx.arc(px, py, 10, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-    }
-  }
-
-  // Fusion particles
-  particles = particles.filter(p => {
-    p.x += p.vx;
-    p.y += p.vy;
-    p.life -= p.decay;
-    
-    if (p.life <= 0) return false;
-    
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.fillStyle = 'rgba(' + RGB + ',' + p.life * 0.7 + ')';
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-    
-    return true;
+  /* the seven stops */
+  elements.forEach((e, i) => {
+    const x = ax(e.mass, b), y = ay(e.binding, b);
+    ctx.fillStyle = i === idx ? AMB : "rgba(237,237,232,0.55)";
+    ctx.beginPath(); ctx.arc(x, y, 2.5, 0, Math.PI * 2); ctx.fill();
   });
 
-  // Element symbol
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.fillStyle = currentMass >= 56 ? '#666' : 'rgba(255,255,255,0.9)';
-  ctx.font = '600 ' + (coreR * 0.75) + 'px Geist';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(data.symbol, cx, cy);
-  ctx.restore();
+  /* step arrow from the previous stop to this one */
+  if (idx > 0) {
+    const p = elements[idx === 6 ? 5 : idx - 1], c = elements[idx];
+    const px = ax(p.mass, b), py = ay(p.binding, b), cx2 = ax(c.mass, b), cy2 = ay(c.binding, b);
+    ctx.save();
+    ctx.strokeStyle = c.binding >= p.binding ? "rgba(237,237,232,0.6)" : "rgba(250,199,117,0.8)";
+    ctx.setLineDash([3, 3]);
+    ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(cx2, cy2); ctx.stroke();
+    ctx.restore();
+  }
 
-  // Bloom
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
+  /* marker, eased between stops along the straight line joining them */
+  const lo = Math.floor(shown), hi = Math.min(6, lo + 1), f = shown - lo;
+  const A0 = elements[lo], A1 = elements[hi];
+  const mx = ax(A0.mass, b) + (ax(A1.mass, b) - ax(A0.mass, b)) * f;
+  const my = ay(A0.binding, b) + (ay(A1.binding, b) - ay(A0.binding, b)) * f;
+  const pulse = 0.5 + 0.5 * Math.sin(time * 3);
+  const g = ctx.createRadialGradient(mx, my, 0, mx, my, 16 + pulse * 6);
+  g.addColorStop(0, "rgba(250,199,117,0.55)");
+  g.addColorStop(1, "rgba(250,199,117,0)");
+  ctx.fillStyle = g;
+  ctx.beginPath(); ctx.arc(mx, my, 16 + pulse * 6, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = AMB;
+  ctx.beginPath(); ctx.arc(mx, my, 5, 0, Math.PI * 2); ctx.fill();
 
-  // Vignette
-  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
+  /* marker label */
+  const cur = elements[idx];
+  const lab = cur.symbol + "-" + cur.mass + "  " + cur.binding.toFixed(2);
+  ctx.font = "600 11px JetBrains Mono, monospace";
+  const lw = ctx.measureText(lab).width;
+  let lx = ax(cur.mass, b) - lw / 2, ly = ay(cur.binding, b) - 22;
+  lx = Math.max(b.x0 + 2, Math.min(b.x1 - lw - 2, lx));
+  if (ly < b.y0 + 14) ly = ay(cur.binding, b) + 10;
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  ctx.fillStyle = "rgba(0,0,0,0.6)";
+  ctx.fillRect(lx - 3, ly - 2, lw + 6, 15);
+  ctx.fillStyle = AMB;
+  ctx.fillText(lab, lx, ly);
+
+  /* step readout, lower right (below the curve) */
+  const t = stepText(idx);
+  ctx.font = "10.5px JetBrains Mono, monospace";
+  ctx.textAlign = "right";
+  ctx.textBaseline = "bottom";
+  ctx.fillStyle = "#EDEDE8";
+  ctx.fillText(t[0], b.x1 - 4, b.y1 - 20);
+  ctx.fillStyle = idx === 6 ? AMB : "#8C9389";
+  ctx.fillText(t[1], b.x1 - 4, b.y1 - 6);
 
   requestAnimationFrame(draw);
 }
 
-window.addEventListener('resize', resize);
+window.addEventListener("resize", resize);
 resize();
 requestAnimationFrame(draw);
 </script>
+
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'nucleosynthesis-in-stars'},'*');}catch(e){}}
 if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

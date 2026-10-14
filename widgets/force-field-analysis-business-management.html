@@ -4,633 +4,474 @@ body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body
 @media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
-
-:root {
-  --bg: #0B0D0C;
-  --bg2: #12160F;
-  --acc: #E85D97;
-  --ag: rgba(232, 93, 151, .7);
-  --ag1: rgba(232, 93, 151, .12);
-  --ag2: rgba(232, 93, 151, .45);
-  --amb: #FAC775;
-  --ink: #EDEDE8;
-  --ink-dim: #8C9389;
-  --line: #262B26;
+:root{
+  --bg:#0B0D0C;
+  --bg2:#12160F;
+  --acc:#E85D97;
+  --acc-rgb:232, 93, 151;
+  --ag:rgba(var(--acc-rgb),.7);
+  --ag1:rgba(var(--acc-rgb),.12);
+  --ag2:rgba(var(--acc-rgb),.45);
+  --amb:#FAC775;
+  --amb-rgb:250,199,117;
+  --ink:#EDEDE8;
+  --ink-rgb:237,237,232;
+  --ink-dim:#8C9389;
+  --dim-rgb:140,147,137;
+  --line:#262B26;
 }
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
-}
-
-body {
-  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
-  font-family: 'Geist', sans-serif;
-  color: var(--ink);
-  min-height: 100vh;
-  padding: 40px 16px 72px;
-}
-
-.container {
-  max-width: 720px;
-  margin: 0 auto;
-}
-
-h1 {
-  font-size: clamp(30px, 8vw, 52px);
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1.02;
-  margin-bottom: 16px;
-}
-
-.intro {
-  font-size: 15.5px;
-  font-weight: 400;
-  color: var(--ink-dim);
-  max-width: 58ch;
-  line-height: 1.55;
-  margin-bottom: 32px;
-}
-
-.card {
-  background: linear-gradient(180deg, #12160F, #0d100b);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
-  margin-bottom: 18px;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
-}
-
-.card-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  color: white;
-}
-
-.live-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--acc);
-}
-
-.card-hint {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--ink-dim);
-  margin-bottom: 16px;
-}
-
-.canvas-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16/9;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
-  box-shadow: inset 0 0 0 1px var(--ag1);
-  margin-bottom: 16px;
-}
-
-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.canvas-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(4px);
-  padding: 9px 16px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  text-transform: uppercase;
-  color: var(--acc);
-  text-align: center;
-}
-
-.slider-row {
-  margin-bottom: 12px;
-}
-
-.slider-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 8px;
-}
-
-.ffa-slider {
-  width: 100%;
-  height: 4px;
-  border-radius: 3px;
-  background: linear-gradient(90deg, var(--acc) var(--fill, 50%), #23291f var(--fill, 50%));
-  -webkit-appearance: none;
-  appearance: none;
-  outline: none;
-  cursor: pointer;
-}
-
-.ffa-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow .15s;
-}
-
-.ffa-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0B0D0C;
-  border: 2px solid var(--acc);
-  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
-  cursor: pointer;
-  transition: box-shadow .15s;
-}
-
-.ffa-slider:hover::-webkit-slider-thumb {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.ffa-slider:hover::-moz-range-thumb {
-  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
-}
-
-.tick-labels {
-  display: flex;
-  justify-content: space-between;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--ink-dim);
-  margin-top: 6px;
-}
-
-.stat-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-}
-
-.stat {
-  text-align: center;
-}
-
-.stat-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  margin-bottom: 6px;
-}
-
-.stat-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 24px;
-  font-weight: 500;
-}
-
-.toggle-section {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.toggle-btn {
-  flex: 1;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14.5px;
-  padding: 12px;
-  border-radius: 11px;
-  border: 1px solid var(--line);
-  background: #12160F;
-  color: var(--ink-dim);
-  cursor: pointer;
-  transition: all .2s;
-}
-
-.toggle-btn.active {
-  background: rgba(232,93,151,.1);
-  border-color: var(--acc);
-  color: var(--acc);
-  box-shadow: 0 0 22px rgba(232,93,151,.18);
-}
-
-.knowdrop-divider {
-  border-top: 1px solid var(--line);
-  padding-top: 16px;
-}
-
-.knowdrop-text {
-  font-size: 14.5px;
-  font-weight: 400;
-  line-height: 1.65;
-  color: var(--ink);
-}
-
-.know-this {
-  border-left: 3px solid var(--acc);
-  padding: 16px 18px;
-  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
-  border-radius: 0 12px 12px 0;
-  margin-bottom: 34px;
-}
-
-.know-this-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--acc);
-  margin-bottom: 10px;
-}
-
-.know-this-body {
-  font-size: 17.4px;
-  font-weight: 400;
-  line-height: 1.55;
-  color: var(--ink);
-}
-
-.footer {
-  margin-top: 34px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.pulse-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--acc);
-  box-shadow: 0 0 10px var(--acc);
-  animation: ffaPulse 2.4s ease-in-out infinite;
-}
-
-@keyframes ffaPulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: .35; transform: scale(.6); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C 55%);font-family:'Geist',sans-serif;color:var(--ink);min-height:100vh;padding:40px 16px 0}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.ffa{max-width:720px;margin:0 auto}
+.ffa h1{font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin:0 0 14px}
+.ffa-intro{font-size:15.5px;font-weight:400;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin:0 0 28px}
+.ffa-card{background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);margin-bottom:18px}
+.ffa-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+.ffa-label{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;color:#fff}
+.ffa-live{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--acc);text-align:right}
+.ffa-hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin-bottom:14px;line-height:1.5}
+.ffa-wrap{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1);margin-bottom:16px}
+.ffa-wrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.ffa-over{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:14px;text-transform:uppercase;color:var(--acc);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ffa-weights{display:grid;grid-template-columns:1fr;gap:16px}
+@media(min-width:560px){.ffa-weights{grid-template-columns:1fr 1fr;gap:20px}}
+.ffa-gtitle{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.04em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+.ffa-gtitle.d{color:var(--acc)}
+.ffa-gtitle.r{color:var(--amb)}
+.ffa-s{margin-bottom:12px}
+.ffa-row{display:flex;justify-content:space-between;align-items:baseline;font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:6px}
+.ffa-row b{color:var(--ink);font-weight:500;font-size:12px}
+.ffa-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;outline:none;margin:0;background:linear-gradient(90deg,var(--acc) var(--fill,0%),#23291f var(--fill,0%))}
+.ffa-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.ffa-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.ffa-slider:hover::-webkit-slider-thumb{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.ffa-slider:hover::-moz-range-thumb{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.ffa-ticks{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink-dim);margin-top:5px;padding:0 6px}
+.ffa-stats{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px;padding-top:16px;border-top:1px solid var(--line)}
+.ffa-stat{text-align:center}
+.ffa-stat-l{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:6px}
+.ffa-stat-v{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500}
+.ffa-rank{margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}
+.ffa-rtitle{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-dim);margin-bottom:10px}
+.ffa-rank ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}
+.ffa-rank li{display:grid;grid-template-columns:20px 1fr 16px auto 22px;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--ink)}
+.ffa-rk{color:var(--ink-dim)}
+.ffa-nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ffa-tg{font-size:10.5px;font-weight:500}
+.ffa-tg.d{color:var(--acc)}
+.ffa-tg.r{color:var(--amb)}
+.ffa-bar{display:flex;gap:3px}
+.ffa-bar i{display:block;width:9px;height:8px;border-radius:2px;background:var(--line)}
+.ffa-bar i.on.d{background:var(--acc);box-shadow:0 0 6px var(--ag)}
+.ffa-bar i.on.r{background:var(--amb)}
+.ffa-rank li b{text-align:right;font-weight:500}
+.ffa-rank li b.d{color:var(--acc)}
+.ffa-rank li b.r{color:var(--amb)}
+.ffa-toggles{display:flex;gap:10px;margin-bottom:14px}
+.ffa-pill{flex:1;font-family:'JetBrains Mono',monospace;font-size:12.5px;padding:12px 8px;border-radius:999px;border:1px solid var(--line);background:#12160F;color:var(--ink-dim);cursor:pointer;transition:all .2s;line-height:1.2}
+.ffa-pill[aria-pressed="true"]{background:rgba(var(--acc-rgb),.1);border-color:var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.ffa-eval{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--ink);line-height:1.5}
+.ffa-evdesc{color:var(--ink-dim);margin-bottom:8px}
+.ffa-tbl{width:100%;border-collapse:collapse;margin-bottom:8px}
+.ffa-tbl th{font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);font-weight:400;text-align:right;padding:4px 6px;border-bottom:1px solid var(--line)}
+.ffa-tbl th:first-child,.ffa-tbl td:first-child{text-align:left;padding-left:0}
+.ffa-tbl td{text-align:right;padding:5px 6px;border-bottom:1px solid var(--line)}
+.ffa-tbl td.after{color:var(--acc)}
+.ffa-tbl td.chg{color:var(--amb)}
+.ffa-evverdict{color:var(--ink)}
+.ffa-divider{border-top:1px solid var(--line);padding-top:16px;margin-top:14px}
+.ffa-drop{font-size:14.5px;font-weight:400;line-height:1.65;color:var(--ink);margin:0}
+.ffa-know{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));border-radius:0 12px 12px 0;margin-bottom:0;padding-bottom:16px}
+.ffa-ktag{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.ffa-kdot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:ffaPulse 2.4s ease-in-out infinite}
+.ffa-ktxt{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.15em;color:var(--acc)}
+.ffa-kbody{font-size:17.4px;font-weight:400;line-height:1.55;color:var(--ink)}
+@keyframes ffaPulse{0%,100%{opacity:1}50%{opacity:.45}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
 
-<div class="container">
-  <h2 class="sr-only">Force Field Analysis Interactive Widget</h2>
-  
-  <h1>Weakening restraints beats <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">pushing harder</span></h1>
-  
-  <p class="intro">Change doesn't fail because drivers are weak — it fails because restraints lock the system in place. Most leaders amplify urgency when they should be dismantling barriers. Drag the slider to shift the balance between driving and restraining forces, then watch how equilibrium moves.</p>
+<div class="ffa">
+  <h2 class="sr-only">Force Field Analysis interactive: weight eight driving and restraining forces, rank them, implement a response and evaluate it before and after</h2>
 
-  <div class="card">
-    <div class="card-header">
-      <span class="card-label">Force Field Canvas</span>
-      <span class="live-tag" id="liveTag">Equilibrium: Current State</span>
+  <h1>Weakening one restraint beats adding one <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">driver</span></h1>
+
+  <p class="ffa-intro">Lewin pictured a change as a tug-of-war frozen in place: driving forces push toward the new state, restraining forces hold the status quo, and the equilibrium line sits wherever the weighted totals balance. Give each of the eight forces a weight from 1 to 5 and watch the arrows and the equilibrium line; then implement a response and compare the field before and after.</p>
+
+  <div class="ffa-card">
+    <div class="ffa-head">
+      <span class="ffa-label">Force field</span>
+      <span class="ffa-live" id="liveTag">Restraints lead 15 to 12</span>
     </div>
-    <div class="card-hint">Balance drives change position — restraints anchor status quo</div>
-    
-    <div class="canvas-wrapper">
-      <canvas id="canvas"></canvas>
-      <div class="canvas-overlay" id="overlayTag">Equilibrium: Current State</div>
+    <div class="ffa-hint">Weight each force from 1 to 5. Watch the arrow lengths and where the equilibrium line settles.</div>
+
+    <div class="ffa-wrap">
+      <canvas id="ffaCanvas" aria-label="Force field diagram: driving arrows push the equilibrium line from the left, restraining arrows push from the right"></canvas>
+      <div class="ffa-over" id="overTag">Restraints lead 15 to 12</div>
     </div>
 
-    <div class="slider-row">
-      <div class="slider-label">Force Balance (← Restraint Dominant | Driver Dominant →)</div>
-      <input type="range" min="0" max="100" value="50" class="ffa-slider" id="forceSlider">
-      <div class="tick-labels">
-        <span>Status Quo Lock</span>
-        <span>Neutral</span>
-        <span>Change Momentum</span>
+    <div class="ffa-weights">
+      <div class="ffa-group">
+        <div class="ffa-gtitle d">Driving forces · push toward change</div>
+        <div class="ffa-s">
+          <div class="ffa-row"><span>Competition</span><b id="v-d0">4</b></div>
+          <input type="range" class="ffa-slider" data-k="d0" aria-label="Competition weight" min="1" max="5" step="1" value="4">
+          <div class="ffa-ticks"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+        </div>
+        <div class="ffa-s">
+          <div class="ffa-row"><span>Old technology</span><b id="v-d1">3</b></div>
+          <input type="range" class="ffa-slider" data-k="d1" aria-label="Old technology weight" min="1" max="5" step="1" value="3">
+          <div class="ffa-ticks"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+        </div>
+        <div class="ffa-s">
+          <div class="ffa-row"><span>Regulation</span><b id="v-d2">3</b></div>
+          <input type="range" class="ffa-slider" data-k="d2" aria-label="Regulation weight" min="1" max="5" step="1" value="3">
+          <div class="ffa-ticks"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+        </div>
+        <div class="ffa-s">
+          <div class="ffa-row"><span>Efficiency gain</span><b id="v-d3">2</b></div>
+          <input type="range" class="ffa-slider" data-k="d3" aria-label="Efficiency gain weight" min="1" max="5" step="1" value="2">
+          <div class="ffa-ticks"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+        </div>
+      </div>
+      <div class="ffa-group">
+        <div class="ffa-gtitle r">Restraining forces · hold the status quo</div>
+        <div class="ffa-s">
+          <div class="ffa-row"><span>Skill gaps</span><b id="v-r0">5</b></div>
+          <input type="range" class="ffa-slider" data-k="r0" aria-label="Skill gaps weight" min="1" max="5" step="1" value="5">
+          <div class="ffa-ticks"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+        </div>
+        <div class="ffa-s">
+          <div class="ffa-row"><span>Financial cost</span><b id="v-r1">4</b></div>
+          <input type="range" class="ffa-slider" data-k="r1" aria-label="Financial cost weight" min="1" max="5" step="1" value="4">
+          <div class="ffa-ticks"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+        </div>
+        <div class="ffa-s">
+          <div class="ffa-row"><span>Cultural norms</span><b id="v-r2">3</b></div>
+          <input type="range" class="ffa-slider" data-k="r2" aria-label="Cultural norms weight" min="1" max="5" step="1" value="3">
+          <div class="ffa-ticks"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+        </div>
+        <div class="ffa-s">
+          <div class="ffa-row"><span>Job-loss fear</span><b id="v-r3">3</b></div>
+          <input type="range" class="ffa-slider" data-k="r3" aria-label="Job-loss fear weight" min="1" max="5" step="1" value="3">
+          <div class="ffa-ticks"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+        </div>
       </div>
     </div>
 
-    <div class="stat-row">
-      <div class="stat">
-        <div class="stat-label">Net Force</div>
-        <div class="stat-value" style="color:var(--acc)" id="netForce">0 N</div>
+    <div class="ffa-stats">
+      <div class="ffa-stat">
+        <div class="ffa-stat-l">Driving total</div>
+        <div class="ffa-stat-v" style="color:var(--acc)" id="statD">12</div>
       </div>
-      <div class="stat">
-        <div class="stat-label">Equilibrium Shift</div>
-        <div class="stat-value" style="color:var(--amb)" id="eqShift">0%</div>
+      <div class="ffa-stat">
+        <div class="ffa-stat-l">Restraining total</div>
+        <div class="ffa-stat-v" style="color:var(--amb)" id="statR">15</div>
       </div>
     </div>
-  </div>
 
-  <div class="card">
-    <div class="toggle-section">
-      <button class="toggle-btn active" id="btnDrivers">Amplify Drivers</button>
-      <button class="toggle-btn" id="btnRestraints">Weaken Restraints</button>
-    </div>
-    <div class="knowdrop-divider">
-      <p class="knowdrop-text" id="knowdropText">Amplifying drivers — technological obsolescence, competitive pressure, regulatory deadlines — creates urgency but often triggers defensive reactions. When you push harder for change without addressing barriers, restraining forces strengthen in response. Employees dig in when they lack skills for new systems, finance teams block unfunded initiatives, cultural norms reassert themselves. The equilibrium barely shifts because every increase in driving force meets equal and opposite resistance. Change fatigue sets in, momentum stalls, and the organisation returns to baseline despite heroic effort.</p>
+    <div class="ffa-rank">
+      <div class="ffa-rtitle">Ranking by weight · D driving, R restraining</div>
+      <ol id="rankList" aria-live="polite"></ol>
     </div>
   </div>
 
-  <div class="know-this">
-    <div class="know-this-tag">Know This</div>
-    <div class="know-this-body">Strategic change management succeeds by <span style="color:var(--acc)">weakening specific restraints</span> through training, communication, or phased implementation rather than only intensifying the <span style="color:var(--acc)">drivers</span> pushing for change.</div>
+  <div class="ffa-card">
+    <div class="ffa-rtitle">Implement a response</div>
+    <div class="ffa-toggles" role="group" aria-label="Response to implement">
+      <button class="ffa-pill" data-resp="none" aria-pressed="true">No response</button>
+      <button class="ffa-pill" data-resp="train" aria-pressed="false">Train staff</button>
+      <button class="ffa-pill" data-resp="push" aria-pressed="false">Push harder</button>
+    </div>
+    <div class="ffa-eval" id="evalPanel" aria-live="polite"></div>
+    <div class="ffa-divider">
+      <p class="ffa-drop" id="dropText"></p>
+    </div>
   </div>
 
-  <div class="footer">
-    <div class="pulse-dot"></div>
+  <div class="ffa-know">
+    <div class="ffa-ktag"><span class="ffa-kdot"></span><span class="ffa-ktxt">Know This</span></div>
+    <div class="ffa-kbody">In a Force Field Analysis each force gets a <span style="color:var(--acc)">weight</span>, the forces are <span style="color:var(--acc)">ranked</span>, and a response aimed at one specific force is then <span style="color:var(--acc)">evaluated</span> against the position before it.</div>
   </div>
 </div>
 
 <script>
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d', { alpha: false });
-const liveTag = document.getElementById('liveTag');
-const overlayTag = document.getElementById('overlayTag');
-const forceSlider = document.getElementById('forceSlider');
-const netForce = document.getElementById('netForce');
-const eqShift = document.getElementById('eqShift');
-const btnDrivers = document.getElementById('btnDrivers');
-const btnRestraints = document.getElementById('btnRestraints');
-const knowdropText = document.getElementById('knowdropText');
+(function(){
+  const canvas=document.getElementById("ffaCanvas");
+  const wrap=canvas.parentElement;
+  const ctx=canvas.getContext("2d");
+  const overTag=document.getElementById("overTag");
+  const liveTag=document.getElementById("liveTag");
+  const statD=document.getElementById("statD");
+  const statR=document.getElementById("statR");
+  const rankList=document.getElementById("rankList");
+  const evalPanel=document.getElementById("evalPanel");
+  const dropText=document.getElementById("dropText");
 
-const dpr = Math.min(window.devicePixelRatio || 1, 2);
-const buf = document.createElement('canvas');
-const bctx = buf.getContext('2d');
+  const CSS=getComputedStyle(document.documentElement);
+  const ACC=CSS.getPropertyValue("--acc").trim();
+  const RGB=CSS.getPropertyValue("--acc-rgb").trim();
+  const AMB=CSS.getPropertyValue("--amb").trim();
+  const AMBRGB=CSS.getPropertyValue("--amb-rgb").trim();
+  const INK=CSS.getPropertyValue("--ink").trim();
+  const INKRGB=CSS.getPropertyValue("--ink-rgb").trim();
+  const DIMRGB=CSS.getPropertyValue("--dim-rgb").trim();
+  const reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-let balance = 50;
-let eqPosition = 0;
-let time = 0;
-let animFrame;
+  const dpr=Math.min(window.devicePixelRatio||1,2);
+  const buf=document.createElement("canvas");
+  const bctx=buf.getContext("2d");
 
-const driverTexts = [
-  'Tech Obsolescence',
-  'Competitive Pressure',
-  'Regulatory Deadline',
-  'Efficiency Gain'
-];
+  const FORCES=[
+    {k:"d0",side:"D",name:"Competition",w:4},
+    {k:"d1",side:"D",name:"Old technology",w:3},
+    {k:"d2",side:"D",name:"Regulation",w:3},
+    {k:"d3",side:"D",name:"Efficiency gain",w:2},
+    {k:"r0",side:"R",name:"Skill gaps",w:5},
+    {k:"r1",side:"R",name:"Financial cost",w:4},
+    {k:"r2",side:"R",name:"Cultural norms",w:3},
+    {k:"r3",side:"R",name:"Job-loss fear",w:3}
+  ];
+  FORCES.forEach(f=>{f.disp=f.w;});
+  const byKey={};
+  FORCES.forEach(f=>{byKey[f.k]=f;});
 
-const restraintTexts = [
-  'Skill Gaps',
-  'Financial Cost',
-  'Cultural Norms',
-  'Fear of Job Loss'
-];
+  let resp="none";
+  let before=null;
 
-function resize() {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  buf.width = canvas.width;
-  buf.height = canvas.height;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
+  const DROP={
+    none:`Lewin treats the current state as an equilibrium, not a resting place: it is where the pull toward change exactly matches the pull toward the status quo. The first two principles describe the field itself. Weighting gives each force a score, which is why the arrows in this picture are different lengths rather than all the same. Ranking sorts those scores so the biggest lever is obvious before any money is spent. Only then does a manager implement a response, and the choice is not just about size: a response aimed at the strongest restraint usually costs less and causes less strain than adding more pressure for change.`,
+    train:`Training is a response aimed at a single restraining force. Staff who cannot yet use the new system hold the line back, and a training program does not add any urgency; it simply shrinks that one arrow. Because the restraining total falls, the equilibrium moves toward change without anyone pushing harder, and the total tension in the field (driving plus restraining) falls with it. Evaluating the response means reading the before and after totals in the table, not just feeling that it went well: did the net shift, and by how much? If the net is still negative, the next move is the next-ranked restraint, not a louder case for change.`,
+    push:`Pushing harder means raising a driving force, here strengthening the efficiency case by three points (weights cap at 5). At the starting weights the driving total climbs by the same three points that training removes, so at first glance the two responses look equivalent. Lewin argued they are not: adding pressure tends to stiffen resistance, modelled here as the Job-loss fear restraint rising by one point, so the net gain is smaller and the tension in the field (driving plus restraining) goes up. The organisation is now straining harder to stand in almost the same place. Evaluate it the same way as any response: compare the totals before and after, and ask whether the extra strain was worth the shift.`
+  };
 
-function updateStats() {
-  const netF = ((balance - 50) * 2).toFixed(0);
-  netForce.textContent = netF + ' N';
-  
-  const shift = ((balance - 50) * 2).toFixed(0);
-  eqShift.textContent = shift + '%';
-  
-  let state;
-  if (balance < 35) state = 'Restraint Dominant';
-  else if (balance > 65) state = 'Change Accelerating';
-  else state = 'Equilibrium: Balanced';
-  
-  liveTag.textContent = state;
-  overlayTag.textContent = state;
-}
-
-function draw() {
-  const w = canvas.width / dpr;
-  const h = canvas.height / dpr;
-  const cx = w / 2;
-  const cy = h / 2;
-  
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, w, h);
-  
-  // Target equilibrium
-  eqPosition += ((balance - 50) / 50 * 0.35 - eqPosition) * 0.08;
-  const eqX = cx + eqPosition * w * 0.32;
-  
-  // Centre line
-  ctx.strokeStyle = 'rgba(38,43,38,0.7)';
-  ctx.lineWidth = 2;
-  ctx.setLineDash([4, 4]);
-  ctx.beginPath();
-  ctx.moveTo(cx, cy - h * 0.35);
-  ctx.lineTo(cx, cy + h * 0.35);
-  ctx.stroke();
-  ctx.setLineDash([]);
-  
-  // Equilibrium marker
-  const eqGlow = ctx.createRadialGradient(eqX, cy, 0, eqX, cy, 40);
-  eqGlow.addColorStop(0, 'rgba(250,199,117,0.9)');
-  eqGlow.addColorStop(0.5, 'rgba(250,199,117,0.3)');
-  eqGlow.addColorStop(1, 'rgba(250,199,117,0)');
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.fillStyle = eqGlow;
-  ctx.beginPath();
-  ctx.arc(eqX, cy, 40, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
-  
-  ctx.fillStyle = '#FAC775';
-  ctx.beginPath();
-  ctx.arc(eqX, cy, 7, 0, Math.PI * 2);
-  ctx.fill();
-  
-  ctx.strokeStyle = '#FAC775';
-  ctx.lineWidth = 1.5;
-  ctx.setLineDash([3, 3]);
-  ctx.beginPath();
-  ctx.moveTo(eqX, cy - h * 0.35);
-  ctx.lineTo(eqX, cy + h * 0.35);
-  ctx.stroke();
-  ctx.setLineDash([]);
-  
-  // Driving forces (right side)
-  const driverForce = balance / 100;
-  for (let i = 0; i < 4; i++) {
-    const startX = w * 0.92;
-    const y = cy - h * 0.28 + (i / 3) * h * 0.56;
-    const length = driverForce * w * 0.30;
-    const endX = startX - length;
-    
-    const arrowGrad = ctx.createLinearGradient(startX, y, endX, y);
-    arrowGrad.addColorStop(0, 'rgba(232,93,151,0.15)');
-    arrowGrad.addColorStop(1, 'rgba(232,93,151,0.85)');
-    
-    ctx.strokeStyle = arrowGrad;
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.moveTo(startX, y);
-    ctx.lineTo(endX, y);
-    ctx.stroke();
-    
-    // Arrow head
-    ctx.fillStyle = 'rgba(232,93,151,0.85)';
-    ctx.beginPath();
-    ctx.moveTo(endX, y);
-    ctx.lineTo(endX + 8, y - 5);
-    ctx.lineTo(endX + 8, y + 5);
-    ctx.closePath();
-    ctx.fill();
-    
-    // Glow
-    if (driverForce > 0.3) {
-      ctx.save();
-      ctx.globalCompositeOperation = 'lighter';
-      ctx.strokeStyle = 'rgba(232,93,151,' + (driverForce * 0.3) + ')';
-      ctx.lineWidth = 6;
-      ctx.beginPath();
-      ctx.moveTo(startX, y);
-      ctx.lineTo(endX, y);
-      ctx.stroke();
-      ctx.restore();
-    }
-    
-    // Label
-    ctx.fillStyle = 'rgba(232,93,151,0.6)';
-    ctx.font = '11px "JetBrains Mono"';
-    ctx.textAlign = 'right';
-    ctx.fillText(driverTexts[i], w * 0.96, y + 4);
+  function totals(useDisp){
+    let D=0,R=0;
+    FORCES.forEach(f=>{const v=useDisp?f.disp:f.w; if(f.side==="D")D+=v; else R+=v;});
+    return {D:D,R:R};
   }
-  
-  // Restraining forces (left side)
-  const restraintForce = (100 - balance) / 100;
-  for (let i = 0; i < 4; i++) {
-    const startX = w * 0.08;
-    const y = cy - h * 0.28 + (i / 3) * h * 0.56;
-    const length = restraintForce * w * 0.30;
-    const endX = startX + length;
-    
-    const arrowGrad = ctx.createLinearGradient(startX, y, endX, y);
-    arrowGrad.addColorStop(0, 'rgba(140,147,137,0.15)');
-    arrowGrad.addColorStop(1, 'rgba(140,147,137,0.85)');
-    
-    ctx.strokeStyle = arrowGrad;
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.moveTo(startX, y);
-    ctx.lineTo(endX, y);
-    ctx.stroke();
-    
-    // Arrow head
-    ctx.fillStyle = 'rgba(140,147,137,0.85)';
-    ctx.beginPath();
-    ctx.moveTo(endX, y);
-    ctx.lineTo(endX - 8, y - 5);
-    ctx.lineTo(endX - 8, y + 5);
-    ctx.closePath();
-    ctx.fill();
-    
-    // Glow
-    if (restraintForce > 0.3) {
-      ctx.save();
-      ctx.globalCompositeOperation = 'lighter';
-      ctx.strokeStyle = 'rgba(140,147,137,' + (restraintForce * 0.25) + ')';
-      ctx.lineWidth = 6;
-      ctx.beginPath();
-      ctx.moveTo(startX, y);
-      ctx.lineTo(endX, y);
-      ctx.stroke();
-      ctx.restore();
-    }
-    
-    // Label
-    ctx.fillStyle = 'rgba(140,147,137,0.6)';
-    ctx.font = '11px "JetBrains Mono"';
-    ctx.textAlign = 'left';
-    ctx.fillText(restraintTexts[i], w * 0.04, y + 4);
+  function fmt(n){ if(n>0) return "+"+n; if(n<0) return "\u2212"+Math.abs(n); return "0"; }
+
+  const sliders=Array.from(document.querySelectorAll(".ffa-slider"));
+  function setFill(s){
+    const v=+s.value, mn=+s.min, mx=+s.max;
+    s.style.setProperty("--fill",((v-mn)/(mx-mn)*100)+"%");
   }
-  
-  // Bloom
-  bctx.setTransform(1, 0, 0, 1, 0, 0);
-  bctx.clearRect(0, 0, buf.width, buf.height);
-  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.38;
-  ctx.filter = 'blur(7px)';
-  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
-  ctx.restore();
-  
-  // Vignette
-  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, w, h);
-  
-  time += 0.016;
-  animFrame = requestAnimationFrame(draw);
-}
+  function syncSliders(){
+    sliders.forEach(s=>{
+      const f=byKey[s.dataset.k];
+      s.value=f.w; setFill(s);
+      const v=document.getElementById("v-"+f.k); if(v) v.textContent=f.w;
+    });
+  }
+  function onSlide(e){
+    const s=e.target; const f=byKey[s.dataset.k]; if(!f) return;
+    f.w=Math.max(1,Math.min(5,Math.round(+s.value)));
+    setFill(s);
+    const v=document.getElementById("v-"+f.k); if(v) v.textContent=f.w;
+    update();
+  }
+  sliders.forEach(s=>{ s.addEventListener("input",onSlide); s.addEventListener("change",onSlide); });
 
-forceSlider.addEventListener('input', (e) => {
-  balance = parseFloat(e.target.value);
-  const fillPct = balance;
-  e.target.style.setProperty('--fill', fillPct + '%');
-  updateStats();
-});
+  const pills=Array.from(document.querySelectorAll(".ffa-pill"));
+  function applyResp(id){
+    if(id===resp) return;
+    if(before){ FORCES.forEach((f,i)=>{f.w=before[i];}); }
+    if(id==="none"){ before=null; }
+    else{
+      if(!before) before=FORCES.map(f=>f.w);
+      if(id==="train"){ byKey.r0.w=Math.max(1,byKey.r0.w-3); }
+      else if(id==="push"){ byKey.d3.w=Math.min(5,byKey.d3.w+3); byKey.r3.w=Math.min(5,byKey.r3.w+1); }
+    }
+    resp=id;
+    pills.forEach(p=>p.setAttribute("aria-pressed",p.dataset.resp===id?"true":"false"));
+    syncSliders();
+    update();
+  }
+  pills.forEach(p=>p.addEventListener("click",()=>applyResp(p.dataset.resp)));
 
-btnDrivers.addEventListener('click', () => {
-  btnDrivers.classList.add('active');
-  btnRestraints.classList.remove('active');
-  knowdropText.textContent = 'Amplifying drivers — technological obsolescence, competitive pressure, regulatory deadlines — creates urgency but often triggers defensive reactions. When you push harder for change without addressing barriers, restraining forces strengthen in response. Employees dig in when they lack skills for new systems, finance teams block unfunded initiatives, cultural norms reassert themselves. The equilibrium barely shifts because every increase in driving force meets equal and opposite resistance. Change fatigue sets in, momentum stalls, and the organisation returns to baseline despite heroic effort.';
-});
+  function renderRank(){
+    const sorted=FORCES.map((f,i)=>({f:f,i:i})).sort((a,b)=>(b.f.w-a.f.w)||(a.i-b.i));
+    rankList.innerHTML=sorted.map((o,idx)=>{
+      const f=o.f; const cls=f.side==="D"?"d":"r";
+      let segs="";
+      for(let s=1;s<=5;s++){ segs+=`<i class="${s<=f.w?"on "+cls:""}"></i>`; }
+      return `<li><span class="ffa-rk">${idx+1}</span><span class="ffa-nm">${f.name}</span><span class="ffa-tg ${cls}" aria-label="${f.side==="D"?"driving":"restraining"}">${f.side}</span><span class="ffa-bar" aria-hidden="true">${segs}</span><b class="${cls}">${f.w}</b></li>`;
+    }).join("");
+    return sorted[0].f;
+  }
 
-btnRestraints.addEventListener('click', () => {
-  btnRestraints.classList.add('active');
-  btnDrivers.classList.remove('active');
-  knowdropText.textContent = 'Weakening restraints removes the barriers that lock equilibrium in place. Targeted training eliminates skill gaps so employees can adopt new systems confidently. Transparent communication addresses fear of job loss before resistance hardens into sabotage. Phased implementation spreads financial costs across quarters, turning budget constraints into manageable investments. Cultural change workshops surface unspoken norms and reframe them collaboratively. Each restraint you dismantle shifts equilibrium toward change without increasing pressure. The system moves because friction disappears, not because force intensifies.';
-});
+  function renderEval(){
+    const t=totals(false); const net=t.D-t.R; const ten=t.D+t.R;
+    if(!before){
+      evalPanel.innerHTML=`<div class="ffa-evdesc">Current field: driving ${t.D}, restraining ${t.R}, net ${fmt(net)}, tension ${ten}. Implement a response to compare the field before and after.</div>`;
+      return;
+    }
+    let bD=0,bR=0;
+    FORCES.forEach((f,i)=>{ if(f.side==="D") bD+=before[i]; else bR+=before[i]; });
+    const bNet=bD-bR, bTen=bD+bR;
+    let desc="";
+    if(resp==="train"){
+      const b=before[4], a=byKey.r0.w;
+      desc = b===a ? `Training program: Skill gaps already at ${a}, nothing left to weaken.` : `Training program: Skill gaps ${b} \u2192 ${a}.`;
+    }else{
+      desc=`Stronger efficiency case: Efficiency gain ${before[3]} \u2192 ${byKey.d3.w}. Modelled pushback: Job-loss fear ${before[7]} \u2192 ${byKey.r3.w}.`;
+    }
+    const row=(label,b,a)=>`<tr><td>${label}</td><td>${typeof b==="number"&&label.indexOf("Net")===0?fmt(b):b}</td><td class="after">${typeof a==="number"&&label.indexOf("Net")===0?fmt(a):a}</td><td class="chg">${fmt(a-b)}</td></tr>`;
+    const dn=net-bNet, dt=ten-bTen;
+    let v = dn>0 ? `Net moved ${dn} toward change` : dn<0 ? `Net moved ${-dn} toward the status quo` : `Net did not move`;
+    v += dt<0 ? `; tension fell by ${-dt}.` : dt>0 ? `; tension rose by ${dt}.` : `; tension unchanged.`;
+    v += net>0 ? ` Drivers now lead, so the line sits on the change side.` : net<0 ? ` Restraints still lead, so the line stays on the status quo side.` : ` The field is now balanced.`;
+    evalPanel.innerHTML=`<div class="ffa-evdesc">${desc}</div><table class="ffa-tbl"><thead><tr><th>Evaluate</th><th>Before</th><th>After</th><th>Change</th></tr></thead><tbody>${row("Driving",bD,t.D)}${row("Restraining",bR,t.R)}${row("Net (D \u2212 R)",bNet,net)}${row("Tension (D + R)",bTen,ten)}</tbody></table><div class="ffa-evverdict">${v}</div>`;
+  }
 
-window.addEventListener('resize', resize);
-resize();
-updateStats();
-forceSlider.style.setProperty('--fill', '50%');
-draw();
+  function renderDrop(top){
+    const side=top.side==="D"?"driving":"restraining";
+    dropText.textContent=DROP[resp]+` Right now the top-ranked force is ${top.name} (${side}, weight ${top.w}).`;
+  }
+
+  function update(){
+    const t=totals(false); const net=t.D-t.R;
+    statD.textContent=t.D; statR.textContent=t.R;
+    let tag;
+    if(net>0) tag=`Drivers lead ${t.D} to ${t.R}`;
+    else if(net<0) tag=`Restraints lead ${t.R} to ${t.D}`;
+    else tag=`Balanced ${t.D} to ${t.R}`;
+    liveTag.textContent=tag; overTag.textContent=tag;
+    const top=renderRank();
+    renderEval();
+    renderDrop(top);
+    kick();
+  }
+
+  let raf=0,last=0;
+  function kick(){
+    if(reduce){ FORCES.forEach(f=>{f.disp=f.w;}); draw(); return; }
+    if(!raf){ last=performance.now(); raf=requestAnimationFrame(tick); }
+  }
+  function tick(now){
+    const dt=Math.min(now-last,50); last=now;
+    const a=1-Math.exp(-dt/140);
+    let maxd=0;
+    FORCES.forEach(f=>{ f.disp+=(f.w-f.disp)*a; maxd=Math.max(maxd,Math.abs(f.w-f.disp)); });
+    if(maxd<0.004){ FORCES.forEach(f=>{f.disp=f.w;}); draw(); raf=0; return; }
+    draw();
+    raf=requestAnimationFrame(tick);
+  }
+
+  function drawArrow(x0,x1,y,rgb){
+    const sgn=x1>x0?1:-1; const len=Math.abs(x1-x0);
+    if(len<2) return;
+    const headLen=Math.min(9,len);
+    const g=ctx.createLinearGradient(x0,y,x1,y);
+    g.addColorStop(0,"rgba("+rgb+",0.25)");
+    g.addColorStop(1,"rgba("+rgb+",0.95)");
+    ctx.save();
+    ctx.globalCompositeOperation="lighter";
+    ctx.strokeStyle="rgba("+rgb+",0.22)"; ctx.lineWidth=8; ctx.lineCap="round";
+    ctx.beginPath(); ctx.moveTo(x0,y); ctx.lineTo(x1-sgn*6,y); ctx.stroke();
+    ctx.restore();
+    ctx.strokeStyle=g; ctx.lineWidth=3; ctx.lineCap="butt";
+    ctx.beginPath(); ctx.moveTo(x0,y); ctx.lineTo(x1-sgn*(headLen-2),y); ctx.stroke();
+    ctx.fillStyle="rgba("+rgb+",0.95)";
+    ctx.beginPath(); ctx.moveTo(x1,y); ctx.lineTo(x1-sgn*headLen,y-4.5); ctx.lineTo(x1-sgn*headLen,y+4.5); ctx.closePath(); ctx.fill();
+    ctx.fillStyle="rgba("+rgb+",0.6)";
+    ctx.fillRect(x0-1,y-4,2,8);
+  }
+
+  function draw(){
+    const w=canvas.width/dpr, h=canvas.height/dpr;
+    if(!w||!h) return;
+    const cx=w/2, cy=h/2;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.globalCompositeOperation="source-over"; ctx.globalAlpha=1; ctx.filter="none";
+    ctx.fillStyle="rgb(0,0,0)"; ctx.fillRect(0,0,w,h);
+
+    const OVER=overTag.offsetHeight||34;
+    const hd=Math.max(80,h-OVER);
+    const fs=Math.max(11,Math.min(13,w*0.018));
+    ctx.font=fs+"px 'JetBrains Mono', monospace";
+    ctx.textBaseline="alphabetic";
+
+    let maxLab=0;
+    FORCES.forEach(f=>{ const tw=ctx.measureText(f.name+" "+f.w).width; if(tw>maxLab) maxLab=tw; });
+    const margin=w*0.03;
+    const range=Math.max(w*0.04,Math.min(w*0.12,cx-(margin+maxLab+8)));
+    const t=totals(true); const netD=t.D-t.R;
+    const eqX=cx+Math.max(-1,Math.min(1,netD/16))*range;
+    const unit=Math.min(w*0.06,(cx-range-margin-10)/5);
+
+    const yA=26, yB=hd-4, cell=(yB-yA)/4;
+
+    ctx.save();
+    ctx.setLineDash([3,5]); ctx.strokeStyle="rgba("+DIMRGB+",0.35)"; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(cx,yA-4); ctx.lineTo(cx,yB); ctx.stroke();
+    ctx.restore();
+
+    for(let i=0;i<4;i++){
+      const d=FORCES[i], r=FORCES[i+4];
+      const ay=yA+cell*i+cell*0.74;
+      const ly=ay-9;
+      ctx.textAlign="left";
+      ctx.fillStyle="rgba("+INKRGB+",0.78)"; ctx.fillText(d.name,margin,ly);
+      const nw=ctx.measureText(d.name+" ").width;
+      ctx.fillStyle=ACC; ctx.fillText(String(d.w),margin+nw,ly);
+      drawArrow(eqX-d.disp*unit,eqX-3,ay,RGB);
+
+      ctx.textAlign="right";
+      ctx.fillStyle=AMB; ctx.fillText(String(r.w),w-margin,ly);
+      const ww=ctx.measureText(" "+r.w).width;
+      ctx.fillStyle="rgba("+INKRGB+",0.78)"; ctx.fillText(r.name,w-margin-ww,ly);
+      drawArrow(eqX+r.disp*unit,eqX+3,ay,AMBRGB);
+    }
+
+    ctx.save();
+    ctx.globalCompositeOperation="lighter";
+    ctx.strokeStyle="rgba("+INKRGB+",0.28)"; ctx.lineWidth=7;
+    ctx.beginPath(); ctx.moveTo(eqX,20); ctx.lineTo(eqX,yB); ctx.stroke();
+    ctx.restore();
+    ctx.strokeStyle=INK; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(eqX,20); ctx.lineTo(eqX,yB); ctx.stroke();
+    ctx.fillStyle=INK;
+    ctx.beginPath(); ctx.moveTo(eqX,22); ctx.lineTo(eqX-5,14); ctx.lineTo(eqX+5,14); ctx.closePath(); ctx.fill();
+    ctx.textAlign="center"; ctx.fillStyle="rgba("+INKRGB+",0.7)";
+    ctx.fillText("Equilibrium",eqX,11);
+
+    if(w>=440){
+      ctx.fillStyle="rgba("+DIMRGB+",0.9)";
+      ctx.textAlign="left"; ctx.fillText("\u25C0 Status quo",margin,11);
+      ctx.textAlign="right"; ctx.fillText("Change \u25B6",w-margin,11);
+    }
+
+    bctx.setTransform(1,0,0,1,0,0);
+    bctx.clearRect(0,0,buf.width,buf.height);
+    if(canvas.width&&canvas.height) bctx.drawImage(canvas,0,0);
+    ctx.save();
+    ctx.globalCompositeOperation="lighter"; ctx.globalAlpha=0.38; ctx.filter="blur(7px)";
+    if(buf.width&&buf.height) ctx.drawImage(buf,0,0,w,h);
+    ctx.restore();
+
+    const vig=ctx.createRadialGradient(cx,cy,h*0.28,cx,cy,w*0.72);
+    vig.addColorStop(0,"rgba(0,0,0,0)"); vig.addColorStop(1,"rgba(0,0,0,0.52)");
+    ctx.fillStyle=vig; ctx.fillRect(0,0,w,h);
+  }
+
+  function resize(){
+    const rect=wrap.getBoundingClientRect();
+    if(!rect.width||!rect.height) return;
+    canvas.width=Math.round(rect.width*dpr); canvas.height=Math.round(rect.height*dpr);
+    buf.width=canvas.width; buf.height=canvas.height;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    draw();
+  }
+  window.addEventListener("resize",resize);
+  if(window.ResizeObserver){ new ResizeObserver(()=>resize()).observe(wrap); }
+  if(document.fonts&&document.fonts.ready){ document.fonts.ready.then(()=>draw()); }
+
+  syncSliders();
+  resize();
+  update();
+})();
 </script>
 <script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
 (function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'force-field-analysis'},'*');}catch(e){}}
