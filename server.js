@@ -326,7 +326,7 @@ app.post('/api/contact', async (req, res) => {
 /* KW:TEACH-SITE (13 Oct 2026): the pre-launch waitlist page is retired — teachers claim a seat in the app now, and the page's
    copy still says the app "goes live before the exams". The API under /api/waitlist stays (the app forwards teacher seats to it). */
 app.get(['/waitlist', '/waitlist.html'], (req, res) => res.redirect(301, '/for-teachers'));
-app.get(['/join', '/join.html'], (req, res) => { res.set('Cache-Control', 'no-store'); const q = req.originalUrl.indexOf('?'); return res.redirect(302, String(process.env.APP_URL || 'https://app.knowhere.me').replace(/\/knowhere\.html.*$/, '').replace(/\/$/, '') + '/join' + (q >= 0 ? req.originalUrl.slice(q) : '')); });
+app.get(['/join', '/join.html'], (req, res) => { res.set('Cache-Control', 'no-store'); const q = req.originalUrl.indexOf('?'); let base = 'https://app.knowhere.me'; try { base = new URL(process.env.APP_URL || base).origin; } catch (e) {} /* join-fix 15 Oct: APP_URL carries /signup for the CTAs; the student door is at the ORIGIN + /join, never under it */ return res.redirect(302, base + '/join' + (q >= 0 ? req.originalUrl.slice(q) : '')); });
 // /KNOWHERE:JOIN
 
 // KNOWHERE:GO-LINKS v1 — short links for creator bios (302 so the destination can change). Add a slug here, redeploy, done.
