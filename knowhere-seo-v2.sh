@@ -121,6 +121,7 @@ PAGES = {
    title="Privacy policy — knowhere",
    desc="How knowhere collects, uses and protects student and parent data under the Australian Privacy Act 1988. What we collect, what we don't, and your rights.",
    name="Privacy"),
+ "teacher-terms.html": dict(path="/teacher-terms", kind="legal", title="Teacher terms of use — knowhere · teach it.", desc="The terms for knowhere · teach it.: the founding term, what happens after it, share links and homeplay, your slides and knowscapes, and acceptable use in the classroom.", name="Teacher terms"),   # KW:TEACH-TERMS
  "terms.html": dict(path="/terms", kind="legal",
    title="Terms of use — knowhere",
    desc="The terms for using knowhere: accounts, parent and student access, free trial, subscriptions, billing, refunds, AI-generated content and acceptable use.",
