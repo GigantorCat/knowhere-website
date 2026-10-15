@@ -29,7 +29,7 @@
   var CTA = PARENT ? "start their free week" : "start your free week";
   var WHERE = ds.where || location.pathname;
   /* W9-YEAR-11: data-pass="off" = always the plain free-week bar, never the exam pass (Year 11 pages: no exam, no pass) */
-  var CLOSE = Date.UTC(2026, 9, 26, 12, 59), now = Date.now(), closed = now > CLOSE || ds.pass === "off";
+  var CLOSE = Date.UTC(2026, 9, 15, 4, 45), now = Date.now(), closed = now > CLOSE || ds.pass === "off";   /* retirepass (15 Oct 2026): the pass is off now; the bar is the plain green free-week bar everywhere */
   var claim = Math.max(0, Math.ceil((CLOSE - now) / 864e5));
   function track(n, d) { try { if (window.umami) window.umami.track(n, d || {}); } catch (e) {} }
 
@@ -75,7 +75,9 @@
     '<div class="pb-hand"><p>not your card? send it to whoever&#8217;s is.</p>' +
     '<button type="button" data-kw-handoff="' + String(WHERE).replace(/"/g, "") + '">send this to a parent</button></div>';
   var chev = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10l4-4 4 4"></path></svg>';
-  var HTML =
+  /* retirepass: once closed, only the plain green bar is built — the pass sheet and its copy never enter the DOM */
+  var PLAIN = '<a class="pb-plain" data-kw-from="passbar" href="' + SIGNUP + '"><span>7 days free</span>' + CTA + '</a>';
+  var HTML = closed ? PLAIN :
     '<div class="pb-scrim" data-pb-close></div>' +
     '<div class="pb-sheet" id="kwPassSheet" role="dialog" aria-label="the 2026 exam pass" aria-hidden="true">' +
       '<p class="pb-price"><span class="n">$49</span> once.</p>' +
@@ -95,13 +97,14 @@
     var st = document.createElement("style"); st.textContent = CSS; document.head.appendChild(st);
     var pb = document.createElement("div"); pb.className = "kw-passbar" + (closed ? " closed" : ""); pb.id = "kwPassbar";
     pb.innerHTML = HTML; document.body.appendChild(pb);
-    var btn = pb.querySelector(".pb-bar"), sh = pb.querySelector(".pb-sheet"), opened = false;
+    var btn = pb.querySelector(".pb-bar"), sh = pb.querySelector(".pb-sheet"), opened = false;   /* retirepass: both null once closed; only the away observer is wired */
     function setOpen(on) {
+      if (!btn || !sh) return;
       pb.classList.toggle("open", on); btn.setAttribute("aria-expanded", on ? "true" : "false"); sh.setAttribute("aria-hidden", on ? "false" : "true");
       if (on && !opened) { opened = true; track("pass_sheet_open", { page: location.pathname }); }
     }
-    btn.addEventListener("click", function () { setOpen(!pb.classList.contains("open")); });
-    pb.querySelector("[data-pb-close]").addEventListener("click", function () { setOpen(false); });
+    if (btn) btn.addEventListener("click", function () { setOpen(!pb.classList.contains("open")); });
+    var pbc = pb.querySelector("[data-pb-close]"); if (pbc) pbc.addEventListener("click", function () { setOpen(false); });
     var hb = pb.querySelector("[data-kw-handoff]");   /* the handoff opens its own sheet (z 1200); put ours away first */
     if (hb) hb.addEventListener("click", function () { setOpen(false); });
     document.addEventListener("keydown", function (e) { if (e.key === "Escape") setOpen(false); });

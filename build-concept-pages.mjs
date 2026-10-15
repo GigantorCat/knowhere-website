@@ -555,7 +555,7 @@ ${beacon(p.slug)}</body></html>`;
 <script src="/knowhere-marks.js?v=2"></script>
 <script src="/knowhere-pass.js" defer></script>
 <script src="/knowhere-handoff.js?v=3" defer></script><!-- KW:HANDOFF -->
-<script src="/knowhere-passbar.js?v=${Y11P ? 3 : 2}" defer data-where="concept:${p.slug}"${Y11P ? ' data-pass="off"' : ''} data-away=".cta-box"></script><!-- KW:PASSBAR -->
+<script src="/knowhere-passbar.js?v=3" defer data-where="concept:${p.slug}" data-pass="off" data-away=".cta-box"></script><!-- KW:PASSBAR · retirepass: data-pass="off" on every page -->
 <style>${CSS.replace('__ACCENT__', accent)}</style>
 </head>
 <body>
@@ -601,17 +601,7 @@ ${wild}${points}${under}${rest}
         <a class="door pri" data-kw-cta href="https://app.knowhere.me/signup?as=student">start your free week →</a>
         <a class="door sec" href="/for-parents?as=parent">parent? start their free week →</a>
       </div>
-      ${Y11P ? `<p class="pass-line">Free for a week, then a plan you can stop any time.</p>` : `<div class="passbox kw-pass">
-        <div>
-          <div class="t">the 2026 exam pass</div>
-          <p>Free for a week, then one payment. It ends itself after the last exam — no subscription.</p>
-        </div>
-        <div class="rhs">
-          <span class="amt">$49 once.</span>
-          <span class="pill"><b data-pass-days>0</b> days left</span>
-        </div>
-      </div>
-      <p class="pass-line" data-pass-fallback="block">Free for a week, then a plan you can stop any time.</p>`}
+      <p class="pass-line">Free for a week, then a plan you can stop any time.</p>${/* retirepass (15 Oct 2026): the 2026 exam pass box is gone for every year; the plain line is the markup */ ''}
       <div class="hand">
         <p class="fr">not your card? send it to whoever's is.</p>
         <button type="button" class="kw-hand" data-kw-handoff="concept:${p.slug}">send this to a parent</button>
@@ -769,7 +759,7 @@ for (const b of built) {
   const pg = fs.readFileSync(b.p.file, 'utf8');
   const wd = fs.readFileSync(path.join('widgets', b.widgetName), 'utf8');
   const ok = pg.includes('<base href="/">') && pg.includes(esc(b.TITLE)) && pg.includes(`/widgets/${b.widgetName}`)
-    && pg.includes('for-parents?as=parent') && (b.p.level === 'Year 11' ? (!pg.includes('data-pass-days') && pg.includes('data-pass="off"')) : pg.includes('data-pass-days')) && pg.includes('data-kw-handoff') && pg.includes('knowhere-passbar.js')
+    && pg.includes('for-parents?as=parent') && !pg.includes('data-pass-days') && pg.includes('data-pass="off"') && pg.includes('data-kw-handoff') && pg.includes('knowhere-passbar.js')
     && pg.includes(`<link rel="canonical" href="${b.p.url}">`)
     && !/#3AADA0/i.test(wd) && wd.includes('kwMobFix') && wd.includes('kwH') && wd.includes(b.accent);
   if (!ok) { console.log(`  ✗ ${b.p.file}`); bad++; }
