@@ -141,7 +141,7 @@ function parentContext({ where, extra = '' }) {
     + FACT('cost', PRICE_LINE)
     + FACT('the trial', 'Nothing today. The free week starts when you add a card; cancel inside it and you pay nothing.')
     + FACT('for you', 'A parent dashboard: a weekly digest and a Gap Map of what’s ready and what isn’t — without interrogating anyone at dinner.')
-    + FACT('the terms', 'Term and year plans land on the first day of term, so you pay for the weeks that are left. A Year 12 plan ends with the exams and never renews.')
+    + FACT('the terms', 'Term and year plans land on the first day of term, so you only ever pay for the weeks ahead of you. A Year 12 plan ends with the exams and never renews.')
     + `</table>`
     + B.p(`I built it because I was the kid pulled out of class in Year 12 for taking notes in pictures — and still finished in the top 10% of the state. The gap was never ability. It was format.`)
     + B.btn('start their free week →', PARENT_URL(where))
