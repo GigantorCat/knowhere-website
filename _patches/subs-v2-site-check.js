@@ -33,14 +33,18 @@ let pass = 0, fail = 0; const ok = (c, l, x) => { console.log((c ? 'PASS ' : 'FA
         ok((await page.locator('.kw-price .plan').count()) === 3, 'pricing: three cards');
         ok(/Most pick this/.test(txt) && (await page.locator('.plan.featured .tier').textContent()).trim() === 'A term', 'pricing: term is the hero');
         ok(/\$79/.test(txt) && /\$99/.test(txt) && /\$29/.test(txt) && /\$249/.test(txt), 'pricing: founding prices with list struck');
-        ok(/Founding rate until Fri 9 April\. Yours for as long as you stay\./.test(txt), 'pricing: the founding line');
+        ok(/Founding rate for the first 50\. Yours for as long as you stay\./.test(txt), 'pricing: the founding line (B3: the seats are the headline)');
+        ok((await page.locator('.kw-price .plan .price .chip').count()) === 3 && /first founders · 50 seats/.test(txt), 'pricing: the first-founders chip on every price');
+        ok(/first 50 seats, or until Fri 9 April 2027/.test(txt), 'pricing: the date is the backstop in the fine print');
+        ok(!/\d+ (of 50 )?(seats )?left\b/.test(txt), 'pricing: no live seat count on the site');
+        { const was = await page.locator('.plan.featured .price .was'); const st = await was.evaluate(e => { const cs = getComputedStyle(e); return { size: cs.fontSize, thick: cs.textDecorationThickness, color: cs.color, deco: cs.textDecorationColor }; }); ok(st.size === '44px' && st.thick === '2px' && st.color !== st.deco, 'pricing: the struck list price is price-sized with a 2px strike in the text colour (B2)', st); }
         ok(/Sign up in Term 2 and you pay for the weeks that are left/.test(txt), 'pricing: the first-charge example');
         ok(/What’s included — all of it, on every period/.test(txt), 'pricing: one feature list');
         const ld = await page.evaluate(() => JSON.parse(document.querySelector('script[type="application/ld+json"]').textContent));
         const app = ld['@graph'].find(x => x['@type'] === 'SoftwareApplication');
         ok(app && app.offers.offerCount === 3 && app.offers.offers.map(o => o.price).join(',') === '39,99,299' && !JSON.stringify(app).match(/Core|Pro|Max|pass/), 'pricing: JSON-LD offers 39 / 99 / 299, no tiers', app && app.offers);
       }
-      if (who === 'for-parents') { ok(/A\$39 a month, A\$99 a term or A\$299 a year/.test(txt), 'for-parents: the three prices'); ok(/founding rate A\$29 \/ A\$79 \/ A\$249 until 9 April/.test(txt), 'for-parents: the founding line in the FAQ'); ok(/included, on every plan/.test(txt), 'for-parents: dashboard included, no Max'); }
+      if (who === 'for-parents') { ok(/A\$39 a month, A\$99 a term or A\$299 a year/.test(txt), 'for-parents: the three prices'); ok(/founding rate A\$29 \/ A\$79 \/ A\$249 for the first 50, or until Fri 9 April, whichever comes first/.test(txt), 'for-parents: the founding line in the FAQ, the date as the backstop'); ok((await page.locator('.kw-par .faq .chip, .kw-par .chip').count()) >= 1 && /first founders · 50 seats/.test(txt), 'for-parents: the first-founders chip on the FAQ price line'); ok(!/\d+ (of 50 )?(seats )?left\b/.test(txt), 'for-parents: no live seat count'); ok(/included, on every plan/.test(txt), 'for-parents: dashboard included, no Max'); }
       await page.close();
     }
     const em = require(path.join(ROOT, 'emails.js'));
