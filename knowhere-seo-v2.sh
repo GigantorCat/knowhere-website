@@ -51,8 +51,8 @@ PAGES = {
    desc="No trailer. Real HSC and VCE concepts from knowhere, a lens switcher that reframes them for different brains, and a quiz that rebuilds itself to fit yours.",
    name="Experience it"),
  "pricing.html": dict(path="/pricing", kind="pricing",
-   title="knowhere pricing — HSC & VCE study plans from A$23/month",
-   desc="Core, Pro and Max. 15 HSC and 16 VCE subjects on every plan, no per-topic fees. Seven days free, AUD, cancel anytime. Less than one hour of tutoring a month.",
+   title="knowhere pricing — HSC & VCE study, A$99 a term",
+   desc="One plan, everything in it: A$39 a month, A$99 a term or A$299 a year. 15 HSC and 16 VCE subjects, no per-topic fees. Seven days free, AUD, cancel anytime.",
    name="Pricing"),
  "for-parents.html": dict(path="/for-parents", kind="faq",
    title="knowhere for parents — Year 11 and 12 study help that fits your kid",
@@ -66,7 +66,7 @@ PAGES = {
     ("Does knowhere replace school or a tutor?",
      "It works alongside school — the explain-it-again, explain-it-differently layer school can't provide for thirty students at once. A month of knowhere costs less than one hour with a tutor, and the two don't fight: plenty of families will want both."),
     ("What does it cost to try?",
-     "Nothing today. Free for a week, then the 2026 exam pass — A$49 once. No subscription; it ends when the exams do. Cancel any time in the free week and you are not charged. The price doesn't move; the days do."),  # KW:PASS — keep in step with for-parents.html
+     "Nothing today. Free for a week, then A$39 a month, A$99 a term or A$299 a year — founding rate A$29 / A$79 / A$249 until 9 April, kept for as long as you stay. Term and year plans land on the first day of term: sign up mid-term and you pay for the weeks that are left. Cancel any time in the free week and you are not charged. If it doesn't click, it costs you a week."),  # subs-v2 — keep in step with for-parents.html
    ]),
  "for-teachers.html": dict(path="/for-teachers", kind="faq",
    title="knowhere · teach it. — HSC & VCE concepts live",
@@ -172,21 +172,21 @@ def app(full=False):
          "description":"Personalised Year 11 and 12 study for HSC and VCE. 15 HSC and 16 VCE subjects as living, interactive concepts, reframed for each learner's motivation, neurology and mode. Seven-day free trial.",
          "audience":{"@type":"EducationalAudience","educationalRole":"student","audienceType":"Year 11 and 12 students (HSC and VCE), their parents and teachers"},
          "educationalLevel":"Year 11 and 12","countriesSupported":"AU","publisher":{"@id":SITE+"/#org"},
-         "offers":{"@type":"AggregateOffer","priceCurrency":"AUD","lowPrice":"23","highPrice":"39","offerCount":3,
+         "offers":{"@type":"AggregateOffer","priceCurrency":"AUD","lowPrice":"39","highPrice":"299","offerCount":3,
                    "url":SITE+"/pricing","eligibleRegion":{"@type":"Country","name":"Australia"}}}
     if full:
-        plans = [("Core","23","276","The full curriculum. 15 HSC and 16 VCE subjects, Knowscapes, flashcards, exam-style questions, progress tracking."),
-                 ("Pro","31","372","Everything in Core plus Unstuck (a different explanation on demand), 10 custom concepts a month and Gap Map."),
-                 ("Max","39","468","Everything in Pro plus the parent dashboard and 30 custom concepts a month.")]
-        a["offers"]["offers"] = [{"@type":"Offer","name":p,"description":d,"price":m,"priceCurrency":"AUD","url":SITE+"/pricing",
+        # subs-v2 (15 Oct 2026): ONE plan, three billing periods. Founding rate (29 / 79 / 249 until 9 Apr 2027) is a
+        # promotion, not a second offer — the list prices are the offers. Core / Pro / Max and the 2026 pass are gone.
+        DESC = "knowhere — everything: 15 HSC and 16 VCE subjects, Knowscapes, Unstuck, 30 custom concepts a month, Gap Map, flashcards, exam-style questions, the parent dashboard."
+        plans = [("Monthly","39","P1M"),("A term","99","P3M"),("A year","299","P1Y")]
+        a["offers"]["offers"] = [{"@type":"Offer","name":"knowhere — "+p,"description":DESC,"price":m,"priceCurrency":"AUD","url":SITE+"/pricing",
                                    "availability":"https://schema.org/InStock",
-                                   "priceSpecification":[{"@type":"UnitPriceSpecification","price":m,"priceCurrency":"AUD","billingDuration":"P1M","name":"Monthly"},
-                                                         {"@type":"UnitPriceSpecification","price":y,"priceCurrency":"AUD","billingDuration":"P1Y","name":"Yearly"}]}
-                                  for p,m,y,d in plans]
+                                   "priceSpecification":[{"@type":"UnitPriceSpecification","price":m,"priceCurrency":"AUD","billingDuration":dur,"name":p}]}
+                                  for p,m,dur in plans]
         a["featureList"] = ["15 HSC and 16 VCE subjects on every plan","Knowscapes — interactive visual concept experiences",
                             "Nine motivational types, a neurology layer and four modes","Flashcards that build themselves",
                             "Exam-style questions generated fresh every time","Concept and topic progress tracking",
-                            "Unstuck — a different explanation on demand (Pro, Max)","Gap Map (Pro, Max)","Parent dashboard (Max)"]
+                            "Unstuck — a different explanation on demand","Gap Map","30 custom concepts a month","Parent dashboard"]
     return a
 
 PAGE_DATES = {}   # fname -> dateModified actually used (feeds the sitemap)

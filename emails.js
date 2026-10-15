@@ -129,16 +129,19 @@ const H2 = t => `<h2 style="margin:0 0 12px;font-family:'Geist',system-ui,Arial,
 const SMALL = t => `<p style="margin:8px 0 0;font-family:'Geist',system-ui,Arial,sans-serif;font-size:14.5px;line-height:1.6;color:#B4B9B0">${t}</p>`;
 const LINE = t => `</td></tr><tr><td style="padding:0 32px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-top:1px dashed #3A4038;font-size:0;line-height:0">&nbsp;</td></tr></table><p style="margin:-9px 0 0;text-align:center;font-size:0;line-height:0"><span style="display:inline-block;background:#191B18;padding:0 10px;font-family:'JetBrains Mono','Courier New',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#8C9389;line-height:1.4">${t}</span></p></td></tr><tr><td style="padding:30px 32px 30px">`;
 const LNK = 'color:#7BEA5A;text-decoration:underline';
-/* KW:HANDOFF-GOAT — the parent context, shared by t4 and the Goat-sent handoff. What knowhere is, the pass, the
-   dashboard, the exam window, Cat's line, and the one button. `where` tags the button's utm_content. */
+/* KW:HANDOFF-GOAT — the parent context, shared by t4 and the Goat-sent handoff. What knowhere is, the prices, the
+   dashboard, Cat's line, and the one button. `where` tags the button's utm_content.
+   subs-v2 (15 Oct 2026): the cost + trial facts are the three periods and the founding rate — the SAME sentence the app's
+   server.js priceFacts() prints (handoff v2, the day-4 nudge, the parent welcome receipt). Change both or neither. */
+const PRICE_LINE = '$39 a month, $99 a term or $299 a year \u2014 founding rate $29 / $79 / $249 until 9 April, kept for as long as you stay. Free for a week first; nothing today.';
 const PARENT_URL = where => `${SITE}/for-parents?as=parent&utm_source=handoff&utm_medium=email&utm_campaign=kw-launch-2026&utm_content=${encodeURIComponent(where || 'email')}`;
 function parentContext({ where, extra = '' }) {
   return B.p(`knowhere is a Year 11 and 12 study app for the HSC and VCE. Every concept in 15 HSC and 16 VCE subjects is rebuilt as an interactive model, then reshaped to how your kid actually learns — what motivates them, how their brain processes things (ADHD, autism and dyslexia treated as operating systems, not deficits), and whether they think in pictures, sound or by doing. The curriculum never changes. Only the way in does.`)
     + `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 22px;border-bottom:1px solid #262B26">`
-    + FACT('cost', 'The 2026 exam pass: free for a week, then $49 once. No subscription — it ends itself on Friday 20 November, after the last exam. Less than an hour of tutoring, for the whole run-in.')
-    + FACT('the trial', 'Nothing today. The free week starts when you add a card, and nothing keeps running past 20 November.')
+    + FACT('cost', PRICE_LINE)
+    + FACT('the trial', 'Nothing today. The free week starts when you add a card; cancel inside it and you pay nothing.')
     + FACT('for you', 'A parent dashboard: a weekly digest and a Gap Map of what’s ready and what isn’t — without interrogating anyone at dinner.')
-    + FACT('the exams', 'HSC written exams start 13 Oct. VCE 26 Oct. That’s the window this is built for.')
+    + FACT('the terms', 'Term and year plans land on the first day of term, so you pay for the weeks that are left. A Year 12 plan ends with the exams and never renews.')
     + `</table>`
     + B.p(`I built it because I was the kid pulled out of class in Year 12 for taking notes in pictures — and still finished in the top 10% of the state. The gap was never ability. It was format.`)
     + B.btn('start their free week →', PARENT_URL(where))
@@ -146,7 +149,7 @@ function parentContext({ where, extra = '' }) {
 }
 /* The Goat-sent handoff: a kid on the site (no account, no card) types a parent's address; the parent gets the kid's
    one-liner on top and the context below the line. One email, fixed copy, no list, no unsubscribe. */
-const KID_LINE = `I've been using a study app called knowhere and it's actually helping. It's free for a week, then $49 once till the last exam — no subscription. Can you look?`;
+const KID_LINE = `I've been using a study app called knowhere and it's actually helping. It's free for a week first. Can you look?`;   /* subs-v2: the plain line, no pass */
 function handoffParent({ parentEmail, kidName, where }) {
   const kid = first(kidName) || '';
   const who = kid || 'Your kid';
@@ -165,7 +168,7 @@ function handoffParent({ parentEmail, kidName, where }) {
 function handoffMailto() {
   const subject = 'Can you look at this? (knowhere)';
   /* KW:HANDOFF-PASS — the same words as the app link (f47) and the site buttons (knowhere-handoff.js). One voice. */
-  const body = `Hey,\n\nI've been using a study app called knowhere and it's actually helping. It's free for a week, then $49 once till the last exam — no subscription. Can you look?\n\n${SITE}/for-parents?as=parent&utm_source=handoff&utm_medium=email&utm_campaign=kw-launch-2026&utm_content=t4`;
+  const body = `Hey,\n\n${KID_LINE}\n\n${SITE}/for-parents?as=parent&utm_source=handoff&utm_medium=email&utm_campaign=kw-launch-2026&utm_content=t4`;
   return `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 function handoff({ email, firstName, type, appUrl }) {
@@ -173,7 +176,7 @@ function handoff({ email, firstName, type, appUrl }) {
   const app = appUrl || 'https://app.knowhere.me';
   const bodyHtml =
     B.eyebrow("this bit's for you") + B.h1(`${hey(firstName)}. Time to hand this up the chain.`)
-    + B.p(`You've had knowhere for a few days now. If it's working — if a concept finally clicked, if Unstuck rescued a Tuesday — here's the honest part: after the free week it's $49 once for the 2026 exam pass, and that's probably not your card.`)
+    + B.p(`You've had knowhere for a few days now. If it's working — if a concept finally clicked, if Unstuck rescued a Tuesday — here's the honest part: after the free week it costs money, and that's probably not your card.`)
     + B.p(`So I've written the bit below for your parent. Forward this whole email, or hit the button and I'll draft the message for you. You add the please.`)
     + B.btn('write the email for me →', handoffMailto())
     + SMALL(`Or just forward this. Everything they need is under the line.`) + B.sig()

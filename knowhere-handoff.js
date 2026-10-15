@@ -7,7 +7,7 @@
    Copy follows the pass while it is on sale (same close as knowhere-pass.js: Mon 26 Oct 2026 23:59 AEDT). */
 (function () {
   if (window.__kwHandoffV2) return; window.__kwHandoffV2 = true;
-  var CLOSE = Date.UTC(2026, 9, 26, 12, 59);
+  var CLOSE = Date.UTC(2026, 9, 15, 4, 45);   /* retirepass (15 Oct 2026): the plain version from now on */
   var BASE = "https://knowhere.me/for-parents?as=parent&utm_source=handoff&utm_medium=share&utm_campaign=kw-launch-2026&utm_content=";
   function text() {
     return Date.now() < CLOSE

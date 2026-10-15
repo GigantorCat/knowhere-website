@@ -4,7 +4,7 @@
    down. After the close: every .kw-pass card hides itself and every [data-pass-fallback] (the standard free-week CTA it
    replaced) comes back, with the display value the attribute names. No hand edit on 27 Oct. */
 (function(){
-  var END = Date.UTC(2026,10,20,12,59), CLOSE = Date.UTC(2026,9,26,12,59), now = Date.now();
+  var END = Date.UTC(2026,10,20,12,59), CLOSE = Date.UTC(2026,9,15,4,45), now = Date.now();   /* retirepass: closed Thu 15 Oct 2026 15:45 AEDT (Cat's call), not 26 Oct. Every .kw-pass hides, every [data-pass-fallback] returns. */
   var days = Math.max(0, Math.ceil((END - now) / 864e5)), closed = now > CLOSE;
   var cards = document.querySelectorAll('.kw-pass'), fb = document.querySelectorAll('[data-pass-fallback]'), i;
   if (closed) {
