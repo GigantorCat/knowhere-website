@@ -66,7 +66,7 @@ PAGES = {
     ("Does knowhere replace school or a tutor?",
      "It works alongside school — the explain-it-again, explain-it-differently layer school can't provide for thirty students at once. A month of knowhere costs less than one hour with a tutor, and the two don't fight: plenty of families will want both."),
     ("What does it cost to try?",
-     "Nothing today. Free for a week, then A$39 a month, A$99 a term or A$299 a year — founding rate A$29 / A$79 / A$249 until 9 April, kept for as long as you stay. Term and year plans land on the first day of term: sign up mid-term and you pay for the weeks that are left. Cancel any time in the free week and you are not charged. If it doesn't click, it costs you a week."),  # subs-v2 — keep in step with for-parents.html
+     "Nothing today. Free for a week, then A$39 a month, A$99 a term or A$299 a year — founding rate A$29 / A$79 / A$249 for the first 50. Yours forever. Founding rate: the first 50 student plans, or until Fri 9 April 2027, whichever comes first. It stays yours while your plan stays active. Term and year plans land on the first day of term: sign up mid-term and you only ever pay for the weeks ahead of you. Cancel any time in the free week and you are not charged. If it doesn't click, it costs you a week."),  # subs-v2 round 4 (16 Oct) — keep in step with for-parents.html
    ]),
  "for-teachers.html": dict(path="/for-teachers", kind="faq",
    title="knowhere · teach it. — HSC & VCE concepts live",
