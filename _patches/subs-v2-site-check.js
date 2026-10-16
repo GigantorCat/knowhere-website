@@ -57,6 +57,19 @@ let pass = 0, fail = 0; const ok = (c, l, x) => { console.log((c ? 'PASS ' : 'FA
     /* round 4 · E: the struck line never resurrects — not in the pages, not in the built heads, not in the generator */
     for (const f of ['pricing.html', 'for-parents.html', 'compare.html', 'emails.js', 'knowhere-seo-v2.sh']) ok(!/weeks that are left/.test(fs.readFileSync(path.join(ROOT, f), 'utf8')), 'no "weeks that are left" in ' + f);
     ok(/only ever pay for the weeks ahead of you/.test(fs.readFileSync(path.join(ROOT, 'for-parents.html'), 'utf8').split('</script>')[0]), 'for-parents: the JSON-LD head carries the new phrase');
+    /* hover sweep (16 Oct): the brat-outline secondaries fill brat with black text on hover — the rule on disk, and the pixels */
+    for (const [f, sel] of [['pricing.html', '.kw-price .soft'], ['pricing.html', '.kw-price .compare .cmp-btn'], ['compare.html', '.kw-cmp .ghost'], ['for-parents.html', '.kw-par .ghost'], ['for-teachers.html', '.kw-tch .ghost'], ['how-it-works.html', '.kw-hiw .ghost'], ['index.html', '.kp-ghost']]) {
+      const src = fs.readFileSync(path.join(ROOT, f), 'utf8'); const m = src.match(new RegExp(sel.replace(/[.\s]/g, c => c === '.' ? '\\.' : '\\s') + ':hover[^{]*\\{([^}]*)\\}'));
+      ok(m && /background:#7BEA5A/.test(m[1]) && /color:#070708/.test(m[1]), `hover sweep: ${f} ${sel}:hover fills brat, black text`, m && m[1]);
+    }
+    for (const [url, sel] of [['/pricing', '.kw-price .soft'], ['/how-it-works', '.kw-hiw .ghost'], ['/compare', '.kw-cmp .ghost']]) {
+      const page = await browser.newPage({ viewport: { width: 1200, height: 900 } });
+      await page.goto(BASE + url, { waitUntil: 'load' }); await page.waitForTimeout(800);
+      const el = page.locator(sel).first(); await el.scrollIntoViewIfNeeded(); await el.hover(); await page.waitForTimeout(500);
+      const st = await el.evaluate(e => { const cs = getComputedStyle(e); return { bg: cs.backgroundColor, color: cs.color, border: cs.borderColor }; });
+      ok(st.bg === 'rgb(123, 234, 90)' && st.color === 'rgb(7, 7, 8)' && st.border === 'rgb(123, 234, 90)', `hover sweep: ${url} ${sel} under the mouse — brat fill, black text`, st);
+      await page.close();
+    }
     const em = require(path.join(ROOT, 'emails.js'));
     const mail = em.handoffParent({ parentEmail: 'p@x.test', kidName: 'Harper', where: 'site' });
     ok(/founding rate \$29 \/ \$79 \/ \$249 until 9 April/.test(mail.html) && !/exam pass|\$49/.test(mail.html), 'emails.js: parentContext carries the three prices + founding, no pass');
