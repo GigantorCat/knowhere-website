@@ -60,6 +60,7 @@ const strip = h => h.replace(/<style[\s\S]*?<\/style>/g, '').replace(/<[^>]+>/g,
 
 /* ── 1. welcome (sent by the server on signup) ── */
 function welcome({ email, firstName, type, position, teacherSeat }) {
+  if (type === 'teacher') return teacherWelcome({ email, firstName, teacherSeat });   /* KW:TEACHER-WELCOME */
   const seat = type === 'teacher' && teacherSeat;
   const body = {
     student: `You're on the list. When the doors open you'll be first through them — 15 HSC and 16 VCE subjects, every concept, rebuilt for the way your brain actually fires.`,
@@ -76,6 +77,72 @@ function welcome({ email, firstName, type, position, teacherSeat }) {
     footHtml: `Sent to ${email} because you joined the waitlist at knowhere.me. Not you? Ignore this and nothing else will arrive.`, unsub: unsubUrl(email),
   });
   return { from: FROM_GOAT, reply_to: REPLY_TO, to: email, subject: seat ? `You're in — a founding seat at knowhere · teach it. 🐐` : `You're in 🐐`, html, text: strip(html) };
+}
+
+/* ── 1b. teacher welcome · KW:TEACHER-WELCOME (17 Oct 2026) ──
+   The door is open (KW_TEACHER_OPEN=1): a teacher who signs up is IN on the spot, so this one email is the
+   founding-drop email AND the welcome. You're in · three things to try · the 30-second network check with a
+   pre-written note for IT. From Cat (teachers get Cat, ruled 12 Oct), replies land on hello@.
+   Seat number shows only past 10, the same rule as the public counter (seat #2 is anti-social-proof). */
+const APP_ORIGIN = (() => { try { return new URL(process.env.APP_URL || 'https://app.knowhere.me').origin; } catch (e) { return 'https://app.knowhere.me'; } })();
+const FROM_CAT = process.env.FROM_EMAIL_CAT || ('Cat at knowhere <' + ((FROM_MAIN.match(/<([^>]+)>/) || [])[1] || 'hello@knowhere.me') + '>');
+const IT_PAGE = `${SITE}/for-your-it-team`;
+const NET_TEST = `${SITE}/join?test=1`;
+const T_FONT = "'Geist',system-ui,Arial,sans-serif";
+function itMailto() {
+  const subject = 'Please allow knowhere.me on the school network (Education)';
+  const body = [
+    'Hi,',
+    '',
+    "I'm using knowhere · teach it. in class. It's an Australian HSC and VCE teaching tool that runs in the browser, with nothing to install.",
+    '',
+    'Could you check it gets through the school filter? Everything you need is on one page: the domains, the category (Education) and the steps for our filter.',
+    IT_PAGE,
+    '',
+    "Quick test from a student laptop: " + NET_TEST + " (it reads “You're through.” when it works).",
+    '',
+    'Thanks!',
+  ].join('\n');
+  return 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+}
+function teacherWelcome({ email, firstName, teacherSeat }) {
+  const seat = Number(teacherSeat) || 0;
+  const showNo = seat > 10;
+  const ghost = (label, href) => `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 14px"><tr><td style="border:1.5px solid #7BEA5A;border-radius:11px"><a href="${href}" style="display:inline-block;padding:12px 20px;font-family:${T_FONT};font-size:14.5px;font-weight:700;color:#F2F0EB;text-decoration:none">${label}</a></td></tr></table>`;
+  const step = (n, t) => `<tr><td width="28" valign="top" style="padding:2px 0 12px;font-family:'JetBrains Mono','Courier New',monospace;font-size:12px;font-weight:700;color:#7BEA5A">${n}</td><td style="padding:0 0 12px;font-family:${T_FONT};font-size:15px;line-height:1.55;color:#B4B9B0">${t}</td></tr>`;
+  const w = t => `<strong style="color:#F2F0EB;font-weight:600">${t}</strong>`;
+  const lead = seat
+    ? `Your founding seat is yours: knowhere · teach it., free until ${w('Friday 9 April 2027')}, and first say in what we build next.`
+    : `The ${TEACHER_SEATS} founding seats have all gone, but the door's open and you're through it.`;
+  const itBox = `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:8px 0 26px"><tr><td bgcolor="#11130F" style="background:#11130F;border:1px solid #3A3F37;border-radius:13px;padding:20px 20px 6px">`
+    + B.eyebrow('before it goes on a student laptop', '#E8B44A')
+    + `<p style="margin:0 0 10px;font-family:${T_FONT};font-size:18px;font-weight:700;letter-spacing:-0.02em;color:#F2F0EB">The 30-second network check</p>`
+    + B.p(`School web filters are suspicious of anything new. Fair. On a student laptop at school, open <a href="${NET_TEST}" style="color:#7BEA5A;text-decoration:underline">knowhere.me/join?test=1</a>.`)
+    + B.p(`${w('“You\'re through.”')} You're set.<br>${w('A block page?')} Send your IT team our one-page note. It has the domains and the steps for your school's filter, Linewize, Zscaler, GoGuardian, Securly and Lightspeed included. Most fix it in minutes.`)
+    + ghost('Email the note to IT →', itMailto())
+    + `<p style="margin:0 0 16px;font-family:${T_FONT};font-size:13px;line-height:1.5;color:#8C9389">or send them the link: <a href="${IT_PAGE}" style="color:#B4B9B0;text-decoration:underline">knowhere.me/for-your-it-team</a></p>`
+    + `</td></tr></table>`;
+  const html = shell({
+    pill: seat ? 'Founding teacher' : 'Teacher',
+    bodyHtml: B.eyebrow(seat ? (showNo ? `founding seat #${seat}` : 'founding seat') : "you're in", '#B795F0')
+      + B.h1(`${hey(firstName)}, you're in.`)
+      + B.p(lead)
+      + B.p(`Live now: Year 11 and 12 ${w('Physics and Chemistry')}. Biology and Psychology are next. Teach those? We'll email you the day they land.`)
+      + B.btn('Open knowhere · teach it. →', `${APP_ORIGIN}/login`)
+      + `<p style="margin:6px 0 12px;font-family:${T_FONT};font-size:15px;font-weight:700;color:#F2F0EB">Three things to try this week</p>`
+      + `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 6px">`
+      + step('01', `${w('Present.')} Pick next week's concept and put it on the projector. The model fills the screen.`)
+      + step('02', `${w('Run call it.')} Lids down, fingers up. One answer is the impostor. Who's sus?`)
+      + step('03', `${w('Share a slide.')} Students open it on any device. No login, no account.`)
+      + `</table>`
+      + itBox
+      + B.p(`Anything breaks, confuses or delights you, hit reply. It comes straight to me.`)
+      + B.sig(),
+    footHtml: `Sent to ${email} because you made a knowhere · teach it. account. Not you? Reply and we'll close it.`, unsub: unsubUrl(email),
+  });
+  const subject = seat ? (showNo ? `You're in: founding seat #${seat} at knowhere · teach it.` : `You're in: a founding seat at knowhere · teach it.`) : `You're in: knowhere · teach it.`;
+  const text = strip(html) + `\n\nThe note for IT: ${IT_PAGE}\nNetwork test: ${NET_TEST}\nOpen the app: ${APP_ORIGIN}/login`;
+  return { from: FROM_CAT, reply_to: REPLY_TO, to: email, subject, html, text };
 }
 
 /* ── 2. countdown: t7 / t3 / t0 — per cohort ── */
@@ -192,4 +259,4 @@ function handoff({ email, firstName, type, appUrl }) {
 const STAGES = ['t7', 't3', 't0', 't4'];
 function build(stage, args) { return stage === 't4' ? handoff(args) : countdown(stage, args); }
 
-module.exports = { welcome, countdown, handoff, handoffParent, build, STAGES, unsubToken, unsubUrl, DATES };
+module.exports = { welcome, teacherWelcome, countdown, handoff, handoffParent, build, STAGES, unsubToken, unsubUrl, DATES };

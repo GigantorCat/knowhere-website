@@ -35,6 +35,7 @@
   .copy{font-family:ui-monospace,Menlo,monospace;font-size:13px;line-height:1.6;color:#EDECE8;background:#0c0d0f;border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:14px 16px;margin-top:12px;white-space:pre-wrap;word-break:break-word}
   .foot{margin-top:40px;font-size:12.5px;color:#56554f;line-height:1.6}
   .foot a{color:#8C8B87}
+  @media (max-width:480px){td code{white-space:normal;overflow-wrap:anywhere}th,td{padding:10px 6px}}   /* KW:IT-FILTER-STEPS phone fit */
   @media print{html,body{background:#fff;color:#111}p,td,.foot{color:#333}a,td code{color:#111}.box{border-color:#999;background:none}.copy{background:none;border-color:#999;color:#111}}
 </style>
 </head>
@@ -58,11 +59,27 @@
   <p>Standard HTTPS on port 443 only. No WebRTC, no peer-to-peer, no downloads. Nothing is required from <code>stripe.com</code> on a school network: teachers are not charged in the founding term and students never pay to open a shared slide.</p>
 
   <h2>Category</h2>
-  <p>If your filter (Linewize / Smoothwall, Netsweeper, FortiGuard, Cisco Umbrella, Zscaler, GoGuardian, Securly, Lightspeed) has <code>knowhere.me</code> uncategorised or filed as "new site", please file it under <b>Education</b>. Each vendor has a free re-categorisation form; the one-liner below is what to paste.</p>
+  <p>If your filter (Linewize / Smoothwall, Netsweeper, FortiGuard, Cisco Umbrella, Zscaler, GoGuardian, Securly, Lightspeed) has <code>knowhere.me</code> uncategorised or filed as "new site", please file it under <b>Education</b>. Some vendors take a re-categorisation request from anyone; Zscaler, GoGuardian, Securly and Lightspeed only take one from your own admin console. Either way, the one-liner below is what to paste.</p>
   <div class="copy">knowhere.me and app.knowhere.me &#8212; Australian education site for HSC and VCE (Years 11&#8211;12): interactive study and classroom teaching tool used by teachers and students. Please categorise as Education. Contact: hello@knowhere.me</div>
 
+  <h2>Steps for your filter</h2>   <!-- KW:IT-FILTER-STEPS (17 Oct 2026): where to allow it, per console -->
+  <p>The fastest fix is an allow rule. Some filters treat <code>knowhere.me</code> and <code>app.knowhere.me</code> as separate sites, so add both (or <code>*.knowhere.me</code> where wildcards work).</p>
+  <table>
+    <tr><th>Filter</th><th>Where to allow it</th></tr>
+    <tr><td>Linewize (Qoria)</td><td>Allow both in the students' filtering policy. To fix the category for every school: Filtering &#8594; Content Filtering &#8594; Category Search &#8594; Suggest a category &#8594; Education.</td></tr>
+    <tr><td>Smoothwall (Qoria)</td><td>Add both to an allow list in your web filter policy.</td></tr>
+    <tr><td>Zscaler</td><td>Administration &#8594; URL Categories: add both to a custom category, then allow it in Policy &#8594; URL &amp; Cloud App Control. Zscaler only re-categorises for customers, so if you can, request Education from your admin portal too.</td></tr>
+    <tr><td>GoGuardian Admin</td><td>Quick Editor &#8594; + Enter a URL &#8594; Allow &#8594; pick the policy your students are on. Add each domain on its own: a domain rule doesn't cover its subdomains. Allow up to 15 minutes.</td></tr>
+    <tr><td>Securly</td><td>Policy Editor &#8594; Global Settings &#8594; Allow/Block &#8594; URL: add <code>knowhere.me</code> and <code>*.knowhere.me</code>. Or use the allow list on one policy.</td></tr>
+    <tr><td>Lightspeed Filter</td><td>Add both as Allow in a web rule and apply it to the rule set your students use.</td></tr>
+    <tr><td>Netsweeper</td><td>Allow both in your policy, or raise a category review with Netsweeper support from your account.</td></tr>
+    <tr><td>FortiGate (FortiGuard)</td><td>Web filter profile &#8594; URL filter: add both as Allow. Category review: <a href="https://www.fortiguard.com/webfilter">fortiguard.com/webfilter</a>.</td></tr>
+    <tr><td>Cisco Umbrella</td><td>Policy Components &#8594; Destination Lists: add both to an allow list on the students' policy.</td></tr>
+  </table>
+  <p>Not listed? Look for &#8220;allow list&#8221;, &#8220;whitelist&#8221; or &#8220;URL override&#8221; in your filter's policy settings. The domains above are all it needs.</p>
+
   <div class="box">
-    <p><b>The quick test.</b> From a student laptop on the school network, open <a href="https://knowhere.me/join?test=1">knowhere.me/join?test=1</a>. If the page loads and the goat moves, you're done.</p>
+    <p><b>The quick test.</b> From a student laptop on the school network, open <a href="https://knowhere.me/join?test=1">knowhere.me/join?test=1</a>. If it says &#8220;You're through.&#8221;, you're done. If a block page shows instead, the filter is catching one of the domains above.</p>
     <p>Questions: <a href="mailto:hello@knowhere.me">hello@knowhere.me</a>. We answer the same day.</p>
   </div>
 
