@@ -113,7 +113,7 @@ function teacherWelcome({ email, firstName, teacherSeat }) {
   const w = t => `<strong style="color:#F2F0EB;font-weight:600">${t}</strong>`;
   const lead = seat
     ? `Your founding seat is yours: knowhere · teach it., free until ${w('Friday 9 April 2027')}, and first say in what we build next.`
-    : `The ${TEACHER_SEATS} founding seats have all gone, but the door's open and you're through it.`;
+    : `The ${TEACHER_SEATS} founding seats have gone, but knowhere · teach it. is still free until ${w('Friday 9 April 2027')}.`;   /* ruled 17 Oct: everyone in before 9 Apr is free; the founding 50 keep a founding rate */
   const itBox = `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:8px 0 26px"><tr><td bgcolor="#11130F" style="background:#11130F;border:1px solid #3A3F37;border-radius:13px;padding:20px 20px 6px">`
     + B.eyebrow('before it goes on a student laptop', '#E8B44A')
     + `<p style="margin:0 0 10px;font-family:${T_FONT};font-size:18px;font-weight:700;letter-spacing:-0.02em;color:#F2F0EB">The 30-second network check</p>`
