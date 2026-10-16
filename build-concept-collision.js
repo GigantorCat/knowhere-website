@@ -72,7 +72,7 @@ const PAGE=`<!DOCTYPE html>
 <meta name="twitter:description" content="${DESC}">
 <meta name="twitter:image" content="https://knowhere.me/og-image.png">
 <script type="application/ld+json">${JSON.stringify(LD)}</script>
-<script defer src="https://cloud.umami.is/script.js" data-website-id="ee8e1d64-1100-4281-8ca5-179736bcc3e0" data-auto-track="false"></script>
+<script defer src="https://cloud.umami.is/script.js" data-website-id="ee8e1d64-1100-4281-8ca5-179736bcc3e0" data-auto-track="false" data-domains="knowhere.me,app.knowhere.me"></script>
 <script defer src="/knowhere-pixel.js?v=4"></script>
 <meta name="facebook-domain-verification" content="6rirzrujmmkavl0wh2oqnpaw8hikf5" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
