@@ -105,6 +105,7 @@ function itMailto() {
   ].join('\n');
   return 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
 }
+/* KW:TEACH-SITE-V5 (17 Oct 2026): Biology + Psychology live in teach it. */
 function teacherWelcome({ email, firstName, teacherSeat }) {
   const seat = Number(teacherSeat) || 0;
   const showNo = seat > 10;
@@ -127,7 +128,7 @@ function teacherWelcome({ email, firstName, teacherSeat }) {
     bodyHtml: B.eyebrow(seat ? (showNo ? `founding seat #${seat}` : 'founding seat') : "you're in", '#B795F0')
       + B.h1(`${hey(firstName)}, you're in.`)
       + B.p(lead)
-      + B.p(`Live now: Year 11 and 12 ${w('Physics and Chemistry')}. Biology and Psychology are next. Teach those? We'll email you the day they land.`)
+      + B.p(`Live now: Year 11 and 12 ${w('Physics, Chemistry, Biology and Psychology')}. Maths is next. Teach it? We'll email you the day it lands.`)
       + B.btn('Open knowhere · teach it. →', `${APP_ORIGIN}/login`)
       + `<p style="margin:6px 0 12px;font-family:${T_FONT};font-size:15px;font-weight:700;color:#F2F0EB">Three things to try this week</p>`
       + `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 6px">`
