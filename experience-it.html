@@ -15,7 +15,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="knowhere">
 <meta property="og:url" content="https://knowhere.me/experience-it">
-<meta property="og:title" content="Try knowhere — real HSC &amp; VCE concepts, reframed for you">
+<meta property="og:title" content="You&#39;ve read about it. Now move it.">
 <meta property="og:description" content="No trailer. Real HSC and VCE concepts from knowhere, a lens switcher that reframes them for different brains, and a quiz that rebuilds itself to fit yours.">
 <meta property="og:image" content="https://knowhere.me/og-image.png">
 <meta property="og:image:width" content="1200">
@@ -23,7 +23,7 @@
 <meta property="og:image:alt" content="knowhere — Year 11 and 12 study built for your brain">
 <meta property="og:locale" content="en_AU">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Try knowhere — real HSC &amp; VCE concepts, reframed for you">
+<meta name="twitter:title" content="You&#39;ve read about it. Now move it.">
 <meta name="twitter:description" content="No trailer. Real HSC and VCE concepts from knowhere, a lens switcher that reframes them for different brains, and a quiz that rebuilds itself to fit yours.">
 <meta name="twitter:image" content="https://knowhere.me/og-image.png">
 <script type="application/ld+json">
@@ -205,6 +205,25 @@
     .kw-exp .page-banner{height:clamp(120px,18vh,180px)}
     .kw-exp .hero{padding-top:clamp(140px,20vh,200px)}
   }
+  /* KW:OPENERS (17 Oct 2026): the concept is the first screen. Existing pieces only (pill row, widget panel, handoff card). */
+  .kw-exp .page-hero.kw-open{min-height:0;justify-content:flex-start;max-width:1120px;margin:0 auto 34px;padding-top:clamp(170px,24vh,290px);padding-bottom:0}   /* clears the absolute particle banner (KW:R6) */
+  .kw-exp .page-hero.kw-open h1{font-size:clamp(26px,3.4vw,40px);line-height:1.05;max-width:24ch;text-wrap:balance}
+  .kw-exp .page-hero.kw-open .open-model{width:100%;text-align:left;margin-top:22px}
+  .kw-exp .page-hero.kw-open .open-cap{font-size:14.5px;line-height:1.5;color:var(--ink-dim);margin:12px 0 0;max-width:none;text-align:center}
+  .kw-exp .widget-stage{position:relative;background:var(--bg);overflow:hidden}
+  .kw-exp .widget-stage .poster img{position:absolute;top:0;left:0;width:100%;height:auto;display:block}
+  .kw-exp .widget-stage iframe{position:relative;opacity:0;pointer-events:none;transition:opacity .35s}
+  .kw-exp .widget-stage.on iframe{opacity:1;pointer-events:auto}
+  .kw-exp .widget-stage.on .poster,.kw-exp .widget-stage.switched .poster{display:none}
+  .kw-exp .kw-open + .kw-handcard{margin-top:0}
+  @media (max-width:700px){
+    .kw-exp .page-hero.kw-open{padding:108px 12px 0}
+    .kw-exp .page-hero.kw-open .page-banner{height:100px}   /* a shorter banner on a phone so the model starts in the first screen */
+    .kw-exp .page-hero.kw-open h1{font-size:25px}
+    .kw-exp .page-hero.kw-open .open-model{margin-top:16px}
+    .kw-exp .page-hero.kw-open .pill-row{gap:6px 8px;padding:8px 10px}
+    .kw-exp .page-hero.kw-open .pill-row .row-label,.kw-exp .page-hero.kw-open .pill-row .more{display:none}
+  }
 </style>
 </helmet>
 <div class="kw-exp">
@@ -224,20 +243,18 @@
     </div>
   </nav>
 
-  <div class="page-hero">
+  <!-- KW:OPENERS (17 Oct 2026) -->
+  <!-- The concept IS the first screen (ruled 17 Oct on the Landing Openers tap page): a smaller h1, then the subject pills and the
+       live panel moved up from #exp-content, then the handoff card. The old hero paragraph and the 01 h2/sub are gone. The JPG
+       under the iframe is a still of gpe-physics-blue.html at rest: it is what paints before any JS, and what stays if the frame
+       never reports in. It is for the default Physics state only; a pill switch drops it. Nothing here carries data-reveal. -->
+  <div class="page-hero kw-open">
     <div class="page-banner" aria-hidden="true">
       <div class="pb-host" id="pbHost"><canvas id="pbCv"></canvas></div>
     </div>
-    <h1>No trailer. No TL;DR.<br><span class="irid">Just the real thing.</span></h1>
-    <p style="color: #FFFFFF">Everything on this page is <em>live</em> from knowhere — a real concept, built to be touched. Every concept is mapped to your curriculum but never capped by it: everything examinable, then more than your textbook ever offered. <br><b>Drag it. Poke it. It's yours.</b></p>
-    <a class="scroll-cue" href="#exp-content" aria-label="Scroll to content"><span class="cue-label">experience it</span><span class="cue-ring"><span class="chev"></span></span></a>
-  </div>
+    <h1>You&#8217;ve read about it. <span style="color:var(--brat)">Now move it.</span></h1>
 
-  <section class="section" id="exp-content">
-    <div class="eyebrow"><span class="lhs">01 · experience the concepts — beyond the textbook</span></div>
-    <h2>One concept.<br><span class="subj-accent">Every way to grasp it.</span></h2>
-    <p class="sub">These are real concepts from knowhere — not mockups, not renders. Pick your subject, then drag it, watch it, or have it read aloud. Interactive, visual and audio in one artefact.</p>
-
+    <div class="open-model" id="exp-content">
     <div class="pill-row" role="tablist" aria-label="Subject">
       <span class="row-label">your subject</span>
       <button class="pill subj-pill active" data-widget="physics">Physics</button>
@@ -254,9 +271,14 @@
         <span id="widgetChromeLabel">physics · unit 3 · gravity &amp; fields</span>
         <span style="text-align:right"><button class="mode-chip" id="listenBtn" aria-label="Read this concept aloud">🔊 read it to me</button></span>
       </div>
-      <iframe id="widgetFrame" src="widgets/gpe-physics-blue.html" title="Interactive gravitational potential energy concept" loading="lazy" scrolling="no"></iframe>
+      <div class="widget-stage" id="widgetStage">
+        <picture class="poster"><source media="(max-width:700px)" srcset="/experience-it-proof-gpe-390.jpg?v=1"><img src="/experience-it-proof-gpe.jpg?v=1" width="1078" height="1020" alt="One real knowhere concept, live: gravitational potential energy for physics. Lift a 1 kg mass away from Earth and watch its energy climb toward zero." loading="eager" fetchpriority="high"></picture>
+        <iframe id="widgetFrame" src="widgets/gpe-physics-blue.html" title="Interactive gravitational potential energy concept" loading="eager" scrolling="no"></iframe>
+      </div>
     </div>
-  </section>
+    <p class="open-cap">A real concept, live from the app. Not a mockup. Pick a subject.</p>
+    </div>
+  </div>
 
   <section class="section kw-handcard" aria-labelledby="hand-h"><!-- KW:HANDOFF -->
     <div class="kw-handcard-in">
@@ -362,7 +384,7 @@ class Component extends DCLogic {
         d.body.style.minHeight='0px';               // release the 100vh floor so body reports natural height
         const h=Math.max(d.body.scrollHeight, d.documentElement.scrollHeight);
         d.body.style.minHeight=prev||'';
-        if(h>120){ f.style.minHeight=h+'px'; f.style.height=h+'px'; }
+        if(h>120){ f.style.minHeight=h+'px'; f.style.height=h+'px'; const st=root.querySelector('#widgetStage'); if(st) st.classList.add('on'); }   /* KW:OPENERS: the live frame takes over from the poster */
       }catch(e){}
     };
     this._widgetFit=fit;
@@ -497,6 +519,7 @@ class Component extends DCLogic {
         const cl=root.querySelector('#widgetChromeLabel'); if(cl) cl.textContent=w.label;
         const f=root.querySelector('#widgetFrame');
         if(f){ f.title=w.title; f.style.minHeight=''; f.style.height=''; f.src=w.src; }
+        const st=root.querySelector('#widgetStage'); if(st) st.classList.add('switched','on');   /* KW:OPENERS: the poster is Physics only */
       });
     });
     /* KW:PASS · the bridge — ?subject=chemistry preselects that pill after the page's own init (Lane 2 search ads land per concept) */
