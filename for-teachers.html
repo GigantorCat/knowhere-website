@@ -1419,6 +1419,23 @@ class Component extends DCLogic {
 </script>
 
 <style>nav .cta.small{white-space:nowrap}</style>
+<script>
+/* teacher-capture (17 Oct 2026): every "claim a seat" link carries this page's own utm_* (and ref) to the app, so a
+   LinkedIn seat and a Facebook-group seat stop looking the same. No utm on the page: the link is left alone and
+   knowhere-pixel.js adds the first-touch ad at click, as before. */
+(function () {
+  try {
+    var q = new URLSearchParams(location.search), keys = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "ref"], got = [];
+    keys.forEach(function (k) { var v = (q.get(k) || "").slice(0, 60); if (v) got.push([k, v]); });
+    if (!got.length) return;
+    document.querySelectorAll('a[href^="https://app.knowhere.me/signup?as=teacher"]').forEach(function (a) {
+      var u = new URL(a.href);
+      got.forEach(function (kv) { u.searchParams.set(kv[0], kv[1]); });
+      a.href = u.toString();
+    });
+  } catch (e) {}
+})();
+</script>
 <script src="./knowhere-mobile-menu.js?v=8" defer></script>
 </body>
 </html>

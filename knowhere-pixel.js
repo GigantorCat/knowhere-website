@@ -25,6 +25,7 @@ var KW_TT_PIXEL_ID = 'DAQ4L7JC77UFPT802VM0';
       var q = new URLSearchParams(location.search);
       var got = {
         source: (q.get('utm_source') || '').slice(0, 40),
+        medium: (q.get('utm_medium') || '').slice(0, 40),   /* teacher-capture: linkedin/paid vs linkedin/organic */
         campaign: (q.get('utm_campaign') || '').slice(0, 60),
         ad: (q.get('utm_content') || '').slice(0, 60),
         term: (q.get('utm_term') || '').slice(0, 40)
@@ -92,6 +93,7 @@ var KW_TT_PIXEL_ID = 'DAQ4L7JC77UFPT802VM0';
       if (acq && (acq.ad || acq.campaign) && a.href.indexOf('utm_') === -1) {
         var u = new URL(a.href, location.href);
         if (acq.source) u.searchParams.set('utm_source', acq.source);
+        if (acq.medium) u.searchParams.set('utm_medium', acq.medium);
         if (acq.campaign) u.searchParams.set('utm_campaign', acq.campaign);
         if (acq.ad) u.searchParams.set('utm_content', acq.ad);
         if (acq.term) u.searchParams.set('utm_term', acq.term);
