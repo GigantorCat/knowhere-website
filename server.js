@@ -23,6 +23,15 @@ const FROM = process.env.FROM_EMAIL || 'knowhere <hello@knowhere.me>';
 const TEACHER_SEATS = Number(process.env.TEACHER_SEATS || 50);
 const SITE = process.env.SITE_URL || 'https://knowhere.me';
 const ADMIN_KEY = process.env.ADMIN_KEY || '';
+/* forward-key (17 Oct 2026): the app forwards every teacher join from ONE server address, so the per-IP limiter would
+   refuse the 9th teacher in 10 minutes. The app sends this shared key in X-KW-Forward-Key and skips the limiter.
+   Unset = no bypass for anyone. Set the same value as WAITLIST_FORWARD_KEY on the app service. */
+const FORWARD_KEY = process.env.WAITLIST_FORWARD_KEY || '';
+function trustedForward(req) {
+  const k = String(req.get('x-kw-forward-key') || '');
+  if (!FORWARD_KEY || k.length !== FORWARD_KEY.length) return false;
+  return require('crypto').timingSafeEqual(Buffer.from(k), Buffer.from(FORWARD_KEY));
+}
 
 const TYPES = new Set(['student', 'parent', 'teacher']);
 const STATES = new Set(['NSW', 'VIC', 'QLD', 'WA', 'SA', 'TAS', 'ACT', 'NT', 'Outside AU']);
@@ -196,7 +205,7 @@ app.post('/api/waitlist', async (req, res) => {
   res.set('Cache-Control', 'no-store');
   const b = req.body || {};
   if (b.website) return res.json({ ok: true, position: stats.total + 1 }); // honeypot: pretend
-  if (limited(req.ip)) return res.status(429).json({ ok: false, error: 'Slow down — try again in a few minutes.' });
+  if (!trustedForward(req) && limited(req.ip)) return res.status(429).json({ ok: false, error: 'Slow down — try again in a few minutes.' });
 
   const email = clean(b.email, 160).toLowerCase();
   const type = clean(b.type, 20).toLowerCase();
