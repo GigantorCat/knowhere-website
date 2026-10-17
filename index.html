@@ -184,31 +184,49 @@
     section[data-screen-label="Fingerprint"] [data-step="0.845"]{font-size:64px !important}
     section[data-screen-label="Fingerprint"] [data-step="0.86"]{margin-top:24px !important}
   }
-  /* KW:OPENERS (17 Oct 2026) — the opener hero + the corner strip, before the IYKYK mask. Plain sections: no sticky, no JS.
-     They sit above the fixed particle stage on a solid ground, so the stage never shows through. The snap line on each is
-     only so html's mandatory snap can rest on them (without it the page snaps straight past them to the mask). */
-  .kp-open,.kp-corners{position:relative;z-index:3;background:#070708;scroll-snap-align:start}
-  .kp-open{padding:104px 34px 56px;text-align:center}
-  .kp-open-in{max-width:760px;margin:0 auto;display:flex;flex-direction:column;align-items:center}
+  /* KW:OPENERS-V2 (18 Oct 2026) — Cat's notes: the opener is a banner (text only, one screen), "Cooked." cooks, and the
+     live widget gets its own full-screen section that floats in. Plain sections, solid ground over the particle stage. */
+  .kp-open,.kp-proof,.kp-corners{position:relative;z-index:3;background:#070708;scroll-snap-align:start}
+  .kp-open{min-height:100vh;min-height:100svh;display:flex;align-items:center;justify-content:center;padding:96px 34px 96px;text-align:center;overflow:hidden}
+  .kp-open-in{position:relative;z-index:1;width:100%;max-width:1120px;margin:0 auto;display:flex;flex-direction:column;align-items:center}
   .kp-open .kp-eye{font-size:10.5px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#8C8B87;margin:0}
-  .kp-open h1{font-size:clamp(29px,4vw,48px);line-height:1.04;font-weight:700;letter-spacing:-0.04em;margin:16px 0 0;max-width:22ch;text-wrap:balance;color:#EDECE8}
-  .kp-open .kp-open-sub{font-size:16.5px;line-height:1.55;color:#9b9a96;margin:16px 0 0;max-width:50ch;text-wrap:pretty}
-  .kp-open .kp-open-cta{display:flex;flex-direction:column;align-items:center;margin-top:26px}
-  .kp-open .kp-open-cta .fr{margin:18px 0 10px;font-size:14.5px;color:#9b9a96}
-  .kp-open .kp-live{margin:22px 0 0;font-size:11px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#8C8B87}
-  /* KW:HERO-V4b, ported from for-parents as is: the live fission proof, poster underneath */
-  .kp-open .proof-card{display:block;width:100%;max-width:560px;margin:24px auto 0;border-radius:16px;border:1px solid rgba(255,255,255,.1);background:#0c0d0f;overflow:hidden;color:#EDECE8;text-align:left}
-  .kp-open .proof-frame{position:relative;background:#0c0d0f;aspect-ratio:560/588;overflow:hidden}
-  .kp-open .proof-frame .poster-link{display:block;position:absolute;inset:0}
-  .kp-open .proof-frame img.poster{display:block;width:100%;height:100%;object-fit:cover;object-position:top}
-  .kp-open .proof-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block;background:transparent;opacity:0;pointer-events:none;transition:opacity .35s}
-  .kp-open .proof-frame.on{aspect-ratio:auto}
-  .kp-open .proof-frame.on iframe{opacity:1;pointer-events:auto}
-  .kp-open .proof-frame.on .poster-link{visibility:hidden}
-  .kp-open .proof-card a.cap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-top:1px solid rgba(255,255,255,.08);text-decoration:none;color:inherit}
-  .kp-open .proof-card .cap .t{font-size:15px;font-weight:600;letter-spacing:-0.01em;line-height:1.3;color:#EDECE8}
-  .kp-open .proof-card .cap i{flex-shrink:0;width:34px;height:34px;border-radius:10px;border:1px solid rgba(123,234,90,.5);display:grid;place-items:center;color:#7BEA5A}
-  .kp-open .proof-card a.cap:hover i{background:rgba(123,234,90,.12)}
+  .kp-open h1{font-size:clamp(34px,4.9vw,66px);line-height:1.03;font-weight:700;letter-spacing:-0.045em;margin:22px 0 0;color:#EDECE8;text-wrap:balance}
+  .kp-open h1 .ln{display:block;text-wrap:balance}
+  .kp-open .kp-open-sub{font-size:18px;line-height:1.55;color:#9b9a96;margin:28px 0 0;max-width:46ch;text-wrap:pretty}
+  .kp-open .kp-fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}
+  .kp-open .kp-cue{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);z-index:3;display:flex;flex-direction:column;align-items:center;gap:6px;color:#8C8B87;text-decoration:none;font-size:10.5px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;animation:kpHint 2.4s ease-in-out infinite}
+  .kp-open .kp-cue:hover,.kp-open .kp-cue:focus-visible{color:#7BEA5A}
+  /* "Cooked." — plain white until the script adds .burn; every stage is a class, so no JS means no animation */
+  .kp-cooked{position:relative;display:inline-block;color:#EDECE8;-webkit-text-stroke:1px transparent;transition:-webkit-text-stroke-color 1.6s ease}
+  .kp-cooked::after{content:attr(data-word);position:absolute;left:0;top:0;color:#7a766f;-webkit-text-fill-color:#7a766f;opacity:0;transition:opacity 1s ease;pointer-events:none}
+  .kp-cooked.burn{color:transparent;-webkit-text-fill-color:transparent;background-image:linear-gradient(to top,#ff3606 0%,#ff6512 16%,#ffa53a 30%,#ffd27a 40%,#EDECE8 52%,#EDECE8 100%);background-size:100% 260%;background-position:0 0;-webkit-background-clip:text;background-clip:text;animation:kpEmber 2.6s cubic-bezier(.45,0,.3,1) forwards}
+  .kp-cooked.lit{background-position:0 100%;animation:kpFlick 1.25s ease-in-out infinite alternate}
+  .kp-cooked.ash{background-position:0 100%;animation:none;filter:none}
+  .kp-cooked.ash::after{opacity:1}
+  .kp-cooked.gone{background-image:none;-webkit-text-stroke-color:rgba(237,236,232,.2)}
+  .kp-cooked.gone::after{opacity:0;transition:none}
+  @keyframes kpEmber{0%{background-position:0 0;filter:drop-shadow(0 0 0 rgba(255,90,20,0))}100%{background-position:0 100%;filter:drop-shadow(0 0 12px rgba(255,80,20,.5)) drop-shadow(0 0 3px rgba(255,140,40,.55))}}
+  @keyframes kpFlick{0%{filter:drop-shadow(0 0 12px rgba(255,80,20,.5)) drop-shadow(0 0 3px rgba(255,140,40,.55)) brightness(1)}100%{filter:drop-shadow(0 0 22px rgba(255,105,30,.72)) drop-shadow(0 0 4px rgba(255,170,60,.7)) brightness(1.16)}}
+  /* the hero widget: its own screen, canvas-left / controls-right inside the frame (the page script lays out the widget) */
+  .kp-proof{min-height:100vh;min-height:100svh;display:flex;flex-direction:column;justify-content:center;padding:84px 28px 36px}
+  .kp-proof-in{width:100%;max-width:1240px;margin:0 auto}
+  .kp-proof-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px 16px;flex-wrap:wrap;margin:0 0 12px;font-size:10.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#8C8B87}
+  .kp-proof-top b{color:#3AADA0;font-weight:700}
+  .kp-proof .proof-card{display:block;width:100%;border-radius:18px;border:1px solid rgba(255,255,255,.1);background:#0B0D0C;overflow:hidden;box-shadow:0 30px 90px rgba(0,0,0,.55)}
+  .kp-proof .proof-frame{position:relative;height:550px;height:clamp(440px,calc(100vh - 250px),760px);height:clamp(440px,calc(100svh - 250px),760px);background:#0B0D0C;overflow:hidden}
+  .kp-proof .proof-frame picture,.kp-proof .proof-frame img.poster{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover;object-position:top center}
+  .kp-proof .proof-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block;background:transparent;opacity:0;pointer-events:none;transition:opacity .35s}
+  .kp-proof .proof-frame.on iframe{opacity:1;pointer-events:auto}
+  .kp-proof .proof-frame.on picture{visibility:hidden}
+  .kp-proof-cta{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:12px 18px;margin-top:22px}
+  .kp-proof-cta .fr{margin:0;font-size:14.5px;color:#9b9a96}
+  .kp-proof .kp-live{margin:16px 0 0;text-align:center;font-size:11px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#8C8B87}
+  /* floats in on scroll: the class only exists when the script ran and the section started below the fold */
+  html.kw-float .kp-proof .proof-card{opacity:0;transform:translateY(80px) scale(.96);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform 1.15s cubic-bezier(.2,.7,.2,1)}
+  html.kw-float .kp-proof .kp-proof-top{opacity:0;transition:opacity .8s ease .15s}
+  html.kw-float .kp-proof.in .proof-card{opacity:1;transform:none}
+  html.kw-float .kp-proof.in .kp-proof-top{opacity:1}
+  @media (prefers-reduced-motion:reduce){.kp-open .kp-cue{animation:none}}
   /* the corner strip: two doors, the site's own type and secondary-link colours */
   .kp-corners{padding:8px 34px 64px;scroll-margin-top:72px}   /* rests under the fixed nav, not behind it */
   .kp-corners-in{max-width:760px;margin:0 auto}
@@ -219,13 +237,16 @@
   .kp-door .go{font-size:16px;font-weight:600;color:#7BEA5A}
   .kp-door:hover .q,.kp-door:focus-visible .q{color:#EDECE8}
   @media (max-width:740px){
-    .kp-open{padding:84px 20px 40px}
-    .kp-open h1{font-size:29px}
-    .kp-open .kp-open-sub{font-size:15.5px}
-    .kp-open .proof-frame{aspect-ratio:366/492}
-    .kp-open .kp-open-cta{width:100%}
-    .kp-open .kp-open-cta .kp-cta{width:100%;justify-content:center}
-    .kp-open .kp-open-cta .kw-hand{width:100%;text-align:center}
+    .kp-open{padding:84px 22px 92px}
+    .kp-open h1{font-size:clamp(28px,7.9vw,38px);line-height:1.07}
+    .kp-open .kp-open-sub{font-size:16px;margin-top:22px}
+    .kp-proof{padding:74px 12px 28px}
+    .kp-proof-top{font-size:9.5px;letter-spacing:.16em;margin-bottom:10px;padding:0 4px}
+    .kp-proof .proof-card{border-radius:16px}
+    .kp-proof .proof-frame{height:560px;height:clamp(500px,calc(100vh - 290px),700px);height:clamp(500px,calc(100svh - 290px),700px)}
+    .kp-proof-cta{flex-direction:column;gap:10px;margin-top:18px}
+    .kp-proof-cta .kp-cta{width:100%;justify-content:center}
+    .kp-proof-cta .kw-hand{width:100%;text-align:center}
     .kp-corners{padding:4px 20px 44px}
     .kp-door{grid-template-columns:1fr auto;padding:18px 0}
     .kp-door .k{grid-column:1/-1}
@@ -256,24 +277,34 @@
       <a href="https://app.knowhere.me/signup" class="kp-cta" data-kw-cta style="padding:10px 18px;font-size:13px;animation:none;box-shadow:0 6px 22px rgba(123,234,90,.25);white-space:nowrap">start your free week</a>
   </nav>
 
-  <!-- KW:OPENERS (17 Oct 2026) -->
-  <!-- A · the opener. Ruled 17 Oct on the Landing Openers tap page. The first screen paints from this markup alone: no
-       data-fade, no data-reveal, no opacity:0. The proof is the for-parents KW:HERO-V4b block as is: the JPG paints first;
-       the page script crops the live widget and swaps it in once it reports a height. -->
+  <!-- KW:OPENERS-V2 (18 Oct 2026) -->
+  <!-- A · the banner. Text only, one screen. "Cooked." is plain white text until the page script cooks it (and never
+       under reduced motion), so the first screen paints from this markup alone. -->
   <section data-screen-label="Opener" class="kp-open" id="kwOpen">
-    <div class="snapmark" style="bottom:0;scroll-snap-align:end" aria-hidden="true"></div><!-- a rest at the opener's foot, so one flick can't skip the CTA -->
+    <canvas class="kp-fx" id="kwCookFx" aria-hidden="true"></canvas>
     <div class="kp-open-in">
       <p class="kp-eye">HSC &amp; VCE · Year 11 and 12</p>
-      <h1>You memorised it. Then the exam reworded the question. <span style="color:#7BEA5A">Cooked.</span></h1>
+      <h1><span class="ln">&#8220;I memorised it.</span><span class="ln">Then the exam reworded the question.</span><span class="ln"><span class="kp-cooked" id="kwCooked" data-word="Cooked.">Cooked.</span>&#8221;</span></h1>
       <p class="kp-open-sub">Not if you know how it works. Then the exam can reword it all it likes. knowhere turns Year 11 and 12 into living concepts you poke until it lands.</p>
+    </div>
+    <a class="kp-cue" href="#kwProof"><span>poke it</span><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></a>
+  </section>
+
+  <!-- KW:OPENERS-V2 (18 Oct 2026) -->
+  <!-- A2 · the hero widget, its own screen: Le Chatelier's principle (Chemistry). The JPG paints first; the page script
+       lays the live widget out canvas-left / controls-right (stacked on a phone) and swaps it in. If any of it fails the
+       poster stays. Fission stays on for-parents and in the ad creative. -->
+  <section data-screen-label="Proof" class="kp-proof" id="kwProof">
+    <div class="snapmark" style="bottom:0;scroll-snap-align:end" aria-hidden="true"></div>
+    <div class="kp-proof-in">
+      <div class="kp-proof-top"><span>A real concept, live from the app</span><span><b>Chemistry</b> · Le Chatelier&#8217;s principle</span></div>
       <div class="proof-card live-proof" id="homeProofCard">
         <div class="proof-frame" id="homeProofFrame">
-          <a class="poster-link" href="/hsc/physics/nuclear-fission" aria-label="Open nuclear fission, a live knowhere concept"><img class="poster" src="/for-parents-proof-fission.jpg?v=1" width="1120" height="1174" alt="One real knowhere concept, live: a nuclear fission chain reaction for HSC physics. Push the control rods in and watch it settle; pull them out and watch it run away." loading="eager" fetchpriority="high"></a>
-          <iframe id="homeProofWidget" src="/widgets/nuclear-fission-physics.html" title="Nuclear fission — a live knowhere concept. Drag the control rods and watch the chain reaction respond." loading="eager" scrolling="no" tabindex="-1"></iframe>
+          <picture><source media="(max-width:740px)" srcset="/home-proof-lechatelier-m.jpg?v=1"><img class="poster" src="/home-proof-lechatelier-d.jpg?v=1" width="1240" height="560" alt="One real knowhere concept, live: Le Chatelier's principle. Particles of A pair up into P and split apart again; change the amount of A, squeeze the box or heat it, and watch the mix shift." loading="eager"></picture>
+          <iframe id="homeProofWidget" src="/widgets/le-chatelier-s-principle-chemistry.html" title="Le Chatelier's principle — a live knowhere concept. Change the amount of A, squeeze the box or heat it, and watch the equilibrium shift." loading="eager" scrolling="no"></iframe>
         </div>
-        <a class="cap" href="/hsc/physics/nuclear-fission"><span class="t">See the full concept, the way you&#8217;d learn it</span><i aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"></path></svg></i></a>
       </div>
-      <div class="kp-open-cta">
+      <div class="kp-proof-cta">
         <a href="https://app.knowhere.me/signup" class="kp-cta" data-kw-cta data-kw-from="hero">start your free week</a>
         <p class="fr">not your card? send it to whoever&#8217;s is.</p>
         <button type="button" class="kw-hand" data-kw-handoff="site-home">send this to a parent</button>
@@ -494,6 +525,7 @@ class Component extends DCLogic {
     window.addEventListener('resize',this._resize);
     this.startMask();
     this.startProof();   /* KW:OPENERS */
+    this.startCook();    /* KW:OPENERS-V2 */
     this.beat=0; this._sub=-1; this._ost=-1; this.boost=0; this._beatKey='';
     this._mT0=performance.now(); this._kT0=0;
     const g0={r:123,g:234,b:90};
@@ -513,61 +545,149 @@ class Component extends DCLogic {
     if(this._onProofFit) window.removeEventListener('resize',this._onProofFit);
   }
 
-  /* KW:OPENERS (17 Oct 2026): the opener's live proof, the for-parents KW:HERO-V4b crop as is. Same-origin iframe: hide all of
-     the widget but the card that holds its slider, zero its page padding and border, give the reactor its first neutrons
-     (rods 40%), then size the frame off the cropped card and swap it in over the poster. If any of it fails the poster stays. */
+  /* KW:OPENERS-V2 (18 Oct 2026): the hero widget, Le Chatelier's principle. Same-origin iframe: keep the card that holds
+     the slider, pull the two stress buttons (Pressure ×2 / Heat it) into it, hide the rest, and lay it out to fill the
+     frame: canvas left, controls right (stacked on a phone). The frame's height comes from the page CSS, not the widget.
+     The section floats in on scroll (html.kw-float, only when it starts below the fold). If any of it fails, the poster stays. */
   startProof(){
-    var pfBox=document.getElementById('homeProofFrame'), pf=document.getElementById('homeProofWidget');
+    var pfBox=document.getElementById('homeProofFrame'), pf=document.getElementById('homeProofWidget'), sec=document.getElementById('kwProof');
+    try{
+      if(sec&&!this.reduce&&('IntersectionObserver' in window)&&sec.getBoundingClientRect().top>window.innerHeight*0.6){
+        document.documentElement.classList.add('kw-float');
+        var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ sec.classList.add('in'); io.disconnect(); } }); },{threshold:0.12});
+        io.observe(sec); this._floatIO=io;
+      }
+    }catch(e){ if(sec) sec.classList.add('in'); }
     if(!pfBox||!pf) return;
-    var cropped=false, cropEl=null;
+    var CSS='html,body{height:100%!important;background:#0B0D0C!important}'+
+      'body{padding:0!important;margin:0!important;min-height:0!important;overflow:hidden!important}'+
+      '.container{max-width:none!important;height:100%!important;margin:0!important}'+
+      '.card{height:100%;margin:0!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:14px!important;display:flex;flex-direction:column}'+
+      '.canvas-wrapper{aspect-ratio:auto!important;flex:1 1 auto;min-height:200px;margin:0 0 14px!important}'+
+      '.card-header{margin-bottom:10px!important}.card-hint{display:none}'+
+      '.toggle-section{margin:12px 0 0!important}.toggle-btn{padding:11px 8px!important;font-size:13.5px!important}'+
+      '.stat-row{margin-top:12px!important;padding-top:12px!important}.know-this{display:none}'+
+      '@media (min-width:720px){'+
+        '.card{display:grid!important;grid-template-columns:minmax(0,1fr) 310px;grid-template-rows:auto auto auto auto auto 1fr;'+
+          'grid-template-areas:"cv hd" "cv ht" "cv sl" "cv tg" "cv st" "cv kt";column-gap:26px;padding:22px!important}'+
+        '.canvas-wrapper{grid-area:cv;height:100%;min-height:0;margin:0!important}'+
+        '.card-header{grid-area:hd;flex-wrap:wrap;gap:6px;margin:2px 0 10px!important}'+
+        '.card-hint{grid-area:ht;display:block;line-height:1.55;margin-bottom:26px!important}'+
+        '.slider-wrapper{grid-area:sl;margin:0!important}'+
+        '.toggle-section{grid-area:tg;margin:22px 0 0!important}.toggle-btn{padding:12px 8px!important}'+
+        '.stat-row{grid-area:st;margin:22px 0 0!important}'+
+        '.know-this{grid-area:kt;display:block;align-self:end;margin:18px 0 0!important;padding:14px 16px!important;font-size:14px!important;line-height:1.5!important}'+
+        '.know-this .know-this-body{font-size:14.5px!important;line-height:1.5!important}'+
+      '}';
+    var done=false, kick=function(){ try{ pf.contentWindow.dispatchEvent(new pf.contentWindow.Event('resize')); }catch(e){} };
     var crop=function(){
-      if(cropped) return true;
+      if(done) return true;
       try{
         var d=pf.contentDocument; if(!d||!d.body) return false;
-        var r=d.querySelector('input[type=range]'); if(!r) return false;
-        var el=r; while(el.parentElement&&el.parentElement!==d.body&&el.parentElement.parentElement!==d.body) el=el.parentElement;
-        var cont=el.parentElement;
-        Array.prototype.forEach.call(cont.children,function(c){ if(c!==el&&c.tagName!=='STYLE'&&c.tagName!=='SCRIPT') c.style.setProperty('display','none','important'); });
-        ['padding','margin'].forEach(function(k){ d.body.style.setProperty(k,'0','important'); cont.style.setProperty(k,'0','important'); });
-        d.body.style.setProperty('min-height','0','important'); d.body.style.setProperty('overflow','hidden','important');
-        cont.style.setProperty('max-width','none','important');
-        ['margin','border'].forEach(function(k){ el.style.setProperty(k,'0','important'); });
-        el.style.setProperty('border-radius','0','important'); el.style.setProperty('box-shadow','none','important');
-        cropped=true; cropEl=el;
+        var r=d.getElementById('stressSlider'), card=r&&r.closest('.card'), cont=card&&card.parentElement;
+        if(!r||!card||!cont||!d.getElementById('canvas')) return false;
+        var tg=d.querySelector('.toggle-section'); if(tg) card.insertBefore(tg,card.querySelector('.stat-row'));
+        var kt=d.querySelector('.know-this'); if(kt) card.appendChild(kt);
+        Array.prototype.forEach.call(cont.children,function(c){ if(c!==card&&c.tagName!=='STYLE'&&c.tagName!=='SCRIPT') c.style.setProperty('display','none','important'); });
+        var st=d.createElement('style'); st.textContent=CSS; d.head.appendChild(st);
         try{
-          var ov=d.getElementById('overlayTag'), cw=ov&&ov.parentElement;
-          if(ov&&cw&&cw.parentElement){ cw.parentElement.insertBefore(ov,cw.nextSibling); }
-          var st=d.createElement('style');
-          st.textContent='.canvas-wrapper{aspect-ratio:4/3!important;margin-bottom:8px!important}.canvas-wrapper canvas{width:100%!important;height:100%!important;max-width:none!important}@media (min-width:560px){.canvas-wrapper{aspect-ratio:16/10!important}}#overlayTag{position:static!important;background:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;padding:2px 0 4px!important;font-size:12.5px!important}';
-          d.head.appendChild(st);
-          try{ pf.contentWindow.dispatchEvent(new pf.contentWindow.Event('resize')); }catch(e){}
-        }catch(e){}
-        try{
-          var hiSent=false;
-          var hiFire=function(kind){
+          var hiSent=false, hiFire=function(kind){
             if(hiSent) return; hiSent=true;
-            try{ if(window.umami) window.umami.track('hero_interact',{page:location.pathname,widget:'nuclear-fission',via:kind,after_s:Math.round((window.performance&&performance.now?performance.now():0)/1000)}); }catch(e){}
+            try{ if(window.umami) window.umami.track('hero_interact',{page:location.pathname,widget:'le-chatelier',via:kind,after_s:Math.round((window.performance&&performance.now?performance.now():0)/1000)}); }catch(e){}
           };
           d.addEventListener('pointerdown',function(){ hiFire('pointer'); },{passive:true,capture:true});
           d.addEventListener('touchstart',function(){ hiFire('touch'); },{passive:true,capture:true});
           d.addEventListener('keydown',function(){ hiFire('key'); },true);
         }catch(e){}
-        try{ r.value=40; r.dispatchEvent(new pf.contentWindow.Event('input',{bubbles:true})); }catch(e){}
+        done=true; kick();
+        requestAnimationFrame(function(){ requestAnimationFrame(function(){ kick(); pfBox.classList.add('on'); }); });
         return true;
       }catch(e){ return false; }
     };
-    var fit=function(){
-      if(!crop()||!cropEl) return;
-      var h=Math.round(cropEl.getBoundingClientRect().height); if(!(h>120)) return;
-      h=Math.max(240,Math.min(1600,h));
-      if(Math.abs(parseInt(pfBox.style.height||0,10)-h)>4) pfBox.style.height=h+'px';
-      pfBox.classList.add('on');
+    pf.addEventListener('load',function(){ crop(); setTimeout(crop,300); setTimeout(crop,1200); setTimeout(kick,1500); });
+    crop();
+    window.addEventListener('resize',kick); this._onProofFit=kick;
+  }
+
+  /* KW:OPENERS-V2 (18 Oct 2026): "Cooked." cooks, once, after the reader has had a beat with the line.
+     Embers rise bottom-up (CSS, .burn → .lit), smoke lifts off the word (canvas), it goes ash grey (.ash), then the word is
+     sampled into dust that crumbles and falls, leaving a faint outline (.gone). The text stays in the DOM for screen readers;
+     under reduced motion none of this runs and the word stays white. */
+  startCook(){
+    var w=document.getElementById('kwCooked'), cv=document.getElementById('kwCookFx'), sec=document.getElementById('kwOpen');
+    if(!w||!cv||!sec||this.reduce||!cv.getContext) return;
+    var ctx=cv.getContext('2d'), dpr=Math.min(window.devicePixelRatio||1,2), W=0, H=0;
+    var size=function(){ var r=sec.getBoundingClientRect(); W=r.width; H=r.height; cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr); ctx.setTransform(dpr,0,0,dpr,0,0); };
+    var box=function(){ var a=w.getBoundingClientRect(), s=sec.getBoundingClientRect(); return {x:a.left-s.left,y:a.top-s.top,w:a.width,h:a.height}; };
+    var smoke=[], dust=[], smokeOn=false, running=false, ending=false, raf=0, timers=[];
+    var later=function(fn,ms){ timers.push(setTimeout(fn,ms)); };
+    var sample=function(){
+      var b=box(), cs=getComputedStyle(w), pad=12, oc=document.createElement('canvas');
+      oc.width=Math.ceil(b.w+pad*2); oc.height=Math.ceil(b.h+pad*2);
+      var o=oc.getContext('2d');
+      o.font=cs.fontStyle+' '+cs.fontWeight+' '+cs.fontSize+' '+cs.fontFamily;
+      try{ o.letterSpacing=cs.letterSpacing; }catch(e){}
+      o.textBaseline='alphabetic'; o.fillStyle='#fff';
+      var t=w.textContent; if(cs.textTransform==='lowercase') t=t.toLowerCase(); else if(cs.textTransform==='uppercase') t=t.toUpperCase();
+      var m=o.measureText(t), asc=m.fontBoundingBoxAscent||m.actualBoundingBoxAscent, des=m.fontBoundingBoxDescent||m.actualBoundingBoxDescent;
+      o.fillText(t,pad,pad+(b.h-(asc+des))/2+asc);
+      var px=o.getImageData(0,0,oc.width,oc.height).data, step=W<700?2:3, out=[];
+      for(var y=0;y<oc.height;y+=step) for(var x=0;x<oc.width;x+=step){
+        if(px[(y*oc.width+x)*4+3]>120){
+          var k=(y-pad)/Math.max(1,b.h), ember=Math.random()<0.05;
+          out.push({x:b.x-pad+x+(Math.random()-0.5)*step*0.8,y:b.y-pad+y+(Math.random()-0.5)*step*0.8,s:step*(0.7+Math.random()*0.5),vx:(Math.random()-0.5)*0.7,vy:Math.random()*0.5,a:0.95,
+            t:performance.now()+k*650+Math.random()*1100,ember:ember,g:118+Math.floor(Math.random()*30)});
+        }
+      }
+      return out;
     };
-    var onH=function(e){ var m=e&&e.data; if(!m||!m.kwH||e.source!==pf.contentWindow) return; fit(); };
-    window.addEventListener('message',onH); this._onProofH=onH;
-    window.addEventListener('resize',fit); this._onProofFit=fit;
-    pf.addEventListener('load',function(){ fit(); setTimeout(fit,300); setTimeout(fit,1200); setTimeout(fit,3000); });
-    fit();
+    var frame=function(now){
+      raf=requestAnimationFrame(frame);
+      ctx.clearRect(0,0,W,H);
+      var b=box();
+      if(smokeOn&&Math.random()<0.5){
+        smoke.push({x:b.x+b.w*(0.06+Math.random()*0.88),y:b.y+b.h*(0.2+Math.random()*0.2),vx:(Math.random()-0.5)*0.25,
+          vy:-(0.35+Math.random()*0.5),r:0.6+Math.random()*1.1,life:0,max:110+Math.random()*90,ph:Math.random()*6.28});
+      }
+      for(var j=smoke.length-1;j>=0;j--){
+        var s=smoke[j]; s.life++; s.x+=s.vx+Math.sin(s.ph+s.life/24)*0.22; s.y+=s.vy; s.r+=0.018;
+        var k=s.life/s.max, a=k<0.15?(k/0.15)*0.42:0.42*(1-(k-0.15)/0.85);
+        if(k>=1){ smoke.splice(j,1); continue; }
+        var g=ctx.createRadialGradient(s.x,s.y,0,s.x,s.y,s.r*1.7);
+        g.addColorStop(0,'rgba(205,200,192,'+a.toFixed(3)+')'); g.addColorStop(1,'rgba(205,200,192,0)');
+        ctx.fillStyle=g; ctx.beginPath(); ctx.arc(s.x,s.y,s.r*1.7,0,6.283); ctx.fill();
+      }
+      for(var q=dust.length-1;q>=0;q--){
+        var d=dust[q];
+        if(now>=d.t){ d.vy+=0.085; d.vx*=0.992; d.x+=d.vx+Math.sin((now+d.t)/300)*0.15; d.y+=d.vy; d.a-=0.0075; }
+        if(d.a<=0||d.y>H+10){ dust.splice(q,1); continue; }
+        ctx.fillStyle=d.ember?'rgba(255,'+(110+Math.floor(Math.random()*60))+',40,'+d.a.toFixed(3)+')':'rgba('+d.g+','+(d.g-4)+','+(d.g-10)+','+d.a.toFixed(3)+')';
+        ctx.fillRect(d.x,d.y,d.s,d.s);
+      }
+      if(ending&&!smokeOn&&!smoke.length&&!dust.length&&running){ cancelAnimationFrame(raf); running=false; ctx.clearRect(0,0,W,H); }
+    };
+    var go=function(){
+      size(); running=true; raf=requestAnimationFrame(frame);
+      w.classList.add('burn');
+      later(function(){ smokeOn=true; },600);
+      later(function(){ w.classList.add('lit'); },2650);
+      later(function(){ w.classList.add('ash'); },4200);
+      later(function(){
+        try{ dust=sample(); }catch(e){ dust=[]; }
+        w.classList.add('gone');
+      },5300);
+      later(function(){ smokeOn=false; ending=true; },5800);
+    };
+    var started=false, start=function(){ if(started) return; started=true; later(go,1300); };
+    var arm=function(){
+      if('IntersectionObserver' in window){
+        var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ start(); io.disconnect(); } }); },{threshold:0.5});
+        io.observe(sec);
+      } else start();
+    };
+    if(document.fonts&&document.fonts.ready) document.fonts.ready.then(arm); else arm();
+    window.addEventListener('resize',size); this._cookResize=size;
+    this._cookStop=function(){ timers.forEach(clearTimeout); cancelAnimationFrame(raf); };
   }
 
   /* ─── IYKYK video text mask — sticky disintegration into wind-borne dust ───
