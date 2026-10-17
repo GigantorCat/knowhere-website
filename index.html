@@ -230,23 +230,29 @@
   /* KW:OPENERS-V3 (18 Oct 2026): the quote gets its attribution; the sub becomes line · KNOWHERE eyebrow · line; the top
      eyebrow is gone; "Cooked." stays cooking (no ash), and a dot-wave field moves along the bottom of the banner. */
   .kp-cooked::after{content:none}
-  .kp-open .kp-cue{color:#B5B4AF;text-shadow:0 0 12px #070708,0 0 4px #070708,0 0 2px #070708}
+  .kp-open .kp-cue{color:#7BEA5A;font-size:13px;font-weight:700;letter-spacing:.22em;gap:8px;text-shadow:0 0 12px #070708,0 0 4px #070708,0 0 2px #070708}
+  .kp-open .kp-cue svg{width:20px;height:20px}
+  .kp-open .kp-cue{animation:kpCue 2.4s ease-in-out infinite}
+  @keyframes kpCue{0%,100%{opacity:.85;transform:translateX(-50%) translateY(0)}50%{opacity:1;transform:translateX(-50%) translateY(6px)}}
+  @media (prefers-reduced-motion:reduce){.kp-open .kp-cue{animation:none}}
+  .kp-open .kp-cue:hover,.kp-open .kp-cue:focus-visible{color:#EDECE8}
+  /* KW:OPENERS-V6 (18 Oct 2026): network in the bottom third, smaller particles; KNOWHERE as a white heading; START KNOWING cue */
   .kp-open .kp-q{margin:0;display:flex;flex-direction:column;align-items:center}
   .kp-open .kp-q h1{margin-top:0}
   .kp-open .kp-cite{margin:18px 0 0;font-size:14px;font-weight:500;letter-spacing:.01em;color:#8C8B87}
   .kp-open .kp-open-sub{max-width:none;margin-top:30px}
-  .kp-open .kp-brandeye{margin:34px 0 0;font-size:10.5px;font-weight:700;letter-spacing:.26em;text-transform:uppercase;color:#7BEA5A}
+  .kp-open .kp-brandeye{margin:36px 0 0;font-size:17px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:#EDECE8}
   .kp-open .kp-open-line{margin:10px 0 0;font-size:20px;line-height:1.45;font-weight:500;letter-spacing:-0.01em;color:#EDECE8;max-width:40ch;text-wrap:balance}
   /* KW:OPENERS-V5 (18 Oct 2026): the knowhere network (was V4 embers). Tall canvas, soft upward fade, no glow. */
-  .kp-open .kp-waves{position:absolute;left:0;right:0;bottom:0;width:100%;height:78%;pointer-events:none;z-index:0;
-    -webkit-mask-image:linear-gradient(to top,#000 30%,transparent 100%);mask-image:linear-gradient(to top,#000 30%,transparent 100%)}
+  .kp-open .kp-waves{position:absolute;left:0;right:0;bottom:0;width:100%;height:34%;pointer-events:none;z-index:0;
+    -webkit-mask-image:linear-gradient(to top,#000 55%,transparent 100%);mask-image:linear-gradient(to top,#000 55%,transparent 100%)}
   @media (min-width:760px){.kp-open .kp-open-sub{white-space:nowrap}}
   @media (max-width:740px){
     .kp-open .kp-cite{font-size:13px;margin-top:14px}
     .kp-open .kp-open-sub{margin-top:22px}
-    .kp-open .kp-brandeye{margin-top:26px;font-size:10px}
+    .kp-open .kp-brandeye{margin-top:28px;font-size:14px;letter-spacing:.28em}
     .kp-open .kp-open-line{font-size:17px}
-    .kp-open .kp-waves{height:72%}
+    .kp-open .kp-waves{height:34%}
   }
   /* the corner strip: two doors, the site's own type and secondary-link colours */
   .kp-corners{padding:8px 34px 64px;scroll-margin-top:72px}   /* rests under the fixed nav, not behind it */
@@ -313,7 +319,7 @@
       <p class="kp-brandeye">knowhere</p>
       <p class="kp-open-line">Year 11 and 12 as living concepts you play with until it lands.</p>
     </div>
-    <a class="kp-cue" href="#kwProof"><span>poke it</span><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></a>
+    <a class="kp-cue" href="#kwProof"><span>start knowing</span><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></a>
   </section>
 
   <!-- KW:OPENERS-V2 (18 Oct 2026) -->
@@ -711,7 +717,7 @@ class Component extends DCLogic {
     var mk=function(){
       var a=Math.random()*6.283, sp=0.06+Math.random()*0.16;
       return {x:Math.random()*Math.max(W,1), y:Math.random()*Math.max(H,1), vx:Math.cos(a)*sp, vy:Math.sin(a)*sp,
-        r:0.9+Math.random()*1.3, green:Math.random()<0.16, lit:0};
+        r:0.55+Math.random()*0.75, green:Math.random()<0.16, lit:0};
     };
     var fire=function(){
       var a=nodes[Math.floor(Math.random()*nodes.length)]; if(!a) return;
@@ -743,17 +749,17 @@ class Component extends DCLogic {
       for(i=0;i<nodes.length;i++){
         n=nodes[i]; var dep=0.45+0.55*(n.y/H), al=(n.green?0.55:0.38)*dep;
         if(n.lit>0){
-          ctx.fillStyle='rgba(123,234,90,'+(n.lit*0.25).toFixed(3)+')'; ctx.beginPath(); ctx.arc(n.x,n.y,n.r*5,0,6.283); ctx.fill();
+          ctx.fillStyle='rgba(123,234,90,'+(n.lit*0.25).toFixed(3)+')'; ctx.beginPath(); ctx.arc(n.x,n.y,n.r*4.5,0,6.283); ctx.fill();
         }
         ctx.fillStyle=(n.green||n.lit>0.05)?'rgba(123,234,90,'+Math.min(1,al+n.lit*0.6).toFixed(3)+')':'rgba(237,236,232,'+al.toFixed(3)+')';
-        ctx.beginPath(); ctx.arc(n.x,n.y,n.r+n.lit*1.2,0,6.283); ctx.fill();
+        ctx.beginPath(); ctx.arc(n.x,n.y,n.r+n.lit*0.8,0,6.283); ctx.fill();
       }
       for(i=pulses.length-1;i>=0;i--){
         var p=pulses[i]; p.t+=p.sp*dt;
         if(p.t>=1||Math.hypot(p.b.x-p.a.x,p.b.y-p.a.y)>REACH*1.1){ if(p.t>=1) p.b.lit=1; pulses.splice(i,1); continue; }
         var px=p.a.x+(p.b.x-p.a.x)*p.t, py=p.a.y+(p.b.y-p.a.y)*p.t;
-        ctx.fillStyle='rgba(123,234,90,0.22)'; ctx.beginPath(); ctx.arc(px,py,4,0,6.283); ctx.fill();
-        ctx.fillStyle='rgba(190,250,170,0.95)'; ctx.beginPath(); ctx.arc(px,py,1.5,0,6.283); ctx.fill();
+        ctx.fillStyle='rgba(123,234,90,0.22)'; ctx.beginPath(); ctx.arc(px,py,3,0,6.283); ctx.fill();
+        ctx.fillStyle='rgba(190,250,170,0.95)'; ctx.beginPath(); ctx.arc(px,py,1.1,0,6.283); ctx.fill();
       }
     };
     var loop=function(now){
