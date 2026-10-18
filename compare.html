@@ -259,6 +259,22 @@
   .kw-cmp .pb-host{inset:0}
   .kw-cmp [data-pb-glass]{inset:0 !important}
   @media (max-width:700px){ .kw-cmp .hero{padding-top:26px} }
+  /* KW:SWEEP-V1 (18 Oct 2026): the banner — one screen, the four columns along the foot (no glass title), eyebrow + cue */
+  .kw-cmp .hero.kp-ban{min-height:calc(100vh - 61px);min-height:calc(100svh - 61px);padding:40px 0 clamp(230px,28vh,270px);justify-content:center;overflow:hidden}
+  .kw-cmp .hero.kp-ban .page-banner{display:block;top:auto;bottom:70px;height:clamp(140px,19vh,180px)}
+  .kw-cmp .hero.kp-ban [data-pb-glass]{display:none !important}
+  .kw-cmp .hero.kp-ban .kicker{color:var(--brat);font-size:11.5px;letter-spacing:.26em}
+  .kw-cmp .kp-cue{position:absolute;left:50%;transform:translateX(-50%);z-index:3;display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--brat);text-decoration:none;font-size:13px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;text-shadow:0 0 12px #070708,0 0 4px #070708,0 0 2px #070708;animation:kpCue 2.4s ease-in-out infinite}
+  .kw-cmp .kp-cue svg{width:20px;height:20px}
+  .kw-cmp .kp-cue:hover,.kw-cmp .kp-cue:focus-visible{color:var(--ink)}
+  @keyframes kpCue{0%,100%{opacity:.85;transform:translateX(-50%) translateY(0)}50%{opacity:1;transform:translateX(-50%) translateY(6px)}}
+  @media (prefers-reduced-motion:reduce){.kw-cmp .kp-cue{animation:none}}
+  .kw-cmp .hero.kp-ban .kp-cue{bottom:calc(100px + env(safe-area-inset-bottom))}
+  @media (max-width:700px){
+    .kw-cmp .hero.kp-ban{padding:30px 0 230px}
+    .kw-cmp .hero.kp-ban .page-banner{display:block;left:-20%;right:-20%;width:auto;bottom:74px;height:120px}
+    .kw-cmp .hero.kp-ban .kp-cue{bottom:calc(204px + env(safe-area-inset-bottom))}
+  }
 </style>
 </helmet>
 <div class="kw-cmp">
@@ -278,25 +294,26 @@
     </div>
   </nav>
 
-  <header class="hero">
+  <!-- KW:SWEEP-V1 (18 Oct 2026): the banner, the Home / for-parents way. Paints from this markup alone. -->
+  <header class="hero kp-ban">
     <div class="hero-bg"></div>
     <div class="page-banner" aria-hidden="true">
       <div class="pb-host" id="pbHost"><canvas id="pbCv"></canvas></div>
     </div>
     <div class="wrap">
-      <span class="kicker" data-reveal>The honest comparison</span>
-      <h1 data-reveal><span style="color:var(--brat)">knowhere</span> vs Atomi vs Edrolo vs a tutor.</h1>
-      <p data-reveal>Four ways to help a Year 12 kid through the HSC or VCE. What each one actually is, what it costs, and who it suits — <em>including where we lose.</em> Prices checked 11 September 2026 on each provider's own pricing page.</p>
-      <div class="row" data-reveal>
+      <span class="kicker">The honest comparison</span>
+      <h1><span style="color:var(--brat)">knowhere</span> vs Atomi vs Edrolo vs a tutor.</h1>
+      <p>Four ways to help a Year 12 kid through the HSC or VCE. What each one actually is, what it costs, and who it suits — <em>including where we lose.</em> Prices checked 11 September 2026 on each provider's own pricing page.</p>
+      <div class="row">
         <a class="cta" href="https://app.knowhere.me/signup?as=parent">Start their free week</a>
       </div>
-      <p class="assure" data-reveal><b>7 days free, A$0 today.</b> Cancel before the week ends and you pay nothing.</p>
-      <div class="alt" data-reveal>
+      <p class="assure"><b>7 days free, A$0 today.</b> Cancel before the week ends and you pay nothing.</p>
+      <div class="alt">
         <a href="#cmp-cost">The prices</a>
         <a href="#cmp-table">The full table</a>
       </div>
     </div>
-    <a class="scroll-cue" href="#cmp-content" aria-label="Scroll to content"><span class="chev"></span></a>
+    <a class="kp-cue" href="#cmp-content"><span>see the numbers</span><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></a>
   </header>
 
   <section class="block" id="cmp-cost">
@@ -488,7 +505,7 @@ class Component extends DCLogic {
       if(!window.KnowherePage||!window.KnowhereParticleBanner){ return setTimeout(boot,50); }
       window.KnowherePage.injectLogo(root);
       this._io=window.KnowherePage.reveal(root);
-      this._stopBanner=window.KnowhereParticleBanner(root,'Compare','compare');
+      this._stopBanner=window.KnowhereParticleBanner(root,'','compare');   /* KW:SWEEP-V1: the columns at the banner's foot, no title */
       /* KW:CMP-R3 subjects modal */
       var dlg=document.getElementById("kwSubjects");
       if(dlg&&typeof dlg.showModal==="function"){
