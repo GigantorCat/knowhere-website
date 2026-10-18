@@ -50,7 +50,6 @@
 <script src="./knowhere-page.js?v=3"></script>
 <script src="./knowhere-pass.js?v=2" defer></script>
 <script src="./knowhere-passbar.js?v=3" defer data-audience="parent" data-away=".cta-band,.kw-found"></script><!-- KW:PASSBAR → KW:FOUNDBAR (KW:PAR-V2) -->
-<script src="./knowhere-network.js?v=1" defer></script><!-- KW:PAR-V2 -->
 <style id="kw-par-v2">
   /* KW:PAR-V2 (18 Oct 2026) — the Home layout on /for-parents: a one-screen text banner with the network along the bottom,
      then the live widget on its own screen (floats in), then the founding card. Plain sections: nothing in the first screen
@@ -124,6 +123,20 @@
     .kw-par .kp-knowing .sub,.kw-par .kp-knowing .k-a{font-size:15.5px}
   }
   @media (prefers-reduced-motion:reduce){.kw-par .kp-cue{animation:none}}
+  /* KW:PAR-V3 (18 Oct 2026): the hearts at the banner's foot (was the network); the FOR PARENTS eyebrow */
+  /* the heart sits just above the sticky bar with PLAY WITH IT inside it; on a phone the strip runs wider than the
+     screen so the gap the ECG leaves round the heart is wider than the cue (the line never crosses the words) */
+  .kw-par .kp-ban .kp-pb{position:absolute;left:0;right:0;bottom:40px;height:34%;pointer-events:none;z-index:0}
+  .kw-par .kp-ban .kp-pb .pb-host{position:absolute;inset:0;-webkit-mask-image:none;mask-image:none}
+  .kw-par .kp-ban .kp-pb .pb-host canvas{position:absolute;inset:0;width:100%;height:100%}
+  .kw-par .kp-ban .kp-pb [data-pb-glass]{display:none !important}
+  .kw-par .kp-ban .kp-cue{bottom:calc(140px + env(safe-area-inset-bottom))}
+  .kw-par .kp-ban-eye{margin:0 0 22px;font-size:11.5px;font-weight:700;letter-spacing:.26em;text-transform:uppercase;color:var(--brat)}
+  @media (max-width:760px){
+    .kw-par .kp-ban .kp-pb{left:-35%;right:-35%;bottom:66px;height:29%}
+    .kw-par .kp-ban .kp-cue{bottom:calc(142px + env(safe-area-inset-bottom))}
+    .kw-par .kp-ban-eye{font-size:10.5px;margin-bottom:18px}
+  }
 </style>
 <script src="./knowhere-particle-banner.js?v=2"></script>
 <style>
@@ -398,10 +411,11 @@
   </nav>
 
   <!-- KW:PAR-V2 (18 Oct 2026) -->
-  <!-- A · the banner: one screen of text, the network along the bottom. Paints from this markup alone. -->
+  <!-- A · the banner: one screen of text, the hearts along the bottom (KW:PAR-V3; V2 had the network). Paints from this markup alone. -->
   <header class="kp-ban" id="parBan">
-    <canvas class="kp-net" data-kw-network aria-hidden="true"></canvas>
+    <div class="kp-pb" aria-hidden="true"><div class="pb-host" id="pbHost"><canvas id="pbCv"></canvas></div></div>
     <div class="wrap kp-ban-in">
+      <p class="kp-ban-eye">For parents</p>
       <h1>An hour of tutoring a week is plenty of money and <span style="color:var(--brat)">nowhere near enough help.</span></h1>
       <p class="kp-ban-sub">And nobody signed up to be the study police.</p>
       <p class="kp-brandeye">knowhere</p>
@@ -443,8 +457,8 @@
   <!-- KW:PAR-V2 · C · "This is knowing" + "What they actually get", one statement -->
   <section class="block proof kp-knowing" id="par-proof">
     <div class="wrap">
-      <div class="eyebrow">HSC &amp; VCE &middot; Year 11 and 12 &middot; <span>NSW and Victoria</span></div>
-      <h2>The care factor <span style="color:var(--brat)">comes first</span>.</h2>
+      <div class="eyebrow">HSC &amp; VCE &middot; Year 11 and 12</div>
+      <h2>Understanding comes first.<br><span style="color:var(--brat)">The care follows.</span></h2>
       <p class="sub">Nobody gets interested first &#8212; you understand something, <em>then</em> you care. knowhere is a Year 11 and 12 study app that rebuilds every concept in the shape that lands for them, and shows you each week what landed.</p>
       <p class="k-a">Live concepts across 15 HSC and 16 VCE subjects, ready to push, pull and play with.</p>
       <div class="alt">
@@ -606,8 +620,8 @@ class Component extends DCLogic {
       if(!window.KnowherePage||!window.KnowhereParticleBanner){ return setTimeout(boot,50); }
       window.KnowherePage.injectLogo(root);
       this._io=window.KnowherePage.reveal(root);
-      /* KW:PAR-V2: the big particle header is gone; the network runs along the banner's foot instead */
-      try{ if(window.KnowhereNetwork) window.KnowhereNetwork.boot(); }catch(e){}
+      /* KW:PAR-V3: the page's hearts run along the banner's foot (no title on them; the eyebrow says "for parents") */
+      try{ this._stopBanner=window.KnowhereParticleBanner(root,'','heart'); }catch(e){}
       try{ if(window.KnowhereFounding){ window.KnowhereFounding.cards(); window.KnowhereFounding.watch(); } }catch(e){}
       /* KW:PAR-V2 (18 Oct 2026): the live widget on its own screen. Same-origin iframe: keep the card that holds the rods
          slider, pull in the Uncontrolled / Controlled buttons (and "Know this" on desktop), hide the rest, lay it out to
