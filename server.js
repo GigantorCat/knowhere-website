@@ -352,7 +352,7 @@ app.get(/^\/([A-Za-z0-9-]+)\/?$/, (req, res, next) => {
 // /KNOWHERE:GO-LINKS
 
 // KNOWHERE:SEO-REDIRECTS v2 — canonical host + clean URLs (301). www -> apex, /x.html -> /x, /index.html -> / (http->https is Railway's job)
-const SEO_PAGES = new Set(["compare", "experience-it", "for-parents", "for-teachers", "how-it-works", "know-us", "mission", "press", "pricing", "privacy", "talk-to-us", "terms", "waitlist"]);
+const SEO_PAGES = new Set(["compare", "experience-it", "for-parents", "for-teachers", "for-your-it-team", "how-it-works", "know-us", "mission", "press", "pricing", "privacy", "talk-to-us", "teacher-terms", "terms", "waitlist"]);
 app.use((req, res, next) => {
   if (req.method !== 'GET' && req.method !== 'HEAD') return next();
   const host = String(req.headers.host || '').toLowerCase();

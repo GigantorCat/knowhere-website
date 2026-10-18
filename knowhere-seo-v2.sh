@@ -31,7 +31,8 @@ SAME_AS = [
   "https://www.linkedin.com/company/knowhere-me",
   "https://www.producthunt.com/products/knowhere-5",
   "https://www.instagram.com/knowheregoat",
-]  # KW:SAME_AS 16 Sep 2026 — entity anchors (SEO-PLAN-11SEP §4). Add TikTok/YouTube/Crunchbase here when they exist.
+  "https://www.wikidata.org/wiki/Q141774084",
+]  # KW:SAME_AS 16 Sep 2026 — entity anchors (SEO-PLAN-11SEP §4). Wikidata Q141774084 added 19 Oct. Add TikTok/YouTube here when they exist.
 
 # ------------------------------------------------------------------ page copy
 # path = clean URL. title <= 60 chars, desc <= 160 chars (warned, not fatal).
@@ -39,8 +40,8 @@ PAGES = {
  "index.html": dict(path="/", kind="home",
    title="knowhere — Year 11 and 12 study built for your brain (HSC & VCE)",
    desc="Year 11 and 12 study, rebuilt around you. 15 HSC and 16 VCE subjects as living, interactive concepts, shaped to what motivates you and how you're wired. 7 days free.",
-   og_title="You can't fake a kickflip. Same goes for Year 11 and 12.",
-   og_desc="Every HSC and VCE concept, rebuilt for the way your brain fires. Live now — seven days free.",
+   og_title="You memorised it. Then the exam reworded the question. Cooked.",
+   og_desc="Not if you know how it works. Then the exam can reword it all it likes. knowhere turns Year 11 and 12 into living concepts you poke until it lands.",
    name="Home"),
  "how-it-works.html": dict(path="/how-it-works", kind="page",
    title="How knowhere works — personalised HSC & VCE study",
@@ -49,6 +50,7 @@ PAGES = {
  "experience-it.html": dict(path="/experience-it", kind="page",
    title="Try knowhere — real HSC & VCE concepts, reframed for you",
    desc="No trailer. Real HSC and VCE concepts from knowhere, a lens switcher that reframes them for different brains, and a quiz that rebuilds itself to fit yours.",
+   og_title="You've read about it. Now move it.",
    name="Experience it"),
  "pricing.html": dict(path="/pricing", kind="pricing",
    title="knowhere pricing — HSC & VCE study, A$99 a term",
@@ -57,6 +59,8 @@ PAGES = {
  "for-parents.html": dict(path="/for-parents", kind="faq",
    title="knowhere for parents — Year 11 and 12 study help that fits your kid",
    desc="Year 11 and 12 study built around how your kid actually learns, mapped to the HSC and VCE curriculum, with a parent dashboard so you can stop asking how study's going.",
+   og_title="An hour of tutoring a week is plenty of money and nowhere near enough help.",
+   og_desc="And nobody signed up to be the study police. knowhere turns Year 11 and 12 into living concepts they play with until it lands.",
    name="For parents",
    faq=[
     ("Does knowhere follow the actual HSC and VCE curriculum?",
@@ -70,7 +74,9 @@ PAGES = {
    ]),
  "for-teachers.html": dict(path="/for-teachers", kind="faq",
    title="knowhere · teach it. — HSC & VCE concepts live",
-   desc="Every Physics and Chemistry concept as a live deck for the projector: a call it. round for the room, slides you can edit, share links with no student login, tonight’s homeplay. Mapped to the HSC syllabus and VCE study design. 50 founding seats, free until 9 April 2027.",
+   desc="Every Physics, Chemistry, Biology and Psychology concept as a live deck for the projector: a call it. round for the room, slides you can edit, share links with no student login, tonight’s homeplay. Mapped to the HSC syllabus and VCE study design. 50 founding seats, free until 9 April 2027.",
+   og_title="You can't learn it for them. You're still the one who answers for it.",
+   og_desc="So knowhere · teach it. hands the room the thinking: a live model, a what-if, three answers and one impostor. Pairs call it before the reveal. They own it by the bell.",
    name="For teachers",
    faq=[
     ("Does knowhere follow the actual study design?",
@@ -78,7 +84,7 @@ PAGES = {
     ("Do my students need accounts?",
      "No. Put a concept on the projector, or send the class a share link: it opens in any browser, no login. A personalised student plan for home study is separate and entirely the student's call."),
     ("Can I use knowhere for lesson planning?",
-     "Yes. Every Physics and Chemistry concept is a ready-made deck: the picture, a call it. round for the room, the takeaway and a homeplay task. Change the words, add your own slides, then present it or share it. More subjects from Term 1. Class groups and progress views are on the list — founding teachers get first say in how they work."),
+     "Yes. Every Physics, Chemistry, Biology and Psychology concept is a ready-made deck: the picture, a call it. round for the room, the takeaway and a homeplay task. Change the words, add your own slides, then present it or share it. Maths from Term 1. Class groups and progress views are on the list — founding teachers get first say in how they work."),
     ("Will knowhere work on the school network?",   # KW:TEACH-SITE
      "It is a normal website, nothing to install, on the projector laptop or the students’ own. Some school filters have not categorised knowhere.me yet; a one-page note for the IT team lists the handful of domains to allow."),
    ]),
@@ -387,7 +393,7 @@ def patch_wiring():
         src = open(path, encoding="utf-8").read(); out = src
         hit = False
         for old, new in pairs:
-            if new in out: hit = True; continue
+            if new in out or (fname == "knowhere-footer.js" and 'href="/compare"' in out): hit = True; continue  # KW 19 Oct: compare already wired (re-indented)
             if old in out:
                 assert out.count(old) == 1, f"{fname}: anchor not unique: {old[:50]!r}"
                 out = out.replace(old, new, 1); hit = True
