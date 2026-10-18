@@ -1,4 +1,5 @@
-/* knowhere-passbar.js v3 — the sticky offer bar (KW:FOUNDBAR, 18 Oct 2026; was the 2026 exam pass bar, KW:PASSBAR 28 Sep).
+/* knowhere-passbar.js v4 — the sticky offer bar (KW:FOUNDBAR, 18 Oct 2026; v4 same day: reads the app's live founding switch;
+   was the 2026 exam pass bar, KW:PASSBAR 28 Sep).
    One file for every page that carries it: Home, /for-parents, /experience-it, /pricing, /how-it-works, /compare,
    /mission, /know-us and every public concept page. Never /for-teachers (the teacher bar is its own). Change it here, it
    changes everywhere ("consistency is my friend and master").
@@ -18,8 +19,8 @@
    The same switch drives any in-page founding card: every .kw-found hides itself and every [data-found-fallback] (the
    plain free-week CTA it stands in for) comes back, with the display value the attribute names.
 
-   ▸ When the 50th founding plan sells, set FOUNDING_FULL = true below and push. (The app knows the count —
-     /billing/quote — but only behind a login, so the site can't read it yet. A public read is a small app job.)
+   ▸ The 50th founding plan: once the app's GET /public/founding is live (Bronco, KICKOFF-BRONCO-FOUNDING-SWITCH-18OCT),
+     the bar closes itself. Before that, or if the app is unreachable: set FOUNDING_FULL = true below and push.
    The free week is card-up-front (doctrine): the trust line says the card out loud; never write "no card" here. */
 (function () {
   if (window.__kwPassbar) return; window.__kwPassbar = true;
@@ -143,4 +144,28 @@
   var io = null, watch = function () {};
   if (document.body) mount(); else document.addEventListener("DOMContentLoaded", mount);
   window.KnowhereFounding = { open: open, cards: cards, watch: function () { watch(); } };
+
+  /* v4 (18 Oct 2026): the live switch. The app answers GET https://app.knowhere.me/public/founding → { open, until } (no
+     login; the app already sends CORS *). Closed there = closed here: the bar turns plain green, every .kw-founding card
+     hides and its fallback returns, and <html> gets .kw-founding-closed so a page can switch anything else in CSS.
+     No answer (offline, slow, or the endpoint not deployed yet) = the date rule above stands. FOUNDING_FULL still forces closed. */
+  var API = "https://app.knowhere.me/public/founding";
+  function shut() {
+    if (!open) return; open = false;
+    window.KnowhereFounding.open = false;
+    document.documentElement.classList.add("kw-founding-closed");
+    var pb = document.getElementById("kwPassbar"); if (pb) { pb.classList.remove("open"); pb.classList.add("closed"); }
+    cards();
+  }
+  if (!open) document.documentElement.classList.add("kw-founding-closed");
+  else if (window.fetch) {
+    try {
+      var ctl = window.AbortController ? new AbortController() : null;
+      if (ctl) setTimeout(function () { try { ctl.abort(); } catch (e) {} }, 4000);
+      fetch(API, { mode: "cors", credentials: "omit", signal: ctl ? ctl.signal : undefined })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (j) { if (j && j.open === false) shut(); })
+        .catch(function () {});
+    } catch (e) {}
+  }
 })();
