@@ -40,7 +40,7 @@ const TITLE='collision theory — HSC chemistry, live — knowhere';
 const DESC='Collision theory for HSC and VCE chemistry, as a live knowscape you can drag: why most collisions do nothing, why energy and orientation both matter, and what examiners catch. Built for Year 12 in NSW and Victoria.';
 const LD={"@context":"https://schema.org","@graph":[
  {"@type":"LearningResource","@id":URL+"#resource","name":"Collision theory — live knowscape","url":URL,"description":DESC,"inLanguage":"en-AU","learningResourceType":"interactive resource","educationalLevel":"Year 12","teaches":"Collision theory: successful collisions need sufficient kinetic energy to overcome activation energy and the correct orientation","about":[{"@type":"Thing","name":"Collision theory"},{"@type":"Thing","name":"Reaction rate"},{"@type":"Thing","name":"Activation energy"}],"educationalAlignment":[{"@type":"AlignmentObject","alignmentType":"educationalSubject","educationalFramework":"NSW HSC Chemistry","targetName":"Static and Dynamic Equilibrium · Factors that Affect Equilibrium"},{"@type":"AlignmentObject","alignmentType":"educationalSubject","educationalFramework":"VCE Chemistry Units 3&4","targetName":"Unit 3 Area of Study 2 — reaction rates"}],"isPartOf":{"@type":"WebSite","@id":"https://knowhere.me/#site","name":"knowhere","url":"https://knowhere.me"},"provider":{"@type":"Organization","@id":"https://knowhere.me/#org","name":"knowhere","legalName":"Gigantor Studios Pty Ltd","url":"https://knowhere.me"},"isAccessibleForFree":true},
- {"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"knowhere","item":"https://knowhere.me/"},{"@type":"ListItem","position":2,"name":"HSC chemistry","item":"https://knowhere.me/hsc/chemistry/collision-theory"},{"@type":"ListItem","position":3,"name":"Collision theory","item":URL}]}]};
+ {"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"knowhere","item":"https://knowhere.me/"},{"@type":"ListItem","position":2,"name":"HSC chemistry","item":"https://knowhere.me/hsc/chemistry/"},{"@type":"ListItem","position":3,"name":"Collision theory","item":URL}]}]};
 
 const PAGE=`<!DOCTYPE html>
 <html lang="en-AU">
@@ -108,6 +108,7 @@ html,body{margin:0;padding:0;background:#070708}
 .kw-c .eyebrow{display:flex;align-items:center;justify-content:space-between;gap:10px 18px;flex-wrap:wrap;margin-bottom:18px}
 .kw-c .eyebrow .lhs{color:var(--subj)}
 .kw-c .eyebrow .lhs b{color:var(--ink-dim);font-weight:400}
+.kw-c .eyebrow .lhs a{color:inherit;border-bottom:1px solid color-mix(in srgb,currentColor 40%,transparent)}.kw-c .eyebrow .lhs a:hover{border-bottom-color:currentColor}
 .kw-c .eyebrow .rhs{display:inline-flex;align-items:center;gap:8px;color:var(--brat)}
 .kw-c .live-dot{width:7px;height:7px;border-radius:50%;background:var(--brat);animation:kwPulse 2s ease-in-out infinite}
 @keyframes kwPulse{50%{opacity:.3}}
@@ -195,7 +196,7 @@ html,body{margin:0;padding:0;background:#070708}
 
   <header class="hero wrap">
     <div class="eyebrow mono">
-      <span class="lhs">HSC · Chemistry · Reaction rates <b>· also VCE Unit 3</b></span>
+      <span class="lhs"><a href="/hsc/">HSC</a> · <a href="/hsc/chemistry/">Chemistry</a> · Reaction rates <b>· also VCE Unit 3</b></span>
       <span class="rhs"><span class="live-dot"></span>live from the app</span>
     </div>
     <h1>collision theory</h1>
@@ -259,13 +260,13 @@ html,body{margin:0;padding:0;background:#070708}
         <button type="button" id="kwCopy">copy the link</button>
       </div>
     </div>
-    <div class="crumbs"><a href="/">knowhere</a><span>›</span><span>hsc chemistry</span><span>›</span><span style="color:var(--ink)">collision theory</span></div>
+    <div class="crumbs"><a href="/">knowhere</a><span>›</span><a href="/hsc/chemistry/">hsc chemistry</a><span>›</span><span style="color:var(--ink)">collision theory</span></div>
   </section>
 
   <knowhere-footer-nav></knowhere-footer-nav>
 
 </div>
-<script src="/knowhere-footer.js?v=23"></script>
+<script src="/knowhere-footer.js?v=26"></script>
 <script src="/knowhere-mobile-menu.js?v=8" defer></script>
 <script>
 (function(){

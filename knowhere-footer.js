@@ -261,15 +261,24 @@
             'knowhere-footer-nav .kfn-rows{position:relative;isolation:isolate;margin-top:auto;padding-top:12px}' +
             /* home only: its page-wide brain runs behind the footer, so fade it out above the rows (full bleed, clipped by the footer) */
             'knowhere-footer-nav[data-kfn-index] .kfn-rows::before{content:"";position:absolute;z-index:-1;left:-100vmax;right:-100vmax;top:-140px;bottom:-240px;background:linear-gradient(to bottom,rgba(7,7,8,0),#070708 140px);pointer-events:none}' +
-            'knowhere-footer-nav .kfn-top{display:flex;align-items:center;gap:24px 44px;flex-wrap:wrap}' +
-            'knowhere-footer-nav .kfn-brand{display:flex;flex-direction:column;align-items:flex-start;gap:8px}' +
+            /* KW:FOOT-V26 (Cat, 19 Oct 2026): three columns — brand | links stacked | student hubs; mobile: brand + hubs, links, socials */
+            'knowhere-footer-nav .kfn-top{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) minmax(0,1fr);grid-template-areas:"brand links stu" "socs links stu";gap:18px 44px;align-items:start}' +
+            'knowhere-footer-nav .kfn-brand{grid-area:brand;display:flex;flex-direction:column;align-items:flex-start;gap:12px}' +
+            'knowhere-footer-nav .kfn-word{font-size:30px}' +
             'knowhere-footer-nav .kfn-mark{display:flex;align-items:center;gap:10px}' +
-            'knowhere-footer-nav .kfn-tag{font-size:13px;line-height:1.3;color:#9b9a96;letter-spacing:-0.005em}' +
-            'knowhere-footer-nav .kfn-links{display:flex;align-items:center;flex-wrap:nowrap}' +
+            'knowhere-footer-nav .kfn-tag{font-size:18px;line-height:1.3;color:#9b9a96;letter-spacing:-0.01em}' +
+            'knowhere-footer-nav .kfn-links{grid-area:links;display:flex;flex-direction:column;align-items:flex-start;gap:12px;padding-top:6px}' +
             'knowhere-footer-nav a.kfn-link{font-size:15px;font-weight:600;letter-spacing:-0.01em;color:#9b9a96;text-decoration:none;white-space:nowrap;transition:color .16s}' +
             'knowhere-footer-nav a.kfn-link:hover,knowhere-footer-nav a.kfn-link:focus-visible{color:#7BEA5A}' +
-            'knowhere-footer-nav .kfn-sep{color:rgba(237,236,232,0.22);font-size:14px;padding:0 14px;user-select:none}' +
-            'knowhere-footer-nav .kfn-socs{display:flex;align-items:center;gap:2px;margin-left:auto}' +
+            'knowhere-footer-nav .kfn-sep{display:none;color:rgba(237,236,232,0.22);font-size:14px;padding:0 14px;user-select:none}' +
+            'knowhere-footer-nav .kfn-stu{grid-area:stu;display:flex;flex-direction:column;align-items:flex-start;gap:14px;padding-top:6px}' +
+            'knowhere-footer-nav .kfn-stu-h{font-family:\'JetBrains Mono\',monospace;font-size:10.5px;letter-spacing:0.22em;text-transform:uppercase;color:#8C8B87}' +
+            'knowhere-footer-nav .kfn-stu-row{display:flex;flex-direction:column;gap:10px}' +
+            'knowhere-footer-nav a.kfn-stu-link{font-size:20px;font-weight:700;letter-spacing:-0.025em;color:#EDECE8;text-decoration:none;white-space:nowrap;transition:color .16s}' +
+            'knowhere-footer-nav a.kfn-stu-link .kfn-arr{color:#7BEA5A;margin-left:6px;transition:margin .16s}' +
+            'knowhere-footer-nav a.kfn-stu-link:hover,knowhere-footer-nav a.kfn-stu-link:focus-visible{color:#7BEA5A}' +
+            'knowhere-footer-nav a.kfn-stu-link:hover .kfn-arr{margin-left:10px}' +
+            'knowhere-footer-nav .kfn-socs{grid-area:socs;display:flex;align-items:center;gap:2px;margin-left:-11px}' +
             'knowhere-footer-nav a.kfn-soc{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;color:#7BEA5A;text-decoration:none;transition:color .16s,background .16s}' +
             'knowhere-footer-nav a.kfn-soc:hover,knowhere-footer-nav a.kfn-soc:focus-visible{color:#A9F293;background:rgba(123,234,90,.10)}' +
             'knowhere-footer-nav a.kfn-soc:focus-visible{outline:2px solid #7BEA5A;outline-offset:2px}' +
@@ -283,9 +292,19 @@
             'knowhere-footer-nav .kfn-ack a:hover{color:#EDECE8}' +
             '@media (max-width:640px){' +
               'knowhere-footer-nav .kfn-in{padding:56px 24px 28px}' +
-              'knowhere-footer-nav .kfn-top{flex-direction:column;align-items:flex-start;gap:22px}' +
+              'knowhere-footer-nav .kfn-top{grid-template-columns:auto minmax(0,1fr);grid-template-areas:"brand stu" "links links" "socs socs";gap:22px 16px;align-items:center}' +
+              'knowhere-footer-nav .kfn-word{font-size:18px}' +
+              'knowhere-footer-nav .kfn-mark svg{height:30px;width:auto}' +
+              'knowhere-footer-nav .kfn-links{flex-direction:row;align-items:center;gap:0;flex-wrap:nowrap;padding-top:0}' +
+              'knowhere-footer-nav .kfn-sep{display:inline}' +
+              'knowhere-footer-nav .kfn-stu{justify-self:end;align-items:flex-end;gap:6px;padding-top:0}' +
+              'knowhere-footer-nav .kfn-stu-h{font-size:9px;letter-spacing:0.18em}' +
+              'knowhere-footer-nav .kfn-stu-row{flex-direction:row;gap:16px}' +
+              'knowhere-footer-nav a.kfn-stu-link{font-size:15px}' +
+              'knowhere-footer-nav a.kfn-stu-link .kfn-x{display:none}' +
+              'knowhere-footer-nav a.kfn-stu-link .kfn-arr{margin-left:4px}' +
               'knowhere-footer-nav .kfn-brand{flex-direction:row;align-items:center;flex-wrap:wrap;gap:6px 14px}' +
-              'knowhere-footer-nav .kfn-tag{font-size:12.5px}' +
+              'knowhere-footer-nav .kfn-tag{display:none}' +
               'knowhere-footer-nav a.kfn-link{font-size:13px}' +
               'knowhere-footer-nav .kfn-sep{font-size:12px;padding:0 8px}' +
               'knowhere-footer-nav .kfn-socs{margin-left:-11px}' +
@@ -311,8 +330,16 @@
               '<div class="kfn-rows">' +
               '<div class="kfn-top">' +
                 '<div class="kfn-brand">' +
-                  '<span class="kfn-mark"><span data-kfn-logo style="display:flex;align-items:center;color:#EDECE8"></span><span style="font-size:18px;font-weight:700;letter-spacing:-0.04em;color:#EDECE8">know<b style="color:#7BEA5A">here</b><sup style="font-size:0.48em;font-weight:600;letter-spacing:0;vertical-align:super;opacity:0.55;margin-left:1px">™</sup></span></span>' +
+                  '<span class="kfn-mark"><span data-kfn-logo style="display:flex;align-items:center;color:#EDECE8"></span><span class="kfn-word" style="font-weight:700;letter-spacing:-0.04em;color:#EDECE8">know<b style="color:#7BEA5A">here</b><sup style="font-size:0.48em;font-weight:600;letter-spacing:0;vertical-align:super;opacity:0.55;margin-left:1px">™</sup></span></span>' +
                   '<span class="kfn-tag">from nowhere to knowing.</span>' +
+                '</div>' +
+                /* KW:FOOT-V26 — the student hubs (build-hub-pages.mjs): the only links from the main site into the concept pages */
+                '<div class="kfn-stu">' +
+                  '<span class="kfn-stu-h">play first</span>' +
+                  '<div class="kfn-stu-row">' +
+                    '<a class="kfn-stu-link" href="/hsc/">hsc<span class="kfn-x"> concepts</span><span class="kfn-arr" aria-hidden="true">→</span></a>' +
+                    '<a class="kfn-stu-link" href="/vce/">vce<span class="kfn-x"> concepts</span><span class="kfn-arr" aria-hidden="true">→</span></a>' +
+                  '</div>' +
                 '</div>' +
                 '<div class="kfn-links">' +
                   '<a class="kfn-link" href="/compare">compare</a>' +
@@ -344,7 +371,7 @@
         try { if (this.querySelector('[data-kfn-vcaa]')) document.querySelectorAll('[data-kw-vcaa]').forEach(function (el) { el.hidden = true; }); } catch (e) {}
         var slot = this.querySelector('[data-kfn-logo]');
         var put = function () {
-          if (window.KnowhereMarks && window.KnowhereMarks.logoSvg) { slot.innerHTML = window.KnowhereMarks.logoSvg(30, '#EDECE8'); }
+          if (window.KnowhereMarks && window.KnowhereMarks.logoSvg) { slot.innerHTML = window.KnowhereMarks.logoSvg(44, '#EDECE8'); }
           else setTimeout(put, 120);
         };
         if (this._onIndex) this.firstElementChild.style.background = 'transparent';

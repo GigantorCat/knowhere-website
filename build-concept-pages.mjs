@@ -253,6 +253,7 @@ html,body{margin:0;padding:0;background:#070708}
 .kw-c .eyebrow{display:flex;align-items:center;justify-content:space-between;gap:10px 18px;flex-wrap:wrap;margin-bottom:18px}
 .kw-c .eyebrow .lhs{color:var(--subj)}
 .kw-c .eyebrow .lhs b{color:var(--ink-dim);font-weight:400}
+.kw-c .eyebrow .lhs a{color:inherit;border-bottom:1px solid color-mix(in srgb,currentColor 40%,transparent)}.kw-c .eyebrow .lhs a:hover{border-bottom-color:currentColor}
 .kw-c .eyebrow .rhs{display:inline-flex;align-items:center;gap:8px;color:var(--brat)}
 .kw-c .live-dot{width:7px;height:7px;border-radius:50%;background:var(--brat);animation:kwPulse 2s ease-in-out infinite}
 @keyframes kwPulse{50%{opacity:.3}}
@@ -406,7 +407,10 @@ ${baked}
 ${beacon(p.slug)}</body></html>`;
 
   /* ── 2. the page ── */
-  const eyebrowMain = `${home.curriculum} · ${Y11P ? 'Year 11 · ' : ''}${home.subject} · ${esc(home.topic)}`;
+  /* KW:HUBS-LINK 19 Oct 2026 — the eyebrow and crumbs link up to the subject hub (build-hub-pages.mjs) */
+  const hubP = p.url.replace(/^https:\/\/knowhere\.me/, '').replace(/[^/]+$/, '');
+  const certP = '/' + hubP.split('/')[1] + '/';
+  const eyebrowMain = `<a href="${certP}">${home.curriculum}</a> · ${Y11P ? `<a href="${certP}year-11/">Year 11</a> · ` : ''}<a href="${hubP}">${home.subject}</a> · ${esc(home.topic)}`;
   const also = cells.slice(1).map(c => `${c.curriculum} ${esc(c.topic)}`).join(' · ');
   /* The description is budgeted tail-first: the curriculum sentence names NSW and Victoria on EVERY page
      (doctrine — never "Australia"), so it is reserved before the concept's own sentence is allowed in,
@@ -439,7 +443,7 @@ ${beacon(p.slug)}</body></html>`;
       {
         '@type': 'BreadcrumbList', itemListElement: [
           { '@type': 'ListItem', position: 1, name: 'knowhere', item: 'https://knowhere.me/' },
-          { '@type': 'ListItem', position: 2, name: `${home.curriculum} ${home.subject}${Y11P ? ' Year 11' : ''}`, item: p.url },
+          { '@type': 'ListItem', position: 2, name: `${home.curriculum} ${home.subject}${Y11P ? ' Year 11' : ''}`, item: 'https://knowhere.me' + hubP },
           { '@type': 'ListItem', position: 3, name: title, item: p.url },
         ],
       },
@@ -611,13 +615,13 @@ ${wild}${points}${under}${rest}
         <button type="button" id="kwCopy">copy the link</button>
       </div>
     </div>
-    <div class="crumbs"><a href="/">knowhere</a><span>›</span><span>${esc(home.curriculum.toLowerCase())} ${esc(home.subject.toLowerCase())}${Y11P ? ' year 11' : ''}</span><span>›</span><span style="color:var(--ink)">${esc(title.toLowerCase())}</span></div>
+    <div class="crumbs"><a href="/">knowhere</a><span>›</span><a href="${hubP}">${esc(home.curriculum.toLowerCase())} ${esc(home.subject.toLowerCase())}${Y11P ? ' year 11' : ''}</a><span>›</span><span style="color:var(--ink)">${esc(title.toLowerCase())}</span></div>
   </section>
 
   <knowhere-footer-nav></knowhere-footer-nav>
 ${p.cert === 'vce' ? '  ' + VCAA_LINE + '\n' : ''}
 </div>
-<script src="/knowhere-footer.js?v=25"></script>
+<script src="/knowhere-footer.js?v=26"></script>
 <script src="/knowhere-mobile-menu.js?v=8" defer></script>
 <script>
 (function(){
@@ -677,7 +681,15 @@ function sitemapWith(files) {
   const keep = xml.split('\n').filter(l => l.includes('<url>') && !/\/(hsc|vce)\//.test(l));
   const today = new Date().toISOString().slice(0, 10);
   const rows = files.map(f => `  <url><loc>https://knowhere.me/${f.replace(/\.html$/, '')}</loc><lastmod>${today}</lastmod><priority>0.7</priority></url>`);
-  return '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + [...keep, ...rows].join('\n') + '\n</urlset>\n';
+  /* KW:HUBS-SITEMAP 19 Oct 2026 — subject hubs (build-hub-pages.mjs) are rows too: /hsc/, /hsc/biology/ … An existing hub row is
+     kept verbatim so a concept regen does not churn its lastmod; a hub on disk with no row gets one. */
+  const oldHub = new Map(xml.split('\n').filter(l => /<loc>https:\/\/knowhere\.me\/(hsc|vce)\/([^<]*\/)?<\/loc>/.test(l)).map(l => [l.match(/<loc>([^<]*)<\/loc>/)[1], l]));
+  const hubDirs = [];
+  const walkHubs = d => { if (!fs.existsSync(d)) return; if (fs.existsSync(path.join(d, 'index.html'))) hubDirs.push(d); for (const s of fs.readdirSync(d)) if (fs.statSync(path.join(d, s)).isDirectory()) walkHubs(path.join(d, s)); };
+  walkHubs('hsc'); walkHubs('vce');
+  const hubRows = hubDirs.map(d => `https://knowhere.me/${d.split(path.sep).join('/')}/`).sort()
+    .map(u => oldHub.get(u) || `  <url><loc>${u}</loc><lastmod>${today}</lastmod><priority>${u.split('/').length <= 5 ? '0.8' : '0.7'}</priority></url>`);
+  return '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + [...keep, ...hubRows, ...rows].join('\n') + '\n</urlset>\n';
 }
 
 /* every concept page already on disk (the hand-built Collision Theory page included) plus the new ones */
@@ -688,8 +700,8 @@ for (const cert of ['hsc', 'vce']) {
     const dir = path.join(cert, d);
     if (!fs.statSync(dir).isDirectory()) continue;
     /* W9-YEAR-11: /<cert>/year-11/<subject>/<slug> sits one folder deeper */
-    if (d === Y11_DIR) { for (const s of fs.readdirSync(dir)) { const sd = path.join(dir, s); if (fs.statSync(sd).isDirectory()) for (const f of fs.readdirSync(sd)) if (f.endsWith('.html')) onDisk.add(path.join(sd, f)); } continue; }
-    for (const f of fs.readdirSync(dir)) if (f.endsWith('.html')) onDisk.add(path.join(cert, d, f));
+    if (d === Y11_DIR) { for (const s of fs.readdirSync(dir)) { const sd = path.join(dir, s); if (fs.statSync(sd).isDirectory()) for (const f of fs.readdirSync(sd)) if (f.endsWith('.html') && f !== 'index.html') onDisk.add(path.join(sd, f)); } continue; }
+    for (const f of fs.readdirSync(dir)) if (f.endsWith('.html') && f !== 'index.html') onDisk.add(path.join(cert, d, f));  /* index.html = a subject hub (build-hub-pages.mjs) */
   }
 }
 for (const b of built) onDisk.add(b.p.file);
@@ -729,6 +741,8 @@ try {
 const sitemap = sitemapWith([...onDisk].filter(f => !orphans.includes(f)).sort());
 console.log(`\nsitemap: ${(sitemap.match(/<url>/g) || []).length} urls (${onDisk.size} concept pages)`);
 
+{ const same = built.filter(b => fs.existsSync(b.p.file) && fs.readFileSync(b.p.file, 'utf8') === b.html).length;
+  console.log(`pages identical to disk: ${same}/${built.length}${same < built.length ? ' — the rest would change on --apply' : ''}`); }
 if (!APPLY) { console.log('\nnothing written — re-run with --apply'); process.exit(0); }
 
 /* ── write ── */
