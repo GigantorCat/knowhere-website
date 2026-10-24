@@ -342,11 +342,24 @@ app.get(['/join', '/join.html'], (req, res) => { res.set('Cache-Control', 'no-st
 const GO_LINKS = {
   acevce:   'https://knowhere.me/experience-it?utm_source=creator&utm_medium=influencer&utm_campaign=kw-launch-2026&utm_term=stu&utm_content=C1',
   road2med: 'https://knowhere.me/experience-it?utm_source=creator&utm_medium=influencer&utm_campaign=kw-launch-2026&utm_term=stu&utm_content=C2',
+  // KW:SHORTLINKS (24 Oct 2026) — Drop 1 teacher links (Jayden ad). Retarget per drop by editing the line; /karen-chem is one more line.
+  karen:     '/for-teachers?utm_source=linkedin&utm_medium=organic&utm_campaign=drop1&utm_content=jayden',
+  staffroom: '/for-teachers?utm_source=facebook&utm_medium=group&utm_campaign=drop1&utm_content=jayden-still',
+  reddit:    '/for-teachers?utm_source=reddit&utm_medium=organic&utm_campaign=drop1&utm_content=jayden-still',
+  ig:        '/for-teachers?utm_source=instagram&utm_medium=organic&utm_campaign=drop1&utm_content=seed1-ig',
 };
 app.get(/^\/([A-Za-z0-9-]+)\/?$/, (req, res, next) => {
-  const to = GO_LINKS[req.params[0].toLowerCase()];
+  let to = GO_LINKS[req.params[0].toLowerCase()];
   if (!to) return next();
+  // KW:SHORTLINKS — a utm_* or ref already on the request wins over the map's value for that key (set, never appended, so no doubles)
+  const q = req.originalUrl.indexOf('?');
+  if (q >= 0) {
+    const u = new URL(to, 'https://knowhere.me');
+    for (const [k, v] of new URLSearchParams(req.originalUrl.slice(q + 1))) if (/^utm_/i.test(k) || k === 'ref') u.searchParams.set(k, v);
+    to = to.startsWith('/') ? u.pathname + u.search : u.href;
+  }
   res.set('Cache-Control', 'no-store');
+  res.set('X-Robots-Tag', 'noindex');
   return res.redirect(302, to);
 });
 // /KNOWHERE:GO-LINKS
