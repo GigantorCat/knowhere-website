@@ -1,0 +1,86 @@
+#!/usr/bin/env python3
+"""KW:TEACH-SITE-V8 (Sat 24 Oct 2026): Economics live in knowhere · teach it.
+
+Run from the website repo root AFTER the pull (origin has the Maths-live copy).
+  python3 _patches/teach-site-v8/apply-teach-site-v8.py            # dry run: shows every change, writes nothing
+  python3 _patches/teach-site-v8/apply-teach-site-v8.py --apply    # writes, backups in _patches/teach-site-v8/backup/
+Order: Bronco's Economics fence PR merged + deployed FIRST, then apply this, then Cat pushes.
+"""
+import os, re, sys, shutil, json
+
+ROOT = sys.argv[sys.argv.index('--root') + 1] if '--root' in sys.argv else os.getcwd()
+APPLY = '--apply' in sys.argv
+HERE = os.path.join(ROOT, '_patches', 'teach-site-v8')
+MARK = '<!-- KW:TEACH-SITE-V8 (24 Oct 2026): Economics live -->'
+OLD_LIST = 'Physics, Chemistry, Biology, Psychology and Maths'
+NEW_LIST = 'Physics, Chemistry, Biology, Psychology, Maths and Economics'
+
+FILES = ['for-teachers.html', 'teacher-terms.html', 'knowhere-seo-v2.sh', 'emails.js']
+TERMS_OLD = 'Biology, Psychology and Maths are live now'
+TERMS_NEW = 'Biology, Psychology, Maths and Economics are live now'
+
+def read(p):
+    with open(os.path.join(ROOT, p), encoding='utf-8') as f:
+        return f.read()
+
+def fail(msg):
+    print('STOP: ' + msg); sys.exit(1)
+
+src = {p: read(p) for p in FILES}
+
+if MARK in src['for-teachers.html'] or NEW_LIST in src['for-teachers.html']:
+    fail('V8 is already in. Nothing to do.')
+# Guards: the pull happened (origin's teacher-terms wording, V6 marker), and V8 isn't in already.
+if 'are now live too' in src['teacher-terms.html'] or TERMS_OLD not in src['teacher-terms.html']:
+    fail('teacher-terms.html is not the pulled version (still the local V7 wording?). Discard the V7 changes and pull first.')
+if 'KW:TEACH-SITE-V6' not in src['for-teachers.html']:
+    fail('for-teachers.html has no V6 marker: wrong repo or not pulled.')
+
+out = {}
+plan = []
+for p, s in src.items():
+    n = s.count(OLD_LIST)
+    t = s.replace(OLD_LIST, NEW_LIST)
+    if p == 'teacher-terms.html':
+        k = t.count(TERMS_OLD)
+        t = t.replace(TERMS_OLD, TERMS_NEW)
+        plan.append(f'{p}: terms line x{k}')
+    if p == 'for-teachers.html':
+        t, k = re.subn(r'("dateModified":")2026-10-\d\d(")', r'\g<1>2026-10-24\g<2>', t)
+        plan.append(f'{p}: dateModified -> 2026-10-24 x{k}')
+    if p.endswith('.html'):
+        t = re.sub(r'(<!-- KW:TEACH-SITE-V6[^>]*-->)', r'\1\n' + MARK, t, count=1)
+    plan.append(f'{p}: subject list x{n}')
+    out[p] = t
+
+# Expected counts (live site 24 Oct): for-teachers 9 + teacher-terms 0 (terms line 1) + seo >=2 + emails 1
+counts = {p: src[p].count(OLD_LIST) for p in FILES}
+if counts['for-teachers.html'] != 9: fail(f"for-teachers.html subject list found {counts['for-teachers.html']}x, expected 9 (live site 24 Oct). Look before applying.")
+if counts['emails.js'] < 1: fail('emails.js teacherWelcome subject list not found.')
+if counts['knowhere-seo-v2.sh'] < 2: fail('knowhere-seo-v2.sh subject list found < 2 (desc + FAQ).')
+
+# Consistency: the SEO source's desc must equal the page's meta description, or a regen undoes it.
+m_page = re.search(r'<meta name="description" content="([^"]*)"', out['for-teachers.html'])
+m_seo = re.search(r'desc="([^"]*)"', out['knowhere-seo-v2.sh'][out['knowhere-seo-v2.sh'].find('teach it.'):])
+if not m_page or not m_seo or m_page.group(1) != m_seo.group(1):
+    fail('SEO source desc != for-teachers meta description after the change. Look before applying.')
+# JSON-LD still parses
+for blk in re.findall(r'<script type="application/ld\+json">(.*?)</script>', out['for-teachers.html'], re.S):
+    json.loads(blk)
+if 'Maths and Economics' not in out['emails.js']: fail('emails.js did not take the change.')
+
+print('KW:TEACH-SITE-V8 ' + ('APPLY' if APPLY else 'DRY RUN'))
+for line in plan: print('  ' + line)
+if not APPLY:
+    print('Dry run only. Nothing written. Re-run with --apply.'); sys.exit(0)
+
+os.makedirs(os.path.join(HERE, 'backup'), exist_ok=True)
+for p in FILES:
+    shutil.copy2(os.path.join(ROOT, p), os.path.join(HERE, 'backup', p + '.pre-v8'))
+    with open(os.path.join(ROOT, p), 'w', encoding='utf-8') as f:
+        f.write(out[p])
+# Read every write back.
+for p in FILES:
+    back = read(p)
+    if back != out[p] or OLD_LIST in back: fail(f'read-back failed on {p}')
+print('Applied and read back: ' + ', '.join(FILES))
