@@ -74,7 +74,7 @@ PAGES = {
    ]),
  "for-teachers.html": dict(path="/for-teachers", kind="faq",
    title="knowhere · teach it. — HSC & VCE concepts live",
-   desc="Every Physics, Chemistry, Biology, Psychology, Maths, Economics, Accounting, Business and Physical Education concept as a live deck for the projector: a call it. round for the room, slides you can edit, share links with no student login, tonight’s homeplay. Mapped to the HSC syllabus and VCE study design. 50 founding seats, free until 9 April 2027.",
+   desc="Every Physics, Chemistry, Biology, Psychology, Maths, Economics, Accounting, Business, Physical Education and Health concept as a live deck for the projector: a call it. round for the room, slides you can edit, share links with no student login, tonight’s homeplay. Mapped to the HSC syllabus and VCE study design. 50 founding seats, free until 9 April 2027.",
    og_title="You can't learn it for them. You're still the one who answers for it.",
    og_desc="So knowhere · teach it. hands the room the thinking: a live model, a what-if, three answers and one impostor. Pairs call it before the reveal. They own it by the bell.",
    name="For teachers",
@@ -84,7 +84,7 @@ PAGES = {
     ("Do my students need accounts?",
      "No. Put a concept on the projector, or send the class a share link: it opens in any browser, no login. A personalised student plan for home study is separate and entirely the student's call."),
     ("Can I use knowhere for lesson planning?",
-     "Yes. Every Physics, Chemistry, Biology, Psychology, Maths, Economics, Accounting, Business and Physical Education concept is a ready-made deck: the picture, a call it. round for the room, the takeaway and a homeplay task. Change the words, add your own slides, then present it or share it. Class groups and progress views are on the list — founding teachers get first say in how they work."),
+     "Yes. Every Physics, Chemistry, Biology, Psychology, Maths, Economics, Accounting, Business, Physical Education and Health concept is a ready-made deck: the picture, a call it. round for the room, the takeaway and a homeplay task. Change the words, add your own slides, then present it or share it. Class groups and progress views are on the list — founding teachers get first say in how they work."),
     ("Will knowhere work on the school network?",   # KW:TEACH-SITE
      "It is a normal website, nothing to install, on the projector laptop or the students’ own. Some school filters have not categorised knowhere.me yet; a one-page note for the IT team lists the handful of domains to allow."),
    ]),
@@ -609,3 +609,4 @@ echo
 echo "next: git diff --stat   then   git add -A && git commit -m 'SEO v2: clean URLs, full heads, schema' && git push"
 # KW:TEACH-SITE-V9 (25 Oct 2026)
 # KW:TEACH-SITE-V10 (26 Oct 2026)
+# KW:TEACH-SITE-V11 (30 Oct 2026)
