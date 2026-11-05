@@ -171,6 +171,9 @@ for m in re.finditer(r'<span>([^<]+?)\s*((?:<a href="[^"]+">(?:HSC|VCE)</a>)+)</
         BOARD[cert.lower()].append((m.group(1).strip(), h.replace('https://knowhere.me/', '/')))
 SOON = re.search(r'<span class="soon">([^<]+)</span>', LIVE).group(1)
 assert len(BOARD['hsc']) == 8 and len(BOARD['vce']) == 11, BOARD
+# English is live (Cat, 5 Nov): it joins both boards and leaves the Term 1 pill, which keeps History
+BOARD['hsc'].append(('English', '/hsc/english-advanced/')); BOARD['vce'].append(('English', '/vce/english/'))
+assert SOON == 'English · History — Term 1'; SOON = 'History — Term 1'
 def explore(where):
     lists = ''.join(
         f'\n      <div class="ex-list" data-cert="{c}"{"" if c == "hsc" else " hidden"}>'
@@ -244,6 +247,8 @@ s = swap(s, "'[data-kw=moved]{margin:12px 0 0!important;padding:0!important;bord
 s = swap(s, "url:'https://knowhere.me/vce/physics/'", "url:'/hsc/physics/photon-model-of-light'")
 s = s.replace("url:'https://knowhere.me/", "url:'/")
 s = re.sub(r"widget:'widgets/", "widget:'/widgets/", s)
+# the pill row counts the live subjects past its five: 12 live with English (Cat, 5 Nov)
+s = swap(s, "more.textContent='+ 6 more live'", "more.textContent='+ 7 more live'")
 # the posters, one pair per subject (captured from the cropped state by shoot-posters.js)
 s = swap(s, "  var ORDER = ['physics','chemistry','biology','psychology','maths'];",
          "  var ORDER = ['physics','chemistry','biology','psychology','maths'];\n"
