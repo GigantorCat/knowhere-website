@@ -72,21 +72,21 @@ PAGES = {
     ("What does it cost to try?",
      "Nothing today. Free for a week, then A$39 a month, A$99 a term or A$299 a year — founding rate A$29 / A$79 / A$249 for the first 50. Yours forever. Founding rate: the first 50 student plans, or until Fri 9 April 2027, whichever comes first. It stays yours while your plan stays active. Term and year plans land on the first day of term: sign up mid-term and you only ever pay for the weeks ahead of you. Cancel any time in the free week and you are not charged. If it doesn't click, it costs you a week."),  # subs-v2 round 4 (16 Oct) — keep in step with for-parents.html
    ]),
- "for-teachers.html": dict(path="/for-teachers", kind="faq",
-   title="knowhere · teach it. — HSC & VCE concepts live",
-   desc="Every Physics, Chemistry, Biology, Psychology, Maths, Economics, Accounting, Business, Physical Education, Health and Geography concept as a live deck for the projector: a call it. round for the room, slides you can edit, share links with no student login, tonight’s homeplay. Mapped to the HSC syllabus and VCE study design. 50 founding seats, free until 9 April 2027.",
+ "for-teachers.html": dict(path="/for-teachers", kind="faq",   # KW:TEACH-V2 (5 Nov 2026): the v2 hero; FAQ = the page's four, word for word
+   title="knowhere · teach it. — Stop reading the room. Run it.",
+   desc="knowhere turns dry HSC and VCE concepts into live models the room has to poke, call and argue over before the reveal. No leaderboards, no logins.",
    og_title="You can't learn it for them. You're still the one who answers for it.",
-   og_desc="So knowhere · teach it. hands the room the thinking: a live model, a what-if, three answers and one impostor. Pairs call it before the reveal. They own it by the bell.",
+   og_desc="So stop reading the room. Run it. Founding teachers: free until 9 April. No card.",
    name="For teachers",
    faq=[
-    ("Does knowhere follow the actual study design?",
-     "Yes. Every concept maps to VCAA and NESA study designs — unit by unit, area of study by area of study. Where something is examinable in one state and not another, it says so on the page."),
+    ("Does it follow the actual study design?",
+     "Yes. Every concept maps to the VCAA study design and the NESA syllabus, unit by unit. Where something is examinable in one state and not the other, it says so on the page."),
     ("Do my students need accounts?",
-     "No. Put a concept on the projector, or send the class a share link: it opens in any browser, no login. A personalised student plan for home study is separate and entirely the student's call."),
-    ("Can I use knowhere for lesson planning?",
-     "Yes. Every Physics, Chemistry, Biology, Psychology, Maths, Economics, Accounting, Business, Physical Education, Health and Geography concept is a ready-made deck: the picture, a call it. round for the room, the takeaway and a homeplay task. Change the words, add your own slides, then present it or share it. Class groups and progress views are on the list — founding teachers get first say in how they work."),
-    ("Will knowhere work on the school network?",   # KW:TEACH-SITE
-     "It is a normal website, nothing to install, on the projector laptop or the students’ own. Some school filters have not categorised knowhere.me yet; a one-page note for the IT team lists the handful of domains to allow."),
+     "No. Put a concept on the projector, or send the class a share link. It opens in any browser, no login. A student’s own study plan at home is a separate thing, entirely their call, never bundled into yours."),
+    ("How much do I have to prepare?",
+     "The deck is built: the model, a call it. round, the takeaway and tonight’s homeplay. Change any word by clicking it, add your own slide, or ask for the concept shown your way. Then walk in and teach."),
+    ("Will it work on the school network?",   # KW:TEACH-SITE
+     "It’s a normal website. Nothing to install, on the projector laptop or theirs. Some school filters haven’t categorised knowhere yet, so here’s the one-page note for your IT team: the handful of domains to allow, and why."),
    ]),
  "compare.html": dict(path="/compare", kind="faq",
    title="knowhere vs Atomi vs Edrolo vs a tutor — honest comparison",

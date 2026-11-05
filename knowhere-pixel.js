@@ -123,7 +123,8 @@ var KW_TT_PIXEL_ID = 'DAQ4L7JC77UFPT802VM0';
   (function () {
     var path = location.pathname;
     /* KW:CONCEPT — the concept pages (/hsc/…, /vce/…) are paid destinations too (P3 -LP-concept, G-SUBJ) */
-    if (path.indexOf('for-parents') === -1 && path.indexOf('experience-it') === -1 && path.indexOf('/hsc/') !== 0 && path.indexOf('/vce/') !== 0) return;
+    /* KW:TEACH-V2 (5 Nov 2026) — /for-teachers is a paid destination too (Meta E01) */
+    if (path.indexOf('for-parents') === -1 && path.indexOf('experience-it') === -1 && path.indexOf('for-teachers') === -1 && path.indexOf('/hsc/') !== 0 && path.indexOf('/vce/') !== 0) return;
 
     var MARKS = [25, 50, 75, 90];
     /* KW:TT — engaged = 50% scroll OR 20 s with the page visible. Once. TikTok's ViewContent. */
@@ -244,5 +245,6 @@ var KW_TT_PIXEL_ID = 'DAQ4L7JC77UFPT802VM0';
   var p = location.pathname;
   if (p.indexOf('for-parents') > -1) window.kwPixel('ViewContent', { content_name: 'for-parents' });
   else if (p.indexOf('experience-it') > -1) window.kwPixel('ViewContent', { content_name: 'experience-it' });
+  else if (p.indexOf('for-teachers') > -1) window.kwPixel('ViewContent', { content_name: 'for-teachers' }); /* KW:TEACH-V2 */
   else if (p.indexOf('/hsc/') === 0 || p.indexOf('/vce/') === 0) window.kwPixel('ViewContent', { content_name: p.replace(/^\//, '').replace(/\/$/, '') }); /* KW:CONCEPT */
 })();
