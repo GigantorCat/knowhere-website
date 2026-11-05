@@ -1,0 +1,610 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Photon model of light — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #3A6FC8;
+  --ag: rgba(58, 111, 200, .7);
+  --ag1: rgba(58, 111, 200, .12);
+  --ag2: rgba(58, 111, 200, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 72px;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(30px, 8vw, 52px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  line-height: 1.55;
+  max-width: 58ch;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: white;
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay-tag {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-control {
+  margin-bottom: 12px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.pm-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  outline: none;
+  margin-bottom: 6px;
+}
+
+.pm-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.pm-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.pm-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.pm-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 4px;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.toggle-section {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: #12160F;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(58,111,200,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(58,111,200,.18);
+}
+
+.knowdrop {
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.knowthis {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 18px;
+}
+
+.knowthis-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.knowthis-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.footer {
+  margin-top: 34px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 10px var(--acc);
+  animation: pmPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes pmPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .35; transform: scale(.6); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Interactive photon energy visualisation showing how frequency determines individual photon energy while intensity controls photon count</h2>
+
+  <h1>Brighter light doesn't mean more powerful <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">photons</span></h1>
+  
+  <p class="intro">Einstein's photon model revealed that turning up the intensity of light just sends more photons, not stronger ones. Each photon's energy depends only on its frequency. Change the frequency to set each photon's energy, then change the intensity to set how many photons arrive.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Photon stream</span>
+      <span class="live-tag" id="liveTag">Visible light • 5.5×10¹⁴ Hz</span>
+    </div>
+    <div class="card-hint">Frequency sets each photon&#8217;s energy (colour). Intensity sets how many photons arrive.</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="canvas"></canvas>
+      <div class="canvas-overlay-tag" id="overlayTag">E = 2.3 eV per photon</div>
+    </div>
+
+    <div class="slider-control">
+      <label class="slider-label" for="freqSlider">Frequency (×10¹⁴ Hz)</label>
+      <input type="range" id="freqSlider" class="pm-slider" min="3" max="12" step="0.1" value="5.5">
+      <div class="tick-labels">
+        <span>3.0</span>
+        <span>6.0</span>
+        <span>9.0</span>
+        <span>12.0</span>
+      </div>
+    </div>
+
+    <div class="slider-control">
+      <label class="slider-label" for="intSlider">Intensity: <span id="intValue">2×</span> photons per second</label>
+      <input type="range" id="intSlider" class="pm-slider" min="1" max="5" step="1" value="2">
+      <div class="tick-labels">
+        <span>Dim</span>
+        <span>Bright</span>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-label">Photon energy</div>
+        <div class="stat-value" style="color:var(--acc)" id="energyStat">2.3 eV</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Wavelength</div>
+        <div class="stat-value" style="color:var(--amb)" id="waveStat">545 nm</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-section">
+      <button class="toggle-btn active" id="btn1">Energy</button>
+      <button class="toggle-btn" id="btn2">Intensity</button>
+    </div>
+    <div class="knowdrop" id="knowdrop">
+      Each photon carries energy E = hf, where h is Planck's constant (6.63×10⁻³⁴ J·s) and f is frequency. When you increase frequency, each individual photon becomes more energetic following a direct linear relationship. This is why ultraviolet light can damage skin cells while visible light cannot, even if the visible light is much brighter. The frequency determines whether a single photon has enough energy to break molecular bonds. A million low-energy photons hitting simultaneously still cannot do what one high-energy photon can do, because energy transfer happens one photon at a time in quantum interactions.
+    </div>
+  </div>
+
+  <div class="knowthis">
+    <span class="knowthis-tag">Know This</span>
+    <div class="knowthis-body">
+      <span style="color:var(--acc)">Photon energy E = hf</span> where h = 6.63×10⁻³⁴ J·s, meaning <span style="color:var(--acc)">higher frequency light delivers higher energy photons</span> in a direct reliable relationship, while <span style="color:var(--acc)">intensity determines photon count</span>, not individual photon energy.
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="pulse-dot"></div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const slider = document.getElementById('freqSlider');
+const liveTag = document.getElementById('liveTag');
+const overlayTag = document.getElementById('overlayTag');
+const energyStat = document.getElementById('energyStat');
+const waveStat = document.getElementById('waveStat');
+const btn1 = document.getElementById('btn1');
+const btn2 = document.getElementById('btn2');
+const knowdrop = document.getElementById('knowdrop');
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d');
+
+let freq = 5.5; // ×10^14 Hz
+let intensity = 2; // relative photon rate: the ONLY thing that sets how many photons are drawn
+const intSlider = document.getElementById('intSlider');
+const intValue = document.getElementById('intValue');
+let photons = [];
+let time = 0;
+
+const h = 6.626e-34; // Planck's constant
+const eVConversion = 1.602e-19; // J to eV
+const c = 3e8; // speed of light m/s
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function updateStats() {
+  const freqHz = freq * 1e14;
+  const energyJ = h * freqHz;
+  const energyEv = energyJ / eVConversion;
+  const wavelengthM = c / freqHz;
+  const wavelengthNm = wavelengthM * 1e9;
+
+  energyStat.textContent = energyEv.toFixed(1) + ' eV';
+  waveStat.textContent = Math.round(wavelengthNm) + ' nm';
+  overlayTag.textContent = `E = ${energyEv.toFixed(1)} eV per photon`;
+
+  let region = '';
+  if (freq < 4.0) region = 'Infrared';
+  else if (freq < 7.5) region = 'Visible light';
+  else region = 'Ultraviolet';
+
+  liveTag.textContent = `${region} • ${freq.toFixed(1)}×10¹⁴ Hz`;
+
+  const fillPercent = ((freq - 3) / (12 - 3)) * 100;
+  slider.style.setProperty('--fill', fillPercent + '%');
+}
+
+function getPhotonColor(f) {
+  // Real colour from wavelength: nm = c / f. Infrared and ultraviolet are invisible, so they get a stand-in
+  const nm = 3e8 / (f * 1e14) * 1e9;
+  if (f < 4.0) return [150, 40, 40]; // infrared stand-in: dim deep red
+  if (f >= 7.5) return [200, 170, 255]; // ultraviolet stand-in: pale violet
+  let r = 0, g = 0, b = 0;
+  if (nm < 440) { r = (440 - nm) / 60; b = 1; } // violet
+  else if (nm < 490) { g = (nm - 440) / 50; b = 1; } // blue
+  else if (nm < 510) { g = 1; b = (510 - nm) / 20; } // cyan to green
+  else if (nm < 580) { r = Math.pow((nm - 510) / 70, 2); g = 1; } // green to yellow
+  else if (nm < 645) { r = 1; g = (645 - nm) / 65; } // orange
+  else { r = 1; } // red
+  return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+}
+
+function spawnPhoton() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  photons.push({
+    x: -20,
+    y: Math.random() * h,
+    vx: 2.5, // every photon travels at c, so all share one speed
+    size: 3 + Math.random() * 2,
+    alpha: 0.8 + Math.random() * 0.2,
+    hue: Math.random() * 30 - 15
+  });
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+
+  // Draw photons
+  const [r, g, b] = getPhotonColor(freq);
+  const baseIntensity = 0.9; // fixed: frequency changes colour (energy), never brightness
+
+  photons = photons.filter(p => {
+    p.x += p.vx;
+    if (p.x > w + 20) return false;
+
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+
+    // Outer glow
+    const outerGrad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 4);
+    outerGrad.addColorStop(0, `rgba(${r},${g},${b},${p.alpha * 0.4 * baseIntensity})`);
+    outerGrad.addColorStop(0.5, `rgba(${r},${g},${b},${p.alpha * 0.15 * baseIntensity})`);
+    outerGrad.addColorStop(1, `rgba(${r},${g},${b},0)`);
+    ctx.fillStyle = outerGrad;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size * 4, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Core
+    const coreGrad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size);
+    coreGrad.addColorStop(0, `rgba(255,255,255,${p.alpha * baseIntensity})`);
+    coreGrad.addColorStop(0.6, `rgba(${r},${g},${b},${p.alpha * 0.8 * baseIntensity})`);
+    coreGrad.addColorStop(1, `rgba(${r},${g},${b},0)`);
+    ctx.fillStyle = coreGrad;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+    return true;
+  });
+
+  // Wave representation in background
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.strokeStyle = `rgba(${r},${g},${b},0.08)`;
+  ctx.lineWidth = 1.5;
+  const wavelength = 60 / (freq / 5); // Visual wavelength scales with freq
+  const amplitude = 15;
+  const offset = (time * 0.5) % wavelength;
+
+  ctx.beginPath();
+  for (let x = -wavelength; x < w + wavelength; x += 2) {
+    const y = h / 2 + Math.sin((x + offset) * Math.PI * 2 / wavelength) * amplitude;
+    if (x === -wavelength) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+  ctx.restore();
+
+  // Energy indicator bars (left side)
+  const barCount = Math.floor(freq / 1.5) + 3;
+  const barSpacing = h / (barCount + 1);
+  for (let i = 0; i < barCount; i++) {
+    const barY = barSpacing * (i + 1);
+    const barAlpha = 0.15 + (i / barCount) * 0.25;
+    ctx.fillStyle = `rgba(${r},${g},${b},${barAlpha})`;
+    ctx.fillRect(8, barY - 1, 35, 2);
+  }
+
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+
+  // Vignette
+  const vig = ctx.createRadialGradient(w / 2, h / 2, h * 0.28, w / 2, h / 2, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+}
+
+function animate() {
+  time++;
+  
+  // Spawn rate set by intensity only (frequency never changes the count)
+  if (time % Math.round(36 / intensity) === 0) {
+    spawnPhoton();
+  }
+
+  draw();
+  requestAnimationFrame(animate);
+}
+
+slider.addEventListener('input', e => {
+  freq = parseFloat(e.target.value);
+  updateStats();
+});
+
+intSlider.addEventListener('input', e => {
+  intensity = parseInt(e.target.value, 10);
+  intValue.textContent = intensity + '×';
+  intSlider.style.setProperty('--fill', ((intensity - 1) / 4) * 100 + '%');
+});
+intSlider.style.setProperty('--fill', '25%');
+
+btn1.addEventListener('click', () => {
+  btn1.classList.add('active');
+  btn2.classList.remove('active');
+  knowdrop.textContent = `Each photon carries energy E = hf, where h is Planck's constant (6.63×10⁻³⁴ J·s) and f is frequency. When you increase frequency, each individual photon becomes more energetic following a direct linear relationship. This is why ultraviolet light can damage skin cells while visible light cannot, even if the visible light is much brighter. The frequency determines whether a single photon has enough energy to break molecular bonds. A million low-energy photons hitting simultaneously still cannot do what one high-energy photon can do, because energy transfer happens one photon at a time in quantum interactions.`;
+});
+
+btn2.addEventListener('click', () => {
+  btn2.classList.add('active');
+  btn1.classList.remove('active');
+  knowdrop.textContent = `Intensity measures the total energy delivered per second per unit area, which depends on how many photons arrive, not how energetic each one is. Doubling the brightness of a red laser doubles the photon count but each photon still has the same energy determined by red light's frequency. Try it above: raise the intensity and watch how many photons arrive each second, while their colour and energy stay put. Only changing the frequency changes the energy of each photon. So making low-frequency light brighter gives you more photons of the same small energy, never a single more energetic one.`;
+});
+
+window.addEventListener('resize', resize);
+resize();
+updateStats();
+animate();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'photon-model-of-light'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>
