@@ -106,8 +106,7 @@ css = swap(css, 'animation:kwBreathe 3.2s', 'animation:kt2RunBreathe 3.2s')
 css = swap(css, '@keyframes kwBreathe{', '@keyframes kt2RunBreathe{')
 CSS = scope(css)
 assert 'kwBreathe' not in CSS and '.kt2 .notes' not in CSS and '.kt2 footer' not in CSS
-# the site's head lower-cases every h1-h3 and .cta; the goated mockup is sentence case, so this page opts out
-CSS += '\n.kt2 h1,.kt2 h2,.kt2 h3{text-transform:none}'
+# headings follow the site: the head lower-cases every h1-h3 (Cat, 5 Nov: consistency over the mockup's sentence case)
 CSS += '\n.kt2 .offer h2.offer-t{font-size:22px;font-weight:800;line-height:1.15}'
 # the poster: in flow (it sets the stage height) until the cropped widget is ready, then the iframe takes over
 CSS += ('\n.kt2 .ks-stage .poster{position:relative;inset:auto;display:block;min-height:0}'
@@ -208,7 +207,7 @@ s = swap(s, "  var ORDER = ['physics','chemistry','biology','psychology','maths'
 s = swap(s, "p.get('acq_ad')||p.get('utm_content')||p.get('subject')||location.hash.slice(1)||''", "p.get('acq_ad')||p.get('utm_content')||p.get('subject')||''")
 # Umami: subject_pill on a tap (never on the boot pre-select)
 s = swap(s, "b.addEventListener('click', function(){ setSubject(k); });",
-         "b.addEventListener('click', function(){ if (k !== current) kwTrack('subject_pill', {subject:k}); setSubject(k); });")
+         "b.addEventListener('click', function(){ if (k === current) return; kwTrack('subject_pill', {subject:k}); setSubject(k); });")
 s = swap(s, "  function fromAd(){",
          "  function kwTrack(name, data){ try{ if (window.umami){ data = data || {}; data.page = location.pathname; window.umami.track(name, data); } }catch(e){} }\n  function fromAd(){")
 # hero_interact: the first touch inside the cropped widget, once per page view, tagged with the subject
@@ -238,6 +237,12 @@ s = swap(s, "document.getElementById('ci-reveal-btn').addEventListener('click', 
 # the 1.8 s fallback shows an uncroppable widget whole, but never swaps the poster for a frame that did not load a widget
 s = swap(s, "setTimeout(function(){ stage.classList.add('ready'); },1800); });",
          "setTimeout(function(){ try{ var fd = frame.contentDocument; if (fd && fd.querySelector('canvas,svg,input,button')) stage.classList.add('ready'); }catch(e){} },1800); });")
+# a load's retry timers belong to that load: a pill tapped mid-load must not let the old page's timers mark the crop done
+s = swap(s, "  frame.addEventListener('load', function(){ crop(); setTimeout(crop,300); setTimeout(crop,1200); setTimeout(function(){ try{",
+         "  var loadGen = 0;\n  frame.addEventListener('load', function(){ var g = loadGen; var mine = function(fn){ return function(){ if (g === loadGen) fn(); }; }; crop(); setTimeout(mine(crop),300); setTimeout(mine(crop),1200); setTimeout(mine(function(){ try{")
+s = swap(s, "if (fd && fd.querySelector('canvas,svg,input,button')) stage.classList.add('ready'); }catch(e){} },1800); });",
+         "if (fd && fd.querySelector('canvas,svg,input,button')) stage.classList.add('ready'); }catch(e){} }),1800); });")
+s = swap(s, "    stage.classList.remove('ready'); cropDone = false;\n", "    loadGen++; stage.classList.remove('ready'); cropDone = false;\n")
 # the mockup's footer year + notes panel are gone
 s = swap(s, "  document.getElementById('yr').textContent = new Date().getFullYear();\n", '')
 s = re.sub(r"  var nb = document.getElementById\('notes-btn'\).*?\n.*?\n", '', s)

@@ -298,7 +298,6 @@ html.kw-snap{scroll-snap-type:y proximity}
 .kt2 .subjects span a{color:var(--brat);text-decoration:none;font-size:10px;letter-spacing:.06em}
 .kt2 .subjects span a:hover{text-decoration:underline}
 .kt2 .subjects span.soon{color:var(--dimmer);border-style:dashed}
-.kt2 h1,.kt2 h2,.kt2 h3{text-transform:none}
 .kt2 .offer h2.offer-t{font-size:22px;font-weight:800;line-height:1.15}
 .kt2 .ks-stage .poster{position:relative;inset:auto;display:block;min-height:0}
 .kt2 .ks-stage .poster img{display:block;width:100%;height:auto}
@@ -656,7 +655,7 @@ window.KWTeachersV2 = function(root){
   ORDER.forEach(function(k){
     var b = document.createElement('button'); b.type='button'; b.className='pill'; b.textContent=SUBJECTS[k].label;
     b.setAttribute('aria-pressed', k===current ? 'true':'false');
-    b.addEventListener('click', function(){ if (k !== current) kwTrack('subject_pill', {subject:k}); setSubject(k); });
+    b.addEventListener('click', function(){ if (k === current) return; kwTrack('subject_pill', {subject:k}); setSubject(k); });
     pills.appendChild(b);
   });
   var more = document.createElement('span'); more.className='pill more'; more.textContent='+ 6 more live'; pills.appendChild(more);
@@ -715,7 +714,8 @@ window.KWTeachersV2 = function(root){
       return true;
     }catch(e){ return false; }
   }
-  frame.addEventListener('load', function(){ crop(); setTimeout(crop,300); setTimeout(crop,1200); setTimeout(function(){ try{ var fd = frame.contentDocument; if (fd && fd.querySelector('canvas,svg,input,button')) stage.classList.add('ready'); }catch(e){} },1800); });
+  var loadGen = 0;
+  frame.addEventListener('load', function(){ var g = loadGen; var mine = function(fn){ return function(){ if (g === loadGen) fn(); }; }; crop(); setTimeout(mine(crop),300); setTimeout(mine(crop),1200); setTimeout(mine(function(){ try{ var fd = frame.contentDocument; if (fd && fd.querySelector('canvas,svg,input,button')) stage.classList.add('ready'); }catch(e){} }),1800); });
   window.addEventListener('resize', kick);
 
   var ci = document.getElementById('ci'), myCall = '';
@@ -725,7 +725,7 @@ window.KWTeachersV2 = function(root){
     document.getElementById('ks-subject').textContent = S.label;
     document.getElementById('ks-concept').textContent = S.concept;
     document.getElementById('ks-link').href = S.url;
-    stage.classList.remove('ready'); cropDone = false;
+    loadGen++; stage.classList.remove('ready'); cropDone = false;
     try{ document.getElementById('ks-poster-m').srcset = POSTER(k,'m'); var pd = document.getElementById('ks-poster-d'); pd.src = POSTER(k,'d'); pd.alt = S.concept + ', a live knowhere concept.'; }catch(e){}
     frame.src = S.widget; frame.title = S.concept + ' — a live knowhere concept';
     Array.prototype.forEach.call(document.querySelectorAll('.cta-seat'), function(a){ try{ var u = new URL(a.href, location.href); u.searchParams.set('as','teacher'); u.searchParams.set('subject', k); a.href = u.toString(); }catch(e){ a.href = 'https://app.knowhere.me/signup?as=teacher&subject=' + k; } });

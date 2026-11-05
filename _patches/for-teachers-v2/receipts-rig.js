@@ -134,6 +134,24 @@ const evs = p => p.evaluate(() => window.__ev);
     await ctx.close();
   }
 
+  console.log('\n4b · a pill tapped while the first widget is still settling never shows it uncropped');
+  { let flashes = 0, runs = 0, worst = 0;
+    for (const first of ['Physics', 'Chemistry']) for (const delay of [0, 100, 250, 500, 900, 1300]) {
+      const ctx = await ctxOf(b, { viewport: { width: 1440, height: 900 } });
+      const p = await ctx.newPage();
+      await p.goto(BASE + '/for-teachers', { waitUntil: 'load' });
+      await p.waitForTimeout(delay);
+      await p.evaluate(() => { window.__bad = 0; const t0 = performance.now(); const iv = setInterval(() => { const st = document.getElementById('ks-stage'); let card = false;
+        try { const d = document.getElementById('ks-frame').contentDocument; card = !!(d && d.querySelector('[data-kw=card]')); } catch (e) {}
+        if (st.classList.contains('ready') && !card) window.__bad += 20; if (performance.now() - t0 > 4000) clearInterval(iv); }, 20); });
+      await p.click(`.pill:has-text("${first}")`);
+      await p.waitForTimeout(4200);
+      const bad = await p.evaluate(() => window.__bad); runs++; if (bad > 0) { flashes++; worst = Math.max(worst, bad); }
+      await ctx.close();
+    }
+    ok(flashes === 0, `${runs} taps at 0–1300 ms after load: ${flashes} showed the uncropped widget` + (flashes ? ` (worst ~${worst} ms)` : ''));
+  }
+
   console.log('\n5 · desktop: THE CLASSROOM steps four beats');
   {
     const ctx = await ctxOf(b, { viewport: { width: 1440, height: 900 } });
