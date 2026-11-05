@@ -74,7 +74,7 @@ const evs = p => p.evaluate(() => window.__ev);
   }
 
   console.log('\n2 · subject from the ad');
-  for (const [q, want, slug] of [['acq_ad=e01-psych', 'psychology', 'circadian-rhythm-sleep-disorders'], ['utm_content=e01-chem', 'chemistry', 'collision-theory'], ['acq_ad=e01-bio', 'biology', 'blood-glucose'], ['acq_ad=e01-maths', 'maths', 'limiting-sum'], ['acq_ad=e01-phys', 'physics', 'photon-model'], ['', 'physics', 'photon-model']]) {
+  for (const [q, want, slug] of [['acq_ad=e01-psych', 'psychology', 'circadian-rhythm-sleep-disorders'], ['utm_content=e01-chem', 'chemistry', 'collision-theory'], ['acq_ad=e01-bio', 'biology', 'autoimmune-disease'], ['acq_ad=e01-maths', 'maths', 'limiting-sum'], ['acq_ad=e01-phys', 'physics', 'photon-model'], ['', 'physics', 'photon-model']]) {
     const ctx = await ctxOf(b, PHONE);
     const p = await ctx.newPage();
     await p.goto(BASE + '/for-teachers' + (q ? '?' + q : ''), { waitUntil: 'load' });
