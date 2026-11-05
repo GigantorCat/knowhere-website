@@ -108,6 +108,10 @@ CSS = scope(css)
 assert 'kwBreathe' not in CSS and '.kt2 .notes' not in CSS and '.kt2 footer' not in CSS
 # headings follow the site: the head lower-cases every h1-h3 (Cat, 5 Nov: consistency over the mockup's sentence case)
 CSS += '\n.kt2 .offer h2.offer-t{font-size:22px;font-weight:800;line-height:1.15}'
+# the purple seat button (Cat, 5 Nov: B): one step deeper than #9B5AEA so white text passes 4.5:1 (4.9:1). On hover the
+# site's KW_LOGIN_HOVER turns every app link white, so the text goes the same purple there (4.9:1 on white), not white on white
+CSS += ('\n.kt2 .offer .btn-primary{background:#9048E8}'
+        '\n.kt2 .offer .btn-primary:hover,.kt2 .offer .btn-primary:focus-visible{color:#9048E8!important}')
 # the poster: in flow (it sets the stage height) until the cropped widget is ready, then the iframe takes over
 CSS += ('\n.kt2 .ks-stage .poster{position:relative;inset:auto;display:block;min-height:0}'
         '\n.kt2 .ks-stage .poster img{display:block;width:100%;height:auto}'
