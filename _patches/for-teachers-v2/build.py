@@ -199,6 +199,13 @@ for subj in ['physics', 'chemistry', 'biology', 'psychology', 'maths']:
            + '],right:' + str(R['right']) + ',sus:' + str(R['sus']) + ',\n      con:' + js(R['con']) + ',\n      trick:' + js(R['trick'])
            + ',\n      watch:' + js(R['watch']) + ',\n      key:' + js(KEYS[subj]['id']) + '}')
     s = s[:m.start()] + rep + s[m.end():]
+# Biology: autoimmune disease replaces blood glucose regulation (Cat, 5 Nov: the glucose picture is cramped on a phone)
+s = swap(s, "biology:{label:'Biology',concept:'Blood glucose regulation',url:'https://knowhere.me/hsc/biology/blood-glucose-regulation',widget:'widgets/blood-glucose-regulation-biology.html',",
+         "biology:{label:'Biology',concept:'Autoimmune disease',url:'/vce/biology/autoimmune-disease',widget:'widgets/autoimmune-disease-biology.html',")
+# the crop hides a knowdrop paragraph but can carry its text tabs across as controls; tabs that only switch hidden text go too
+s = swap(s, "'[data-kw=moved]{margin:12px 0 0!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important}'+",
+         "'[data-kw=moved]{margin:12px 0 0!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important}'+\n"
+         "    '[data-kw=card] [role=group]:has(> [data-kd]){display:none!important}'+")
 # the photon page exists now (built through build-concept-pages.mjs); the other four were already public
 s = swap(s, "url:'https://knowhere.me/vce/physics/'", "url:'/hsc/physics/photon-model-of-light'")
 s = s.replace("url:'https://knowhere.me/", "url:'/")
