@@ -110,6 +110,17 @@ assert 'kwBreathe' not in CSS and '.kt2 .notes' not in CSS and '.kt2 footer' not
 CSS += '\n.kt2 .offer h2.offer-t{font-size:22px;font-weight:800;line-height:1.15}'
 # the purple seat button (Cat, 5 Nov: B): one step deeper than #9B5AEA so white text passes 4.5:1 (4.9:1). On hover the
 # site's KW_LOGIN_HOVER turns every app link white, so the text goes the same purple there (4.9:1 on white), not white on white
+CSS += ('\n.kt2 .explore{margin-top:28px;border-radius:22px;padding:24px 24px 26px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);box-shadow:0 30px 80px rgba(0,0,0,.5);display:grid;gap:14px}'
+        '\n.kt2 .final .explore{margin-top:16px}'
+        '\n.kt2 .ex-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px 18px}'
+        '\n.kt2 .ex-t{font-size:22px;font-weight:800;letter-spacing:-.03em;line-height:1.15}'
+        '\n.kt2 .ex-tog{display:flex;gap:8px}'
+        '\n.kt2 .ex-list{display:flex;flex-wrap:wrap;gap:8px;align-items:center}'
+        '\n.kt2 .ex-list[hidden]{display:none}'
+        '\n.kt2 .ex-s{font-family:var(--mono);font-size:13px;color:var(--ink);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:8px 14px;transition:border-color .15s,color .15s}'
+        '\n.kt2 a.ex-s:hover,.kt2 a.ex-s:focus-visible{border-color:var(--brat);color:var(--brat)}'
+        '\n.kt2 .ex-s.soon{color:var(--dimmer);border-style:dashed}'
+        '\n.kt2 .ex-all{font-size:14px;color:var(--ink);text-decoration:none;border-bottom:1px solid var(--brat);padding-bottom:1px;margin-left:6px}')
 CSS += ('\n.kt2 .offer .btn-primary{background:#9048E8}'
         '\n.kt2 .offer .btn-primary:hover,.kt2 .offer .btn-primary:focus-visible{color:#9048E8!important}')
 # the poster: in flow (it sets the stage height) until the cropped widget is ready, then the iframe takes over
@@ -150,6 +161,29 @@ POSTER_ALT = 'Photon model of light, a live knowhere concept: change the frequen
 b = swap(b, '<div class="poster">loading the model</div>',
          '<div class="poster" id="ks-poster"><picture><source id="ks-poster-m" media="(max-width:751px)" srcset="/for-teachers-ks-physics-m.jpg?v=1">'
          f'<img id="ks-poster-d" src="/for-teachers-ks-physics-d.jpg?v=1" alt="{H.escape(POSTER_ALT)}" loading="eager"></picture></div>')
+# ── the explore card (Cat, 5 Nov): the final card's subject links move into their own card, shown under the widget and
+#    under the final offer. Eyebrow, the "Live now" line, an HSC / VCE toggle, then that board's subjects as pills.
+#    Labels and hub links are lifted from the final card, so nothing is retyped.
+LIVE = b[b.index('      <div class="live">'):b.index('<span class="soon">English · History — Term 1</span>\n        </div>\n      </div>\n') + len('<span class="soon">English · History — Term 1</span>\n        </div>\n      </div>\n')]
+BOARD = {'hsc': [], 'vce': []}
+for m in re.finditer(r'<span>([^<]+?)\s*((?:<a href="[^"]+">(?:HSC|VCE)</a>)+)</span>', LIVE):
+    for h, cert in re.findall(r'<a href="([^"]+)">(HSC|VCE)</a>', m.group(2)):
+        BOARD[cert.lower()].append((m.group(1).strip(), h.replace('https://knowhere.me/', '/')))
+SOON = re.search(r'<span class="soon">([^<]+)</span>', LIVE).group(1)
+assert len(BOARD['hsc']) == 8 and len(BOARD['vce']) == 11, BOARD
+def explore(where):
+    lists = ''.join(
+        f'\n      <div class="ex-list" data-cert="{c}"{"" if c == "hsc" else " hidden"}>'
+        + ''.join(f'<a class="ex-s" href="{h}">{H.escape(t)}</a>' for t, h in BOARD[c])
+        + f'<span class="ex-s soon">{SOON}</span><a class="ex-all" href="/{c}/">browse the live concepts &#8594;</a></div>'
+        for c in ('hsc', 'vce'))
+    return (f'\n    <div class="explore" data-explore="{where}">\n      <span class="kicker">explore the knowscapes</span>\n'
+            '      <div class="ex-top"><h3 class="ex-t">Live now, Year 11 and 12</h3>'
+            '<div class="ex-tog" role="group" aria-label="Pick your board"><button class="pill" type="button" data-cert="hsc" aria-pressed="true">HSC</button>'
+            '<button class="pill" type="button" data-cert="vce" aria-pressed="false">VCE</button></div></div>' + lists + '\n    </div>')
+b = swap(b, LIVE + '    </div>\n', '    </div>' + explore('final') + '\n')
+b = swap(b, '<span class="cap">The study design still links you to a 1999 applet. This is the 2026 one.</span>\n      </div>\n',
+         '<span class="cap">The study design still links you to a 1999 applet. This is the 2026 one.</span>\n      </div>' + explore('widget') + '\n')
 # heading order (Lighthouse a11y): the hero offer title follows the h1, so it is an h2, styled exactly as the mockup's h3
 b = swap(b, '<h3>Free until 9 April. No card.</h3>', '<h2 class="offer-t">Free until 9 April. No card.</h2>')
 # site-relative links (same pages, so they also work on a local server)
@@ -261,6 +295,17 @@ assert 'notes' not in s and "getElementById('yr')" not in s and 'location.hash' 
 for k in ['physics', 'chemistry', 'biology', 'psychology', 'maths']:
     assert ('key:"' + KEYS[k]['id'] + '"') in s, k
 
+# the explore cards: one board for both cards; a Psychology arrival (VCE only) opens on VCE
+s += ("\n  // explore the knowscapes: HSC / VCE toggle, shared by both cards\n"
+      "  var exCert = current === 'psychology' ? 'vce' : 'hsc';\n"
+      "  function setCert(c){ exCert = c; Array.prototype.forEach.call(document.querySelectorAll('[data-explore]'), function(card){\n"
+      "    Array.prototype.forEach.call(card.querySelectorAll('.ex-tog [data-cert]'), function(bt){ bt.setAttribute('aria-pressed', bt.getAttribute('data-cert') === c ? 'true' : 'false'); });\n"
+      "    Array.prototype.forEach.call(card.querySelectorAll('.ex-list'), function(l){ l.hidden = l.getAttribute('data-cert') !== c; }); }); }\n"
+      "  Array.prototype.forEach.call(document.querySelectorAll('[data-explore]'), function(card){\n"
+      "    var where = card.getAttribute('data-explore');\n"
+      "    Array.prototype.forEach.call(card.querySelectorAll('.ex-tog [data-cert]'), function(bt){ bt.addEventListener('click', function(){ var c = bt.getAttribute('data-cert'); if (c === exCert) return; kwTrack('explore_board', {cert:c, from:where}); setCert(c); }); });\n"
+      "    Array.prototype.forEach.call(card.querySelectorAll('.ex-list a'), function(a){ a.addEventListener('click', function(){ kwTrack('explore_click', {cert:exCert, subject:(a.classList.contains('ex-all') ? 'all' : a.textContent), from:where}); }); });\n"
+      "  });\n  setCert(exCert);\n")
 ENGINE = ("window.KWTeachersV2 = function(root){\n  if (!root || root.__kt2) return function(){};\n  root.__kt2 = true;\n"
           "(function(){" + s + "})();\n  return function(){};\n};")
 
