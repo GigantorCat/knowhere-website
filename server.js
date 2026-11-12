@@ -265,6 +265,52 @@ app.post('/api/waitlist', async (req, res) => {
   }
 });
 
+// ---------- GAMSAT early access (KW:GAMSAT, 12 Nov 2026) ----------
+// POST /api/gamsat { email, sitting, source, acqAd, acqCampaign, website(honeypot) } → a Resend contact tagged as GAMSAT.
+// Its own list, never the retired school waitlist: user_type 'gamsat' and plan_interest 'gamsat-<sitting>' on a new contact
+// (both properties already exist in Resend, so no schema change). A contact who is already on file (a parent, a teacher) keeps
+// their own details: only plan_interest is set, so they still show up in a GAMSAT filter. When RESEND_GAMSAT_SEGMENT_ID is set
+// (the account's plan allowed 3 segments on 12 Nov, all in use) every sign-up also joins that segment. No welcome email yet:
+// the copy is Cat's to approve. Same limiter as the waitlist.
+const GAMSAT_SEGMENT_ID = process.env.RESEND_GAMSAT_SEGMENT_ID || '';
+const SITTINGS = new Set(['march-2027', 'september-2027', 'unsure', '']);
+app.post('/api/gamsat', async (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  const b = req.body || {};
+  if (b.website) return res.json({ ok: true }); // honeypot: pretend
+  if (limited(req.ip)) return res.status(429).json({ ok: false, error: 'Slow down — try again in a few minutes.' });
+  const email = clean(b.email, 160).toLowerCase();
+  const sitting = clean(b.sitting, 20).toLowerCase();
+  if (!EMAIL_RE.test(email)) return res.status(400).json({ ok: false, error: 'That email doesn\'t look right.' });
+  if (!SITTINGS.has(sitting)) return res.status(400).json({ ok: false, error: 'Pick a sitting, or "not sure yet".' });
+  if (!RESEND_KEY) return res.status(503).json({ ok: false, error: 'Sign-up isn\'t wired up yet. Email hello@knowhere.me and we\'ll add you by hand.' });
+  const tag = 'gamsat-' + (sitting || 'unsure');
+  const properties = {
+    user_type: 'gamsat', plan_interest: tag, source_page: clean(b.source, 120) || '/gamsat',
+    acq_ad: clean(b.acqAd, 60) || 'none', acq_campaign: clean(b.acqCampaign, 60) || 'none', joined_at: new Date().toISOString(),
+  };
+  try {
+    let r = await resend('POST', '/contacts', { email, unsubscribed: false, properties, segments: GAMSAT_SEGMENT_ID ? [{ id: GAMSAT_SEGMENT_ID }] : undefined });
+    let existed = false;
+    if (!r.ok && (r.status === 409 || /exist/i.test(JSON.stringify(r.json)))) {
+      existed = true;   /* keep who they are; mark the GAMSAT interest and add them to the GAMSAT segment */
+      r = await resend('PATCH', '/contacts/' + encodeURIComponent(email), { properties: { plan_interest: tag } });
+      if (r.ok && GAMSAT_SEGMENT_ID) {
+        const s = await resend('POST', '/contacts/' + encodeURIComponent(email) + '/segments/' + GAMSAT_SEGMENT_ID);
+        if (!s.ok) console.warn('[gamsat] segment add failed', s.status, s.json);
+      }
+    }
+    if (!r.ok) {
+      console.error('[gamsat] resend error', r.status, r.json);
+      return res.status(502).json({ ok: false, error: 'Couldn\'t save that just now. Try again, or email hello@knowhere.me.' });
+    }
+    return res.json({ ok: true, existed });
+  } catch (e) {
+    console.error('[gamsat] error', e);
+    return res.status(500).json({ ok: false, error: 'Something broke on our side. Email hello@knowhere.me and we\'ll add you.' });
+  }
+});
+
 // ---------- the handoff (KW:HANDOFF-GOAT, 16 Sep 2026) ----------
 // POST /api/handoff { parentEmail, firstName, where, website(honeypot) } → the Goat emails the parent (emails.handoffParent).
 // Fixed copy, no free text: the only things a submitter controls are an address and a first name, and the name is

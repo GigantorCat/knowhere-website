@@ -1,0 +1,759 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Electric fields and Coulomb's law — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #3A6FC8;
+  --ag: rgba(58, 111, 200, .7);
+  --ag1: rgba(58, 111, 200, .12);
+  --ag2: rgba(58, 111, 200, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  line-height: 1.55;
+  max-width: 58ch;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--ink);
+  font-weight: 400;
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+  font-weight: 400;
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-section {
+  margin-bottom: 12px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.field-slider {
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 50%), #23291f var(--fill, 50%));
+  appearance: none;
+  outline: none;
+  margin-bottom: 8px;
+}
+
+.field-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.field-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.field-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.field-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.stat:first-child .stat-value {
+  color: var(--acc);
+}
+
+.stat:last-child .stat-value {
+  color: var(--amb);
+}
+
+.toggle-section {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(58,111,200,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(58,111,200,.18);
+}
+
+.knowdrop {
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-this-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.know-this-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (max-width: 360px) {
+  body {
+    padding: 32px 12px 0;
+  }
+  .card {
+    padding: 14px;
+  }
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Interactive electric field visualisation showing how charge signs determine attraction and repulsion</h2>
+  
+  <h1>Forces That Push <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">Back</span></h1>
+  
+  <p class="intro">Gravity only attracts — mass always pulls on mass. But electric forces can repel. The difference? Charge comes in two signs, and like charges push each other away with exactly the same inverse-square law that unlike charges use to attract. Change the separation between the charges and watch the force.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-label">Coulomb force field</span>
+      <span class="live-tag" id="forceTag">Force × 0.16</span>
+    </div>
+    <div class="card-hint">Change the charge separation. Watch the force readout.</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="fieldCanvas"></canvas>
+      <div class="canvas-overlay" id="canvasTag">Separation: 5.0r</div>
+    </div>
+
+    <div class="slider-section">
+      <label class="slider-label" for="distSlider">Charge separation</label>
+      <input type="range" id="distSlider" class="field-slider" min="20" max="100" value="50" step="1">
+      <div class="tick-labels">
+        <span>Close</span>
+        <span>Far</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <span class="stat-label">Force magnitude</span>
+        <span class="stat-value" id="forceStat">0.16×</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Field strength</span>
+        <span class="stat-value" id="fieldStat">16%</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-section">
+      <button class="toggle-btn active" id="repelBtn">Repulsion</button>
+      <button class="toggle-btn" id="attractBtn">Attraction</button>
+    </div>
+    <div class="knowdrop" id="knowdropText">
+      Like charges repel with the same inverse-square law that unlike charges use to attract. When you place two positive charges near each other, the force pushes them apart — field lines emanate from both, never crossing, creating a pressure between them. The mathematics is identical to attraction, but the sign of the force flips. This is the fundamental difference from gravity: mass only attracts, but charge can push. Field lines pointing outward from positive charges (or inward to negative) map the direction a positive test charge would accelerate.
+    </div>
+  </div>
+
+  <div class="know-this">
+    <span class="know-this-tag">Know This</span>
+    <p class="know-this-body"><span style="color:var(--acc)">Coulomb's law</span> is an inverse-square law identical in structure to Newton's gravity, but charge comes in <span style="color:var(--acc)">two signs</span> — like charges repel, unlike attract — giving electric forces a push-and-pull versatility that gravity lacks.</p>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('fieldCanvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d', { alpha: false });
+
+const slider = document.getElementById('distSlider');
+const forceTag = document.getElementById('forceTag');
+const canvasTag = document.getElementById('canvasTag');
+const forceStat = document.getElementById('forceStat');
+const fieldStat = document.getElementById('fieldStat');
+
+const repelBtn = document.getElementById('repelBtn');
+const attractBtn = document.getElementById('attractBtn');
+const knowdropText = document.getElementById('knowdropText');
+
+let isRepel = true;
+let separation = 50;
+let time = 0;
+let lastFrame = performance.now();
+
+const stars = Array.from({length: 150}, () => ({
+  x: Math.random(),
+  y: Math.random(),
+  r: Math.random() * 1.4 + 0.3,
+  tw: Math.random() * Math.PI * 2,
+  sp: 0.6 + Math.random() * 1.8,
+  h: Math.random() < 0.22
+}));
+
+let particles = [];
+for (let i = 0; i < 80; i++) {
+  particles.push({
+    x: Math.random(),
+    y: Math.random(),
+    vx: (Math.random() - 0.5) * 0.3,
+    vy: (Math.random() - 0.5) * 0.3,
+    life: Math.random()
+  });
+}
+
+function resize() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function updateUI() {
+  const normalized = (slider.value - 20) / 80;
+  const sepR = normalized * 8 + 2;
+  const forceDisplay = 4 / (sepR * sepR); /* inverse square, relative to the force at 2.0r */
+  
+  forceTag.textContent = `Force × ${forceDisplay.toFixed(2)}`;
+  canvasTag.textContent = `Separation: ${sepR.toFixed(1)}r`;
+  forceStat.textContent = `${forceDisplay.toFixed(2)}×`;
+  fieldStat.textContent = `${Math.round(forceDisplay * 100)}%`;
+  
+  slider.style.setProperty('--fill', `${normalized * 100}%`);
+}
+
+/* Arrowhead on a field line: pts is the traced path; dir +1 if traced along the field, -1 if traced against it.
+   Placed a short way out from the starting charge, so it shows out of + and in to -. */
+function drawFieldArrow(pts, dir, rgb) {
+  if (pts.length < 4) return;
+  let total = 0;
+  for (let k = 1; k < pts.length; k++) total += Math.hypot(pts[k][0] - pts[k-1][0], pts[k][1] - pts[k-1][1]);
+  const target = Math.min(total * 0.5, 70);
+  let acc = 0, k = 1;
+  for (; k < pts.length; k++) {
+    acc += Math.hypot(pts[k][0] - pts[k-1][0], pts[k][1] - pts[k-1][1]);
+    if (acc >= target) break;
+  }
+  k = Math.min(k, pts.length - 1);
+  const [ax, ay] = pts[k];
+  let tx = (pts[k][0] - pts[k-1][0]) * dir;
+  let ty = (pts[k][1] - pts[k-1][1]) * dir;
+  const tl = Math.hypot(tx, ty);
+  if (!tl) return;
+  tx /= tl; ty /= tl;
+  const L = 7, W = 3.6;
+  ctx.beginPath();
+  ctx.moveTo(ax + tx * L * 0.5, ay + ty * L * 0.5);
+  ctx.lineTo(ax - tx * L * 0.5 - ty * W, ay - ty * L * 0.5 + tx * W);
+  ctx.lineTo(ax - tx * L * 0.5 + ty * W, ay - ty * L * 0.5 - tx * W);
+  ctx.closePath();
+  ctx.fillStyle = `rgba(${rgb},0.75)`;
+  ctx.fill();
+}
+
+function draw() {
+  const w = canvas.width / Math.min(window.devicePixelRatio || 1, 2);
+  const h = canvas.height / Math.min(window.devicePixelRatio || 1, 2);
+  const cx = w / 2;
+  const cy = h / 2;
+  
+  const now = performance.now();
+  const dt = Math.min((now - lastFrame) / 1000, 0.1);
+  lastFrame = now;
+  time += dt;
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+  
+  // Stars
+  stars.forEach(st => {
+    const twinkle = 0.5 + 0.5 * Math.sin(time * st.sp + st.tw);
+    ctx.fillStyle = st.h ? `rgba(58,111,200,${twinkle * 0.6})` : `rgba(237,237,232,${twinkle * 0.25})`;
+    ctx.beginPath();
+    ctx.arc(st.x * w, st.y * h, st.r, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  
+  const normalized = (separation - 20) / 80;
+  const sepR = normalized * 8 + 2;
+  const sep = sepR * w * 0.06; /* drawn gap proportional to the labelled separation: 2.0r = 0.12w, 10.0r = 0.60w */
+  
+  const q1x = cx - sep / 2;
+  const q1y = cy;
+  const q2x = cx + sep / 2;
+  const q2y = cy;
+  
+  const chargeR = Math.max(w * 0.035, 14);
+  
+  // Field lines
+  const numLines = 16;
+  const maxSteps = Math.ceil((w + h) / 3); /* long enough for a line to reach the edge at any separation */
+  const sources = isRepel ? [[q1x, q1y], [q2x, q2y]] : [[q1x, q1y]]; /* two like charges: lines leave both */
+  for (const [sx, sy] of sources)
+  for (let i = 0; i < numLines; i++) {
+    const angle = (i / numLines) * Math.PI * 2;
+    let px = sx + Math.cos(angle) * chargeR * 1.5;
+    let py = sy + Math.sin(angle) * chargeR * 1.5;
+    const pts = [[px, py]];
+    
+    ctx.beginPath();
+    ctx.moveTo(px, py);
+    
+    for (let step = 0; step < maxSteps; step++) {
+      const dx1 = px - q1x;
+      const dy1 = py - q1y;
+      const r1sq = dx1 * dx1 + dy1 * dy1 + 1;
+      
+      const dx2 = px - q2x;
+      const dy2 = py - q2y;
+      const r2sq = dx2 * dx2 + dy2 * dy2 + 1;
+      
+      let fx = dx1 / (r1sq * Math.sqrt(r1sq));
+      let fy = dy1 / (r1sq * Math.sqrt(r1sq));
+      
+      if (isRepel) {
+        fx += dx2 / (r2sq * Math.sqrt(r2sq));
+        fy += dy2 / (r2sq * Math.sqrt(r2sq));
+      } else {
+        fx -= dx2 / (r2sq * Math.sqrt(r2sq));
+        fy -= dy2 / (r2sq * Math.sqrt(r2sq));
+      }
+      
+      const fmag = Math.sqrt(fx * fx + fy * fy);
+      if (fmag > 0) {
+        fx /= fmag;
+        fy /= fmag;
+      }
+      
+      px += fx * 3;
+      py += fy * 3;
+      
+      ctx.lineTo(px, py);
+      pts.push([px, py]);
+      
+      if (px < 0 || px > w || py < 0 || py > h) break;
+      if (!isRepel) {
+        const distToQ2 = Math.hypot(px - q2x, py - q2y);
+        if (distToQ2 < chargeR * 1.5) break;
+      }
+    }
+    
+    ctx.strokeStyle = 'rgba(58,111,200,0.25)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    /* two like charges: the two lines aimed straight at the other charge stall at the midpoint null, so they get no arrow */
+    const towardNull = isRepel && ((sx === q1x && i === 0) || (sx === q2x && i === numLines / 2));
+    if (!towardNull) drawFieldArrow(pts, 1, "110,150,225"); /* traced along the field: arrow points away from + */
+  }
+  
+  if (!isRepel) {
+    for (let i = 0; i < numLines; i++) {
+      const angle = (i / numLines) * Math.PI * 2;
+      let px = q2x + Math.cos(angle + Math.PI) * chargeR * 1.5;
+      let py = q2y + Math.sin(angle + Math.PI) * chargeR * 1.5;
+      const pts = [[px, py]];
+      
+      ctx.beginPath();
+      ctx.moveTo(px, py);
+      
+      for (let step = 0; step < maxSteps; step++) {
+        const dx1 = px - q1x;
+        const dy1 = py - q1y;
+        const r1sq = dx1 * dx1 + dy1 * dy1 + 1;
+        
+        const dx2 = px - q2x;
+        const dy2 = py - q2y;
+        const r2sq = dx2 * dx2 + dy2 * dy2 + 1;
+        
+        let fx = -dx1 / (r1sq * Math.sqrt(r1sq));
+        let fy = -dy1 / (r1sq * Math.sqrt(r1sq));
+        
+        fx += dx2 / (r2sq * Math.sqrt(r2sq));
+        fy += dy2 / (r2sq * Math.sqrt(r2sq));
+        
+        const fmag = Math.sqrt(fx * fx + fy * fy);
+        if (fmag > 0) {
+          fx /= fmag;
+          fy /= fmag;
+        }
+        
+        px += fx * 3;
+        py += fy * 3;
+        
+        ctx.lineTo(px, py);
+        pts.push([px, py]);
+        
+        if (px < 0 || px > w || py < 0 || py > h) break;
+        const distToQ1 = Math.hypot(px - q1x, py - q1y);
+        if (distToQ1 < chargeR * 1.5) break;
+      }
+      
+      ctx.strokeStyle = 'rgba(250,199,117,0.25)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      drawFieldArrow(pts, -1, "250,199,117"); /* traced away from the negative charge, against the field: arrow points in to - */
+    }
+  }
+  
+  // Particles in field
+  particles.forEach(p => {
+    const px = p.x * w;
+    const py = p.y * h;
+    
+    const dx1 = px - q1x;
+    const dy1 = py - q1y;
+    const r1sq = dx1 * dx1 + dy1 * dy1 + 100;
+    
+    const dx2 = px - q2x;
+    const dy2 = py - q2y;
+    const r2sq = dx2 * dx2 + dy2 * dy2 + 100;
+    
+    let fx = dx1 / (r1sq * Math.sqrt(r1sq)) * 0.0001;
+    let fy = dy1 / (r1sq * Math.sqrt(r1sq)) * 0.0001;
+    
+    if (isRepel) {
+      fx += dx2 / (r2sq * Math.sqrt(r2sq)) * 0.0001;
+      fy += dy2 / (r2sq * Math.sqrt(r2sq)) * 0.0001;
+    } else {
+      fx -= dx2 / (r2sq * Math.sqrt(r2sq)) * 0.0001;
+      fy -= dy2 / (r2sq * Math.sqrt(r2sq)) * 0.0001;
+    }
+    
+    p.vx += fx;
+    p.vy += fy;
+    p.vx *= 0.98;
+    p.vy *= 0.98;
+    
+    p.x += p.vx;
+    p.y += p.vy;
+    
+    if (p.x < 0 || p.x > 1) p.vx *= -1;
+    if (p.y < 0 || p.y > 1) p.vy *= -1;
+    p.x = Math.max(0, Math.min(1, p.x));
+    p.y = Math.max(0, Math.min(1, p.y));
+    
+    p.life += dt * 0.3;
+    const alpha = 0.4 + 0.3 * Math.sin(p.life);
+    
+    ctx.fillStyle = `rgba(58,111,200,${alpha})`;
+    ctx.beginPath();
+    ctx.arc(p.x * w, p.y * h, 1.5, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  
+  // Charge 1 glow
+  const glow1 = ctx.createRadialGradient(q1x, q1y, 0, q1x, q1y, chargeR * 4);
+  glow1.addColorStop(0, 'rgba(58,111,200,0.55)');
+  glow1.addColorStop(0.4, 'rgba(58,111,200,0.18)');
+  glow1.addColorStop(1, 'rgba(58,111,200,0)');
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.fillStyle = glow1;
+  ctx.beginPath();
+  ctx.arc(q1x, q1y, chargeR * 4, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+  
+  // Charge 2 glow
+  const glow2 = ctx.createRadialGradient(q2x, q2y, 0, q2x, q2y, chargeR * 4);
+  if (isRepel) {
+    glow2.addColorStop(0, 'rgba(58,111,200,0.55)');
+    glow2.addColorStop(0.4, 'rgba(58,111,200,0.18)');
+    glow2.addColorStop(1, 'rgba(58,111,200,0)');
+  } else {
+    glow2.addColorStop(0, 'rgba(250,199,117,0.55)');
+    glow2.addColorStop(0.4, 'rgba(250,199,117,0.18)');
+    glow2.addColorStop(1, 'rgba(250,199,117,0)');
+  }
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.fillStyle = glow2;
+  ctx.beginPath();
+  ctx.arc(q2x, q2y, chargeR * 4, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+  
+  // Charge 1 core
+  ctx.fillStyle = '#3A6FC8';
+  ctx.beginPath();
+  ctx.arc(q1x, q1y, chargeR, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#fff';
+  ctx.font = `${chargeR * 1.2}px 'JetBrains Mono', monospace`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('+', q1x, q1y);
+  
+  // Charge 2 core
+  ctx.fillStyle = isRepel ? '#3A6FC8' : '#FAC775';
+  ctx.beginPath();
+  ctx.arc(q2x, q2y, chargeR, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#000';
+  ctx.font = `${chargeR * 1.4}px 'JetBrains Mono', monospace`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(isRepel ? '+' : '−', q2x, q2y + (isRepel ? 0 : -1));
+  
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+  
+  requestAnimationFrame(draw);
+}
+
+slider.addEventListener('input', () => {
+  separation = parseInt(slider.value);
+  updateUI();
+});
+
+repelBtn.addEventListener('click', () => {
+  isRepel = true;
+  repelBtn.classList.add('active');
+  attractBtn.classList.remove('active');
+  knowdropText.textContent = "Like charges repel with the same inverse-square law that unlike charges use to attract. When you place two positive charges near each other, the force pushes them apart — field lines emanate from both, never crossing, creating a pressure between them. The mathematics is identical to attraction, but the sign of the force flips. This is the fundamental difference from gravity: mass only attracts, but charge can push. Field lines pointing outward from positive charges (or inward to negative) map the direction a positive test charge would accelerate.";
+});
+
+attractBtn.addEventListener('click', () => {
+  isRepel = false;
+  repelBtn.classList.remove('active');
+  attractBtn.classList.add('active');
+  knowdropText.textContent = "Unlike charges attract because the electric field created by a positive charge points radially outward, and a negative charge placed in that field experiences a force in the opposite direction — toward the positive source. Field lines terminate on negative charges and originate from positive ones, creating a natural flow from + to −. The force magnitude follows Coulomb's law: F = k|q₁q₂|/r², identical in structure to gravitational attraction but vastly stronger (10³⁹ times stronger for protons and electrons). The field is a property of space itself, existing whether or not a test charge is present. When opposite charges approach, potential energy converts to kinetic energy, accelerating them together until other forces (quantum mechanical, structural) provide equilibrium at the atomic scale.";
+});
+
+window.addEventListener('resize', resize);
+resize();
+updateUI();
+requestAnimationFrame(draw);
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'g6'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>
