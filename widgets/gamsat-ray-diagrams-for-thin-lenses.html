@@ -1,0 +1,563 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Ray diagrams for thin lenses — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #3A6FC8;
+  --acc-rgb: 58, 111, 200;
+  --ag:  rgba(var(--acc-rgb),.7);
+  --ag1: rgba(var(--acc-rgb),.12);
+  --ag2: rgba(var(--acc-rgb),.45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 0;
+}
+.sr-only { position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0; }
+.rl-wrap { max-width: 720px; margin: 0 auto; }
+.rl-h1 { font-size: clamp(26px,6.5vw,44px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; margin-bottom: 14px; }
+.rl-intro { font-size: 15.5px; color: var(--ink-dim); max-width: 58ch; line-height: 1.55; margin-bottom: 26px; }
+.rl-card {
+  background: linear-gradient(180deg,#12160F,#0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 20px;
+}
+.rl-card.sec { border-radius: 14px; }
+.rl-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.rl-label { font-family: 'JetBrains Mono', monospace; font-size: 13px; text-transform: uppercase; color: #fff; }
+.rl-live { font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; color: var(--acc); }
+.rl-hint { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-dim); margin: 6px 0 14px; line-height: 1.5; }
+.rl-q { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 8px; }
+.rl-tg { display: flex; gap: 10px; }
+.rl-modes { margin-bottom: 14px; }
+.rl-tog {
+  flex: 1 1 0; min-width: 0;
+  font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  padding: 12px 6px; border-radius: 999px; cursor: pointer;
+  background: #12160F; border: 1px solid var(--line); color: var(--ink-dim);
+  transition: background .2s, color .2s, border-color .2s, box-shadow .2s;
+}
+.rl-tog[aria-pressed="true"] { background: rgba(var(--acc-rgb),.1); border-color: var(--acc); color: var(--acc); box-shadow: 0 0 22px rgba(var(--acc-rgb),.18); }
+.rl-tog:focus-visible { outline: 2px solid var(--ag2); outline-offset: 2px; }
+.rl-cv { position: relative; width: 100%; aspect-ratio: 16/9; border-radius: 12px; overflow: hidden; background: #000; box-shadow: inset 0 0 0 1px var(--ag1); }
+.rl-cv canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.rl-tag {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.55); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+  padding: 9px 16px; font-family: 'JetBrains Mono', monospace; font-size: 14px;
+  text-transform: uppercase; color: var(--acc); text-align: center;
+}
+.rl-ctl { margin-top: 18px; }
+.rl-row { display: flex; justify-content: space-between; align-items: baseline; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 10px; }
+.rl-row b { font-weight: 500; font-size: 13px; color: var(--acc); }
+.rl-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; border-radius: 3px; outline: none; display: block; background: linear-gradient(90deg, var(--acc) var(--fill,0%), #23291f var(--fill,0%)); }
+.rl-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #0B0D0C; border: 2px solid var(--acc); box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag); transition: box-shadow .15s; cursor: pointer; }
+.rl-slider::-webkit-slider-thumb:hover { box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag); }
+.rl-slider::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: #0B0D0C; border: 2px solid var(--acc); box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag); transition: box-shadow .15s; cursor: pointer; }
+.rl-slider:focus-visible { box-shadow: 0 0 0 3px var(--ag2); }
+.rl-ticks { position: relative; height: 14px; margin-top: 8px; margin-bottom: 14px; font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--ink-dim); }
+.rl-ticks span { position: absolute; top: 0; transform: translateX(-50%); white-space: nowrap; }
+.rl-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; border-top: 1px solid var(--line); margin-top: 6px; padding-top: 14px; }
+.rl-stat small { display: block; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 6px; }
+.rl-stat b { font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 500; }
+.rl-stat.a b { color: var(--acc); }
+.rl-stat.m b { color: var(--amb); }
+.rl-eq { margin-top: 12px; font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 1.6; color: var(--ink-dim); overflow-wrap: anywhere; }
+.rl-eq b { color: var(--ink); font-weight: 500; }
+.rl-drop { border-top: 1px solid var(--line); margin-top: 14px; padding-top: 16px; font-size: 14.5px; line-height: 1.65; color: var(--ink); }
+.rl-know { border-left: 3px solid var(--acc); padding: 16px 18px; background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0)); border-radius: 0 12px 12px 0; margin-bottom: 0; padding-bottom: 16px; }
+.rl-ktag { display: flex; align-items: center; gap: 9px; margin-bottom: 10px; font-family: 'JetBrains Mono', monospace; font-size: 13px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--acc); }
+.rl-kdot { width: 6px; height: 6px; border-radius: 50%; background: var(--acc); box-shadow: 0 0 8px var(--acc); animation: rlPulse 2.4s ease-in-out infinite; }
+@keyframes rlPulse { 0%,100% { opacity: 1; } 50% { opacity: .45; } }
+.rl-kbody { font-size: 17.4px; line-height: 1.55; color: var(--ink); margin-bottom: 0; }
+@media (max-width: 560px) { .rl-cv { aspect-ratio: 1/1; } }
+@media (prefers-reduced-motion: reduce) { .rl-kdot { animation: none; } .rl-tog { transition: none; } }
+</style>
+
+<div class="rl-wrap">
+  <h2 class="sr-only">Interactive ray diagrams for thin lenses on an optical bench: switch between a pinhole, a convex lens and a concave lens, change the object distance and the focal length, and watch the principal rays meet at a real image or trace back to a virtual one while the image distance and magnification are read out</h2>
+  <h1 class="rl-h1">Move the object in towards F and a convex lens throws its image further <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">away</span></h1>
+  <p class="rl-intro">A pinhole makes a picture with no glass at all: light travels in straight lines through one small hole and lands upside down on the screen behind it. A thin lens does the same job by bending light, and three rays from the top of the object are enough to find where its image forms. Start with the convex lens, bring the object in towards the focal point and watch where the image goes.</p>
+
+  <div class="rl-card">
+    <div class="rl-head">
+      <span class="rl-label">Ray diagrams on the bench</span>
+      <span class="rl-live" id="rlLive" aria-live="polite">Convex lens &middot; f = 10 cm</span>
+    </div>
+    <p class="rl-hint">Choose an optic. Change the object distance and the focal length. Watch where the rays meet.</p>
+
+    <div class="rl-modes">
+      <div class="rl-q">Optic on the bench</div>
+      <div class="rl-tg" role="group" aria-label="Optic on the bench">
+        <button class="rl-tog" type="button" data-mode="pinhole" aria-pressed="false">Pinhole</button>
+        <button class="rl-tog" type="button" data-mode="convex" aria-pressed="true">Convex lens</button>
+        <button class="rl-tog" type="button" data-mode="concave" aria-pressed="false">Concave lens</button>
+      </div>
+    </div>
+
+    <div class="rl-cv" id="rlWrap">
+      <canvas id="rlCanvas" role="img" aria-label="Ray diagram of the chosen optic with the object, the principal rays and the image"></canvas>
+      <div class="rl-tag" id="rlTag">v = 15.0 cm &middot; real &middot; inverted &middot; M = &minus;0.50</div>
+    </div>
+
+    <div class="rl-ctl">
+      <div class="rl-row"><span>Object distance u</span><b id="rlUV">30 cm</b></div>
+      <input type="range" class="rl-slider" id="rlU" aria-label="Object distance u in centimetres" min="5" max="60" step="1" value="30">
+      <div class="rl-ticks">
+        <span style="left:0%">5 cm</span>
+        <span style="left:27.27%">20</span>
+        <span style="left:63.64%">40</span>
+        <span style="left:100%">60 cm</span>
+      </div>
+      <div class="rl-row"><span id="rlPLab">Focal length f</span><b id="rlPV">10 cm</b></div>
+      <input type="range" class="rl-slider" id="rlP" aria-label="Focal length of the lens, or screen distance of the pinhole camera, in centimetres" min="5" max="30" step="1" value="10">
+      <div class="rl-ticks">
+        <span style="left:0%">5 cm</span>
+        <span style="left:20%">10</span>
+        <span style="left:60%">20</span>
+        <span style="left:100%">30 cm</span>
+      </div>
+    </div>
+
+    <div class="rl-stats">
+      <div class="rl-stat a"><small>Image distance v</small><b id="rlVStat">+15.0 cm</b></div>
+      <div class="rl-stat m"><small>Magnification M = &minus;v/u</small><b id="rlMStat">&minus;0.50</b></div>
+    </div>
+    <div class="rl-eq" id="rlEq"></div>
+  </div>
+
+  <div class="rl-card sec">
+    <div class="rl-q">Two ways to find the image</div>
+    <div class="rl-tg" role="group" aria-label="Two ways to find the image">
+      <button class="rl-tog" type="button" data-drop="rays" aria-pressed="true">Ray tracing</button>
+      <button class="rl-tog" type="button" data-drop="eq" aria-pressed="false">Lens equation</button>
+    </div>
+    <p class="rl-drop" id="rlDrop"></p>
+  </div>
+
+  <div class="rl-know">
+    <div class="rl-ktag"><span class="rl-kdot"></span><span>Know This</span></div>
+    <p class="rl-kbody"><span style="color:var(--acc)">Three principal rays</span> from the tip of the object meet at its image, and <span style="color:var(--acc)">the thin lens equation</span> with <span style="color:var(--acc)">M = &minus;v/u</span> gives the same position and size in numbers.</p>
+  </div>
+</div>
+
+<script>
+(function () {
+  const CSS = getComputedStyle(document.documentElement);
+  const ACC = CSS.getPropertyValue("--acc").trim();
+  const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+  const AMB = CSS.getPropertyValue("--amb").trim();
+  const INK = CSS.getPropertyValue("--ink").trim();
+  const DIM = CSS.getPropertyValue("--ink-dim").trim();
+  const accA = a => "rgba(" + RGB + "," + a + ")";
+  function hexA(hex, a) {
+    const n = parseInt(hex.replace("#", ""), 16);
+    return "rgba(" + ((n >> 16) & 255) + "," + ((n >> 8) & 255) + "," + (n & 255) + "," + a + ")";
+  }
+  const RM = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const canvas = document.getElementById("rlCanvas");
+  const wrap = document.getElementById("rlWrap");
+  const ctx = canvas.getContext("2d");
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const buf = document.createElement("canvas");
+  const bctx = buf.getContext("2d");
+
+  const uIn = document.getElementById("rlU");
+  const pIn = document.getElementById("rlP");
+  const uV = document.getElementById("rlUV");
+  const pV = document.getElementById("rlPV");
+  const pLab = document.getElementById("rlPLab");
+  const live = document.getElementById("rlLive");
+  const tag = document.getElementById("rlTag");
+  const vStat = document.getElementById("rlVStat");
+  const mStat = document.getElementById("rlMStat");
+  const eqEl = document.getElementById("rlEq");
+  const dropEl = document.getElementById("rlDrop");
+  const modeBtns = Array.from(document.querySelectorAll("[data-mode]"));
+  const dropBtns = Array.from(document.querySelectorAll("[data-drop]"));
+
+  const VCAP = 120;
+  const HO = 5;
+  const st = { mode: "convex" };
+  const cur = { u: 30, p: 10 }, tgt = { u: 30, p: 10 }, from = { u: 30, p: 10 };
+  let animStart = 0, revealStart = 0, reveal = 1, raf = 0;
+  const DUR = 380, RDUR = 420;
+
+  function solve(mode, u, p) {
+    if (mode === "pinhole") return { u: u, f: null, v: p, M: -p / u, real: true, far: false, inf: false };
+    const f = mode === "convex" ? p : -p;
+    const d = u - f;
+    if (Math.abs(d) < 1e-6) return { u: u, f: f, v: Infinity, M: Infinity, real: false, far: true, inf: true };
+    const v = f * u / d;
+    return { u: u, f: f, v: v, M: -v / u, real: v > 0, far: Math.abs(v) > VCAP, inf: false };
+  }
+
+  function resize() {
+    const rect = wrap.getBoundingClientRect();
+    if (!rect.width || !rect.height) return; /* f27c: refuse a zero measurement, keep the last good size */
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    buf.width = canvas.width; buf.height = canvas.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    draw();
+  }
+
+  function arrow(x, y0, y1, color, width, dashed) {
+    ctx.save();
+    ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = width; ctx.lineCap = "round";
+    if (dashed) ctx.setLineDash([5, 4]);
+    const dir = y1 < y0 ? -1 : 1;
+    const len = Math.abs(y1 - y0);
+    const head = Math.min(8, Math.max(3, len * 0.35));
+    ctx.beginPath(); ctx.moveTo(x, y0); ctx.lineTo(x, y1 - dir * head * 0.6); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.beginPath(); ctx.moveTo(x, y1); ctx.lineTo(x - head * 0.55, y1 - dir * head); ctx.lineTo(x + head * 0.55, y1 - dir * head); ctx.closePath(); ctx.fill();
+    ctx.restore();
+  }
+
+  function seg(x1, y1, x2, y2, color, width, dash) {
+    ctx.save();
+    ctx.strokeStyle = color; ctx.lineWidth = width; ctx.lineCap = "round";
+    if (dash) ctx.setLineDash(dash);
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    ctx.restore();
+  }
+
+  function toEdge(x, y, dx, dy, w) {
+    const xe = dx >= 0 ? w + 4 : -4;
+    const t = (xe - x) / (dx || 1e-9);
+    return { x: xe, y: y + dy * t };
+  }
+
+  function label(text, x, y, color, align) {
+    ctx.save();
+    ctx.font = "500 11px JetBrains Mono, monospace";
+    ctx.fillStyle = color; ctx.textAlign = align || "center"; ctx.textBaseline = "alphabetic";
+    ctx.fillText(text, x, y);
+    ctx.restore();
+  }
+
+  function bracket(x1, x2, y, color, text, above) {
+    const a = Math.min(x1, x2), b = Math.max(x1, x2);
+    seg(a, y, b, y, color, 1, null);
+    seg(a, y - 4, a, y + 4, color, 1, null);
+    seg(b, y - 4, b, y + 4, color, 1, null);
+    label(text, (a + b) / 2, above ? y - 6 : y + 14, color, "center");
+  }
+
+  function draw() {
+    const w = canvas.width / dpr, h = canvas.height / dpr;
+    if (!w || !h) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    const mode = st.mode, u = cur.u, p = cur.p;
+    const S = solve(mode, u, p);
+    const lens = mode !== "pinhole";
+    const x0 = w * 0.46, yA = h * 0.47;
+    const af = lens ? Math.abs(S.f) : 0;
+    const vR = (S.v > 0 && isFinite(S.v)) ? Math.min(S.v, VCAP) : 0;
+    const vL = (S.v < 0 && isFinite(S.v)) ? Math.min(-S.v, VCAP) : 0;
+    const leftNeed = Math.max(u, vL, af * 1.08, 6);
+    const rightNeed = Math.max(vR, af * 1.08, lens ? 6 : p, 6);
+    const sx = Math.min((x0 - w * 0.05) / 45, (x0 - w * 0.05) / leftNeed, (w * 0.97 - x0) / rightNeed);
+    const showImg = isFinite(S.v) && Math.abs(S.v) <= VCAP;
+    const Mabs = isFinite(S.M) ? Math.abs(S.M) : 1e9;
+    const hop = showImg ? Math.max(h * 0.03, Math.min(h * 0.17, h * 0.30 / Math.max(Mabs, 1e-6))) : h * 0.17;
+    const xo = x0 - u * sx, yT = yA - hop;
+    const xi = x0 + (showImg ? S.v * sx : 0);
+    const yI = yA - (showImg ? S.M * hop : 0);
+    const rayA = 0.95 * reveal;
+    const imgCol = S.real ? ACC : AMB;
+
+    /* bench grid: one faint line every 5 cm, same scale as the rays */
+    ctx.save();
+    ctx.strokeStyle = hexA(DIM, 0.09); ctx.lineWidth = 1;
+    for (let k = -40; k <= 40; k++) {
+      const gx = x0 + k * 5 * sx;
+      if (gx < 0 || gx > w) continue;
+      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke();
+    }
+    ctx.restore();
+    label("grid 5 cm", w * 0.02, h * 0.07, hexA(DIM, 0.8), "left");
+    seg(0, yA, w, yA, hexA(DIM, 0.55), 1, null);
+
+    /* the optic */
+    const lensTop = yA - h * 0.36, lensBot = yA + h * 0.36;
+    if (mode === "convex") {
+      const bulge = h * 0.075;
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(x0, lensTop);
+      ctx.quadraticCurveTo(x0 + bulge * 2, yA, x0, lensBot);
+      ctx.quadraticCurveTo(x0 - bulge * 2, yA, x0, lensTop);
+      ctx.closePath();
+      ctx.fillStyle = accA(0.10); ctx.fill();
+      ctx.strokeStyle = accA(0.75); ctx.lineWidth = 1.5; ctx.stroke();
+      ctx.restore();
+      seg(x0, lensTop - 6, x0, lensBot + 6, accA(0.35), 1, [3, 4]);
+    } else if (mode === "concave") {
+      const e = h * 0.05, bulge = h * 0.075;
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(x0 - e, lensTop); ctx.lineTo(x0 + e, lensTop);
+      ctx.quadraticCurveTo(x0 + e - bulge, yA, x0 + e, lensBot);
+      ctx.lineTo(x0 - e, lensBot);
+      ctx.quadraticCurveTo(x0 - e + bulge, yA, x0 - e, lensTop);
+      ctx.closePath();
+      ctx.fillStyle = accA(0.10); ctx.fill();
+      ctx.strokeStyle = accA(0.75); ctx.lineWidth = 1.5; ctx.stroke();
+      ctx.restore();
+      seg(x0, lensTop - 6, x0, lensBot + 6, accA(0.35), 1, [3, 4]);
+    }
+
+    if (lens) {
+      /* focal points on both sides */
+      for (let k = 1; k <= 2; k++) {
+        const name = k === 1 ? "F" : "2F";
+        [x0 - k * af * sx, x0 + k * af * sx].forEach(fx => {
+          if (fx < w * 0.02 || fx > w * 0.98) return;
+          ctx.save(); ctx.fillStyle = accA(0.9); ctx.beginPath(); ctx.arc(fx, yA, 3, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+          label(name, fx, yA + 16, accA(0.85), "center");
+        });
+      }
+    }
+
+    /* object */
+    arrow(xo, yA, yT, INK, 2.5, false);
+    label("object", xo, Math.max(12, yT - 8), hexA(INK, 0.85), "center");
+
+    if (lens) {
+      const fNear = x0 - af * sx, fFar = x0 + af * sx;
+      const hits = [];
+      hits.push({ y: yT, kind: "parallel" });
+      hits.push({ y: yA, kind: "centre" });
+      if (mode === "convex") {
+        if (Math.abs(xo - fNear) > 0.5) {
+          hits.push({ y: yA + (yT - yA) * (x0 - fNear) / (xo - fNear), kind: "focal" });
+        }
+      } else {
+        hits.push({ y: yT + (yA - yT) * (x0 - xo) / (fFar - xo), kind: "focal" });
+      }
+      hits.forEach(hit => {
+        /* incoming */
+        seg(xo, yT, x0, hit.y, accA(rayA), 1.6, null);
+        if (hit.kind === "focal" && mode === "convex" && xo > fNear) {
+          seg(fNear, yA, xo, yT, hexA(AMB, 0.55 * reveal), 1.2, [5, 5]);
+        }
+        if (hit.kind === "focal" && mode === "concave") {
+          seg(x0, hit.y, fFar, yA, hexA(AMB, 0.55 * reveal), 1.2, [5, 5]);
+        }
+        /* emerging */
+        if (!showImg) {
+          const dx = x0 - xo, dy = yA - yT;
+          const e = toEdge(x0, hit.y, dx, dy, w);
+          seg(x0, hit.y, e.x, e.y, accA(rayA), 1.6, null);
+        } else if (S.real) {
+          seg(x0, hit.y, xi, yI, accA(rayA), 1.6, null);
+          const e = toEdge(xi, yI, xi - x0, yI - hit.y, w);
+          seg(xi, yI, e.x, e.y, accA(0.32 * reveal), 1.2, null);
+        } else {
+          const e = toEdge(x0, hit.y, x0 - xi, hit.y - yI, w);
+          seg(x0, hit.y, e.x, e.y, accA(rayA), 1.6, null);
+          seg(x0, hit.y, xi, yI, hexA(AMB, 0.6 * reveal), 1.2, [5, 5]);
+        }
+      });
+    } else {
+      /* pinhole camera: wall with a hole, a box and a screen */
+      const hr = Math.max(3, h * 0.012);
+      const boxH = h * 0.30;
+      const xs = x0 + p * sx;
+      ctx.save();
+      ctx.strokeStyle = hexA(DIM, 0.9); ctx.lineWidth = 4; ctx.lineCap = "butt";
+      ctx.beginPath(); ctx.moveTo(x0, yA - boxH); ctx.lineTo(x0, yA - hr); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x0, yA + hr); ctx.lineTo(x0, yA + boxH); ctx.stroke();
+      ctx.lineWidth = 1.5; ctx.strokeStyle = hexA(DIM, 0.7);
+      ctx.beginPath(); ctx.moveTo(x0, yA - boxH); ctx.lineTo(xs, yA - boxH); ctx.lineTo(xs, yA + boxH); ctx.lineTo(x0, yA + boxH); ctx.stroke();
+      ctx.restore();
+      seg(xs, yA - boxH, xs, yA + boxH, hexA(INK, 0.85), 2.5, null);
+      label("screen", xs, yA + boxH + 15, hexA(INK, 0.8), "center");
+      label("pinhole", x0, yA + boxH + 15, hexA(DIM, 0.9), "center");
+      /* rays from the tip that the wall blocks */
+      for (let k = -4; k <= 4; k++) {
+        if (k === 0) continue;
+        const yw = yA + k * boxH * 0.22;
+        seg(xo, yT, x0 - 2, yw, accA(0.2 * reveal), 1, null);
+      }
+      /* the thin bundle that gets through, from the tip and from half way up */
+      [{ y: yT, a: 1 }, { y: yA - hop * 0.5, a: 0.55 }].forEach(src => {
+        const land = [yA - hr, yA + hr].map(yh => src.y + (yh - src.y) * (xs - xo) / (x0 - xo));
+        ctx.save();
+        ctx.fillStyle = accA(0.16 * src.a * reveal);
+        ctx.beginPath(); ctx.moveTo(xo, src.y); ctx.lineTo(xs, land[0]); ctx.lineTo(xs, land[1]); ctx.closePath(); ctx.fill();
+        ctx.restore();
+        seg(xo, src.y, xs, land[0], accA(0.9 * src.a * reveal), 1.3, null);
+        seg(xo, src.y, xs, land[1], accA(0.9 * src.a * reveal), 1.3, null);
+      });
+    }
+
+    /* image */
+    if (showImg) {
+      arrow(xi, yA, yI, imgCol, 2.5, !S.real);
+      const inverted = S.M < 0;
+      const ly = inverted ? Math.min(h * 0.86, yI + 15) : (mode === "concave" ? yA + 31 : Math.max(12, yI - 8));
+      label(S.real ? "real image" : "virtual image", xi, ly, S.real ? accA(0.95) : hexA(AMB, 0.95), "center");
+      bracket(x0, xi, h * 0.1, S.real ? accA(0.85) : hexA(AMB, 0.85), "v = " + fmt(S.v, 1) + " cm", true);
+    } else if (S.inf) {
+      label("object at F: rays leave parallel, image at infinity", w * 0.97, h * 0.2, accA(0.9), "right");
+    } else if (S.v > 0) {
+      label("image far beyond the bench, v = " + fmt(S.v, 0) + " cm", w * 0.97, h * 0.2, accA(0.9), "right");
+    } else {
+      label("virtual image far to the left, v = " + fmt(S.v, 0) + " cm", w * 0.03, h * 0.2, hexA(AMB, 0.9), "left");
+    }
+    bracket(xo, x0, h * 0.845, hexA(DIM, 0.9), "u = " + fmt(u, 0) + " cm", false);
+
+    /* bloom */
+    bctx.setTransform(1, 0, 0, 1, 0, 0); bctx.clearRect(0, 0, buf.width, buf.height);
+    if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+    ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
+    (buf.width&&buf.height)&&ctx.drawImage(buf, 0, 0, w, h); ctx.restore();
+
+    /* vignette */
+    const cx = w / 2, cy = h / 2;
+    const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
+  }
+
+  function fmt(x, d) {
+    if (!isFinite(x)) return "∞";
+    const s = Math.abs(x).toFixed(d);
+    return (x < 0 ? "−" : "") + s;
+  }
+  function signed(x, d) {
+    if (!isFinite(x)) return "∞";
+    return (x < 0 ? "−" : "+") + Math.abs(x).toFixed(d);
+  }
+  function paren(x, d) {
+    const s = fmt(x, d);
+    return x < 0 ? "(" + s + ")" : s;
+  }
+
+  function updateText() {
+    const u = tgt.u, p = tgt.p;
+    const S = solve(st.mode, u, p);
+    const modeName = st.mode === "pinhole" ? "Pinhole" : (st.mode === "convex" ? "Convex lens" : "Concave lens");
+    uV.textContent = u + " cm";
+    if (st.mode === "pinhole") {
+      pLab.textContent = "Screen distance v";
+      pV.textContent = p + " cm";
+      live.textContent = modeName + " · screen " + p + " cm";
+    } else {
+      pLab.textContent = "Focal length f";
+      pV.textContent = fmt(S.f, 0) + " cm";
+      live.textContent = modeName + " · f = " + fmt(S.f, 0) + " cm";
+    }
+    const hi = isFinite(S.M) ? S.M * HO : Infinity;
+    if (S.inf) {
+      tag.textContent = "object at F · v → ∞ · no image on the bench";
+      vStat.textContent = "∞";
+      mStat.textContent = "∞";
+      eqEl.innerHTML = "<b>1/f = 1/u + 1/v</b> → 1/" + paren(S.f, 0) + " = 1/" + u + " + 1/v, so 1/v = 0 and v → ∞. Rays leave the lens parallel: no image forms at any finite distance.";
+      return;
+    }
+    const nature = (S.real ? "real" : "virtual") + " · " + (S.M < 0 ? "inverted" : "upright");
+    tag.textContent = (st.mode === "pinhole" ? "screen at " + p + " cm" : "v = " + fmt(S.v, 1) + " cm") + " · " + nature + " · M = " + fmt(S.M, 2);
+    vStat.textContent = signed(S.v, 1) + " cm";
+    mStat.textContent = fmt(S.M, 2);
+    const sizeWord = Math.abs(S.M) > 1.001 ? "enlarged" : (Math.abs(S.M) < 0.999 ? "diminished" : "same size");
+    if (st.mode === "pinhole") {
+      eqEl.innerHTML = "No focal length: light goes straight through the hole. <b>M = −v/u</b> = −" + p + "/" + u + " = " + fmt(S.M, 2) + " · <b>h<sub>i</sub> = M × h<sub>o</sub></b> = " + fmt(S.M, 2) + " × 5.0 cm = " + fmt(hi, 1) + " cm (" + sizeWord + ", inverted)";
+    } else {
+      eqEl.innerHTML = "<b>1/f = 1/u + 1/v</b> → 1/" + paren(S.f, 0) + " = 1/" + u + " + 1/" + paren(S.v, 1) + " · <b>M = −v/u</b> = " + fmt(S.M, 2) + " · <b>h<sub>i</sub> = M × h<sub>o</sub></b> = " + fmt(hi, 1) + " cm (" + sizeWord + ", " + (S.M < 0 ? "inverted" : "upright") + ")";
+    }
+  }
+
+  function tick(now) {
+    raf = 0;
+    let busy = false;
+    if (animStart) {
+      const k = Math.min(1, (now - animStart) / DUR);
+      const e = 1 - Math.pow(1 - k, 3);
+      cur.u = from.u + (tgt.u - from.u) * e;
+      cur.p = from.p + (tgt.p - from.p) * e;
+      if (k < 1) busy = true; else { animStart = 0; cur.u = tgt.u; cur.p = tgt.p; }
+    }
+    if (revealStart) {
+      const k = Math.min(1, (now - revealStart) / RDUR);
+      reveal = 1 - Math.pow(1 - k, 3);
+      if (k < 1) busy = true; else { revealStart = 0; reveal = 1; }
+    }
+    draw();
+    if (busy) raf = requestAnimationFrame(tick);
+  }
+  function kick() { if (!raf) raf = requestAnimationFrame(tick); }
+
+  function setTarget(u, p) {
+    tgt.u = u; tgt.p = p;
+    if (RM) { cur.u = u; cur.p = p; animStart = 0; draw(); return; }
+    from.u = cur.u; from.p = cur.p;
+    animStart = performance.now();
+    kick();
+  }
+
+  function fill(el) {
+    const mn = parseFloat(el.min), mx = parseFloat(el.max), v = parseFloat(el.value);
+    el.style.setProperty("--fill", ((v - mn) / (mx - mn) * 100).toFixed(2) + "%");
+  }
+
+  function onInput() {
+    fill(uIn); fill(pIn);
+    setTarget(parseFloat(uIn.value), parseFloat(pIn.value));
+    updateText();
+  }
+  uIn.addEventListener("input", onInput);
+  pIn.addEventListener("input", onInput);
+
+  modeBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const m = btn.getAttribute("data-mode");
+      if (m === st.mode) return;
+      st.mode = m;
+      modeBtns.forEach(b => b.setAttribute("aria-pressed", b === btn ? "true" : "false"));
+      if (RM) { reveal = 1; draw(); } else { reveal = 0; revealStart = performance.now(); kick(); }
+      updateText();
+    });
+  });
+
+  const DROPS = {
+    rays: "Draw the lens as a vertical line with F marked at a distance f on each side, and the object as an arrow standing on the axis. From the arrow tip send one ray parallel to the axis: a convex lens bends it through F on the far side, a concave lens bends it outward as if it had come from F on the near side. Send a second ray straight through the centre of the lens; it does not bend. Where the two rays cross is the tip of the image, and if they only cross when you extend them backwards with dashed lines the image is virtual and sits on the same side as the object. A third ray, through F and out parallel, is your check: all three must meet at the one point. Measure v and the image height off the same scale you used to draw u and the object.",
+    eq: "The thin lens equation 1/f = 1/u + 1/v links the focal length, the object distance and the image distance. A convex lens has a positive f and a concave lens a negative f; a positive v is a real image on the far side of the lens and a negative v is a virtual image on the same side as the object. Rearranged, v = fu/(u − f), which is why an object sitting exactly at F sends v off to infinity. Magnification is M = −v/u: a negative M means the image is inverted, and a size between −1 and 1 means it is smaller than the object. A pinhole has no f at all, because light travels in straight lines through the hole, so its image height is simply h<sub>i</sub> = −(v/u) h<sub>o</sub> for whatever screen distance you choose. Keep the sign convention through the whole calculation and the answer tells you where the image is, which way up it is and how big it is."
+  };
+  function setDrop(key) {
+    dropEl.innerHTML = DROPS[key];
+    dropBtns.forEach(b => b.setAttribute("aria-pressed", b.getAttribute("data-drop") === key ? "true" : "false"));
+  }
+  dropBtns.forEach(btn => btn.addEventListener("click", () => setDrop(btn.getAttribute("data-drop"))));
+  setDrop("rays");
+
+  fill(uIn); fill(pIn);
+  updateText();
+  resize();
+  window.addEventListener("resize", resize);
+  if (window.ResizeObserver) new ResizeObserver(() => resize()).observe(wrap);
+})();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'g10'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

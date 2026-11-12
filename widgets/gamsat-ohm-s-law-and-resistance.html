@@ -1,0 +1,501 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Ohm's law and resistance — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{
+  --bg:#0B0D0C;--bg2:#12160F;--acc:#3A6FC8;--acc-rgb:58, 111, 200;
+  --ag:rgba(var(--acc-rgb),.7);--ag1:rgba(var(--acc-rgb),.12);--ag2:rgba(var(--acc-rgb),.45);
+  --amb:#FAC775;--ink:#EDEDE8;--ink-dim:#8C9389;--line:#262B26;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C 55%);background-color:var(--bg);color:var(--ink);font-family:'Geist',sans-serif;min-height:100vh;padding:40px 16px 0;box-sizing:border-box}
+.ohm-wrap{max-width:720px;margin:0 auto}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.ohm-h1{font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin:0 0 14px}
+.ohm-intro{font-size:15.5px;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin:0 0 24px}
+.ohm-card{background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);margin-bottom:18px}
+.ohm-card.sec{border-radius:14px}
+.ohm-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.ohm-label{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;color:var(--ink)}
+.ohm-live{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--acc)}
+.ohm-hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin:6px 0 12px;line-height:1.5}
+.ohm-cw{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1)}
+.ohm-cw canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.ohm-tag{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--acc);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ohm-mat{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px}
+.ohm-mb{font-family:'JetBrains Mono',monospace;font-size:13px;padding:10px 6px;border-radius:11px;background:#12160F;border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:all .2s;line-height:1.3}
+.ohm-mb small{display:block;font-size:10px;opacity:.8;margin-top:2px}
+.ohm-mb.on{background:rgba(var(--acc-rgb),.1);border:1px solid var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.ohm-sl{margin-top:18px}
+.ohm-sl-top{display:flex;justify-content:space-between;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:10px}
+.ohm-sl-top b{font-weight:500;color:var(--ink);text-transform:none}
+.ohm-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;outline:none;margin:0;background:linear-gradient(90deg,var(--acc) var(--fill,0%),#23291f var(--fill,0%))}
+.ohm-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.ohm-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.ohm-slider:hover::-webkit-slider-thumb{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.ohm-slider:hover::-moz-range-thumb{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.ohm-ticks{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink-dim);margin-top:10px}
+.ohm-grid3{display:grid;grid-template-columns:1fr;gap:0 18px}
+@media (min-width:640px){.ohm-grid3{grid-template-columns:repeat(3,1fr)}}
+.ohm-note{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--amb);line-height:1.5;margin-top:16px;display:none}
+.ohm-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;border-top:1px solid var(--line);margin-top:18px;padding-top:14px}
+.ohm-stl{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:4px}
+.ohm-stv{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500}
+.ohm-stv.a{color:var(--acc)}.ohm-stv.b{color:var(--amb)}
+.ohm-sts{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-dim);margin-top:4px;line-height:1.4}
+.ohm-tog{display:flex;gap:10px}
+.ohm-btn{flex:1;font-family:'JetBrains Mono',monospace;font-size:14.5px;padding:12px;border-radius:11px;background:#12160F;border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:all .2s}
+.ohm-btn.on{background:rgba(var(--acc-rgb),.1);border:1px solid var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.ohm-drop{border-top:1px solid var(--line);padding-top:16px;margin-top:16px;font-size:14.5px;line-height:1.65;color:var(--ink);margin-bottom:0}
+.ohm-know{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));border-radius:0 12px 12px 0;margin:6px 0 0;margin-bottom:0;padding-bottom:16px}
+.ohm-kt{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.ohm-kd{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:ohmPulse 2.4s ease-in-out infinite}
+.ohm-ktx{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:0.15em;color:var(--acc)}
+.ohm-kb{font-size:17.4px;line-height:1.55;color:var(--ink);margin:0}
+@keyframes ohmPulse{0%,100%{opacity:1}50%{opacity:.45}}
+@media (prefers-reduced-motion:reduce){.ohm-kd{animation:none}.ohm-btn,.ohm-mb{transition:none}}
+@media (max-width:420px){.ohm-tag{font-size:11px;padding:6px 8px}.ohm-stv{font-size:20px}.ohm-btn{font-size:13px;padding:11px 8px}.ohm-mb{font-size:12px}}
+</style>
+
+<div class="ohm-wrap">
+  <h2 class="sr-only">Interactive model: electrons drift through a metal wire of adjustable material, length, thickness and temperature while the current against voltage graph is drawn; a second mode shows a filament globe whose graph curves</h2>
+
+  <h1 class="ohm-h1">Ohm's law is a straight line only while the temperature holds <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">steady</span></h1>
+  <p class="ohm-intro">Voltage pushes the free electrons in a wire; the vibrating metal ions get in their way, and that is resistance. Keep the wire at one temperature and double the push gives double the current. Raise the voltage, then change the wire and watch the line tilt.</p>
+
+  <div class="ohm-card">
+    <div class="ohm-head">
+      <span class="ohm-label">Inside the conductor</span>
+      <span class="ohm-live" id="ohmLive">Ohmic · straight line</span>
+    </div>
+    <div class="ohm-hint">Raise the voltage to draw the I&ndash;V graph. Change the wire to tilt the line.</div>
+    <div class="ohm-cw">
+      <canvas id="ohmCv" aria-label="Wire with drifting electrons and an I-V graph"></canvas>
+      <div class="ohm-tag" id="ohmTag">R = 6.9 &Omega; &middot; I = 0.43 A</div>
+    </div>
+
+    <div class="ohm-mat" id="ohmMat">
+      <button class="ohm-mb" data-m="0" type="button">Iron<small>&rho; 9.7&times;10&#8315;&#8312; &Omega;m</small></button>
+      <button class="ohm-mb on" data-m="1" type="button">Constantan<small>&rho; 4.9&times;10&#8315;&#8311; &Omega;m</small></button>
+      <button class="ohm-mb" data-m="2" type="button">Nichrome<small>&rho; 1.1&times;10&#8315;&#8310; &Omega;m</small></button>
+    </div>
+    <div class="ohm-note" id="ohmNote">Tungsten filament: the current itself sets its temperature, so length, thickness and material are fixed.</div>
+
+    <div class="ohm-sl">
+      <div class="ohm-sl-top"><span>Voltage across it</span><b id="ohmVv">3.0 V</b></div>
+      <input class="ohm-slider" id="ohmV" type="range" min="0" max="6" step="0.1" value="3" aria-label="Voltage">
+      <div class="ohm-ticks"><span>0 V</span><span>2 V</span><span>4 V</span><span>6 V</span></div>
+    </div>
+
+    <div class="ohm-grid3" id="ohmWireCtl">
+      <div class="ohm-sl">
+        <div class="ohm-sl-top"><span>Length</span><b id="ohmLv">1.00 m</b></div>
+        <input class="ohm-slider" id="ohmL" type="range" min="0.5" max="2" step="0.05" value="1" aria-label="Wire length">
+        <div class="ohm-ticks"><span>0.5 m</span><span>2 m</span></div>
+      </div>
+      <div class="ohm-sl">
+        <div class="ohm-sl-top"><span>Diameter</span><b id="ohmDv">0.30 mm</b></div>
+        <input class="ohm-slider" id="ohmD" type="range" min="0.1" max="0.3" step="0.01" value="0.3" aria-label="Wire diameter">
+        <div class="ohm-ticks"><span>0.10 mm</span><span>0.30 mm</span></div>
+      </div>
+      <div class="ohm-sl">
+        <div class="ohm-sl-top"><span>Temperature</span><b id="ohmTv">20 &deg;C</b></div>
+        <input class="ohm-slider" id="ohmT" type="range" min="20" max="300" step="5" value="20" aria-label="Wire temperature">
+        <div class="ohm-ticks"><span>20 &deg;C</span><span>300 &deg;C</span></div>
+      </div>
+    </div>
+
+    <div class="ohm-stats">
+      <div>
+        <div class="ohm-stl">Resistance R = V / I</div>
+        <div class="ohm-stv a" id="ohmR">6.9 &Omega;</div>
+        <div class="ohm-sts" id="ohmRs">R = &rho;L / A</div>
+      </div>
+      <div>
+        <div class="ohm-stl">Current I</div>
+        <div class="ohm-stv b" id="ohmI">0.43 A</div>
+        <div class="ohm-sts" id="ohmIs">I = V / R</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ohm-card sec">
+    <div class="ohm-tog">
+      <button class="ohm-btn on" id="ohmBw" type="button">Metal wire</button>
+      <button class="ohm-btn" id="ohmBg" type="button">Filament globe</button>
+    </div>
+    <p class="ohm-drop" id="ohmDrop"></p>
+  </div>
+
+  <div class="ohm-know">
+    <div class="ohm-kt"><span class="ohm-kd"></span><span class="ohm-ktx">Know This</span></div>
+    <p class="ohm-kb">A metal wire is <span style="color:var(--acc)">ohmic</span> only at <span style="color:var(--acc)">constant temperature</span>, where its resistance R = &rho;L/A is fixed by its <span style="color:var(--acc)">material, length and area</span>.</p>
+  </div>
+</div>
+
+<script>
+(function(){
+  const CSS = getComputedStyle(document.documentElement);
+  const ACC = CSS.getPropertyValue("--acc").trim();
+  const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+  function hexRgb(v){ v = v.trim().replace("#",""); if (v.length === 3) v = v.split("").map(function(c){return c + c;}).join(""); const n = parseInt(v,16); return ((n>>16)&255) + "," + ((n>>8)&255) + "," + (n&255); }
+  const AMB = CSS.getPropertyValue("--amb").trim();
+  const AMBRGB = hexRgb(AMB);
+  const INKRGB = hexRgb(CSS.getPropertyValue("--ink"));
+  const DIMRGB = hexRgb(CSS.getPropertyValue("--ink-dim"));
+  const LINE = CSS.getPropertyValue("--line").trim();
+
+  const canvas = document.getElementById("ohmCv");
+  const ctx = canvas.getContext("2d");
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const buf = document.createElement("canvas"); const bctx = buf.getContext("2d");
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const MATS = [
+    { name: "Iron", rho: 9.7e-8, alpha: 0.0050 },
+    { name: "Constantan", rho: 4.9e-7, alpha: 0.00001 },
+    { name: "Nichrome", rho: 1.10e-6, alpha: 0.0004 }
+  ];
+  const IMAX = 1.0, VMAX = 6;
+  const GLOBE_NOTE = document.getElementById("ohmNote").textContent;
+  const st = { mode: "wire", m: 1, V: 3, L: 1, d: 0.3, T: 20 };
+  let ghosts = [];
+  let committed = null;
+
+  const $ = function(id){ return document.getElementById(id); };
+  const sV = $("ohmV"), sL = $("ohmL"), sD = $("ohmD"), sT = $("ohmT");
+
+  function wireR(s){
+    const m = MATS[s.m];
+    const A = Math.PI * Math.pow(s.d * 1e-3 / 2, 2);
+    return m.rho * (1 + m.alpha * (s.T - 20)) * s.L / A;
+  }
+  /* tungsten filament model: cold R 1 ohm at 20 C, rises to 12 ohm (about 2460 C) at 6 V */
+  function globeR(V){ return 1 + 11 * Math.pow(Math.max(V,0) / 6, 0.55); }
+  function globeT(V){ return 20 + (globeR(V) - 1) / 0.0045; }
+  function curR(){ return st.mode === "wire" ? wireR(st) : globeR(st.V); }
+  function curI(){ return st.V / curR(); }
+  function curT(){ return st.mode === "wire" ? st.T : globeT(st.V); }
+  function fmtR(r){ return r >= 100 ? r.toFixed(0) : (r >= 10 ? r.toFixed(1) : r.toFixed(2)); }
+  function fmtI(i){ return i >= 1 ? i.toFixed(2) : (i >= 0.1 ? i.toFixed(2) : i.toFixed(3)); }
+
+  const DROP = {
+    wire: "A metal wire is packed with free electrons that drift through a lattice of positive ions. The voltage sets up an electric field that pushes them along, and every collision with a vibrating ion hands energy to the lattice. A longer wire means more collisions on the way through and a thicker wire lets more electrons flow side by side, so R = ρL/A, with the resistivity ρ set by the material. That is also why resistors in series add (R = R₁ + R₂, a longer path) while resistors in parallel lower the total (1/R = 1/R₁ + 1/R₂, a wider path). Held at a steady temperature the wire is ohmic: double V and I doubles, so its I–V graph is a straight line through the origin.",
+    globe: "A filament globe is a long, very thin tungsten wire, and the current through it heats it until it glows at well over 2000 °C. Hotter ions vibrate harder, so the drifting electrons scatter more often and the resistance climbs to roughly ten times its cold value. Each extra volt therefore buys less extra current and the I–V graph bends towards the voltage axis: the globe is non-ohmic. R = V/I still holds at any single point, but R is different at every point, so the gradient of the curve is not the resistance. In the lab, step the voltage up, read I on an ammeter in series and V on a voltmeter in parallel, and plot I against V to see the curve."
+  };
+
+  /* particles */
+  let ions = [], els = [], geomKey = "";
+  function rand(seed){ const x = Math.sin(seed * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
+
+  let W = 0, H = 0;
+  function layout(){
+    const pad = H * 0.08;
+    const tagH = W < 480 ? 30 : 40;
+    const top = pad, bot = H - tagH - H * 0.05;
+    const sx0 = W * 0.04, sx1 = W * 0.55;
+    const gx0 = W * 0.64, gx1 = W * 0.96;
+    return { top: top, bot: bot, sx0: sx0, sx1: sx1, gx0: gx0, gx1: gx1 };
+  }
+  function wireGeom(Lo){
+    const span = Lo.sx1 - Lo.sx0;
+    const midY = Lo.top + (Lo.bot - Lo.top) * 0.34;
+    const maxH = (Lo.bot - Lo.top) * 0.40;
+    let len, th;
+    if (st.mode === "wire") {
+      len = span * (0.40 + 0.48 * (st.L - 0.5) / 1.5);
+      th = maxH * (0.30 + 0.70 * (st.d - 0.1) / 0.2);
+    } else {
+      len = span * 0.86; th = maxH * 0.42;
+    }
+    const cx = (Lo.sx0 + Lo.sx1) / 2;
+    return { x0: cx - len / 2, x1: cx + len / 2, y0: midY - th / 2, y1: midY + th / 2, midY: midY, len: len, th: th };
+  }
+  function rebuild(g){
+    const key = Math.round(g.len) + ":" + Math.round(g.th) + ":" + st.mode;
+    if (key === geomKey) return;
+    geomKey = key;
+    const sp = Math.max(9, Math.min(16, H * 0.06));
+    const cols = Math.max(3, Math.floor(g.len / sp));
+    const rows = Math.max(1, Math.floor(g.th / sp));
+    const dx = g.len / cols, dy = g.th / rows;
+    ions = [];
+    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+      ions.push({ x: g.x0 + dx * (c + 0.5), y: g.y0 + dy * (r + 0.5), ph: rand(r * 31 + c) * 6.28, ph2: rand(r * 17 + c * 3 + 5) * 6.28 });
+    }
+    const keep = els.map(function(e){ return (e.x - g.x0) / g.len; });
+    els = [];
+    const n = Math.max(3, Math.round(rows * cols * 0.6));
+    for (let k = 0; k < n; k++) {
+      const r = k % rows;
+      const f = k < keep.length ? ((keep[k] % 1) + 1) % 1 : rand(k * 7.3 + 1);
+      els.push({ x: g.x0 + f * g.len, y: g.y0 + dy * (r + rand(k * 3.1) * 0.8 + 0.1), ph: rand(k * 9.7) * 6.28 });
+    }
+  }
+
+  function resize(){
+    const rect = canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return; /* f27c: refuse a zero measurement, keep the last good size */
+    canvas.width = Math.max(1, Math.round(rect.width * dpr)); canvas.height = Math.max(1, Math.round(rect.height * dpr));
+    buf.width = canvas.width; buf.height = canvas.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    W = canvas.width / dpr; H = canvas.height / dpr;
+    geomKey = "";
+    draw(0);
+  }
+
+  let time = 0;
+  function draw(dt){
+    const w = canvas.width / dpr, h = canvas.height / dpr;
+    W = w; H = h;
+    time += dt / 1000;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.globalCompositeOperation = "source-over"; ctx.globalAlpha = 1; ctx.filter = "none";
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = "rgba(0,0,0,1)"; ctx.fillRect(0, 0, w, h);
+    const Lo = layout();
+    const g = wireGeom(Lo);
+    rebuild(g);
+    const R = curR(), I = curI(), T = curT();
+    const small = w < 480;
+    const fs = small ? 9 : 11;
+
+    /* ---- circuit leads + cell ---- */
+    const cellY = Lo.bot - 4;
+    const cellX = (Lo.sx0 + Lo.sx1) / 2;
+    ctx.strokeStyle = "rgba(" + DIMRGB + ",0.55)"; ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(g.x0, g.midY); ctx.lineTo(Lo.sx0 + 2, g.midY); ctx.lineTo(Lo.sx0 + 2, cellY); ctx.lineTo(cellX - 8, cellY);
+    ctx.moveTo(g.x1, g.midY); ctx.lineTo(Lo.sx1 - 2, g.midY); ctx.lineTo(Lo.sx1 - 2, cellY); ctx.lineTo(cellX + 8, cellY);
+    ctx.stroke();
+    /* cell: long plate = positive (right), short plate = negative (left) */
+    ctx.strokeStyle = "rgba(" + INKRGB + ",0.9)"; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(cellX - 8, cellY - 7); ctx.lineTo(cellX - 8, cellY + 7); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cellX + 8, cellY - 14); ctx.lineTo(cellX + 8, cellY + 14); ctx.stroke();
+    ctx.fillStyle = "rgba(" + INKRGB + ",0.85)"; ctx.font = "500 " + fs + "px JetBrains Mono, monospace"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText("−", cellX - 17, cellY - 9); ctx.fillText("+", cellX + 17, cellY - 9);
+    ctx.fillStyle = AMB; ctx.textAlign = "left"; ctx.fillText(st.V.toFixed(1) + " V", cellX + 28, cellY - 10);
+
+    /* ---- conductor body ---- */
+    const hot = st.mode === "globe" ? Math.max(0, Math.min(1, (T - 500) / 2000)) : 0;
+    ctx.save();
+    const bodyGrad = ctx.createLinearGradient(0, g.y0, 0, g.y1);
+    bodyGrad.addColorStop(0, "rgba(" + RGB + ",0.10)"); bodyGrad.addColorStop(0.5, "rgba(" + RGB + ",0.04)"); bodyGrad.addColorStop(1, "rgba(" + RGB + ",0.10)");
+    ctx.fillStyle = bodyGrad; ctx.fillRect(g.x0, g.y0, g.len, g.th);
+    if (hot > 0) {
+      ctx.globalCompositeOperation = "lighter";
+      ctx.fillStyle = "rgba(" + AMBRGB + "," + (0.10 + 0.45 * hot).toFixed(3) + ")"; ctx.fillRect(g.x0, g.y0, g.len, g.th);
+      ctx.globalCompositeOperation = "source-over";
+    }
+    ctx.strokeStyle = "rgba(" + RGB + ",0.65)"; ctx.lineWidth = 1.2; ctx.strokeRect(g.x0, g.y0, g.len, g.th);
+    /* terminals */
+    ctx.fillStyle = "rgba(" + INKRGB + ",0.25)";
+    ctx.fillRect(g.x0 - 6, g.y0 - 4, 6, g.th + 8); ctx.fillRect(g.x1, g.y0 - 4, 6, g.th + 8);
+    ctx.restore();
+
+    /* ions: thermal vibration amplitude grows with absolute temperature */
+    const TK = T + 273;
+    const amp = Math.min(5.5, 1.1 * Math.sqrt(TK / 293) * (st.mode === "globe" ? 1.6 : 1) * (H / 260 + 0.4));
+    const ionR = Math.max(2.2, Math.min(4, H * 0.014));
+    const vib = reduce ? 0 : 1;
+    for (const p of ions) {
+      const ox = vib * amp * Math.sin(time * 9 + p.ph), oy = vib * amp * Math.cos(time * 7.3 + p.ph2);
+      ctx.beginPath(); ctx.arc(p.x + ox, p.y + oy, ionR, 0, 6.283);
+      ctx.fillStyle = hot > 0 ? "rgba(" + AMBRGB + "," + (0.45 + 0.5 * hot).toFixed(3) + ")" : "rgba(" + DIMRGB + ",0.75)";
+      ctx.fill();
+    }
+
+    /* electrons: drift speed is proportional to current density J = I/A (drift v = I / nAe) */
+    let J;
+    if (st.mode === "wire") { J = st.V / (MATS[st.m].rho * (1 + MATS[st.m].alpha * (st.T - 20)) * st.L); }
+    else { J = I / 0.5 * 1.6e7; }
+    const x = J / 8e6;
+    const speed = (g.len * 0.55) * x / (x + 1);
+    ctx.save(); ctx.globalCompositeOperation = "lighter";
+    const eR = Math.max(1.6, ionR * 0.62);
+    for (const e of els) {
+      e.x += speed * dt / 1000;
+      if (e.x > g.x1) e.x -= g.len;
+      const wob = vib * Math.min(2.5, amp * 0.5) * Math.sin(time * 13 + e.ph + e.x * 0.3);
+      const yy = Math.max(g.y0 + 2, Math.min(g.y1 - 2, e.y + wob));
+      ctx.fillStyle = "rgba(" + RGB + ",0.25)"; ctx.beginPath(); ctx.arc(e.x, yy, eR * 2.4, 0, 6.283); ctx.fill();
+      ctx.fillStyle = ACC; ctx.beginPath(); ctx.arc(e.x, yy, eR, 0, 6.283); ctx.fill();
+    }
+    ctx.restore();
+
+    /* labels around the conductor */
+    ctx.font = "500 " + fs + "px JetBrains Mono, monospace"; ctx.textBaseline = "alphabetic"; ctx.textAlign = "left";
+    ctx.fillStyle = "rgba(" + INKRGB + ",0.9)";
+    const lab = st.mode === "wire" ? MATS[st.m].name.toUpperCase() + " · " + st.L.toFixed(2) + " m · " + st.d.toFixed(2) + " mm" : "TUNGSTEN FILAMENT (MAGNIFIED)";
+    ctx.fillText(lab, Lo.sx0 + 2, Lo.top + fs * 0.4);
+    ctx.fillStyle = hot > 0.05 ? AMB : "rgba(" + DIMRGB + ",1)";
+    ctx.fillText(Math.round(T) + " °C", Lo.sx0 + 2, Lo.top + fs * 1.9);
+    /* drift arrow */
+    const ay = g.y1 + (small ? 12 : 16);
+    if (st.V > 0.05) {
+      ctx.strokeStyle = ACC; ctx.fillStyle = ACC; ctx.lineWidth = 1.5;
+      const ax0 = g.x0 + g.len * 0.25, ax1 = g.x0 + g.len * 0.75;
+      ctx.beginPath(); ctx.moveTo(ax0, ay); ctx.lineTo(ax1, ay); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(ax1 + 6, ay); ctx.lineTo(ax1 - 1, ay - 4); ctx.lineTo(ax1 - 1, ay + 4); ctx.closePath(); ctx.fill();
+      ctx.textAlign = "center"; ctx.textBaseline = "top";
+      ctx.fillText("electron drift", (ax0 + ax1) / 2, ay + 5);
+    } else {
+      ctx.fillStyle = "rgba(" + DIMRGB + ",1)"; ctx.textAlign = "center"; ctx.textBaseline = "top";
+      ctx.fillText("no push, no drift", g.x0 + g.len / 2, ay + 2);
+    }
+
+    /* ---- I-V graph ---- */
+    const gx0 = Lo.gx0, gx1 = Lo.gx1, gy0 = Lo.top + fs, gy1 = Lo.bot;
+    const X = function(v){ return gx0 + (v / VMAX) * (gx1 - gx0); };
+    const Y = function(i){ return gy1 - (i / IMAX) * (gy1 - gy0); };
+    ctx.strokeStyle = LINE; ctx.lineWidth = 1;
+    for (let k = 1; k <= 3; k++) { const v = k * 2; ctx.beginPath(); ctx.moveTo(X(v), gy0); ctx.lineTo(X(v), gy1); ctx.stroke(); }
+    for (let k = 1; k <= 4; k++) { const i = k * 0.25; ctx.beginPath(); ctx.moveTo(gx0, Y(i)); ctx.lineTo(gx1, Y(i)); ctx.stroke(); }
+    ctx.strokeStyle = "rgba(" + INKRGB + ",0.7)"; ctx.lineWidth = 1.3;
+    ctx.beginPath(); ctx.moveTo(gx0, gy0 - 4); ctx.lineTo(gx0, gy1); ctx.lineTo(gx1 + 4, gy1); ctx.stroke();
+    ctx.fillStyle = "rgba(" + DIMRGB + ",1)"; ctx.font = (small ? 8 : 10) + "px JetBrains Mono, monospace";
+    ctx.textAlign = "right"; ctx.textBaseline = "middle";
+    ctx.fillText("1.0", gx0 - 4, Y(1)); ctx.fillText("0.5", gx0 - 4, Y(0.5)); ctx.fillText("0", gx0 - 4, gy1);
+    ctx.textAlign = "center"; ctx.textBaseline = "top";
+    ctx.fillText("2", X(2), gy1 + 3); ctx.fillText("4", X(4), gy1 + 3); ctx.fillText("6", X(6), gy1 + 3);
+    ctx.font = "500 " + fs + "px JetBrains Mono, monospace";
+    ctx.fillStyle = "rgba(" + INKRGB + ",0.9)";
+    ctx.textAlign = "left"; ctx.textBaseline = "alphabetic"; ctx.fillText("I (A)", gx0 + 4, gy0 - 2);
+    ctx.textAlign = "right"; ctx.textBaseline = "bottom"; ctx.fillText("V (V)", gx1, gy1 - 3);
+
+    ctx.save();
+    ctx.beginPath(); ctx.rect(gx0, gy0 - 2, gx1 - gx0 + 2, gy1 - gy0 + 2); ctx.clip();
+    /* ghost lines of earlier wires */
+    ghosts.forEach(function(gr, k){
+      ctx.strokeStyle = "rgba(" + DIMRGB + "," + (0.25 + 0.15 * k).toFixed(2) + ")"; ctx.lineWidth = 1.2; ctx.setLineDash([3, 4]);
+      ctx.beginPath(); ctx.moveTo(X(0), Y(0)); ctx.lineTo(X(VMAX), Y(VMAX / gr)); ctx.stroke();
+    });
+    ctx.setLineDash([]);
+    const fn = st.mode === "wire" ? function(v){ return v / wireR(st); } : function(v){ return v / globeR(v); };
+    /* full characteristic, faint */
+    ctx.strokeStyle = "rgba(" + RGB + ",0.28)"; ctx.lineWidth = 1.4; ctx.setLineDash([5, 5]);
+    ctx.beginPath(); for (let v = 0; v <= VMAX + 0.001; v += 0.1) { const px = X(v), py = Y(fn(v)); if (v === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py); } ctx.stroke();
+    ctx.setLineDash([]);
+    /* traced part, up to the present voltage */
+    ctx.strokeStyle = ACC; ctx.lineWidth = 2.6;
+    ctx.beginPath(); ctx.moveTo(X(0), Y(0));
+    for (let v = 0.05; v <= st.V + 0.001; v += 0.05) ctx.lineTo(X(v), Y(fn(v)));
+    ctx.lineTo(X(st.V), Y(I)); ctx.stroke();
+    if (st.mode === "globe") {
+      /* chord from origin: its slope is 1/R at this point */
+      ctx.strokeStyle = "rgba(" + AMBRGB + ",0.55)"; ctx.lineWidth = 1; ctx.setLineDash([2, 3]);
+      ctx.beginPath(); ctx.moveTo(X(0), Y(0)); ctx.lineTo(X(st.V), Y(I)); ctx.stroke(); ctx.setLineDash([]);
+    }
+    ctx.restore();
+    const off = I > IMAX;
+    const px = X(st.V), py = off ? gy0 : Y(I);
+    ctx.save(); ctx.globalCompositeOperation = "lighter";
+    const halo = ctx.createRadialGradient(px, py, 0, px, py, 16);
+    halo.addColorStop(0, "rgba(" + AMBRGB + ",0.6)"); halo.addColorStop(1, "rgba(" + AMBRGB + ",0)");
+    ctx.fillStyle = halo; ctx.beginPath(); ctx.arc(px, py, 16, 0, 6.283); ctx.fill();
+    ctx.restore();
+    ctx.fillStyle = AMB; ctx.beginPath(); ctx.arc(px, py, 4.5, 0, 6.283); ctx.fill();
+    if (off) {
+      ctx.fillStyle = AMB; ctx.font = "500 " + fs + "px JetBrains Mono, monospace"; ctx.textAlign = px > (gx0 + gx1) / 2 ? "right" : "left"; ctx.textBaseline = "top";
+      ctx.fillText("↑ off scale", px + (ctx.textAlign === "right" ? -8 : 8), gy0 + 2);
+    }
+
+    /* bloom */
+    bctx.setTransform(1, 0, 0, 1, 0, 0); bctx.clearRect(0, 0, buf.width, buf.height);
+    if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+    ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
+    (buf.width&&buf.height)&&ctx.drawImage(buf, 0, 0, w, h); ctx.restore();
+    /* vignette */
+    const cx = w / 2, cy = h / 2;
+    const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
+  }
+
+  function setFill(el){ const mn = parseFloat(el.min), mx = parseFloat(el.max); el.style.setProperty("--fill", ((parseFloat(el.value) - mn) / (mx - mn) * 100) + "%"); }
+  function ui(){
+    const R = curR(), I = curI(), T = curT();
+    $("ohmVv").textContent = st.V.toFixed(1) + " V";
+    $("ohmLv").textContent = st.L.toFixed(2) + " m";
+    $("ohmDv").textContent = st.d.toFixed(2) + " mm";
+    $("ohmTv").textContent = Math.round(st.T) + " °C";
+    $("ohmR").textContent = fmtR(R) + " Ω";
+    $("ohmI").textContent = fmtI(I) + " A";
+    const note = $("ohmNote");
+    if (st.mode === "wire") {
+      note.textContent = "Constantan is an alloy made so its resistance hardly changes with temperature, which is why it is used for standard resistors. Pick iron to see heating raise R.";
+      note.style.display = st.m === 1 ? "block" : "none";
+    } else {
+      note.textContent = GLOBE_NOTE;
+      note.style.display = "block";
+    }
+    if (st.mode === "wire") {
+      $("ohmRs").textContent = "R = ρL/A, fixed";
+      $("ohmIs").textContent = I > IMAX ? "off the graph: tiny R" : "I = V/R";
+      $("ohmLive").textContent = "Ohmic · straight line";
+      $("ohmTag").textContent = "R = " + fmtR(R) + " Ω · I = V/R = " + fmtI(I) + " A";
+    } else {
+      $("ohmRs").textContent = "rises as the filament heats";
+      $("ohmIs").textContent = "filament at " + Math.round(T) + " °C";
+      $("ohmLive").textContent = "Non-ohmic · curve";
+      $("ohmTag").textContent = "R = V/I = " + fmtR(R) + " Ω at " + st.V.toFixed(1) + " V";
+    }
+    [sV, sL, sD, sT].forEach(setFill);
+    if (reduce) draw(0);
+  }
+  function commit(){
+    if (st.mode !== "wire") return;
+    const R = wireR(st);
+    if (committed !== null && Math.abs(committed - R) / committed > 0.02) {
+      ghosts.push(committed); if (ghosts.length > 3) ghosts.shift();
+    }
+    committed = R;
+  }
+
+  sV.addEventListener("input", function(){ st.V = parseFloat(sV.value); ui(); });
+  sL.addEventListener("input", function(){ st.L = parseFloat(sL.value); ui(); });
+  sD.addEventListener("input", function(){ st.d = parseFloat(sD.value); ui(); });
+  sT.addEventListener("input", function(){ st.T = parseFloat(sT.value); ui(); });
+  [sL, sD, sT].forEach(function(el){ el.addEventListener("change", function(){ commit(); ui(); }); });
+  document.querySelectorAll(".ohm-mb").forEach(function(b){
+    b.addEventListener("click", function(){
+      st.m = parseInt(b.getAttribute("data-m"), 10);
+      document.querySelectorAll(".ohm-mb").forEach(function(o){ o.classList.toggle("on", o === b); });
+      commit(); ui();
+    });
+  });
+  function setMode(m){
+    st.mode = m;
+    $("ohmBw").classList.toggle("on", m === "wire");
+    $("ohmBg").classList.toggle("on", m === "globe");
+    $("ohmWireCtl").style.display = m === "wire" ? "" : "none";
+    $("ohmMat").style.display = m === "wire" ? "" : "none";
+    $("ohmNote").style.display = m === "wire" ? "none" : "block";
+    $("ohmDrop").textContent = DROP[m];
+    geomKey = "";
+    ui();
+  }
+  $("ohmBw").addEventListener("click", function(){ setMode("wire"); });
+  $("ohmBg").addEventListener("click", function(){ setMode("globe"); });
+
+  window.addEventListener("resize", resize);
+  committed = wireR(st);
+  setMode("wire");
+  resize();
+
+  if (!reduce) {
+    let last = performance.now();
+    function frame(now){
+      const dt = Math.min(now - last, 50); last = now;
+      draw(dt);
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+})();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'g7'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

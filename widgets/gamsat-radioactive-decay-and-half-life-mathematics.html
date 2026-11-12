@@ -1,0 +1,553 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Radioactive decay and half-life mathematics — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #3A6FC8;
+  --ag: rgba(58, 111, 200, .7);
+  --ag1: rgba(58, 111, 200, .12);
+  --ag2: rgba(58, 111, 200, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+body{
+  background:radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family:'Geist',sans-serif;
+  color:var(--ink);
+  min-height:100vh;
+  padding:40px 16px 72px;
+  line-height:1.5;
+}
+
+.container{max-width:720px;margin:0 auto}
+
+h1{
+  font-size:clamp(30px,8vw,52px);
+  font-weight:700;
+  letter-spacing:-0.03em;
+  line-height:1.02;
+  margin-bottom:14px;
+}
+
+.intro{
+  font-size:15.5px;
+  color:var(--ink-dim);
+  max-width:58ch;
+  line-height:1.55;
+  margin-bottom:32px;
+}
+
+.card{
+  background:linear-gradient(180deg,#12160F,#0d100b);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:16px;
+  box-shadow:0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom:18px;
+}
+
+.card-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:6px;
+}
+
+.card-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  text-transform:uppercase;
+  color:var(--ink);
+}
+
+.live-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  text-transform:uppercase;
+  color:var(--acc);
+}
+
+.card-hint{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  color:var(--ink-dim);
+  margin-bottom:14px;
+}
+
+.canvas-wrapper{
+  position:relative;
+  width:100%;
+  aspect-ratio:16/9;
+  border-radius:12px;
+  overflow:hidden;
+  background:#000;
+  box-shadow:inset 0 0 0 1px var(--ag1);
+  margin-bottom:16px;
+}
+
+canvas{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  display:block;
+}
+
+.canvas-overlay{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  background:rgba(0,0,0,0.55);
+  backdrop-filter:blur(4px);
+  padding:9px 16px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:14px;
+  text-transform:uppercase;
+  color:var(--acc);
+  text-align:center;
+}
+
+.dot-key{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin:-6px 0 14px;display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px}
+.dot-key span.k-par,.dot-key span.k-dau{display:inline-block;width:9px;height:9px;border-radius:50%;flex:none}
+.dot-key span.k-par{background:#3A6FC8;box-shadow:0 0 6px var(--ag)}
+.dot-key span.k-dau{background:var(--dau,#C89A55)}
+.dot-key .kp{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;margin-right:8px}
+.live-tag,.stat-label{text-transform:none!important}
+
+.slider-container{
+  margin-bottom:16px;
+}
+
+.slider-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;
+  text-transform:uppercase;
+  color:var(--ink-dim);
+  margin-bottom:8px;
+  display:block;
+}
+
+.decay-slider{
+  -webkit-appearance:none;
+  appearance:none;
+  width:100%;
+  height:4px;
+  border-radius:3px;
+  background:linear-gradient(90deg, var(--acc) var(--fill,0%), #23291f var(--fill,0%));
+  outline:none;
+  margin-bottom:8px;
+}
+
+.decay-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  appearance:none;
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  background:#0B0D0C;
+  border:2px solid var(--acc);
+  box-shadow:0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor:pointer;
+  transition:box-shadow .15s;
+}
+
+.decay-slider::-moz-range-thumb{
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  background:#0B0D0C;
+  border:2px solid var(--acc);
+  box-shadow:0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor:pointer;
+  transition:box-shadow .15s;
+}
+
+.decay-slider::-webkit-slider-thumb:hover{
+  box-shadow:0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.decay-slider::-moz-range-thumb:hover{
+  box-shadow:0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels{
+  position:relative;
+  height:14px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  color:var(--ink-dim);
+}
+
+.tick-labels span{
+  position:absolute;
+  top:0;
+  transform:translateX(-50%);
+  white-space:nowrap;
+}
+
+.stat-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+  padding-top:16px;
+  border-top:1px solid var(--line);
+}
+
+.stat{
+  text-align:center;
+}
+
+.stat-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;
+  text-transform:uppercase;
+  color:var(--ink-dim);
+  margin-bottom:6px;
+}
+
+.stat-value{
+  font-family:'JetBrains Mono',monospace;
+  font-size:24px;
+  font-weight:500;
+}
+
+.stat-value.acc{color:var(--acc)}
+.stat-value.amb{color:var(--amb)}
+
+.toggle-section{
+  display:flex;
+  gap:10px;
+  margin-bottom:16px;
+}
+
+.toggle-btn{
+  flex:1;
+  font-family:'JetBrains Mono',monospace;
+  font-size:14.5px;
+  padding:12px;
+  border-radius:11px;
+  border:1px solid var(--line);
+  background:#12160F;
+  color:var(--ink-dim);
+  cursor:pointer;
+  transition:all .2s;
+}
+
+.toggle-btn.active{
+  background:rgba(58,111,200,.1);
+  border:1px solid var(--acc);
+  color:var(--acc);
+  box-shadow:0 0 22px rgba(58,111,200,.18);
+}
+
+.knowdrop{
+  padding-top:16px;
+  border-top:1px solid var(--line);
+  font-size:14.5px;
+  line-height:1.65;
+  color:var(--ink);
+}
+
+.know-this{
+  border-left:3px solid var(--acc);
+  padding:16px 18px;
+  background:linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius:0 12px 12px 0;
+  margin-bottom:34px;
+}
+
+.know-this-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  text-transform:uppercase;
+  letter-spacing:0.15em;
+  color:var(--acc);
+  margin-bottom:10px;
+  display:block;
+}
+
+.know-this-body{
+  font-size:17.4px;
+  line-height:1.55;
+  color:var(--ink);
+}
+
+.footer{
+  margin-top:34px;
+  padding-top:16px;
+  border-top:1px solid var(--line);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.pulse-dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--acc);
+  box-shadow:0 0 10px var(--acc);
+  animation:rdPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes rdPulse{
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:.35;transform:scale(.6)}
+}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Radioactive decay interactive simulation</h2>
+  
+  <h1>Each nucleus has <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">no memory</span></h1>
+  
+  <p class="intro">Every nucleus has the same chance of decaying each second, so no one can say which one goes next. Yet thousands of them together follow a steady pattern: about half of what is left decays in every half-life. Increase the time elapsed and watch the number left halve with every half-life.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-label">Decay simulation</div>
+      <div class="live-tag" id="liveTag">t = 0.0 s</div>
+    </div>
+    <div class="card-hint">10,000 nuclei • half-life t½ = 1.0 s</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="decayCanvas"></canvas>
+      <div class="canvas-overlay" id="canvasOverlay">10000 NUCLEI REMAIN • 0% DECAYED</div>
+    </div>
+    <div class="dot-key" id="dotKey" aria-live="polite"><span class="kp"><span class="k-par"></span>parent nucleus</span><span class="kp"><span class="k-dau"></span><span id="dotKeyDau">daughter after alpha: A − 4, Z − 2</span></span></div>
+
+    <div class="slider-container">
+      <label class="slider-label" for="timeSlider">Time elapsed</label>
+      <input type="range" id="timeSlider" class="decay-slider" min="0" max="5" step="0.05" value="0">
+      <div class="tick-labels" aria-hidden="true">
+        <span style="left:calc(10px + (100% - 20px) * 0)">0 s</span>
+        <span style="left:calc(10px + (100% - 20px) * 0.2)">1 t½</span>
+        <span style="left:calc(10px + (100% - 20px) * 0.4)">2 t½</span>
+        <span style="left:calc(10px + (100% - 20px) * 0.6)">3 t½</span>
+        <span style="left:calc(10px + (100% - 20px) * 0.8)">4 t½</span>
+        <span style="left:calc(10px + (100% - 20px) * 1)">5 t½</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Remaining</div>
+        <div class="stat-value acc" id="remainingStat">10000</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Activity (Bq)</div>
+        <div class="stat-value amb" id="activityStat">6930</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-section">
+      <button class="toggle-btn active" id="alphaBtn">Alpha (α)</button>
+      <button class="toggle-btn" id="betaBtn">Beta (β⁻)</button>
+    </div>
+    
+    <div class="knowdrop" id="knowdropText">
+      Alpha decay occurs when a nucleus emits a helium-4 nucleus (2 protons + 2 neutrons), decreasing the mass number A by 4 and atomic number Z by 2. For example, uranium-238 decays to thorium-234 plus an alpha particle. The ejected alpha particle carries significant kinetic energy but has low penetration — stopped by paper or skin. This decay mode is common in heavy nuclei (Z > 82) where the strong nuclear force struggles to contain excess nucleons. Alpha emitters have half-lives from microseconds to billions of years, depending on the isotope.
+    </div>
+  </div>
+
+  <div class="know-this">
+    <span class="know-this-tag">Know This</span>
+    <div class="know-this-body">
+      In each <span style="color:var(--acc)">half-life</span>, about half of the nuclei still left decay, whatever the starting amount. After n half-lives a fraction <span style="color:var(--acc)">(½)<sup>n</sup></span> remains, and the <span style="color:var(--acc)">activity halves</span> every half-life too. For times between whole half-lives the same curve is <span style="color:var(--acc)">N = N<sub>0</sub>e<sup>−λt</sup></span>, with λ = ln 2 ÷ t½ and activity A = λN.
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="pulse-dot"></div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('decayCanvas');
+const ctx = canvas.getContext('2d');
+const slider = document.getElementById('timeSlider');
+const liveTag = document.getElementById('liveTag');
+const canvasOverlay = document.getElementById('canvasOverlay');
+const remainingStat = document.getElementById('remainingStat');
+const activityStat = document.getElementById('activityStat');
+const alphaBtn = document.getElementById('alphaBtn');
+const betaBtn = document.getElementById('betaBtn');
+const knowdropText = document.getElementById('knowdropText');
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d');
+
+let nuclei = [];
+let mode = 'alpha';
+const dotKeyDau = document.getElementById('dotKeyDau');
+const dotKey = document.getElementById('dotKey');
+function setMode(m) {
+  mode = m;
+  dotKeyDau.textContent = m === 'alpha' ? `daughter after alpha: A − 4, Z − 2` : `daughter after beta-minus: A same, Z + 1`;
+  dotKey.style.setProperty('--dau', m === 'alpha' ? '#C89A55' : '#3A6FC8');
+  draw();
+}
+const TOTAL = 10000;
+const LAMBDA = 0.693; // s⁻¹ (gives t½ = 1.0 s)
+const HALF_LIFE = Math.log(2) / LAMBDA;
+
+// Initialize nuclei in grid
+function initNuclei() {
+  nuclei = [];
+  const cols = 100;
+  const rows = 100;
+  for (let i = 0; i < TOTAL; i++) {
+    nuclei.push({
+      x: (i % cols) / cols,
+      y: Math.floor(i / cols) / rows,
+      decayed: false,
+      decayTime: -Math.log(Math.random()) / LAMBDA,
+      brightness: 0.7 + Math.random() * 0.3
+    });
+  }
+}
+
+initNuclei();
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  draw();
+}
+
+window.addEventListener('resize', resize);
+resize();
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  const t = parseFloat(slider.value);
+
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+
+  // Count remaining
+  let remaining = 0;
+  nuclei.forEach(n => {
+    n.decayed = t >= n.decayTime; /* recomputed every draw, so dragging back in time restores nuclei */
+    if (!n.decayed) remaining++;
+  });
+
+  // Draw nuclei
+  const size = Math.min(w, h) * 0.006;
+  nuclei.forEach(n => {
+    const px = n.x * w;
+    const py = n.y * h;
+    
+    if (n.decayed) {
+      // Decayed: the daughter nucleus, dim, tinted by decay mode
+      ctx.fillStyle = mode === 'alpha' ? 'rgba(200,154,85,0.6)' : 'rgba(58, 111, 200,0.6)';
+      ctx.beginPath();
+      ctx.arc(px, py, size * 0.8, 0, Math.PI * 2);
+      ctx.fill();
+    } else {
+      // Undecayed parent: glowing blue
+      const grad = ctx.createRadialGradient(px, py, 0, px, py, size * 2);
+      grad.addColorStop(0, `rgba(58,111,200,${n.brightness})`);
+      grad.addColorStop(0.5, 'rgba(58,111,200,0.4)');
+      grad.addColorStop(1, 'rgba(58,111,200,0)');
+      
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(px, py, size * 2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+      
+      ctx.fillStyle = '#3A6FC8';
+      ctx.beginPath();
+      ctx.arc(px, py, size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  });
+
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+
+  // Vignette
+  const cx = w / 2;
+  const cy = h / 2;
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+
+  // Update stats
+  const activity = Math.round(LAMBDA * remaining);
+  const percentDecayed = Math.round((1 - remaining / TOTAL) * 100);
+  
+  liveTag.textContent = `t = ${t.toFixed(1)} s`;
+  canvasOverlay.textContent = `${remaining} NUCLEI REMAIN • ${percentDecayed}% DECAYED`;
+  remainingStat.textContent = remaining.toLocaleString();
+  activityStat.textContent = activity.toLocaleString();
+}
+
+slider.addEventListener('input', () => {
+  const fill = (slider.value / slider.max) * 100;
+  slider.style.setProperty('--fill', fill + '%');
+  draw();
+});
+
+// Initialize slider fill
+slider.style.setProperty('--fill', '0%');
+
+// Toggle buttons
+alphaBtn.addEventListener('click', () => {
+  setMode('alpha');
+  alphaBtn.classList.add('active');
+  betaBtn.classList.remove('active');
+  knowdropText.textContent = `Alpha decay occurs when a nucleus emits a helium-4 nucleus (2 protons + 2 neutrons), decreasing the mass number A by 4 and atomic number Z by 2. For example, uranium-238 decays to thorium-234 plus an alpha particle. The ejected alpha particle carries significant kinetic energy but has low penetration — stopped by paper or skin. This decay mode is common in heavy nuclei (Z > 82) where the strong nuclear force struggles to contain excess nucleons. Alpha emitters have half-lives from microseconds to billions of years, depending on the isotope.`;
+});
+
+betaBtn.addEventListener('click', () => {
+  setMode('beta');
+  betaBtn.classList.add('active');
+  alphaBtn.classList.remove('active');
+  knowdropText.textContent = `Beta-minus decay converts a neutron into a proton, electron (β⁻), and antineutrino, increasing atomic number Z by 1 while mass number A stays constant. For example, carbon-14 decays to nitrogen-14 plus a beta particle. The emitted electron has moderate penetration — passes through paper but is stopped by a few millimetres of aluminium. Inside the nucleus, the weak nuclear force mediates this transformation when the neutron-to-proton ratio is too high for stability. The continuous energy spectrum of emitted electrons (from zero to a maximum) puzzled physicists until Pauli proposed the neutrino to conserve energy and momentum in each decay event.`;
+});
+
+draw();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'g9'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

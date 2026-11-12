@@ -1,0 +1,621 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Work, energy and the conservation principle — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #3A6FC8;
+  --ag: rgba(58, 111, 200, .7);
+  --ag1: rgba(58, 111, 200, .12);
+  --ag2: rgba(58, 111, 200, .45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  min-height: 100vh;
+  padding: 40px 16px 0;
+  color: var(--ink);
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 20px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-wrapper {
+  margin-bottom: 10px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+}
+
+.fall-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 0%), #23291f var(--fill, 0%));
+  outline: none;
+  margin-bottom: 8px;
+}
+
+.fall-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.fall-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+
+.fall-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.fall-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+  margin-top: 14px;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.stat-value.acc { color: var(--acc); }
+.stat-value.amb { color: var(--amb); }
+
+.toggle-section {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  background: #12160F;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.toggle-btn.active {
+  background: rgba(58,111,200,.1);
+  border: 1px solid var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(58,111,200,.18);
+}
+
+.knowdrop {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.knowdrop p {
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-this-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+  margin-bottom: 8px;
+}
+
+.know-this p {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (max-width: 360px) {
+  body { padding: 32px 12px 0; }
+  .card { padding: 14px; }
+}
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Interactive demonstration of energy conservation during free fall</h2>
+  
+  <h1>Energy doesn't convert — it just <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">swaps</span></h1>
+  
+  <p class="intro">As an object falls, gravitational potential energy doesn't disappear and kinetic energy doesn't appear from nowhere — they trade places, joule for joule, like a perfect currency exchange. Lower the ball and watch the energy bar-chart swap in real time.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-label">Free fall simulator</div>
+      <div class="live-tag" id="liveTag">h = 10.0 m</div>
+    </div>
+    <div class="card-hint">Lower the ball. Watch the two energy bars.</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="fallCanvas"></canvas>
+      <div class="canvas-overlay" id="canvasOverlay">Total Energy: 490 J</div>
+    </div>
+
+    <div class="slider-wrapper">
+      <div class="slider-label">Ball height</div>
+      <input type="range" class="fall-slider" id="heightSlider" min="0" max="100" value="100" step="1">
+      <div class="tick-labels">
+        <span>0 m</span>
+        <span>5 m</span>
+        <span>10 m</span>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Potential (Eg)</div>
+        <div class="stat-value acc" id="potentialStat">490 J</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Kinetic (Ek)</div>
+        <div class="stat-value amb" id="kineticStat">0 J</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-section">
+      <button class="toggle-btn active" id="btnNoFriction">No friction</button>
+      <button class="toggle-btn" id="btnFriction">With friction</button>
+    </div>
+    
+    <div class="knowdrop">
+      <p id="knowdropText">In a perfect vacuum with no air resistance, energy conservation is exact: every joule of gravitational potential energy converts completely into kinetic energy. The total mechanical energy Eg + Ek remains absolutely constant throughout the fall. This is why physicists often start with frictionless models — not because they're realistic, but because they reveal the underlying conservation principle without complicating factors. At the top of the fall, all energy is stored as potential (mgh) and the object is stationary. At the bottom, all that energy has become motion (½mv²) and height is zero.</p>
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-this-tag">Know This</div>
+    <p>Energy is never created or destroyed — it only changes form, and during free fall, <span style="color:var(--acc)">gravitational potential energy</span> trades perfectly with <span style="color:var(--acc)">kinetic energy</span> so that their sum stays constant.</p>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('fallCanvas');
+const ctx = canvas.getContext('2d');
+const slider = document.getElementById('heightSlider');
+const liveTag = document.getElementById('liveTag');
+const canvasOverlay = document.getElementById('canvasOverlay');
+const potentialStat = document.getElementById('potentialStat');
+const kineticStat = document.getElementById('kineticStat');
+const btnNoFriction = document.getElementById('btnNoFriction');
+const btnFriction = document.getElementById('btnFriction');
+const knowdropText = document.getElementById('knowdropText');
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d');
+
+let hasFriction = false;
+const mass = 5; // kg
+const g = 9.8;
+const maxHeight = 10; // meters
+
+const texts = {
+  noFriction: "In a perfect vacuum with no air resistance, energy conservation is exact: every joule of gravitational potential energy converts completely into kinetic energy. The total mechanical energy Eg + Ek remains absolutely constant throughout the fall. This is why physicists often start with frictionless models — not because they're realistic, but because they reveal the underlying conservation principle without complicating factors. At the top of the fall, all energy is stored as potential (mgh) and the object is stationary. At the bottom, all that energy has become motion (½mv²) and height is zero.",
+  friction: "When air resistance is present, some mechanical energy converts into thermal energy as the ball pushes through air molecules. The sum Eg + Ek is no longer constant — it decreases continuously as energy dissipates as heat. Total energy is still conserved (including thermal), but mechanical energy alone is not. This is why a real ball doesn't bounce back to its starting height: each bounce loses energy to sound, heat, and deformation. The work-energy theorem accounts for this: the net work (including negative work by friction) equals the change in kinetic energy, and the 'missing' energy hasn't vanished — it's just spread out as invisible thermal motion."
+};
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  draw();
+}
+
+function updateSlider() {
+  const val = parseFloat(slider.value);
+  slider.style.setProperty('--fill', val + '%');
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+
+  const heightFraction = parseFloat(slider.value) / 100;
+  const currentHeight = heightFraction * maxHeight;
+  
+  const Eg = mass * g * currentHeight;
+  const totalEnergy = mass * g * maxHeight;
+  let Ek = totalEnergy - Eg;
+  
+  if (hasFriction) {
+    /* Friction turns some of the drop into heat. Eg depends only on height (mgh); the heat comes out of Ek. */
+    const energyLoss = totalEnergy * 0.22 * (1 - heightFraction);
+    const adjustedEk = Math.max(0, Ek - energyLoss);
+    const adjustedTotal = Eg + adjustedEk;
+    
+    liveTag.textContent = `h = ${currentHeight.toFixed(1)} m`;
+    const shownMech = Math.round(Eg) + Math.round(adjustedEk); /* add the shown numbers so the overlay sums exactly */
+    canvasOverlay.textContent = `Eg + Ek: ${shownMech} J · Heat: ${Math.round(totalEnergy) - shownMech} J`;
+    potentialStat.textContent = `${Math.round(Eg)} J`;
+    kineticStat.textContent = `${Math.round(adjustedEk)} J`;
+    
+    drawScene(w, h, heightFraction, Eg, adjustedEk, totalEnergy);
+  } else {
+    liveTag.textContent = `h = ${currentHeight.toFixed(1)} m`;
+    canvasOverlay.textContent = `Total Energy: ${Math.round(totalEnergy)} J`;
+    potentialStat.textContent = `${Math.round(Eg)} J`;
+    kineticStat.textContent = `${Math.round(Ek)} J`;
+    
+    drawScene(w, h, heightFraction, Eg, Ek, totalEnergy);
+  }
+
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.38;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+
+  // Vignette
+  const cx = w / 2;
+  const cy = h / 2;
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+}
+
+function drawScene(w, h, heightFraction, Eg, Ek, totalEnergy) {
+  const margin = 40;
+  const barWidth = 50;
+  const barSpacing = w / 2 - barWidth - 20;
+  const maxBarHeight = h - margin * 2;
+  
+  // Ground line
+  ctx.strokeStyle = 'rgba(237,237,232,0.3)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(margin, h - margin);
+  ctx.lineTo(w - margin, h - margin);
+  ctx.stroke();
+
+  // Height reference (left side)
+  const ballX = margin + 60;
+  const ballY = margin + (1 - heightFraction) * maxBarHeight;
+  const ballRadius = 14;
+  
+  // Dashed line from ball to ground
+  ctx.setLineDash([4, 4]);
+  ctx.strokeStyle = 'rgba(58,111,200,0.4)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(ballX, ballY);
+  ctx.lineTo(ballX, h - margin);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  
+  // Ball
+  const ballGrad = ctx.createRadialGradient(ballX - 4, ballY - 4, 2, ballX, ballY, ballRadius);
+  ballGrad.addColorStop(0, '#FAC775');
+  ballGrad.addColorStop(1, '#D89A45');
+  ctx.fillStyle = ballGrad;
+  ctx.beginPath();
+  ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
+  ctx.fill();
+  
+  // Ball glow
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  const ballHalo = ctx.createRadialGradient(ballX, ballY, 0, ballX, ballY, ballRadius * 2.2);
+  ballHalo.addColorStop(0, 'rgba(250,199,117,0.4)');
+  ballHalo.addColorStop(1, 'rgba(250,199,117,0)');
+  ctx.fillStyle = ballHalo;
+  ctx.beginPath();
+  ctx.arc(ballX, ballY, ballRadius * 2.2, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+  // Energy bars (right side)
+  const barBaseX = w - margin - barWidth * 2 - 30;
+  
+  // Potential energy bar (blue)
+  const egHeight = totalEnergy > 0 ? (Eg / totalEnergy) * maxBarHeight : 0;
+  const egGrad = ctx.createLinearGradient(0, h - margin - egHeight, 0, h - margin);
+  egGrad.addColorStop(0, '#3A6FC8');
+  egGrad.addColorStop(1, '#2854A0');
+  ctx.fillStyle = egGrad;
+  ctx.fillRect(barBaseX, h - margin - egHeight, barWidth, egHeight);
+  
+  // Potential bar outline
+  ctx.strokeStyle = '#3A6FC8';
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(barBaseX, h - margin - egHeight, barWidth, egHeight);
+  
+  // Potential label
+  ctx.fillStyle = '#3A6FC8';
+  ctx.font = '11px "JetBrains Mono"';
+  ctx.textAlign = 'center';
+  ctx.fillText('Eg', barBaseX + barWidth / 2, h - margin + 18);
+  
+  // Kinetic energy bar (amber)
+  const ekHeight = totalEnergy > 0 ? (Ek / totalEnergy) * maxBarHeight : 0;
+  const ekGrad = ctx.createLinearGradient(0, h - margin - ekHeight, 0, h - margin);
+  ekGrad.addColorStop(0, '#FAC775');
+  ekGrad.addColorStop(1, '#D89A45');
+  ctx.fillStyle = ekGrad;
+  ctx.fillRect(barBaseX + barWidth + 30, h - margin - ekHeight, barWidth, ekHeight);
+  
+  // Kinetic bar outline
+  ctx.strokeStyle = '#FAC775';
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(barBaseX + barWidth + 30, h - margin - ekHeight, barWidth, ekHeight);
+  
+  // Kinetic label
+  ctx.fillStyle = '#FAC775';
+  ctx.fillText('Ek', barBaseX + barWidth + 30 + barWidth / 2, h - margin + 18);
+  
+  // Bar glows
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  
+  if (egHeight > 0) {
+    const egHalo = ctx.createRadialGradient(barBaseX + barWidth / 2, h - margin - egHeight / 2, 0, barBaseX + barWidth / 2, h - margin - egHeight / 2, barWidth * 1.5);
+    egHalo.addColorStop(0, 'rgba(58,111,200,0.25)');
+    egHalo.addColorStop(1, 'rgba(58,111,200,0)');
+    ctx.fillStyle = egHalo;
+    ctx.fillRect(barBaseX - barWidth / 2, h - margin - egHeight - barWidth / 2, barWidth * 2, egHeight + barWidth);
+  }
+  
+  if (ekHeight > 0) {
+    const ekHalo = ctx.createRadialGradient(barBaseX + barWidth + 30 + barWidth / 2, h - margin - ekHeight / 2, 0, barBaseX + barWidth + 30 + barWidth / 2, h - margin - ekHeight / 2, barWidth * 1.5);
+    ekHalo.addColorStop(0, 'rgba(250,199,117,0.25)');
+    ekHalo.addColorStop(1, 'rgba(250,199,117,0)');
+    ctx.fillStyle = ekHalo;
+    ctx.fillRect(barBaseX + barWidth + 30 - barWidth / 2, h - margin - ekHeight - barWidth / 2, barWidth * 2, ekHeight + barWidth);
+  }
+  
+  ctx.restore();
+
+  // Motion blur on ball if falling fast
+  if (heightFraction < 0.5 && Ek > 50) {
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.globalAlpha = 0.15;
+    for (let i = 1; i <= 3; i++) {
+      ctx.fillStyle = '#FAC775';
+      ctx.beginPath();
+      ctx.arc(ballX, ballY - i * 8, ballRadius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+}
+
+slider.addEventListener('input', () => {
+  updateSlider();
+  draw();
+});
+
+btnNoFriction.addEventListener('click', () => {
+  hasFriction = false;
+  btnNoFriction.classList.add('active');
+  btnFriction.classList.remove('active');
+  knowdropText.textContent = texts.noFriction;
+  draw();
+});
+
+btnFriction.addEventListener('click', () => {
+  hasFriction = true;
+  btnFriction.classList.add('active');
+  btnNoFriction.classList.remove('active');
+  knowdropText.textContent = texts.friction;
+  draw();
+});
+
+window.addEventListener('resize', resize);
+resize();
+updateSlider();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'g4'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>
