@@ -1,0 +1,751 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Buffers and buffer systems — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #3E9AD6;
+  --acc-rgb: 62, 154, 214;
+  --ag: rgba(var(--acc-rgb), 0.7);
+  --ag1: rgba(var(--acc-rgb), 0.12);
+  --ag2: rgba(var(--acc-rgb), 0.45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body {
+  background: radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);
+  font-family: 'Geist', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 16px 0;
+  line-height: 1.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: clamp(26px, 6.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 16px;
+}
+
+.intro {
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  max-width: 58ch;
+  line-height: 1.55;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #12160F, #0d100b);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(0,0,0,0.5), inset 0 1px 0 var(--ag1);
+  margin-bottom: 18px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+
+.card-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--ag1);
+  margin-bottom: 16px;
+}
+
+.canvas-wrapper canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  padding: 9px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  text-transform: none;
+  color: var(--acc);
+  text-align: center;
+}
+
+.slider-wrapper {
+  margin-bottom: 8px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+}
+
+.buffer-slider {
+  width: 100%;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc) var(--fill, 50%), #23291f var(--fill, 50%));
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.buffer-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+
+.buffer-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.buffer-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0B0D0C;
+  border: 2px solid var(--acc);
+  box-shadow: 0 0 16px var(--ag), 0 0 4px var(--ag);
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+
+.buffer-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 24px var(--acc), 0 0 8px var(--ag);
+}
+
+.tick-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+  padding: 0 4px;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  margin-top: 14px;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 4px;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.stat-value.acc { color: var(--acc); }
+.stat-value.amb { color: var(--amb); }
+
+.toggle-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  padding: 12px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: #12160F;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toggle-btn.active {
+  background: rgba(var(--acc-rgb), 0.1);
+  border-color: var(--acc);
+  color: var(--acc);
+  box-shadow: 0 0 22px rgba(var(--acc-rgb), 0.18);
+}
+
+.knowdrop-divider {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.knowdrop-text {
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.know-this {
+  border-left: 3px solid var(--acc);
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0;
+}
+
+.know-this-tag {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 12px;
+}
+
+.pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 8px var(--acc);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+.know-this-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--acc);
+}
+
+.know-this-body {
+  font-size: 17.4px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.know-this-body span {
+  color: var(--acc);
+}
+.reset-row {
+  display: flex;
+  justify-content: flex-end;
+  margin: -4px 0 12px;
+}
+
+.reset-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 9px;
+  border: 1px solid var(--line);
+  background: #12160F;
+  color: var(--ink-dim);
+  cursor: pointer;
+  flex: none;
+}
+
+.reset-btn:hover {
+  border-color: var(--acc);
+  color: var(--acc);
+}
+</style>
+
+<h2 class="sr-only">Buffer Systems Interactive Widget — Shows how buffers resist pH change by absorbing added acid or base</h2>
+
+<div class="container">
+  <h1>A buffer doesn't stop the attack — it <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">absorbs</span> it</h1>
+  
+  <p class="intro">Most students think buffers block pH change like a wall. In reality, a buffer is a sacrificial pair: a weak acid and its conjugate base that soak up incoming H⁺ or OH⁻ by reacting with them, holding pH steady until one half runs out. Add strong acid or base and watch the buffer respond.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-label">Buffer response</div>
+      <div class="live-tag" id="additionTag">Neutral</div>
+    </div>
+    <div class="card-hint">Add strong acid (left) or base (right)</div>
+    
+    <div class="canvas-wrapper">
+      <canvas id="bufferCanvas"></canvas>
+      <div class="canvas-overlay" id="canvasTag">Buffer intact — HA and A⁻ balanced · pH 4.76 (pKa 4.76)</div>
+    </div>
+
+    <div class="slider-wrapper">
+      <div class="slider-label">Addition strength</div>
+      <input type="range" min="0" max="100" value="50" class="buffer-slider" id="bufferSlider">
+      <div class="tick-labels">
+        <span>Strong Acid</span>
+        <span>Neutral</span>
+        <span>Strong Base</span>
+      </div>
+    </div>
+
+    <div class="reset-row"><button class="reset-btn" id="resetBtn" type="button">Reset</button></div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">HA consumed</div>
+        <div class="stat-value acc" id="acidStat">0%</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">A⁻ consumed</div>
+        <div class="stat-value amb" id="baseStat">0%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-row">
+      <button class="toggle-btn active" data-mode="mechanism">Mechanism</button>
+      <button class="toggle-btn" data-mode="blood">Blood buffer</button>
+    </div>
+    
+    <div class="knowdrop-divider">
+      <p class="knowdrop-text" id="knowdropText">
+        When you add strong acid (H⁺), the conjugate base A⁻ grabs it to form HA, removing the threat. When you add strong base (OH⁻), the weak acid HA donates H⁺ to neutralise it, forming A⁻ and water. Each half of the pair sacrifices itself to absorb the opposite attack. The buffer holds pH steady as long as neither component runs out. Once one is used up, the buffer capacity is exceeded and the pH swings sharply: down if acid keeps coming, up if base does. This is Le Chatelier in action: the equilibrium HA ⇌ H⁺ + A⁻ shifts left or right to consume the added species, but the shift is small enough that [H⁺] barely moves.
+      </p>
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="know-this-tag">
+      <div class="pulse-dot"></div>
+      <div class="know-this-label">Know This</div>
+    </div>
+    <p class="know-this-body">A buffer is <span>one solution</span> containing both a <span>weak acid</span> and its <span>conjugate base</span>, allowing the pair to absorb added H⁺ or OH⁻ until one component is consumed.</p>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('bufferCanvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+const slider = document.getElementById('bufferSlider');
+const additionTag = document.getElementById('additionTag');
+const canvasTag = document.getElementById('canvasTag');
+const acidStat = document.getElementById('acidStat');
+const baseStat = document.getElementById('baseStat');
+const toggleBtns = document.querySelectorAll('.toggle-btn');
+const knowdropText = document.getElementById('knowdropText');
+const resetBtn = document.getElementById('resetBtn');
+
+const CSS = getComputedStyle(document.documentElement);
+const ACC = CSS.getPropertyValue('--acc').trim();
+const RGB = CSS.getPropertyValue('--acc-rgb').trim();
+const AMB = CSS.getPropertyValue('--amb').trim();
+const PKA = 4.76;
+const KA = Math.pow(10, -PKA);
+const KW = 1e-14;
+const HALF = 15;            /* 15 HA and 15 A⁻ to start */
+const UNIT = 0.01;          /* each dot stands for 0.01 mol/L */
+const H_COL = '#FF6B6B', OH_COL = '#3E9AD6';
+
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const buf = document.createElement('canvas');
+const bctx = buf.getContext('2d');
+
+let particles = [];       /* the buffer pair: HA and A⁻ */
+let attackParticles = []; /* added H⁺ or OH⁻ still travelling */
+let freeIons = [];        /* added H⁺ or OH⁻ left over once one half of the pair is gone */
+let time = 0;
+let lastW = 0, lastH = 0;
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; /* f23: refuse a zero measurement, keep the last good size */
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  buf.width = canvas.width;
+  buf.height = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const w = canvas.width / dpr, h = canvas.height / dpr;
+  if (!particles.length) initParticles();
+  else if (lastW && lastH) {
+    /* keep the state, just stretch the positions to the new size */
+    const sx = w / lastW, sy = h / lastH;
+    particles.concat(attackParticles, freeIons).forEach(p => { p.x *= sx; p.y *= sy; });
+  }
+  lastW = w; lastH = h;
+  updateDisplay();
+}
+
+function initParticles() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  particles = [];
+  attackParticles = [];
+  freeIons = [];
+  for (let i = 0; i < HALF * 2; i++) {
+    particles.push({
+      x: 20 + Math.random() * (w - 40),
+      y: 40 + Math.random() * (h - 60),
+      vx: (Math.random() - 0.5) * 0.4,
+      vy: (Math.random() - 0.5) * 0.4,
+      r: 9 + Math.random() * 2,
+      type: i % 2 === 0 ? 'HA' : 'A-',
+      phase: Math.random() * Math.PI * 2,
+      flash: 0
+    });
+  }
+}
+
+function counts() {
+  let nHA = 0, nA = 0, freeH = 0, freeOH = 0;
+  particles.forEach(p => { if (p.type === 'HA') nHA++; else nA++; });
+  freeIons.forEach(f => { if (f.type === 'H+') freeH++; else freeOH++; });
+  return { nHA, nA, freeH, freeOH };
+}
+
+/* pH from the dots on screen. Both halves present: Henderson–Hasselbalch.
+   One half gone: weak acid (or its base) plus the leftover strong acid (or base), solved exactly. */
+function computePH(c) {
+  if (c.nHA > 0 && c.nA > 0) return PKA + Math.log10(c.nA / c.nHA);
+  if (c.nA === 0) {
+    const cs = c.freeH * UNIT, C = c.nHA * UNIT;
+    const b = KA - cs;
+    const hh = (-b + Math.sqrt(b * b + 4 * KA * (cs + C))) / 2;
+    return -Math.log10(Math.max(hh, 1e-14));
+  }
+  const KB = KW / KA;
+  const cs = c.freeOH * UNIT, C = c.nA * UNIT;
+  const b = KB - cs;
+  const oh = (-b + Math.sqrt(b * b + 4 * KB * (cs + C))) / 2;
+  return 14 + Math.log10(Math.max(oh, 1e-14));
+}
+
+function nearest(list, x, y, pred) {
+  let best = null, bd = Infinity;
+  list.forEach(p => {
+    if (!pred(p)) return;
+    const d = Math.hypot(p.x - x, p.y - y);
+    if (d < bd) { bd = d; best = p; }
+  });
+  return best;
+}
+
+function drawDot(x, y, r, col, rgb, label, pulse, alpha) {
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  const grd = ctx.createRadialGradient(x, y, 0, x, y, r * 3);
+  grd.addColorStop(0, 'rgba(' + rgb + ',' + (0.35 * alpha) + ')');
+  grd.addColorStop(1, 'rgba(' + rgb + ',0)');
+  ctx.fillStyle = grd;
+  ctx.beginPath();
+  ctx.arc(x, y, r * 3 * pulse, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+  ctx.globalAlpha = alpha;
+  ctx.fillStyle = col;
+  ctx.beginPath();
+  ctx.arc(x, y, r * pulse, 0, Math.PI * 2);
+  ctx.fill();
+  if (label) {
+    ctx.fillStyle = '#000';
+    ctx.font = '700 10px Geist, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(label, x, y + 0.5);
+  }
+  ctx.globalAlpha = 1;
+}
+
+function draw() {
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  const cx = w / 2;
+  const cy = h / 2;
+
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+
+  const position = parseInt(slider.value, 10);
+  const fromCenter = position - 50;
+
+  /* more strength = more H⁺ or OH⁻ added per second (up to about 4 a second) */
+  if (Math.abs(fromCenter) > 5 && freeIons.filter(f => f.type === (fromCenter < 0 ? 'H+' : 'OH-')).length < 30 && Math.random() < Math.abs(fromCenter) / 50 * 0.07) {
+    const isAcid = fromCenter < 0;
+    attackParticles.push({
+      x: isAcid ? -8 : w + 8,
+      y: 20 + Math.random() * (h - 40),
+      vx: isAcid ? 2.2 : -2.2,
+      vy: 0,
+      r: 6,
+      type: isAcid ? 'H+' : 'OH-',
+      age: 0
+    });
+  }
+
+  /* the buffer pair drifts */
+  particles.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    if (p.x < p.r || p.x > w - p.r) p.vx *= -1;
+    if (p.y < 28 + p.r || p.y > h - p.r) p.vy *= -1;
+    p.x = Math.max(p.r, Math.min(w - p.r, p.x));
+    p.y = Math.max(28 + p.r, Math.min(h - p.r, p.y));
+  });
+  freeIons.forEach(f => {
+    f.x += f.vx; f.y += f.vy;
+    if (f.x < 6 || f.x > w - 6) f.vx *= -1;
+    if (f.y < 28 || f.y > h - 6) f.vy *= -1;
+    f.x = Math.max(6, Math.min(w - 6, f.x));
+    f.y = Math.max(28, Math.min(h - 6, f.y));
+  });
+
+  /* each added ion heads for something it can react with:
+     H⁺ → leftover OH⁻ first, then A⁻ (makes HA). OH⁻ → leftover H⁺ first, then HA (makes A⁻ + water).
+     Nothing left to react with: it stays in solution as a free ion. */
+  let changed = false;
+  attackParticles = attackParticles.filter(ap => {
+    ap.age++;
+    const isH = ap.type === 'H+';
+    let target = nearest(freeIons, ap.x, ap.y, f => f.type !== ap.type);
+    let targetIsFree = !!target;
+    if (!target) target = nearest(particles, ap.x, ap.y, p => p.type === (isH ? 'A-' : 'HA'));
+    if (target) {
+      const dx = target.x - ap.x, dy = target.y - ap.y;
+      const d = Math.hypot(dx, dy) || 1;
+      ap.vx += (dx / d * 2.4 - ap.vx) * 0.08;
+      ap.vy += (dy / d * 2.4 - ap.vy) * 0.08;
+      if (d < (target.r || 5) + ap.r + 2) {
+        if (targetIsFree) freeIons.splice(freeIons.indexOf(target), 1);
+        else { target.type = isH ? 'HA' : 'A-'; target.flash = 1; }
+        changed = true;
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        const flash = ctx.createRadialGradient(ap.x, ap.y, 0, ap.x, ap.y, 22);
+        flash.addColorStop(0, 'rgba(255,255,255,0.6)');
+        flash.addColorStop(1, 'rgba(' + RGB + ',0)');
+        ctx.fillStyle = flash;
+        ctx.beginPath();
+        ctx.arc(ap.x, ap.y, 22, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+        return false;
+      }
+    } else {
+      /* nothing to react with: once inside the solution it stays as a free ion and wanders */
+      const inside = ap.x > 12 && ap.x < w - 12;
+      if (inside) {
+        freeIons.push({ x: ap.x, y: Math.max(28, ap.y), vx: Math.sign(ap.vx) * (0.4 + Math.random() * 0.5), vy: (Math.random() - 0.5) * 0.8, r: 5, type: ap.type });
+        changed = true;
+        return false;
+      }
+    }
+    ap.x += ap.vx;
+    ap.y += ap.vy;
+    if (ap.age > 1200) return false;
+    drawDot(ap.x, ap.y, ap.r, isH ? H_COL : OH_COL, isH ? '255,107,107' : '107,207,127', '', 1, 1);
+    return true;
+  });
+
+  freeIons.forEach(f => {
+    const isH = f.type === 'H+';
+    drawDot(f.x, f.y, f.r, isH ? H_COL : OH_COL, isH ? '255,107,107' : '107,207,127', '', 1, 0.9);
+  });
+
+  particles.forEach(p => {
+    const pulse = 0.92 + 0.08 * Math.sin(time * 0.8 + p.phase);
+    const isHA = p.type === 'HA';
+    drawDot(p.x, p.y, p.r, isHA ? ACC : AMB, isHA ? RGB : '250,199,117', isHA ? 'HA' : 'A⁻', pulse, 1);
+    if (p.flash > 0) {
+      ctx.strokeStyle = 'rgba(255,255,255,' + p.flash + ')';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r + 4 + (1 - p.flash) * 8, 0, Math.PI * 2);
+      ctx.stroke();
+      p.flash = Math.max(0, p.flash - 0.03);
+    }
+  });
+
+  if (changed) updateDisplay();
+
+  // Bloom
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buf.width, buf.height);
+  if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.3;
+  ctx.filter = 'blur(7px)';
+  if (buf.width && buf.height) ctx.drawImage(buf, 0, 0, w, h);
+  ctx.restore();
+  ctx.filter = 'none';
+
+  // Vignette
+  const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, Math.max(w, h) * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.45)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+
+  /* key */
+  ctx.font = '11px "JetBrains Mono", monospace';
+  ctx.textBaseline = 'alphabetic';
+  ctx.textAlign = 'left';
+  ctx.fillStyle = H_COL;
+  ctx.fillText('● added H⁺', 10, 18);
+  ctx.textAlign = 'right';
+  ctx.fillStyle = OH_COL;
+  ctx.fillText('added OH⁻ ●', w - 10, 18);
+
+  time += 0.016;
+  requestAnimationFrame(draw);
+}
+
+function updateDisplay() {
+  const position = parseInt(slider.value, 10);
+  const fromCenter = position - 50;
+
+  slider.style.setProperty('--fill', position + '%');
+
+  const c = counts();
+  acidStat.textContent = Math.max(0, Math.round((HALF - c.nHA) / HALF * 100)) + '%';
+  baseStat.textContent = Math.max(0, Math.round((HALF - c.nA) / HALF * 100)) + '%';
+
+  const phText = 'pH ' + computePH(c).toFixed(2) + ' (pKa ' + PKA.toFixed(2) + ')';
+
+  let state;
+  if (c.nA === 0) {
+    state = 'Buffer exhausted — A⁻ used up';
+  } else if (c.nHA === 0) {
+    state = 'Buffer exhausted — HA used up';
+  } else if (Math.abs(fromCenter) < 5) {
+    state = c.nA === c.nHA ? 'Buffer intact — HA and A⁻ balanced' : 'Buffer intact — holding pH';
+  } else if (fromCenter < 0) {
+    state = 'A⁻ consuming H⁺ → forming HA';
+  } else {
+    state = 'HA donating H⁺ → forming A⁻';
+  }
+  canvasTag.textContent = state + ' · ' + phText;
+
+  if (Math.abs(fromCenter) < 5) {
+    additionTag.textContent = 'Neutral';
+  } else {
+    additionTag.textContent = fromCenter < 0 ? 'Adding H⁺' : 'Adding OH⁻';
+  }
+}
+
+slider.addEventListener('input', updateDisplay);
+
+resetBtn.addEventListener('click', () => {
+  initParticles();
+  updateDisplay();
+});
+
+toggleBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    toggleBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const mode = btn.getAttribute('data-mode');
+    if (mode === 'mechanism') {
+      knowdropText.textContent = "When you add strong acid (H⁺), the conjugate base A⁻ grabs it to form HA, removing the threat. When you add strong base (OH⁻), the weak acid HA donates H⁺ to neutralise it, forming A⁻ and water. Each half of the pair sacrifices itself to absorb the opposite attack. The buffer holds pH steady as long as neither component runs out. Once one is used up, the buffer capacity is exceeded and the pH swings sharply: down if acid keeps coming, up if base does. This is Le Chatelier in action: the equilibrium HA ⇌ H⁺ + A⁻ shifts left or right to consume the added species, but the shift is small enough that [H⁺] barely moves.";
+    } else {
+      knowdropText.textContent = "Your blood maintains pH 7.4 using the carbonic acid–hydrogencarbonate buffer: H₂CO₃ (weak acid) and HCO₃⁻ (conjugate base). When you exercise, muscles dump lactic acid into the bloodstream. HCO₃⁻ immediately neutralises the H⁺, forming H₂CO₃, which breaks down to CO₂ (exhaled) and water. When blood becomes too alkaline, H₂CO₃ donates H⁺ to bring pH down. The lungs and kidneys constantly adjust the ratio of H₂CO₃ to HCO₃⁻, maintaining buffer capacity. Without this system, a single metabolic spike would swing blood pH into the lethal range within minutes.";
+    }
+  });
+});
+
+window.addEventListener('resize', resize);
+resize();
+updateDisplay();
+draw();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'g-buffers-and-buffer-systems'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

@@ -21,7 +21,12 @@
 
    ▸ The 50th founding plan: once the app's GET /public/founding is live (Bronco, KICKOFF-BRONCO-FOUNDING-SWITCH-18OCT),
      the bar closes itself. Before that, or if the app is unreachable: set FOUNDING_FULL = true below and push.
-   The free week is card-up-front (doctrine): the trust line says the card out loud; never write "no card" here. */
+   The free week is card-up-front (doctrine): the trust line says the card out loud; never write "no card" here.
+
+   v5 (13 Nov 2026, KW:GAMSAT): data-audience="gamsat" — the GAMSAT founding seat (/gamsat only). Its own offer, never the
+   school one: purple bar "The founding seat · First 30 only · A$99", the sheet below, no handoff, no school founding switch
+   (/public/founding is not asked). data-open-at (ISO, e.g. 2026-12-11T00:00:00+11:00): before it the CTA goes to
+   data-claim (default #claim, the page's founding list); from it, to signup?as=gamsat. data-away as for every page. */
 (function () {
   if (window.__kwPassbar) return; window.__kwPassbar = true;
   var FOUNDING_UNTIL = Date.UTC(2027, 3, 9, 13, 59);   /* Fri 9 Apr 2027 23:59 AEST — the app's own FOUNDING_UNTIL */
@@ -32,13 +37,15 @@
      /for-parents visit opened on the PARENT tab. A page that says audience=parent is parent, and leaves a note (site
      sessionStorage) so a parent who clicks through to a concept page stays a parent; everyone else -> student. */
   function ss(k, v) { try { if (v === undefined) return sessionStorage.getItem(k); sessionStorage.setItem(k, v); } catch (e) { return null; } }
+  var GAMSAT = ds.audience === "gamsat";
+  var G_OPEN = GAMSAT && ds.openAt && Date.now() >= Date.parse(ds.openAt);
   if (ds.audience === "parent") ss("kw_aud", "parent");
   var PARENT = ds.audience === "parent" || (!ds.audience && ss("kw_aud") === "parent");
   var SIGNUP = "https://app.knowhere.me/signup?as=" + (PARENT ? "parent" : "student");
   var CTA = PARENT ? "start their free week" : "start your free week";
   var CLAIM = PARENT ? "claim their seat" : "claim your seat";
   var WHERE = ds.where || location.pathname;
-  var open = !FOUNDING_FULL && Date.now() <= FOUNDING_UNTIL;
+  var open = GAMSAT || (!FOUNDING_FULL && Date.now() <= FOUNDING_UNTIL);   /* gamsat: its own offer, not the school switch */
   function track(n, d) { try { if (window.umami) window.umami.track(n, d || {}); } catch (e) {} }
 
   /* in-page founding cards: hide when the offer is closed, bring their fallbacks back */
@@ -93,7 +100,22 @@
     '<button type="button" data-kw-handoff="' + String(WHERE).replace(/"/g, "") + '">send this to a parent</button></div>';
   var chev = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10l4-4 4 4"></path></svg>';
   var PLAIN = '<a class="pb-plain" data-kw-from="passbar" href="' + SIGNUP + '"><span>7 days free</span>' + CTA + '</a>';
-  var HTML = !open ? PLAIN :
+  var G_HREF = G_OPEN ? "https://app.knowhere.me/signup?as=gamsat" : (ds.claim || "#claim");
+  var GHTML =
+    '<div class="pb-scrim" data-pb-close></div>' +
+    '<div class="pb-sheet" id="kwFoundSheet" role="dialog" aria-label="the founding seat" aria-hidden="true">' +
+      '<p class="pb-eye">First 30 GAMSAT candidates</p>' +
+      '<p class="pb-h">The founding seat.<br>Both 2027 sittings.</p>' +
+      '<p class="pb-price"><span class="n">A$99</span>once</p>' +
+      '<p class="pb-l">The whole Section 3 shelf, <b>until the end of your September 2027 sitting</b>. Free week first.</p>' +
+      '<a class="pb-cta" data-kw-from="foundbar" data-pb-close href="' + G_HREF + '">claim a founding seat</a>' +
+      '<p class="pb-fine">' + (G_OPEN ? '30 founding seats.' : '30 founding seats. Opens Friday 11 December.') + '</p>' +
+    '</div>' +
+    '<button class="pb-bar" type="button" aria-expanded="false" aria-controls="kwFoundSheet">' +
+      '<span class="pb-t">The founding seat<small>First 30 only</small></span>' +
+      '<span class="pb-p">A$99</span><span class="pb-chev" aria-hidden="true">' + chev + '</span>' +
+    '</button>';
+  var HTML = GAMSAT ? GHTML : !open ? PLAIN :
     '<div class="pb-scrim" data-pb-close></div>' +
     '<div class="pb-sheet" id="kwFoundSheet" role="dialog" aria-label="the founding rate" aria-hidden="true">' +
       '<p class="pb-eye">First 50 student plans</p>' +
@@ -124,7 +146,7 @@
       if (on && !opened) { opened = true; track("found_sheet_open", { page: location.pathname }); }
     }
     if (btn) btn.addEventListener("click", function () { setOpen(!pb.classList.contains("open")); });
-    var pbc = pb.querySelector("[data-pb-close]"); if (pbc) pbc.addEventListener("click", function () { setOpen(false); });
+    Array.prototype.forEach.call(pb.querySelectorAll("[data-pb-close]"), function (el) { el.addEventListener("click", function () { setOpen(false); }); });   /* v5: the gamsat CTA closes the sheet too (it jumps to #claim) */
     var hb = pb.querySelector("[data-kw-handoff]");   /* the handoff opens its own sheet (z 1200); put ours away first */
     if (hb) hb.addEventListener("click", function () { setOpen(false); });
     document.addEventListener("keydown", function (e) { if (e.key === "Escape") setOpen(false); });
@@ -158,7 +180,7 @@
     cards();
   }
   if (!open) document.documentElement.classList.add("kw-founding-closed");
-  else if (window.fetch) {
+  else if (window.fetch && !GAMSAT) {   /* v5: gamsat never asks the school switch */
     try {
       var ctl = window.AbortController ? new AbortController() : null;
       if (ctl) setTimeout(function () { try { ctl.abort(); } catch (e) {} }, 4000);
