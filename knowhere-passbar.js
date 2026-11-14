@@ -107,7 +107,7 @@
       '<p class="pb-eye">First 30 GAMSAT candidates</p>' +
       '<p class="pb-h">The founding seat.<br>Both 2027 sittings.</p>' +
       '<p class="pb-price"><span class="n">A$99</span>once</p>' +
-      '<p class="pb-l">The whole Section 3 shelf, <b>until the end of your September 2027 sitting</b>. Free week first.</p>' +
+      '<p class="pb-l">The whole Section 3 shelf, <b>until the end of your September 2027 sitting</b>. One payment, nothing renews.</p>' +
       '<a class="pb-cta" data-kw-from="foundbar" data-pb-close href="' + G_HREF + '">claim a founding seat</a>' +
       '<p class="pb-fine">' + (G_OPEN ? '30 founding seats.' : '30 founding seats. Opens Friday 11 December.') + '</p>' +
     '</div>' +

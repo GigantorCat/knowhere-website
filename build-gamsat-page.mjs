@@ -50,7 +50,7 @@ const STEMLORD = {
 
 /* words an adult GAMSAT page never says (Cat, 10 Nov) — checked on every file this writes */
 const BANNED = [/\byear\s*1[12]\b/i, /\bATAR\b/, /\bVCE\b/, /\bHSC\b/, /guarantee/i, /every subject/i, /\bVCAA\b/, /\bNESA\b/];
-const BANNED_TEXT = [/held seat|seat is held|seat held|reserve[sd]? (a|your) seat/i];   /* never promise a held seat */
+const BANNED_TEXT = [/held seat|seat is held|seat held|reserve[sd]? (a|your) seat/i, /free week|free trial|days free|week free/i];   /* never promise a held seat · D87 (15 Nov): GAMSAT has no free week */
 
 /* ── the app: accent bake, subject colours, the map, goated knowhow ── */
 const srv = fs.readFileSync(path.join(APP, 'server.js'), 'utf8');
@@ -289,7 +289,7 @@ html.kw-float .kt2 [data-float].in{opacity:1;transform:none}
       <div>
         <span class="chip">Founding 30</span>
         <h3>A$99 once.<br>Both 2027 sittings.</h3>
-        <p class="sub">The whole Section 3 shelf, as things you can move. Free week first.</p>
+        <p class="sub">The whole Section 3 shelf, as things you can move. One payment, nothing renews.</p>
       </div>
       <div class="r">
         <a class="btn btn-purple" href="${claimHref}" data-claim data-g="hero">claim a founding seat</a>
@@ -353,7 +353,7 @@ ${opts}
     <div class="offer" id="claimCard" data-float>
       <span class="chip">Founding 30</span>
       <h3>Claim a founding seat.</h3>
-      <p class="sub">A$99 once, and it covers both 2027 sittings.<br>Physics, chemistry, biology and the maths, written for an adult who hasn't touched science since school.<br><span data-after="Free week first, and the first 30 in keep the rate.">Free week first. The founding list hears first on Friday 11 December, and the first 30 in keep the rate.</span></p>
+      <p class="sub">A$99 once, and it covers both 2027 sittings.<br>Physics, chemistry, biology and the maths, written for an adult who hasn't touched science since school.<br><span data-after="One payment, nothing renews, and the first 30 in keep the rate.">One payment, nothing renews. The founding list hears first on Friday 11 December, and the first 30 in keep the rate.</span></p>
       <form id="kgForm" novalidate>
         <fieldset class="sit">
           <legend>Which sitting are you aiming for?</legend>
