@@ -1,4 +1,4 @@
-/* knowhere-passbar.js v4 — the sticky offer bar (KW:FOUNDBAR, 18 Oct 2026; v4 same day: reads the app's live founding switch;
+/* knowhere-passbar.js v6 — the sticky offer bar (KW:FOUNDBAR, 18 Oct 2026; v4 same day: reads the app's live founding switch;
    was the 2026 exam pass bar, KW:PASSBAR 28 Sep).
    One file for every page that carries it: Home, /for-parents, /experience-it, /pricing, /how-it-works, /compare,
    /mission, /know-us and every public concept page. Never /for-teachers (the teacher bar is its own). Change it here, it
@@ -109,7 +109,7 @@
       '<p class="pb-price"><span class="n">A$99</span>once</p>' +
       '<p class="pb-l">The whole Section 3 shelf, <b>until the end of your September 2027 sitting</b>. One payment, nothing renews.</p>' +
       '<a class="pb-cta" data-kw-from="foundbar" data-pb-close href="' + G_HREF + '">claim a founding seat</a>' +
-      '<p class="pb-fine">' + (G_OPEN ? '30 founding seats.' : '30 founding seats. Opens Friday 11 December.') + '</p>' +
+      '<p class="pb-fine">' + (G_OPEN ? '30 founding seats.' : '30 founding seats. Opens soon.') + '</p>' +   /* v6 (16 Nov 2026): the door opened 16 Nov, no date in the fallback */
     '</div>' +
     '<button class="pb-bar" type="button" aria-expanded="false" aria-controls="kwFoundSheet">' +
       '<span class="pb-t">The founding seat<small>First 30 only</small></span>' +
