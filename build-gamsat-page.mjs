@@ -6,9 +6,10 @@
    data-audience="gamsat"). Cat ruled the GAMSAT cohort on 10 Nov: adults, Section 3 only, no state, no year, no school,
    so this page never says Year 12, ATAR, VCE, HSC, a score promise, "guaranteed" or "every subject" (the gate below).
 
-   Cat's call (13 Nov): the page is the founding list now and switches to the real signup on Fri 11 Dec 2026 00:00 AEDT
-   (OPENS_AT, one constant): before it every "claim a founding seat" goes to #claim; from it they go to signup?as=gamsat
-   and the claim card's form becomes that button. Never promise a held seat.
+   Cat's call (13 Nov): the page is the founding list first and switches to the real signup at OPENS_AT (one constant):
+   before it every "claim a founding seat" goes to #claim; from it they go to signup?as=gamsat and the claim card's form
+   becomes that button. Never promise a held seat. GO-LIVE (Cat, 16 Nov): OPENS_AT moved from Fri 11 Dec to Mon 16 Nov 2026;
+   a build after the moment writes the page open (OPEN_NOW), and the client switch stays for a build made early.
 
    INPUT   the app (KW_APP, default ../../Backend/knowhereApp): the flat widget store + sidecars, server.js (injectAccent),
            knowhere.html (the subject colours), pipeline/gamsat/map.json (the shelf count, a picture's science),
@@ -27,7 +28,8 @@ const die = m => { console.error('✗ ' + m); process.exit(1); };
 const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
 /* ══ the config ══════════════════════════════════════════════════════════════════════════════════════════════ */
-const OPENS_AT = '2026-12-11T00:00:00+11:00';                 /* Fri 11 Dec 2026 00:00 AEDT: the founding list becomes signup */
+const OPENS_AT = '2026-11-16T00:00:00+11:00';                 /* GO-LIVE (Cat, 16 Nov 2026): the door opened Mon 16 Nov 2026, not Fri 11 Dec. Before it the founding list; from it signup */
+const OPEN_NOW = Date.now() >= Date.parse(OPENS_AT);          /* built after the moment: the page is written open (no flash of the list before the script runs) */
 const SIGNUP = 'https://app.knowhere.me/signup?as=gamsat';
 /* the three pills (13 Nov): the tip lines are the mock's rewrites of the goated GAMSAT knowhow lines */
 const PILLS = [
@@ -103,7 +105,7 @@ const EP_PIC = Object.values(K).find(v => v.id === ep.kwId) ? Object.keys(K).fin
 if (STEMLORD.options.length !== 3 || !(STEMLORD.answer >= 0 && STEMLORD.answer < 3)) die('Stemlord needs three options and an answer 0-2');
 const more = shelf - PILLS.length;
 
-const claimHref = '#claim';   /* the date switch rewrites every [data-claim] on the client */
+const claimHref = OPEN_NOW ? SIGNUP : '#claim';   /* the date switch also rewrites every [data-claim] on the client (a page built early still opens on time) */
 const TITLE = 'GAMSAT Section 3, as things you can move — knowhere';
 const DESC = 'Section 3 is half your GAMSAT score, and it is written in physics, chemistry and biology. Move the science underneath. Founding seats for the 2027 sittings.';
 const opts = STEMLORD.options.map((o, i) => `          <button type="button" class="opt" data-a="${i === STEMLORD.answer ? 1 : 0}"><b>${i + 1}</b>${esc(o)}</button>`).join('\n');
@@ -144,7 +146,7 @@ const page = `<!DOCTYPE html>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="/knowhere-marks.js?v=2"></script>
-<script src="/knowhere-passbar.js?v=5" defer data-audience="gamsat" data-where="gamsat" data-open-at="${OPENS_AT}" data-claim="#claim" data-away="#heroOffer,#claimCard"></script>
+<script src="/knowhere-passbar.js?v=6" defer data-audience="gamsat" data-where="gamsat" data-open-at="${OPENS_AT}" data-claim="#claim" data-away="#heroOffer,#claimCard"></script>
 <style>
 html,body{margin:0;padding:0;background:#070708}
 .kt2{--bg:#070708;--ink:#EDECE8;--dim:#9A9994;--dimmer:#6E6D69;--brat:#7BEA5A;--kwp:#9B5AEA;--line:rgba(255,255,255,.09);--panel:#0E0E10;--mono:'JetBrains Mono',monospace;
@@ -174,6 +176,7 @@ html,body{margin:0;padding:0;background:#070708}
 .kt2 .lede b{color:var(--ink);font-weight:600}
 .kt2 .brat{color:var(--brat)}
 .kt2 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:15px 24px;border-radius:999px;font-weight:700;font-size:15px;border:1.5px solid transparent;cursor:pointer;font-family:inherit;line-height:1;text-transform:lowercase}
+.kt2 [hidden]{display:none!important}   /* hidden beats .btn and form display rules: the signup button hid behind the list until this (QA, 16 Nov) */
 .kt2 .btn-purple{background:var(--kwp);color:#fff;box-shadow:0 8px 30px rgba(155,90,234,.3)}
 .kt2 .btn-purple:hover{filter:brightness(1.08)}
 .kt2 .btn-purple[disabled]{opacity:.6;cursor:wait}
@@ -293,7 +296,7 @@ html.kw-float .kt2 [data-float].in{opacity:1;transform:none}
       </div>
       <div class="r">
         <a class="btn btn-purple" href="${claimHref}" data-claim data-g="hero">claim a founding seat</a>
-        <span class="fine" data-after="30 founding seats">30 founding seats · opens Fri 11 December</span>
+        <span class="fine" data-after="30 founding seats">${OPEN_NOW ? "30 founding seats" : "30 founding seats · opens soon"}</span>
       </div>
     </div>
     <a class="btn btn-run" href="#knowscape" data-g="stimulated">get stimulated ↓</a>
@@ -348,13 +351,13 @@ ${opts}
 
 <section class="claim" id="claim">
   <div class="wrap">
-    <span class="kicker" data-float data-after="Early access · open now">Early access · opens Friday 11 December</span>
+    <span class="kicker" data-float data-after="Early access · open now">${OPEN_NOW ? "Early access · open now" : "Early access · opens soon"}</span>
     <h2 data-float>Walk in knowing you know.<br><span class="brat">Walk out insufferable.</span></h2>
     <div class="offer" id="claimCard" data-float>
       <span class="chip">Founding 30</span>
       <h3>Claim a founding seat.</h3>
-      <p class="sub">A$99 once, and it covers both 2027 sittings.<br>Physics, chemistry, biology and the maths, written for an adult who hasn't touched science since school.<br><span data-after="One payment, nothing renews, and the first 30 in keep the rate.">One payment, nothing renews. The founding list hears first on Friday 11 December, and the first 30 in keep the rate.</span></p>
-      <form id="kgForm" novalidate>
+      <p class="sub">A$99 once, and it covers both 2027 sittings.<br>Physics, chemistry, biology and the maths, written for an adult who hasn't touched science since school.<br><span data-after="One payment, nothing renews, and the first 30 in keep the rate.">${OPEN_NOW ? "One payment, nothing renews, and the first 30 in keep the rate." : "One payment, nothing renews. The founding list hears first the moment it opens, and the first 30 in keep the rate."}</span></p>
+      <form id="kgForm" novalidate${OPEN_NOW ? " hidden" : ""}>
         <fieldset class="sit">
           <legend>Which sitting are you aiming for?</legend>
           <label><input type="radio" name="sitting" value="march-2027"><span>March 2027</span></label>
@@ -367,7 +370,7 @@ ${opts}
         <p class="msg" id="kgMsg" role="status" aria-live="polite"></p>
         <p class="privacy">One email when it opens. Unsubscribe any time. <a href="/privacy">Privacy</a>.</p>
       </form>
-      <a class="btn btn-purple" id="kgSignup" href="${SIGNUP}" data-g="claim" hidden>claim a founding seat</a>
+      <a class="btn btn-purple" id="kgSignup" href="${SIGNUP}" data-g="claim"${OPEN_NOW ? "" : " hidden"}>claim a founding seat</a>
     </div>
   </div>
 </section>
@@ -388,7 +391,7 @@ ${opts}
   (function inj(){ if(!window.KnowhereMarks){ return setTimeout(inj,60); } document.querySelectorAll('[data-kw-logo]').forEach(function(el){ el.innerHTML=window.KnowhereMarks.logoSvg(parseInt(el.getAttribute('data-kw-logo')||'24',10)); }); })();
   function track(n,d){ try{ if(window.umami){ d=d||{}; d.cohort='gamsat'; window.umami.track(n,d); } }catch(e){} }
 
-  /* ── the 11 Dec switch: before it, every claim CTA goes to #claim (the founding list); from it, to signup ── */
+  /* ── the open switch (OPENS_AT): before it, every claim CTA goes to #claim (the founding list); from it, to signup ── */
   var OPEN = Date.now() >= Date.parse(OPENS_AT);
   if (OPEN) {
     document.querySelectorAll('a[data-claim]').forEach(function(a){ a.href = SIGNUP; });
@@ -441,7 +444,7 @@ ${opts}
       .then(function(r){
         btn.disabled = false;
         if (!r.ok){ msg.className = 'msg bad'; msg.textContent = (r.j && r.j.error) || 'Couldn\\u2019t save that just now. Try again.'; return; }
-        msg.className = 'msg ok'; msg.textContent = 'You\\u2019re on the founding list. On Friday 11 December you hear first, and the first 30 in keep the founding rate.';
+        msg.className = 'msg ok'; msg.textContent = 'You\\u2019re on the founding list. You hear first the moment it opens, and the first 30 in keep the founding rate.';
         form.email.value = ''; track('gamsat_signup', {sitting: s ? s.value : 'none'});
       })
       .catch(function(){ btn.disabled = false; msg.className = 'msg bad'; msg.textContent = 'Couldn\\u2019t save that just now. Try again.'; });
@@ -469,7 +472,7 @@ for (const p of pics.values()) if (!page.includes(p.src)) die('page does not ref
 const mine = new Set(out.map(([f]) => f));
 const stale = fs.readdirSync('widgets').filter(f => /^gamsat-.+\.html$/.test(f) && !mine.has('widgets/' + f));
 
-console.log(`build-gamsat-page v2 · app ${path.relative(ROOT, APP) || APP} · opens ${OPENS_AT} · shelf ${shelf} (pill "+ ${more} more") · ${APPLY ? 'APPLY' : 'DRY'}`);
+console.log(`build-gamsat-page v2 · app ${path.relative(ROOT, APP) || APP} · opens ${OPENS_AT} (${OPEN_NOW ? 'OPEN: built as signup' : 'not yet: built as the list'}) · shelf ${shelf} (pill "+ ${more} more") · ${APPLY ? 'APPLY' : 'DRY'}`);
 for (const p of pics.values()) console.log(`  ${p.science.padEnd(9)} ${p.id} ${p.slug}${p.id === STEMLORD.picture ? '  ← Stemlord ep ' + STEMLORD.episode : ''}`);
 for (const [f, c] of out) { const same = fs.existsSync(f) && fs.readFileSync(f, 'utf8') === c; console.log(`  ${same ? '=' : fs.existsSync(f) ? '~' : '+'} ${f} (${(c.length / 1024).toFixed(1)} KB)`); }
 if (stale.length) console.log('  stale (no longer referenced; git rm them):\n' + stale.map(f => '    widgets/' + f).join('\n'));
