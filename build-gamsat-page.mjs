@@ -343,9 +343,9 @@ html.kw-float .kt2 [data-float].in{opacity:1;transform:none}
   <div class="wrap">
     <div class="ks-head" data-float>
       <span class="kicker">A real concept, live from the app</span>
-      <h2>The squid is new.<br><span class="brat">The science isn't.</span></h2>
-      <p class="lede">Pick a science. Change something and watch what happens.<br><b>This is the exact model you get.</b></p>
-      <div class="pills" role="group" aria-label="Pick a science">
+      <h2>Stop reading about it.<br><span class="brat">See how it works.</span></h2>
+      <p class="lede">Pick a subject. Change something and watch what happens.<br><b>This is the exact model you get.</b></p>
+      <div class="pills" role="group" aria-label="Pick a subject">
 ${PILLS.map((p, i) => `        <button type="button" class="pill" data-k="${p.k}" aria-pressed="${i === 0}">${esc(K[p.k].s)}</button>`).join('\n')}
         <span class="pill more">+ ${more} more on the shelf</span>
       </div>
