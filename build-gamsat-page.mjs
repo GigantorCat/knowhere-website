@@ -40,7 +40,7 @@ const PILLS = [
 /* This week's Stemlord: one block per episode. picture = any GAMSAT concept id ("move it yourself" loads it into the stage).
    video: the ad's URL once Animal's cut exists; null hides the video tile and the question card takes the full width. */
 const STEMLORD = {
-  episode: 1, title: 'the squid', length: '15 seconds', video: null, poster: null,
+  episode: 1, title: 'the squid', length: '20 seconds', video: '/uploads/stemlord-ep1-9x16.mp4', poster: '/uploads/stemlord-ep1-poster.jpg',
   typed: 'A deep-sea squid pumps blood through vessels of varying width… <i>at 3,000 metres.</i> Diabolical!',
   question: 'Blood flow through a vessel = pressure difference ÷ resistance. One vessel narrows and its resistance doubles, at the same pressure difference. What happens to the flow?',
   options: ['It doubles', 'It halves', 'It stays the same'], answer: 1,
@@ -110,7 +110,9 @@ const TITLE = 'GAMSAT Section 3, as things you can move — knowhere';
 const DESC = 'Section 3 is half your GAMSAT score, and it is written in physics, chemistry and biology. Move the science underneath. Founding seats for the 2027 sittings.';
 const opts = STEMLORD.options.map((o, i) => `          <button type="button" class="opt" data-a="${i === STEMLORD.answer ? 1 : 0}"><b>${i + 1}</b>${esc(o)}</button>`).join('\n');
 const vid = STEMLORD.video
-  ? `      <div class="vid has"><video src="${esc(STEMLORD.video)}"${STEMLORD.poster ? ` poster="${esc(STEMLORD.poster)}"` : ''} controls playsinline preload="metadata" title="This week's Stemlord, episode ${STEMLORD.episode}"></video></div>\n`
+  /* 17 Nov: muted + playsinline (+ the old WebKit spelling) so phones and in-app browsers (Instagram) play it inline and
+     never with sound; it is silent anyway. loop + controls stay; the page script plays it when half of it is on screen. */
+  ? `      <div class="vid has"><video src="${esc(STEMLORD.video)}"${STEMLORD.poster ? ` poster="${esc(STEMLORD.poster)}"` : ''} muted playsinline webkit-playsinline loop controls preload="metadata" data-autoview title="This week's Stemlord, episode ${STEMLORD.episode}, ${esc(STEMLORD.length)}"></video></div>\n`
   : '';
 
 const page = `<!DOCTYPE html>
@@ -223,9 +225,10 @@ html,body{margin:0;padding:0;background:#070708}
 .kt2 .sec-h{display:grid;gap:14px;margin-bottom:26px}
 .kt2 .epgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:stretch}
 .kt2 .epgrid.solo{grid-template-columns:1fr}
-@media (max-width:900px){.kt2 .epgrid{grid-template-columns:1fr}}
-.kt2 .vid{border-radius:18px;border:1px solid var(--line);background:#0B0D11;overflow:hidden;min-height:360px;display:grid;place-items:center}
-.kt2 .vid video{width:100%;height:100%;display:block;object-fit:cover}
+.kt2 .epgrid.hasvid{grid-template-columns:minmax(0,340px) minmax(0,1fr)}
+@media (max-width:900px){.kt2 .epgrid,.kt2 .epgrid.hasvid{grid-template-columns:1fr}.kt2 .vid{max-width:340px;width:100%;margin:0 auto}}
+.kt2 .vid{border-radius:18px;border:1px solid var(--line);background:#0B0D11;overflow:hidden;align-self:start}
+.kt2 .vid video{width:100%;height:auto;aspect-ratio:9/16;display:block;object-fit:cover;background:#0B0D11}
 .kt2 .qcard{background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--brat);border-radius:18px;padding:22px}
 .kt2 .typed{font-family:var(--mono);font-size:13.5px;line-height:1.6;background:#0B0D11;border:1px solid var(--line);border-radius:10px;padding:12px 14px}
 .kt2 .typed i{font-style:normal;color:var(--brat)}
@@ -332,7 +335,7 @@ ${PILLS.map((p, i) => `        <button type="button" class="pill" data-k="${p.k}
       <h2>The Stemlord writes the questions.<br><span class="brat">You see straight through them.</span></h2>
       <p class="lede">Every Wednesday he dresses ordinary science up as something terrifying.<br><b>Have a go, then move the science underneath.</b></p>
     </div>
-    <div class="epgrid${STEMLORD.video ? '' : ' solo'}" data-float>
+    <div class="epgrid${STEMLORD.video ? ' hasvid' : ' solo'}" data-float>
 ${vid}      <div class="qcard">
         <div class="typed">${STEMLORD.typed}</div>
         <p class="q">${esc(STEMLORD.question)}</p>
@@ -452,6 +455,17 @@ ${opts}
 
   /* ── scroll float ── */
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  /* Stemlord (17 Nov): the episode plays, muted, when half of it is on screen and pauses when it leaves. Reduced motion:
+     it waits for a tap. One gamsat_ep_play per visit. */
+  (function(){
+    var v = document.querySelector('.kt2 video[data-autoview]'); if (!v) return;
+    v.muted = true; v.defaultMuted = true; var told = false;
+    v.addEventListener('play', function(){ if (!told){ told = true; track('gamsat_ep_play', {episode: ${STEMLORD.episode}}); } });
+    if (reduce || !window.IntersectionObserver) return;
+    new IntersectionObserver(function(es){ es.forEach(function(e){
+      if (e.isIntersecting && e.intersectionRatio >= 0.5){ var p = v.play(); if (p && p.catch) p.catch(function(){}); } else if (!v.paused) v.pause();
+    }); }, {threshold: [0, 0.5]}).observe(v);
+  })();
   if (!reduce && window.IntersectionObserver){
     document.documentElement.classList.add('kw-float');
     var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }); }, {threshold: 0.12});
