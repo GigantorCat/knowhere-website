@@ -41,6 +41,12 @@ const PILLS = [
    video: the ad's URL once Animal's cut exists; null hides the video tile and the question card takes the full width. */
 const STEMLORD = {
   episode: 1, title: 'the squid', length: '20 seconds', video: '/uploads/stemlord-ep1-9x16.mp4', poster: '/uploads/stemlord-ep1-poster.jpg',
+  eyebrow: 'Episode 1: The deep-sea squid',   /* 18 Nov: the episode's own eyebrow, under the rule */
+  /* desktop (>900 px), 18 Nov: a 16:9 row above the card. videoLandscape (1920×1080) plays like the phone one; until it exists
+     the row shows `still` (a lair crop, never the 9:16 stretched) with `hook` beside it. posterLandscape = its poster frame. */
+  videoLandscape: '/uploads/stemlord-ep1-16x9.mp4', posterLandscape: '/uploads/stemlord-ep1-16x9-poster.jpg',
+  still: null,
+  hook: 'Section 3 will describe the heart as a mystery organ in a <span class="brat">deep-sea squid.</span>',
   typed: 'A deep-sea squid pumps blood through vessels of varying width… <i>at 3,000 metres.</i> Diabolical!',   /* phones (≤900 px) */
   /* desktop (>900 px): the Stemlord's full screen, as a terminal. The grey "// stemlord.exe · episode N · title" line is made
      from episode + title; the LAST line is his sign-off, in brat with a blinking cursor. <i>…</i> = brat. */
@@ -138,10 +144,16 @@ const LD = JSON.stringify({ '@context': 'https://schema.org', '@graph': [
 const opts = STEMLORD.options.map((o, i) => `          <button type="button" class="opt" data-a="${i === STEMLORD.answer ? 1 : 0}"><b>${i + 1}</b>${esc(o)}</button>`).join('\n');
 const scr = STEMLORD.screen.slice(0, -1).join('<br>');
 const term = `<div class="term" aria-label="The Stemlord’s screen"><span class="c">// stemlord.exe · episode ${STEMLORD.episode} · ${esc(STEMLORD.title)}</span>${scr}<span class="mw">${STEMLORD.screen[STEMLORD.screen.length - 1]}<span class="cur" aria-hidden="true"></span></span></div>`;
+if (!STEMLORD.eyebrow) die('Stemlord needs an eyebrow (e.g. "Episode 1: The deep-sea squid")');
+if (STEMLORD.video && !STEMLORD.videoLandscape && !STEMLORD.still) die('Stemlord needs videoLandscape or a still for the desktop row');
+const alt = `The Stemlord in his lair, episode ${STEMLORD.episode}`;
+const land = !STEMLORD.video ? '' : STEMLORD.videoLandscape
+  ? `      <div class="vid land has"><video src="${esc(STEMLORD.videoLandscape)}"${STEMLORD.posterLandscape ? ` poster="${esc(STEMLORD.posterLandscape)}"` : ''} muted playsinline webkit-playsinline loop controls preload="metadata" data-autoview title="${esc(alt)}, ${esc(STEMLORD.length)}"></video></div>\n`
+  : `      <div class="vid land still"><img src="${esc(STEMLORD.still)}" alt="${esc(alt)}" loading="lazy" decoding="async"><p class="cap">${STEMLORD.hook}</p></div>\n`;
 const vid = STEMLORD.video
   /* 17 Nov: muted + playsinline (+ the old WebKit spelling) so phones and in-app browsers (Instagram) play it inline and
      never with sound; it is silent anyway. loop + controls stay; the page script plays it when half of it is on screen. */
-  ? `      <div class="vid has"><video src="${esc(STEMLORD.video)}"${STEMLORD.poster ? ` poster="${esc(STEMLORD.poster)}"` : ''} muted playsinline webkit-playsinline loop controls preload="metadata" data-autoview title="This week's Stemlord, episode ${STEMLORD.episode}, ${esc(STEMLORD.length)}"></video></div>\n`
+  ? land + `      <div class="vid por has"><video src="${esc(STEMLORD.video)}"${STEMLORD.poster ? ` poster="${esc(STEMLORD.poster)}"` : ''} muted playsinline webkit-playsinline loop controls preload="metadata" data-autoview title="${esc(alt)}, ${esc(STEMLORD.length)}"></video></div>\n`
   : '';
 
 const page = `<!DOCTYPE html>
@@ -272,20 +284,31 @@ html,body{margin:0;padding:0;background:#070708}
 .kt2 .reveal{margin-top:14px;font-size:15px;line-height:1.55;color:var(--dim)}
 .kt2 .reveal b{color:var(--ink)}
 .kt2 .reveal .turn{display:block;margin:10px 0 14px;font-size:20px;font-weight:800;letter-spacing:-.02em;color:var(--ink);line-height:1.2}
-/* 17 Nov (Cat, the mock): one-line lede on desktop; above 900 px the card grows and the typed line becomes the full terminal */
+/* 17–18 Nov (Cat, the mock): above 900 px the video is a 16:9 row (the landscape cut, or the lair still + hook until it
+   lands) and the card is two columns: The Stemlord's terminal | the question, options and reveal. Phones: unchanged. */
+.kt2 .stem .sec-h{margin-bottom:0}
 .kt2 .stem .sec-h .lede{max-width:none}
+.kt2 hr.rule{border:0;border-top:1px solid var(--line);margin:34px 0 26px}
+.kt2 .kicker.ep{display:block;margin-bottom:14px}
 .kt2 .term{display:none}
+.kt2 .vid.land{display:none}
 @media (min-width:901px){
-.kt2 .stem .sec-h .lede{white-space:nowrap}
-.kt2 .epgrid.hasvid{gap:22px}
-.kt2 .qcard{padding:30px 32px;display:flex;flex-direction:column}
+.kt2 .epgrid.hasvid{grid-template-columns:1fr;gap:20px;max-width:1000px}
+.kt2 .vid.por{display:none}
+.kt2 .vid.land{display:block;width:100%;aspect-ratio:16/9;position:relative;background:#070708;overflow:hidden}
+.kt2 .vid.land video{aspect-ratio:16/9;height:100%}
+.kt2 .vid.still img{position:absolute;left:2%;top:50%;transform:translateY(-50%);width:60%;height:auto;display:block;-webkit-mask-image:linear-gradient(90deg,#000 80%,transparent);mask-image:linear-gradient(90deg,#000 80%,transparent)}
+.kt2 .vid.still .cap{position:absolute;right:5%;top:50%;transform:translateY(-50%);width:32%;font-size:28px;font-weight:800;line-height:1.15;letter-spacing:-.02em;text-wrap:balance}
+.kt2 .qcard{padding:30px 32px;display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:8px 30px;align-items:start}
+.kt2 .qcard .term{grid-column:1;grid-row:1 / span 3}
+.kt2 .qcard .q,.kt2 .qcard .opts,.kt2 .qcard .reveal{grid-column:2}
 .kt2 .typed{display:none}
 .kt2 .term{display:block;font-family:var(--mono);font-size:17px;line-height:1.65;background:#0B0D11;border:1px solid var(--line);border-radius:12px;padding:18px 20px}
 .kt2 .term .c{color:var(--dimmer);font-size:13px;display:block;margin-bottom:6px}
 .kt2 .term i{font-style:normal;color:var(--brat)}
 .kt2 .term .mw{display:block;margin-top:8px;color:var(--brat);font-weight:700;letter-spacing:.04em}
 .kt2 .term .cur{display:inline-block;width:.6em;height:1.05em;background:var(--brat);vertical-align:-2px;margin-left:4px;animation:kwBlink 1s steps(2) infinite}
-.kt2 .qcard .q{font-size:23px;line-height:1.35;margin:24px 0 18px;letter-spacing:-.01em}
+.kt2 .qcard .q{font-size:23px;line-height:1.35;margin:0 0 18px;letter-spacing:-.01em}
 .kt2 .opts{gap:10px}
 .kt2 .opt{font-size:18px;padding:17px 18px;border-radius:14px}
 .kt2 .opt b{font-size:14px}
@@ -383,10 +406,11 @@ ${PILLS.map((p, i) => `        <button type="button" class="pill" data-k="${p.k}
 <section class="stem" id="stemlord">
   <div class="wrap">
     <div class="sec-h" data-float>
-      <span class="kicker">This week's Stemlord · episode ${STEMLORD.episode}</span>
-      <h2>The Stemlord writes the questions.<br><span class="brat">You see straight through them.</span></h2>
-      <p class="lede">Whenever he’s feeling diabolical, he dresses ordinary science up as something terrifying.</p>
+      <span class="kicker">Introducing The Stemlord</span>
+      <h2>Welcome to GAMSAT Section 3.<br><span class="brat">Brace yourself for the bizarre.</span></h2>
+      <p class="lede">Alien chemistry, weird contraptions and five-legged goats.<br><b>Meet The Stemlord, master of turning ordinary science into something diabolical.</b></p>
     </div>
+    <hr class="rule"><span class="kicker ep">${esc(STEMLORD.eyebrow)}</span>
     <div class="epgrid${STEMLORD.video ? ' hasvid' : ' solo'}" data-float>
 ${vid}      <div class="qcard">
         <div class="typed">${STEMLORD.typed}</div>
@@ -458,7 +482,7 @@ ${opts}
   document.querySelectorAll('[data-g]').forEach(function(a){ a.addEventListener('click', function(){ if (a.type !== 'submit') track('gamsat_cta', {where: a.getAttribute('data-g'), open: OPEN}); }); });
   document.addEventListener('click', function(e){ var t = e.target && e.target.closest && e.target.closest('.kw-passbar .pb-cta'); if (t) track('gamsat_cta', {where: 'bar', open: OPEN}); });
 
-  /* ── the knowscape: three pills, and any GAMSAT picture the Stemlord loads ── */
+  /* ── the knowscape: three pills, and any GAMSAT picture The Stemlord loads ── */
   var cur = ${JSON.stringify(PILLS[0].k)}, f = document.getElementById('ksFrame'), stage = document.getElementById('ksStage');
   function pick(k, scroll, via){
     if (!K[k]) return;
@@ -476,7 +500,7 @@ ${opts}
   if (K[qk] && qk !== '_ep') setTimeout(function(){ pick(qk, true, 'link'); }, 60);
   window.addEventListener('hashchange', function(){ var h = (location.hash || '').replace('#',''); if (K[h] && h !== '_ep') pick(h, true, 'link'); });
 
-  /* ── this week's Stemlord ── */
+  /* ── The Stemlord, this week's episode ── */
   var opts = document.querySelectorAll('#epOpts .opt'), done = false;
   opts.forEach(function(o){ o.addEventListener('click', function(){
     if (done) return; done = true;
@@ -508,16 +532,21 @@ ${opts}
 
   /* ── scroll float ── */
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  /* Stemlord (17 Nov): the episode plays, muted, when half of it is on screen and pauses when it leaves. Reduced motion:
+  /* The Stemlord (17 Nov): the episode plays, muted, when half of it is on screen and pauses when it leaves. Reduced motion:
      it waits for a tap. One gamsat_ep_play per visit. */
   (function(){
-    var v = document.querySelector('.kt2 video[data-autoview]'); if (!v) return;
-    v.muted = true; v.defaultMuted = true; var told = false;
-    v.addEventListener('play', function(){ if (!told){ told = true; track('gamsat_ep_play', {episode: ${STEMLORD.episode}}); } });
-    if (reduce || !window.IntersectionObserver) return;
-    new IntersectionObserver(function(es){ es.forEach(function(e){
+    /* 18 Nov: two cuts can be on the page (9:16 for phones, 16:9 for desktop); only the one on screen ever intersects */
+    var vs = document.querySelectorAll('.kt2 video[data-autoview]'); if (!vs.length) return;
+    var told = false;
+    var io = (reduce || !window.IntersectionObserver) ? null : new IntersectionObserver(function(es){ es.forEach(function(e){
+      var v = e.target;
       if (e.isIntersecting && e.intersectionRatio >= 0.5){ var p = v.play(); if (p && p.catch) p.catch(function(){}); } else if (!v.paused) v.pause();
-    }); }, {threshold: [0, 0.5]}).observe(v);
+    }); }, {threshold: [0, 0.5]});
+    Array.prototype.forEach.call(vs, function(v){
+      v.muted = true; v.defaultMuted = true;
+      v.addEventListener('play', function(){ if (!told){ told = true; track('gamsat_ep_play', {episode: ${STEMLORD.episode}}); } });
+      if (io) io.observe(v);
+    });
   })();
   if (!reduce && window.IntersectionObserver){
     document.documentElement.classList.add('kw-float');
