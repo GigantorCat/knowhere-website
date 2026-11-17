@@ -345,7 +345,7 @@ PAGE = f'''{head}<body>
 
 </div><!-- /.kt2 -->
 
-<x-import component-from-global-scope="knowhere-footer-nav" from="./knowhere-footer.js?v=26"></x-import>
+<x-import component-from-global-scope="knowhere-footer-nav" from="./knowhere-footer.js?v=27"></x-import>
 
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{{&quot;$preview&quot;:{{&quot;width&quot;:1040,&quot;height&quot;:820}}}}">
@@ -368,7 +368,7 @@ class Component extends DCLogic {{
    swaps named in _patches/for-teachers-v2/build.py. Call it. rounds: the app's goated keys (teach-notes.json). */
 {ENGINE}
 </script>
-<script src="./knowhere-mobile-menu.js?v=8" defer></script>
+<script src="./knowhere-mobile-menu.js?v=9" defer></script>
 </body>
 </html>
 '''

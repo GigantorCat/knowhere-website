@@ -299,7 +299,7 @@
               'knowhere-footer-nav .kfn-sep{display:inline}' +
               'knowhere-footer-nav .kfn-stu{justify-self:end;align-items:flex-end;gap:6px;padding-top:0}' +
               'knowhere-footer-nav .kfn-stu-h{font-size:9px;letter-spacing:0.18em}' +
-              'knowhere-footer-nav .kfn-stu-row{flex-direction:row;gap:16px}' +
+              'knowhere-footer-nav .kfn-stu-row{flex-direction:row;flex-wrap:wrap;justify-content:flex-end;gap:6px 16px}' +   /* V27: three hubs may wrap on a small phone */
               'knowhere-footer-nav a.kfn-stu-link{font-size:15px}' +
               'knowhere-footer-nav a.kfn-stu-link .kfn-x{display:none}' +
               'knowhere-footer-nav a.kfn-stu-link .kfn-arr{margin-left:4px}' +
@@ -339,6 +339,8 @@
                   '<div class="kfn-stu-row">' +
                     '<a class="kfn-stu-link" href="/hsc/">hsc<span class="kfn-x"> concepts</span><span class="kfn-arr" aria-hidden="true">→</span></a>' +
                     '<a class="kfn-stu-link" href="/vce/">vce<span class="kfn-x"> concepts</span><span class="kfn-arr" aria-hidden="true">→</span></a>' +
+                    /* KW:FOOT-V27 (18 Nov 2026): GAMSAT joins the hubs — until now nothing on the site linked to /gamsat */
+                    '<a class="kfn-stu-link" href="/gamsat">gamsat<span class="kfn-x"> section 3</span><span class="kfn-arr" aria-hidden="true">→</span></a>' +
                   '</div>' +
                 '</div>' +
                 '<div class="kfn-links">' +
