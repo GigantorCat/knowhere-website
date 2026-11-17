@@ -574,7 +574,7 @@ ${beacon(p.slug)}</body></html>`;
       <a href="/how-it-works">How it works</a>
       <a href="/experience-it">Experience it</a>
       <a href="/pricing">Pricing</a>
-      <a href="/for-parents">For parents</a><a href="/for-teachers">For teachers</a>
+      <a href="/for-parents">For parents</a><a href="/for-teachers">For teachers</a><a href="/gamsat">GAMSAT</a>
       <a href="https://app.knowhere.me/login" class="login">Log in</a>
       <a class="nav-cta" data-kw-cta href="https://app.knowhere.me/signup?as=student">start your free week</a>
     </div>
@@ -621,8 +621,8 @@ ${wild}${points}${under}${rest}
   <knowhere-footer-nav></knowhere-footer-nav>
 ${p.cert === 'vce' ? '  ' + VCAA_LINE + '\n' : ''}
 </div>
-<script src="/knowhere-footer.js?v=26"></script>
-<script src="/knowhere-mobile-menu.js?v=8" defer></script>
+<script src="/knowhere-footer.js?v=27"></script>
+<script src="/knowhere-mobile-menu.js?v=9" defer></script>
 <script>
 (function(){
   (function inj(){ if(!window.KnowhereMarks){ return setTimeout(inj,60); } document.querySelectorAll('[data-kw-logo]').forEach(function(el){ el.innerHTML=window.KnowhereMarks.logoSvg(parseInt(el.getAttribute('data-kw-logo')||'24',10)); }); })();

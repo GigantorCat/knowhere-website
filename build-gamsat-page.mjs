@@ -15,7 +15,7 @@
            knowhere.html (the subject colours), pipeline/gamsat/map.json (the shelf count, a picture's science),
            pipeline/gamsat/knowhow.json (GOATED lines, for a Stemlord picture off the pills).
    OUTPUT  gamsat.html · widgets/gamsat-<slug>.html (the three pills + the Stemlord picture). A gamsat-*.html widget no
-           longer referenced is listed as stale (delete it with git rm). sitemap.xml keeps its hand row.
+           longer referenced is listed as stale (delete it with git rm). sitemap.xml: knowhere-seo-v2.sh keeps the /gamsat row (PAGES, kind="ext").
    Dry run by default; --apply writes, then reads every file back.                                              */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -117,6 +117,24 @@ const more = shelf - PILLS.length;
 const claimHref = OPEN_NOW ? SIGNUP : '#claim';   /* the date switch also rewrites every [data-claim] on the client (a page built early still opens on time) */
 const TITLE = 'GAMSAT Section 3, as things you can move — knowhere';
 const DESC = 'Section 3 is half your GAMSAT score, and it is written in physics, chemistry and biology. Move the science underneath. Founding seats for the 2027 sittings.';
+/* KW:GAMSAT-SEO (18 Nov 2026): the page's structured data. It lives here, not in knowhere-seo-v2.sh, because this file owns
+   the head. The organisation is named by @id only: the site-wide description names the school certificates, which the gate
+   below bans on this page. No dates in it, so a rebuild with nothing changed stays byte-identical. */
+const GURL = 'https://knowhere.me/gamsat', GORG = { '@id': 'https://knowhere.me/#org' };
+const LD = JSON.stringify({ '@context': 'https://schema.org', '@graph': [
+  { '@type': 'Organization', '@id': GORG['@id'], name: 'knowhere', url: 'https://knowhere.me/' },
+  { '@type': 'WebPage', '@id': GURL + '#webpage', url: GURL, name: TITLE, description: DESC, inLanguage: 'en-AU', publisher: GORG,
+    breadcrumb: { '@id': GURL + '#breadcrumb' }, mainEntity: { '@id': GURL + '#course' } },
+  { '@type': 'BreadcrumbList', '@id': GURL + '#breadcrumb', itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'knowhere', item: 'https://knowhere.me/' },
+    { '@type': 'ListItem', position: 2, name: 'GAMSAT', item: GURL } ] },
+  { '@type': 'Course', '@id': GURL + '#course', name: 'GAMSAT Section 3 science, as things you can move',
+    description: 'The physics, chemistry and biology under GAMSAT Section 3 as interactive models, for candidates from non-science backgrounds.',
+    provider: GORG, inLanguage: 'en-AU',
+    about: ['GAMSAT Section 3', 'Reasoning in Biological and Physical Sciences', 'physics', 'chemistry', 'biology'],
+    audience: { '@type': 'Audience', audienceType: 'GAMSAT candidates, including those from non-science backgrounds' },
+    offers: { '@type': 'Offer', price: '99', priceCurrency: 'AUD', category: 'Paid', url: GURL, availability: 'https://schema.org/InStock' } },
+] });
 const opts = STEMLORD.options.map((o, i) => `          <button type="button" class="opt" data-a="${i === STEMLORD.answer ? 1 : 0}"><b>${i + 1}</b>${esc(o)}</button>`).join('\n');
 const scr = STEMLORD.screen.slice(0, -1).join('<br>');
 const term = `<div class="term" aria-label="The Stemlord’s screen"><span class="c">// stemlord.exe · episode ${STEMLORD.episode} · ${esc(STEMLORD.title)}</span>${scr}<span class="mw">${STEMLORD.screen[STEMLORD.screen.length - 1]}<span class="cur" aria-hidden="true"></span></span></div>`;
@@ -154,6 +172,7 @@ const page = `<!DOCTYPE html>
 <meta name="twitter:title" content="You can read the question. You just don't speak science. Yet.">
 <meta name="twitter:description" content="${esc(DESC)}">
 <meta name="twitter:image" content="https://knowhere.me/og-gamsat.png">
+<script type="application/ld+json">${LD}</script>
 <script defer src="https://cloud.umami.is/script.js" data-website-id="ee8e1d64-1100-4281-8ca5-179736bcc3e0" data-auto-track="false" data-domains="knowhere.me,app.knowhere.me"></script>
 <script defer src="/knowhere-pixel.js?v=4"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">

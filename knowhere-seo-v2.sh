@@ -73,7 +73,7 @@ PAGES = {
      "Nothing today. Free for a week, then A$39 a month, A$99 a term or A$299 a year — founding rate A$29 / A$79 / A$249 for the first 50. Yours forever. Founding rate: the first 50 student plans, or until Fri 9 April 2027, whichever comes first. It stays yours while your plan stays active. Term and year plans land on the first day of term: sign up mid-term and you only ever pay for the weeks ahead of you. Cancel any time in the free week and you are not charged. If it doesn't click, it costs you a week."),  # subs-v2 round 4 (16 Oct) — keep in step with for-parents.html
    ]),
  "for-teachers.html": dict(path="/for-teachers", kind="faq",   # KW:TEACH-V2 (5 Nov 2026): the v2 hero; FAQ = the page's four, word for word
-   title="knowhere · teach it. — Stop reading the room. Run it.",
+   title="HSC & VCE lessons for teachers — knowhere · teach it.",   # KW:GAMSAT-SEO 18 Nov: a title people search for; the hero line stays on the page and in og_title
    desc="knowhere turns dry HSC and VCE concepts into live models the room has to poke, call and argue over before the reveal. No leaderboards, no logins.",
    og_title="You can't learn it for them. You're still the one who answers for it.",
    og_desc="So stop reading the room. Run it. Founding teachers: free until 9 April. No card.",
@@ -137,6 +137,12 @@ PAGES = {
    title="Hold a seat — knowhere",
    desc="Founding teacher seats and early access for knowhere, the Year 11 and 12 study app for HSC and VCE.",
    name="Waitlist"),
+ "gamsat.html": dict(path="/gamsat", kind="ext",   # KW:GAMSAT-SEO 18 Nov 2026 — this page's head and JSON-LD are OWNED by build-gamsat-page.mjs
+   # (its own og image, and a gate that bans the school words). It is listed here ONLY so its sitemap row, its clean-URL 301
+   # and link rewriting survive every regen — before this, a regen silently dropped /gamsat from the sitemap. Never head-patched.
+   title="GAMSAT Section 3, as things you can move — knowhere",
+   desc="(owned by build-gamsat-page.mjs)",
+   name="GAMSAT"),
  "404.html": dict(path=None, kind="404",
    title="404 — knowhere",
    desc="That page is nowhere. knowhere is here.",
@@ -151,13 +157,13 @@ def org():
          "alternateName":["knowhere.me","knowhere study app"],
          "legalName":"Gigantor Studios Pty Ltd","url":SITE+"/",
          "logo":{"@type":"ImageObject","url":SITE+"/og-image.png","width":1200,"height":630},
-         "description":"knowhere is an Australian personalised study app for Year 11 and 12 students doing the HSC (NSW) and VCE (Victoria). Every concept in 15 HSC and 16 VCE subjects is rebuilt for the way each learner thinks — motivation, neurology and mode — instead of teaching everyone the same way.",
+         "description":"knowhere is an Australian personalised study app for Year 11 and 12 students doing the HSC (NSW) and VCE (Victoria). Every concept in 15 HSC and 16 VCE subjects is rebuilt for the way each learner thinks — motivation, neurology and mode — instead of teaching everyone the same way. Teachers get the same concepts as ready-built lessons to run with a class (knowhere · teach it.), and adults sitting the GAMSAT get the Section 3 science the same way.",
          "disambiguatingDescription":"Australian education technology product for HSC and VCE students, made by Gigantor Studios Pty Ltd. Not affiliated with NESA or VCAA.",
          "foundingDate":"2026","founder":{"@id":SITE+"/#founder"},
          "email":"hello@knowhere.me",
          "address":{"@type":"PostalAddress","addressRegion":"NSW","addressCountry":"AU"},
          "areaServed":{"@type":"Country","name":"Australia"},
-         "knowsAbout":["HSC","VCE","Year 11 and 12 study","personalised learning","neurodivergent learners","ADHD study strategies"]}
+         "knowsAbout":["HSC","VCE","GAMSAT Section 3","Year 11 and 12 study","personalised learning","interactive lessons for teachers","neurodivergent learners","ADHD study strategies","dyslexia","autism"]}
     if SAME_AS: o["sameAs"] = SAME_AS
     return o
 
@@ -176,7 +182,8 @@ def app(full=False):
          "applicationCategory":"EducationalApplication","applicationSubCategory":"Study app",
          "operatingSystem":"Web","url":SITE+"/","inLanguage":"en-AU","isAccessibleForFree":False,
          "description":"Personalised Year 11 and 12 study for HSC and VCE. 15 HSC and 16 VCE subjects as living, interactive concepts, reframed for each learner's motivation, neurology and mode. Seven-day free trial.",
-         "audience":{"@type":"EducationalAudience","educationalRole":"student","audienceType":"Year 11 and 12 students (HSC and VCE), their parents and teachers"},
+         "audience":[{"@type":"EducationalAudience","educationalRole":"student","audienceType":"Year 11 and 12 students (HSC and VCE) and their parents"},
+                     {"@type":"EducationalAudience","educationalRole":"teacher","audienceType":"Year 11 and 12 teachers (HSC and VCE)"}],   # KW:GAMSAT-SEO 18 Nov: teachers are an audience, not a footnote
          "educationalLevel":"Year 11 and 12","countriesSupported":"AU","publisher":{"@id":SITE+"/#org"},
          "offers":{"@type":"AggregateOffer","priceCurrency":"AUD","lowPrice":"39","highPrice":"299","offerCount":3,
                    "url":SITE+"/pricing","eligibleRegion":{"@type":"Country","name":"Australia"}}}
@@ -429,6 +436,8 @@ const SEO_PAGES = new Set(%s);
 app.use((req, res, next) => {
   if (req.method !== 'GET' && req.method !== 'HEAD') return next();
   const host = String(req.headers.host || '').toLowerCase();
+  // know.here (Cat's short domain, 18 Nov 2026): every path 301s to the same path on knowhere.me
+  if (host === 'know.here' || host === 'www.know.here') return res.redirect(301, 'https://knowhere.me' + req.originalUrl);
   if (host !== 'knowhere.me' && host !== 'www.knowhere.me') {
     // localhost / Railway preview host: serve as-is, but keep it out of the index
     res.set('X-Robots-Tag', 'noindex');
@@ -465,12 +474,15 @@ def patch_server():
 
 def write_sitemap():
     prio = {"/":"1.0","/how-it-works":"0.9","/experience-it":"0.9","/pricing":"0.9","/for-parents":"0.8","/for-teachers":"0.8",
-            "/compare":"0.8","/mission":"0.6","/know-us":"0.6","/press":"0.6","/talk-to-us":"0.5","/privacy":"0.3","/terms":"0.3"}
+            "/compare":"0.8","/gamsat":"0.8","/mission":"0.6","/know-us":"0.6","/press":"0.6","/talk-to-us":"0.5","/privacy":"0.3","/terms":"0.3"}
     rows = []
     for f, p in PAGES.items():
         if not p["path"] or p["kind"] in ("noindex","404"): continue
         if not os.path.exists(os.path.join(ROOT, f)): continue
         u = SITE + p["path"]
+        if p["kind"] == "ext":   # KW:GAMSAT-SEO — generated elsewhere: its existing row is kept verbatim (no lastmod churn); no row yet -> one is made
+            _k = re.search(r"^.*<loc>" + re.escape(u) + r"</loc>.*$", open(os.path.join(ROOT, "sitemap.xml"), encoding="utf-8").read(), re.M)
+            rows.append(_k.group(0) if _k else f"  <url><loc>{u}</loc><lastmod>{TODAY}</lastmod><priority>{prio.get(p['path'],'0.5')}</priority></url>"); continue
         lm = PAGE_DATES.get(f, TODAY)
         rows.append(f"  <url><loc>{u}</loc><lastmod>{lm}</lastmod><priority>{prio.get(p['path'],'0.5')}</priority></url>")
     # KW:HUBS-SITEMAP 19 Oct 2026 — subject hubs (build-hub-pages.mjs): /hsc/, /hsc/biology/ ... before the concept rows.
@@ -540,6 +552,8 @@ def main():
     for fname, p in PAGES.items():
         if not os.path.exists(os.path.join(ROOT, fname)):
             print(f"  skip {fname} (not in repo)"); continue
+        if p["kind"] == "ext":   # KW:GAMSAT-SEO — its own generator owns the head
+            print(f"  {fname:22s} (ext: sitemap + clean URL only)"); continue
         tl, dl = len(p["title"]), len(p["desc"])
         flag = ("" if tl <= 60 else " TITLE>60") + ("" if dl <= 160 else " DESC>160")
         if patch_page(fname, p): changed.append(fname)
@@ -566,6 +580,7 @@ def main():
     for fname, p in PAGES.items():
         path = os.path.join(ROOT, fname)
         if not os.path.exists(path): continue
+        if p["kind"] == "ext": continue   # KW:GAMSAT-SEO
         s = open(path, encoding="utf-8").read()
         ok = ("KNOWHERE:SEO-HEAD v2" in s and s.count("<title>") == 1 and s.count('name="description"') == 1
               and '<html lang="en-AU">' in s)

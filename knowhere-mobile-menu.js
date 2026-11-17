@@ -1,5 +1,7 @@
 /* ─────────────────────────────────────────────────────────────
-   knowhere-mobile-menu.js v8 — shared mobile menu (≤820px).
+   knowhere-mobile-menu.js v9 — shared mobile menu (≤820px).
+   v9 (18 Nov 2026): GAMSAT joins the links. On a narrow desktop bar (821–1040px) the bar's
+   GAMSAT link hides, so six links never crowd the CTA; it is still in the footer.
    v8: the page's nav CTA ([data-kw-cta]) is hidden from the bar at ≤820px and
    rendered as the first item of the panel, green, with the page's own label and
    destination (parents → ?as=parent, teachers → /waitlist, else student signup).
@@ -36,7 +38,8 @@
     ".kwm-panel .kwm-soc{display:flex;align-items:center;gap:2px;padding:6px 8px 2px;margin-top:4px;border-top:1px solid rgba(255,255,255,.08)}" +
     ".kwm-panel .kwm-soc a{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;padding:0;border-radius:11px;color:#8C8B87}" +
     ".kwm-panel .kwm-soc a i{display:block;width:17px;height:17px;background:currentColor;-webkit-mask:var(--ico) center/contain no-repeat;mask:var(--ico) center/contain no-repeat}" +
-    "@media (max-width:820px){.kwm-btn{display:flex}nav:not(.kwm-panel) a[href*=\"app.knowhere.me\"],nav:not(.kwm-panel) [data-kw-cta]{display:none !important}}";
+    "@media (max-width:820px){.kwm-btn{display:flex}nav:not(.kwm-panel) a[href*=\"app.knowhere.me\"],nav:not(.kwm-panel) [data-kw-cta]{display:none !important}}" +
+    "@media (min-width:821px) and (max-width:1040px){nav:not(.kwm-panel) a[href=\"/gamsat\"]{display:none !important}}";
 
   var LINKS =
     '<a href="/">Home</a>' +
@@ -45,6 +48,7 @@
     '<a href="/pricing">Pricing</a>' +
     '<a href="/for-parents">For parents</a>' +
     '<a href="/for-teachers">For teachers</a>' +
+    '<a href="/gamsat">GAMSAT</a>' +
     '<a class="kwm-login" href="https://app.knowhere.me/login">Log in</a>';
 
   function panelEl() { return document.getElementById("kwm-panel"); }
