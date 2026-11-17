@@ -41,7 +41,15 @@ const PILLS = [
    video: the ad's URL once Animal's cut exists; null hides the video tile and the question card takes the full width. */
 const STEMLORD = {
   episode: 1, title: 'the squid', length: '20 seconds', video: '/uploads/stemlord-ep1-9x16.mp4', poster: '/uploads/stemlord-ep1-poster.jpg',
-  typed: 'A deep-sea squid pumps blood through vessels of varying width… <i>at 3,000 metres.</i> Diabolical!',
+  typed: 'A deep-sea squid pumps blood through vessels of varying width… <i>at 3,000 metres.</i> Diabolical!',   /* phones (≤900 px) */
+  /* desktop (>900 px): the Stemlord's full screen, as a terminal. The grey "// stemlord.exe · episode N · title" line is made
+     from episode + title; the LAST line is his sign-off, in brat with a blinking cursor. <i>…</i> = brat. */
+  screen: [
+    'A deep-sea squid pumps blood through vessels of varying width… <i>at 3,000 metres.</i>',
+    'One vessel narrows. Resistance doubles.',
+    'What happens to flow?',
+    'MWAHAHAHAHA',
+  ],
   question: 'Blood flow through a vessel = pressure difference ÷ resistance. One vessel narrows and its resistance doubles, at the same pressure difference. What happens to the flow?',
   options: ['It doubles', 'It halves', 'It stays the same'], answer: 1,
   reveal: '<b>It’s 2.</b> Flow = pressure ÷ resistance, so double the resistance and the flow halves. It’s Ohm’s law, with blood instead of current.',
@@ -102,6 +110,7 @@ for (const p of PILLS) { const x = picture(p.id); K[p.k] = { s: x.science, n: x.
 const ep = picture(STEMLORD.picture);
 const EP_PIC = Object.values(K).find(v => v.id === ep.kwId) ? Object.keys(K).find(k => K[k].id === ep.kwId)
   : (K._ep = { s: ep.science, n: ep.title, src: ep.src, id: ep.kwId, k: goatedLine(ep.id) }, '_ep');
+if (!Array.isArray(STEMLORD.screen) || STEMLORD.screen.length < 2) die('Stemlord needs a screen: at least one line plus the sign-off');
 if (STEMLORD.options.length !== 3 || !(STEMLORD.answer >= 0 && STEMLORD.answer < 3)) die('Stemlord needs three options and an answer 0-2');
 const more = shelf - PILLS.length;
 
@@ -109,6 +118,8 @@ const claimHref = OPEN_NOW ? SIGNUP : '#claim';   /* the date switch also rewrit
 const TITLE = 'GAMSAT Section 3, as things you can move — knowhere';
 const DESC = 'Section 3 is half your GAMSAT score, and it is written in physics, chemistry and biology. Move the science underneath. Founding seats for the 2027 sittings.';
 const opts = STEMLORD.options.map((o, i) => `          <button type="button" class="opt" data-a="${i === STEMLORD.answer ? 1 : 0}"><b>${i + 1}</b>${esc(o)}</button>`).join('\n');
+const scr = STEMLORD.screen.slice(0, -1).join('<br>');
+const term = `<div class="term" aria-label="The Stemlord’s screen"><span class="c">// stemlord.exe · episode ${STEMLORD.episode} · ${esc(STEMLORD.title)}</span>${scr}<span class="mw">${STEMLORD.screen[STEMLORD.screen.length - 1]}<span class="cur" aria-hidden="true"></span></span></div>`;
 const vid = STEMLORD.video
   /* 17 Nov: muted + playsinline (+ the old WebKit spelling) so phones and in-app browsers (Instagram) play it inline and
      never with sound; it is silent anyway. loop + controls stay; the page script plays it when half of it is on screen. */
@@ -242,6 +253,28 @@ html,body{margin:0;padding:0;background:#070708}
 .kt2 .reveal{margin-top:14px;font-size:15px;line-height:1.55;color:var(--dim)}
 .kt2 .reveal b{color:var(--ink)}
 .kt2 .reveal .turn{display:block;margin:10px 0 14px;font-size:20px;font-weight:800;letter-spacing:-.02em;color:var(--ink);line-height:1.2}
+/* 17 Nov (Cat, the mock): one-line lede on desktop; above 900 px the card grows and the typed line becomes the full terminal */
+.kt2 .stem .sec-h .lede{max-width:none}
+.kt2 .term{display:none}
+@media (min-width:901px){
+.kt2 .stem .sec-h .lede{white-space:nowrap}
+.kt2 .epgrid.hasvid{gap:22px}
+.kt2 .qcard{padding:30px 32px;display:flex;flex-direction:column}
+.kt2 .typed{display:none}
+.kt2 .term{display:block;font-family:var(--mono);font-size:17px;line-height:1.65;background:#0B0D11;border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+.kt2 .term .c{color:var(--dimmer);font-size:13px;display:block;margin-bottom:6px}
+.kt2 .term i{font-style:normal;color:var(--brat)}
+.kt2 .term .mw{display:block;margin-top:8px;color:var(--brat);font-weight:700;letter-spacing:.04em}
+.kt2 .term .cur{display:inline-block;width:.6em;height:1.05em;background:var(--brat);vertical-align:-2px;margin-left:4px;animation:kwBlink 1s steps(2) infinite}
+.kt2 .qcard .q{font-size:23px;line-height:1.35;margin:24px 0 18px;letter-spacing:-.01em}
+.kt2 .opts{gap:10px}
+.kt2 .opt{font-size:18px;padding:17px 18px;border-radius:14px}
+.kt2 .opt b{font-size:14px}
+.kt2 .reveal{font-size:17px}
+.kt2 .reveal .turn{font-size:26px}
+}
+@keyframes kwBlink{50%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.kt2 .term .cur{animation:none}}
 
 /* claim */
 .kt2 .claim .wrap{max-width:820px;text-align:center;display:grid;gap:22px;justify-items:center}
@@ -333,11 +366,12 @@ ${PILLS.map((p, i) => `        <button type="button" class="pill" data-k="${p.k}
     <div class="sec-h" data-float>
       <span class="kicker">This week's Stemlord · episode ${STEMLORD.episode}</span>
       <h2>The Stemlord writes the questions.<br><span class="brat">You see straight through them.</span></h2>
-      <p class="lede">Every Wednesday he dresses ordinary science up as something terrifying.<br><b>Have a go, then move the science underneath.</b></p>
+      <p class="lede">Whenever he’s feeling diabolical, he dresses ordinary science up as something terrifying.</p>
     </div>
     <div class="epgrid${STEMLORD.video ? ' hasvid' : ' solo'}" data-float>
 ${vid}      <div class="qcard">
         <div class="typed">${STEMLORD.typed}</div>
+        ${term}
         <p class="q">${esc(STEMLORD.question)}</p>
         <div class="opts" id="epOpts">
 ${opts}
