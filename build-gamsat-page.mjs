@@ -44,8 +44,8 @@ const STEMLORD = {
   eyebrow: 'Episode 1: The deep-sea squid',   /* 18 Nov: the episode's own eyebrow, under the rule */
   /* desktop (>900 px), 18 Nov: a 16:9 row above the card. videoLandscape (1920×1080) plays like the phone one; until it exists
      the row shows `still` (a lair crop, never the 9:16 stretched) with `hook` beside it. posterLandscape = its poster frame. */
-  videoLandscape: null, posterLandscape: null,
-  still: '/uploads/stemlord-ep1-lair.jpg',
+  videoLandscape: '/uploads/stemlord-ep1-16x9.mp4', posterLandscape: '/uploads/stemlord-ep1-16x9-poster.jpg',
+  still: null,
   hook: 'Section 3 will describe the heart as a mystery organ in a <span class="brat">deep-sea squid.</span>',
   typed: 'A deep-sea squid pumps blood through vessels of varying width… <i>at 3,000 metres.</i> Diabolical!',   /* phones (≤900 px) */
   /* desktop (>900 px): the Stemlord's full screen, as a terminal. The grey "// stemlord.exe · episode N · title" line is made
