@@ -37,6 +37,10 @@ body{background:radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);f
 .rs-cv{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1);margin-bottom:16px}
 @media (max-width:520px){.rs-cv{aspect-ratio:5/4}}
 .rs-cv canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.rs-ledger{display:none;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.6;color:var(--ink-dim);margin:-6px 0 16px}
+.rs-ledger.on{display:block}
+.rs-ledger b{font-weight:500;color:var(--ink);transition:opacity .3s}
+.rs-ledger i{font-style:normal;opacity:.7}
 .rs-ov{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:14px;text-transform:uppercase;color:var(--acc);text-align:center;line-height:1.3}
 .rs-row{display:flex;justify-content:space-between;align-items:baseline;font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:8px}
 .rs-row b{font-weight:500;font-size:12px;color:var(--ink)}
@@ -63,7 +67,7 @@ body{background:radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);f
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}}
 </style>
 
-<h2 class="sr-only">Interactive visualisation of the pyruvate fork: oxygen sends pyruvate into the mitochondrion for about 30 ATP, while no oxygen sends it to fermentation in the cytosol, ending in lactic acid in animals or ethanol and carbon dioxide in yeast</h2>
+<h2 class="sr-only">Interactive visualisation of the pyruvate fork: oxygen sends pyruvate into the mitochondrion for about 32 ATP, while no oxygen sends it to fermentation in the cytosol, ending in lactic acid in animals or ethanol and carbon dioxide in yeast. An ATP ledger on glycolysis shows 2 ATP spent and 4 ATP made, so 2 are kept at every oxygen level (extra, not examinable)</h2>
 
 <div class="rs-wrap">
   <h1>Fermentation makes no ATP. It makes <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">NAD⁺</span></h1>
@@ -86,6 +90,7 @@ body{background:radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);f
       <canvas id="rsCanvas"></canvas>
       <div class="rs-ov" id="rsOv">100% O₂ · ≈32 ATP · 0% fermented</div>
     </div>
+    <div class="rs-ledger" id="rsLedger">glycolysis: <b>spend 2 ATP</b> → <b>make 4 ATP</b> → <b>keep 2</b> <i>· extra — not examinable</i></div>
 
     <div class="rs-row"><span>Oxygen available</span><b id="rsO2V">100%</b></div>
     <input type="range" class="rs-slider" id="rsO2" aria-label="Oxygen available" min="0" max="100" step="1" value="100">
@@ -108,7 +113,7 @@ body{background:radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);f
 
   <div class="rs-kt">
     <div class="rs-kt-tag"><span class="rs-dot"></span><span>Know This</span></div>
-    <div class="rs-kt-body">In both animals and yeast, <span style="color:var(--acc)">fermentation</span> in the cytosol regenerates <span style="color:var(--acc)">NAD⁺</span> so glycolysis keeps making its 2 ATP; only the product differs: <span style="color:var(--acc)">lactic acid</span> in animals, ethanol and CO₂ in yeast.</div>
+    <div class="rs-kt-body">In both animals and yeast, <span style="color:var(--acc)">fermentation</span> in the cytosol regenerates <span style="color:var(--acc)">NAD⁺</span> so glycolysis keeps making its 2 ATP; only the product differs: <span style="color:var(--acc)">lactic acid</span> in animals, ethanol and CO₂ in yeast.<br>Glycolysis spends 2 ATP to make 4. That is the net 2.</div>
   </div>
 </div>
 
@@ -226,6 +231,146 @@ body{background:radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);f
   function q(a, c, b, t){
     const u = 1 - t;
     return { x: u * u * a.x + 2 * u * t * c.x + t * t * b.x, y: u * u * a.y + 2 * u * t * c.y + t * t * b.y };
+  }
+
+  // ATP ledger on glycolysis (extra, not examinable): spend 2, make 4, keep 2.
+  // Same at every oxygen level and in both cell types, so it reads nothing from o2 or mode.
+  const LT = 7.2;
+  function ease(t){ t = t < 0 ? 0 : (t > 1 ? 1 : t); return t * t * (3 - 2 * t); }
+  function seg(t, a, b){ return ease((t - a) / (b - a)); }
+  function mix(a, b, t){ return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t }; }
+  function ledgerGeo(L, w){
+    const fs = L.fs;
+    const rx = w * 0.975 - 12;
+    /* short canvases (narrow phones): squeeze the three rows so "keep 2" stays clear of the O₂ label */
+    const oTop = L.yM - L.ry - 15 - fs * 0.6;
+    const lh = Math.max(fs + 1, Math.min(fs + 7, (oTop - 3 - fs * 0.5 - L.y0) / 2.9));
+    ctx.save();
+    ctx.font = "500 " + fs + "px \"JetBrains Mono\", monospace";
+    const glyEnd = L.cx + 12 + ctx.measureText("GLYCOLYSIS").width;
+    /* narrow phones: the full words would sit on top of GLYCOLYSIS, so the ledger drops "ATP →" there */
+    const full = ["spend 2 ATP →", "make 4 ATP →", "keep 2"], short = ["spend 2", "make 4", "keep 2"];
+    const widest = Math.max(ctx.measureText(full[0]).width, ctx.measureText(full[1]).width);
+    const labels = (rx - widest - 4 < glyEnd + 10) ? short : full;
+    /* the very narrowest phones: even the short words would sit on GLYCOLYSIS, so the ledger stands down
+       there (it is extra, and the Know This line still says it) */
+    const off = rx - Math.max(ctx.measureText(short[0]).width, ctx.measureText(short[1]).width) - 4 < glyEnd + 8;
+    const gap = labels === short ? 6 : 9;
+    const ws = ctx.measureText(labels[0]).width;
+    const wm = ctx.measureText(labels[1]).width;
+    const wk = ctx.measureText(labels[2]).width;
+    /* the tag shares a line with the ANIMAL CELL / YEAST CELL header: shorten it where they would touch */
+    const headR = w * 0.025 + 10 + ctx.measureText("ANIMAL CELL · cytosol").width;
+    ctx.font = "500 " + Math.max(9.5, fs - 1.5) + "px \"JetBrains Mono\", monospace";
+    const tagFull = "extra — not examinable";
+    const tag = (rx - ctx.measureText(tagFull).width < headR + 8) ? "not examinable" : tagFull;
+    ctx.restore();
+    const ys = L.y0 + lh * 0.9, ym = ys + lh, yk = ym + lh;
+    return { fs: fs, rx: rx, lh: lh, ys: ys, ym: ym, yk: yk, tagY: L.top + 6, tag: tag, off: off, labels: labels, gap: gap,
+      sx: rx - ws - gap, mx: rx - wm - gap, kx: rx - wk - gap, glyEnd: glyEnd,
+      g: { x: L.cx, y: L.y0 },
+      split: { x: L.cx, y: L.y0 + 0.42 * (L.yF - L.y0) },
+      pay: { x: L.cx, y: L.y0 + 0.58 * (L.yF - L.y0) },
+      pyr: { x: L.cx, y: L.yF } };
+  }
+  function ledgerPhase(){
+    if (reduce) return 6.0;
+    return time % LT;
+  }
+  function token(x, y, r, a, filled){
+    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+    if (filled) { ctx.fillStyle = ink(0.95 * a); ctx.fill(); }
+    else { ctx.strokeStyle = ink(0.95 * a); ctx.lineWidth = 1.4; ctx.stroke(); }
+  }
+  function drawLedgerTokens(G){
+    if (G.off) return;
+    const t = ledgerPhase();
+    const out = t > 6.6 ? 1 - seg(t, 6.6, 7.1) : 1;
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    // glucose: waits at the top, then runs to the split and becomes 2 pyruvate
+    const gIn = seg(t, 0.0, 0.4);
+    if (t < 2.7) {
+      const down = seg(t, 1.7, 2.7);
+      const p = mix(G.g, G.split, down);
+      token(p.x, p.y, 4.4, gIn * (1 - 0.3 * down), true);
+    } else if (t < 4.0) {
+      const k = seg(t, 2.7, 3.9);
+      const a = 1 - seg(t, 3.7, 4.0);
+      for (let s = -1; s <= 1; s += 2) {
+        const p = mix(G.split, G.pyr, k);
+        token(p.x + s * (2 + 5 * Math.sin(Math.PI * Math.min(k * 1.2, 1))), p.y, 3, a, true);
+      }
+    }
+    // spend: 2 ATP leave the ledger and go into glucose
+    for (let i = 0; i < 2; i++) {
+      const start = { x: G.sx - i * G.gap, y: G.ys };
+      const k = seg(t, 0.5 + i * 0.25, 1.4 + i * 0.25);
+      if (k >= 1) continue;
+      const a = seg(t, 0.1, 0.5) * (k > 0.85 ? (1 - k) / 0.15 : 1);
+      const ctl = { x: G.g.x + 8, y: start.y };
+      const p = q(start, ctl, G.g, k);
+      token(p.x, p.y, 3.2, a, false);
+    }
+    // make: 4 ATP come out of the second half of glycolysis
+    for (let i = 0; i < 4; i++) {
+      const slot = { x: G.mx - i * G.gap, y: G.ym };
+      const k = seg(t, 2.9 + i * 0.18, 3.8 + i * 0.18);
+      if (k <= 0) continue;
+      const bx2 = Math.max(slot.x, G.glyEnd + 9);
+      let p = k < 0.5 ? mix(G.pay, { x: bx2, y: G.pay.y }, k / 0.5)
+        : (k < 0.8 ? mix({ x: bx2, y: G.pay.y }, { x: bx2, y: slot.y }, (k - 0.5) / 0.3)
+        : mix({ x: bx2, y: slot.y }, slot, (k - 0.8) / 0.2));
+      let a = Math.min(1, k * 3) * out;
+      if (i >= 2) {
+        // these 2 pay back the spend: up to the spend line, then gone
+        const b = seg(t, 4.5, 5.3);
+        const back = { x: G.sx - (i - 2) * G.gap, y: G.ys };
+        if (b > 0) { p = mix(slot, back, b); a *= b > 0.8 ? (1 - b) / 0.2 : 1; }
+      } else {
+        // these 2 stay: down to the keep line
+        const s = seg(t, 4.5, 5.3);
+        const keep = { x: G.kx - i * G.gap, y: G.yk };
+        if (s > 0) p = mix(slot, keep, s);
+        if (t > 5.3) {
+          const glow = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 10);
+          glow.addColorStop(0, ink(0.35 * out)); glow.addColorStop(1, ink(0));
+          ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(p.x, p.y, 10, 0, Math.PI * 2); ctx.fill();
+        }
+      }
+      if (a > 0.01) token(p.x, p.y, 3.2, a, true);
+    }
+    ctx.restore();
+  }
+  function drawLedgerText(G){
+    /* narrow phones: the canvas has no room, so the same ledger reads as a line under the picture */
+    const hl = document.getElementById("rsLedger");
+    if (hl && hl.classList.contains("on") !== !!G.off) hl.classList.toggle("on", !!G.off);
+    if (G.off) {
+      if (hl) {
+        const t = ledgerPhase();
+        const k = reduce ? 3 : (t < 2.4 ? 0 : (t < 4.5 ? 1 : (t < 6.8 ? 2 : -1)));
+        hl.querySelectorAll("b").forEach(function(b, i){ b.style.opacity = (k === 3 || k === i) ? "1" : "0.5"; });
+      }
+      return;
+    }
+    const t = ledgerPhase();
+    const lit = function(a, b){ return reduce ? 1 : Math.max(seg(t, a, a + 0.3) - seg(t, b, b + 0.4), 0); };
+    ctx.save();
+    ctx.textAlign = "right";
+    ctx.textBaseline = "middle";
+    ctx.font = "500 " + Math.max(9.5, G.fs - 1.5) + "px \"JetBrains Mono\", monospace";
+    ctx.fillStyle = ink(0.45);
+    ctx.fillText(G.tag, G.rx, G.tagY);
+    ctx.font = "500 " + G.fs + "px \"JetBrains Mono\", monospace";
+    ctx.fillStyle = ink(0.55 + 0.4 * lit(0.3, 2.2));
+    ctx.fillText(G.labels[0], G.rx, G.ys);
+    ctx.fillStyle = ink(0.55 + 0.4 * lit(2.8, 4.4));
+    ctx.fillText(G.labels[1], G.rx, G.ym);
+    ctx.font = "700 " + G.fs + "px \"JetBrains Mono\", monospace";
+    ctx.fillStyle = ink(0.7 + 0.3 * lit(4.6, 6.6));
+    ctx.fillText(G.labels[2], G.rx, G.yk);
+    ctx.restore();
   }
 
   function layout(w, h){
@@ -380,6 +525,10 @@ body{background:radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);f
     });
     ctx.restore();
 
+    // ATP ledger tokens (same at every oxygen level, both cell types)
+    const G = ledgerGeo(L, w);
+    drawLedgerTokens(G);
+
     // bloom
     bctx.setTransform(1, 0, 0, 1, 0, 0);
     bctx.clearRect(0, 0, buf.width, buf.height);
@@ -426,7 +575,7 @@ body{background:radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);f
     ctx.textBaseline = "middle";
     ctx.fillStyle = acc(0.55 + 0.45 * f);
     ctx.fillText("ETC", L.xR, L.yM - fs * 0.7);
-    ctx.fillText("~30 ATP", L.xR, L.yM + fs * 0.7);
+    ctx.fillText("~32 ATP", L.xR, L.yM + fs * 0.7);
     const ox = L.xR + L.rx * 0.5;
     ctx.fillStyle = acc(0.5 + 0.5 * f);
     ctx.fillText("O₂", ox, L.yM - L.ry - 15);
@@ -434,6 +583,7 @@ body{background:radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);f
     ctx.beginPath(); ctx.moveTo(ox, L.yM - L.ry - 8); ctx.lineTo(ox, L.yM - L.ry - 1); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(ox - 3, L.yM - L.ry - 4); ctx.lineTo(ox, L.yM - L.ry - 1); ctx.lineTo(ox + 3, L.yM - L.ry - 4); ctx.stroke();
     ctx.restore();
+    drawLedgerText(G);
   }
 
   updateText();
