@@ -26,7 +26,20 @@
    v5 (13 Nov 2026, KW:GAMSAT): data-audience="gamsat" — the GAMSAT founding seat (/gamsat only). Its own offer, never the
    school one: purple bar "The founding seat · First 30 only · A$99", the sheet below, no handoff, no school founding switch
    (/public/founding is not asked). data-open-at (ISO, e.g. 2026-12-11T00:00:00+11:00): before it the CTA goes to
-   data-claim (default #claim, the page's founding list); from it, to signup?as=gamsat. data-away as for every page. */
+   data-claim (default #claim, the page's founding list); from it, to signup?as=gamsat. data-away as for every page.
+
+   v7 (20 Nov 2026, KW:FOUNDDUO — Cat: "students are a dead audience until Jan, teachers are still interested"): on every
+   public concept page (data-where="concept:<slug>") the founding offer serves students AND teachers, equal weight. Bar:
+   "Founding seats · students + teachers · until 9 Apr". Sheet: "Claim a founding seat." then two equal halves (side by
+   side on desktop, stacked students-first on a phone): Students = today's founding rate + the card-up-front trust line +
+   the parent handoff; Teachers = "Free until Fri 9 April 2027.", CTA signup?as=teacher. Both CTAs are the same brat
+   button. Never write "no card" in either half. A remembered parent (kw_aud) still gets the parent sheet; data-teachers="off"
+   turns the duo off on a page. The concept page's own door row carries "teacher? claim your founding seat →"
+   (build-concept-pages.mjs + build-concept-collision.js write it; _patches/founding-duo-20261120 patched the live pages).
+   Attribution: on a concept page every app signup link (nav, doors, bar, sheet, footer, mobile menu) gets the page's
+   incoming utm_* (or, if it came in bare, the browser's first-touch kwAcq from knowhere-pixel.js), and utm_content=<slug>
+   when nothing else set utm_content (a paid ad's P-code wins). The app's /signup forwards utm_* and its teacher
+   register puts them on the Resend contact (source_page = utm_source/utm_medium, acq_ad = utm_content). */
 (function () {
   if (window.__kwPassbar) return; window.__kwPassbar = true;
   var FOUNDING_UNTIL = Date.UTC(2027, 3, 9, 13, 59);   /* Fri 9 Apr 2027 23:59 AEST — the app's own FOUNDING_UNTIL */
@@ -45,6 +58,9 @@
   var CTA = PARENT ? "start their free week" : "start your free week";
   var CLAIM = PARENT ? "claim their seat" : "claim your seat";
   var WHERE = ds.where || location.pathname;
+  var SLUG = /^concept:/.test(WHERE) ? WHERE.slice(8).replace(/[^a-z0-9-]/gi, "") : "";
+  var DUO = !!SLUG && !GAMSAT && !PARENT && ds.teachers !== "off";   /* v7 KW:FOUNDDUO: students + teachers, equal weight */
+  var TEACH_SIGNUP = "https://app.knowhere.me/signup?as=teacher";
   var open = GAMSAT || (!FOUNDING_FULL && Date.now() <= FOUNDING_UNTIL);   /* gamsat: its own offer, not the school switch */
   function track(n, d) { try { if (window.umami) window.umami.track(n, d || {}); } catch (e) {} }
 
@@ -92,6 +108,17 @@
     ".kw-passbar.closed .pb-plain{display:flex}" +
     ".kw-passbar.away .pb-bar,.kw-passbar.away .pb-plain{transform:translateY(130%)}" +
     ".kw-passbar.away .pb-plain{display:none}" +
+    /* v7 KW:FOUNDDUO — two equal halves; the sheet scrolls inside itself if a short phone can't fit both */
+    ".kw-passbar.duo .pb-bar,.kw-passbar.duo .pb-plain,.kw-passbar.duo .pb-sheet{max-width:820px}" +
+    ".kw-passbar.duo .pb-sheet{max-height:calc(100vh - 84px);max-height:calc(100dvh - 84px);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}" +
+    ".kw-passbar .pb-duo{display:grid;grid-template-columns:1fr 1fr;gap:14px}" +
+    ".kw-passbar .pb-half{display:flex;flex-direction:column;border:1px solid rgba(155,90,234,.38);border-radius:16px;padding:18px 18px 16px;background:rgba(155,90,234,.07)}" +
+    ".kw-passbar .pb-top{min-height:118px}" +
+    ".kw-passbar .pb-free{font-size:27px;font-weight:800;letter-spacing:-0.03em;line-height:1.12;color:#fff;margin:0}" +
+    ".kw-passbar .pb-half .pb-l{margin:8px 0 16px}" +
+    ".kw-passbar .pb-half .pb-hand{margin-top:auto;padding-top:14px}" +
+    ".kw-passbar .pb-half .pb-fine{margin-bottom:0}" +
+    "@media (max-width:700px){.kw-passbar .pb-duo{grid-template-columns:1fr;gap:12px}.kw-passbar .pb-top{min-height:0}.kw-passbar.duo .pb-sheet{padding:18px 14px 14px;max-height:calc(100vh - 150px);max-height:calc(100dvh - 150px)}.kw-passbar.duo .pb-h{font-size:20px;margin-bottom:12px}.kw-passbar .pb-half{padding:16px 16px 14px}.kw-passbar .pb-half .pb-price .n{font-size:34px}.kw-passbar .pb-free{font-size:24px}}" +
     "@media (prefers-reduced-motion:reduce){.kw-passbar *{transition:none!important}}";
 
   var who = PARENT ? 'theirs' : 'yours', they = PARENT ? 'they stay' : 'you stay', plan = PARENT ? 'their plan' : 'your plan';
@@ -115,7 +142,39 @@
       '<span class="pb-t">The founding seat<small>First 30 only</small></span>' +
       '<span class="pb-p">A$99</span><span class="pb-chev" aria-hidden="true">' + chev + '</span>' +
     '</button>';
-  var HTML = GAMSAT ? GHTML : !open ? PLAIN :
+  /* v7 KW:FOUNDDUO — concept pages: one title, two equal halves, students first */
+  var DHTML =
+    '<div class="pb-scrim" data-pb-close></div>' +
+    '<div class="pb-sheet" id="kwFoundSheet" role="dialog" aria-label="founding seats" aria-hidden="true">' +
+      '<p class="pb-h">Claim a founding seat.</p>' +
+      '<div class="pb-duo">' +
+        '<div class="pb-half pb-stu">' +
+          '<div class="pb-top">' +
+            '<p class="pb-eye">Students</p>' +
+            '<p class="pb-price"><span class="n">$79</span>a term<s>$99</s></p>' +
+            '<p class="pb-l">Or $29 a month or $249 a year.</p>' +
+          '</div>' +
+          '<a class="pb-cta" data-kw-from="foundbar" href="' + SIGNUP + '">claim your student seat</a>' +
+          '<p class="pb-trust">Free for a week first. We take a card to start &#8212; cancel inside the week and you pay nothing.</p>' +
+          '<p class="pb-fine">The first 50 student plans, or until Fri 9 April 2027, whichever comes first.</p>' +
+          hand +
+        '</div>' +
+        '<div class="pb-half pb-tea">' +
+          '<div class="pb-top">' +
+            '<p class="pb-eye">Teachers</p>' +
+            '<p class="pb-free">Free until Fri 9 April 2027.</p>' +
+            '<p class="pb-l">Run this model with your class. Every teacher who joins before then is free.</p>' +
+          '</div>' +
+          '<a class="pb-cta" data-kw-from="foundbar-teacher" href="' + TEACH_SIGNUP + '">claim your teacher seat</a>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+    '<button class="pb-bar" type="button" aria-expanded="false" aria-controls="kwFoundSheet">' +
+      '<span class="pb-t">Founding seats<small>students + teachers</small></span>' +
+      '<span class="pb-p">until 9 Apr</span><span class="pb-chev" aria-hidden="true">' + chev + '</span>' +
+    '</button>' +
+    PLAIN;
+  var HTML = GAMSAT ? GHTML : !open ? PLAIN : DUO ? DHTML :
     '<div class="pb-scrim" data-pb-close></div>' +
     '<div class="pb-sheet" id="kwFoundSheet" role="dialog" aria-label="the founding rate" aria-hidden="true">' +
       '<p class="pb-eye">First 50 student plans</p>' +
@@ -137,7 +196,7 @@
     cards();
     if (document.getElementById("kwPassbar")) return;
     var st = document.createElement("style"); st.textContent = CSS; document.head.appendChild(st);
-    var pb = document.createElement("div"); pb.className = "kw-passbar" + (open ? "" : " closed"); pb.id = "kwPassbar";
+    var pb = document.createElement("div"); pb.className = "kw-passbar" + (open ? "" : " closed") + (DUO ? " duo" : ""); pb.id = "kwPassbar";
     pb.innerHTML = HTML; document.body.appendChild(pb);
     var btn = pb.querySelector(".pb-bar"), sh = pb.querySelector(".pb-sheet"), opened = false;
     function setOpen(on) {
@@ -163,6 +222,35 @@
     watch();
     setTimeout(watch, 1500);   /* and once more after a component page has rendered */
   }
+  /* v7 KW:FOUNDDUO attribution — concept pages only. Every app signup link carries the page's utm_* to the app. */
+  var UK = ["source", "medium", "campaign", "content", "term"];
+  function utms() {
+    var o = {}, i, v, q, a;
+    try { q = new URLSearchParams(location.search); for (i = 0; i < UK.length; i++) { v = q.get("utm_" + UK[i]); if (v) o[UK[i]] = v; } } catch (e) {}
+    if (!o.source && !o.campaign && !o.content) {   /* came in bare: the first-touch record knowhere-pixel.js keeps */
+      try { a = window.kwAcq && window.kwAcq(); if (a) { if (a.source) o.source = a.source; if (a.medium) o.medium = a.medium; if (a.campaign) o.campaign = a.campaign; if (a.ad) o.content = a.ad; if (a.term) o.term = a.term; } } catch (e) {}
+    }
+    if (!o.content) o.content = SLUG;
+    return o;
+  }
+  function tag(a) {
+    try {
+      if (!a || !a.href || !/^https:\/\/app\.knowhere\.me\/signup/.test(a.href)) return;
+      var u = new URL(a.href), o = utms(), k;
+      for (k in o) if (o[k]) u.searchParams.set("utm_" + k, String(o[k]).slice(0, 60));
+      if (u.toString() !== a.href) a.href = u.toString();
+    } catch (e) {}
+  }
+  function tagAll() { Array.prototype.forEach.call(document.querySelectorAll('a[href^="https://app.knowhere.me/signup"]'), tag); }
+  if (SLUG) {
+    var onTap = function (e) { var t = e && e.target; tag(t && t.closest ? t.closest("a") : null); };
+    window.addEventListener("click", onTap, true);    /* window capture runs before knowhere-pixel.js's document one */
+    window.addEventListener("auxclick", onTap, true);
+    window.addEventListener("pointerdown", onTap, true);   /* before a long-press "open in new tab" */
+    setTimeout(tagAll, 0);   /* after mount(), so the bar and sheet links are tagged too */
+    setTimeout(tagAll, 1500);   /* the footer and mobile menu write their CTAs late */
+  }
+
   var io = null, watch = function () {};
   if (document.body) mount(); else document.addEventListener("DOMContentLoaded", mount);
   window.KnowhereFounding = { open: open, cards: cards, watch: function () { watch(); } };

@@ -559,7 +559,7 @@ ${beacon(p.slug)}</body></html>`;
 <script src="/knowhere-marks.js?v=2"></script>
 <script src="/knowhere-pass.js" defer></script>
 <script src="/knowhere-handoff.js?v=3" defer></script><!-- KW:HANDOFF -->
-<script src="/knowhere-passbar.js?v=3" defer data-where="concept:${p.slug}" data-pass="off" data-away=".cta-box"></script><!-- KW:PASSBAR · retirepass: data-pass="off" on every page -->
+<script src="/knowhere-passbar.js?v=7" defer data-where="concept:${p.slug}" data-pass="off" data-away=".cta-box"></script><!-- KW:PASSBAR · retirepass: data-pass="off" on every page -->
 <style>${CSS.replace('__ACCENT__', accent)}</style>
 </head>
 <body>
@@ -604,6 +604,7 @@ ${wild}${points}${under}${rest}
       <div class="doors">
         <a class="door pri" data-kw-cta href="https://app.knowhere.me/signup?as=student">start your free week →</a>
         <a class="door sec" href="/for-parents?as=parent">parent? start their free week →</a>
+        <a class="door sec" data-kw-from="door-teacher" href="https://app.knowhere.me/signup?as=teacher">teacher? claim your founding seat&nbsp;→</a>
       </div>
       <p class="pass-line">Free for a week, then a plan you can stop any time.</p>${/* retirepass (15 Oct 2026): the 2026 exam pass box is gone for every year; the plain line is the markup */ ''}
       <div class="hand">
@@ -773,7 +774,7 @@ for (const b of built) {
   const pg = fs.readFileSync(b.p.file, 'utf8');
   const wd = fs.readFileSync(path.join('widgets', b.widgetName), 'utf8');
   const ok = pg.includes('<base href="/">') && pg.includes(esc(b.TITLE)) && pg.includes(`/widgets/${b.widgetName}`)
-    && pg.includes('for-parents?as=parent') && !pg.includes('data-pass-days') && pg.includes('data-pass="off"') && pg.includes('data-kw-handoff') && pg.includes('knowhere-passbar.js')
+    && pg.includes('for-parents?as=parent') && pg.includes('signup?as=teacher') && pg.includes('knowhere-passbar.js?v=7') && !pg.includes('data-pass-days') && pg.includes('data-pass="off"') && pg.includes('data-kw-handoff') && pg.includes('knowhere-passbar.js')
     && pg.includes(`<link rel="canonical" href="${b.p.url}">`)
     && !/#3AADA0/i.test(wd) && wd.includes('kwMobFix') && wd.includes('kwH') && wd.includes(b.accent);
   if (!ok) { console.log(`  ✗ ${b.p.file}`); bad++; }
