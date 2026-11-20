@@ -80,7 +80,7 @@ const PAGE=`<!DOCTYPE html>
 <script src="/knowhere-marks.js?v=2"></script>
 <script src="/knowhere-pass.js" defer></script>
 <script src="/knowhere-handoff.js?v=3" defer></script><!-- KW:HANDOFF -->
-<script src="/knowhere-passbar.js?v=2" defer data-where="concept:collision-theory" data-away=".cta-box"></script><!-- KW:PASSBAR -->
+<script src="/knowhere-passbar.js?v=7" defer data-where="concept:collision-theory" data-away=".cta-box"></script><!-- KW:PASSBAR -->
 <style>
 h1,h2,h3{text-transform:lowercase}
 html,body{margin:0;padding:0;background:#070708}
@@ -239,6 +239,7 @@ html,body{margin:0;padding:0;background:#070708}
       <div class="doors">
         <a class="door pri" data-kw-cta href="https://app.knowhere.me/signup?as=student">start your free week →</a>
         <a class="door sec" href="/for-parents?as=parent">parent? start their free week →</a>
+        <a class="door sec" data-kw-from="door-teacher" href="https://app.knowhere.me/signup?as=teacher">teacher? claim your founding seat&nbsp;→</a>
       </div>
       <p class="pass-line">Free for a week, then a plan you can stop any time.</p>
       <div class="hand">
@@ -304,7 +305,7 @@ if(pxEdits){ fs.writeFileSync(PIX+'.bak-'+stamp,px); fs.writeFileSync(PIX,pxOut)
 /* receipts, from disk */
 const w=fs.readFileSync(path.join('widgets','collision-theory-chemistry.html'),'utf8'), pg=fs.readFileSync(path.join('hsc','chemistry','collision-theory.html'),'utf8'), pf=fs.readFileSync(PIX,'utf8');
 const ok=[ [!/#3AADA0/i.test(w),'widget: no teal'], [w.includes('kwMobFix'),'widget: kwMobFix'], [w.includes('f43'),'widget: f43'], [w.includes('kwH'),'widget: beacon'],
-  [pg.includes('<base href="/">'),'page: base'], [pg.includes(TITLE),'page: title'], [pg.includes('/widgets/collision-theory-chemistry.html'),'page: iframe src'], [pg.includes('for-parents?as=parent'),'page: parent door'], [!pg.includes('data-pass-days') && pg.includes('class="pass-line"'),'page: no pass box (retirepass)'], [pg.includes('data-kw-handoff'),'page: the handoff'], [pg.includes('knowhere-handoff.js'),'page: handoff component loaded'],
+  [pg.includes('<base href="/">'),'page: base'], [pg.includes(TITLE),'page: title'], [pg.includes('/widgets/collision-theory-chemistry.html'),'page: iframe src'], [pg.includes('for-parents?as=parent'),'page: parent door'], [pg.includes('signup?as=teacher'),'page: teacher door (KW:FOUNDDUO)'], [pg.includes('knowhere-passbar.js?v=7'),'page: founding duo bar (KW:FOUNDDUO)'], [!pg.includes('data-pass-days') && pg.includes('class="pass-line"'),'page: no pass box (retirepass)'], [pg.includes('data-kw-handoff'),'page: the handoff'], [pg.includes('knowhere-handoff.js'),'page: handoff component loaded'],
   [pf.split('KW:CONCEPT').length-1===2,'pixel: two KW:CONCEPT marks'], [fs.readFileSync(SRC,'utf8')===raw,'teal source untouched'] ];
 let bad=0; for(const [c,n] of ok){ console.log((c?'  ✓ ':'  ✗ ')+n); if(!c) bad++; }
 if(bad){ console.error(bad+' receipt(s) failed'); process.exit(1); }
