@@ -143,6 +143,10 @@ PAGES = {
    title="GAMSAT Section 3, as things you can move — knowhere",
    desc="(owned by build-gamsat-page.mjs)",
    name="GAMSAT"),
+ "gamsat-free.html": dict(path="/gamsat-free", kind="ext",   # KW:GAMSAT-FREE 22 Nov 2026 — the eleven free models; owned by build-gamsat-page.mjs like /gamsat
+   title="Eleven free GAMSAT Section 3 models — knowhere",
+   desc="(owned by build-gamsat-page.mjs)",
+   name="GAMSAT free models"),
  "404.html": dict(path=None, kind="404",
    title="404 — knowhere",
    desc="That page is nowhere. knowhere is here.",
@@ -474,7 +478,7 @@ def patch_server():
 
 def write_sitemap():
     prio = {"/":"1.0","/how-it-works":"0.9","/experience-it":"0.9","/pricing":"0.9","/for-parents":"0.8","/for-teachers":"0.8",
-            "/compare":"0.8","/gamsat":"0.8","/mission":"0.6","/know-us":"0.6","/press":"0.6","/talk-to-us":"0.5","/privacy":"0.3","/terms":"0.3"}
+            "/compare":"0.8","/gamsat":"0.8","/gamsat-free":"0.7","/mission":"0.6","/know-us":"0.6","/press":"0.6","/talk-to-us":"0.5","/privacy":"0.3","/terms":"0.3"}
     rows = []
     for f, p in PAGES.items():
         if not p["path"] or p["kind"] in ("noindex","404"): continue

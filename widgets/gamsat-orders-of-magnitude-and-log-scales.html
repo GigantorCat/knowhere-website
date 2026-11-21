@@ -1,0 +1,364 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Orders of magnitude and log scales — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{
+  --bg:#0B0D0C;
+  --bg2:#12160F;
+  --acc:#2FA94E;
+  --acc-rgb:47, 169, 78;
+  --ag:rgba(var(--acc-rgb),.7);
+  --ag1:rgba(var(--acc-rgb),.12);
+  --ag2:rgba(var(--acc-rgb),.45);
+  --amb:#FAC775;
+  --ink:#EDEDE8;
+  --ink-dim:#8C9389;
+  --line:#262B26;
+}
+body{margin:0;background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C 55%);font-family:'Geist',sans-serif;color:var(--ink);min-height:100vh;padding:40px 16px 0;box-sizing:border-box}
+.om *{box-sizing:border-box}
+.om{max-width:720px;margin:0 auto}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.om h1{font-family:'Geist',sans-serif;font-weight:800;font-size:clamp(26px,6.5vw,44px);letter-spacing:-0.03em;line-height:1.05;margin:0 0 14px;color:var(--ink)}
+.om .intro{font-size:15.5px;font-weight:400;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin:0 0 24px}
+.om .card{background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);margin-bottom:18px}
+.om .card.sec{border-radius:14px}
+.om .hrow{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.om .hlabel{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;color:#fff}
+.om .live{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--acc)}
+.om .hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin:6px 0 12px;line-height:1.5}
+.om .cwrap{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1)}
+.om .cwrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.om .otag{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:14px;text-transform:uppercase;color:var(--acc);text-align:center;line-height:1.3}
+.om .fx{font-family:'JetBrains Mono',monospace;font-size:13.5px;line-height:1.7;color:var(--ink);background:rgba(0,0,0,.35);border:1px solid var(--line);border-radius:10px;padding:9px 12px;margin:14px 0 6px;overflow-wrap:anywhere}
+.om .fx sup{font-size:.72em;line-height:0}
+.om .fx sub{font-size:.72em;line-height:0}
+.om .fx .a{color:var(--acc)}
+.om .fx .b{color:var(--amb)}
+.om .slab{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin:12px 0 10px;display:flex;justify-content:space-between;gap:8px}
+.om .slab span:last-child{color:var(--acc)}
+.om-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;background:linear-gradient(90deg,var(--acc) var(--fill,0%),#23291f var(--fill,0%));outline:none;margin:8px 0 10px}
+.om-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.om-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.om-slider:hover::-webkit-slider-thumb{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.om-slider:hover::-moz-range-thumb{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.om .ticks{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink-dim)}
+.om .ticks sup{font-size:.8em}
+.om .stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;border-top:1px solid var(--line);margin-top:14px;padding-top:14px}
+.om .stl{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:4px}
+.om .stv{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500;line-height:1.15;overflow-wrap:anywhere}
+.om .stv sup{font-size:.6em}
+.om .stv.a{color:var(--acc)}
+.om .stv.b{color:var(--amb)}
+.om .sts{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin-top:4px}
+.om .tg{display:flex;gap:10px}
+.om .tb{flex:1;font-family:'JetBrains Mono',monospace;font-size:14.5px;padding:12px;border-radius:11px;background:#12160F;border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:all .2s}
+.om .tb.on{background:rgba(var(--acc-rgb),.1);border:1px solid var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.om .kd{border-top:1px solid var(--line);padding-top:16px;margin-top:16px;font-family:'Geist',sans-serif;font-size:14.5px;font-weight:400;line-height:1.65;color:var(--ink)}
+.om .kd p{margin:0}
+.om .kt{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));border-radius:0 12px 12px 0;margin:24px 0 0}
+.om .ktag{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.om .kdot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:omdot 2.4s ease-in-out infinite}
+.om .ktx{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:0.15em;color:var(--acc)}
+.om .kb{font-family:'Geist',sans-serif;font-size:17.4px;font-weight:400;line-height:1.55;color:var(--ink);margin:0}
+.om .last{margin-bottom:0;padding-bottom:0}
+@keyframes omdot{0%,100%{opacity:1}50%{opacity:.45}}
+@media (prefers-reduced-motion:reduce){.om .kdot{animation:none}.om .tb{transition:none}}
+@media (max-width:420px){.om .stv{font-size:20px}.om .otag{font-size:12px;padding:8px 10px}.om .tb{font-size:13px;padding:12px 8px}}
+</style>
+
+<div class="om">
+  <h2 class="sr-only">Interactive: one value shown on a linear ruler and a base 10 log ruler from 0.001 to 1,000,000, showing that each step on a log scale means ten times bigger</h2>
+  <h1>On a log scale, every equal step means <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">ten&nbsp;times</span></h1>
+  <p class="intro">Put 0.001 and 1,000,000 on an ordinary ruler and nearly everything gets crushed against zero. A base 10 log scale spaces the powers of ten evenly, so each step along it multiplies by 10. Change the value and watch it move on both rulers at once.</p>
+
+  <div class="card" id="omCard">
+    <div class="hrow">
+      <div class="hlabel">Two rulers, one value</div>
+      <div class="live" id="omLive">log = 0.00</div>
+    </div>
+    <div class="hint">Raise the value from 0.001 up to 1,000,000. Top ruler: linear. Bottom ruler: log base 10, in metres.</div>
+    <div class="cwrap">
+      <canvas id="omCv" aria-hidden="true"></canvas>
+      <div class="otag" id="omTag">value 1 · order of magnitude 0</div>
+    </div>
+    <div class="fx" id="omFx">log<sub>10</sub>(1) = 0.00 so 1 = 10<sup>0.00</sup></div>
+    <div class="slab"><span>Value (exponent of 10)</span><span id="omSv">10^0.00</span></div>
+    <input type="range" class="om-slider" id="omS" min="-3" max="6" step="0.01" value="0" aria-label="Value, set by its power of ten from 0.001 to 1,000,000">
+    <div class="ticks"><span>10<sup>-3</sup></span><span>10<sup>-2</sup></span><span>10<sup>-1</sup></span><span>1</span><span>10<sup>1</sup></span><span>10<sup>2</sup></span><span>10<sup>3</sup></span><span>10<sup>4</sup></span><span>10<sup>5</sup></span><span>10<sup>6</sup></span></div>
+    <div class="stats">
+      <div>
+        <div class="stl">Value</div>
+        <div class="stv a" id="omV">1</div>
+        <div class="sts" id="omU">= 1 m</div>
+      </div>
+      <div>
+        <div class="stl">Order of magnitude</div>
+        <div class="stv b" id="omO">10<sup>0</sup></div>
+        <div class="sts" id="omL">linear ruler position 0.0001%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card sec">
+    <div class="tg">
+      <button class="tb" id="omT1" type="button" aria-pressed="false">Linear ruler</button>
+      <button class="tb on" id="omT2" type="button" aria-pressed="true">Log ruler</button>
+    </div>
+    <div class="kd"><p id="omKd"></p></div>
+  </div>
+
+  <div class="kt last">
+    <div class="ktag"><span class="kdot"></span><span class="ktx">Know This</span></div>
+    <p class="kb">On a <span style="color:var(--acc)">base 10 log scale</span> each equal step multiplies by 10, so moving up one <span style="color:var(--acc)">order of magnitude</span> means a value <span style="color:var(--acc)">ten times bigger</span>.</p>
+  </div>
+</div>
+
+<script>
+(() => {
+  const el = id => document.getElementById(id);
+  const cv = el("omCv"), ctx = cv.getContext("2d");
+  const CSS = getComputedStyle(document.documentElement);
+  const ACC = CSS.getPropertyValue("--acc").trim();
+  const RGB = CSS.getPropertyValue("--acc-rgb").trim();
+  const AMB = CSS.getPropertyValue("--amb").trim();
+  const INK = CSS.getPropertyValue("--ink").trim();
+  const DIM = CSS.getPropertyValue("--ink-dim").trim();
+  const LINE = CSS.getPropertyValue("--line").trim();
+  const acc = a => "rgba(" + RGB + "," + a + ")";
+  const AH = AMB.replace("#", "");
+  const amb = a => "rgba(" + [0, 2, 4].map(i => parseInt(AH.substr(i, 2), 16)).join(",") + "," + a + ")";
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const buf = document.createElement("canvas"); const bctx = buf.getContext("2d");
+
+  const LO = -3, HI = 6, LINMAX = 1e6;
+  const UNITS = [
+    { e: -3, t: "1 mm" }, { e: -2, t: "1 cm" }, { e: 0, t: "1 m" }, { e: 3, t: "1 km" }, { e: 6, t: "1000 km" }
+  ];
+  let target = 0, cur = 0, anim = 0, last = 0, mode = 1;
+
+  const fmt = v => {
+    const r = Number(v.toPrecision(4));
+    return r.toLocaleString("en-AU", { maximumFractionDigits: 7 });
+  };
+  const powLabel = e => {
+    if (e >= 0) return Math.pow(10, e).toLocaleString("en-AU");
+    return Math.pow(10, e).toFixed(-e);
+  };
+  const supStr = n => String(n).split("").map(c => ({ "-": "⁻", "0": "⁰", "1": "¹", "2": "²", "3": "³", "4": "⁴", "5": "⁵", "6": "⁶", "7": "⁷", "8": "⁸", "9": "⁹" })[c]).join("");
+  const unitStr = v => {
+    if (v >= 1000) return fmt(v / 1000) + " km";
+    if (v >= 1) return fmt(v) + " m";
+    if (v >= 0.01) return fmt(v * 100) + " cm";
+    return fmt(v * 1000) + " mm";
+  };
+
+  const pctStr = p => p >= 1 ? p.toFixed(1) : Number(p.toPrecision(2)).toLocaleString("en-AU", { maximumFractionDigits: 12 });
+  function resize(){
+    const rect = cv.getBoundingClientRect();
+    if (!rect.width || !rect.height) return; /* f27c: refuse a zero measurement, keep the last good size */
+    cv.width = Math.max(1, Math.round(rect.width * dpr)); cv.height = Math.max(1, Math.round(rect.height * dpr));
+    buf.width = cv.width; buf.height = cv.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function rr(x, y, w, h, r){
+    ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+  }
+
+  function draw(){
+    const w = cv.width / dpr, h = cv.height / dpr;
+    if (w < 2 || h < 2) return;
+    const tagH = el("omTag").offsetHeight || 34;
+    const top = h * 0.07, bot = h - tagH - h * 0.04;
+    const span = bot - top;
+    const L = w * 0.06, R = w * 0.94, W = R - L;
+    const narrow = w < 560;
+    const fs = Math.max(9, Math.min(13, w / 50));
+    const v = Math.pow(10, cur);
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = "rgba(0,0,0,1)"; ctx.fillRect(0, 0, w, h);
+    ctx.textBaseline = "middle";
+
+    const linOn = mode === 0, logOn = mode === 1;
+    const yLinT = top + span * 0.03, yLin = top + span * 0.30, yLinLab = top + span * 0.41;
+    const yLogT = top + span * 0.53, yLog = top + span * 0.75, yLogLab = top + span * 0.86, yUnit = top + span * 0.97;
+
+    // ----- linear ruler -----
+    ctx.globalAlpha = linOn ? 1 : 0.55;
+    ctx.font = "500 " + fs + "px 'JetBrains Mono', monospace";
+    ctx.textAlign = "left"; ctx.fillStyle = linOn ? INK : DIM;
+    ctx.fillText(narrow ? "LINEAR: +250,000 PER STEP" : "LINEAR: EQUAL STEPS ADD 250,000", L, yLinT);
+    ctx.strokeStyle = linOn ? AMB : DIM; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(L, yLin); ctx.lineTo(R, yLin); ctx.stroke();
+    ctx.font = (fs - 1) + "px 'JetBrains Mono', monospace";
+    for (let i = 0; i <= 4; i++){
+      const val = i * 250000, x = L + W * val / LINMAX;
+      ctx.beginPath(); ctx.moveTo(x, yLin - 6); ctx.lineTo(x, yLin + 6); ctx.stroke();
+      ctx.textAlign = i === 0 ? "left" : (i === 4 ? "right" : "center");
+      ctx.fillStyle = DIM;
+      ctx.fillText(val.toLocaleString("en-AU"), x, yLinLab);
+    }
+    for (let i = 1; i < 20; i++){
+      if (i % 5 === 0) continue;
+      const x = L + W * i / 20;
+      ctx.beginPath(); ctx.moveTo(x, yLin - 3); ctx.lineTo(x, yLin + 3); ctx.stroke();
+    }
+    // the squashed sliver: 0 to 10,000 is the first 1%
+    const sliver = W * 10000 / LINMAX;
+    ctx.fillStyle = amb(0.35);
+    ctx.fillRect(L, yLin - 9, Math.max(sliver, 1.5), 18);
+    ctx.globalAlpha = 1;
+
+    // ----- log ruler -----
+    ctx.globalAlpha = logOn ? 1 : 0.55;
+    ctx.font = "500 " + fs + "px 'JetBrains Mono', monospace";
+    ctx.textAlign = "left"; ctx.fillStyle = logOn ? INK : DIM;
+    ctx.fillText(narrow ? "LOG BASE 10: \u00D710 PER STEP" : "LOG BASE 10: EQUAL STEPS MULTIPLY BY 10", L, yLogT);
+    const gx = e => L + W * (e - LO) / (HI - LO);
+    const step = W / (HI - LO);
+    // filled glow up to current value
+    const gr = ctx.createLinearGradient(L, 0, gx(cur), 0);
+    gr.addColorStop(0, acc(0.05)); gr.addColorStop(1, acc(logOn ? 0.45 : 0.2));
+    ctx.fillStyle = gr; ctx.fillRect(L, yLog - 5, gx(cur) - L, 10);
+    ctx.strokeStyle = logOn ? ACC : DIM; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(L, yLog); ctx.lineTo(R, yLog); ctx.stroke();
+    for (let e = LO; e <= HI; e++){
+      const x = gx(e);
+      ctx.strokeStyle = logOn ? ACC : DIM; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(x, yLog - 8); ctx.lineTo(x, yLog + 8); ctx.stroke();
+      ctx.font = (fs - 1) + "px 'JetBrains Mono', monospace";
+      ctx.textAlign = e === LO ? "left" : (e === HI ? "right" : "center");
+      ctx.fillStyle = Math.floor(cur + 1e-9) === e ? AMB : DIM;
+      const full = powLabel(e), short = e === 0 ? "1" : "10" + supStr(e);
+      ctx.fillText(ctx.measureText(full).width < step - 8 ? full : short, x, yLogLab);
+      if (e < HI){
+        ctx.lineWidth = 1; ctx.strokeStyle = logOn ? acc(0.5) : LINE;
+        for (let k = 2; k <= 9; k++){
+          const xm = x + step * Math.log10(k);
+          ctx.beginPath(); ctx.moveTo(xm, yLog - 4); ctx.lineTo(xm, yLog + 4); ctx.stroke();
+        }
+        if (step > 30){
+          ctx.strokeStyle = logOn ? acc(0.55) : LINE; ctx.lineWidth = 1.2;
+          const ay = yLog - 11;
+          ctx.beginPath(); ctx.moveTo(x + 3, ay); ctx.quadraticCurveTo(x + step / 2, ay - span * 0.07, x + step - 3, ay); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(x + step - 3, ay); ctx.lineTo(x + step - 8, ay - 3); ctx.moveTo(x + step - 3, ay); ctx.lineTo(x + step - 7, ay + 2); ctx.stroke();
+          if (step > 44){
+            ctx.font = (fs - 2) + "px 'JetBrains Mono', monospace"; ctx.textAlign = "center";
+            ctx.fillStyle = logOn ? ACC : DIM;
+            ctx.fillText("×10", x + step / 2, ay - span * 0.07);
+          }
+        }
+      }
+    }
+    // unit landmarks in metres
+    ctx.font = (fs - 2) + "px 'JetBrains Mono', monospace";
+    UNITS.forEach(u => {
+      ctx.textAlign = u.e === LO ? "left" : (u.e === HI ? "right" : "center");
+      ctx.fillStyle = logOn ? AMB : DIM;
+      ctx.fillText(u.t, gx(u.e), yUnit);
+    });
+    ctx.globalAlpha = 1;
+
+    // ----- markers + connector -----
+    const xLin = L + W * Math.min(v, LINMAX) / LINMAX;
+    const xLog = gx(cur);
+    ctx.save(); ctx.setLineDash([4, 4]); ctx.strokeStyle = acc(0.5); ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.moveTo(xLin, yLin + 9); ctx.lineTo(xLog, yLog - 9); ctx.stroke(); ctx.restore();
+
+    ctx.save(); ctx.globalCompositeOperation = "lighter";
+    [[xLin, yLin, AMB], [xLog, yLog, ACC]].forEach(([x, y, c]) => {
+      const g = ctx.createRadialGradient(x, y, 0, x, y, 18);
+      g.addColorStop(0, c === ACC ? acc(0.6) : amb(0.55)); g.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, 18, 0, Math.PI * 2); ctx.fill();
+    });
+    ctx.restore();
+    ctx.fillStyle = AMB; ctx.beginPath(); ctx.arc(xLin, yLin, 5, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = ACC; ctx.beginPath(); ctx.arc(xLog, yLog, 6, 0, Math.PI * 2); ctx.fill();
+
+    // value badge near log marker
+    ctx.font = "500 " + fs + "px 'JetBrains Mono', monospace";
+    const vs = fmt(v);
+    const bw = ctx.measureText(vs).width + 14, bh = fs + 8;
+    const bx = Math.min(Math.max(xLin + 10, L), R - bw);
+    const by = yLin - bh - 7;
+    ctx.fillStyle = "rgba(0,0,0,0.7)"; rr(bx, by, bw, bh, 5); ctx.fill();
+    ctx.strokeStyle = AMB; ctx.lineWidth = 1; rr(bx, by, bw, bh, 5); ctx.stroke();
+    ctx.fillStyle = AMB; ctx.textAlign = "left"; ctx.fillText(vs, bx + 7, by + bh / 2 + 0.5);
+
+    // percent along the linear ruler, computed
+    const pct = 100 * v / LINMAX;
+    ctx.font = (fs - 1) + "px 'JetBrains Mono', monospace";
+    ctx.textAlign = "right"; ctx.fillStyle = DIM;
+    if (!narrow){
+      ctx.fillText(pctStr(pct) + "% of the way", R, yLinT);
+      ctx.fillText(((cur - LO) / (HI - LO) * 100).toFixed(1) + "% of the way", R, yLogT);
+    }
+
+    // bloom
+    bctx.setTransform(1, 0, 0, 1, 0, 0); bctx.clearRect(0, 0, buf.width, buf.height);
+    if (cv.width && cv.height) bctx.drawImage(cv, 0, 0);
+    ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
+    (buf.width&&buf.height)&&ctx.drawImage(buf, 0, 0, w, h); ctx.restore();
+    // vignette
+    const cx = w / 2, cy = h / 2;
+    const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
+  }
+
+  function syncUI(){
+    const x = target, v = Math.pow(10, x), om = Math.floor(x + 1e-9);
+    const xs = x.toFixed(2), vs = fmt(v);
+    const s = el("omS");
+    s.style.setProperty("--fill", ((x - LO) / (HI - LO) * 100) + "%");
+    el("omLive").textContent = "log = " + xs;
+    el("omSv").textContent = "10^" + xs;
+    el("omTag").textContent = "value " + vs + " · order of magnitude " + om;
+    el("omFx").innerHTML = "log<sub>10</sub>(<span class=\"b\">" + vs + "</span>) = <span class=\"a\">" + xs + "</span> so " + vs + " = 10<sup>" + xs + "</sup>, between 10<sup>" + om + "</sup> and 10<sup>" + (om + 1) + "</sup>";
+    el("omV").textContent = vs;
+    el("omU").textContent = vs + " m = " + unitStr(v);
+    el("omO").innerHTML = "10<sup>" + om + "</sup>";
+    const pct = 100 * v / LINMAX;
+    el("omL").textContent = "linear ruler: " + pctStr(pct) + "% along";
+  }
+
+  function frame(now){
+    const dt = Math.min(now - last, 50); last = now;
+    const k = 1 - Math.exp(-dt / 90);
+    cur += (target - cur) * k;
+    if (Math.abs(target - cur) < 0.001){ cur = target; draw(); anim = 0; return; }
+    draw(); anim = requestAnimationFrame(frame);
+  }
+  function go(){
+    if (reduce){ cur = target; draw(); return; }
+    if (!anim){ last = performance.now(); anim = requestAnimationFrame(frame); }
+  }
+
+  el("omS").addEventListener("input", e => { target = parseFloat(e.target.value); syncUI(); go(); });
+
+  const KD = [
+    `A linear scale adds the same amount for each equal step: here every quarter of the ruler adds 250,000. That works when values are similar in size, but it hides small ones. Everything from 0 to 10,000 is squeezed into the first ${(100 * 10000 / LINMAX).toFixed(0)}% of the ruler, so 0.001, 1 and 1,000 all sit on top of each other. A value's order of magnitude is the power of 10 it sits at or just above: 3,162 = 10<sup>3.5</sup>, so its order of magnitude is 3. Two values one order of magnitude apart differ by a factor of about 10, which is why 1 mm and 1 km (a factor of ${(1000 / 0.001).toLocaleString("en-AU")}) are six orders of magnitude apart.`,
+    `A base 10 log scale places each value at its logarithm, log<sub>10</sub> x, so 0.001, 0.01, 0.1, 1, 10 and so on land at equal spacing. Each step of one unit multiplies the value by 10, and half a step multiplies by about ${Math.sqrt(10).toFixed(2)}, because 10<sup>0.5</sup> = &radic;10. The small ticks between the powers of ten crowd together on the right because 2, 3, 4 ... 9 sit at log 2 = ${Math.log10(2).toFixed(3)}, log 3 = ${Math.log10(3).toFixed(3)} and so on. Log scales suit units that range over many orders of magnitude, such as lengths from millimetres to thousands of kilometres. Zero and negative numbers never appear on a log scale, because no power of 10 equals them.`
+  ];
+  function setKd(i){
+    mode = i;
+    el("omKd").innerHTML = KD[i];
+    [el("omT1"), el("omT2")].forEach((b, j) => { b.classList.toggle("on", i === j); b.setAttribute("aria-pressed", i === j ? "true" : "false"); });
+    if (!anim) draw();
+  }
+  el("omT1").addEventListener("click", () => setKd(0));
+  el("omT2").addEventListener("click", () => setKd(1));
+
+  window.addEventListener("resize", () => { resize(); draw(); });
+  resize(); setKd(1); syncUI(); draw();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (!anim) draw(); });
+})();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'g-orders-of-magnitude-and-log-scales'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

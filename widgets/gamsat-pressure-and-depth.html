@@ -1,0 +1,559 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Pressure and depth — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #3A6FC8;
+  --acc-rgb: 58, 111, 200;
+  --ag:  rgba(var(--acc-rgb),.7);
+  --ag1: rgba(var(--acc-rgb),.12);
+  --ag2: rgba(var(--acc-rgb),.45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);font-family:'Geist',sans-serif;color:var(--ink);min-height:100vh;padding:40px 16px 0;box-sizing:border-box;-webkit-font-smoothing:antialiased}
+.pd-wrap{max-width:720px;margin:0 auto}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.pd-wrap h1{font-family:'Geist',sans-serif;font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin:0 0 14px;color:var(--ink)}
+.pd-intro{font-size:15.5px;font-weight:400;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin:0 0 26px}
+.card{background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);margin-bottom:22px}
+.card.pd-sec{border-radius:14px}
+.card-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.card-label{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;color:var(--ink);letter-spacing:.04em}
+.pd-live{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--acc);letter-spacing:.06em}
+.pd-hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin:0 0 12px;line-height:1.5}
+.canvas-wrap{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1)}
+.canvas-wrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.pd-ovl{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:14px;text-transform:uppercase;color:var(--acc);text-align:center;letter-spacing:.02em}
+.pd-ctl{margin-top:16px}
+.pd-f{text-transform:none}
+.pd-row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);letter-spacing:.06em;margin-bottom:10px}
+.pd-row b{font-weight:500;color:var(--acc);font-size:12px;letter-spacing:.02em}
+.pd-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;margin:6px 0 0;background:linear-gradient(90deg, var(--acc) var(--fill,0%), #23291f var(--fill,0%));outline:none;cursor:pointer}
+.pd-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag), 0 0 4px var(--ag);transition:box-shadow .15s}
+.pd-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag), 0 0 4px var(--ag);transition:box-shadow .15s}
+.pd-slider:hover::-webkit-slider-thumb{box-shadow:0 0 24px var(--acc), 0 0 8px var(--ag)}
+.pd-slider:hover::-moz-range-thumb{box-shadow:0 0 24px var(--acc), 0 0 8px var(--ag)}
+.pd-slider:focus-visible{outline:1px solid var(--ag2);outline-offset:6px}
+.pd-ticks{position:relative;height:18px;margin:10px 10px 0}
+.pd-tick{position:absolute;top:0;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink-dim);white-space:nowrap}
+.pd-tick::before{content:"";display:block;width:1px;height:4px;background:var(--ink-dim);margin:0 auto 2px;opacity:.6}
+.pd-qlabel{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);letter-spacing:.06em;margin:18px 0 10px}
+.pd-toggles{display:flex;gap:10px;flex-wrap:wrap}
+.pd-toggles button{flex:1 1 0;font-family:'JetBrains Mono',monospace;font-size:12px;padding:12px;border-radius:999px;background:#12160F;border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:background .2s,border-color .2s,color .2s,box-shadow .2s;white-space:nowrap}
+.pd-toggles button[aria-pressed="true"]{background:rgba(var(--acc-rgb),.1);border:1px solid var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.pd-toggles button:focus-visible{outline:1px solid var(--acc);outline-offset:3px}
+.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;border-top:1px solid var(--line);margin-top:18px;padding-top:14px}
+.stat-label{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);letter-spacing:.06em;margin-bottom:6px;line-height:1.35}
+.stat-value{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500;line-height:1.1}
+.stat-value small{font-size:13px;color:var(--ink-dim);font-weight:400;margin-left:4px}
+.stat-sub{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin-top:4px}
+.pd-s1{color:var(--acc)}
+.pd-s2{color:var(--amb)}
+.knowdrop{border-top:1px solid var(--line);padding-top:16px;margin-top:16px}
+.knowdrop p{font-family:'Geist',sans-serif;font-size:14.5px;font-weight:400;line-height:1.65;color:var(--ink);margin:0}
+.know{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));border-radius:0 12px 12px 0;margin:0;margin-bottom:0}
+.know-row{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.know-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:pdDot 2.4s ease-in-out infinite;flex:none}
+.know-tag{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:0.15em;color:var(--acc)}
+.know p{font-family:'Geist',sans-serif;font-size:17.4px;font-weight:400;line-height:1.55;color:var(--ink);margin:0}
+@keyframes pdDot{0%,100%{opacity:1}50%{opacity:.45}}
+.pd-wrap>*:last-child{margin-bottom:0}
+@media (prefers-reduced-motion: reduce){
+  .know-dot{animation:none}
+  .pd-toggles button,.pd-slider::-webkit-slider-thumb{transition:none}
+}
+</style>
+<div class="pd-wrap">
+  <h2 class="sr-only">Pressure and depth: three connected vessels of different shapes and a depth against pressure graph that change with depth, fluid and the pressure zero</h2>
+  <h1>At the same depth, a thin tube of water presses as hard as the <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">ocean</span></h1>
+  <p class="pd-intro">Pressure in a still fluid comes from the weight of fluid stacked above a point, so it depends on how deep the point is and how dense the fluid is, not on how much fluid there is or what shape holds it. It pushes in every direction at once. Lower the probe, switch to seawater or mercury, and watch the pressure arrows in all three vessels and the line on the graph.</p>
+
+  <section class="card pd-main" aria-label="Pressure and depth model">
+    <div class="card-head">
+      <span class="card-label">Pressure and depth</span>
+      <span class="pd-live" id="pdLive">Fresh water &middot; 10.0 m</span>
+    </div>
+    <p class="pd-hint">Change the depth, then the fluid. Compare the arrows in the three vessels.</p>
+    <div class="canvas-wrap" id="pdWrap">
+      <canvas id="pdCanvas" role="img" aria-label="Three connected vessels, a narrow tube, a flared basin and a flask, filled to the same level, with a probe at the chosen depth in each, beside a graph of pressure against depth"></canvas>
+      <div class="pd-ovl" id="pdOvl" aria-live="polite"><span class="pd-f">P = P&#8320; + &rho;gh = 101.3 + 98.1 = 199.4 kPa (1.97 atm)</span></div>
+    </div>
+    <div class="pd-ctl">
+      <div class="pd-row"><span>Probe depth</span><b id="pdDV">10.0 m</b></div>
+      <input type="range" class="pd-slider" id="pdD" aria-label="Probe depth in metres" min="0" max="30" step="0.5" value="10">
+      <div class="pd-ticks" id="pdTicks" aria-hidden="true"></div>
+    </div>
+    <div class="pd-box">
+    <div class="pd-qlabel" id="pdFluidQ">Fluid</div>
+    <div class="pd-toggles" role="group" aria-labelledby="pdFluidQ" id="pdFluid">
+      <button type="button" data-f="fresh" aria-pressed="true">Fresh water</button>
+      <button type="button" data-f="sea" aria-pressed="false">Seawater</button>
+      <button type="button" data-f="hg" aria-pressed="false">Mercury</button>
+    </div>
+    </div>
+    <div class="pd-box">
+    <div class="pd-qlabel" id="pdModeQ">Pressure drawn</div>
+    <div class="pd-toggles" role="group" aria-labelledby="pdModeQ" id="pdMode">
+      <button type="button" data-m="abs" aria-pressed="true">Absolute</button>
+      <button type="button" data-m="gauge" aria-pressed="false">Gauge</button>
+    </div>
+    </div>
+    <div class="stat-row">
+      <div><div class="stat-label">Gauge &middot; <span class="pd-f">&rho;gh</span></div><div class="stat-value pd-s1" id="pdS1">98.1<small>kPa</small></div><div class="stat-sub" id="pdS1b">0.97 atm</div></div>
+      <div><div class="stat-label">Absolute &middot; <span class="pd-f">P&#8320; + &rho;gh</span></div><div class="stat-value pd-s2" id="pdS2">199.4<small>kPa</small></div><div class="stat-sub" id="pdS2b">1.97 atm</div></div>
+    </div>
+  </section>
+
+  <section class="card pd-sec" aria-label="Why the shape does not matter, and which zero to use">
+    <div class="pd-toggles" role="group" aria-label="Which idea the paragraph explains" id="pdDrop">
+      <button type="button" data-k="shape" aria-pressed="true">Any shape</button>
+      <button type="button" data-k="zero" aria-pressed="false">Gauge or absolute</button>
+    </div>
+    <div class="knowdrop"><p id="pdDropP" aria-live="polite"></p></div>
+  </section>
+
+  <div class="know">
+    <div class="know-row"><span class="know-dot" aria-hidden="true"></span><span class="know-tag">Know this</span></div>
+    <p>Pressure in a still fluid is <span style="color:var(--acc)">P&#8320; + &rho;gh</span>: it grows with <span style="color:var(--acc)">depth and density</span>, pushes equally in <span style="color:var(--acc)">every direction</span>, and ignores the shape of the container.</p>
+  </div>
+</div>
+<script>
+(function(){
+  "use strict";
+  var CSS = getComputedStyle(document.documentElement);
+  var ACC = CSS.getPropertyValue("--acc").trim();
+  var RGB = CSS.getPropertyValue("--acc-rgb").trim();
+  var AMB = CSS.getPropertyValue("--amb").trim();
+  var INK = CSS.getPropertyValue("--ink").trim();
+  var DIM = CSS.getPropertyValue("--ink-dim").trim();
+  var LINE = CSS.getPropertyValue("--line").trim();
+  var RM = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+
+  var canvas = document.getElementById("pdCanvas");
+  var ctx = canvas.getContext("2d");
+  var wrap = document.getElementById("pdWrap");
+  var ovl = document.getElementById("pdOvl");
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
+  var buf = document.createElement("canvas"); var bctx = buf.getContext("2d");
+  var canBlur = typeof ctx.filter === "string";
+  var FONT = "11px JetBrains Mono, monospace";
+
+  var G = 9.81, P0 = 101.3, ATM = 101.325, DMAX = 30, DVES = 32;
+  var FLUIDS = {
+    fresh: { name: "Fresh water", short: "fresh water", rho: 1000 },
+    sea:   { name: "Seawater", short: "seawater", rho: 1025 },
+    hg:    { name: "Mercury", short: "mercury", rho: 13600 }
+  };
+  var FORDER = ["fresh", "sea", "hg"];
+  var VESSELS = [
+    { name: "Tube",  pts: [[0, 0.26], [1, 0.26]] },
+    { name: "Basin", pts: [[0, 0.46], [1, 0.27]] },
+    { name: "Flask", pts: [[0, 0.24], [0.36, 0.24], [0.62, 0.44], [1, 0.44]] }
+  ];
+  var DROP = {
+    shape: "Pressure at a point comes from the weight of the column of fluid straight above it, so only vertical depth counts, never width or volume. A flared basin holds far more water than a thin tube, but the extra water rests on the sloping walls, which hold it up; the base only feels the column above it. A narrowing flask is the mirror case: the roof of its shoulder pushes down on the fluid below, adding exactly what the missing water would have. So connected vessels fill to one level and match pressure at every depth, which is why a dam is built for how deep the reservoir is, not how far back it stretches. In a standing adult, blood in the feet sits about 1.3 m below the heart, so it is at roughly 13 kPa (about 100 mmHg) more pressure.",
+    zero: "Absolute pressure counts everything pushing on a point, including the air on the surface: P = P₀ + ρgh, with P₀ about 101 kPa (1 atm) at sea level. Gauge pressure counts only the part above the atmosphere, ρgh, because most gauges read zero when open to the air. A diver at 10 m in seawater is at about 1 atm gauge but 2 atm absolute, and it is the absolute value that sets gas volume, so the air in a held breath halves between the surface and 10 m. Blood pressure and tyre pressure are gauge readings. When a graph or table says only “pressure”, check its zero: a line through the origin is gauge, a line starting near 101 kPa is absolute."
+  };
+
+  var state = { d: 10, f: "fresh", mode: "abs" };
+  function p0Of(mode){ return mode === "abs" ? P0 : 0; }
+  function niceAxis(v){
+    var steps = [50, 100, 200, 250, 500, 1000];
+    for (var i = 0; i < steps.length; i++){ if (v / steps[i] <= 6) return { max: Math.ceil(v / steps[i]) * steps[i], step: steps[i] }; }
+    return { max: Math.ceil(v / 1000) * 1000, step: 1000 };
+  }
+  function targetVals(){
+    var rho = FLUIDS[state.f].rho, p0 = p0Of(state.mode);
+    var ax = niceAxis((p0 + rho * G * DMAX / 1000) * 1.06);
+    return { d: state.d, rho: rho, p0: p0, axis: ax.max };
+  }
+  var disp = targetVals(), from = null, to = null, t0 = 0, raf = 0, DUR = 650;
+  function ease(t){ return 1 - Math.pow(1 - t, 3); }
+  function animate(){
+    to = targetVals();
+    if (RM){ disp = to; draw(); return; }
+    from = { d: disp.d, rho: disp.rho, p0: disp.p0, axis: disp.axis };
+    t0 = performance.now();
+    if (!raf) raf = requestAnimationFrame(step);
+  }
+  function step(now){
+    var t = Math.min(1, (now - t0) / DUR), e = ease(t);
+    for (var k in to){ disp[k] = from[k] + (to[k] - from[k]) * e; }
+    draw();
+    if (t < 1){ raf = requestAnimationFrame(step); } else { raf = 0; disp = { d: to.d, rho: to.rho, p0: to.p0, axis: to.axis }; draw(); }
+  }
+
+  function withA(hex, a){
+    var h = hex.replace("#", "");
+    if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+    var n = parseInt(h, 16);
+    return "rgba(" + ((n >> 16) & 255) + "," + ((n >> 8) & 255) + "," + (n & 255) + "," + a + ")";
+  }
+  function accA(a){ return "rgba(" + RGB + "," + a + ")"; }
+  function hwAt(pts, d){
+    if (d <= pts[0][0]) return pts[0][1];
+    for (var i = 1; i < pts.length; i++){ if (d <= pts[i][0]){ var p = pts[i - 1], q = pts[i]; return p[1] + (q[1] - p[1]) * (d - p[0]) / (q[0] - p[0]); } }
+    return pts[pts.length - 1][1];
+  }
+  function fmtP(v){ return v >= 1000 ? String(Math.round(v)) : v.toFixed(1); }
+  function fmt1(v){ return v.toFixed(1); }
+
+  /* ---------- sizing ---------- */
+  var W = 0, H = 0;
+  function resize(){
+    var rect = canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    canvas.width = Math.round(rect.width * dpr); canvas.height = Math.round(rect.height * dpr);
+    buf.width = canvas.width; buf.height = canvas.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    W = canvas.width / dpr; H = canvas.height / dpr;
+    draw();
+  }
+
+  function layout(w, h){
+    var inside = ovl.parentElement === wrap;
+    var top = Math.max(14, h * 0.07), bot = h - (inside ? 44 : 12);
+    if (w >= 560){
+      var yS = top + 44, yB = bot - 24;
+      return { wide: true, top: top, vx0: w * 0.11, vx1: w * 0.6, yS: yS, yB: yB,
+        gx0: w * 0.69, gx1: w * 0.95, gy0: yS, gy1: yS + (yB - yS) * DMAX / DVES };
+    }
+    var avail = bot - top;
+    var yS2 = top + 40, yB2 = top + avail * 0.5;
+    var gy0 = yB2 + 60;
+    return { wide: false, top: top, vx0: w * 0.15, vx1: w * 0.97, yS: yS2, yB: yB2,
+      gx0: w * 0.17, gx1: w * 0.9, gy0: gy0, gy1: bot - 8 };
+  }
+
+  function vy(L, d){ return L.yS + (d / DVES) * (L.yB - L.yS); }
+  function gy(L, d){ return L.gy0 + (d / DMAX) * (L.gy1 - L.gy0); }
+  function gx(L, p){ return L.gx0 + (p / disp.axis) * (L.gx1 - L.gx0); }
+  function pAt(d, rho, p0){ return p0 + rho * G * d / 1000; }
+
+  function vesselGeom(L){
+    var sw = (L.vx1 - L.vx0) / 3, rimD = -0.07, pipeD = 1 - Math.max(7, (L.yB - L.yS) * 0.055) / (L.yB - L.yS);
+    return VESSELS.map(function(v, i){
+      return { v: v, cx: L.vx0 + sw * (i + 0.5), sw: sw, rimD: rimD, pipeD: pipeD };
+    });
+  }
+  function sideX(g, d, side){ return g.cx + side * hwAt(g.v.pts, Math.max(0, d)) * g.sw; }
+  function rimHw(g){ var a = g.v.pts[0], b = g.v.pts[1]; var slope = (b[1] - a[1]) / (b[0] - a[0]); return a[1] + slope * g.rimD; }
+
+  function drawVessels(L, VG){
+    var hgMix = Math.max(0, Math.min(1, (disp.rho - 1025) / (13600 - 1025)));
+    /* fluid: one path, so overlaps never double up; shade deepens with depth (higher pressure) */
+    ctx.beginPath();
+    VG.forEach(function(g){
+      var n = 24, i, d;
+      for (i = 0; i <= n; i++){ d = i / n; var x = sideX(g, d, -1), y = vy(L, d * DVES); if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y); }
+      for (i = n; i >= 0; i--){ d = i / n; ctx.lineTo(sideX(g, d, 1), vy(L, d * DVES)); }
+      ctx.closePath();
+    });
+    for (var j = 0; j < VG.length - 1; j++){
+      var a = VG[j], b = VG[j + 1];
+      var xa = Math.min(sideX(a, a.pipeD, 1), sideX(a, 1, 1)) - 1, xb = Math.max(sideX(b, b.pipeD, -1), sideX(b, 1, -1)) + 1;
+      var ya = vy(L, a.pipeD * DVES), yb = vy(L, DVES);
+      ctx.rect(xa, ya, xb - xa, yb - ya);
+    }
+    var grd = ctx.createLinearGradient(0, L.yS, 0, L.yB);
+    var lo = 0.08 + 0.1 * hgMix, hi = 0.42 + 0.2 * hgMix;
+    if (hgMix < 0.5){ grd.addColorStop(0, accA(lo)); grd.addColorStop(1, accA(hi)); }
+    else { grd.addColorStop(0, withA(INK, lo * 0.9)); grd.addColorStop(1, withA(INK, hi * 0.75)); }
+    ctx.fillStyle = grd; ctx.fill();
+
+    /* walls */
+    ctx.save();
+    ctx.strokeStyle = withA(INK, 0.55); ctx.lineWidth = 2; ctx.lineJoin = "round"; ctx.lineCap = "round";
+    var yBot = vy(L, DVES);
+    VG.forEach(function(g, i){
+      [-1, 1].forEach(function(side){
+        var toPipe = (side === 1 && i < VG.length - 1) || (side === -1 && i > 0);
+        var endD = toPipe ? g.pipeD : 1;
+        ctx.beginPath();
+        ctx.moveTo(g.cx + side * rimHw(g) * g.sw, vy(L, g.rimD * DVES));
+        g.v.pts.forEach(function(p){ if (p[0] < endD) ctx.lineTo(sideX(g, p[0], side), vy(L, p[0] * DVES)); });
+        ctx.lineTo(sideX(g, endD, side), vy(L, endD * DVES));
+        ctx.stroke();
+      });
+      if (i < VG.length - 1){
+        var nb = VG[i + 1];
+        ctx.beginPath();
+        ctx.moveTo(sideX(g, g.pipeD, 1), vy(L, g.pipeD * DVES));
+        ctx.lineTo(sideX(nb, nb.pipeD, -1), vy(L, nb.pipeD * DVES));
+        ctx.stroke();
+      }
+    });
+    ctx.beginPath(); ctx.moveTo(sideX(VG[0], 1, -1), yBot); ctx.lineTo(sideX(VG[2], 1, 1), yBot); ctx.stroke();
+    ctx.restore();
+
+    /* the free surface, same level in all three */
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    ctx.strokeStyle = hgMix < 0.5 ? accA(0.95) : withA(INK, 0.9); ctx.lineWidth = 2;
+    VG.forEach(function(g){ ctx.beginPath(); ctx.moveTo(sideX(g, 0, -1) + 1, L.yS); ctx.lineTo(sideX(g, 0, 1) - 1, L.yS); ctx.stroke(); });
+    ctx.restore();
+
+    /* air pressing on the surface: strong when P0 is counted, ghosted when it is left out */
+    var airA = 0.15 + 0.8 * (disp.p0 / P0);
+    ctx.save();
+    ctx.strokeStyle = withA(AMB, airA.toFixed(3)); ctx.fillStyle = withA(AMB, airA.toFixed(3)); ctx.lineWidth = 1.5;
+    VG.forEach(function(g){
+      var span = rimHw(g) * g.sw * 2, n = Math.max(1, Math.round(span / 30));
+      for (var k = 0; k < n; k++){
+        var x = g.cx - span / 2 + span * (k + 0.5) / n, y0 = L.yS - 30, y1 = L.yS - 6;
+        ctx.beginPath(); ctx.moveTo(x, y0); ctx.lineTo(x, y1 - 4); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(x, y1); ctx.lineTo(x - 4, y1 - 6); ctx.lineTo(x + 4, y1 - 6); ctx.closePath(); ctx.fill();
+      }
+    });
+    ctx.restore();
+  }
+
+  function shownP(){ return pAt(disp.d, disp.rho, disp.p0); }
+  function arrowLen(g){ var f = Math.log(1 + Math.max(0, shownP()) / 50) / Math.log(1 + 4200 / 50); return 5 + Math.min(1, f) * g.sw * 0.18; }
+
+  function drawProbes(L, VG){
+    var yP = vy(L, disp.d), len, P = shownP();
+    /* depth line across every vessel (and on to the graph when they share a scale) */
+    ctx.save();
+    ctx.setLineDash([4, 5]); ctx.strokeStyle = accA(0.55); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(L.vx0 - 6, yP); ctx.lineTo(L.wide ? gx(L, P) : L.vx1, yP); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    VG.forEach(function(g){
+      len = arrowLen(g);
+      var r0 = 4.5;
+      ctx.strokeStyle = ACC; ctx.fillStyle = ACC; ctx.lineWidth = 1.8;
+      for (var k = 0; k < 8; k++){
+        var a = k * Math.PI / 4, ca = Math.cos(a), sa = Math.sin(a);
+        var x1 = g.cx + ca * r0, y1 = yP + sa * r0, x2 = g.cx + ca * (r0 + len), y2 = yP + sa * (r0 + len);
+        ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+        var hx = 4;
+        ctx.beginPath(); ctx.moveTo(x2 + ca * 1.5, y2 + sa * 1.5);
+        ctx.lineTo(x2 - ca * hx - sa * hx * 0.7, y2 - sa * hx + ca * hx * 0.7);
+        ctx.lineTo(x2 - ca * hx + sa * hx * 0.7, y2 - sa * hx - ca * hx * 0.7);
+        ctx.closePath(); ctx.fill();
+      }
+      var halo = ctx.createRadialGradient(g.cx, yP, 0, g.cx, yP, r0 * 4);
+      halo.addColorStop(0, accA(0.6)); halo.addColorStop(1, accA(0));
+      ctx.fillStyle = halo; ctx.beginPath(); ctx.arc(g.cx, yP, r0 * 4, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = INK; ctx.beginPath(); ctx.arc(g.cx, yP, 3.2, 0, Math.PI * 2); ctx.fill();
+    });
+    ctx.restore();
+  }
+
+  function drawGraph(L){
+    var p0 = disp.p0, i;
+    var ax = niceAxis(disp.axis / 1.0001), stepV = ax.step;
+    ctx.save();
+    /* grid */
+    ctx.strokeStyle = LINE; ctx.lineWidth = 1;
+    for (var p = 0; p <= disp.axis + 0.01; p += stepV){ var x = Math.round(gx(L, p)) + 0.5; ctx.beginPath(); ctx.moveTo(x, L.gy0); ctx.lineTo(x, L.gy1); ctx.stroke(); }
+    for (var d = 0; d <= DMAX; d += 10){ var y = Math.round(gy(L, d)) + 0.5; ctx.beginPath(); ctx.moveTo(L.gx0, y); ctx.lineTo(L.gx1, y); ctx.stroke(); }
+    ctx.strokeStyle = withA(DIM, 0.7);
+    ctx.beginPath(); ctx.moveTo(L.gx0 + 0.5, L.gy0); ctx.lineTo(L.gx0 + 0.5, L.gy1); ctx.moveTo(L.gx0, L.gy0 + 0.5); ctx.lineTo(L.gx1, L.gy0 + 0.5); ctx.stroke();
+    /* atmosphere line */
+    if (p0 > 1){
+      var xa = gx(L, p0);
+      ctx.setLineDash([3, 4]); ctx.strokeStyle = withA(AMB, (0.75 * p0 / P0).toFixed(3));
+      ctx.beginPath(); ctx.moveTo(xa, L.gy0); ctx.lineTo(xa, L.gy1); ctx.stroke(); ctx.setLineDash([]);
+    }
+    /* clip the lines to the plot box */
+    ctx.save();
+    ctx.beginPath(); ctx.rect(L.gx0, L.gy0 - 2, L.gx1 - L.gx0 + 2, L.gy1 - L.gy0 + 4); ctx.clip();
+    FORDER.forEach(function(k){
+      var rho = FLUIDS[k].rho, sel = k === state.f;
+      ctx.beginPath(); ctx.moveTo(gx(L, p0), gy(L, 0)); ctx.lineTo(gx(L, pAt(DMAX, rho, p0)), gy(L, DMAX));
+      if (sel){ ctx.strokeStyle = ACC; ctx.lineWidth = 2.6; ctx.shadowColor = accA(0.8); ctx.shadowBlur = 8; }
+      else { ctx.strokeStyle = withA(DIM, 0.55); ctx.lineWidth = 1.2; ctx.shadowBlur = 0; }
+      ctx.stroke(); ctx.shadowBlur = 0;
+    });
+    ctx.restore();
+    /* the probe point */
+    var P = shownP(), xp = gx(L, P), yp = gy(L, disp.d);
+    ctx.setLineDash([3, 4]); ctx.strokeStyle = accA(0.5); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(xp, L.gy0); ctx.lineTo(xp, yp); ctx.stroke();
+    if (!L.wide){ ctx.beginPath(); ctx.moveTo(L.gx0, yp); ctx.lineTo(xp, yp); ctx.stroke(); }
+    ctx.setLineDash([]);
+    ctx.globalCompositeOperation = "lighter";
+    var halo = ctx.createRadialGradient(xp, yp, 0, xp, yp, 16);
+    halo.addColorStop(0, accA(0.7)); halo.addColorStop(1, accA(0));
+    ctx.fillStyle = halo; ctx.beginPath(); ctx.arc(xp, yp, 16, 0, Math.PI * 2); ctx.fill();
+    ctx.globalCompositeOperation = "source-over";
+    ctx.fillStyle = ACC; ctx.beginPath(); ctx.arc(xp, yp, 4.5, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+
+  function txt(s, x, y, col, align, base){
+    ctx.fillStyle = col; ctx.textAlign = align || "left"; ctx.textBaseline = base || "alphabetic"; ctx.fillText(s, x, y);
+  }
+
+  function drawText(L, VG){
+    ctx.save();
+    ctx.font = FONT;
+    var P = shownP();
+    /* vessel names and the reading under each one */
+    VG.forEach(function(g){
+      txt(g.v.name.toUpperCase(), g.cx, L.yS - 36, INK, "center", "bottom");
+      txt(fmtP(P) + " kPa", g.cx, vy(L, DVES) + 6, ACC, "center", "top");
+    });
+    /* vessel depth scale */
+    for (var d = 0; d <= DMAX; d += 10){
+      var y = vy(L, d);
+      ctx.strokeStyle = withA(DIM, 0.6); ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(L.vx0 - 4, y); ctx.lineTo(L.vx0 - 9, y); ctx.stroke();
+      txt(d + (d === DMAX ? " m" : ""), L.vx0 - 12, y, DIM, "right", "middle");
+    }
+    txt("DEPTH", L.vx0 - 12, L.yS - 36, DIM, "right", "bottom");
+    /* air label */
+    var airA = 0.3 + 0.7 * (disp.p0 / P0);
+    txt(disp.p0 > P0 / 2 ? "AIR P₀" : "P₀ OFF", L.vx0 - 12, L.yS - 18, withA(AMB, airA.toFixed(3)), "right", "middle");
+
+    /* graph axes */
+    var ax = niceAxis(disp.axis / 1.0001);
+    for (var p = 0; p <= disp.axis + 0.01; p += ax.step){
+      var x = gx(L, p);
+      if (x > L.gx1 + 1) break;
+      var lab = p >= 1000 ? (p / 1000) + "k" : String(p);
+      if (p === 0 || (x - L.gx0) > 18) txt(lab, x, L.gy0 - 6, DIM, "center", "bottom");
+    }
+    txt("PRESSURE (kPa)", L.gx0, L.gy0 - 22, DIM, "left", "bottom");
+    if (!L.wide){
+      for (var d2 = 0; d2 <= DMAX; d2 += 10) txt(d2 + (d2 === DMAX ? " m" : ""), L.gx0 - 7, gy(L, d2), DIM, "right", "middle");
+    }
+    if (disp.p0 > 1){ txt("P₀", gx(L, disp.p0) + 4, L.gy1 - 4, withA(AMB, (disp.p0 / P0).toFixed(3)), "left", "bottom"); }
+    /* probe value on the graph (placed first, so the line names keep clear of it) */
+    var placed = [];
+    var xp = gx(L, P), yp = gy(L, disp.d), lab2 = fmtP(P) + " kPa";
+    var w2 = ctx.measureText(lab2).width;
+    var right = xp + 10 + w2 < L.gx1 + 4, ly2 = yp + (disp.d < 4 ? 14 : -10);
+    txt(lab2, right ? xp + 10 : xp - 10, ly2, INK, right ? "left" : "right", "middle");
+    placed.push({ x0: right ? xp + 8 : xp - 12 - w2, x1: right ? xp + 12 + w2 : xp - 8, y0: ly2 - 8, y1: ly2 + 8 });
+    placed.push({ x0: xp - 10, x1: xp + 10, y0: yp - 10, y1: yp + 10 });
+    /* line names, beside each line on its high-pressure side */
+    var order = [state.f].concat(FORDER.filter(function(k){ return k !== state.f; }));
+    /* fresh water and seawater differ by 2.5%: when their lines sit on top of each other, they share one name */
+    var twin = Math.abs(gx(L, pAt(DMAX, 1025, 0)) - gx(L, pAt(DMAX, 1000, 0))) < 12;
+    order.forEach(function(k){
+      var rho = FLUIDS[k].rho, dEnd = DMAX, s = FLUIDS[k].short;
+      if (twin && k !== state.f && (k === "fresh" || k === "sea")){
+        if (state.f !== "hg" || k === "sea") return;
+        s = "water";
+      }
+      if (pAt(DMAX, rho, disp.p0) > disp.axis) dEnd = (disp.axis - disp.p0) / (rho * G / 1000);
+      var tw = ctx.measureText(s).width, fr = [0.55, 0.8, 0.3, 0.92, -0.55, -0.8, -0.3, 1];
+      for (var q = 0; q < fr.length; q++){
+        var side = fr[q] < 0 ? -1 : 1, dL = dEnd * Math.abs(fr[q]), xl = gx(L, pAt(dL, rho, disp.p0)), y = gy(L, dL);
+        var x = side > 0 ? xl + 8 : xl - 8 - tw;
+        if (q === fr.length - 1 && dEnd < DMAX){ x = L.gx1 - 4 - tw; y = gy(L, dEnd) + 12; }
+        var box = { x0: x - 2, x1: x + tw + 2, y0: y - 8, y1: y + 8 };
+        if (box.x0 < L.gx0 + 2) continue;
+        if (box.x1 > L.gx1 - 2 || box.y0 < L.gy0 + 2 || box.y1 > L.gy1) continue;
+        var hit = placed.some(function(b){ return !(box.x1 < b.x0 || box.x0 > b.x1 || box.y1 < b.y0 || box.y0 > b.y1); });
+        if (hit) continue;
+        placed.push(box);
+        txt(s, x, y, k === state.f ? ACC : DIM, "left", "middle");
+        break;
+      }
+    });
+    /* slope note */
+    var slope = disp.rho * G / 1000;
+    var slopeS = "SLOPE ρg = " + (slope >= 100 ? slope.toFixed(0) : slope.toFixed(1)) + " kPa/m";
+    if (L.wide) txt(slopeS, L.gx1, L.gy1 + 16, DIM, "right", "top");
+    else txt(slopeS, L.gx1, L.gy0 - 22, DIM, "right", "bottom");
+    ctx.restore();
+  }
+
+  function draw(){
+    if (!W || !H) return;
+    var w = W, h = H, cx = w / 2, cy = h / 2;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    var bg = ctx.createLinearGradient(0, 0, 0, h);
+    bg.addColorStop(0, accA(0.05)); bg.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, w, h);
+    var L = layout(w, h), VG = vesselGeom(L);
+    drawVessels(L, VG);
+    drawGraph(L);
+    drawProbes(L, VG);
+    /* bloom */
+    if (canBlur){
+      bctx.setTransform(1, 0, 0, 1, 0, 0); bctx.clearRect(0, 0, buf.width, buf.height);
+      if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+      ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
+      (buf.width&&buf.height)&&ctx.drawImage(buf, 0, 0, w, h); ctx.restore();
+    }
+    /* vignette */
+    var vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
+    drawText(L, VG);
+  }
+
+  /* ---------- readouts: computed from the same model the picture uses ---------- */
+  var elD = document.getElementById("pdD"), elDV = document.getElementById("pdDV");
+  var elLive = document.getElementById("pdLive");
+  var elS1 = document.getElementById("pdS1"), elS2 = document.getElementById("pdS2");
+  var ovlF = ovl.querySelector(".pd-f");
+  var elS1b = document.getElementById("pdS1b"), elS2b = document.getElementById("pdS2b");
+  function setStat(el, v){ el.innerHTML = fmtP(v) + "<small>kPa</small>"; }
+  function readouts(){
+    var f = FLUIDS[state.f], d = state.d;
+    var gauge = f.rho * G * d / 1000, abs = P0 + gauge;
+    elDV.textContent = d.toFixed(1) + " m";
+    elLive.textContent = f.name + " · " + d.toFixed(1) + " m";
+    setStat(elS1, gauge); setStat(elS2, abs);
+    elS1b.textContent = (gauge / ATM).toFixed(2) + " atm";
+    elS2b.textContent = (abs / ATM).toFixed(2) + " atm";
+    if (state.mode === "abs"){
+      ovlF.textContent = "P = P₀ + ρgh = 101.3 + " + fmt1(gauge) + " = " + fmt1(P0 + Math.round(gauge * 10) / 10) + " kPa (" + (abs / ATM).toFixed(2) + " atm)";
+    } else {
+      ovlF.textContent = "Gauge P = ρgh = " + f.rho + " × 9.81 × " + d.toFixed(1) + " m = " + fmt1(gauge) + " kPa";
+    }
+    elD.style.setProperty("--fill", ((d - 0) / (DMAX - 0) * 100) + "%");
+  }
+
+  /* ticks at their true values */
+  (function(){
+    var box = document.getElementById("pdTicks");
+    [0, 10, 20, 30].forEach(function(v){
+      var t = document.createElement("span"); t.className = "pd-tick";
+      t.style.left = (v / DMAX * 100) + "%"; t.textContent = v + " m"; box.appendChild(t);
+    });
+  })();
+
+  elD.addEventListener("input", function(){ state.d = parseFloat(elD.value) || 0; readouts(); animate(); });
+  function group(id, attr, fn){
+    var g = document.getElementById(id), bs = g.querySelectorAll("button");
+    Array.prototype.forEach.call(bs, function(b){
+      b.addEventListener("click", function(){
+        Array.prototype.forEach.call(bs, function(o){ o.setAttribute("aria-pressed", o === b ? "true" : "false"); });
+        fn(b.getAttribute(attr));
+      });
+    });
+  }
+  group("pdFluid", "data-f", function(v){ state.f = v; readouts(); animate(); });
+  group("pdMode", "data-m", function(v){ state.mode = v; readouts(); animate(); });
+  var dropP = document.getElementById("pdDropP");
+  group("pdDrop", "data-k", function(v){ dropP.textContent = DROP[v]; });
+  dropP.textContent = DROP.shape;
+
+  readouts();
+  window.addEventListener("resize", resize);
+  if (window.ResizeObserver){ new ResizeObserver(function(){ resize(); }).observe(wrap); }
+  resize();
+  if (document.fonts && document.fonts.ready){ document.fonts.ready.then(function(){ draw(); }); }
+})();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'g-pressure-and-depth'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

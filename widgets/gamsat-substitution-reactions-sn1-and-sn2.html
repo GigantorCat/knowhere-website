@@ -1,0 +1,604 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Substitution reactions: SN1 and SN2 — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{
+  --bg:#0B0D0C;
+  --bg2:#12160F;
+  --acc:#3E9AD6;
+  --acc-rgb:62, 154, 214;
+  --ag:rgba(var(--acc-rgb),.7);
+  --ag1:rgba(var(--acc-rgb),.12);
+  --ag2:rgba(var(--acc-rgb),.45);
+  --amb:#FAC775;
+  --ink:#EDEDE8;
+  --ink-dim:#8C9389;
+  --line:#262B26;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C 55%);background-color:var(--bg);color:var(--ink);font-family:'Geist',sans-serif;min-height:100vh;padding:40px 16px 0;box-sizing:border-box;-webkit-font-smoothing:antialiased}
+.container{max-width:720px;margin:0 auto}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+h1{font-family:'Geist',sans-serif;font-weight:800;font-size:clamp(26px,6.5vw,44px);letter-spacing:-0.03em;line-height:1.05;margin:0 0 14px}
+.intro{font-size:15.5px;font-weight:400;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin:0 0 26px}
+.card{background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);margin-bottom:22px}
+.card.second{border-radius:14px}
+.card-header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:6px}
+.card-label{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;color:var(--ink);letter-spacing:.04em}
+.live-tag{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--acc);letter-spacing:.06em;white-space:nowrap}
+.card-hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);line-height:1.5;margin-bottom:14px}
+.ctl-title{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);letter-spacing:.06em;margin:0 0 7px}
+.pills{display:grid;gap:8px;margin-bottom:14px}
+.pills.four{grid-template-columns:repeat(4,minmax(0,1fr))}
+.pills.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.pill{font-family:'JetBrains Mono',monospace;font-size:12px;padding:10px 8px;border-radius:999px;background:#12160F;border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:background .2s,border-color .2s,color .2s,box-shadow .2s;white-space:nowrap}
+.pill[aria-pressed="true"]{background:rgba(var(--acc-rgb),.1);border-color:var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.pill:focus-visible,.toggle-btn:focus-visible,.play-btn:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.canvas-wrapper{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1)}
+.canvas-wrapper canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.canvas-overlay{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:14px;text-transform:uppercase;color:var(--acc);text-align:center;letter-spacing:.03em;line-height:1.35}
+.slider-block{margin-top:16px}
+.sn-row{display:flex;justify-content:space-between;align-items:baseline;font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);letter-spacing:.06em;margin-bottom:9px}
+.sn-row b{font-weight:500;color:var(--acc);font-size:12px}
+.sn-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;outline:none;margin:6px 0;background:linear-gradient(90deg,var(--acc) var(--fill,0%),#23291f var(--fill,0%))}
+.sn-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.sn-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.sn-slider:hover::-webkit-slider-thumb{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.sn-slider:hover::-moz-range-thumb{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.sn-ticks{position:relative;height:16px;margin:4px 10px 0;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink-dim)}
+.sn-ticks span{position:absolute;top:0;white-space:nowrap;transform:translateX(-50%)}
+.sn-ticks span:first-child{transform:translateX(-10px)}
+.sn-ticks span:last-child{transform:translateX(calc(-100% + 10px))}
+.play-row{display:flex;justify-content:flex-start;margin-top:12px}
+.play-btn{font-family:'JetBrains Mono',monospace;font-size:13px;padding:10px 18px;border-radius:999px;background:rgba(var(--acc-rgb),.1);border:1px solid var(--acc);color:var(--acc);cursor:pointer;white-space:nowrap}
+.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;border-top:1px solid var(--line);margin-top:16px;padding-top:14px}
+.stat-label{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);letter-spacing:.06em;margin-bottom:5px}
+.stat-value{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500;line-height:1.15;white-space:nowrap}
+.stat-sub{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-dim);margin-top:4px;line-height:1.4}
+.sn-note{font-size:14px;line-height:1.5;color:var(--amb);margin:14px 0 0;padding-top:12px;border-top:1px solid var(--line)}
+.toggle-buttons{display:flex;gap:10px}
+.toggle-btn{flex:1;font-family:'JetBrains Mono',monospace;font-size:14.5px;padding:12px;border-radius:999px;background:#12160F;border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:background .2s,border-color .2s,color .2s,box-shadow .2s;white-space:nowrap}
+.toggle-btn[aria-pressed="true"]{background:rgba(var(--acc-rgb),.1);border-color:var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.knowdrop{border-top:1px solid var(--line);padding-top:16px;margin-top:16px}
+.knowdrop p{font-family:'Geist',sans-serif;font-size:14.5px;font-weight:400;line-height:1.65;color:var(--ink);margin:0}
+.know-this{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));border-radius:0 12px 12px 0;margin:0;margin-bottom:0}
+.kt-tag{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.kt-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:ktpulse 2.4s ease-in-out infinite;flex:0 0 auto}
+.kt-text{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:0.15em;color:var(--acc)}
+.know-this p{font-family:'Geist',sans-serif;font-size:17.4px;font-weight:400;line-height:1.55;color:var(--ink);margin:0}
+@keyframes ktpulse{0%,100%{opacity:1}50%{opacity:.45}}
+@media (max-width:560px){
+  .pills.four{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (prefers-reduced-motion:reduce){
+  .kt-dot{animation:none}
+  .pill,.toggle-btn{transition:none}
+}
+</style>
+<div class="container">
+  <h2 class="sr-only">Substitution reactions: an interactive SN1 and SN2 mechanism with the energy profile of each path</h2>
+  <h1>Crowd the carbon and the rate stops caring about the <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">nucleophile</span></h1>
+  <p class="intro">A nucleophile can swap out a leaving group in one shove from behind, or wait for the leaving group to walk off first and then move in. Which one happens depends on how crowded the carbon is and what it is dissolved in. Choose a substrate, then raise the reaction progress and watch what the three groups on carbon do.</p>
+
+  <div class="card main">
+    <div class="card-header">
+      <span class="card-label">Substitution at carbon</span>
+      <span class="live-tag" id="snLive">SN2 wins</span>
+    </div>
+    <div class="card-hint">Pick a substrate and conditions, then advance the reaction progress. Watch the groups on carbon and the two energy hills.</div>
+
+    <div class="ctl">
+      <div class="ctl-title" id="snSubTitle">Substrate (alkyl bromide)</div>
+    <div class="pills four" role="group" aria-label="Substrate" id="snSub">
+      <button class="pill" data-sub="me" aria-pressed="false">Methyl</button>
+      <button class="pill" data-sub="p1" aria-pressed="false">Primary</button>
+      <button class="pill" data-sub="p2" aria-pressed="true">Secondary</button>
+      <button class="pill" data-sub="p3" aria-pressed="false">Tertiary</button>
+    </div>
+    </div>
+    <div class="ctl">
+    <div class="ctl-title" id="snCondTitle">Nucleophile and solvent</div>
+    <div class="pills two" role="group" aria-label="Nucleophile and solvent" id="snCond">
+      <button class="pill" data-cond="strong" aria-pressed="true">CN⁻ · aprotic</button>
+      <button class="pill" data-cond="weak" aria-pressed="false">H₂O · protic</button>
+    </div>
+    </div>
+
+    <div class="canvas-wrapper" id="snWrap">
+      <canvas id="snCanvas" aria-label="Molecule scene and energy profile for the chosen substitution"></canvas>
+      <div class="canvas-overlay" id="snOverlay" aria-live="polite">SN2 · nucleophile lines up behind the carbon</div>
+    </div>
+
+    <div class="slider-block">
+      <div class="sn-row"><span>Reaction progress</span><b id="snPV">0%</b></div>
+      <input type="range" class="sn-slider" id="snProg" aria-label="Reaction progress" min="0" max="100" step="1" value="0">
+      <div class="sn-ticks" aria-hidden="true">
+        <span style="left:0%">Reactants</span>
+        <span style="left:50%">50%</span>
+        <span style="left:100%">Products</span>
+      </div>
+      <div class="play-row"><button class="play-btn" id="snPlay">▶ Run the reaction</button></div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Rate law</div>
+        <div class="stat-value" style="color:var(--acc)" id="snRate">k[RX][Nu]</div>
+        <div class="stat-sub" id="snRateSub">Double [Nu]: rate ×2</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Stereo outcome</div>
+        <div class="stat-value" style="color:var(--amb)" id="snStereo">Inversion</div>
+        <div class="stat-sub" id="snStereoSub">(R) in, (S) out</div>
+      </div>
+    </div>
+    <p class="sn-note" id="snNote">Secondary: a strong nucleophile in an aprotic solvent tips it to SN2.</p>
+  </div>
+
+  <div class="card second">
+    <div class="toggle-buttons" role="group" aria-label="Which path to read about">
+      <button class="toggle-btn" data-kd="sn2" aria-pressed="true">SN2 path</button>
+      <button class="toggle-btn" data-kd="sn1" aria-pressed="false">SN1 path</button>
+    </div>
+    <div class="knowdrop">
+      <p id="snKd">SN2 means substitution, nucleophilic, bimolecular: two species meet in the one step that sets the rate, so rate = k[RX][Nu].</p>
+    </div>
+  </div>
+
+  <div class="know-this">
+    <div class="kt-tag"><span class="kt-dot"></span><span class="kt-text">Know This</span></div>
+    <p>SN2 is one backside step that gives <span style="color:var(--acc)">inversion</span>; SN1 waits for a <span style="color:var(--acc)">flat carbocation</span>, ignores how much nucleophile is there and comes out <span style="color:var(--acc)">racemic</span>.</p>
+  </div>
+</div>
+<script>
+(function(){
+  const CSS = getComputedStyle(document.documentElement);
+  const cv = n => CSS.getPropertyValue(n).trim();
+  const ACC = cv("--acc"), RGB = cv("--acc-rgb"), AMB = cv("--amb"), INK = cv("--ink"), DIM = cv("--ink-dim"), LINE = cv("--line"), BG = cv("--bg");
+  const MONO = "\"JetBrains Mono\", monospace";
+  const accA = a => "rgba(" + RGB + "," + a + ")";
+  const reduce = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+
+  const canvas = document.getElementById("snCanvas");
+  const ctx = canvas.getContext("2d");
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const buf = document.createElement("canvas"); const bctx = buf.getContext("2d");
+  const wrap = document.getElementById("snWrap");
+  const overlay = document.getElementById("snOverlay");
+  const slider = document.getElementById("snProg");
+  const pv = document.getElementById("snPV");
+  const playBtn = document.getElementById("snPlay");
+  const liveTag = document.getElementById("snLive");
+  const rateEl = document.getElementById("snRate"), rateSub = document.getElementById("snRateSub");
+  const stEl = document.getElementById("snStereo"), stSub = document.getElementById("snStereoSub");
+  const noteEl = document.getElementById("snNote");
+  const kdEl = document.getElementById("snKd");
+
+  /* Substrates: three groups on the carbon at azimuths 90 (up, in plane), 210 (down, hashed), 330 (down, wedge).
+     rank = CIP priority among the four groups (Br and the nucleophile outrank every alkyl group here).
+     sn2 / sn1 = relative barrier heights (illustrative units) before the solvent and nucleophile shift them. */
+  const SUBS = {
+    me: { name: "bromomethane", g: [["H", 0.62, 1], ["H", 0.62, 1], ["H", 0.62, 1]], sn2: 1.2, sn1: 4.0, chiral: false },
+    p1: { name: "1-bromopropane", g: [["H", 0.62, 1], ["C₂H₅", 1, 3], ["H", 0.62, 1]], sn2: 1.5, sn1: 3.5, chiral: false },
+    p2: { name: "2-bromobutane", g: [["H", 0.62, 1], ["C₂H₅", 1, 3], ["CH₃", 0.86, 2]], sn2: 2.2, sn1: 2.3, chiral: true },
+    p3: { name: "3-bromo-3-methylhexane", g: [["CH₃", 0.86, 1], ["C₃H₇", 1.1, 3], ["C₂H₅", 1, 2]], sn2: 3.8, sn1: 1.4, chiral: true }
+  };
+  const CONDS = {
+    strong: { nu: "CN⁻", bonded: "CN", solv: "in DMSO (polar aprotic)", d2: -0.4, d1: 0.5, dH: -0.9, water: false },
+    weak: { nu: "H₂O", bonded: "OH", solv: "in water (polar protic)", d2: 0.5, d1: -0.5, dH: -0.4, water: true }
+  };
+  const NOTES = {
+    me_strong: "Methyl: nothing shields the back face, and a methyl cation is far too unstable to form.",
+    me_weak: "Water is a weak nucleophile, so this SN2 is slow, but a methyl cation is still far too unstable for SN1.",
+    p1_strong: "Primary: one alkyl group barely shields the back face, and primary cations do not form.",
+    p1_weak: "Slow, but still SN2: a primary cation is too unstable to form, even in water.",
+    p2_strong: "Secondary: a strong nucleophile in an aprotic solvent tips it to SN2.",
+    p2_weak: "Secondary: a weak nucleophile in a protic solvent tips it to SN1. Some alkene forms too (E1).",
+    p3_strong: "Tertiary: the back face is blocked, so only SN1 can substitute. A strong base like this mostly eliminates instead (E2).",
+    p3_weak: "Tertiary: the cation is stable and water stabilises it further. Some alkene forms too (E1)."
+  };
+  const KD = {
+    sn2: "SN2 means substitution, nucleophilic, bimolecular: two species meet in the one step that sets the rate, so rate = k[RX][Nu] and doubling either doubles the rate. The nucleophile has to reach the carbon from the side opposite the leaving group, into the back lobe of the C–Br antibonding orbital. Every group on that carbon stands in the way, so methyl reacts fastest, then primary, then secondary, and tertiary effectively not at all. At the transition state the carbon briefly holds five groups, its other three flat in one plane, and then they snap through to the far side like an umbrella in a gale (Walden inversion). Strong, negatively charged nucleophiles in polar aprotic solvents such as DMSO or acetone speed it up, because those solvents leave the anion bare and reactive.",
+    sn1: "SN1 means substitution, nucleophilic, unimolecular: only the substrate is in the slow step, so rate = k[RX] and adding more nucleophile changes nothing. The leaving group departs on its own to give a carbocation, a flat sp² carbon with an empty p orbital above and below its plane. Alkyl groups push electron density into that empty orbital (induction and hyperconjugation), so tertiary cations form fastest, then secondary, while primary and methyl cations essentially never form. Polar protic solvents such as water and alcohols help by solvating both the cation and the departing bromide. The nucleophile can attack either face, so a single enantiomer comes out close to racemic, often with a small excess of inversion while the bromide still shields the front face. A carbocation can also rearrange (a hydride or methyl shift) to a more stable cation before the nucleophile arrives."
+  };
+
+  const state = { sub: "p2", cond: "strong", p: 0, playing: false, kd: "sn2" };
+  const bar = { e2: 0, e1: 0, dH: 0 };
+  let from = null, to = null, tw0 = 0, raf = null, last = 0;
+
+  function targets() {
+    const s = SUBS[state.sub], c = CONDS[state.cond];
+    return { e2: s.sn2 + c.d2, e1: s.sn1 + c.d1, dH: c.dH };
+  }
+  function pathNow() { const t = targets(); return t.e2 <= t.e1 ? "SN2" : "SN1"; }
+
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const easeOut = t => 1 - Math.pow(1 - t, 3);
+
+  /* energy along the path: cosine-smoothed through key points, flat at every peak and valley */
+  function keyPts(path, b) {
+    if (path === "SN2") return [[0, 0], [0.5, b.e2], [1, b.dH]];
+    const I = b.e1 * 0.62, T2 = b.e1 * 0.82;
+    return [[0, 0], [0.28, b.e1], [0.5, I], [0.7, T2], [1, b.dH]];
+  }
+  function energy(path, b, x) {
+    const k = keyPts(path, b);
+    for (let i = 0; i < k.length - 1; i++) {
+      if (x <= k[i + 1][0]) { const t = (x - k[i][0]) / (k[i + 1][0] - k[i][0]); const m = (1 - Math.cos(Math.PI * t)) / 2; return lerp(k[i][1], k[i + 1][1], m); }
+    }
+    return k[k.length - 1][1];
+  }
+
+  /* geometry: 3D direction of each group; x along the C–Br axis (Br at +x), y up, z toward the viewer */
+  const PHI = [90, 210, 330].map(d => d * Math.PI / 180);
+  function groupVec(i, ux) { const r = Math.sqrt(1 - ux * ux); return { x: ux, y: r * Math.sin(PHI[i]), z: r * Math.cos(PHI[i]) }; }
+  function cross(a, b) { return { x: a.y * b.z - a.z * b.y, y: a.z * b.x - a.x * b.z, z: a.x * b.y - a.y * b.x }; }
+  function dot(a, b) { return a.x * b.x + a.y * b.y + a.z * b.z; }
+  /* R or S from the drawn geometry: top group on the given side of the axis, the three groups pointing away from it */
+  function descriptor(sub, topSide) {
+    const ux = -0.334 * topSide;
+    const list = [{ v: { x: topSide, y: 0, z: 0 }, r: 9 }];
+    sub.g.forEach((g, i) => list.push({ v: groupVec(i, ux), r: g[2] }));
+    list.sort((a, b) => b.r - a.r);
+    return dot(cross(list[0].v, list[1].v), list[2].v) < 0 ? "R" : "S";
+  }
+
+  function resize() {
+    const r = canvas.getBoundingClientRect();
+    if (!r.width || !r.height) return;
+    canvas.width = Math.round(r.width * dpr); canvas.height = Math.round(r.height * dpr);
+    buf.width = canvas.width; buf.height = canvas.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    draw();
+  }
+
+  function text(t, x, y, size, col, align, weight, alpha) {
+    ctx.save(); ctx.globalAlpha = alpha == null ? 1 : alpha;
+    ctx.font = (weight || 500) + " " + size + "px " + MONO; ctx.fillStyle = col; ctx.textAlign = align || "center"; ctx.textBaseline = "middle";
+    ctx.fillText(t, x, y); ctx.restore();
+  }
+
+  function curly(x0, y0, x1, y1, lift, alpha) {
+    if (alpha <= 0.01) return;
+    const mx = (x0 + x1) / 2, my = (y0 + y1) / 2 - lift;
+    ctx.save(); ctx.globalAlpha = alpha; ctx.strokeStyle = AMB; ctx.fillStyle = AMB; ctx.lineWidth = 2; ctx.lineCap = "round";
+    ctx.beginPath(); ctx.moveTo(x0, y0); ctx.quadraticCurveTo(mx, my, x1, y1); ctx.stroke();
+    const ang = Math.atan2(y1 - my, x1 - mx), s = 8;
+    ctx.beginPath(); ctx.moveTo(x1, y1);
+    ctx.lineTo(x1 - s * Math.cos(ang - 0.42), y1 - s * Math.sin(ang - 0.42));
+    ctx.lineTo(x1 - s * Math.cos(ang + 0.42), y1 - s * Math.sin(ang + 0.42));
+    ctx.closePath(); ctx.fill(); ctx.restore();
+  }
+
+  function bondLine(x0, y0, x1, y1, order, col, alpha) {
+    if (order <= 0.12) return;
+    ctx.save(); ctx.globalAlpha = alpha; ctx.strokeStyle = col; ctx.lineWidth = 2.4; ctx.lineCap = "round";
+    if (order < 0.88) ctx.setLineDash([4, 5]);
+    ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke(); ctx.restore();
+  }
+
+  function bubble(x, y, r, label, stroke, alpha, size) {
+    ctx.save(); ctx.globalAlpha = alpha;
+    ctx.fillStyle = BG; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+    ctx.lineWidth = 1.6; ctx.strokeStyle = stroke; ctx.stroke(); ctx.restore();
+    text(label, x, y + 0.5, size || 11, INK, "center", 500, alpha);
+  }
+
+  /* one molecule: carbon at (cx, cy), unit bond length L, umbrella position ux (-0.334 groups left ... +0.334 groups right) */
+  function molecule(o) {
+    const sub = SUBS[state.sub], L = o.L, cx = o.cx, cy = o.cy, a = o.alpha == null ? 1 : o.alpha;
+    const Lg = L * 1.12;
+    const pts = sub.g.map((g, i) => { const v = groupVec(i, o.ux); return { v: v, g: g, x: cx + (v.x - v.z * 0.6) * Lg, y: cy - (v.y * 1.3 - v.z * 0.16) * Lg, r: L * 0.29 * g[1] }; });
+    /* p orbital lobes on a carbocation */
+    if (o.lobes > 0.01) {
+      ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = o.lobes * a;
+      for (const s of [-1, 1]) {
+        const g = ctx.createRadialGradient(cx + s * L * 0.42, cy, 0, cx + s * L * 0.42, cy, L * 0.5);
+        g.addColorStop(0, accA(0.5)); g.addColorStop(1, accA(0));
+        ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(cx + s * L * 0.42, cy, L * 0.42, L * 0.24, 0, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.restore();
+    }
+    const hashed = pts.filter(q => q.v.z < -0.2), rest = pts.filter(q => q.v.z >= -0.2);
+    const drawBond = q => {
+      const dx = q.x - cx, dy = q.y - cy, d = Math.hypot(dx, dy) || 1, ex = q.x - dx / d * q.r, ey = q.y - dy / d * q.r;
+      const nx = -dy / d, ny = dx / d;
+      ctx.save(); ctx.globalAlpha = a * 0.9; ctx.strokeStyle = INK; ctx.fillStyle = INK; ctx.lineWidth = 2.2; ctx.lineCap = "round";
+      if (q.v.z > 0.2) { const wv = L * 0.1; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(ex + nx * wv, ey + ny * wv); ctx.lineTo(ex - nx * wv, ey - ny * wv); ctx.closePath(); ctx.fill(); }
+      else if (q.v.z < -0.2) { ctx.lineWidth = 1.6; for (let k = 1; k <= 6; k++) { const t = k / 6.5, hw = L * 0.1 * t; const px = cx + (ex - cx) * t, py = cy + (ey - cy) * t; ctx.beginPath(); ctx.moveTo(px + nx * hw, py + ny * hw); ctx.lineTo(px - nx * hw, py - ny * hw); ctx.stroke(); } }
+      else { ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(ex, ey); ctx.stroke(); }
+      ctx.restore();
+    };
+    hashed.forEach(q => { drawBond(q); bubble(q.x, q.y, q.r, q.g[0], accA(0.35 + 0.3 * q.g[1]), a * 0.85, 11); });
+    /* leaving group and nucleophile bonds */
+    if (o.lg) bondLine(cx, cy, o.lg.x - o.lg.r, o.lg.y, o.lg.order, INK, a * 0.9);
+    if (o.nu) for (const n of o.nu) bondLine(cx, cy, n.x - Math.sign(n.x - cx) * n.r, n.y, n.order, AMB, a * n.alpha * 0.95);
+    rest.forEach(q => { drawBond(q); bubble(q.x, q.y, q.r, q.g[0], accA(0.35 + 0.3 * q.g[1]), a, 11); });
+    /* the carbon */
+    ctx.save(); ctx.globalAlpha = a;
+    const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, L * 0.45); glow.addColorStop(0, accA(0.45)); glow.addColorStop(1, accA(0));
+    ctx.globalCompositeOperation = "lighter"; ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(cx, cy, L * 0.45, 0, Math.PI * 2); ctx.fill();
+    ctx.globalCompositeOperation = "source-over"; ctx.fillStyle = BG; ctx.strokeStyle = ACC; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(cx, cy, L * 0.2, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); ctx.restore();
+    text("C", cx, cy + 0.5, 12, ACC, "center", 600, a);
+    if (o.plus > 0.01) text("+", cx + L * 0.22, cy - L * 0.24, 15, AMB, "center", 600, a * o.plus);
+    if (o.lg) {
+      bubble(o.lg.x, o.lg.y, o.lg.r, o.lg.label, accA(0.6), a * o.lg.alpha, 12);
+      if (o.lg.tag) text(o.lg.tag, o.lg.x, o.lg.y - o.lg.r - 9, 11, AMB, "center", 500, a * o.lg.alpha);
+    }
+    if (o.nu) for (const n of o.nu) {
+      if (n.alpha <= 0.01) continue;
+      ctx.save(); ctx.globalAlpha = a * n.alpha; ctx.fillStyle = BG; ctx.strokeStyle = AMB; ctx.lineWidth = 1.8;
+      ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); ctx.restore();
+      text(n.label, n.x, n.y + 0.5, 11, AMB, "center", 500, a * n.alpha);
+      if (n.pair > 0.01) {
+        const sx = n.x + Math.sign(cx - n.x) * (n.r + 4);
+        ctx.save(); ctx.globalAlpha = a * n.alpha * n.pair; ctx.fillStyle = AMB;
+        ctx.beginPath(); ctx.arc(sx, n.y - 3.5, 1.8, 0, Math.PI * 2); ctx.arc(sx, n.y + 3.5, 1.8, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+      }
+      if (n.tag) text(n.tag, n.x, n.y - n.r - 9, 11, AMB, "center", 500, a * n.alpha);
+    }
+    if (o.caption) text(o.caption, cx, o.capY, 11, o.capCol || DIM, "center", 500, o.capAlpha == null ? a : o.capAlpha);
+    if (o.caption2) text(o.caption2, cx, o.capY + 15, 11, o.capCol || DIM, "center", 500, o.capAlpha == null ? a : o.capAlpha);
+  }
+
+  function nuLabel(c, order, p, end) {
+    if (order < 0.5) return c.nu;
+    if (c.water) return p < end ? "OH₂⁺" : "OH";
+    return c.bonded;
+  }
+
+  function drawScene(S) {
+    const sub = SUBS[state.sub], c = CONDS[state.cond], path = pathNow(), p = state.p;
+    const L = Math.max(28, Math.min(S.w * 0.16, S.h * (S.w >= S.h * 1.6 ? 0.19 : 0.22)));
+    const cx = S.x + S.w * 0.5, cy = S.y + S.h * (S.w >= S.h * 1.6 ? 0.56 : 0.54);
+    text(sub.name + " + " + c.nu, S.x + 14, S.y + 18, 12, INK, "left", 500, 0.9);
+    text(c.solv, S.x + 14, S.y + 34, 11, DIM, "left", 400, 1);
+    const capY = Math.min(S.y + S.h - 26, cy + L * 1.85);
+    if (path === "SN2") {
+      const fNu = smooth(0.22, 0.78, p);
+      const ux = -0.334 + 0.668 * smooth(0.3, 0.75, p);
+      const dNu = L * (1 + 1.6 * (1 - smooth(0, 0.8, p)));
+      const dLG = L * (1 + 1.6 * smooth(0.2, 1, p));
+      const ts = smooth(0.3, 0.45, p) * (1 - smooth(0.55, 0.7, p));
+      const nuX = cx - dNu, lgX = cx + dLG, rN = L * 0.32, rB = L * 0.34;
+      const lgOrder = 1 - fNu;
+      molecule({ cx: cx, cy: cy, L: L, ux: ux, lobes: 0, plus: 0,
+        lg: { x: lgX, y: cy, r: rB, order: lgOrder, label: lgOrder < 0.15 ? "Br⁻" : "Br", alpha: 1, tag: ts > 0.5 ? "δ−" : "" },
+        nu: [{ x: nuX, y: cy, r: rN, order: fNu, label: nuLabel(c, fNu, p, 0.96), alpha: 1, pair: 1 - smooth(0.3, 0.5, p), tag: ts > 0.5 ? "δ−" : (c.water && fNu >= 0.5 && p >= 0.96 ? "−H⁺" : "") }],
+        caption: p > 0.9 ? (sub.chiral ? "(" + descriptor(sub, -1) + ") product: inverted" : "inverted (no stereocentre here)") : (p < 0.1 && sub.chiral ? "(" + descriptor(sub, 1) + ") substrate" : ""),
+        capY: capY, capCol: p > 0.9 ? AMB : DIM });
+      if (ts > 0.05) text("‡ transition state", cx, cy - L * 1.62, 12, ACC, "center", 500, ts);
+      const aA = p < 0.32 ? 1 : Math.max(0, 1 - (p - 0.32) / 0.1);
+      curly(nuX + rN + 6, cy - 4, cx - L * 0.26, cy - L * 0.12, L * 0.85, aA);
+      curly(cx + dLG * 0.45, cy - 4, lgX - rB * 0.3, cy - rB - 2, L * 0.6, aA);
+    } else {
+      const k = smooth(0.48, 0.6, p);
+      const ux0 = -0.334 * (1 - smooth(0.08, 0.4, p));
+      const lgOrder = 1 - smooth(0.05, 0.3, p);
+      const dLG = L * (1 + 1.6 * smooth(0.05, 0.45, p));
+      const drift = smooth(0.42, 0.56, p);
+      const lgX = lerp(cx + dLG, S.x + S.w - L * 0.55, drift), lgY = lerp(cy, S.y + S.h * 0.17 + 8, drift);
+      const plus = smooth(0.2, 0.32, p) * (1 - smooth(0.66, 0.8, p));
+      const lobes = smooth(0.25, 0.42, p) * (1 - smooth(0.62, 0.78, p));
+      const waitX = S.x + L * 0.6, waitY = cy;
+      if (k < 0.02) {
+        molecule({ cx: cx, cy: cy, L: L, ux: ux0, lobes: lobes, plus: plus,
+          lg: { x: lgX, y: lgY, r: L * 0.34, order: lgOrder, label: lgOrder < 0.15 ? "Br⁻" : "Br", alpha: 1, tag: (p > 0.12 && p < 0.3) ? "δ−" : "" },
+          nu: [{ x: waitX, y: waitY, r: L * 0.32, order: 0, label: c.nu, alpha: 0.75, pair: 0.6, tag: p < 0.45 ? "waits" : "" }],
+          caption: p < 0.1 && sub.chiral ? "(" + descriptor(sub, 1) + ") substrate" : (p > 0.3 ? "flat carbocation, open on both faces" : ""), capY: capY, capCol: p > 0.3 ? ACC : DIM });
+        curly(cx + dLG * 0.45, cy - 4, lgX - L * 0.1, cy - L * 0.36, L * 0.6, p < 0.2 ? 1 : Math.max(0, 1 - (p - 0.2) / 0.08));
+      } else {
+        /* the cation is attacked from both faces: one copy per face */
+        const sc = 1 - 0.25 * k, Ls = L * sc;
+        const xA = lerp(cx, S.x + S.w * 0.27, k), xB = lerp(cx, S.x + S.w * 0.73, k);
+        const q = smooth(0.56, 0.92, p), ord = smooth(0.62, 0.86, p), um = smooth(0.62, 0.92, p);
+        const dN = Ls * (1 + 0.8 * (1 - q)), nA = smooth(0.5, 0.6, p);
+        const done = smooth(0.9, 0.97, p);
+        const lbl = nuLabel(c, ord, p, 0.96), tagN = c.water && ord >= 0.5 && p >= 0.96 ? "−H⁺" : "";
+        const capA = sub.chiral ? "(" + descriptor(sub, -1) + ") · inversion" : "inversion";
+        const capB = sub.chiral ? "(" + descriptor(sub, 1) + ") · retention" : "retention";
+        const nuA = { x: lerp(waitX, xA - dN, nA), y: cy, r: Ls * 0.32, order: ord, label: lbl, alpha: 1, pair: 1 - smooth(0.6, 0.75, p), tag: tagN };
+        molecule({ cx: xA, cy: cy, L: Ls, ux: 0.334 * um, lobes: lobes, plus: plus, nu: [nuA], caption: done > 0.01 ? capA : "", caption2: done > 0.01 ? "about 50%" : "", capY: capY, capCol: AMB, capAlpha: done });
+        const nuB = { x: xB + dN, y: cy, r: Ls * 0.32, order: ord, label: lbl, alpha: nA, pair: 1 - smooth(0.6, 0.75, p), tag: tagN };
+        molecule({ cx: xB, cy: cy, L: Ls, ux: -0.334 * um, lobes: lobes, plus: plus, nu: [nuB], caption: done > 0.01 ? capB : "", caption2: done > 0.01 ? "about 50%" : "", capY: capY, capCol: AMB, capAlpha: done });
+        bubble(lgX, lgY, L * 0.3, "Br⁻", accA(0.5), 0.6, 11);
+        const aB = p < 0.66 ? smooth(0.52, 0.56, p) : Math.max(0, 1 - (p - 0.66) / 0.08);
+        curly(nuA.x + nuA.r + 6, cy - 4, xA - Ls * 0.26, cy - Ls * 0.14, Ls * 0.7, aB);
+        curly(nuB.x - nuB.r - 6, cy - 4, xB + Ls * 0.26, cy - Ls * 0.14, Ls * 0.7, aB);
+      }
+    }
+  }
+
+  function drawProfile(P, wide) {
+    const path = pathNow(), p = state.p;
+    const x0 = P.x + 30, x1 = P.x + P.w - 14, y0 = P.y + (wide ? 40 : 34), y1 = P.y + P.h - (wide ? 24 : 20);
+    const EMIN = wide ? -1.3 : -1.1, EMAX = wide ? 4.9 : Math.max(bar.e1, bar.e2) + 0.45;
+    const Y = e => y1 - 6 - (clamp(e, EMIN, EMAX) - EMIN) / (EMAX - EMIN) * (y1 - 6 - y0);
+    const X = t => x0 + 10 + t * (x1 - x0 - 20);
+    text("Energy profile", wide ? x0 - 16 : x0 + 10, P.y + 16, 12, INK, "left", 500, 0.9);
+    text("lower barrier wins", x1, P.y + 16, 11, DIM, "right", 400, 1);
+    ctx.save(); ctx.strokeStyle = DIM; ctx.globalAlpha = 0.7; ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.moveTo(x0, y0 - 6); ctx.lineTo(x0, y1); ctx.lineTo(x1, y1); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x0, y0 - 12); ctx.lineTo(x0 - 4, y0 - 4); ctx.lineTo(x0 + 4, y0 - 4); ctx.closePath(); ctx.fillStyle = DIM; ctx.fill();
+    ctx.setLineDash([3, 5]); ctx.globalAlpha = 0.35; ctx.beginPath(); ctx.moveTo(x0, Y(0)); ctx.lineTo(x1, Y(0)); ctx.stroke(); ctx.restore();
+    ctx.save(); ctx.translate(x0 - 14, (y0 + y1) / 2); ctx.rotate(-Math.PI / 2); text("Energy", 0, 0, 11, DIM, "center", 400, 1); ctx.restore();
+    text("Reaction progress →", (x0 + x1) / 2, y1 + 14, 11, DIM, "center", 400, 1);
+    const curve = (pth, active) => {
+      ctx.save();
+      ctx.beginPath();
+      for (let i = 0; i <= 120; i++) { const t = i / 120, xx = X(t), yy = Y(energy(pth, bar, t)); if (i) ctx.lineTo(xx, yy); else ctx.moveTo(xx, yy); }
+      if (active) {
+        ctx.globalCompositeOperation = "lighter"; ctx.strokeStyle = accA(0.22); ctx.lineWidth = 9; ctx.stroke();
+        ctx.globalCompositeOperation = "source-over"; ctx.strokeStyle = ACC; ctx.lineWidth = 2.6; ctx.stroke();
+      } else { ctx.strokeStyle = DIM; ctx.globalAlpha = 0.6; ctx.lineWidth = 1.6; ctx.setLineDash([5, 5]); ctx.stroke(); }
+      ctx.restore();
+    };
+    const other = path === "SN2" ? "SN1" : "SN2";
+    curve(other, false); curve(path, true);
+    const peak2 = Y(bar.e2), peak1 = Y(bar.e1);
+    text("SN2", X(0.5), peak2 - 12, 12, path === "SN2" ? ACC : DIM, "center", 600, 1);
+    text("SN1", X(0.28), peak1 - 12, 12, path === "SN1" ? ACC : DIM, "center", 600, 1);
+    /* Ea arrow on the winning path (SN1: the first, slow step) */
+    const px = path === "SN2" ? X(0.5) : X(0.28), py = path === "SN2" ? peak2 : peak1, by = Y(0);
+    if (by - py > 16) {
+      ctx.save(); ctx.strokeStyle = AMB; ctx.fillStyle = AMB; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(px, by - 2); ctx.lineTo(px, py + 8); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(px, py + 3); ctx.lineTo(px - 4, py + 10); ctx.lineTo(px + 4, py + 10); ctx.closePath(); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(px, by + 1); ctx.lineTo(px - 4, by - 6); ctx.lineTo(px + 4, by - 6); ctx.closePath(); ctx.fill();
+      ctx.restore();
+      text("Ea", px + (path === "SN1" ? -8 : 8), (py + by) / 2, 12, AMB, path === "SN1" ? "right" : "left", 600, 1);
+    }
+    if (path === "SN1") {
+      const I = bar.e1 * 0.62;
+      text("carbocation", X(0.52), Y(I) + 18, 11, AMB, "center", 400, 0.95);
+      text("slow step", X(0.28), Math.min(by + 14, y1 - 8), 11, DIM, "center", 400, 1);
+    }
+    const ex = X(p), ey = Y(energy(path, bar, p));
+    ctx.save(); ctx.globalCompositeOperation = "lighter";
+    const g = ctx.createRadialGradient(ex, ey, 0, ex, ey, 16); g.addColorStop(0, accA(0.7)); g.addColorStop(1, accA(0));
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(ex, ey, 16, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+    ctx.save(); ctx.fillStyle = INK; ctx.beginPath(); ctx.arc(ex, ey, 4.5, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+  }
+
+  function draw() {
+    const w = canvas.width / dpr, h = canvas.height / dpr;
+    if (!w || !h) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.globalCompositeOperation = "source-over"; ctx.globalAlpha = 1; ctx.filter = "none";
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = BG; ctx.fillRect(0, 0, w, h);
+    let pad = 12;
+    try { if (getComputedStyle(overlay).position === "absolute") pad = overlay.offsetHeight + 4; } catch (e) {}
+    const wide = w >= 560;
+    const H = h - pad;
+    let S, P;
+    if (wide) { S = { x: 0, y: 0, w: w * 0.55, h: H }; P = { x: w * 0.55, y: 0, w: w * 0.45, h: H }; }
+    else { const sh = H * 0.5; S = { x: 0, y: 0, w: w, h: sh }; P = { x: 0, y: sh, w: w, h: H - sh }; }
+    ctx.save(); ctx.strokeStyle = LINE; ctx.lineWidth = 1;
+    ctx.beginPath(); if (wide) { ctx.moveTo(P.x, 14); ctx.lineTo(P.x, H - 10); } else { ctx.moveTo(14, P.y); ctx.lineTo(w - 14, P.y); } ctx.stroke(); ctx.restore();
+    drawScene(S);
+    drawProfile(P, wide);
+    /* bloom */
+    bctx.setTransform(1, 0, 0, 1, 0, 0); bctx.clearRect(0, 0, buf.width, buf.height);
+    if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+    ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
+    (buf.width&&buf.height)&&ctx.drawImage(buf, 0, 0, w, h); ctx.restore();
+    /* vignette */
+    const cx = w / 2, cy = h / 2;
+    const vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
+  }
+
+  function phaseText() {
+    const path = pathNow(), p = state.p, sub = SUBS[state.sub], c = CONDS[state.cond];
+    if (path === "SN2") {
+      if (p < 0.05) return "SN2 · " + c.nu + " lines up behind the carbon";
+      if (p < 0.38) return "SN2 · backside attack: one step, no intermediate";
+      if (p < 0.62) return "SN2 · transition state: five groups on carbon";
+      if (p < 0.92) return "SN2 · the umbrella flips as bromide leaves";
+      return sub.chiral ? "SN2 · done: configuration inverted" : "SN2 · done: inverted, no stereocentre to see";
+    }
+    if (p < 0.05) return "SN1 · bromide is about to leave on its own";
+    if (p < 0.3) return "SN1 · slow step: the C–Br bond breaks";
+    if (p < 0.5) return "SN1 · flat carbocation, the nucleophile still waits";
+    if (p < 0.62) return "SN1 · fast step: attack from either face";
+    if (p < 0.92) return "SN1 · two faces, two mirror-image products";
+    return "SN1 · done: racemic mix, about 50 : 50";
+  }
+
+  function readouts() {
+    const path = pathNow(), sub = SUBS[state.sub];
+    liveTag.textContent = path + " wins";
+    if (path === "SN2") {
+      rateEl.textContent = "k[RX][Nu]"; rateSub.textContent = "Double [Nu]: rate ×2";
+      stEl.textContent = "Inversion";
+      stSub.textContent = sub.chiral ? "(" + descriptor(sub, 1) + ") in, (" + descriptor(sub, -1) + ") out" : "No stereocentre here";
+    } else {
+      rateEl.textContent = "k[RX]"; rateSub.textContent = "Double [Nu]: rate ×1";
+      stEl.textContent = "Racemic";
+      stSub.textContent = sub.chiral ? "(" + descriptor(sub, 1) + ") in, (R) + (S) out" : "No stereocentre here";
+    }
+    noteEl.textContent = NOTES[state.sub + "_" + state.cond];
+    overlay.textContent = phaseText();
+    const pc = Math.round(state.p * 100);
+    pv.textContent = pc + "%";
+    slider.value = String(pc);
+    slider.style.setProperty("--fill", pc + "%");
+  }
+
+  function tick(now) {
+    const dt = Math.min(now - last, 50); last = now;
+    let more = false;
+    if (from && to) {
+      const t = clamp((now - tw0) / 650, 0, 1), e = easeOut(t);
+      bar.e2 = lerp(from.e2, to.e2, e); bar.e1 = lerp(from.e1, to.e1, e); bar.dH = lerp(from.dH, to.dH, e);
+      if (t < 1) more = true; else { from = null; }
+    }
+    if (state.playing) {
+      state.p = Math.min(1, state.p + dt / 3600);
+      if (state.p >= 1) stopPlay(); else more = true;
+    }
+    readouts(); draw();
+    raf = more ? requestAnimationFrame(tick) : null;
+  }
+  function kick() { if (!raf) { last = performance.now(); raf = requestAnimationFrame(tick); } }
+
+  function retarget() {
+    to = targets();
+    if (reduce) { bar.e2 = to.e2; bar.e1 = to.e1; bar.dH = to.dH; from = null; readouts(); draw(); return; }
+    from = { e2: bar.e2, e1: bar.e1, dH: bar.dH }; tw0 = performance.now();
+    readouts(); draw(); kick();
+  }
+
+  function stopPlay() { state.playing = false; playBtn.textContent = "▶ Run the reaction"; }
+
+  function wireGroup(id, key, attr) {
+    const btns = document.querySelectorAll("#" + id + " button");
+    btns.forEach(b => b.addEventListener("click", () => {
+      btns.forEach(x => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
+      state[key] = b.getAttribute(attr);
+      retarget();
+    }));
+  }
+  wireGroup("snSub", "sub", "data-sub");
+  wireGroup("snCond", "cond", "data-cond");
+
+  slider.addEventListener("input", () => {
+    if (state.playing) stopPlay();
+    state.p = clamp(parseFloat(slider.value) / 100, 0, 1);
+    readouts(); draw();
+  });
+
+  playBtn.addEventListener("click", () => {
+    if (state.playing) { stopPlay(); return; }
+    if (reduce) { state.p = state.p >= 1 ? 0 : 1; readouts(); draw(); return; }
+    if (state.p >= 0.99) state.p = 0;
+    state.playing = true; playBtn.textContent = "Pause";
+    kick();
+  });
+
+  const kdBtns = document.querySelectorAll("[data-kd]");
+  kdBtns.forEach(b => b.addEventListener("click", () => {
+    kdBtns.forEach(x => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
+    state.kd = b.getAttribute("data-kd");
+    kdEl.textContent = KD[state.kd];
+  }));
+  kdEl.textContent = KD.sn2;
+
+  const t0 = targets(); bar.e2 = t0.e2; bar.e1 = t0.e1; bar.dH = t0.dH; to = t0;
+  window.addEventListener("resize", resize);
+  try { new ResizeObserver(() => resize()).observe(wrap); } catch (e) {}
+  readouts();
+  resize();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => draw());
+})();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'g-substitution-reactions-sn1-and-sn2'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

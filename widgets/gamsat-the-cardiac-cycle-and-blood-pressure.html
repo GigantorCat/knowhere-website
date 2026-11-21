@@ -1,0 +1,629 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>The cardiac cycle and blood pressure — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #5AADD4;
+  --acc-rgb: 90, 173, 212;
+  --ag:  rgba(var(--acc-rgb),.7);
+  --ag1: rgba(var(--acc-rgb),.12);
+  --ag2: rgba(var(--acc-rgb),.45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);font-family:'Geist',sans-serif;color:var(--ink);min-height:100vh;padding:40px 16px 0;box-sizing:border-box;-webkit-font-smoothing:antialiased}
+.cc-wrap{max-width:720px;margin:0 auto}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.cc-wrap h1{font-family:'Geist',sans-serif;font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin:0 0 14px;color:var(--ink)}
+.cc-intro{font-size:15.5px;font-weight:400;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin:0 0 26px}
+.card{background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);margin-bottom:22px}
+.card.cc-sec{border-radius:14px}
+.card-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.card-label{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;color:var(--ink);letter-spacing:.04em}
+.cc-live{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--acc);letter-spacing:.06em}
+.cc-hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin:0 0 12px;line-height:1.5}
+.canvas-wrap{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1)}
+.canvas-wrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.cc-ovl{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:14px;text-transform:uppercase;color:var(--acc);text-align:center;letter-spacing:.03em}
+.cc-ctl{margin-top:16px}
+.cc-row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);letter-spacing:.06em;margin-bottom:10px}
+.cc-row b{font-weight:500;color:var(--acc);font-size:12px;letter-spacing:.02em}
+.cc-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;margin:6px 0 0;background:linear-gradient(90deg, var(--acc) var(--fill,0%), #23291f var(--fill,0%));outline:none;cursor:pointer}
+.cc-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag), 0 0 4px var(--ag);transition:box-shadow .15s}
+.cc-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag), 0 0 4px var(--ag);transition:box-shadow .15s}
+.cc-slider:hover::-webkit-slider-thumb{box-shadow:0 0 24px var(--acc), 0 0 8px var(--ag)}
+.cc-slider:hover::-moz-range-thumb{box-shadow:0 0 24px var(--acc), 0 0 8px var(--ag)}
+.cc-slider:focus-visible{outline:1px solid var(--ag2);outline-offset:6px}
+.cc-ticks{position:relative;height:18px;margin:10px 10px 0}
+.cc-tick{position:absolute;top:0;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink-dim);white-space:nowrap}
+.cc-tick::before{content:"";display:block;width:1px;height:4px;background:var(--ink-dim);margin:0 auto 2px;opacity:.6}
+.cc-play{margin-top:14px;display:flex}
+.cc-play button{font-family:'JetBrains Mono',monospace;font-size:12px;padding:10px 16px;border-radius:999px;background:#12160F;border:1px solid var(--line);color:var(--ink);cursor:pointer;transition:border-color .2s,color .2s}
+.cc-play button[aria-pressed="true"]{border-color:var(--acc);color:var(--acc)}
+.cc-play button:focus-visible{outline:1px solid var(--acc);outline-offset:3px}
+.cc-qlabel{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);letter-spacing:.06em;margin:18px 0 10px}
+.cc-toggles{display:flex;gap:10px;flex-wrap:wrap}
+.cc-toggles button{flex:1 1 0;font-family:'JetBrains Mono',monospace;font-size:12px;padding:12px;border-radius:999px;background:#12160F;border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:background .2s,border-color .2s,color .2s,box-shadow .2s;white-space:nowrap}
+.cc-toggles button[aria-pressed="true"]{background:rgba(var(--acc-rgb),.1);border:1px solid var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.cc-toggles button:focus-visible{outline:1px solid var(--acc);outline-offset:3px}
+.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;border-top:1px solid var(--line);margin-top:18px;padding-top:14px}
+.stat-label{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);letter-spacing:.06em;margin-bottom:6px;line-height:1.35}
+.stat-value{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500;line-height:1.1}
+.stat-value small{font-size:13px;color:var(--ink-dim);font-weight:400;margin-left:4px}
+.cc-s1{color:var(--acc)}
+.cc-s2{color:var(--amb)}
+.knowdrop{border-top:1px solid var(--line);padding-top:16px;margin-top:16px}
+.knowdrop p{font-family:'Geist',sans-serif;font-size:14.5px;font-weight:400;line-height:1.65;color:var(--ink);margin:0}
+.know{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));border-radius:0 12px 12px 0;margin:0}
+.know-row{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.know-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:ccDot 2.4s ease-in-out infinite;flex:none}
+.know-tag{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:0.15em;color:var(--acc)}
+.know p{font-family:'Geist',sans-serif;font-size:17.4px;font-weight:400;line-height:1.55;color:var(--ink);margin:0}
+@keyframes ccDot{0%,100%{opacity:1}50%{opacity:.45}}
+.cc-wrap>*:last-child{margin-bottom:0;padding-bottom:16px}
+@media (prefers-reduced-motion: reduce){
+  .know-dot{animation:none}
+  .cc-toggles button,.cc-slider::-webkit-slider-thumb{transition:none}
+}
+</style>
+<div class="cc-wrap">
+  <h2 class="sr-only">The cardiac cycle and blood pressure: left ventricular, aortic and left atrial pressure through one heartbeat, with the matching pressure-volume loop and the arm cuff reading</h2>
+  <h1>Heart valves have no muscle. Every one is opened by <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">pressure</span>.</h1>
+  <p class="cc-intro">Through one beat, the left ventricle, the aorta and the left atrium each trace their own pressure, and a valve flips only where two of those traces cross. Drawn as pressure against volume, the same beat becomes a loop with a corner at every valve event. Move through the beat and watch which valve opens at each crossing, then stiffen the aorta and watch the cuff reading spread.</p>
+
+  <section class="card cc-main" aria-label="Cardiac cycle model">
+    <div class="card-head">
+      <span class="card-label">One beat at 75 per minute</span>
+      <span class="cc-live" id="ccLive">Ejection</span>
+    </div>
+    <p class="cc-hint">Move through the beat. Watch where the traces cross.</p>
+    <div class="canvas-wrap" id="ccWrap">
+      <canvas id="ccCanvas" role="img" aria-label="Pressure against time for the left ventricle, aorta and left atrium over one heartbeat, beside the left ventricular pressure-volume loop"></canvas>
+      <div class="cc-ovl" id="ccOvl" aria-live="polite">Ejection &middot; aortic valve open</div>
+    </div>
+    <div class="cc-ctl">
+      <div class="cc-row"><span>Time in the beat</span><b id="ccTV">250 ms</b></div>
+      <input type="range" class="cc-slider" id="ccT" aria-label="Time in the beat in milliseconds" min="0" max="800" step="5" value="250">
+      <div class="cc-ticks" id="ccTicks" aria-hidden="true"></div>
+    </div>
+    <div class="cc-play"><button type="button" id="ccPlay" aria-pressed="false">&#9654; Play one beat</button></div>
+    <div class="cc-scbox">
+    <div class="cc-qlabel" id="ccScQ">Which heart</div>
+    <div class="cc-toggles" role="group" aria-labelledby="ccScQ" id="ccSc">
+      <button type="button" data-sc="healthy" aria-pressed="true">Healthy</button>
+      <button type="button" data-sc="stiff" aria-pressed="false">Stiff aorta</button>
+      <button type="button" data-sc="stenosis" aria-pressed="false">Stenosis</button>
+    </div>
+    </div>
+    <div class="stat-row">
+      <div><div class="stat-label">LV pressure now</div><div class="stat-value cc-s1" id="ccS1">122<small>mmHg</small></div></div>
+      <div><div class="stat-label">Cuff reading</div><div class="stat-value cc-s2" id="ccS2">120/80<small>mmHg</small></div></div>
+    </div>
+  </section>
+
+  <section class="card cc-sec" aria-label="Valves and blood pressure">
+    <div class="cc-toggles" role="group" aria-label="Valves or blood pressure" id="ccDrop">
+      <button type="button" data-k="valves" aria-pressed="true">Valves &amp; sounds</button>
+      <button type="button" data-k="cuff" aria-pressed="false">Cuff numbers</button>
+    </div>
+    <div class="knowdrop"><p id="ccDropP" aria-live="polite"></p></div>
+  </section>
+
+  <div class="know">
+    <div class="know-row"><span class="know-dot" aria-hidden="true"></span><span class="know-tag">Know this</span></div>
+    <p>Each heart valve is passive, opening or shutting exactly where <span style="color:var(--acc)">two pressures cross</span>, and an arm cuff reads the <span style="color:var(--acc)">aortic peak</span> over the <span style="color:var(--acc)">aortic trough</span>.</p>
+  </div>
+</div>
+<script>
+(function(){
+  "use strict";
+  var CSS = getComputedStyle(document.documentElement);
+  function tok(n){ return CSS.getPropertyValue(n).trim(); }
+  var ACC = tok("--acc"), RGB = tok("--acc-rgb"), AMB = tok("--amb"), INK = tok("--ink"), DIM = tok("--ink-dim"), LINE = tok("--line");
+  var RM = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  var MONO = "\"JetBrains Mono\", ui-monospace, monospace";
+  function acc(a){ return "rgba(" + RGB + "," + a + ")"; }
+  function withA(hex, a){
+    var h = hex.replace("#", "");
+    if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+    var n = parseInt(h, 16);
+    return "rgba(" + ((n >> 16) & 255) + "," + ((n >> 8) & 255) + "," + (n & 255) + "," + a + ")";
+  }
+
+  /* ---------- the model: one 800 ms beat (75 per minute), 1 ms steps ----------
+     LV: passive filling curve + an active rise; the aortic valve opens where LV pressure first passes aortic pressure.
+     Aorta: a three-element windkessel fed by the ejection flow, so it rises with ejection and decays in diastole.
+     During ejection LV = aorta + the valve gradient (flow squared x G); after the valve shuts LV relaxes.
+     The mitral valve shuts and reopens where LV and atrial pressure cross. Systolic and diastolic are read off the aorta. */
+  var T = 800;
+  var LA_N = [[0,6],[70,11],[112,8],[135,9.5],[230,3.5],[495,12],[575,5],[800,6]];
+  var LA_S = [[0,9],[70,17],[115,10],[138,11.5],[240,6],[520,15],[600,8],[800,9]];
+  var SC = {
+    healthy:  { name: "Healthy",         S: 120, D: 80, G: 5,  tc: 425, pk: 0.28, EDV: 120, ESV: 50, la: LA_N, N: 5 },
+    stiff:    { name: "Stiff aorta",     S: 150, D: 70, G: 5,  tc: 425, pk: 0.30, EDV: 120, ESV: 52, la: LA_N, N: 3 },
+    stenosis: { name: "Aortic stenosis", S: 115, D: 75, G: 60, tc: 450, pk: 0.45, EDV: 120, ESV: 55, la: LA_S, N: 2.5 }
+  };
+  var FLOOR = 20, ZC = 55, AMP = 160;
+  function clamp(x, a, b){ return x < a ? a : x > b ? b : x; }
+  function keyed(k, t){
+    for (var i = 1; i < k.length; i++){
+      if (t <= k[i][0]){
+        var a = k[i - 1], b = k[i], u = (t - a[0]) / (b[0] - a[0]);
+        return a[1] + (b[1] - a[1]) * (0.5 - 0.5 * Math.cos(Math.PI * u));
+      }
+    }
+    return k[k.length - 1][1];
+  }
+  function build(s){
+    var tf = s.tc + 22, gC = s.tc + 110, i, t;
+    var bA = s.pk / (1 - s.pk);
+    function qraw(u){ return u <= 0 || u >= 1 ? 0 : Math.pow(u, bA) * (1 - u); }
+    var qmax = qraw(s.pk), QN = 400, Qc = [0], acc = 0;
+    for (i = 1; i <= QN; i++){ acc += qraw((i - 0.5) / QN) / QN; Qc.push(acc); }
+    for (i = 0; i <= QN; i++) Qc[i] /= acc;
+    function Q(u){ var x = clamp(u, 0, 1) * QN, k = Math.floor(x); if (k >= QN) return 1; return Qc[k] + (Qc[k + 1] - Qc[k]) * (x - k); }
+    function qn(u){ return qraw(u) / qmax; }
+    function g(t){ return 0.8 + 3 * Math.exp(-Math.pow((t - gC) / 50, 2)) + 1.5 * Math.exp(-Math.pow((t - 60) / 30, 2)); }
+    function riseF(t){ return t < 100 ? 0 : 1 - Math.exp(-Math.pow((t - 100) / 50, 2)); }
+    function fallF(t){ return 1 / (1 + Math.exp((t - tf) / 14)); }
+    var la = [], ldia = [];
+    for (t = 0; t <= T; t++){ la.push(keyed(s.la, t)); ldia.push(la[t] - g(t)); }
+    var SV = s.EDV - s.ESV;
+    function beat(C, tau, keep){
+      var Pc = 80, out = null;
+      for (var b = 0; b < 7; b++){
+        var to = -1, lv = [], ao = [], last = b === 6;
+        for (t = 0; t <= T; t++){
+          var Liso = ldia[t] + AMP * riseF(t), qin = 0, u = 0;
+          var Anow = Pc;
+          if (to < 0 && t >= 100 && t < s.tc && Liso >= Anow) to = t;
+          if (to >= 0 && t <= s.tc){
+            u = (t - to) / (s.tc - to);
+            qin = SV * (Q(u + 0.5 / (s.tc - to)) - Q(u - 0.5 / (s.tc - to)));
+          }
+          if (last){
+            var A = Pc + ZC * qin;
+            if (to >= 0 && t <= s.tc){ lv.push(A + s.G * Math.pow(qn(u), 2)); }
+            else if (t > s.tc){ lv.push(null); }
+            else lv.push(Liso);
+            ao.push(A);
+          }
+          Pc += qin / C - (Pc - FLOOR) / tau;
+        }
+        if (last) out = { lv: lv, ao: ao, to: to < 0 ? s.tc - 1 : to };
+      }
+      return out;
+    }
+    var C = 1.5, tau = 1500, r, k, lo, hi;
+    for (var round = 0; round < 8; round++){
+      lo = 0.2; hi = 6;
+      for (k = 0; k < 30; k++){ C = (lo + hi) / 2; r = beat(C, tau); if (Math.max.apply(null, r.ao) > s.S) lo = C; else hi = C; }
+      lo = 100; hi = 20000;
+      for (k = 0; k < 30; k++){ tau = (lo + hi) / 2; r = beat(C, tau); if (Math.min.apply(null, r.ao) > s.D) hi = tau; else lo = tau; }
+    }
+    r = beat(C, tau);
+    var lv = r.lv, ao = r.ao, to = r.to;
+    var Atc = ao[s.tc], f0 = fallF(s.tc);
+    for (t = s.tc + 1; t <= T; t++){
+      var w = t - s.tc;
+      lv[t] = ldia[t] + (Atc - ldia[s.tc]) * fallF(t) / f0 * (1 - 0) ;
+      ao[t] = ao[t] - s.N * (w / 8) * Math.exp(1 - w / 8);
+    }
+    var mc = -1, mo = -1;
+    for (t = 100; t < to; t++){ if (lv[t] > la[t]){ mc = t; break; } }
+    for (t = s.tc + 1; t < T; t++){ if (lv[t] < la[t]){ mo = t; break; } }
+    if (mc < 0) mc = 101; if (mo < 0) mo = s.tc + 80;
+    var v = [], Fend = 0.72 * (1 - Math.exp(-(T - mo) / 45)) + 0.03;
+    for (t = 0; t <= T; t++){
+      var vol;
+      if (t >= mo){ var sF = t - mo; vol = s.ESV + SV * (0.72 * (1 - Math.exp(-sF / 45)) + 0.03 * sF / (T - mo)); }
+      else if (t <= 100){ var u0 = t / 100; vol = s.ESV + SV * (Fend + (1 - Fend) * u0 * u0 * (3 - 2 * u0)); }
+      else if (t < to) vol = s.EDV;
+      else if (t <= s.tc) vol = s.EDV - SV * Q((t - to) / (s.tc - to));
+      else vol = s.ESV;
+      v.push(vol);
+    }
+    return { lv: lv, ao: ao, la: la, v: v, ev: [mc, to, s.tc, mo], sys: Math.max.apply(null, ao), dia: Math.min.apply(null, ao), lvPk: Math.max.apply(null, lv), edv: s.EDV, esv: s.ESV, C: C, tau: tau };
+  }
+
+  var MODELS = {};
+  for (var key in SC){ if (Object.prototype.hasOwnProperty.call(SC, key)) MODELS[key] = build(SC[key]); }
+  function niceMax(m){ return Math.max(160, Math.ceil((m.lvPk + 12) / 40) * 40); }
+  function copyModel(m){ return { lv: m.lv.slice(), ao: m.ao.slice(), la: m.la.slice(), v: m.v.slice(), ev: m.ev.slice(), sys: m.sys, dia: m.dia, lvPk: m.lvPk, edv: m.edv, esv: m.esv, ymax: niceMax(m) }; }
+
+  var state = { sc: "healthy", t: 250 };
+  var disp = copyModel(MODELS.healthy);
+  var morph = null;
+
+  var canvas = document.getElementById("ccCanvas");
+  var ctx = canvas.getContext("2d");
+  var wrap = document.getElementById("ccWrap");
+  var ovl = document.getElementById("ccOvl");
+  var live = document.getElementById("ccLive");
+  var slider = document.getElementById("ccT");
+  var tv = document.getElementById("ccTV");
+  var s1 = document.getElementById("ccS1"), s2 = document.getElementById("ccS2");
+  var playBtn = document.getElementById("ccPlay");
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
+  var buf = document.createElement("canvas"); var bctx = buf.getContext("2d");
+  var canBlur = typeof ctx.filter === "string";
+  var W = 0, H = 0;
+
+  var PHASES = [
+    { key: "kick", labels: ["Atrial kick", "Atrial"], name: "Atrial kick", valves: "mitral open, aortic shut" },
+    { key: "ivc", labels: ["IVC"], name: "Isovolumetric contraction", valves: "both valves shut" },
+    { key: "ej", labels: ["Ejection", "Eject"], name: "Ejection", valves: "aortic valve open, mitral shut" },
+    { key: "ivr", labels: ["IVR"], name: "Isovolumetric relaxation", valves: "both valves shut" },
+    { key: "fill", labels: ["Filling", "Fill"], name: "Filling", valves: "mitral valve open, aortic shut" }
+  ];
+  var EVENTS = ["MV shuts", "AV opens", "AV shuts", "MV opens"];
+  var EVENTS_SHORT = ["MV shut", "AV open", "AV shut", "MV open"];
+  function bounds(m){ return [0, m.ev[0], m.ev[1], m.ev[2], m.ev[3], T]; }
+  function phaseAt(t, m){
+    var b = bounds(m);
+    for (var i = 0; i < 5; i++){ if (t >= b[i] && t < b[i + 1]) return i; }
+    return 4;
+  }
+  function at(arr, t){
+    var i = Math.floor(t), f = t - i;
+    if (i >= T) return arr[T];
+    if (i < 0) return arr[0];
+    return arr[i] + (arr[i + 1] - arr[i]) * f;
+  }
+
+  /* ---------- sizing ---------- */
+  function resize(){
+    var rect = canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    canvas.width = Math.round(rect.width * dpr); canvas.height = Math.round(rect.height * dpr);
+    buf.width = canvas.width; buf.height = canvas.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    W = canvas.width / dpr; H = canvas.height / dpr;
+    draw();
+  }
+
+  function layout(w, h){
+    var ovlAbs = getComputedStyle(ovl).position === "absolute";
+    var ovlH = ovlAbs ? ovl.offsetHeight : 0;
+    var top = Math.max(10, h * 0.06), bottom = h - ovlH - Math.max(8, h * 0.03);
+    var axisB = 22, strip = 18;
+    if (w >= 560){
+      var split = w * 0.6;
+      return {
+        wide: true,
+        stripY: top, stripH: 14, pvTitleY: top,
+        wg: { x: 42, y: top + strip + 6, w: split - 42 - 6, h: bottom - axisB - (top + strip + 6) },
+        pv: { x: split + 50, y: top + strip + 6, w: w - split - 50 - 16, h: bottom - axisB - (top + strip + 6) }
+      };
+    }
+    var avail = bottom - top;
+    var wgH = avail * 0.5;
+    var pvTop = top + wgH + 6;
+    return {
+      wide: false,
+      stripY: top, stripH: 14, pvTitleY: pvTop,
+      wg: { x: 38, y: top + strip + 6, w: w - 38 - 12, h: wgH - axisB - strip - 6 },
+      pv: { x: 38, y: pvTop + strip + 6, w: w - 38 - 12, h: bottom - axisB - (pvTop + strip + 6) }
+    };
+  }
+
+  function font(sz, wt){ ctx.font = (wt || "400") + " " + sz + "px " + MONO; }
+  function text(s, x, y, col, align, base){
+    ctx.fillStyle = col; ctx.textAlign = align || "left"; ctx.textBaseline = base || "alphabetic"; ctx.fillText(s, x, y);
+  }
+  function dashed(x1, y1, x2, y2, col, wd){
+    ctx.save(); ctx.setLineDash([3, 4]); ctx.strokeStyle = col; ctx.lineWidth = wd || 1;
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); ctx.restore();
+  }
+  function curve(arr, X, Y, col, wd){
+    ctx.beginPath();
+    for (var t = 0; t <= T; t += 2){ var x = X(t), y = Y(arr[t]); if (t === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y); }
+    ctx.strokeStyle = col; ctx.lineWidth = wd; ctx.lineJoin = "round"; ctx.stroke();
+  }
+  function marker(n, x, y, px, py){
+    ctx.save();
+    ctx.strokeStyle = acc(0.55); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(x, y); ctx.stroke();
+    ctx.fillStyle = "rgba(0,0,0,0.85)"; ctx.beginPath(); ctx.arc(x, y, 8, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = ACC; ctx.lineWidth = 1.4; ctx.stroke();
+    ctx.fillStyle = ACC; ctx.beginPath(); ctx.arc(px, py, 2.6, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+  function markerNum(n, x, y){ font(11, "500"); text(String(n), x, y + 0.5, INK, "center", "middle"); }
+
+  /* ---------- drawing ---------- */
+  function draw(){
+    if (!W || !H) return;
+    var w = W, h = H, m = disp, L = layout(w, h), t = state.t;
+    var g = L.wg, p = L.pv, ymax = m.ymax;
+    var ph = phaseAt(t, m), b = bounds(m), i;
+    var X = function(tt){ return g.x + tt / T * g.w; };
+    var Y = function(pp){ return g.y + g.h - pp / ymax * g.h; };
+    var VX = function(v){ return p.x + (v - 30) / 120 * p.w; };
+    var PY = function(pp){ return p.y + p.h - pp / ymax * p.h; };
+    var step = (g.h / (ymax / 40) < 18) ? 80 : 40;
+    var stepP = (p.h / (ymax / 40) < 18) ? 80 : 40;
+
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.globalCompositeOperation = "source-over"; ctx.globalAlpha = 1; ctx.filter = "none";
+    ctx.fillStyle = "#000"; ctx.fillRect(0, 0, w, h);
+
+    /* grids */
+    ctx.lineWidth = 1;
+    for (var gp = 0; gp <= ymax + 0.1; gp += step){ ctx.strokeStyle = gp === 0 ? withA(DIM, 0.55) : withA(LINE, 0.9); ctx.beginPath(); ctx.moveTo(g.x, Y(gp)); ctx.lineTo(g.x + g.w, Y(gp)); ctx.stroke(); }
+    for (gp = 0; gp <= ymax + 0.1; gp += stepP){ ctx.strokeStyle = gp === 0 ? withA(DIM, 0.55) : withA(LINE, 0.9); ctx.beginPath(); ctx.moveTo(p.x, PY(gp)); ctx.lineTo(p.x + p.w, PY(gp)); ctx.stroke(); }
+    for (var gt = 0; gt <= T; gt += 200){ ctx.strokeStyle = withA(LINE, 0.6); ctx.beginPath(); ctx.moveTo(X(gt), g.y); ctx.lineTo(X(gt), g.y + g.h); ctx.stroke(); }
+
+    /* phase strip over the time plot */
+    for (i = 0; i < 5; i++){
+      var x0 = X(b[i]), x1 = X(b[i + 1]);
+      ctx.fillStyle = i === ph ? acc(0.32) : acc(0.07);
+      ctx.fillRect(x0 + 0.5, L.stripY, Math.max(0, x1 - x0 - 1), L.stripH);
+    }
+    /* valve-event lines */
+    for (i = 0; i < 4; i++) dashed(X(m.ev[i]), L.stripY + L.stripH, X(m.ev[i]), g.y + g.h, withA(DIM, 0.4), 1);
+
+    /* cuff lines: systolic and diastolic are the aortic peak and trough */
+    dashed(g.x, Y(m.sys), g.x + g.w, Y(m.sys), withA(AMB, 0.35), 1);
+    dashed(g.x, Y(m.dia), g.x + g.w, Y(m.dia), withA(AMB, 0.35), 1);
+
+    /* curves */
+    ctx.save();
+    ctx.beginPath(); ctx.rect(g.x, g.y - 4, g.w, g.h + 6); ctx.clip();
+    curve(m.la, X, Y, withA(INK, 0.7), 1.5);
+    curve(m.ao, X, Y, AMB, 2);
+    curve(m.lv, X, Y, ACC, 2.6);
+    ctx.restore();
+
+    /* the PV loop */
+    ctx.save();
+    ctx.beginPath(); ctx.rect(p.x, p.y - 4, p.w, p.h + 6); ctx.clip();
+    ctx.beginPath();
+    for (var k = 0; k <= T; k += 2){ var lx = VX(m.v[k]), ly = PY(m.lv[k]); if (k === 0) ctx.moveTo(lx, ly); else ctx.lineTo(lx, ly); }
+    ctx.closePath();
+    ctx.fillStyle = acc(0.08); ctx.fill();
+    ctx.strokeStyle = acc(0.85); ctx.lineWidth = 2; ctx.lineJoin = "round"; ctx.stroke();
+    /* trail of the last 90 ms */
+    ctx.globalCompositeOperation = "lighter";
+    for (var s = 18; s >= 1; s--){
+      var tt = ((t - s * 5) % T + T) % T;
+      ctx.fillStyle = acc(((1 - s / 18) * 0.45).toFixed(3));
+      ctx.beginPath(); ctx.arc(VX(at(m.v, tt)), PY(at(m.lv, tt)), 1.5 + 3 * (1 - s / 18), 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.globalCompositeOperation = "source-over";
+    ctx.restore();
+
+    /* cursor through the beat */
+    var cx = X(t);
+    ctx.save();
+    ctx.strokeStyle = acc(0.55); ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.moveTo(cx, L.stripY); ctx.lineTo(cx, g.y + g.h); ctx.stroke();
+    ctx.globalCompositeOperation = "lighter";
+    var halo = ctx.createRadialGradient(cx, Y(at(m.lv, t)), 0, cx, Y(at(m.lv, t)), 16);
+    halo.addColorStop(0, acc(0.6)); halo.addColorStop(1, acc(0));
+    ctx.fillStyle = halo; ctx.beginPath(); ctx.arc(cx, Y(at(m.lv, t)), 16, 0, Math.PI * 2); ctx.fill();
+    ctx.globalCompositeOperation = "source-over";
+    ctx.fillStyle = withA(INK, 0.9); ctx.beginPath(); ctx.arc(cx, Y(at(m.la, t)), 3, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = AMB; ctx.beginPath(); ctx.arc(cx, Y(at(m.ao, t)), 3.6, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = ACC; ctx.beginPath(); ctx.arc(cx, Y(at(m.lv, t)), 4.4, 0, Math.PI * 2); ctx.fill();
+    /* the moving point on the loop */
+    var dx = VX(at(m.v, t)), dy = PY(at(m.lv, t));
+    ctx.globalCompositeOperation = "lighter";
+    var halo2 = ctx.createRadialGradient(dx, dy, 0, dx, dy, 18);
+    halo2.addColorStop(0, acc(0.7)); halo2.addColorStop(1, acc(0));
+    ctx.fillStyle = halo2; ctx.beginPath(); ctx.arc(dx, dy, 18, 0, Math.PI * 2); ctx.fill();
+    ctx.globalCompositeOperation = "source-over";
+    ctx.fillStyle = INK; ctx.beginPath(); ctx.arc(dx, dy, 4.6, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = ACC; ctx.lineWidth = 2; ctx.stroke();
+    ctx.restore();
+
+    /* bloom */
+    if (canBlur){
+      bctx.setTransform(1, 0, 0, 1, 0, 0); bctx.clearRect(0, 0, buf.width, buf.height);
+      if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+      ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
+      (buf.width&&buf.height)&&ctx.drawImage(buf, 0, 0, w, h); ctx.restore();
+      ctx.filter = "none";
+    }
+    /* vignette */
+    var vcx = w / 2, vcy = h / 2;
+    var vig = ctx.createRadialGradient(vcx, vcy, h * 0.28, vcx, vcy, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
+
+    /* ---------- crisp labels on top ---------- */
+    font(11);
+    /* phase strip names, only where they fit */
+    for (i = 0; i < 5; i++){
+      var sw = X(b[i + 1]) - X(b[i]), lab = "";
+      for (var j = 0; j < PHASES[i].labels.length; j++){ if (ctx.measureText(PHASES[i].labels[j]).width + 6 <= sw){ lab = PHASES[i].labels[j]; break; } }
+      if (lab) text(lab, (X(b[i]) + X(b[i + 1])) / 2, L.stripY + L.stripH / 2 + 0.5, i === ph ? INK : DIM, "center", "middle");
+    }
+    /* axes */
+    for (gp = 0; gp <= ymax + 0.1; gp += step) text(String(gp), g.x - 6, Y(gp), DIM, "right", "middle");
+    for (gp = 0; gp <= ymax + 0.1; gp += stepP) text(String(gp), p.x - 6, PY(gp), DIM, "right", "middle");
+    for (gt = 0; gt <= T; gt += 200) text(gt === T ? "800 ms" : String(gt), X(gt), g.y + g.h + 15, DIM, gt === T ? "right" : "center", "alphabetic");
+    text("mmHg", g.x + 4, g.y + 12, DIM, "left", "alphabetic");
+    text("LV pressure-volume loop", p.x, L.pvTitleY + L.stripH / 2 + 0.5, INK, "left", "middle");
+    text("ESV " + Math.round(m.esv), VX(m.esv), p.y + p.h + 15, DIM, "center", "alphabetic");
+    text("EDV " + Math.round(m.edv) + " mL", VX(m.edv), p.y + p.h + 15, DIM, "center", "alphabetic");
+
+    /* curve names */
+    var tPk = 0; for (i = 0; i <= T; i++) if (m.lv[i] > m.lv[tPk]) tPk = i;
+    var lvLabY = Math.max(g.y + 10, Y(m.lv[tPk]) - 8);
+    text("LV", X(tPk), lvLabY, ACC, "center", "alphabetic");
+    var tAo = Math.abs(t - 560) < 45 ? 500 : 560;
+    text("Aorta", X(tAo), Y(m.ao[tAo]) + 15, AMB, "center", "alphabetic");
+    var tLa = Math.abs(t - 300) < 45 ? 380 : 300;
+    text("LA", X(tLa), Y(m.la[tLa]) - 6, withA(INK, 0.85), "center", "alphabetic");
+    text("Systolic " + Math.round(m.sys), g.x + g.w - 2, Y(m.sys) - 5, AMB, "right", "alphabetic");
+    text("Diastolic " + Math.round(m.dia), g.x + g.w - 2, Y(m.dia) + 14, AMB, "right", "alphabetic");
+
+    /* numbered valve events: where the traces cross, and the matching loop corners */
+    var e = m.ev;
+    var pts = [
+      { x: X(e[0]), y: Y(at(m.la, e[0])), ox: -9, oy: -20 },
+      { x: X(e[1]), y: Y(at(m.ao, e[1])), ox: -13, oy: -17 },
+      { x: X(e[2]), y: Y(at(m.ao, e[2])), ox: 13, oy: -17 },
+      { x: X(e[3]), y: Y(at(m.la, e[3])), ox: 11, oy: -20 }
+    ];
+    for (i = 0; i < 4; i++){ marker(i + 1, pts[i].x + pts[i].ox, pts[i].y + pts[i].oy, pts[i].x, pts[i].y); markerNum(i + 1, pts[i].x + pts[i].ox, pts[i].y + pts[i].oy); }
+
+    var cn = [
+      { x: VX(m.v[e[0]]), y: PY(m.lv[e[0]]) },
+      { x: VX(m.v[e[1]]), y: PY(m.lv[e[1]]) },
+      { x: VX(m.v[e[2]]), y: PY(m.lv[e[2]]) },
+      { x: VX(m.v[e[3]]), y: PY(m.lv[e[3]]) }
+    ];
+    var inset = [ { dx: 15, dy: -2 }, { dx: 15, dy: 2 }, { dx: -15, dy: 2 }, { dx: -15, dy: -2 } ];
+    for (i = 0; i < 4; i++){
+      var mx = cn[i].x + inset[i].dx, my = cn[i].y + inset[i].dy;
+      marker(i + 1, mx, my, cn[i].x, cn[i].y); markerNum(i + 1, mx, my);
+      font(11);
+    }
+    /* a key for the numbered events, flowing across the empty band above the loop */
+    font(11);
+    var keyX = p.x + 10, keyY = p.y + 9, gap = 14, names = EVENTS, rowW = 0;
+    for (i = 0; i < 4; i++) rowW += 20 + ctx.measureText(EVENTS[i]).width + (i ? gap : 0);
+    if (!L.wide && rowW > p.w - 10) names = EVENTS_SHORT;
+    for (i = 0; i < 4; i++){
+      var iw = 20 + ctx.measureText(names[i]).width;
+      if (keyX + iw > p.x + p.w && keyX > p.x + 10){ keyX = p.x + 10; keyY += 19; }
+      ctx.save(); ctx.fillStyle = "rgba(0,0,0,0.85)"; ctx.strokeStyle = ACC; ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.arc(keyX, keyY, 7.5, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); ctx.restore();
+      markerNum(i + 1, keyX, keyY);
+      font(11); text(names[i], keyX + 12, keyY + 0.5, withA(INK, 0.9), "left", "middle");
+      keyX += iw + gap;
+    }
+    /* stroke volume across the loop */
+    var svY = (cn[0].y + cn[1].y) / 2, svA = cn[3].x + 6, svB = cn[0].x - 6;
+    if (svB - svA > 40){
+      ctx.save(); ctx.strokeStyle = withA(AMB, 0.8); ctx.fillStyle = withA(AMB, 0.8); ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.moveTo(svA, svY); ctx.lineTo(svB, svY); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(svA, svY); ctx.lineTo(svA + 6, svY - 4); ctx.lineTo(svA + 6, svY + 4); ctx.closePath(); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(svB, svY); ctx.lineTo(svB - 6, svY - 4); ctx.lineTo(svB - 6, svY + 4); ctx.closePath(); ctx.fill();
+      ctx.restore();
+      font(11);
+      var svTxt = "Stroke volume " + Math.round(m.edv - m.esv) + " mL";
+      if (ctx.measureText(svTxt).width > svB - svA - 4) svTxt = "SV " + Math.round(m.edv - m.esv) + " mL";
+      text(svTxt, (svA + svB) / 2, svY - 6, AMB, "center", "alphabetic");
+    }
+  }
+
+  /* ---------- readouts: every one computed from the arrays the picture draws ---------- */
+  var DROP = {
+    valves: "Heart valves are passive flaps: each one opens only while the pressure behind it beats the pressure in front, and shuts the moment that reverses. As the ventricle starts to squeeze, its pressure passes the atrium and the mitral valve shuts (1), giving the first heart sound, S1. For the next few tens of milliseconds both valves are shut, so pressure soars with no change in volume: isovolumetric contraction. The aortic valve opens only when ventricular pressure passes aortic pressure (2), near 80 mmHg, and shuts as ventricular pressure falls back to meet it (3), giving the second sound, S2, and the small notch in the aortic trace. Pressure then drops with both valves shut again until it falls under the atrium and the mitral valve reopens (4).",
+    cuff: "An arm cuff reads the arteries, not the ventricle: systolic is the peak aortic pressure during ejection and diastolic is the trough, just before the aortic valve opens again. The gap between them, the pulse pressure, is set mostly by stroke volume against how much the aorta can stretch, so a stiff aorta gives a higher systolic and a lower diastolic for the same beat. Mean arterial pressure sits about one third of the way up from diastolic, because at rest about two thirds of each beat is spent in diastole. With a narrowed aortic valve the ventricle must make far more pressure than the cuff ever sees, and the difference across the valve is the pressure gradient. In a healthy heart the ventricle and the aorta peak within a few mmHg of each other."
+  };
+  var dropP = document.getElementById("ccDropP");
+  dropP.textContent = DROP.valves;
+
+  function readouts(){
+    var m = disp, t = state.t, ph = phaseAt(t, m), P = PHASES[ph];
+    var lvNow = Math.round(at(m.lv, t));
+    tv.textContent = Math.round(t) + " ms";
+    live.textContent = SC[state.sc].name + " · " + P.name;
+    ovl.textContent = P.name + " · " + P.valves;
+    s1.innerHTML = lvNow + "<small>mmHg</small>";
+    s2.innerHTML = Math.round(m.sys) + "/" + Math.round(m.dia) + "<small>mmHg</small>";
+    slider.style.setProperty("--fill", (t / T * 100).toFixed(2) + "%");
+    slider.setAttribute("aria-valuetext", Math.round(t) + " ms, " + P.name + ", " + P.valves);
+  }
+
+  /* ---------- ticks at their true values ---------- */
+  var ticks = document.getElementById("ccTicks");
+  [0, 200, 400, 600, 800].forEach(function(v){
+    var d = document.createElement("span"); d.className = "cc-tick";
+    d.style.left = (v / T * 100) + "%"; d.textContent = String(v);
+    ticks.appendChild(d);
+  });
+
+  /* ---------- motion: a scenario change eases once and stops; play runs one beat and stops ---------- */
+  var raf = 0, last = 0, play = null;
+  function ease(x){ return 1 - Math.pow(1 - x, 3); }
+  function tick(now){
+    raf = 0;
+    var dt = Math.min(now - (last || now), 50); last = now;
+    if (morph){
+      var k = Math.min(1, (now - morph.start) / 520), e = ease(k), a = morph.a, b = morph.b;
+      for (var i = 0; i <= T; i++){
+        disp.lv[i] = a.lv[i] + (b.lv[i] - a.lv[i]) * e;
+        disp.ao[i] = a.ao[i] + (b.ao[i] - a.ao[i]) * e;
+        disp.la[i] = a.la[i] + (b.la[i] - a.la[i]) * e;
+        disp.v[i] = a.v[i] + (b.v[i] - a.v[i]) * e;
+      }
+      for (i = 0; i < 4; i++) disp.ev[i] = a.ev[i] + (b.ev[i] - a.ev[i]) * e;
+      ["sys", "dia", "lvPk", "edv", "esv", "ymax"].forEach(function(f){ disp[f] = a[f] + (b[f] - a[f]) * e; });
+      if (k >= 1){ disp = copyModel(MODELS[state.sc]); morph = null; }
+    }
+    if (play){
+      var adv = dt * 0.2;
+      play.left -= adv;
+      if (play.left <= 0){ state.t = play.start; stopPlay(); }
+      else state.t = (state.t + adv) % T;
+      slider.value = String(Math.round(state.t / 5) * 5);
+    }
+    readouts(); draw();
+    if (morph || play) kick();
+  }
+  function kick(){ if (!raf){ raf = requestAnimationFrame(tick); } }
+  function startPlay(){
+    play = { start: state.t, left: T };
+    playBtn.textContent = "❚❚ Pause";
+    playBtn.setAttribute("aria-pressed", "true");
+    last = 0; kick();
+  }
+  function stopPlay(){
+    play = null;
+    playBtn.textContent = "▶ Play one beat";
+    playBtn.setAttribute("aria-pressed", "false");
+  }
+  playBtn.addEventListener("click", function(){
+    if (play){ stopPlay(); readouts(); draw(); } else startPlay();
+  });
+
+  slider.addEventListener("input", function(){
+    if (play) stopPlay();
+    state.t = Math.min(T - 1, parseFloat(slider.value) || 0);
+    readouts(); draw();
+  });
+
+  var scBtns = Array.prototype.slice.call(document.querySelectorAll("#ccSc button"));
+  scBtns.forEach(function(btn){
+    btn.addEventListener("click", function(){
+      var k = btn.getAttribute("data-sc");
+      scBtns.forEach(function(o){ o.setAttribute("aria-pressed", o === btn ? "true" : "false"); });
+      if (k === state.sc && !morph) return;
+      state.sc = k;
+      var target = copyModel(MODELS[k]);
+      if (RM){ disp = target; morph = null; readouts(); draw(); return; }
+      morph = { a: copyModel(disp), b: target, start: performance.now() };
+      kick();
+    });
+  });
+
+  var dropBtns = Array.prototype.slice.call(document.querySelectorAll("#ccDrop button"));
+  dropBtns.forEach(function(btn){
+    btn.addEventListener("click", function(){
+      dropBtns.forEach(function(o){ o.setAttribute("aria-pressed", o === btn ? "true" : "false"); });
+      dropP.textContent = DROP[btn.getAttribute("data-k")];
+    });
+  });
+
+  window.addEventListener("resize", resize);
+  if (window.ResizeObserver){ new ResizeObserver(function(){ resize(); }).observe(wrap); }
+  readouts();
+  resize();
+  if (document.fonts && document.fonts.ready){ document.fonts.ready.then(function(){ draw(); }); }
+})();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'g-the-cardiac-cycle-and-blood-pressure'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

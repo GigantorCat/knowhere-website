@@ -1,0 +1,460 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Flow through tubes: viscosity and resistance — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #3A6FC8;
+  --acc-rgb: 58, 111, 200;
+  --ag:  rgba(var(--acc-rgb),.7);
+  --ag1: rgba(var(--acc-rgb),.12);
+  --ag2: rgba(var(--acc-rgb),.45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);font-family:'Geist',sans-serif;color:var(--ink);min-height:100vh;padding:40px 16px 0;box-sizing:border-box;-webkit-font-smoothing:antialiased}
+.ft-wrap{max-width:720px;margin:0 auto}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.ft-wrap h1{font-family:'Geist',sans-serif;font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin:0 0 14px;color:var(--ink)}
+.ft-intro{font-size:15.5px;font-weight:400;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin:0 0 26px}
+.card{background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);margin-bottom:22px}
+.card.ft-sec{border-radius:14px}
+.card-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.card-label{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;color:var(--ink);letter-spacing:.04em}
+.ft-live{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--acc);letter-spacing:.06em}
+.ft-unit{text-transform:none}
+.ft-hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin:0 0 12px;line-height:1.5}
+.canvas-wrap{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1)}
+.canvas-wrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.ft-ovl{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:14px;text-transform:uppercase;color:var(--acc);text-align:center;letter-spacing:.03em}
+.ft-ctl{margin-top:16px}
+.ft-ctl+.ft-ctl{margin-top:6px}
+.ft-row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);letter-spacing:.06em;margin-bottom:10px}
+.ft-row b{font-weight:500;color:var(--acc);font-size:12px;letter-spacing:.02em}
+.ft-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;margin:6px 0 0;background:linear-gradient(90deg, var(--acc) var(--fill,0%), #23291f var(--fill,0%));outline:none;cursor:pointer}
+.ft-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag), 0 0 4px var(--ag);transition:box-shadow .15s}
+.ft-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag), 0 0 4px var(--ag);transition:box-shadow .15s}
+.ft-slider:hover::-webkit-slider-thumb{box-shadow:0 0 24px var(--acc), 0 0 8px var(--ag)}
+.ft-slider:hover::-moz-range-thumb{box-shadow:0 0 24px var(--acc), 0 0 8px var(--ag)}
+.ft-slider:focus-visible{outline:1px solid var(--ag2);outline-offset:6px}
+.ft-ticks{position:relative;height:18px;margin:8px 10px 0}
+.ft-tick{position:absolute;top:0;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink-dim);white-space:nowrap;line-height:1.35}
+.ft-tick::before{content:"";display:block;width:1px;height:4px;background:var(--ink-dim);margin:0 auto 2px;opacity:.6}
+.ft-qlabel{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);letter-spacing:.06em;margin:18px 0 10px}
+.ft-toggles{display:flex;gap:10px;flex-wrap:wrap}
+.ft-toggles button{flex:1 1 0;font-family:'JetBrains Mono',monospace;font-size:12px;padding:12px;border-radius:999px;background:#12160F;border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:background .2s,border-color .2s,color .2s,box-shadow .2s;white-space:nowrap}
+.ft-toggles button[aria-pressed="true"]{background:rgba(var(--acc-rgb),.1);border:1px solid var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.ft-toggles button:focus-visible{outline:1px solid var(--acc);outline-offset:3px}
+.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;border-top:1px solid var(--line);margin-top:18px;padding-top:14px}
+.stat-label{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);letter-spacing:.06em;margin-bottom:6px;line-height:1.35}
+.stat-value{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500;line-height:1.1}
+.ft-s1{color:var(--acc)}
+.ft-s2{color:var(--amb)}
+.knowdrop{border-top:1px solid var(--line);padding-top:16px;margin-top:16px}
+.knowdrop p{font-family:'Geist',sans-serif;font-size:14.5px;font-weight:400;line-height:1.65;color:var(--ink);margin:0}
+.know{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));border-radius:0 12px 12px 0;margin:0;margin-bottom:0}
+.know-row{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.know-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:ftDot 2.4s ease-in-out infinite;flex:none}
+.know-tag{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:0.15em;color:var(--acc)}
+.know p{font-family:'Geist',sans-serif;font-size:17.4px;font-weight:400;line-height:1.55;color:var(--ink);margin:0}
+@keyframes ftDot{0%,100%{opacity:1}50%{opacity:.45}}
+.ft-wrap>*:last-child{margin-bottom:0}
+@media (prefers-reduced-motion: reduce){
+  .know-dot{animation:none}
+  .ft-toggles button,.ft-slider::-webkit-slider-thumb{transition:none}
+}
+</style>
+<div class="ft-wrap">
+  <h2 class="sr-only">Flow through tubes: viscosity and resistance. A blood vessel with fluid streaming through it and a parabolic speed profile, beside a graph of flow against radius, which change with vessel radius, pressure difference and fluid.</h2>
+  <h1>Halve the radius and the flow falls to a <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">sixteenth</span></h1>
+  <p class="ft-intro">Fluid sticks to the wall of a tube and rubs on itself, so it races down the middle and stands still at the edge. That friction, called viscosity, makes flow depend on the radius to the fourth power, not on the area. Narrow the vessel and watch the flow collapse, then switch the fluid to water and watch the same tube open up.</p>
+
+  <section class="card ft-main" aria-label="Flow through a tube model">
+    <div class="card-head">
+      <span class="card-label">Poiseuille flow</span>
+      <span class="ft-live" id="ftLive">Blood &middot; <span class="ft-unit">&eta; 3.5 mPa&middot;s</span></span>
+    </div>
+    <p class="ft-hint">Narrow the vessel, change the pressure difference, swap the fluid. Watch the centre stream and the dot on the curve.</p>
+    <div class="canvas-wrap" id="ftWrap">
+      <canvas id="ftCanvas" role="img" aria-label="A lengthwise cut through a vessel with particles streaming from high to low pressure, fastest along the centre line, and a graph of flow against radius"></canvas>
+      <div class="ft-ovl" id="ftOvl" aria-live="polite">Radius 100% &middot; R &times;1.00 &middot; Q 100% of normal</div>
+    </div>
+    <div class="ft-ctl">
+      <div class="ft-row"><span>Vessel radius</span><b id="ftRV">100%</b></div>
+      <input type="range" class="ft-slider" id="ftR" aria-label="Vessel radius as a percentage of normal" min="50" max="120" step="1" value="100">
+      <div class="ft-ticks" id="ftRT" aria-hidden="true"></div>
+    </div>
+    <div class="ft-ctl">
+      <div class="ft-row"><span>Pressure difference</span><b id="ftPV">100%</b></div>
+      <input type="range" class="ft-slider" id="ftP" aria-label="Pressure difference as a percentage of normal" min="50" max="200" step="5" value="100">
+      <div class="ft-ticks" id="ftPT" aria-hidden="true"></div>
+    </div>
+    <div class="ft-fluidbox">
+    <div class="ft-qlabel" id="ftFluidQ">Fluid</div>
+    <div class="ft-toggles" role="group" aria-label="Which fluid flows through the vessel" id="ftFluid">
+      <button type="button" data-f="water" aria-pressed="false">Water</button>
+      <button type="button" data-f="blood" aria-pressed="true">Blood</button>
+      <button type="button" data-f="thick" aria-pressed="false">Thick blood</button>
+    </div>
+    </div>
+    <div class="stat-row">
+      <div><div class="stat-label">Flow vs normal</div><div class="stat-value ft-s1" id="ftS1">100%</div></div>
+      <div><div class="stat-label">Resistance vs normal</div><div class="stat-value ft-s2" id="ftS2">&times;1.00</div></div>
+    </div>
+  </section>
+
+  <section class="card ft-sec" aria-label="Why the radius matters so much">
+    <div class="ft-toggles" role="group" aria-label="What this switches" id="ftDrop">
+      <button type="button" data-k="why" aria-pressed="true">Why r&#8308;</button>
+      <button type="button" data-k="body" aria-pressed="false">In the body</button>
+    </div>
+    <div class="knowdrop"><p id="ftDropP" aria-live="polite"></p></div>
+  </section>
+
+  <div class="know">
+    <div class="know-row"><span class="know-dot" aria-hidden="true"></span><span class="know-tag">Know this</span></div>
+    <p>Flow through a tube goes with the <span style="color:var(--acc)">radius to the fourth</span>, so halving the radius cuts flow to <span style="color:var(--acc)">one sixteenth</span> at the same <span style="color:var(--acc)">pressure difference</span>.</p>
+  </div>
+</div>
+<script>
+(function(){
+  "use strict";
+  var CSS = getComputedStyle(document.documentElement);
+  var ACC = CSS.getPropertyValue("--acc").trim();
+  var RGB = CSS.getPropertyValue("--acc-rgb").trim();
+  var AMB = CSS.getPropertyValue("--amb").trim();
+  var INK = CSS.getPropertyValue("--ink").trim();
+  var DIM = CSS.getPropertyValue("--ink-dim").trim();
+  var RM = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+
+  function rgbOf(hex){
+    var h = hex.replace("#", "");
+    if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+    var n = parseInt(h, 16);
+    return ((n >> 16) & 255) + "," + ((n >> 8) & 255) + "," + (n & 255);
+  }
+  var AMB_RGB = rgbOf(AMB), INK_RGB = rgbOf(INK), DIM_RGB = rgbOf(DIM);
+  function acc(a){ return "rgba(" + RGB + "," + a + ")"; }
+  function amb(a){ return "rgba(" + AMB_RGB + "," + a + ")"; }
+  function ink(a){ return "rgba(" + INK_RGB + "," + a + ")"; }
+  function dim(a){ return "rgba(" + DIM_RGB + "," + a + ")"; }
+
+  var canvas = document.getElementById("ftCanvas");
+  var ctx = canvas.getContext("2d");
+  var wrap = document.getElementById("ftWrap");
+  var ovl = document.getElementById("ftOvl");
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
+  var buf = document.createElement("canvas"); var bctx = buf.getContext("2d");
+  var canBlur = typeof ctx.filter === "string";
+  var MONO = "JetBrains Mono, monospace";
+
+  /* the model: Poiseuille. Q = pi dP r^4 / (8 eta L), R = 8 eta L / (pi r^4), Q = dP / R.
+     Everything is relative to a normal vessel carrying blood (3.5 mPa s) at the normal pressure difference. */
+  var FLUIDS = {
+    water: { name: "Water", eta: 1.0, dens: 0.75, size: 1.3 },
+    blood: { name: "Blood", eta: 3.5, dens: 1.0, size: 2.0 },
+    thick: { name: "Thick blood", eta: 6.0, dens: 1.45, size: 2.0 }
+  };
+  var ETA0 = 3.5, RMAX = 1.2;
+  var st = { r: 1, dp: 1, f: "blood" };
+  var drawR = 1;
+  function model(){
+    var f = FLUIDS[st.f];
+    var r4 = Math.pow(st.r, 4);
+    var R = (f.eta / ETA0) / r4;
+    var Q = st.dp / R;
+    var vmax = st.dp * st.r * st.r * (ETA0 / f.eta); /* centre speed: dP r^2 / (4 eta L) */
+    return { f: f, R: R, Q: Q, vmax: vmax, r4: r4 };
+  }
+
+  function fmtPct(x){ var p = x * 100; return (p < 10 ? p.toFixed(1) : Math.round(p).toString()) + "%"; }
+  function fmtX(x){ return "×" + (x >= 10 ? x.toFixed(1) : x >= 1 ? x.toFixed(2) : x.toFixed(2)); }
+
+  /* particles: a lengthwise slice of the vessel. s is the place across the radius (-1 wall, 0 centre, +1 wall),
+     u is how far along the tube (0 inlet, 1 outlet). Speed at s is vmax (1 - s^2), the parabola. */
+  var parts = [];
+  var seed = 11;
+  function rnd(){ seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }
+  function newPart(u){ return { u: u, s: (rnd() * 2 - 1) * 0.94, k: rnd() }; }
+  function syncCount(){
+    var f = FLUIDS[st.f];
+    var want = Math.round(70 * f.dens * drawR * drawR / (RMAX * RMAX) * 2.1);
+    while (parts.length < want) parts.push(newPart(rnd()));
+    if (parts.length > want) parts.length = want;
+  }
+
+  var W = 0, H = 0;
+  function resize(){
+    var rect = wrap.getBoundingClientRect();
+    if (!rect.width || !rect.height) return false;
+    var cw = Math.round(rect.width * dpr), ch = Math.round(rect.height * dpr);
+    if (cw === canvas.width && ch === canvas.height && W) return false;
+    canvas.width = cw; canvas.height = ch;
+    buf.width = cw; buf.height = ch;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    W = canvas.width / dpr; H = canvas.height / dpr;
+    return true;
+  }
+
+  function layout(w, h){
+    var ovIn = ovl.parentElement === wrap;
+    var ob = ovIn ? ovl.offsetHeight + 4 : 0;
+    var avail = h - ob;
+    if (w >= 560){
+      return {
+        narrow: false,
+        tx0: w * 0.06, tx1: w * 0.56, cy: avail * 0.52, rmax: Math.min(avail * 0.34, w * 0.17),
+        gx0: w * 0.67, gx1: w * 0.95, gy0: avail * 0.15, gy1: avail * 0.84
+      };
+    }
+    var top = h * 0.04, split = avail * 0.5;
+    return {
+      narrow: true,
+      tx0: w * 0.08, tx1: w * 0.92, cy: top + (split - top) * 0.56, rmax: Math.min((split - top) * 0.32, w * 0.2),
+      gx0: w * 0.17, gx1: w * 0.93, gy0: split + avail * 0.08, gy1: avail - Math.max(30, avail * 0.08)
+    };
+  }
+
+  function label(t, x, y, col, align, size, weight){
+    ctx.font = (weight || 400) + " " + (size || 11) + "px " + MONO;
+    ctx.textAlign = align || "left"; ctx.textBaseline = "middle";
+    ctx.fillStyle = col; ctx.fillText(t, x, y);
+  }
+  function arrow(x0, y, x1, col, lw){
+    ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = lw || 1.5;
+    ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x1, y); ctx.stroke();
+    var hd = Math.min(6, Math.abs(x1 - x0) * 0.6);
+    if (hd > 1.5){ ctx.beginPath(); ctx.moveTo(x1, y); ctx.lineTo(x1 - hd, y - hd * 0.6); ctx.lineTo(x1 - hd, y + hd * 0.6); ctx.closePath(); ctx.fill(); }
+  }
+
+  function drawTube(L, m){
+    var x0 = L.tx0, x1 = L.tx1, cy = L.cy, len = x1 - x0;
+    var rpx = drawR / RMAX * L.rmax, r0 = 1 / RMAX * L.rmax;
+
+    /* fluid body with the pressure falling from inlet to outlet */
+    var g = ctx.createLinearGradient(x0, 0, x1, 0);
+    g.addColorStop(0, acc(0.10 + 0.10 * st.dp)); g.addColorStop(1, acc(0.04));
+    ctx.fillStyle = g; ctx.fillRect(x0, cy - rpx, len, rpx * 2);
+
+    /* normal-size ghost walls */
+    if (Math.abs(drawR - 1) > 0.015){
+      ctx.save(); ctx.setLineDash([5, 5]); ctx.strokeStyle = ink(0.28); ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(x0, cy - r0); ctx.lineTo(x1, cy - r0); ctx.moveTo(x0, cy + r0); ctx.lineTo(x1, cy + r0); ctx.stroke();
+      ctx.restore();
+      label("normal wall", x1, drawR < 1 ? cy + r0 + 13 : cy + r0 - 10, ink(0.6), "right", 11);
+    }
+
+    /* particles, each with a streak as long as its speed */
+    var base = len * 0.11;
+    ctx.save(); ctx.globalCompositeOperation = "lighter";
+    for (var i = 0; i < parts.length; i++){
+      var p = parts[i];
+      var sp = base * m.vmax * (1 - p.s * p.s);
+      var x = x0 + p.u * len, y = cy + p.s * rpx;
+      var tl = Math.min(sp * 0.16, len * 0.2);
+      if (tl > 1.5){
+        var sg = ctx.createLinearGradient(x - tl, 0, x, 0);
+        sg.addColorStop(0, acc(0)); sg.addColorStop(1, acc(0.55));
+        ctx.strokeStyle = sg; ctx.lineWidth = m.f.size * 0.9;
+        ctx.beginPath(); ctx.moveTo(Math.max(x0, x - tl), y); ctx.lineTo(x, y); ctx.stroke();
+      }
+      ctx.fillStyle = acc(0.55 + 0.4 * p.k);
+      ctx.beginPath(); ctx.arc(x, y, m.f.size, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.restore();
+
+    /* the vessel walls */
+    ctx.fillStyle = dim(0.22);
+    ctx.fillRect(x0, cy - rpx - 6, len, 6); ctx.fillRect(x0, cy + rpx, len, 6);
+    ctx.strokeStyle = ink(0.8); ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(x0, cy - rpx); ctx.lineTo(x1, cy - rpx); ctx.moveTo(x0, cy + rpx); ctx.lineTo(x1, cy + rpx); ctx.stroke();
+
+    /* speed profile: arrows from one cross-section, tips trace a parabola */
+    var xp = x0 + len * (L.narrow ? 0.1 : 0.12);
+    var lmax = len * 0.42 * (1 - Math.exp(-m.vmax / 1.4));
+    ctx.strokeStyle = amb(0.5); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(xp, cy - rpx); ctx.lineTo(xp, cy + rpx); ctx.stroke();
+    var ss = [-0.85, -0.6, -0.3, 0, 0.3, 0.6, 0.85];
+    for (var j = 0; j < ss.length; j++){
+      arrow(xp, cy + ss[j] * rpx, xp + lmax * (1 - ss[j] * ss[j]), amb(0.85), 1.4);
+    }
+    ctx.save(); ctx.globalCompositeOperation = "lighter";
+    ctx.strokeStyle = amb(0.95); ctx.lineWidth = 2; ctx.beginPath();
+    for (var k = 0; k <= 40; k++){
+      var s = -1 + k / 20, px = xp + lmax * (1 - s * s), py = cy + s * rpx;
+      if (k === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.stroke(); ctx.restore();
+    label("fastest at centre", Math.min(xp + lmax + 8, x1 - 4), cy - Math.max(14, rpx * 0.16), amb(0.95), xp + lmax + 120 > x1 ? "right" : "left", 11);
+
+    /* ends and pressure labels */
+    var outer = Math.max(rpx + 6, r0);
+    var ly = cy - outer - 14;
+    label("high P", x0, ly, ink(0.85), "left", 11, 500);
+    label("low P", x1, ly, ink(0.85), "right", 11, 500);
+    arrow(x0 + len * 0.36, ly, x0 + len * 0.62, acc(0.9), 1.5);
+    label("flow", x0 + len * 0.49, ly - 13, acc(0.95), "center", 11);
+    label("zero at the wall", x0 + len * 0.42, (r0 - rpx - 6 > 26) ? cy + rpx + 19 : cy + outer + 13, dim(1), "center", 11);
+  }
+
+  function drawGraph(L, m){
+    var gx0 = L.gx0, gx1 = L.gx1, gy0 = L.gy0, gy1 = L.gy1;
+    var YM = 2.4;
+    function X(r){ return gx0 + (r / RMAX) * (gx1 - gx0); }
+    function Y(q){ return gy1 - (q / YM) * (gy1 - gy0); }
+    /* grid */
+    ctx.strokeStyle = ink(0.08); ctx.lineWidth = 1;
+    [0.5, 1, 1.5, 2].forEach(function(q){ ctx.beginPath(); ctx.moveTo(gx0, Y(q)); ctx.lineTo(gx1, Y(q)); ctx.stroke(); });
+    [0.5, 1].forEach(function(r){ ctx.beginPath(); ctx.moveTo(X(r), gy0); ctx.lineTo(X(r), gy1); ctx.stroke(); });
+    ctx.strokeStyle = ink(0.45); ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.moveTo(gx0, gy0 - 4); ctx.lineTo(gx0, gy1); ctx.lineTo(gx1 + 4, gy1); ctx.stroke();
+    /* tick labels */
+    label("0", gx0, gy1 + 11, dim(1), "center", 11);
+    label("50%", X(0.5), gy1 + 11, dim(1), "center", 11);
+    label("100%", X(1), gy1 + 11, dim(1), "center", 11);
+    label("100%", gx0 - 5, Y(1), dim(1), "right", 11);
+    label("200%", gx0 - 5, Y(2), dim(1), "right", 11);
+    label("radius", (gx0 + gx1) / 2 + (L.narrow ? 0 : 12), gy1 + 25, ink(0.7), "center", 11);
+    label("flow", gx0 - 5, gy0 - 12, ink(0.7), "right", 11);
+    label("same fluid, same ΔP", gx1, gy0 - 12, dim(1), "right", 11);
+
+    /* if flow only followed the area (r^2): the intuitive wrong curve */
+    ctx.save(); ctx.setLineDash([4, 4]); ctx.strokeStyle = amb(0.7); ctx.lineWidth = 1.5; ctx.beginPath();
+    for (var i = 0; i <= 60; i++){ var r = RMAX * i / 60; var q = r * r; var px = X(r), py = Y(Math.min(q, YM)); if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py); }
+    ctx.stroke(); ctx.restore();
+    /* Poiseuille: r^4 */
+    ctx.save(); ctx.globalCompositeOperation = "lighter";
+    ctx.strokeStyle = acc(1); ctx.lineWidth = 2.6; ctx.beginPath();
+    for (var k = 0; k <= 80; k++){ var r2 = RMAX * k / 80; var q2 = Math.pow(r2, 4); var px2 = X(r2), py2 = Y(Math.min(q2, YM)); if (k === 0) ctx.moveTo(px2, py2); else ctx.lineTo(px2, py2); }
+    ctx.stroke(); ctx.restore();
+    label("r⁴", X(1.17) - 6, Y(Math.pow(1.17, 4)) + 2, ACC, "right", 12, 500);
+    label("r² (area)", X(0.3), Y(0.09) - 16, amb(0.9), "center", 11);
+
+    /* where this vessel sits */
+    var cr = st.r, cq = m.r4;
+    ctx.save(); ctx.setLineDash([3, 4]); ctx.strokeStyle = acc(0.6); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(X(cr), gy1); ctx.lineTo(X(cr), Y(cq)); ctx.lineTo(gx0, Y(cq)); ctx.stroke(); ctx.restore();
+    ctx.save(); ctx.globalCompositeOperation = "lighter";
+    var hg = ctx.createRadialGradient(X(cr), Y(cq), 0, X(cr), Y(cq), 16);
+    hg.addColorStop(0, acc(0.7)); hg.addColorStop(1, acc(0));
+    ctx.fillStyle = hg; ctx.beginPath(); ctx.arc(X(cr), Y(cq), 16, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+    ctx.fillStyle = ACC; ctx.beginPath(); ctx.arc(X(cr), Y(cq), 4.5, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = ink(0.9); ctx.lineWidth = 1.2; ctx.stroke();
+    var tag = fmtPct(cq);
+    var right = X(cr) < (gx0 + gx1) / 2;
+    label(tag, X(cr) + (right ? 10 : -10), Y(cq) - 13, ink(0.95), right ? "left" : "right", 12, 500);
+  }
+
+  function draw(){
+    var w = W, h = H;
+    if (!w || !h) return;
+    var m = model();
+    var L = layout(w, h);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.globalCompositeOperation = "source-over"; ctx.globalAlpha = 1; ctx.filter = "none";
+    ctx.clearRect(0, 0, w, h);
+    drawTube(L, m);
+    drawGraph(L, m);
+    if (canBlur){
+      bctx.setTransform(1, 0, 0, 1, 0, 0); bctx.clearRect(0, 0, buf.width, buf.height);
+      if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+      ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
+      (buf.width&&buf.height)&&ctx.drawImage(buf, 0, 0, w, h); ctx.restore();
+    }
+    var cx = w / 2, cy = h / 2;
+    var vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
+  }
+
+  function step(dt){
+    var m = model();
+    drawR += (st.r - drawR) * Math.min(1, dt / 120);
+    if (Math.abs(st.r - drawR) < 0.002) drawR = st.r;
+    syncCount();
+    var L = layout(W, H);
+    var len = L.tx1 - L.tx0;
+    var base = 0.11; /* fraction of the tube per second at unit centre speed */
+    for (var i = 0; i < parts.length; i++){
+      var p = parts[i];
+      p.u += base * m.vmax * (1 - p.s * p.s) * dt / 1000;
+      if (p.u > 1){ p.u -= 1; p.s = (rnd() * 2 - 1) * 0.94; p.k = rnd(); }
+    }
+    return len;
+  }
+
+  var last = 0;
+  function frame(now){
+    var dt = last ? Math.min(now - last, 50) : 16; last = now;
+    resize();
+    step(dt);
+    draw();
+    requestAnimationFrame(frame);
+  }
+
+  /* readouts */
+  var rIn = document.getElementById("ftR"), pIn = document.getElementById("ftP");
+  var rV = document.getElementById("ftRV"), pV = document.getElementById("ftPV");
+  var live = document.getElementById("ftLive"), s1 = document.getElementById("ftS1"), s2 = document.getElementById("ftS2");
+  function fill(el){ var mn = +el.min, mx = +el.max; el.style.setProperty("--fill", ((+el.value - mn) / (mx - mn) * 100) + "%"); }
+  function refresh(){
+    var m = model();
+    rV.textContent = Math.round(st.r * 100) + "%";
+    pV.textContent = Math.round(st.dp * 100) + "%";
+    live.textContent = m.f.name + " · ";
+    var un = document.createElement("span"); un.className = "ft-unit"; un.textContent = "η " + m.f.eta.toFixed(1) + " mPa·s"; live.appendChild(un);
+    s1.textContent = fmtPct(m.Q);
+    s2.textContent = fmtX(m.R);
+    ovl.textContent = "Radius " + Math.round(st.r * 100) + "% · R " + fmtX(m.R) + " · Q " + fmtPct(m.Q) + " of normal";
+    fill(rIn); fill(pIn);
+    if (RM){ drawR = st.r; syncCount(); resize(); draw(); }
+  }
+  function ticks(id, el, vals, fmt){
+    var box = document.getElementById(id), mn = +el.min, mx = +el.max;
+    vals.forEach(function(v){
+      var t = document.createElement("span"); t.className = "ft-tick";
+      t.style.left = ((v - mn) / (mx - mn) * 100) + "%"; t.textContent = fmt(v);
+      box.appendChild(t);
+    });
+  }
+  ticks("ftRT", rIn, [50, 75, 100, 120], function(v){ return v + "%"; });
+  ticks("ftPT", pIn, [50, 100, 150, 200], function(v){ return v + "%"; });
+  rIn.addEventListener("input", function(){ st.r = +rIn.value / 100; refresh(); });
+  pIn.addEventListener("input", function(){ st.dp = +pIn.value / 100; refresh(); });
+
+  function group(id, onPick){
+    var g = document.getElementById(id), bs = g.querySelectorAll("button");
+    Array.prototype.forEach.call(bs, function(b){
+      b.addEventListener("click", function(){
+        Array.prototype.forEach.call(bs, function(x){ x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+        onPick(b);
+      });
+    });
+  }
+  group("ftFluid", function(b){ st.f = b.getAttribute("data-f"); refresh(); });
+
+  var DROP = {
+    why: `The fourth power is two effects multiplied together. A wider tube has more cross-section to carry fluid, which gives one factor of r². It also puts the centre further from the wall that holds the fluid back, so the fastest layer runs faster, which gives a second factor of r². Multiply them and flow goes with r⁴: a vessel only 10% narrower carries about 66% of the flow (0.9⁴ ≈ 0.66). Poiseuille’s law assumes steady, smooth (laminar) flow of a simple fluid through a long rigid tube; blood bends those rules a little, but the steep radius effect holds.`,
+    body: `The body steers blood with this. Smooth muscle in arteriole walls changes their radius by a few percent, and because of r⁴ that is enough to redirect blood between organs and set blood pressure. A plaque that narrows an artery to half its radius makes that stretch sixteen times harder to push through. Vessels combine like resistors: in series their resistances add, and in parallel the reciprocals add, so two identical vessels side by side have half the resistance of one. That is why a huge number of tiny capillaries in parallel has a modest total resistance, even though each one alone is enormous.`
+  };
+  var dropP = document.getElementById("ftDropP");
+  group("ftDrop", function(b){ dropP.textContent = DROP[b.getAttribute("data-k")]; });
+  dropP.textContent = DROP.why;
+
+  syncCount();
+  refresh();
+  window.addEventListener("resize", function(){ if (resize() && RM) draw(); });
+  if (typeof ResizeObserver === "function"){ new ResizeObserver(function(){ if (resize() && RM) draw(); }).observe(wrap); }
+  resize();
+  if (RM){ draw(); } else { requestAnimationFrame(frame); }
+})();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'g-flow-through-tubes-viscosity-and-resistance'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>
