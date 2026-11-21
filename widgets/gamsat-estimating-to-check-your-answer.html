@@ -1,0 +1,400 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Estimating to check your answer — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{
+  --bg:#0B0D0C;--bg2:#12160F;--acc:#2FA94E;--acc-rgb:47, 169, 78;
+  --ag:rgba(var(--acc-rgb),.7);--ag1:rgba(var(--acc-rgb),.12);--ag2:rgba(var(--acc-rgb),.45);
+  --amb:#FAC775;--ink:#EDEDE8;--ink-dim:#8C9389;--line:#262B26;
+}
+body{margin:0;background:radial-gradient(120% 80% at 50% -10%,#11160F 0%,#0B0D0C 55%);font-family:'Geist',sans-serif;color:var(--ink);min-height:100vh;padding:40px 16px 0;box-sizing:border-box}
+.es-wrap{max-width:720px;margin:0 auto}
+.es-wrap *{box-sizing:border-box}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.es-h1{font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin:0 0 14px}
+.es-intro{font-size:15.5px;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin:0 0 26px}
+.es-card{background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 var(--ag1);margin-bottom:18px}
+.es-card.sec{border-radius:14px}
+.es-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.es-label{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;color:#fff;letter-spacing:.04em}
+.es-live{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--acc)}
+.es-hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin:6px 0 12px;line-height:1.5}
+.es-probs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.es-btn{font-family:'JetBrains Mono',monospace;font-size:14.5px;padding:12px;border-radius:11px;background:#12160F;border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:all .2s;line-height:1.25}
+.es-btn.on{background:rgba(var(--acc-rgb),.1);border:1px solid var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.es-btn:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.es-cv{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1)}
+.es-cv canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.es-tag{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:14px;text-transform:uppercase;color:var(--acc);text-align:center;pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.es-fx{margin-top:12px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:rgba(0,0,0,.35);font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.75;color:var(--ink-dim)}
+.es-fx div{overflow-wrap:anywhere}
+.es-fx .a{color:var(--acc)}
+.es-fx .b{color:var(--amb)}
+.es-fx .w{color:var(--ink)}
+.es-sl-lab{display:flex;justify-content:space-between;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-dim);margin:16px 0 8px}
+.es-sl-lab span{text-transform:uppercase}
+.es-sl-lab b{font-weight:500;color:var(--acc);white-space:nowrap}
+.es-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;background:linear-gradient(90deg,var(--acc) var(--fill,0%),#23291f var(--fill,0%));outline:none;margin:6px 0}
+.es-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.es-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag),0 0 4px var(--ag);transition:box-shadow .15s;cursor:pointer}
+.es-slider:hover::-webkit-slider-thumb{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.es-slider:hover::-moz-range-thumb{box-shadow:0 0 24px var(--acc),0 0 8px var(--ag)}
+.es-ticks{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink-dim);margin-top:4px}
+.es-slip{width:100%;margin-top:14px}
+.es-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+.es-stat-l{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:4px;line-height:1.4}
+.es-stat-v{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500;overflow-wrap:anywhere}
+.es-stat-v.a{color:var(--acc)}
+.es-stat-v.b{color:var(--amb)}
+.es-tog{display:flex;gap:10px}
+.es-tog .es-btn{flex:1}
+.es-drop{border-top:1px solid var(--line);padding-top:16px;margin:14px 0 0;font-size:14.5px;line-height:1.65;color:var(--ink)}
+.es-know{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg,var(--ag1),rgba(0,0,0,0));border-radius:0 12px 12px 0;margin:8px 0 0}
+.es-know-tag{display:flex;align-items:center;gap:9px;font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:0.15em;color:var(--acc);margin-bottom:10px}
+.es-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:espulse 2.4s ease-in-out infinite}
+@keyframes espulse{0%,100%{opacity:1}50%{opacity:.45}}
+.es-know p{font-size:17.4px;line-height:1.55;color:var(--ink);margin:0}
+.es-last{margin-bottom:0;padding-bottom:0}
+@media (max-width:620px){.es-tag{font-size:12px;padding:8px 10px}.es-btn{font-size:13px;padding:11px 8px}.es-fx{font-size:12px}.es-stat-v{font-size:20px}}
+@media (prefers-reduced-motion:reduce){.es-dot{animation:none}.es-btn{transition:none}}
+</style>
+<div class="es-wrap">
+  <h2 class="sr-only">Interactive: estimate a calculation by rounding each number to its leading digit, then check whether the calculator answer is reasonable on a powers-of-10 number line.</h2>
+  <h1 class="es-h1">A deliberately rough answer tells you if yours is <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">right</span></h1>
+  <p class="es-intro">Round every number to its leading digit and the sum becomes one you can do in your head. It will not match the calculator, but it lands close to it, so a slipped decimal point (ten times out) stands out a mile. Pick a problem, change the first number, then slip a decimal and watch the check fail.</p>
+
+  <div class="es-card">
+    <div class="es-head">
+      <div class="es-label">Estimate vs exact</div>
+      <div class="es-live" id="esLive">Leading digit &#xB7; round</div>
+    </div>
+    <div class="es-hint">Rectangles show each product as an area. The line below is powers of 10.</div>
+    <div class="es-probs" role="group" aria-label="Choose a problem">
+      <button class="es-btn on" data-p="0" aria-pressed="true">Fuel</button>
+      <button class="es-btn" data-p="1" aria-pressed="false">Carpet</button>
+      <button class="es-btn" data-p="2" aria-pressed="false">Pay</button>
+    </div>
+    <div class="es-cv">
+      <canvas id="esCv" aria-label="Area model of the exact and estimated products, above a powers-of-10 number line marking the estimate, its reasonable zone and the calculator answer"></canvas>
+      <div class="es-tag" id="esTag">Est $100 &#xB7; calc $90.34 &#xB7; reasonable</div>
+    </div>
+    <div class="es-sl-lab"><span id="esSlName">Litres bought</span><b id="esSlVal">47.8 L</b></div>
+    <input type="range" class="es-slider" id="esSl" min="20" max="80" step="0.1" value="47.8" aria-label="First number in the calculation">
+    <div class="es-ticks" id="esTicks"><span>20</span><span>50</span><span>80</span></div>
+    <div class="es-fx" id="esFx"></div>
+    <button class="es-btn es-slip" id="esSlip" aria-pressed="false">Slip a decimal point (calculator &#xD7;10)</button>
+    <div class="es-stats">
+      <div><div class="es-stat-l">Estimate</div><div class="es-stat-v a" id="esStE">$100</div></div>
+      <div><div class="es-stat-l">Calculator says</div><div class="es-stat-v b" id="esStC">$90.34</div></div>
+    </div>
+  </div>
+
+  <div class="es-card sec">
+    <div class="es-tog" role="group" aria-label="Estimation method">
+      <button class="es-btn on" id="esRound" aria-pressed="true">Round</button>
+      <button class="es-btn" id="esTrunc" aria-pressed="false">Truncate</button>
+    </div>
+    <p class="es-drop" id="esDrop"></p>
+  </div>
+
+  <div class="es-know es-last">
+    <div class="es-know-tag"><span class="es-dot"></span><span>Know This</span></div>
+    <p>Round each number to its <span style="color:var(--acc)">leading digit</span>, multiply, and if the calculator lands a <span style="color:var(--acc)">power of 10</span> away from that <span style="color:var(--acc)">estimate</span>, recheck it.</p>
+  </div>
+</div>
+<script>
+(function(){
+  const CSS=getComputedStyle(document.documentElement);
+  const ACC=CSS.getPropertyValue("--acc").trim();
+  const RGB=CSS.getPropertyValue("--acc-rgb").trim();
+  const AMB=CSS.getPropertyValue("--amb").trim();
+  const INK=CSS.getPropertyValue("--ink").trim();
+  const DIM=CSS.getPropertyValue("--ink-dim").trim();
+  const LINE=CSS.getPropertyValue("--line").trim();
+  const reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const PROBS=[
+    {name:"Fuel",slName:"Litres bought",aMin:20,aMax:80,step:0.1,aDef:47.8,aUnit:"L",aDp:1,b:1.89,bLab:"$/L",money:true,unit:"",xLab:"litres",yLab:"$ per litre \u2191 \u00B7 litres \u2192"},
+    {name:"Carpet",slName:"Room length",aMin:2,aMax:12,step:0.1,aDef:6.3,aUnit:"m",aDp:1,b:2.7,bLab:"m",money:false,unit:" m\u00B2",xLab:"length (m)",yLab:"width \u2191 \u00B7 length \u2192"},
+    {name:"Pay",slName:"Hours worked",aMin:5,aMax:60,step:0.5,aDef:37.5,aUnit:"h",aDp:1,b:31.62,bLab:"$/h",money:true,unit:"",xLab:"hours",yLab:"$ per hour \u2191 \u00B7 hours \u2192"}
+  ];
+  const ZONE=3; /* outer band: within 3 times the estimate means no slip of about 10 times; it does not catch a wrong digit */
+  const CLOSE=1.25; /* inner band: within about 25% of the estimate counts as reasonable */
+  const LOGMIN=0, LOGMAX=5;
+
+  const DROP={
+    round:"Leading digit approximation keeps only the first non-zero digit of each number and rounds it using the digit after it: 47.8 has its leading digit in the tens place, so it becomes 50, and 1.89 becomes 2. Place value is what keeps the size right, because the 4 in 47.8 means four tens, not four ones. Multiply the rounded numbers in your head and you have an estimate in seconds. Some numbers round up and others round down, so the errors often partly cancel and the estimate lands close to the exact answer. It will never match exactly, and that is fine: its job is to catch an answer that is wildly wrong, not to replace the calculator.",
+    trunc:"Truncating chops digits off instead of rounding: 47.8 becomes 40 and 1.89 becomes 1, whatever the next digit is. Every truncated number is less than or equal to the real one, so a truncated estimate can only undershoot, and you can see the estimate rectangle sit entirely inside the exact one. Truncation is quick, and it is how many devices cut decimals off a display, but it is cruder than rounding, especially when the leading digit is small, like the 1 in 1.89. If you truncate, expect the true answer to sit above your estimate. A slipped decimal point still shows up, because it moves the answer a whole power of 10."
+  };
+
+  const cv=document.getElementById("esCv");
+  const ctx=cv.getContext("2d");
+  const dpr=Math.min(window.devicePixelRatio||1,2);
+  const buf=document.createElement("canvas"); const bctx=buf.getContext("2d");
+  const sl=document.getElementById("esSl");
+  const slip=document.getElementById("esSlip");
+  const probBtns=Array.from(document.querySelectorAll(".es-probs .es-btn"));
+  const bRound=document.getElementById("esRound"), bTrunc=document.getElementById("esTrunc");
+
+  let pi=0, mode="round", slipped=false;
+
+  function clean(v){return Number(v.toPrecision(12));}
+  function lead(x,m){
+    if(x<=0) return 0;
+    const e=Math.floor(Math.log10(x)+1e-9);
+    const p=Math.pow(10,e);
+    const q=x/p;
+    const d=(m==="trunc")?Math.floor(q+1e-9):Math.round(q);
+    return clean(d*p);
+  }
+  function group(s){
+    const parts=s.split(".");
+    parts[0]=parts[0].replace(/\B(?=(\d{3})+(?!\d))/g,",");
+    return parts.join(".");
+  }
+  function num(x,dp){
+    let s=x.toFixed(dp);
+    if(s.indexOf(".")>=0) s=s.replace(/0+$/,"").replace(/\.$/,"");
+    return group(s);
+  }
+  function val(x,P,isEst){
+    if(P.money) return "$"+(isEst||Math.abs(x-Math.round(x))<1e-9?group(String(Math.round(x))):group(x.toFixed(2)));
+    return num(x,isEst?0:4)+P.unit;
+  }
+  const SUP={"-":"\u207B","0":"\u2070","1":"\u00B9","2":"\u00B2","3":"\u00B3","4":"\u2074","5":"\u2075","6":"\u2076","7":"\u2077","8":"\u2078","9":"\u2079"};
+  function sci(x){
+    const e=Math.floor(Math.log10(x)+1e-9);
+    const m=x/Math.pow(10,e);
+    const es=String(e).split("").map(c=>SUP[c]).join("");
+    return num(m,2)+" \u00D7 10"+es;
+  }
+
+  function compute(){
+    const P=PROBS[pi];
+    const a=Number(sl.value);
+    const ea=lead(a,mode), eb=lead(P.b,mode);
+    const exact=clean(a*P.b);
+    const est=clean(ea*eb);
+    const calc=slipped?clean(exact*10):exact;
+    const ratio=calc/est;
+    const ok=ratio<=ZONE&&ratio>=1/ZONE;
+    const close=ratio<=CLOSE&&ratio>=1/CLOSE;
+    return {P,a,ea,eb,exact,est,calc,ratio,ok,close};
+  }
+
+  /* drawn (animated) values */
+  let cur=null, tgt=null, raf=0, last=0;
+  function targetsFrom(S){
+    return {a:S.a,b:S.P.b,ea:S.ea,eb:S.eb,lEst:Math.log10(S.est),lCalc:Math.log10(S.calc),lEx:Math.log10(S.exact),sl:slipped?1:0};
+  }
+
+  function resize(){
+    const r=cv.getBoundingClientRect();
+    if (!r.width || !r.height) return; /* f27c: refuse a zero measurement, keep the last good size */
+    cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.height*dpr);
+    buf.width=cv.width; buf.height=cv.height;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    draw();
+  }
+
+  function rr(x,y,w,h,r){
+    ctx.beginPath(); ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+    ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h); ctx.lineTo(x+r,y+h);
+    ctx.quadraticCurveTo(x,y+h,x,y+h-r); ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+  }
+
+  function draw(){
+    if(!cur) return;
+    const w=cv.width/dpr, h=cv.height/dpr;
+    if(w<10||h<10) return;
+    const S=compute(), P=S.P;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.globalCompositeOperation="source-over"; ctx.globalAlpha=1; ctx.filter="none";
+    ctx.fillStyle="#000"; ctx.fillRect(0,0,w,h);
+    const fs=Math.max(10,Math.min(13,w/54));
+    const mono="'JetBrains Mono', monospace";
+
+    /* ---------- AREA MODEL ---------- */
+    const x0=w*0.06, x1=w*0.58, y0=h*0.11, y1=h*0.48;
+    const xMax=Math.max(P.aMax,lead(P.aMax,"round"));
+    const yMax=Math.max(P.b,lead(P.b,"round"));
+    const sx=(x1-x0)/xMax, sy=(y1-y0)/yMax;
+    /* faint grid */
+    ctx.strokeStyle="rgba(255,255,255,0.05)"; ctx.lineWidth=1;
+    for(let i=0;i<=10;i++){const gx=x0+(x1-x0)*i/10; ctx.beginPath(); ctx.moveTo(gx,y0); ctx.lineTo(gx,y1); ctx.stroke();}
+    for(let i=0;i<=4;i++){const gy=y0+(y1-y0)*i/4; ctx.beginPath(); ctx.moveTo(x0,gy); ctx.lineTo(x1,gy); ctx.stroke();}
+    /* axes */
+    ctx.strokeStyle=DIM; ctx.lineWidth=1.2;
+    ctx.beginPath(); ctx.moveTo(x0,y0-4); ctx.lineTo(x0,y1); ctx.lineTo(x1+4,y1); ctx.stroke();
+    /* exact rectangle */
+    const exW=cur.a*sx, exH=cur.b*sy;
+    ctx.globalAlpha=0.12; ctx.fillStyle=AMB; ctx.fillRect(x0,y1-exH,exW,exH); ctx.globalAlpha=1;
+    ctx.strokeStyle=AMB; ctx.lineWidth=1.6; ctx.strokeRect(x0,y1-exH,exW,exH);
+    /* estimate rectangle */
+    const esW=cur.ea*sx, esH=cur.eb*sy;
+    ctx.save(); ctx.globalCompositeOperation="lighter";
+    ctx.fillStyle="rgba("+RGB+",0.16)"; ctx.fillRect(x0,y1-esH,esW,esH);
+    ctx.restore();
+    ctx.strokeStyle=ACC; ctx.lineWidth=2; ctx.setLineDash([6,4]); ctx.strokeRect(x0,y1-esH,esW,esH); ctx.setLineDash([]);
+    /* axis names */
+    ctx.font="400 "+(fs-1)+"px "+mono; ctx.fillStyle=DIM; ctx.textBaseline="alphabetic"; ctx.textAlign="left";
+    ctx.fillText(P.yLab,x0+2,y0-5);
+
+    /* ---------- READOUT (right of area) ---------- */
+    const rx=w*0.62; let ry=h*0.11+fs;
+    const rowH=Math.max(fs*1.75,h*0.095);
+    function leadLine(x,dp,rounded,unit){
+      const s=num(x,dp);
+      let idx=0; while(idx<s.length&&(s[idx]==="0"||s[idx]==="."||s[idx]===",")) idx++;
+      ctx.font="500 "+fs+"px "+mono; ctx.textAlign="left";
+      let px=rx;
+      ctx.fillStyle=DIM; ctx.fillText(s.slice(0,idx),px,ry); px+=ctx.measureText(s.slice(0,idx)).width;
+      ctx.fillStyle=ACC; ctx.fillText(s[idx],px,ry); px+=ctx.measureText(s[idx]).width;
+      ctx.fillStyle=DIM; ctx.fillText(s.slice(idx+1)+" "+unit,px,ry); px+=ctx.measureText(s.slice(idx+1)+" "+unit).width;
+      ctx.fillStyle=INK; ctx.fillText(" \u2192 ",px,ry); px+=ctx.measureText(" \u2192 ").width;
+      ctx.fillStyle=ACC; ctx.fillText(num(rounded,0),px,ry);
+      ry+=rowH;
+    }
+    leadLine(S.a,P.aDp,S.ea,P.aUnit);
+    leadLine(P.b,2,S.eb,P.bLab);
+    ctx.font="500 "+fs+"px "+mono;
+    ctx.fillStyle=ACC; ctx.fillText("est  "+val(S.est,P,true),rx,ry); ry+=rowH;
+    ctx.fillStyle=AMB; ctx.fillText("exact "+val(S.exact,P,false),rx,ry);
+
+    /* ---------- POWERS-OF-10 LINE ---------- */
+    const lx0=w*0.06, lx1=w*0.94, ly=Math.min(h*0.74,h-62);
+    const X=l=>lx0+(lx1-lx0)*(l-LOGMIN)/(LOGMAX-LOGMIN);
+    /* reasonable zone */
+    const zl=X(Math.max(LOGMIN,cur.lEst-Math.log10(ZONE))), zr=X(Math.min(LOGMAX,cur.lEst+Math.log10(ZONE)));
+    ctx.save(); ctx.globalCompositeOperation="lighter";
+    ctx.fillStyle="rgba("+RGB+",0.14)"; rr(zl,ly-8,zr-zl,16,5); ctx.fill();
+    ctx.restore();
+    ctx.strokeStyle="rgba("+RGB+",0.5)"; ctx.lineWidth=1; rr(zl,ly-8,zr-zl,16,5); ctx.stroke();
+    /* tighter band: within about 25% of the estimate */
+    const cl=X(Math.max(LOGMIN,cur.lEst-Math.log10(CLOSE))), cr=X(Math.min(LOGMAX,cur.lEst+Math.log10(CLOSE)));
+    ctx.fillStyle="rgba("+RGB+",0.30)"; rr(cl,ly-8,Math.max(2,cr-cl),16,4); ctx.fill();
+    /* line + minor ticks */
+    ctx.strokeStyle=DIM; ctx.lineWidth=1.4;
+    ctx.beginPath(); ctx.moveTo(lx0,ly); ctx.lineTo(lx1,ly); ctx.stroke();
+    ctx.lineWidth=1;
+    for(let e=LOGMIN;e<LOGMAX;e++){
+      for(let k=2;k<=9;k++){const tx=X(e+Math.log10(k)); ctx.beginPath(); ctx.moveTo(tx,ly-3); ctx.lineTo(tx,ly+3); ctx.stroke();}
+    }
+    ctx.font="400 "+(fs-1)+"px "+mono; ctx.textAlign="center"; ctx.fillStyle=DIM;
+    for(let e=LOGMIN;e<=LOGMAX;e++){
+      const tx=X(e);
+      ctx.strokeStyle=INK; ctx.lineWidth=1.4; ctx.beginPath(); ctx.moveTo(tx,ly-7); ctx.lineTo(tx,ly+7); ctx.stroke();
+      const lab="10"+SUP[String(e)];
+      ctx.fillStyle=DIM; ctx.textAlign=e===LOGMIN?"left":(e===LOGMAX?"right":"center");
+      ctx.fillText(lab,e===LOGMIN?tx-2:(e===LOGMAX?tx+2:tx),ly+fs+8);
+    }
+    /* ghost of the true exact answer when slipped */
+    if(cur.sl>0.02){
+      const gx=X(cur.lEx);
+      ctx.globalAlpha=cur.sl*0.6; ctx.strokeStyle=AMB; ctx.lineWidth=1.2; ctx.setLineDash([3,3]);
+      ctx.beginPath(); ctx.arc(gx,ly,5,0,Math.PI*2); ctx.stroke(); ctx.setLineDash([]);
+      ctx.globalAlpha=1;
+    }
+    /* estimate marker (triangle above) */
+    const ex=X(cur.lEst);
+    ctx.save(); ctx.globalCompositeOperation="lighter";
+    const halo=ctx.createRadialGradient(ex,ly,0,ex,ly,22);
+    halo.addColorStop(0,"rgba("+RGB+",0.45)"); halo.addColorStop(1,"rgba("+RGB+",0)");
+    ctx.fillStyle=halo; ctx.beginPath(); ctx.arc(ex,ly,22,0,Math.PI*2); ctx.fill(); ctx.restore();
+    ctx.fillStyle=ACC; ctx.beginPath(); ctx.moveTo(ex,ly-2); ctx.lineTo(ex-6,ly-12); ctx.lineTo(ex+6,ly-12); ctx.closePath(); ctx.fill();
+    /* calculator marker */
+    const cxp=X(cur.lCalc);
+    ctx.fillStyle=S.ok?AMB:INK; ctx.strokeStyle="#000"; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.arc(cxp,ly,5.5,0,Math.PI*2); ctx.fill(); ctx.stroke();
+    /* labels: estimate high row, calculator low row */
+    function placeLabel(text,x,y,color){
+      ctx.font="500 "+fs+"px "+mono;
+      const tw=ctx.measureText(text).width;
+      let lx=Math.min(Math.max(x-tw/2,4),w-4-tw);
+      ctx.textAlign="left"; ctx.fillStyle=color; ctx.fillText(text,lx,y);
+    }
+    placeLabel("est "+val(S.est,P,true),ex,ly-14-fs*1.25,ACC);
+    placeLabel((S.close?"calc ":(S.ok?"calc ? ":"calc \u2717 "))+val(S.calc,P,false),cxp,ly-15,S.ok?AMB:INK);
+
+    /* bloom */
+    bctx.setTransform(1,0,0,1,0,0); bctx.clearRect(0,0,buf.width,buf.height);
+    if (cv.width && cv.height) bctx.drawImage(cv,0,0);
+    ctx.save(); ctx.globalCompositeOperation="lighter"; ctx.globalAlpha=0.38; ctx.filter="blur(7px)";
+    (buf.width&&buf.height)&&ctx.drawImage(buf,0,0,w,h); ctx.restore();
+    /* vignette */
+    const cx=w/2, cy=h/2;
+    const vig=ctx.createRadialGradient(cx,cy,h*0.28,cx,cy,w*0.72);
+    vig.addColorStop(0,"rgba(0,0,0,0)"); vig.addColorStop(1,"rgba(0,0,0,0.52)");
+    ctx.fillStyle=vig; ctx.fillRect(0,0,w,h);
+  }
+
+  function step(now){
+    const dt=Math.min(now-last,50); last=now;
+    const k=1-Math.exp(-dt/70);
+    let moving=false;
+    for(const key in tgt){
+      const d=tgt[key]-cur[key];
+      if(Math.abs(d)>1e-4*(Math.abs(tgt[key])+1)){cur[key]+=d*k; moving=true;} else cur[key]=tgt[key];
+    }
+    draw();
+    if(moving) raf=requestAnimationFrame(step); else raf=0;
+  }
+
+  function update(){
+    const S=compute(), P=S.P;
+    tgt=targetsFrom(S);
+    if(!cur||reduce){cur=Object.assign({},tgt); draw();}
+    else if(!raf){last=performance.now(); raf=requestAnimationFrame(step);}
+    const f=(Number(sl.value)-P.aMin)/(P.aMax-P.aMin)*100;
+    sl.style.setProperty("--fill",f+"%");
+    document.getElementById("esSlName").textContent=P.slName;
+    document.getElementById("esSlVal").textContent=num(S.a,P.aDp)+" "+P.aUnit;
+    document.getElementById("esLive").textContent="Leading digit \u00B7 "+(mode==="round"?"round":"truncate");
+    const bStr=num(P.b,2);
+    const aStr=num(S.a,P.aDp);
+    const verdict=S.close?"reasonable":(S.ok?"check the digits":"recheck!");
+    document.getElementById("esTag").textContent="Est "+val(S.est,P,true)+" \u00B7 calc "+val(S.calc,P,false)+" \u00B7 "+verdict;
+    const fx=document.getElementById("esFx");
+    fx.innerHTML=
+      "<div><span class=\"w\">"+aStr+" \u00D7 "+bStr+"</span> \u2248 <span class=\"a\">"+num(S.ea,0)+" \u00D7 "+num(S.eb,0)+" = "+num(S.est,0)+"</span> <span>("+(mode==="round"?"rounded":"truncated")+" to leading digit)</span></div>"+
+      "<div>exact: <span class=\"b\">"+num(S.exact,4)+"</span> = "+sci(S.exact)+" \u00B7 estimate "+sci(S.est)+"</div>"+
+      "<div>calculator \u00F7 estimate = <span class=\""+(S.ok?"b":"w")+"\">"+num(S.calc,4)+" \u00F7 "+num(S.est,0)+" = "+S.ratio.toFixed(2)+"</span> \u2192 "+(S.close?"<span class=\"a\">within 25%: reasonable</span>":(S.ok?"<span class=\"b\">within \u00D73: no slip of 10 times, but too far off to rule out a wrong digit</span>":"<span class=\"w\">more than \u00D73 away: recheck</span>"))+"</div>";
+    document.getElementById("esStE").textContent=val(S.est,P,true);
+    document.getElementById("esStC").textContent=val(S.calc,P,false);
+    document.getElementById("esDrop").textContent=DROP[mode];
+  }
+
+  function setProblem(i){
+    pi=i; const P=PROBS[i];
+    probBtns.forEach((b,j)=>{b.classList.toggle("on",j===i); b.setAttribute("aria-pressed",j===i?"true":"false");});
+    sl.min=P.aMin; sl.max=P.aMax; sl.step=P.step; sl.value=P.aDef;
+    const mid=(P.aMin+P.aMax)/2;
+    document.getElementById("esTicks").innerHTML="<span>"+P.aMin+" "+P.aUnit+"</span><span>"+mid+"</span><span>"+P.aMax+" "+P.aUnit+"</span>";
+    update();
+  }
+  probBtns.forEach((b,i)=>b.addEventListener("click",()=>setProblem(i)));
+  sl.addEventListener("input",update);
+  slip.addEventListener("click",()=>{
+    slipped=!slipped; slip.classList.toggle("on",slipped); slip.setAttribute("aria-pressed",slipped?"true":"false");
+    slip.textContent=slipped?"Fix the decimal point":"Slip a decimal point (calculator \u00D710)";
+    update();
+  });
+  function setMode(m){
+    mode=m;
+    bRound.classList.toggle("on",m==="round"); bRound.setAttribute("aria-pressed",m==="round"?"true":"false");
+    bTrunc.classList.toggle("on",m==="trunc"); bTrunc.setAttribute("aria-pressed",m==="trunc"?"true":"false");
+    update();
+  }
+  bRound.addEventListener("click",()=>setMode("round"));
+  bTrunc.addEventListener("click",()=>setMode("trunc"));
+  window.addEventListener("resize",resize);
+  setProblem(0);
+  resize();
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(draw);
+})();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'g-estimating-to-check-your-answer'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

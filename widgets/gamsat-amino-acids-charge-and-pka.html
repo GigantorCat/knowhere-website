@@ -1,0 +1,598 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Amino acids, charge and pKa — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #3E9AD6;
+  --acc-rgb: 62, 154, 214;
+  --ag:  rgba(var(--acc-rgb),.7);
+  --ag1: rgba(var(--acc-rgb),.12);
+  --ag2: rgba(var(--acc-rgb),.45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);font-family:'Geist',sans-serif;color:var(--ink);min-height:100vh;padding:40px 16px 0;box-sizing:border-box;-webkit-font-smoothing:antialiased}
+.aa-wrap{max-width:720px;margin:0 auto}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.aa-wrap h1{font-family:'Geist',sans-serif;font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin:0 0 14px;color:var(--ink)}
+.aa-intro{font-size:15.5px;font-weight:400;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin:0 0 26px}
+.card{background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);margin-bottom:22px}
+.card.aa-sec{border-radius:14px}
+.card-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.card-label{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;color:var(--ink);letter-spacing:.04em}
+.aa-live{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--acc);letter-spacing:.06em}
+.aa-hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin:0 0 12px;line-height:1.5}
+.canvas-wrap{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1)}
+.canvas-wrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.aa-ovl{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:14px;text-transform:uppercase;color:var(--acc);text-align:center;letter-spacing:.03em}
+.aa-ctl{margin-top:16px}
+.aa-row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);letter-spacing:.06em;margin-bottom:10px}
+.aa-row b{font-weight:500;color:var(--acc);font-size:12px;letter-spacing:.02em}
+.aa-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;margin:6px 0 0;background:linear-gradient(90deg, var(--acc) var(--fill,0%), #23291f var(--fill,0%));outline:none;cursor:pointer}
+.aa-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag), 0 0 4px var(--ag);transition:box-shadow .15s}
+.aa-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag), 0 0 4px var(--ag);transition:box-shadow .15s}
+.aa-slider:hover::-webkit-slider-thumb{box-shadow:0 0 24px var(--acc), 0 0 8px var(--ag)}
+.aa-slider:hover::-moz-range-thumb{box-shadow:0 0 24px var(--acc), 0 0 8px var(--ag)}
+.aa-slider:focus-visible{outline:1px solid var(--ag2);outline-offset:6px}
+.aa-ticks{position:relative;height:30px;margin:10px 10px 0}
+.aa-tick{position:absolute;top:0;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink-dim);text-align:center;white-space:nowrap;line-height:1.35}
+.aa-tick::before{content:"";display:block;width:1px;height:4px;background:var(--ink-dim);margin:0 auto 2px;opacity:.6}
+.aa-tick i{font-style:normal;display:block;opacity:.8}
+.aa-qlabel{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);letter-spacing:.06em;margin:18px 0 10px}
+.aa-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.aa-toggles{display:flex;gap:10px;flex-wrap:wrap}
+.aa-toggles button{flex:1 1 0}
+.aa-grid button,.aa-toggles button{font-family:'JetBrains Mono',monospace;font-size:12px;padding:12px;border-radius:999px;background:#12160F;border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:background .2s,border-color .2s,color .2s,box-shadow .2s;white-space:nowrap}
+.aa-grid button[aria-pressed="true"],.aa-toggles button[aria-pressed="true"]{background:rgba(var(--acc-rgb),.1);border:1px solid var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.aa-grid button:focus-visible,.aa-toggles button:focus-visible{outline:1px solid var(--acc);outline-offset:3px}
+.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;border-top:1px solid var(--line);margin-top:18px;padding-top:14px}
+.stat-label{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);letter-spacing:.06em;margin-bottom:6px;line-height:1.35}
+.stat-value{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500;line-height:1.1}
+.aa-s1{color:var(--acc)}
+.aa-s2{color:var(--amb)}
+.knowdrop{border-top:1px solid var(--line);padding-top:16px;margin-top:16px}
+.knowdrop p{font-family:'Geist',sans-serif;font-size:14.5px;font-weight:400;line-height:1.65;color:var(--ink);margin:0}
+.know{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));border-radius:0 12px 12px 0;margin:0;margin-bottom:0;padding-bottom:16px}
+.know-row{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.know-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:aaDot 2.4s ease-in-out infinite;flex:none}
+.know-tag{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:0.15em;color:var(--acc)}
+.know p{font-family:'Geist',sans-serif;font-size:17.4px;font-weight:400;line-height:1.55;color:var(--ink);margin:0}
+@keyframes aaDot{0%,100%{opacity:1}50%{opacity:.45}}
+.aa-wrap>*:last-child{margin-bottom:0;padding-bottom:16px}
+@media (prefers-reduced-motion: reduce){
+  .know-dot{animation:none}
+  .aa-grid button,.aa-toggles button,.aa-slider::-webkit-slider-thumb{transition:none}
+}
+</style>
+<div class="aa-wrap">
+  <h2 class="sr-only">Amino acids, charge and pKa: an amino acid whose ionisable groups gain and lose protons as the pH changes, beside its net charge curve and titration curve</h2>
+  <h1>At zero net charge, an amino acid still carries two <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">charges</span>.</h1>
+  <p class="aa-intro">Each ionisable group on an amino acid holds its proton below its pKa and lets it go above it, so the net charge is a sum of fractions that falls as the pH rises. Raise the pH from strong acid to strong base and watch each group give up its proton, the net charge pass through zero, and where that zero lands for each amino acid.</p>
+
+  <section class="card aa-main" aria-label="Amino acid charge model">
+    <div class="card-head">
+      <span class="card-label">Charge and pKa</span>
+      <span class="aa-live" id="aaLive">Glycine &middot; zwitterion</span>
+    </div>
+    <p class="aa-hint">Raise the pH, then switch amino acid. Watch the protons and the curve.</p>
+    <div class="canvas-wrap" id="aaWrap">
+      <canvas id="aaCanvas" role="img" aria-label="An amino acid drawn as its alpha carbon with each ionisable group, showing how much of each proton it still holds, beside a curve of net charge against pH"></canvas>
+      <div class="aa-ovl" id="aaOvl" aria-live="polite">pH 7.40 above pI 5.97 &middot; net 0.00</div>
+    </div>
+    <div class="aa-ctl">
+      <div class="aa-row"><span>Solution pH</span><b id="aaPV">7.40</b></div>
+      <input type="range" class="aa-slider" id="aaPH" aria-label="Solution pH" min="0" max="14" step="0.05" value="7.4">
+      <div class="aa-ticks" id="aaTicks" aria-hidden="true"></div>
+    </div>
+    <div class="aa-box">
+    <div class="aa-qlabel" id="aaPickQ">Amino acid</div>
+    <div class="aa-grid" role="group" aria-labelledby="aaPickQ" id="aaPick">
+      <button type="button" data-aa="gly" aria-pressed="true">Glycine</button>
+      <button type="button" data-aa="asp" aria-pressed="false">Aspartate</button>
+      <button type="button" data-aa="cys" aria-pressed="false">Cysteine</button>
+      <button type="button" data-aa="his" aria-pressed="false">Histidine</button>
+      <button type="button" data-aa="lys" aria-pressed="false">Lysine</button>
+      <button type="button" data-aa="arg" aria-pressed="false">Arginine</button>
+    </div>
+    </div>
+    <div class="aa-box">
+    <div class="aa-qlabel" id="aaViewQ">Graph</div>
+    <div class="aa-toggles" role="group" aria-labelledby="aaViewQ" id="aaView">
+      <button type="button" data-v="charge" aria-pressed="true">Charge vs pH</button>
+      <button type="button" data-v="titr" aria-pressed="false">Titration curve</button>
+    </div>
+    </div>
+    <div class="stat-row">
+      <div><div class="stat-label">Net charge</div><div class="stat-value aa-s1" id="aaS1">0.00</div></div>
+      <div><div class="stat-label">Isoelectric point</div><div class="stat-value aa-s2" id="aaS2">5.97</div></div>
+    </div>
+  </section>
+
+  <section class="card aa-sec" aria-label="Where amino acid charge matters">
+    <div class="aa-toggles" role="group" aria-label="Where amino acid charge matters" id="aaDrop">
+      <button type="button" data-k="sep" aria-pressed="true">Separation</button>
+      <button type="button" data-k="his" aria-pressed="false">Histidine at 7.4</button>
+    </div>
+    <div class="knowdrop"><p id="aaDropP" aria-live="polite"></p></div>
+  </section>
+
+  <div class="know">
+    <div class="know-row"><span class="know-dot" aria-hidden="true"></span><span class="know-tag">Know this</span></div>
+    <p>A group is half deprotonated when the pH equals its <span style="color:var(--acc)">pKa</span>, and an amino acid has zero net charge at its <span style="color:var(--acc)">isoelectric point</span>, the mean of the two pKas either side of the <span style="color:var(--acc)">zwitterion</span>.</p>
+  </div>
+</div>
+<script>
+(function(){
+  "use strict";
+  var CSS = getComputedStyle(document.documentElement);
+  var ACC = CSS.getPropertyValue("--acc").trim();
+  var RGB = CSS.getPropertyValue("--acc-rgb").trim();
+  var AMB = CSS.getPropertyValue("--amb").trim();
+  var INK = CSS.getPropertyValue("--ink").trim();
+  var DIM = CSS.getPropertyValue("--ink-dim").trim();
+  var LINE = CSS.getPropertyValue("--line").trim();
+  var RM = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  var MONO = "\"JetBrains Mono\", monospace";
+  var SANS = "Geist, sans-serif";
+
+  function withA(col, a){
+    var h = String(col).replace("#", "").trim();
+    if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+    var n = parseInt(h, 16);
+    if (isNaN(n)) return "rgba(" + RGB + "," + a + ")";
+    return "rgba(" + ((n >> 16) & 255) + "," + ((n >> 8) & 255) + "," + (n & 255) + "," + a + ")";
+  }
+  function accA(a){ return "rgba(" + RGB + "," + a + ")"; }
+
+  /* ---------- the chemistry ---------- */
+  /* textbook pKa values (alpha-carboxyl, alpha-amino, side chain); tables differ by about 0.2 */
+  var AA = {
+    gly: { name: "Glycine",   a: 2.34, n: 9.60,  side: null },
+    asp: { name: "Aspartate", a: 1.99, n: 9.90,  side: { lab: "side-chain COOH", pka: 3.90,  acid: true,  hi: "COOH", lo: "COO⁻" } },
+    cys: { name: "Cysteine",  a: 1.96, n: 10.28, side: { lab: "thiol",           pka: 8.18,  acid: true,  hi: "SH",   lo: "S⁻" } },
+    his: { name: "Histidine", a: 1.82, n: 9.17,  side: { lab: "imidazole",       pka: 6.00,  acid: false, hi: "ImH⁺", lo: "Im" } },
+    lys: { name: "Lysine",    a: 2.18, n: 8.95,  side: { lab: "ε-amino",         pka: 10.53, acid: false, hi: "NH₃⁺", lo: "NH₂" } },
+    arg: { name: "Arginine",  a: 2.17, n: 9.04,  side: { lab: "guanidino",       pka: 12.48, acid: false, hi: "=NH₂⁺", lo: "=NH" } }
+  };
+  function groups(k){
+    var d = AA[k], g = [
+      { key: "n", lab: "α-amino", pka: d.n, acid: false, hi: "NH₃⁺", lo: "NH₂" },
+      { key: "c", lab: "α-carboxyl", pka: d.a, acid: true, hi: "COOH", lo: "COO⁻" }
+    ];
+    if (d.side) g.push({ key: "r", lab: d.side.lab, pka: d.side.pka, acid: d.side.acid, hi: d.side.hi, lo: d.side.lo });
+    return g;
+  }
+  /* Henderson-Hasselbalch: fraction still holding its proton */
+  function fProt(pka, ph){ return 1 / (1 + Math.pow(10, ph - pka)); }
+  function gCharge(g, ph){ var f = fProt(g.pka, ph); return g.acid ? -(1 - f) : f; }
+  function netQ(k, ph){ var s = 0, g = groups(k); for (var i = 0; i < g.length; i++) s += gCharge(g[i], ph); return s; }
+  function eqOH(k, ph){ var s = 0, g = groups(k); for (var i = 0; i < g.length; i++) s += 1 - fProt(g[i].pka, ph); return s; }
+  function nBase(k){ var g = groups(k), c = 0; for (var i = 0; i < g.length; i++) if (!g[i].acid) c++; return c; }
+  function sortedPka(k){ return groups(k).map(function(g){ return g.pka; }).sort(function(a, b){ return a - b; }); }
+  /* pI: the mean of the two pKas either side of the net-zero form */
+  function pairOf(k){ var s = sortedPka(k), q0 = nBase(k); return [s[q0 - 1], s[q0]]; }
+  function pIof(k){ var p = pairOf(k); return (p[0] + p[1]) / 2; }
+  function speciesOf(k, ph){
+    var s = sortedPka(k), z = nBase(k);
+    for (var i = 0; i < s.length; i++) if (ph > s[i]) z--;
+    return z >= 2 ? "dication" : z === 1 ? "cation" : z === 0 ? "zwitterion" : z === -1 ? "anion" : "dianion";
+  }
+  function f2(x){ return (Math.round(x * 100 + 1e-6) / 100).toFixed(2); }
+  function fmtQ(q){ var a = Math.abs(q); if (a < 0.005) return "0.00"; return (q > 0 ? "+" : "−") + a.toFixed(2); }
+  function qCol(q, a){ if (Math.abs(q) < 0.02) return withA(DIM, a); return q > 0 ? accA(a) : withA(AMB, a); }
+
+  /* ---------- state ---------- */
+  var st = { aa: "gly", view: "charge", ph: 7.4 };
+  var disp = { ph: 7.4 };
+  var NS = 141;
+  function curve(k, view){
+    var out = [], nG = groups(k).length;
+    for (var i = 0; i < NS; i++){
+      var ph = 14 * i / (NS - 1);
+      if (view === "charge") out.push({ u: ph / 14, v: (2 - netQ(k, ph)) / 4 });
+      else out.push({ u: eqOH(k, ph) / nG, v: 1 - ph / 14 });
+    }
+    return out;
+  }
+  var mo = { from: curve("gly", "charge"), to: curve("gly", "charge"), t: 1, fromView: "charge" };
+  function curShown(){
+    var e = ease(mo.t), out = [];
+    for (var i = 0; i < NS; i++) out.push({ u: mo.from[i].u + (mo.to[i].u - mo.from[i].u) * e, v: mo.from[i].v + (mo.to[i].v - mo.from[i].v) * e });
+    return out;
+  }
+  function ease(t){ return 1 - Math.pow(1 - t, 3); }
+  function retarget(){
+    mo.from = curShown(); mo.fromView = st.view;
+    mo.to = curve(st.aa, st.view); mo.t = RM ? 1 : 0;
+  }
+
+  /* ---------- canvas ---------- */
+  var canvas = document.getElementById("aaCanvas");
+  var ctx = canvas.getContext("2d");
+  var wrap = document.getElementById("aaWrap");
+  var ovl = document.getElementById("aaOvl");
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
+  var buf = document.createElement("canvas"); var bctx = buf.getContext("2d");
+  var canBlur = typeof ctx.filter === "string";
+
+  function resize(){
+    var rect = canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    canvas.width = Math.round(rect.width * dpr); canvas.height = Math.round(rect.height * dpr);
+    buf.width = canvas.width; buf.height = canvas.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    draw();
+  }
+
+  function layout(w, h){
+    var res = 0;
+    if (ovl.parentElement === wrap && getComputedStyle(ovl).position === "absolute") res = ovl.offsetHeight + 2;
+    var top = Math.max(8, h * 0.04), bot = res + Math.max(6, h * 0.03);
+    var H2 = h - top - bot;
+    if (w >= 560) return { M: { x: w * 0.015, y: top, w: w * 0.38, h: H2 }, C: { x: w * 0.40, y: top, w: w * 0.585, h: H2 } };
+    var mh = Math.round(Math.max(H2 * 0.5, Math.min(H2 * 0.56, 190)));
+    return { M: { x: w * 0.02, y: top, w: w * 0.96, h: mh }, C: { x: 0, y: top + mh, w: w, h: H2 - mh } };
+  }
+
+  var BOXES = [];
+  function hits(b){ for (var i = 0; i < BOXES.length; i++){ var o = BOXES[i]; if (b.x < o.x + o.w && b.x + b.w > o.x && b.y < o.y + o.h && b.y + b.h > o.y) return true; } return false; }
+  function label(t, x, y, font, col, align, back){
+    ctx.font = font; ctx.textAlign = align || "left"; ctx.textBaseline = "middle";
+    if (back){
+      var tw = ctx.measureText(t).width, x0 = align === "center" ? x - tw / 2 : align === "right" ? x - tw : x;
+      ctx.fillStyle = "rgba(0,0,0,0.62)"; ctx.fillRect(x0 - 3, y - 8, tw + 6, 16);
+      BOXES.push({ x: x0 - 3, y: y - 8, w: tw + 6, h: 16 });
+    }
+    ctx.fillStyle = col; ctx.fillText(t, x, y);
+  }
+
+  function drawMolecule(M, k, ph){
+    var g = groups(k), q = netQ(k, ph), sp = speciesOf(k, ph), d = AA[k];
+    var cx = M.x + M.w / 2;
+    label(d.name.toUpperCase(), cx, M.y + 9, "500 13px " + MONO, INK, "center");
+    label("net " + fmtQ(q) + " · " + sp, cx, M.y + 27, "500 12px " + MONO, qCol(q, 1), "center");
+    var T = 46, A = M.h - T;
+    var r = Math.max(19, Math.min(30, M.w * 0.105, (A - 76) / 3.2));
+    var yU = M.y + T + r + 8 + Math.max(0, A - 5.6 * r - 110) * 0.18;
+    var below = (M.h - (yU - M.y)) >= 2 * r + 112;   /* room for the side-chain labels under it */
+    var yR = below ? M.y + M.h - r - 36 : M.y + M.h - r - 10;
+    yR = Math.max(yR, yU + 2 * r + 36);
+    var dx = Math.min(M.w * 0.31, r * 4.2);
+    var P = { n: { x: cx - dx, y: yU, ox: -0.72, oy: -0.69 }, c: { x: cx + dx, y: yU, ox: 0.72, oy: -0.69 }, r: { x: cx, y: yR, ox: below ? 0.96 : -0.9, oy: below ? 0.28 : 0.42 } };
+    var ca = { x: cx, y: yU };
+    /* bonds */
+    ctx.save();
+    ctx.strokeStyle = withA(INK, 0.28); ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(P.n.x + r, yU); ctx.lineTo(ca.x - r * 0.55, yU);
+    ctx.moveTo(ca.x + r * 0.55, yU); ctx.lineTo(P.c.x - r, yU);
+    ctx.moveTo(ca.x, yU + r * 0.55); ctx.lineTo(ca.x, yR - (d.side ? r : r * 0.6));
+    ctx.moveTo(ca.x, yU - r * 0.55); ctx.lineTo(ca.x, yU - r * 1.05);
+    ctx.stroke();
+    ctx.restore();
+    /* alpha carbon and its H */
+    ctx.fillStyle = "rgba(0,0,0,0.85)"; ctx.strokeStyle = withA(INK, 0.4); ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(ca.x, yU, r * 0.55, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    label("Cα", ca.x, yU, "500 12px " + MONO, INK, "center");
+    label("H", ca.x, yU - r * 1.05 - 8, "12px " + MONO, DIM, "center");
+    /* glycine: side chain is just H */
+    if (!d.side){
+      ctx.fillStyle = "rgba(0,0,0,0.85)"; ctx.strokeStyle = withA(DIM, 0.6); ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.arc(cx, yR, r * 0.6, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      label("H", cx, yR, "500 12px " + MONO, DIM, "center");
+      if (below) label("side chain: H, nothing to ionise", cx, yR + r * 0.6 + 14, "11px " + MONO, DIM, "center");
+      else { label("side chain: H", cx + r * 0.6 + 10, yR - 7, "11px " + MONO, DIM, "left"); label("nothing to ionise", cx + r * 0.6 + 10, yR + 7, "11px " + MONO, DIM, "left"); }
+    }
+    for (var i = 0; i < g.length; i++){
+      var G = g[i], p = P[G.key], fp = fProt(G.pka, ph), c = gCharge(G, ph), ac = Math.abs(c);
+      /* proton: sits on the group while held, drifts away and fades as it leaves */
+      var dist = r + 10 + (1 - fp) * r * 0.95;
+      var hx = Math.max(M.x + 14, Math.min(M.x + M.w - 14, p.x + p.ox * dist)), hy = Math.max(M.y + 6, Math.min(M.y + M.h - 6, p.y + p.oy * dist));
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      var hal = ctx.createRadialGradient(hx, hy, 0, hx, hy, 14);
+      hal.addColorStop(0, withA(INK, 0.35 * fp)); hal.addColorStop(1, withA(INK, 0));
+      ctx.fillStyle = hal; ctx.beginPath(); ctx.arc(hx, hy, 14, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+      ctx.fillStyle = withA(INK, 0.12 + 0.88 * fp);
+      ctx.beginPath(); ctx.arc(hx, hy, 4.5, 0, Math.PI * 2); ctx.fill();
+      var hr = p.ox > 0 ? (hx + 30 < M.x + M.w) : (hx - 30 < M.x);
+      label("H⁺", hx + (hr ? 8 : -8), hy - 9, "11px " + MONO, withA(INK, 0.15 + 0.85 * fp), hr ? "left" : "right");
+      /* charge glow */
+      if (ac > 0.02){
+        ctx.save(); ctx.globalCompositeOperation = "lighter";
+        var gl = ctx.createRadialGradient(p.x, p.y, r * 0.4, p.x, p.y, r * 2);
+        gl.addColorStop(0, qCol(c, 0.30 * ac)); gl.addColorStop(1, qCol(c, 0));
+        ctx.fillStyle = gl; ctx.beginPath(); ctx.arc(p.x, p.y, r * 2, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+      }
+      /* node */
+      ctx.fillStyle = "rgba(0,0,0,0.9)"; ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = qCol(c, 0.10 + 0.22 * ac); ctx.fill();
+      ctx.strokeStyle = ac > 0.02 ? qCol(c, 0.4 + 0.6 * ac) : withA(DIM, 0.5); ctx.lineWidth = 1.5; ctx.stroke();
+      /* ring: share of the proton still held */
+      ctx.lineWidth = 3; ctx.strokeStyle = withA(INK, 0.1);
+      ctx.beginPath(); ctx.arc(p.x, p.y, r + 4, 0, Math.PI * 2); ctx.stroke();
+      if (fp > 0.003){
+        ctx.strokeStyle = withA(INK, 0.85);
+        ctx.beginPath(); ctx.arc(p.x, p.y, r + 4, -Math.PI / 2, -Math.PI / 2 + fp * Math.PI * 2); ctx.stroke();
+      }
+      label(fp >= 0.5 ? G.hi : G.lo, p.x, p.y - 6, "500 12px " + MONO, INK, "center");
+      label(fmtQ(c), p.x, p.y + 9, "500 11px " + MONO, qCol(c, 1), "center");
+      if (G.key === "r" && !below){
+        label(G.lab, p.x + r + 10, p.y - 7, "11px " + MONO, DIM, "left");
+        label("pKa " + G.pka.toFixed(2), p.x + r + 10, p.y + 7, "11px " + MONO, DIM, "left");
+      } else {
+        var ly = p.y + r + 15;
+        label(G.lab, p.x, ly, "11px " + MONO, DIM, "center");
+        label("pKa " + G.pka.toFixed(2), p.x, ly + 14, "11px " + MONO, DIM, "center");
+      }
+    }
+  }
+
+  function plotRect(C){ return { x: C.x + 40, y: C.y + 22, w: C.w - 40 - 14, h: C.h - 22 - 36 }; }
+
+  function drawChart(C, k, ph){
+    var P = plotRect(C), view = st.view, nG = groups(k).length, pI = pIof(k);
+    BOXES = [];
+    var X = function(u){ return P.x + u * P.w; }, Y = function(v){ return P.y + v * P.h; };
+    var fadeIn = RM ? 1 : ease(mo.t);
+    ctx.save();
+    ctx.lineWidth = 1;
+    if (view === "charge"){
+      for (var q = 2; q >= -2; q--){
+        var yy = Y((2 - q) / 4);
+        ctx.strokeStyle = q === 0 ? withA(INK, 0.35) : withA(INK, 0.08);
+        ctx.beginPath(); ctx.moveTo(P.x, yy); ctx.lineTo(P.x + P.w, yy); ctx.stroke();
+        label(q === 0 ? "0" : (q > 0 ? "+" : "−") + Math.abs(q), P.x - 7, yy, "11px " + MONO, DIM, "right");
+      }
+      for (var x = 0; x <= 14; x += 2){
+        var xx = X(x / 14);
+        ctx.strokeStyle = withA(INK, 0.05); ctx.beginPath(); ctx.moveTo(xx, P.y); ctx.lineTo(xx, P.y + P.h); ctx.stroke();
+        label(String(x), xx, P.y + P.h + 12, "11px " + MONO, DIM, "center");
+      }
+      label("pH", P.x + P.w, P.y + P.h + 27, "500 11px " + MONO, INK, "right");
+      label("NET CHARGE", P.x - 34, P.y - 12, "500 11px " + MONO, INK, "left");
+    } else {
+      for (var p2 = 0; p2 <= 14; p2 += 2){
+        var y2 = Y(1 - p2 / 14);
+        ctx.strokeStyle = withA(INK, 0.07); ctx.beginPath(); ctx.moveTo(P.x, y2); ctx.lineTo(P.x + P.w, y2); ctx.stroke();
+        label(String(p2), P.x - 7, y2, "11px " + MONO, DIM, "right");
+      }
+      for (var e = 0; e <= nG * 2; e++){
+        var xe = X(e / (nG * 2));
+        ctx.strokeStyle = withA(INK, e % 2 ? 0.04 : 0.1); ctx.beginPath(); ctx.moveTo(xe, P.y); ctx.lineTo(xe, P.y + P.h); ctx.stroke();
+        if (e % 2 === 0) label(String(e / 2), xe, P.y + P.h + 12, "11px " + MONO, DIM, "center");
+      }
+      label("OH⁻ added (equivalents)", P.x + P.w, P.y + P.h + 27, "500 11px " + MONO, INK, "right");
+      label("pH", P.x - 34, P.y - 12, "500 11px " + MONO, INK, "left");
+    }
+    ctx.restore();
+
+    var pts = curShown();
+    /* charge view: shade positive and negative regions */
+    var fillA = view === "charge" ? (mo.fromView === "charge" ? 1 : fadeIn) : (mo.fromView === "charge" ? 1 - fadeIn : 0);
+    if (fillA > 0.01){
+      var y0 = Y(0.5);
+      ctx.save();
+      ctx.beginPath(); ctx.moveTo(X(pts[0].u), y0);
+      for (var i = 0; i < pts.length; i++) ctx.lineTo(X(pts[i].u), Y(pts[i].v));
+      ctx.lineTo(X(pts[pts.length - 1].u), y0); ctx.closePath();
+      ctx.save(); ctx.clip();
+      ctx.fillStyle = accA(0.16 * fillA); ctx.fillRect(P.x, P.y, P.w, y0 - P.y);
+      ctx.fillStyle = withA(AMB, 0.13 * fillA); ctx.fillRect(P.x, y0, P.w, P.y + P.h - y0);
+      ctx.restore(); ctx.restore();
+    }
+
+    /* pKa guides and pI */
+    var g = groups(k), pair = pairOf(k), lastLab = -999, row = 0;
+    var sorted = g.slice().sort(function(a, b){ return a.pka - b.pka; });
+    ctx.save();
+    ctx.globalAlpha = fadeIn;
+    ctx.setLineDash([4, 5]); ctx.lineWidth = 1;
+    for (var j = 0; j < sorted.length; j++){
+      var pk = sorted[j].pka, used = pk === pair[0] || pk === pair[1];
+      ctx.strokeStyle = used ? withA(AMB, 0.55) : withA(INK, 0.32);
+      if (view === "charge"){
+        var xk = X(pk / 14);
+        ctx.beginPath(); ctx.moveTo(xk, P.y); ctx.lineTo(xk, P.y + P.h); ctx.stroke();
+        row = (xk - lastLab < 40) ? row + 1 : 0; lastLab = xk;
+        label(pk.toFixed(2), xk + 3, P.y + 9 + row * 15, "11px " + MONO, used ? AMB : DIM, "left", true);
+      } else {
+        var yk = Y(1 - pk / 14);
+        ctx.beginPath(); ctx.moveTo(P.x, yk); ctx.lineTo(P.x + P.w, yk); ctx.stroke();
+        var ub = eqOH(k, pk) / nG;
+        if (ub > 0.5) label("pKa " + pk.toFixed(2), P.x + 4, yk - 9, "11px " + MONO, used ? AMB : DIM, "left", true);
+        else label("pKa " + pk.toFixed(2), P.x + P.w - 4, yk + 9, "11px " + MONO, used ? AMB : DIM, "right", true);
+      }
+    }
+    ctx.setLineDash([]);
+    if (view === "charge"){
+      var xi = X(pI / 14), yi = Y(0.5);
+      diamond(xi, yi, 6);
+      label("pI " + f2(pI), xi - 6, yi + 15, "500 11px " + MONO, AMB, "right", true);
+      label("pKa", P.x + P.w, P.y - 12, "11px " + MONO, DIM, "right");
+    } else {
+      var xi2 = X(eqOH(k, pI) / nG), yi2 = Y(1 - pI / 14);
+      diamond(xi2, yi2, 6);
+      label("pI " + f2(pI), xi2 - 10, yi2 - 4, "500 11px " + MONO, AMB, "right", true);
+    }
+    ctx.restore();
+
+    /* the curve */
+    ctx.save();
+    ctx.lineJoin = "round"; ctx.lineCap = "round";
+    ctx.strokeStyle = accA(0.25); ctx.lineWidth = 7;
+    ctx.beginPath();
+    for (var m = 0; m < pts.length; m++){ var px = X(pts[m].u), py = Y(pts[m].v); if (m) ctx.lineTo(px, py); else ctx.moveTo(px, py); }
+    ctx.stroke();
+    ctx.strokeStyle = ACC; ctx.lineWidth = 2.4; ctx.stroke();
+    ctx.restore();
+
+    /* where the solution is now */
+    var q = netQ(k, ph), cx, cy;
+    if (view === "charge"){ cx = X(ph / 14); cy = Y((2 - q) / 4); }
+    else { cx = X(eqOH(k, ph) / nG); cy = Y(1 - ph / 14); }
+    ctx.save();
+    ctx.globalAlpha = fadeIn;
+    ctx.strokeStyle = accA(0.55); ctx.lineWidth = 1.2; ctx.setLineDash([2, 4]);
+    ctx.beginPath();
+    if (view === "charge"){ ctx.moveTo(cx, P.y); ctx.lineTo(cx, P.y + P.h); }
+    else { ctx.moveTo(P.x, cy); ctx.lineTo(cx, cy); }
+    ctx.stroke(); ctx.setLineDash([]);
+    ctx.globalCompositeOperation = "lighter";
+    var halo = ctx.createRadialGradient(cx, cy, 0, cx, cy, 18);
+    halo.addColorStop(0, accA(0.7)); halo.addColorStop(1, accA(0));
+    ctx.fillStyle = halo; ctx.beginPath(); ctx.arc(cx, cy, 18, 0, Math.PI * 2); ctx.fill();
+    ctx.globalCompositeOperation = "source-over";
+    ctx.fillStyle = INK; ctx.beginPath(); ctx.arc(cx, cy, 4.5, 0, Math.PI * 2); ctx.fill();
+    var txt = view === "charge" ? fmtQ(q) : "pH " + ph.toFixed(2);
+    ctx.font = "500 12px " + MONO;
+    var tw = ctx.measureText(txt).width + 6;
+    var cand = view === "charge" ? [[1, -1], [-1, -1], [1, 1], [-1, 1]] : [[1, 1], [-1, -1], [1, -1], [-1, 1]];
+    var pick = null;
+    for (var c = 0; c < cand.length && !pick; c++){
+      var sx = cand[c][0], sy = cand[c][1], bx = sx > 0 ? cx + 9 : cx - 9 - tw, by = cy + sy * 17 - 8;
+      var box = { x: bx, y: by, w: tw, h: 16 };
+      if (bx < P.x || bx + tw > P.x + P.w || by < P.y || by + 16 > P.y + P.h) continue;
+      if (!hits(box)) pick = cand[c];
+    }
+    if (!pick) pick = cand[0];
+    label(txt, pick[0] > 0 ? cx + 12 : cx - 12, cy + pick[1] * 17, "500 12px " + MONO, ACC, pick[0] > 0 ? "left" : "right", true);
+    ctx.restore();
+  }
+
+  function diamond(x, y, s){
+    ctx.save();
+    ctx.fillStyle = AMB; ctx.strokeStyle = "rgba(0,0,0,0.8)"; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(x, y - s); ctx.lineTo(x + s, y); ctx.lineTo(x, y + s); ctx.lineTo(x - s, y); ctx.closePath();
+    ctx.fill(); ctx.stroke();
+    ctx.restore();
+  }
+
+  function draw(){
+    var w = canvas.width / dpr, h = canvas.height / dpr;
+    if (!w || !h) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.globalAlpha = 1; ctx.globalCompositeOperation = "source-over"; ctx.filter = "none";
+    ctx.clearRect(0, 0, w, h);
+    var bg = ctx.createLinearGradient(0, 0, 0, h);
+    bg.addColorStop(0, accA(0.06)); bg.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, w, h);
+    var L = layout(w, h);
+    if (w >= 560){
+      ctx.strokeStyle = withA(INK, 0.07); ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(w * 0.395, L.M.y + 6); ctx.lineTo(w * 0.395, L.M.y + L.M.h - 6); ctx.stroke();
+    } else {
+      ctx.strokeStyle = withA(INK, 0.07); ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(w * 0.05, L.C.y - 2); ctx.lineTo(w * 0.95, L.C.y - 2); ctx.stroke();
+    }
+    drawMolecule(L.M, st.aa, disp.ph);
+    drawChart(L.C, st.aa, disp.ph);
+    /* bloom */
+    if (canBlur){
+      bctx.setTransform(1, 0, 0, 1, 0, 0); bctx.clearRect(0, 0, buf.width, buf.height);
+      if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+      ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
+      (buf.width&&buf.height)&&ctx.drawImage(buf, 0, 0, w, h); ctx.restore();
+      ctx.filter = "none";
+    }
+    /* vignette */
+    var cxv = w / 2, cyv = h / 2;
+    var vig = ctx.createRadialGradient(cxv, cyv, h * 0.28, cxv, cyv, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
+  }
+
+  /* ---------- animation: ease to the new state, then stop ---------- */
+  var raf = 0, last = 0;
+  function frame(now){
+    var dt = Math.min(now - last, 50); last = now;
+    if (RM){ disp.ph = st.ph; mo.t = 1; }
+    else {
+      disp.ph += (st.ph - disp.ph) * (1 - Math.exp(-dt / 70));
+      if (Math.abs(st.ph - disp.ph) < 0.002) disp.ph = st.ph;
+      mo.t = Math.min(1, mo.t + dt / 420);
+    }
+    draw();
+    if (disp.ph !== st.ph || mo.t < 1) raf = requestAnimationFrame(frame); else raf = 0;
+  }
+  function kick(){
+    if (RM){ disp.ph = st.ph; mo.t = 1; draw(); return; }
+    if (!raf){ last = performance.now(); raf = requestAnimationFrame(frame); }
+  }
+
+  /* ---------- DOM readouts ---------- */
+  var slider = document.getElementById("aaPH");
+  var pv = document.getElementById("aaPV");
+  var live = document.getElementById("aaLive");
+  var s1 = document.getElementById("aaS1");
+  var s2 = document.getElementById("aaS2");
+  function updateText(){
+    var k = st.aa, ph = st.ph, q = netQ(k, ph), pI = pIof(k), d = AA[k];
+    pv.textContent = ph.toFixed(2);
+    slider.style.setProperty("--fill", (ph / 14 * 100) + "%");
+    live.textContent = d.name + " · " + speciesOf(k, ph);
+    s1.textContent = fmtQ(q);
+    s2.textContent = f2(pI);
+    var rel, go;
+    if (Math.abs(ph - pI) < 0.025){ rel = "= pI " + f2(pI); go = "no net drift"; }
+    else if (ph < pI){ rel = "below pI " + f2(pI); go = "moves to cathode (−)"; }
+    else { rel = "above pI " + f2(pI); go = "moves to anode (+)"; }
+    if (Math.abs(q) < 0.005) go = "no net drift";
+    ovl.textContent = "pH " + ph.toFixed(2) + " " + rel + " · net " + fmtQ(q) + " · " + go;
+  }
+
+  slider.addEventListener("input", function(){
+    var v = parseFloat(slider.value); if (isNaN(v)) return;
+    st.ph = Math.max(0, Math.min(14, v));
+    updateText(); kick();
+  });
+
+  function wireGroup(id, attr, onPick){
+    var grp = document.getElementById(id), btns = grp.querySelectorAll("button");
+    for (var i = 0; i < btns.length; i++){
+      btns[i].addEventListener("click", function(ev){
+        var b = ev.currentTarget;
+        for (var j = 0; j < btns.length; j++) btns[j].setAttribute("aria-pressed", btns[j] === b ? "true" : "false");
+        onPick(b.getAttribute(attr));
+      });
+    }
+  }
+  wireGroup("aaPick", "data-aa", function(v){ if (v === st.aa) return; st.aa = v; retarget(); updateText(); kick(); });
+  wireGroup("aaView", "data-v", function(v){ if (v === st.view) return; var prev = st.view; st.view = v; mo.fromView = prev; mo.from = curShown(); mo.to = curve(st.aa, st.view); mo.t = RM ? 1 : 0; kick(); });
+
+  var DROP = {
+    sep: "Net charge decides where an amino acid or protein goes in an electric field. At pH 8.6, glycine (pI 5.97) carries a small net negative charge and runs towards the anode, lysine (pI 9.74) is net positive and runs towards the cathode, and anything sitting at its own pI does not move at all. Isoelectric focusing uses exactly that: in a pH gradient each protein drifts until the local pH equals its pI, then stops. Ion-exchange columns work on the same sign: below its pI a protein sticks to a negatively charged resin, and raising the pH past its pI releases it. A protein is also least soluble at its pI, because with no net charge the molecules stop repelling one another and clump.",
+    his: "At the pH of blood, 7.4, most side chains are locked in one state: aspartate and glutamate are fully negative, lysine and arginine fully positive. Histidine is the exception, because its imidazole pKa of about 6.0 sits only 1.4 units below 7.4, so about 4% of histidine side chains hold a proton at any moment and a small shift in pH changes that share fast. That makes histidine the residue enzymes use to pass protons around their active sites, and a large part of why haemoglobin buffers blood. Inside a folded protein a pKa can move by a unit or more, because nearby charges or a pocket with little water make one form more stable than it is in free solution. So a table pKa is a starting point: when a passage gives a different value for a residue in a protein, use the passage value."
+  };
+  var dropP = document.getElementById("aaDropP");
+  wireGroup("aaDrop", "data-k", function(v){ dropP.textContent = DROP[v]; });
+  dropP.textContent = DROP.sep;
+
+  /* slider ticks at their true values */
+  var ticks = document.getElementById("aaTicks");
+  [[0, "0", "acid"], [2, "2", ""], [4, "4", ""], [6, "6", ""], [8, "8", ""], [10, "10", ""], [12, "12", ""], [14, "14", "base"]].forEach(function(t){
+    var s = document.createElement("span"); s.className = "aa-tick";
+    s.style.left = (t[0] / 14 * 100) + "%";
+    s.textContent = t[1];
+    if (t[2]){ var i = document.createElement("i"); i.textContent = t[2]; s.appendChild(i); }
+    ticks.appendChild(s);
+  });
+
+  updateText();
+  window.addEventListener("resize", resize);
+  if (window.ResizeObserver){ try { new ResizeObserver(function(){ resize(); }).observe(wrap); } catch (e) {} }
+  resize();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ draw(); }).catch(function(){});
+})();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'g-amino-acids-charge-and-pka'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

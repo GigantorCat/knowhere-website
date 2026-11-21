@@ -1,0 +1,644 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>The oxygen–haemoglobin dissociation curve — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #5AADD4;
+  --acc-rgb: 90, 173, 212;
+  --ag:  rgba(var(--acc-rgb),.7);
+  --ag1: rgba(var(--acc-rgb),.12);
+  --ag2: rgba(var(--acc-rgb),.45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);font-family:'Geist',sans-serif;color:var(--ink);min-height:100vh;padding:40px 16px 0;box-sizing:border-box;-webkit-font-smoothing:antialiased}
+.ox-wrap{max-width:720px;margin:0 auto}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.ox-wrap h1{font-family:'Geist',sans-serif;font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin:0 0 14px;color:var(--ink)}
+.ox-intro{font-size:15.5px;font-weight:400;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin:0 0 26px}
+.card{background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);margin-bottom:22px}
+.card.ox-sec{border-radius:14px}
+.card-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.card-label{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;color:var(--ink);letter-spacing:.04em}
+.ox-live{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--acc);letter-spacing:.06em}
+.ox-hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin:0 0 12px;line-height:1.5}
+.canvas-wrap{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1)}
+.canvas-wrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.ox-ovl{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:14px;text-transform:uppercase;color:var(--acc);text-align:center;letter-spacing:.03em}
+.ox-ctl{margin-top:16px}
+.ox-row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);letter-spacing:.06em;margin-bottom:10px}
+.ox-row b{font-weight:500;color:var(--acc);font-size:12px;letter-spacing:.02em;white-space:nowrap}
+.ox-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;margin:6px 0 0;background:linear-gradient(90deg, var(--acc) var(--fill,0%), #23291f var(--fill,0%));outline:none;cursor:pointer}
+.ox-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag), 0 0 4px var(--ag);transition:box-shadow .15s}
+.ox-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag), 0 0 4px var(--ag);transition:box-shadow .15s}
+.ox-slider:hover::-webkit-slider-thumb{box-shadow:0 0 24px var(--acc), 0 0 8px var(--ag)}
+.ox-slider:hover::-moz-range-thumb{box-shadow:0 0 24px var(--acc), 0 0 8px var(--ag)}
+.ox-slider:focus-visible{outline:1px solid var(--ag2);outline-offset:6px}
+.ox-ticks{position:relative;height:28px;margin:10px 10px 0}
+.ox-tick{position:absolute;top:0;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink-dim);text-align:center;white-space:nowrap;line-height:1.35}
+.ox-tick::before{content:"";display:block;width:1px;height:4px;background:var(--ink-dim);margin:0 auto 2px;opacity:.6}
+.ox-tick i{font-style:normal;display:block;opacity:.8}
+.ox-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 26px}
+.ox-grid .ox-ctl{margin-top:12px}
+.ox-qlabel{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);letter-spacing:.06em;margin:18px 0 10px}
+.ox-toggles{display:flex;gap:10px;flex-wrap:wrap}
+.ox-toggles button{flex:1 1 0;font-family:'JetBrains Mono',monospace;font-size:12px;padding:12px;border-radius:999px;background:#12160F;border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:background .2s,border-color .2s,color .2s,box-shadow .2s;white-space:nowrap}
+.ox-toggles button[aria-pressed="true"]{background:rgba(var(--acc-rgb),.1);border:1px solid var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.ox-toggles button:focus-visible{outline:1px solid var(--acc);outline-offset:3px}
+.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;border-top:1px solid var(--line);margin-top:18px;padding-top:14px}
+.stat-label{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);letter-spacing:.06em;margin-bottom:6px;line-height:1.35}
+.stat-value{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500;line-height:1.1}
+.stat-value small{font-size:12px;color:var(--ink-dim);font-weight:400;margin-left:5px}
+.ox-s1{color:var(--acc)}
+.ox-s2{color:var(--amb)}
+.knowdrop{border-top:1px solid var(--line);padding-top:16px;margin-top:16px}
+.knowdrop p{font-family:'Geist',sans-serif;font-size:14.5px;font-weight:400;line-height:1.65;color:var(--ink);margin:0}
+.know{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));border-radius:0 12px 12px 0;margin:0;margin-bottom:0;padding-bottom:16px}
+.know-row{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.know-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:oxDot 2.4s ease-in-out infinite;flex:none}
+.know-tag{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:0.15em;color:var(--acc)}
+.know p{font-family:'Geist',sans-serif;font-size:17.4px;font-weight:400;line-height:1.55;color:var(--ink);margin:0}
+@keyframes oxDot{0%,100%{opacity:1}50%{opacity:.45}}
+.ox-wrap>*:last-child{margin-bottom:0;padding-bottom:16px}
+@media (max-width:520px){
+  .ox-grid{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion: reduce){
+  .know-dot{animation:none}
+  .ox-toggles button,.ox-slider::-webkit-slider-thumb{transition:none}
+}
+</style>
+<div class="ox-wrap">
+  <h2 class="sr-only">The oxygen–haemoglobin dissociation curve: a live curve showing how much oxygen haemoglobin loads in the lungs and hands to tissue, and how CO₂, pH, temperature and 2,3-BPG shift it</h2>
+  <h1>Haemoglobin’s real job is letting <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">go</span>.</h1>
+  <p class="ox-intro">Blood leaves the lungs about 97% saturated with oxygen, yet resting tissue takes only about a quarter of it. The S-shape of the oxygen–haemoglobin dissociation curve, and the way it shifts, decide how much is handed over. Lower the tissue PO₂, then raise CO₂, acid, heat or 2,3-BPG and watch how much oxygen haemoglobin lets go.</p>
+
+  <section class="card ox-main" aria-label="Oxygen–haemoglobin dissociation curve model">
+    <div class="card-head">
+      <span class="card-label">Dissociation curve</span>
+      <span class="ox-live" id="oxLive">Slight right shift</span>
+    </div>
+    <p class="ox-hint">Lower the tissue PO₂, then change one tissue condition at a time. Watch the amber bracket.</p>
+    <div class="canvas-wrap" id="oxWrap">
+      <canvas id="oxCanvas" role="img" aria-label="Haemoglobin saturation plotted against oxygen partial pressure, with the lungs and the tissue marked on the curve and two haemoglobin molecules showing how many of their four haem sites hold oxygen"></canvas>
+      <div class="ox-ovl" id="oxOvl" aria-live="polite">Lungs 97% → tissue 71% · unloads 26%</div>
+    </div>
+
+    <div class="ox-ctl">
+      <div class="ox-row"><span>Tissue PO₂</span><b id="oxPO2V">40 mmHg</b></div>
+      <input type="range" class="ox-slider" id="oxPO2" aria-label="Oxygen partial pressure in the tissue, in mmHg" min="10" max="100" step="1" value="40">
+      <div class="ox-ticks" data-min="10" data-max="100" data-t="10|20:exercise|40:rest|100:lungs"></div>
+    </div>
+
+    <div class="ox-box">
+    <div class="ox-qlabel" id="oxPreQ">Tissue conditions</div>
+    <div class="ox-toggles" role="group" aria-labelledby="oxPreQ" id="oxPre">
+      <button type="button" data-p="rest" aria-pressed="true">Resting</button>
+      <button type="button" data-p="ex" aria-pressed="false">Exercising</button>
+      <button type="button" data-p="stored" aria-pressed="false">Stored blood</button>
+    </div>
+    </div>
+
+    <div class="ox-grid">
+      <div class="ox-ctl">
+        <div class="ox-row"><span>CO₂ (PCO₂)</span><b id="oxCO2V">46 mmHg</b></div>
+        <input type="range" class="ox-slider" id="oxCO2" aria-label="Carbon dioxide partial pressure in the tissue, in mmHg" min="20" max="80" step="1" value="46">
+        <div class="ox-ticks" data-min="20" data-max="80" data-t="20|40:normal|80"></div>
+      </div>
+      <div class="ox-ctl">
+        <div class="ox-row"><span>Blood pH</span><b id="oxPHV">7.34</b></div>
+        <input type="range" class="ox-slider" id="oxPH" aria-label="Blood pH in the tissue" min="7" max="7.7" step="0.01" value="7.34">
+        <div class="ox-ticks" data-min="7" data-max="7.7" data-t="7.0|7.4:normal|7.7"></div>
+      </div>
+      <div class="ox-ctl">
+        <div class="ox-row"><span>Temperature</span><b id="oxTV">37.0 °C</b></div>
+        <input type="range" class="ox-slider" id="oxT" aria-label="Tissue temperature in degrees Celsius" min="34" max="42" step="0.1" value="37">
+        <div class="ox-ticks" data-min="34" data-max="42" data-t="34|37:normal|42"></div>
+      </div>
+      <div class="ox-ctl">
+        <div class="ox-row"><span>2,3-BPG</span><b id="oxBPGV">5.0 mmol/L</b></div>
+        <input type="range" class="ox-slider" id="oxBPG" aria-label="2,3-BPG in red cells, in millimoles per litre" min="1" max="8" step="0.1" value="5">
+        <div class="ox-ticks" data-min="1" data-max="8" data-t="1|5:normal|8"></div>
+      </div>
+    </div>
+
+    <div class="ox-box">
+    <div class="ox-qlabel" id="oxCmpQ">Compare with</div>
+    <div class="ox-toggles" role="group" aria-labelledby="oxCmpQ" id="oxCmp" data-kw-multi>
+      <button type="button" data-c="mb" aria-pressed="false">Myoglobin</button>
+      <button type="button" data-c="hbf" aria-pressed="false">Fetal Hb</button>
+      <button type="button" data-c="n1" aria-pressed="false">No teamwork</button>
+    </div>
+    </div>
+
+    <div class="stat-row">
+      <div><div class="stat-label">Tissue P50</div><div class="stat-value ox-s1" id="oxS1">28.8<small>mmHg</small></div></div>
+      <div><div class="stat-label">O₂ handed to tissue</div><div class="stat-value ox-s2" id="oxS2">26<small>% of load</small></div></div>
+    </div>
+  </section>
+
+  <section class="card ox-sec" aria-label="Why the curve has its shape and why it shifts">
+    <div class="ox-toggles" role="group" aria-label="Why the curve has its shape and why it shifts" id="oxDrop">
+      <button type="button" data-k="s" aria-pressed="true">The S-shape</button>
+      <button type="button" data-k="shift" aria-pressed="false">The shifts</button>
+    </div>
+    <div class="knowdrop"><p id="oxDropP" aria-live="polite"></p></div>
+  </section>
+
+  <div class="know">
+    <div class="know-row"><span class="know-dot" aria-hidden="true"></span><span class="know-tag">Know this</span></div>
+    <p>Haemoglobin’s <span style="color:var(--acc)">cooperative binding</span> makes the curve S-shaped, and more CO₂, acid, heat or 2,3-BPG causes a <span style="color:var(--acc)">right shift</span>: a higher <span style="color:var(--acc)">P50</span>, so working tissue is handed more oxygen.</p>
+  </div>
+</div>
+<script>
+(function(){
+  "use strict";
+  var CSS = getComputedStyle(document.documentElement);
+  var ACC = CSS.getPropertyValue("--acc").trim();
+  var RGB = CSS.getPropertyValue("--acc-rgb").trim();
+  var AMB = CSS.getPropertyValue("--amb").trim();
+  var INK = CSS.getPropertyValue("--ink").trim();
+  var DIM = CSS.getPropertyValue("--ink-dim").trim();
+  var LINE = CSS.getPropertyValue("--line").trim();
+  var MONO = "\"JetBrains Mono\", monospace";
+  var RM = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+
+  var canvas = document.getElementById("oxCanvas");
+  var ctx = canvas.getContext("2d");
+  var wrap = document.getElementById("oxWrap");
+  var ovl = document.getElementById("oxOvl");
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
+  var buf = document.createElement("canvas"); var bctx = buf.getContext("2d");
+  var canBlur = typeof ctx.filter === "string";
+
+  function withA(hex, a){
+    var h = hex.replace("#", "");
+    if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+    var n = parseInt(h, 16);
+    return "rgba(" + ((n >> 16) & 255) + "," + ((n >> 8) & 255) + "," + (n & 255) + "," + a + ")";
+  }
+  function accA(a){ return "rgba(" + RGB + "," + a + ")"; }
+
+  /* ---------- the model ---------- */
+  var P50_0 = 26.8, N_HB = 2.7, LUNG_PO2 = 100;
+  function hill(p, p50, n){ if (p <= 0) return 0; var r = Math.pow(p / p50, n); return r / (1 + r); }
+  function hh(co2){ return 6.1 + Math.log(24 / (0.03 * co2)) / Math.LN10; }   /* Henderson–Hasselbalch, bicarbonate 24 mmol/L */
+  function p50Tissue(s){
+    var lg = -0.48 * (s.ph - 7.4) + 0.06 * Math.log(s.co2 / 40) / Math.LN10 + 0.024 * (s.t - 37) + 0.025 * (s.bpg - 5);
+    return P50_0 * Math.pow(10, lg);
+  }
+  function p50Lungs(s){ return P50_0 * Math.pow(10, 0.025 * (s.bpg - 5)); }   /* arterial blood: normal CO2, pH and temperature; 2,3-BPG travels with the red cell */
+  var CMP = {
+    mb:  { p50: 2.8, n: 1,   label: "myoglobin",      col: function(a){ return withA(AMB, a); }, dash: [6, 5] },
+    hbf: { p50: 19,  n: 2.7, label: "fetal Hb",       col: function(a){ return withA(INK, a); }, dash: [2, 5] },
+    n1:  { p50: null, n: 1,  label: "no teamwork", col: function(a){ return withA(DIM, a); }, dash: [1, 4] }
+  };
+  var PRESETS = {
+    rest:   { po2: 40, co2: 46, ph: 7.34, t: 37,   bpg: 5 },
+    ex:     { po2: 20, co2: 60, ph: 7.2,  t: 39.5, bpg: 5 },
+    stored: { po2: 40, co2: 46, ph: 7.34, t: 37,   bpg: 1 }
+  };
+
+  var state = { po2: 40, co2: 46, ph: 7.34, t: 37, bpg: 5, cmp: { mb: false, hbf: false, n1: false } };
+  var disp = { po2: 40, pT: 0, pL: 0, mb: 0, hbf: 0, n1: 0 };
+  var targ = {};
+  function computeTarget(){
+    targ.po2 = state.po2; targ.pT = p50Tissue(state); targ.pL = p50Lungs(state);
+    targ.mb = state.cmp.mb ? 1 : 0; targ.hbf = state.cmp.hbf ? 1 : 0; targ.n1 = state.cmp.n1 ? 1 : 0;
+  }
+  computeTarget(); disp.pT = targ.pT; disp.pL = targ.pL;
+
+  /* ---------- canvas sizing ---------- */
+  var W = 0, H = 0;
+  function resize(){
+    var rect = canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    canvas.width = Math.round(rect.width * dpr); canvas.height = Math.round(rect.height * dpr);
+    buf.width = canvas.width; buf.height = canvas.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    W = canvas.width / dpr; H = canvas.height / dpr;
+    draw();
+  }
+
+  function layout(w, h){
+    var ovH = (ovl.parentElement === wrap) ? 40 : 6;
+    var top = Math.max(28, h * 0.08);
+    var tall = h > w * 0.72;
+    var plot, panel;
+    if (!tall){
+      var pw = Math.max(128, w * 0.25);
+      plot = { x: 50, y: top, w: w - 50 - pw - 30, h: h - top - ovH - 42 };
+      panel = { x: w - pw - 8, y: top - 10, w: pw, h: plot.h + 34, vertical: true };
+    } else {
+      var ph = Math.max(104, h * 0.3);
+      plot = { x: 46, y: top, w: w - 46 - 22, h: h - top - ph - 44 - ovH };
+      panel = { x: 8, y: plot.y + plot.h + 42, w: w - 16, h: ph, vertical: false };
+    }
+    return { plot: plot, panel: panel, tall: tall };
+  }
+
+  function X(P, v){ return P.x + (v / 100) * P.w; }
+  function Y(P, s){ return P.y + P.h - s * P.h; }
+
+  function curvePath(P, p50, n){
+    ctx.beginPath();
+    for (var i = 0; i <= 400; i++){
+      var po2 = i * 0.25, s = hill(po2, p50, n);
+      var x = X(P, po2), y = Y(P, s);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+  }
+
+  function drawGrid(P){
+    ctx.save();
+    ctx.strokeStyle = LINE; ctx.lineWidth = 1;
+    for (var v = 0; v <= 100; v += 20){ var x = Math.round(X(P, v)) + 0.5; ctx.beginPath(); ctx.moveTo(x, P.y); ctx.lineTo(x, P.y + P.h); ctx.stroke(); }
+    for (var s = 0; s <= 1.0001; s += 0.25){ var y = Math.round(Y(P, s)) + 0.5; ctx.beginPath(); ctx.moveTo(P.x, y); ctx.lineTo(P.x + P.w, y); ctx.stroke(); }
+    ctx.strokeStyle = withA(DIM, 0.7);
+    ctx.beginPath(); ctx.moveTo(P.x + 0.5, P.y); ctx.lineTo(P.x + 0.5, P.y + P.h + 0.5); ctx.lineTo(P.x + P.w, P.y + P.h + 0.5); ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawCurves(P){
+    ctx.save();
+    ctx.lineJoin = "round"; ctx.lineCap = "round";
+    /* comparison curves */
+    ["n1", "hbf", "mb"].forEach(function(k){
+      var a = disp[k]; if (a < 0.02) return;
+      var c = CMP[k], p50 = c.p50 === null ? disp.pT : c.p50;
+      ctx.setLineDash(c.dash); ctx.lineWidth = 2; ctx.strokeStyle = c.col((0.85 * a).toFixed(3));
+      curvePath(P, p50, c.n); ctx.stroke();
+    });
+    ctx.setLineDash([]);
+    /* the curve in the lungs (arterial conditions), when it differs from the tissue curve */
+    var sep = Math.abs(disp.pT - disp.pL);
+    if (sep > 0.3){
+      ctx.setLineDash([7, 6]); ctx.lineWidth = 1.6; ctx.strokeStyle = withA(INK, Math.min(0.55, sep / 3).toFixed(3));
+      curvePath(P, disp.pL, N_HB); ctx.stroke(); ctx.setLineDash([]);
+    }
+    /* the tissue curve */
+    ctx.globalCompositeOperation = "lighter";
+    ctx.lineWidth = 7; ctx.strokeStyle = accA(0.16); curvePath(P, disp.pT, N_HB); ctx.stroke();
+    ctx.globalCompositeOperation = "source-over";
+    ctx.lineWidth = 3; ctx.strokeStyle = ACC; curvePath(P, disp.pT, N_HB); ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawMarks(P, m){
+    ctx.save();
+    /* P50 guide */
+    var xp = X(P, Math.min(100, disp.pT)), yh = Y(P, 0.5);
+    ctx.setLineDash([3, 4]); ctx.strokeStyle = accA(0.55); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(P.x, yh); ctx.lineTo(xp, yh); ctx.lineTo(xp, P.y + P.h); ctx.stroke();
+    ctx.setLineDash([]);
+    /* unloading band and bracket */
+    var yL = Y(P, m.sL), yT = Y(P, m.sT), xT = X(P, disp.po2), xL = X(P, LUNG_PO2);
+    ctx.fillStyle = withA(AMB, 0.08);
+    ctx.fillRect(xT, yL, xL - xT, Math.max(0, yT - yL));
+    ctx.strokeStyle = withA(AMB, 0.6); ctx.setLineDash([4, 4]); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(xT, yT); ctx.lineTo(xL + 10, yT); ctx.stroke();
+    ctx.setLineDash([]);
+    var bx = xL + 10;
+    ctx.strokeStyle = AMB; ctx.lineWidth = 2.2;
+    ctx.beginPath(); ctx.moveTo(bx - 4, yL); ctx.lineTo(bx, yL); ctx.lineTo(bx, yT); ctx.lineTo(bx - 4, yT); ctx.stroke();
+    if (yT - yL > 14){
+      ctx.fillStyle = AMB; ctx.beginPath(); ctx.moveTo(bx, yT + 1); ctx.lineTo(bx - 4, yT - 6); ctx.lineTo(bx + 4, yT - 6); ctx.closePath(); ctx.fill();
+    }
+    /* points */
+    ctx.globalCompositeOperation = "lighter";
+    var g = ctx.createRadialGradient(xT, yT, 0, xT, yT, 16);
+    g.addColorStop(0, accA(0.55)); g.addColorStop(1, accA(0));
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(xT, yT, 16, 0, Math.PI * 2); ctx.fill();
+    ctx.globalCompositeOperation = "source-over";
+    ctx.fillStyle = ACC; ctx.beginPath(); ctx.arc(xT, yT, 5.5, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#000"; ctx.beginPath(); ctx.arc(xT, yT, 2, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = INK; ctx.beginPath(); ctx.arc(xL, yL, 5, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = accA(0.9); ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(xL, yL, 8, 0, Math.PI * 2); ctx.stroke();
+    ctx.restore();
+  }
+
+  function rrect(x, y, w, h, r){
+    ctx.beginPath(); ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h); ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r); ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y); ctx.closePath();
+  }
+
+  /* one haemoglobin: two alpha and two beta subunits, each with a haem that holds one O2.
+     bound = average O2 per molecule (0 to 4); the subunits close up and turn a little as they fill (tense to relaxed) */
+  function tetramer(cx, cy, r, bound){
+    var f = Math.max(0, Math.min(1, bound / 4));
+    var rot = -0.12 + 0.26 * f, d = r * (1.3 - 0.16 * f);
+    var order = [0, 2, 1, 3];
+    ctx.save();
+    for (var i = 0; i < 4; i++){
+      var ang = rot + Math.PI / 4 + i * Math.PI / 2;
+      var sx = cx + Math.cos(ang) * d, sy = cy + Math.sin(ang) * d;
+      var alpha = (i % 2 === 0);
+      ctx.fillStyle = alpha ? accA(0.13) : withA(INK, 0.07);
+      ctx.strokeStyle = alpha ? accA(0.55) : withA(INK, 0.35);
+      ctx.lineWidth = 1.4;
+      ctx.beginPath(); ctx.arc(sx, sy, r, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      /* the haem plate */
+      var hw = r * 0.62, hh2 = r * 0.2;
+      ctx.save(); ctx.translate(sx, sy); ctx.rotate(ang);
+      ctx.fillStyle = withA(DIM, 0.75); ctx.fillRect(-hw / 2, -hh2 / 2, hw, hh2);
+      ctx.restore();
+      /* the O2 on it */
+      var fill = Math.max(0, Math.min(1, bound - order.indexOf(i)));
+      var ox = sx + Math.cos(ang) * r * 0.36, oy = sy + Math.sin(ang) * r * 0.36;
+      var or = Math.max(2.4, r * 0.17);
+      var px = -Math.sin(ang) * or * 0.85, py = Math.cos(ang) * or * 0.85;
+      if (fill > 0.02){
+        ctx.save(); ctx.globalCompositeOperation = "lighter";
+        var g = ctx.createRadialGradient(ox, oy, 0, ox, oy, or * 4);
+        g.addColorStop(0, accA((0.5 * fill).toFixed(3))); g.addColorStop(1, accA(0));
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(ox, oy, or * 4, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+        ctx.fillStyle = accA((0.25 + 0.75 * fill).toFixed(3));
+        ctx.beginPath(); ctx.arc(ox - px, oy - py, or, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(ox + px, oy + py, or, 0, Math.PI * 2); ctx.fill();
+      }
+      if (fill < 0.98){
+        ctx.strokeStyle = withA(DIM, (0.6 * (1 - fill)).toFixed(3)); ctx.lineWidth = 1;
+        ctx.setLineDash([2, 2]);
+        ctx.beginPath(); ctx.arc(ox, oy, or * 1.5, 0, Math.PI * 2); ctx.stroke();
+        ctx.setLineDash([]);
+      }
+    }
+    ctx.restore();
+  }
+
+  function panelCells(L){
+    var p = L.panel;
+    if (p.vertical){
+      var ch = (p.h - 26) / 2;
+      return [{ x: p.x, y: p.y, w: p.w, h: ch }, { x: p.x, y: p.y + ch + 26, w: p.w, h: ch }];
+    }
+    var cw = (p.w - 40) / 2;
+    return [{ x: p.x, y: p.y, w: cw, h: p.h }, { x: p.x + cw + 40, y: p.y, w: cw, h: p.h }];
+  }
+
+  function drawPanelShapes(L, m){
+    var cells = panelCells(L);
+    var vals = [4 * m.sL, 4 * m.sT];
+    cells.forEach(function(c, i){
+      ctx.save();
+      rrect(c.x, c.y, c.w, c.h, 10);
+      ctx.fillStyle = i === 0 ? withA(INK, 0.025) : accA(0.035); ctx.fill();
+      ctx.strokeStyle = i === 0 ? withA(INK, 0.14) : accA(0.3); ctx.lineWidth = 1; ctx.stroke();
+      ctx.restore();
+      var r = Math.max(9, Math.min(c.w * 0.13, (c.h - 44) * 0.235));
+      tetramer(c.x + c.w / 2, c.y + 20 + (c.h - 40) / 2, r, vals[i]);
+    });
+    /* arrow from lungs to tissue */
+    var a = cells[0], b = cells[1];
+    ctx.save(); ctx.strokeStyle = AMB; ctx.fillStyle = AMB; ctx.lineWidth = 1.8;
+    if (L.panel.vertical){
+      var x = a.x + a.w / 2, y1 = a.y + a.h + 4, y2 = b.y - 4;
+      ctx.beginPath(); ctx.moveTo(x, y1); ctx.lineTo(x, y2 - 5); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x, y2); ctx.lineTo(x - 5, y2 - 7); ctx.lineTo(x + 5, y2 - 7); ctx.closePath(); ctx.fill();
+    } else {
+      var yy = a.y + a.h / 2, x1 = a.x + a.w + 6, x2 = b.x - 6;
+      ctx.beginPath(); ctx.moveTo(x1, yy); ctx.lineTo(x2 - 5, yy); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x2, yy); ctx.lineTo(x2 - 7, yy - 5); ctx.lineTo(x2 - 7, yy + 5); ctx.closePath(); ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  function drawPanelText(L, m){
+    var cells = panelCells(L);
+    var vals = [4 * m.sL, 4 * m.sT];
+    var names = ["IN THE LUNGS", "IN THE TISSUE"];
+    ctx.save();
+    ctx.font = "11px " + MONO; ctx.textAlign = "center";
+    cells.forEach(function(c, i){
+      ctx.textBaseline = "top"; ctx.fillStyle = i === 0 ? INK : ACC;
+      ctx.fillText(names[i], c.x + c.w / 2, c.y + 7, c.w - 8);
+      ctx.textBaseline = "bottom"; ctx.fillStyle = DIM;
+      ctx.fillText(vals[i].toFixed(1) + " of 4 O₂", c.x + c.w / 2, c.y + c.h - 6, c.w - 8);
+    });
+    ctx.restore();
+  }
+
+  function drawPlotText(P, m, L){
+    ctx.save();
+    ctx.font = "11px " + MONO; ctx.fillStyle = DIM;
+    ctx.textAlign = "right"; ctx.textBaseline = "middle";
+    for (var s = 0; s <= 1.0001; s += 0.25) ctx.fillText(Math.round(s * 100) + "%", P.x - 6, Y(P, s));
+    ctx.textAlign = "center"; ctx.textBaseline = "top";
+    for (var v = 0; v <= 100; v += 20) ctx.fillText(String(v), X(P, v), P.y + P.h + 6);
+    ctx.textAlign = "right";
+    ctx.fillText("PO₂, mmHg (7.5 mmHg = 1 kPa)", P.x + P.w, P.y + P.h + 22);
+    ctx.textAlign = "left"; ctx.textBaseline = "bottom";
+    ctx.fillText("Hb saturation", P.x - 40 < 2 ? 2 : P.x - 40, P.y - 8);
+    /* P50 label */
+    var xp = X(P, Math.min(100, disp.pT));
+    ctx.fillStyle = ACC; ctx.textAlign = "left"; ctx.textBaseline = "bottom";
+    ctx.fillText("P50 " + disp.pT.toFixed(0), xp + 5, P.y + P.h - 4);
+    /* point labels */
+    var xT = X(P, disp.po2), yT = Y(P, m.sT), xL = X(P, LUNG_PO2), yL = Y(P, m.sL);
+    ctx.fillStyle = INK; ctx.textAlign = "right"; ctx.textBaseline = "bottom";
+    ctx.fillText("lungs", xL - 10, yL - 6);
+    ctx.fillStyle = ACC; ctx.textAlign = "left"; ctx.textBaseline = "top";
+    var tx = xT + 10, ty = yT + 8;
+    if (tx + 50 > xL - 6){ tx = xT - 10; ctx.textAlign = "right"; }
+    if (ty + 14 > P.y + P.h - 18) ty = yT - 22;
+    ctx.fillText("tissue", tx, ty);
+    /* unloading label, in the empty corner under the curve */
+    var pct = Math.round(m.sL * 100) - Math.round(m.sT * 100);
+    ctx.fillStyle = AMB; ctx.textAlign = "right";
+    var uy = yT - 6; ctx.textBaseline = "bottom";
+    if (yT - yL < 34){ uy = yT + 6; ctx.textBaseline = "top"; }
+    ctx.fillText("unloads " + pct + "%", xL - 4, uy);
+    /* legend for the extra curves, bottom right of the plot */
+    var items = [];
+    items.push({ t: disp.pT - disp.pL > 0.3 || disp.pL - disp.pT > 0.3 ? "in the tissue" : "adult Hb", c: ACC, dash: [], w: 3 });
+    if (Math.abs(disp.pT - disp.pL) > 0.3) items.push({ t: "in the lungs", c: withA(INK, 0.6), dash: [7, 6], w: 1.6 });
+    ["mb", "hbf", "n1"].forEach(function(k){ if (disp[k] > 0.5) items.push({ t: CMP[k].label, c: CMP[k].col(0.9), dash: CMP[k].dash, w: 2 }); });
+    if (items.length > 1){
+      var lh = 15, lw = 0;
+      items.forEach(function(it){ lw = Math.max(lw, ctx.measureText(it.t).width); });
+      var bw = lw + 40, bh = items.length * lh + 8;
+      var bx0 = P.x + P.w - bw - 4, by0 = P.y + P.h - bh - 22;
+      if (uy > by0 - 14 && uy < by0 + bh + 14) by0 = Math.max(P.y + P.h * 0.32, uy - bh - 18);
+      ctx.fillStyle = "rgba(0,0,0,0.6)"; rrect(bx0, by0, bw, bh, 6); ctx.fill();
+      ctx.textAlign = "left"; ctx.textBaseline = "middle";
+      items.forEach(function(it, i){
+        var yy = by0 + 4 + lh * i + lh / 2;
+        ctx.strokeStyle = it.c; ctx.lineWidth = it.w; ctx.setLineDash(it.dash);
+        ctx.beginPath(); ctx.moveTo(bx0 + 7, yy); ctx.lineTo(bx0 + 29, yy); ctx.stroke(); ctx.setLineDash([]);
+        ctx.fillStyle = INK; ctx.fillText(it.t, bx0 + 34, yy);
+      });
+    }
+    ctx.restore();
+  }
+
+  function metrics(){
+    return { sL: hill(LUNG_PO2, disp.pL, N_HB), sT: hill(disp.po2, disp.pT, N_HB) };
+  }
+
+  function draw(){
+    var w = W, h = H; if (!w || !h) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = "#000"; ctx.fillRect(0, 0, w, h);
+    var L = layout(w, h), P = L.plot, m = metrics();
+    drawGrid(P);
+    drawCurves(P);
+    drawMarks(P, m);
+    drawPanelShapes(L, m);
+    /* bloom */
+    if (canBlur){
+      bctx.setTransform(1, 0, 0, 1, 0, 0); bctx.clearRect(0, 0, buf.width, buf.height);
+      if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+      ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
+      (buf.width&&buf.height)&&ctx.drawImage(buf, 0, 0, w, h); ctx.restore();
+    }
+    /* vignette */
+    var cx = w / 2, cy = h / 2;
+    var vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
+    drawPlotText(P, m, L);
+    drawPanelText(L, m);
+  }
+
+  /* ---------- eased transitions that settle ---------- */
+  var raf = 0, last = 0;
+  var KEYS = ["po2", "pT", "pL", "mb", "hbf", "n1"];
+  function tick(now){
+    var dt = Math.min(now - (last || now), 50); last = now;
+    var k = 1 - Math.exp(-dt / 85), moving = false;
+    KEYS.forEach(function(key){
+      var d = targ[key] - disp[key];
+      var eps = (key === "mb" || key === "hbf" || key === "n1") ? 0.004 : 0.02;
+      if (Math.abs(d) < eps){ disp[key] = targ[key]; } else { disp[key] += d * k; moving = true; }
+    });
+    draw();
+    if (moving){ raf = requestAnimationFrame(tick); } else { raf = 0; last = 0; }
+  }
+  function kick(){
+    if (RM){ KEYS.forEach(function(key){ disp[key] = targ[key]; }); draw(); return; }
+    if (!raf){ last = 0; raf = requestAnimationFrame(tick); }
+  }
+
+  /* ---------- controls ---------- */
+  var el = function(id){ return document.getElementById(id); };
+  var S = { po2: el("oxPO2"), co2: el("oxCO2"), ph: el("oxPH"), t: el("oxT"), bpg: el("oxBPG") };
+  var V = { po2: el("oxPO2V"), co2: el("oxCO2V"), ph: el("oxPHV"), t: el("oxTV"), bpg: el("oxBPGV") };
+  function fmtV(key, v){
+    if (key === "po2" || key === "co2") return Math.round(v) + " mmHg";
+    if (key === "ph") return v.toFixed(2);
+    if (key === "t") return v.toFixed(1) + " °C";
+    return v.toFixed(1) + " mmol/L";
+  }
+  function setFill(inp){
+    var mn = parseFloat(inp.min), mx = parseFloat(inp.max), v = parseFloat(inp.value);
+    inp.style.setProperty("--fill", ((v - mn) / (mx - mn) * 100).toFixed(2) + "%");
+  }
+  function syncSliders(){
+    Object.keys(S).forEach(function(key){
+      S[key].value = String(state[key]); setFill(S[key]); V[key].textContent = fmtV(key, state[key]);
+    });
+  }
+  var lastCO2 = state.co2;
+  Object.keys(S).forEach(function(key){
+    S[key].addEventListener("input", function(){
+      var v = parseFloat(S[key].value);
+      if (key === "co2"){
+        /* CO2 makes carbonic acid, so pH follows it */
+        var ph = state.ph + (hh(v) - hh(lastCO2));
+        state.ph = Math.round(Math.max(7, Math.min(7.7, ph)) * 100) / 100;
+        lastCO2 = v;
+      }
+      state[key] = v;
+      syncSliders(); matchPreset(); update();
+    });
+  });
+
+  var preBtns = Array.prototype.slice.call(document.querySelectorAll("#oxPre button"));
+  function matchPreset(){
+    preBtns.forEach(function(b){
+      var p = PRESETS[b.getAttribute("data-p")], on = true;
+      Object.keys(p).forEach(function(key){ if (Math.abs(p[key] - state[key]) > 0.001) on = false; });
+      b.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+  }
+  preBtns.forEach(function(b){
+    b.addEventListener("click", function(){
+      var p = PRESETS[b.getAttribute("data-p")];
+      Object.keys(p).forEach(function(key){ state[key] = p[key]; });
+      lastCO2 = state.co2;
+      syncSliders(); matchPreset(); update();
+    });
+  });
+
+  var cmpBtns = Array.prototype.slice.call(document.querySelectorAll("#oxCmp button"));
+  cmpBtns.forEach(function(b){
+    b.addEventListener("click", function(){
+      var k = b.getAttribute("data-c");
+      state.cmp[k] = !state.cmp[k];
+      b.setAttribute("aria-pressed", state.cmp[k] ? "true" : "false");
+      update();
+    });
+  });
+
+  /* ---------- readouts ---------- */
+  function update(){
+    computeTarget();
+    var sL = hill(LUNG_PO2, targ.pL, N_HB), sT = hill(targ.po2, targ.pT, N_HB);
+    var lp = Math.round(sL * 100), tp = Math.round(sT * 100), un = lp - tp;
+    el("oxOvl").textContent = "Lungs " + lp + "% → tissue " + tp + "% · unloads " + un + "%";
+    var d = targ.pT - P50_0, live;
+    if (Math.abs(d) < 0.5) live = "Normal position";
+    else if (d > 0) live = (d < 2.5 ? "Slight right shift" : "Right shift +" + d.toFixed(0) + " mmHg");
+    else live = (d > -2.5 ? "Slight left shift" : "Left shift −" + Math.abs(d).toFixed(0) + " mmHg");
+    el("oxLive").textContent = live;
+    el("oxS1").innerHTML = targ.pT.toFixed(1) + "<small>mmHg</small>";
+    el("oxS2").innerHTML = Math.max(0, un) + "<small>% of load</small>";
+    kick();
+  }
+
+  /* ---------- ticks at their true values ---------- */
+  Array.prototype.slice.call(document.querySelectorAll(".ox-ticks")).forEach(function(box){
+    var mn = parseFloat(box.getAttribute("data-min")), mx = parseFloat(box.getAttribute("data-max"));
+    box.getAttribute("data-t").split("|").forEach(function(part){
+      var bits = part.split(":"), v = parseFloat(bits[0]);
+      var t = document.createElement("span"); t.className = "ox-tick";
+      t.style.left = ((v - mn) / (mx - mn) * 100).toFixed(2) + "%";
+      t.textContent = bits[0];
+      if (bits[1]){ var i = document.createElement("i"); i.textContent = bits[1]; t.appendChild(i); }
+      box.appendChild(t);
+    });
+  });
+
+  /* ---------- knowdrop ---------- */
+  var DROP = {
+    s: "Each haemoglobin is four protein subunits, two alpha and two beta, and each holds a haem whose iron can carry one O₂. With no oxygen bound the molecule sits in a tense (T) shape with low affinity, so the first O₂ binds reluctantly: that is the flat foot of the curve. Every O₂ that binds pulls the molecule toward the relaxed (R) shape, which raises the affinity of the sites still empty, so the curve climbs steeply between about 20 and 60 mmHg. Near 100 mmHg almost every site is full and the curve flattens into a plateau, so loading in the lungs barely suffers if PO₂ dips. Myoglobin has one subunit and nothing to cooperate with, so its curve is a hyperbola; switch on No teamwork to see what haemoglobin would look like without teamwork.",
+    shift: "A right shift means a higher P50: haemoglobin needs more PO₂ to stay half full, so at any given tissue PO₂ it lets go of more oxygen. CO₂, hydrogen ions (lower pH), heat and 2,3-BPG all stabilise the tense shape, and working muscle makes the first three, so it is handed extra oxygen exactly when it needs it; the CO₂ and pH part is the Bohr effect. In the lungs CO₂ leaves and pH rises, so the same blood loads on a curve sitting further left. A left shift means a tighter grip: fetal haemoglobin binds 2,3-BPG weakly, so it pulls oxygen across the placenta from the mother’s blood, and stored blood low in 2,3-BPG unloads poorly after a transfusion. Carbon monoxide also shifts the curve left while it blocks haem sites, a double hit on oxygen delivery."
+  };
+  var dropBtns = Array.prototype.slice.call(document.querySelectorAll("#oxDrop button"));
+  function setDrop(k){
+    dropBtns.forEach(function(b){ b.setAttribute("aria-pressed", b.getAttribute("data-k") === k ? "true" : "false"); });
+    el("oxDropP").textContent = DROP[k];
+  }
+  dropBtns.forEach(function(b){ b.addEventListener("click", function(){ setDrop(b.getAttribute("data-k")); }); });
+  setDrop("s");
+
+  syncSliders(); matchPreset(); update();
+  resize();
+  window.addEventListener("resize", resize);
+  if (window.ResizeObserver){ try { new ResizeObserver(function(){ resize(); }).observe(wrap); } catch (e) {} }
+  if (document.fonts && document.fonts.ready){ document.fonts.ready.then(function(){ draw(); }).catch(function(){}); }
+})();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'g-the-oxygen-haemoglobin-dissociation-curve'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>

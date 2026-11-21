@@ -1,0 +1,667 @@
+<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Resting membrane potential — live knowscape</title><style id="kwMobFix">body{padding-bottom:30px!important;margin-bottom:0!important}hr{display:none!important}.kw-foot{display:none!important}
+@media (max-width:480px){*{min-width:0;overflow-wrap:anywhere}div{flex-wrap:wrap}canvas,svg,img,video{max-width:100%!important;height:auto!important}table{display:block;max-width:100%;overflow-x:auto}pre{white-space:pre-wrap;max-width:100%}}
+body>*:last-child{margin-bottom:0!important;padding-bottom:0!important}html,body,body>*{min-height:0!important}
+@media (max-width:640px){h1{font-size:clamp(16px,4.5vw,25px)!important;font-weight:800!important;line-height:1.15!important}}</style></head><body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+:root {
+  --bg: #0B0D0C;
+  --bg2: #12160F;
+  --acc: #5AADD4;
+  --acc-rgb: 90, 173, 212;
+  --ag:  rgba(var(--acc-rgb),.7);
+  --ag1: rgba(var(--acc-rgb),.12);
+  --ag2: rgba(var(--acc-rgb),.45);
+  --amb: #FAC775;
+  --ink: #EDEDE8;
+  --ink-dim: #8C9389;
+  --line: #262B26;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(120% 80% at 50% -10%, #11160F 0%, #0B0D0C 55%);font-family:'Geist',sans-serif;color:var(--ink);min-height:100vh;padding:40px 16px 0;box-sizing:border-box;-webkit-font-smoothing:antialiased}
+.rm-wrap{max-width:720px;margin:0 auto}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.rm-wrap h1{font-family:'Geist',sans-serif;font-size:clamp(26px,6.5vw,44px);font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin:0 0 14px;color:var(--ink)}
+.rm-intro{font-size:15.5px;font-weight:400;color:var(--ink-dim);max-width:58ch;line-height:1.55;margin:0 0 26px}
+.card{background:linear-gradient(180deg,#12160F,#0d100b);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 var(--ag1);margin-bottom:22px}
+.card.rm-sec{border-radius:14px}
+.card-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.card-label{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;color:var(--ink);letter-spacing:.04em}
+.rm-live{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;color:var(--acc);letter-spacing:.06em}
+.rm-hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin:0 0 12px;line-height:1.5}
+.canvas-wrap{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px var(--ag1)}
+.canvas-wrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.rm-ovl{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:14px;text-transform:uppercase;color:var(--acc);text-align:center;letter-spacing:.03em}
+.rm-u{text-transform:none}
+.rm-ctl{margin-top:16px}
+.rm-ctl + .rm-ctl{margin-top:6px}
+.rm-row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);letter-spacing:.06em;margin-bottom:10px}
+.rm-row b{font-weight:500;color:var(--acc);font-size:12px;letter-spacing:.02em;text-transform:none}
+.rm-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;margin:6px 0 0;background:linear-gradient(90deg, var(--acc) var(--fill,0%), #23291f var(--fill,0%));outline:none;cursor:pointer}
+.rm-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag), 0 0 4px var(--ag);transition:box-shadow .15s}
+.rm-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#0B0D0C;border:2px solid var(--acc);box-shadow:0 0 16px var(--ag), 0 0 4px var(--ag);transition:box-shadow .15s}
+.rm-slider:hover::-webkit-slider-thumb{box-shadow:0 0 24px var(--acc), 0 0 8px var(--ag)}
+.rm-slider:hover::-moz-range-thumb{box-shadow:0 0 24px var(--acc), 0 0 8px var(--ag)}
+.rm-slider:focus-visible{outline:1px solid var(--ag2);outline-offset:6px}
+.rm-ticks{position:relative;height:30px;margin:10px 10px 0}
+.rm-tick{position:absolute;top:0;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink-dim);text-align:center;white-space:nowrap;line-height:1.35}
+.rm-tick::before{content:"";display:block;width:1px;height:4px;background:var(--ink-dim);margin:0 auto 2px;opacity:.6}
+.rm-tick i{font-style:normal;display:block;opacity:.8}
+.rm-qlabel{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);letter-spacing:.06em;margin:16px 0 10px}
+.rm-toggles{display:flex;gap:10px;flex-wrap:wrap}
+.rm-toggles button{flex:1 1 0;font-family:'JetBrains Mono',monospace;font-size:12px;padding:12px;border-radius:999px;background:#12160F;border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:background .2s,border-color .2s,color .2s,box-shadow .2s;white-space:nowrap}
+.rm-toggles button[aria-pressed="true"]{background:rgba(var(--acc-rgb),.1);border:1px solid var(--acc);color:var(--acc);box-shadow:0 0 22px rgba(var(--acc-rgb),.18)}
+.rm-toggles button:focus-visible{outline:1px solid var(--acc);outline-offset:3px}
+.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;border-top:1px solid var(--line);margin-top:18px;padding-top:14px}
+.stat-label{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);letter-spacing:.06em;margin-bottom:6px;line-height:1.35}
+.stat-label sub{text-transform:none;font-size:8.5px}
+.stat-value{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500;line-height:1.1}
+.stat-value small{font-size:13px;color:var(--ink-dim);font-weight:400;margin-left:4px}
+.rm-s1{color:var(--acc)}
+.rm-s2{color:var(--amb)}
+.knowdrop{border-top:1px solid var(--line);padding-top:16px;margin-top:16px}
+.knowdrop p{font-family:'Geist',sans-serif;font-size:14.5px;font-weight:400;line-height:1.65;color:var(--ink);margin:0}
+.know{border-left:3px solid var(--acc);padding:16px 18px;background:linear-gradient(90deg, var(--ag1), rgba(0,0,0,0));border-radius:0 12px 12px 0;margin:0;margin-bottom:0;padding-bottom:16px}
+.know-row{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.know-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:rmDot 2.4s ease-in-out infinite;flex:none}
+.know-tag{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:0.15em;color:var(--acc)}
+.know p{font-family:'Geist',sans-serif;font-size:17.4px;font-weight:400;line-height:1.55;color:var(--ink);margin:0}
+@keyframes rmDot{0%,100%{opacity:1}50%{opacity:.45}}
+.rm-wrap>*:last-child{margin-bottom:0;padding-bottom:16px}
+@media (prefers-reduced-motion: reduce){
+  .know-dot{animation:none}
+  .rm-toggles button,.rm-slider::-webkit-slider-thumb{transition:none}
+}
+</style>
+<div class="rm-wrap">
+  <h2 class="sr-only">Resting membrane potential: a slice of neuron membrane with potassium and sodium leak channels and the sodium-potassium pump, beside a voltage scale showing where the membrane potential settles</h2>
+  <h1>The pump builds the gradient. The &minus;70&nbsp;mV comes from a <span style="color:var(--acc);text-shadow:0 0 26px var(--ag2)">leak</span>.</h1>
+  <p class="rm-intro">Inside a resting neuron, potassium is about 28 times more concentrated than outside, and the membrane is dotted with channels that let it leak out. Every K&#8314; that escapes leaves a negative charge behind, until the inside is negative enough to hold the rest back. Raise the outside potassium or the sodium leak, stop the pump, and watch where the membrane potential settles.</p>
+
+  <section class="card rm-main" aria-label="Resting membrane potential model">
+    <div class="card-head">
+      <span class="card-label">Membrane at rest</span>
+      <span class="rm-live" id="rmLive">Pump on &middot; &minus;71 <span class="rm-u">mV</span></span>
+    </div>
+    <p class="rm-hint">Change outside K&#8314; and the Na&#8314; leak, then switch the pump off. Watch the V<sub>m</sub> line.</p>
+    <div class="canvas-wrap" id="rmWrap">
+      <canvas id="rmCanvas" role="img" aria-label="A slice of membrane with potassium ions leaking out, a smaller sodium leak in and the pump, beside a voltage scale marking the potassium and sodium equilibrium potentials and the membrane potential"></canvas>
+      <div class="rm-ovl" id="rmOvl" aria-live="polite">V<span class="rm-u">m</span> &minus;71 <span class="rm-u">mV</span> &middot; 18 <span class="rm-u">mV</span> above E<span class="rm-u">K</span></div>
+    </div>
+    <div class="rm-ctl">
+      <div class="rm-row"><span>Outside K&#8314;</span><b id="rmKoV">5 mM</b></div>
+      <input type="range" class="rm-slider" id="rmKo" aria-label="Outside potassium concentration in millimolar" min="2" max="20" step="0.5" value="5">
+      <div class="rm-ticks" id="rmKoT" aria-hidden="true"></div>
+    </div>
+    <div class="rm-ctl">
+      <div class="rm-row"><span>Na&#8314; leak vs K&#8314; leak</span><b id="rmPV">5%</b></div>
+      <input type="range" class="rm-slider" id="rmP" aria-label="Sodium permeability as a percentage of potassium permeability" min="0" max="50" step="1" value="5">
+      <div class="rm-ticks" id="rmPT" aria-hidden="true"></div>
+    </div>
+    <div class="rm-qlabel" id="rmPumpQ">Na&#8314;/K&#8314; pump</div>
+    <div class="rm-toggles" role="group" aria-labelledby="rmPumpQ" id="rmPump">
+      <button type="button" data-pump="on" aria-pressed="true">Pump on</button>
+      <button type="button" data-pump="off" aria-pressed="false">Pump off</button>
+    </div>
+    <div class="stat-row">
+      <div><div class="stat-label">Membrane potential V<sub>m</sub></div><div class="stat-value rm-s1" id="rmS1">&minus;71<small>mV</small></div></div>
+      <div><div class="stat-label">K&#8314; equilibrium E<sub>K</sub></div><div class="stat-value rm-s2" id="rmS2">&minus;89<small>mV</small></div></div>
+    </div>
+  </section>
+
+  <section class="card rm-sec" aria-label="Why the resting potential sits where it does">
+    <div class="rm-toggles" role="group" aria-label="What the paragraph explains" id="rmDrop">
+      <button type="button" data-k="why" aria-pressed="true">Why &minus;70 mV</button>
+      <button type="button" data-k="pump" aria-pressed="false">The pump&rsquo;s job</button>
+    </div>
+    <div class="knowdrop"><p id="rmDropP" aria-live="polite">Potassium is about 28 times more concentrated inside than out, and the resting membrane is studded with K&#8314; leak channels.</p></div>
+  </section>
+
+  <div class="know">
+    <div class="know-row"><span class="know-dot" aria-hidden="true"></span><span class="know-tag">Know this</span></div>
+    <p>A resting neuron sits near &minus;70 mV because its membrane leaks mostly <span style="color:var(--acc)">K&#8314;</span>, which holds it close to <span style="color:var(--acc)">E<sub>K</sub> (about &minus;90 mV)</span>, while a <span style="color:var(--acc)">small Na&#8314; leak</span> pulls it up; the pump only keeps the gradients in place.</p>
+  </div>
+</div>
+<script>
+(function(){
+  "use strict";
+  var CSS = getComputedStyle(document.documentElement);
+  var ACC = CSS.getPropertyValue("--acc").trim();
+  var RGB = CSS.getPropertyValue("--acc-rgb").trim();
+  var AMB = CSS.getPropertyValue("--amb").trim();
+  var INK = CSS.getPropertyValue("--ink").trim();
+  var DIM = CSS.getPropertyValue("--ink-dim").trim();
+  var RM = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+
+  function triple(hex){
+    var h = String(hex || "").replace("#", "").trim();
+    if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+    var n = parseInt(h, 16); if (isNaN(n)) return "200,200,200";
+    return ((n >> 16) & 255) + "," + ((n >> 8) & 255) + "," + (n & 255);
+  }
+  var AMBR = triple(AMB), INKR = triple(INK), DIMR = triple(DIM);
+  function ac(a){ return "rgba(" + RGB + "," + a + ")"; }
+  function am(a){ return "rgba(" + AMBR + "," + a + ")"; }
+  function ik(a){ return "rgba(" + INKR + "," + a + ")"; }
+  function dm(a){ return "rgba(" + DIMR + "," + a + ")"; }
+
+  var canvas = document.getElementById("rmCanvas");
+  var ctx = canvas.getContext("2d");
+  var wrap = document.getElementById("rmWrap"), ovl = document.getElementById("rmOvl");
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
+  var buf = document.createElement("canvas"); var bctx = buf.getContext("2d");
+  var canBlur = typeof ctx.filter === "string";
+  var MONO = "\"JetBrains Mono\", monospace";
+
+  /* ---------- the model: 37 degrees C, RT/F = 26.7 mV, (RT/F) ln 10 = 61.5 mV ---------- */
+  var L10 = 61.5, RTF = 26.7, NAO = 145, KI0 = 140, NAI0 = 15, VTOP = 70, VBOT = -100, RUN_END = 0.95;
+  var T = { ko: 5, p: 0.05, r: 1.5, rho: 0 };      /* target */
+  var S = { ko: 5, p: 0.05, r: 1.5, rho: 0 };      /* shown (eases toward target) */
+  var pumpOn = true;
+
+  function model(s){
+    var ki = KI0 - s.rho * (KI0 - s.ko), nai = NAI0 + s.rho * (NAO - NAI0);
+    /* Mullins-Noda form of the GHK equation: r = 3/2 pump coupling while the pump runs, 1 when it stops */
+    var vm = L10 * Math.log10((s.r * s.ko + s.p * NAO) / (s.r * ki + s.p * nai));
+    var ek = L10 * Math.log10(s.ko / ki), ena = L10 * Math.log10(NAO / nai);
+    return { ki: ki, nai: nai, vm: vm, ek: ek, ena: ena };
+  }
+  function ghk(V, ci, co){   /* GHK flux for a cation, outward positive, permeability 1 */
+    var u = V / RTF; if (Math.abs(u) < 1e-4) return ci - co;
+    var e = Math.exp(-u); return u * (ci - co * e) / (1 - e);
+  }
+  function fluxes(m, s){
+    var kOut = ghk(m.vm, m.ki, s.ko);
+    var naIn = -s.p * ghk(m.vm, m.nai, NAO);
+    var pumpRate = pumpOn ? (naIn / 3) * (1 + 2 * s.rho) : 0;   /* rebuilding a run-down gradient, it works harder */
+    return { kOut: kOut, naIn: naIn, pump: pumpRate };
+  }
+
+  /* ---------- seeded blue-noise slots for the resting ions ---------- */
+  var seed = 11;
+  function rnd(){ seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }
+  function slots(n){
+    var out = [];
+    for (var i = 0; i < n; i++){
+      var best = null, bestD = -1;
+      for (var c = 0; c < 14; c++){
+        var x = rnd(), y = rnd(), d = 9;
+        for (var j = 0; j < out.length; j++){ var dx = (out[j].x - x) * 2.2, dy = out[j].y - y; var dd = dx * dx + dy * dy; if (dd < d) d = dd; }
+        if (d > bestD){ bestD = d; best = { x: x, y: y }; }
+      }
+      out.push(best);
+    }
+    return out;
+  }
+  var OUT_SLOTS = slots(64), IN_SLOTS = slots(64);
+  var N_ANION = 12;
+
+  /* ---------- canvas sizing ---------- */
+  var W = 0, H = 0;
+  function resize(){
+    var rect = canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    canvas.width = Math.round(rect.width * dpr); canvas.height = Math.round(rect.height * dpr);
+    buf.width = canvas.width; buf.height = canvas.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    W = canvas.width / dpr; H = canvas.height / dpr;
+    draw();
+  }
+
+  function layout(w, h){
+    var ovlIn = ovl && ovl.parentElement === wrap;   /* on a phone the app moves the tag out of the picture */
+    var top = h * 0.06, bot = ovlIn ? h - Math.max(44, h * 0.1) : h - Math.max(14, h * 0.05);
+    if (w >= 560){
+      return { wide: true, s: { x: w * 0.03, y: top, w: w * 0.58, h: bot - top }, p: { x: w * 0.655, y: top, w: w * 0.32, h: bot - top } };
+    }
+    var sh = (bot - top) * 0.6;
+    return { wide: false, s: { x: w * 0.03, y: top, w: w * 0.94, h: sh }, p: { x: w * 0.07, y: top + sh + (bot - top) * 0.07, w: w * 0.86, h: (bot - top) * 0.33 } };
+  }
+  var CHANNELS = [
+    { t: "K", f: 0.08 }, { t: "Na", f: 0.27 }, { t: "K", f: 0.43 }, { t: "P", f: 0.6 }, { t: "K", f: 0.77 }, { t: "Na", f: 0.93 }
+  ];
+
+  function rrect(c, x, y, w, h, r){
+    r = Math.min(r, w / 2, h / 2);
+    c.beginPath(); c.moveTo(x + r, y); c.lineTo(x + w - r, y); c.quadraticCurveTo(x + w, y, x + w, y + r);
+    c.lineTo(x + w, y + h - r); c.quadraticCurveTo(x + w, y + h, x + w - r, y + h); c.lineTo(x + r, y + h);
+    c.quadraticCurveTo(x, y + h, x, y + h - r); c.lineTo(x, y + r); c.quadraticCurveTo(x, y, x + r, y); c.closePath();
+  }
+  function fmtV(v){ var r = Math.round(v); if (r === 0) return "0"; return (r < 0 ? "−" : "+") + Math.abs(r); }
+  function fmtC(c){ return c >= 20 ? String(Math.round(c)) : (Math.round(c * 10) / 10).toString(); }
+
+  /* text with a subscript, e.g. E + K. Returns width. */
+  function subText(main, sub, x, y, size, color, align, weight){
+    ctx.save();
+    ctx.fillStyle = color; ctx.textBaseline = "middle";
+    ctx.font = (weight || "400") + " " + size + "px " + MONO;
+    var w1 = ctx.measureText(main).width;
+    ctx.font = (weight || "400") + " " + Math.max(10, size * 0.75) + "px " + MONO;
+    var w2 = sub ? ctx.measureText(sub).width : 0;
+    var tw = w1 + w2, x0 = x;
+    if (align === "center") x0 = x - tw / 2; else if (align === "right") x0 = x - tw;
+    ctx.textAlign = "left";
+    ctx.font = (weight || "400") + " " + size + "px " + MONO;
+    ctx.fillText(main, x0, y);
+    if (sub){ ctx.font = (weight || "400") + " " + Math.max(10, size * 0.75) + "px " + MONO; ctx.fillText(sub, x0 + w1, y + size * 0.3); }
+    ctx.restore();
+    return tw;
+  }
+  function pill(x, y, w, h){ ctx.save(); ctx.fillStyle = "rgba(0,0,0,0.62)"; rrect(ctx, x, y, w, h, h / 2); ctx.fill(); ctx.restore(); }
+
+  /* coloured runs of text on one line, with a dark backing: parts = [[text, colour], ...] */
+  function runs(parts, x, y, size){
+    ctx.save(); ctx.font = "400 " + size + "px " + MONO; ctx.textBaseline = "middle"; ctx.textAlign = "left";
+    var tw = 0; parts.forEach(function(p){ tw += ctx.measureText(p[0]).width; });
+    pill(x - 6, y - size * 0.8, tw + 12, size * 1.6);
+    var cx = x; parts.forEach(function(p){ ctx.fillStyle = p[1]; ctx.fillText(p[0], cx, y); cx += ctx.measureText(p[0]).width; });
+    ctx.restore();
+    return tw;
+  }
+
+  /* ---------- particles that cross the membrane ---------- */
+  var parts = [], acc = { K: 0, Na: 0, P: 0 }, rr = { K: 0, Na: 0 }, pumpFlash = 0;
+  var VIS = 0.26, CAP = 26;
+  function chanOf(type){
+    var list = CHANNELS.filter(function(c){ return c.t === type; });
+    var i = rr[type] % list.length; rr[type]++; return list[i];
+  }
+  function spawn(kind, ch, dir, delay){
+    parts.push({ kind: kind, f: ch.f, dir: dir, t: -(delay || 0), dur: 1.25, off: (rnd() - 0.5) * 2, j: rnd() });
+  }
+  function stepParticles(dt, fl){
+    var kRate = Math.min(CAP, Math.max(0, fl.kOut) * VIS), naRate = Math.min(CAP, Math.max(0, fl.naIn) * VIS);
+    var pRate = Math.min(CAP / 3, fl.pump * VIS);
+    acc.K += kRate * dt; acc.Na += naRate * dt; acc.P += pRate * dt;
+    while (acc.K >= 1){ acc.K -= 1; spawn("K", chanOf("K"), -1, 0); }
+    while (acc.Na >= 1){ acc.Na -= 1; spawn("Na", chanOf("Na"), 1, 0); }
+    var pc = CHANNELS[3];
+    while (acc.P >= 1){
+      acc.P -= 1; pumpFlash = 1;
+      spawn("Na", pc, -1, 0); spawn("Na", pc, -1, 0.12); spawn("Na", pc, -1, 0.24);
+      spawn("K", pc, 1, 0.06); spawn("K", pc, 1, 0.18);
+    }
+    pumpFlash = Math.max(0, pumpFlash - dt * 2.2);
+    for (var i = parts.length - 1; i >= 0; i--){ parts[i].t += dt / parts[i].dur; if (parts[i].t >= 1) parts.splice(i, 1); }
+    if (parts.length > 260) parts.splice(0, parts.length - 260);
+  }
+
+  /* ---------- drawing ---------- */
+  function drawScene(L, m, fl){
+    var s = L.s, small = s.w < 360;
+    var tb = Math.max(12, Math.min(26, s.h * 0.13));
+    var ym = s.y + s.h * 0.5, oTop = s.y, oBot = ym - tb / 2, iTop = ym + tb / 2, iBot = s.y + s.h;
+    var lab = Math.max(11, Math.min(13, s.h * 0.05));
+    var r = Math.max(2.4, Math.min(4.2, s.h * 0.016 + 1));
+
+    /* compartments */
+    ctx.save();
+    var gO = ctx.createLinearGradient(0, oTop, 0, oBot); gO.addColorStop(0, am(0.0)); gO.addColorStop(1, am(0.05));
+    ctx.fillStyle = gO; ctx.fillRect(s.x, oTop, s.w, oBot - oTop);
+    var gI = ctx.createLinearGradient(0, iTop, 0, iBot); gI.addColorStop(0, ac(0.07)); gI.addColorStop(1, ac(0.0));
+    ctx.fillStyle = gI; ctx.fillRect(s.x, iTop, s.w, iBot - iTop);
+    ctx.restore();
+
+    /* resting ions: one dot for about 4 mM */
+    var labH = lab * 2.2;
+    function place(sl, top, bottom){ return { x: s.x + 8 + sl.x * (s.w - 16), y: top + sl.y * (bottom - top) }; }
+    var nKo = Math.max(1, Math.round(S.ko / 4)), nNaO = Math.round(NAO / 4.2);
+    var nKi = Math.max(1, Math.round(m.ki / 4.2)), nNaI = Math.max(1, Math.round(m.nai / 4.2));
+    ctx.save(); ctx.globalCompositeOperation = "lighter";
+    for (var i = 0; i < OUT_SLOTS.length && i < nKo + nNaO; i++){
+      var pO = place(OUT_SLOTS[i], oTop + labH, oBot - r * 3);
+      ctx.fillStyle = i < nKo ? ac(0.95) : am(0.55);
+      ctx.beginPath(); ctx.arc(pO.x, pO.y, i < nKo ? r * 1.15 : r, 0, Math.PI * 2); ctx.fill();
+    }
+    for (var k = 0; k < IN_SLOTS.length && k < N_ANION + nKi + nNaI; k++){
+      var pI = place(IN_SLOTS[k], iTop + r * 3, iBot - labH);
+      if (k < N_ANION){
+        ctx.strokeStyle = dm(0.55); ctx.lineWidth = 1.2;
+        ctx.beginPath(); ctx.arc(pI.x, pI.y, r * 1.7, 0, Math.PI * 2); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(pI.x - r * 0.8, pI.y); ctx.lineTo(pI.x + r * 0.8, pI.y); ctx.stroke();
+      } else {
+        var isK = k < N_ANION + nKi;
+        ctx.fillStyle = isK ? ac(0.6) : am(0.95);
+        ctx.beginPath(); ctx.arc(pI.x, pI.y, isK ? r : r * 1.15, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+    ctx.restore();
+
+    /* the bilayer */
+    ctx.save();
+    ctx.fillStyle = "rgba(0,0,0,0.85)"; ctx.fillRect(s.x, oBot, s.w, tb);
+    var hr = Math.max(1.6, tb * 0.17), step = hr * 2.5;
+    ctx.strokeStyle = dm(0.22); ctx.lineWidth = 1;
+    for (var x = s.x + hr; x < s.x + s.w; x += step){
+      ctx.beginPath(); ctx.moveTo(x, oBot + hr * 2); ctx.lineTo(x, ym - 1); ctx.moveTo(x, ym + 1); ctx.lineTo(x, iTop - hr * 2); ctx.stroke();
+    }
+    ctx.fillStyle = dm(0.55);
+    for (var x2 = s.x + hr; x2 < s.x + s.w; x2 += step){
+      ctx.beginPath(); ctx.arc(x2, oBot + hr, hr, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(x2, iTop - hr, hr, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.restore();
+
+    /* separated charge: a thin layer of + outside and - inside, sized by |Vm| */
+    var nq = Math.round(Math.min(1, Math.abs(m.vm) / 90) * (small ? 11 : 16));
+    var sign = m.vm <= 0 ? 1 : -1, q = Math.max(2.4, tb * 0.18);
+    ctx.save(); ctx.lineWidth = 1.6; ctx.lineCap = "round";
+    for (var c = 0; c < nq; c++){
+      var qx = s.x + s.w * (c + 0.5) / nq;
+      var yo = oBot - q - 3, yi = iTop + q + 3;
+      ctx.strokeStyle = sign > 0 ? am(0.85) : ac(0.85);
+      ctx.beginPath(); ctx.moveTo(qx - q, yo); ctx.lineTo(qx + q, yo); if (sign > 0){ ctx.moveTo(qx, yo - q); ctx.lineTo(qx, yo + q); } ctx.stroke();
+      ctx.strokeStyle = sign > 0 ? ac(0.85) : am(0.85);
+      ctx.beginPath(); ctx.moveTo(qx - q, yi); ctx.lineTo(qx + q, yi); if (sign < 0){ ctx.moveTo(qx, yi - q); ctx.lineTo(qx, yi + q); } ctx.stroke();
+    }
+    ctx.restore();
+
+    /* channels and the pump */
+    var cw = Math.max(10, tb * 0.85);
+    CHANNELS.forEach(function(ch){
+      var cx = s.x + ch.f * s.w;
+      ctx.save();
+      if (ch.t === "P"){
+        var pw = cw * 1.9, ph = tb * 1.7;
+        rrect(ctx, cx - pw / 2, ym - ph / 2, pw, ph, 6);
+        ctx.fillStyle = pumpOn ? ac(0.12 + 0.25 * pumpFlash) : "rgba(0,0,0,0.9)"; ctx.fill();
+        ctx.lineWidth = 1.5; ctx.strokeStyle = pumpOn ? ac(0.9) : dm(0.6); ctx.stroke();
+        var ah = ph * 0.32;
+        ctx.lineWidth = 2; ctx.lineCap = "round";
+        ctx.strokeStyle = pumpOn ? am(0.95) : dm(0.4);
+        ctx.beginPath(); ctx.moveTo(cx - pw * 0.22, ym + ah); ctx.lineTo(cx - pw * 0.22, ym - ah); ctx.lineTo(cx - pw * 0.22 - 3, ym - ah + 4); ctx.moveTo(cx - pw * 0.22, ym - ah); ctx.lineTo(cx - pw * 0.22 + 3, ym - ah + 4); ctx.stroke();
+        ctx.strokeStyle = pumpOn ? ac(0.95) : dm(0.4);
+        ctx.beginPath(); ctx.moveTo(cx + pw * 0.22, ym - ah); ctx.lineTo(cx + pw * 0.22, ym + ah); ctx.lineTo(cx + pw * 0.22 - 3, ym + ah - 4); ctx.moveTo(cx + pw * 0.22, ym + ah); ctx.lineTo(cx + pw * 0.22 + 3, ym + ah - 4); ctx.stroke();
+        if (!pumpOn){ ctx.strokeStyle = am(0.8); ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(cx - pw / 2 - 3, ym + ph / 2 + 3); ctx.lineTo(cx + pw / 2 + 3, ym - ph / 2 - 3); ctx.stroke(); }
+      } else {
+        var isK = ch.t === "K";
+        var open = isK ? 1 : Math.min(1, S.p / 0.25);
+        var col = isK ? ac : am;
+        var pore = cw * 0.42 * (isK ? 1 : open);
+        var half = (cw - pore) / 2 + 2;
+        ctx.fillStyle = col(isK ? 0.28 : 0.12 + 0.2 * open);
+        ctx.strokeStyle = col(isK ? 0.95 : 0.35 + 0.6 * open); ctx.lineWidth = 1.3;
+        rrect(ctx, cx - pore / 2 - half, oBot - 3, half, tb + 6, 3); ctx.fill(); ctx.stroke();
+        rrect(ctx, cx + pore / 2, oBot - 3, half, tb + 6, 3); ctx.fill(); ctx.stroke();
+        if (!isK && S.p < 0.005){ ctx.strokeStyle = am(0.6); ctx.beginPath(); ctx.moveTo(cx - 3, ym); ctx.lineTo(cx + 3, ym); ctx.stroke(); }
+        if (RM){
+          /* reduced motion: a still arrow per channel, its strength from the same flux */
+          var fx = isK ? fl.kOut : fl.naIn, a = Math.min(1, Math.max(0, fx) / 25);
+          if (a > 0.02){
+            var dir = isK ? -1 : 1, y0 = ym - dir * (tb * 1.4), y1 = ym + dir * (tb * 1.4);
+            ctx.strokeStyle = col(0.3 + 0.7 * a); ctx.lineWidth = 1 + 2.5 * a; ctx.lineCap = "round";
+            ctx.beginPath(); ctx.moveTo(cx, y0); ctx.lineTo(cx, y1); ctx.moveTo(cx - 4, y1 - dir * 5); ctx.lineTo(cx, y1); ctx.lineTo(cx + 4, y1 - dir * 5); ctx.stroke();
+          }
+        }
+      }
+      ctx.restore();
+    });
+
+    /* moving ions */
+    if (!RM){
+      ctx.save(); ctx.globalCompositeOperation = "lighter";
+      var reachO = (oBot - oTop) * 0.42, reachI = (iBot - iTop) * 0.42;
+      parts.forEach(function(p){
+        if (p.t < 0) return;
+        var cx = s.x + p.f * s.w + (p.kind === "Na" && p.f === CHANNELS[3].f ? -cw * 0.42 : 0) + (p.kind === "K" && p.f === CHANNELS[3].f ? cw * 0.42 : 0);
+        var startY = p.dir > 0 ? oBot - reachO : iTop + reachI;
+        var endY = p.dir > 0 ? iTop + reachI : oBot - reachO;
+        var e = p.t;
+        var y = startY + (endY - startY) * e;
+        var x = cx + p.off * s.w * 0.035 * Math.abs(1 - 2 * e) * (0.6 + 0.4 * p.j);
+        var a = Math.min(1, e / 0.15) * Math.min(1, (1 - e) / 0.3);
+        var col = p.kind === "K" ? ac : am;
+        ctx.fillStyle = col(0.25 * a);
+        ctx.beginPath(); ctx.arc(x, y, r * 2.4, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = col(0.95 * a);
+        ctx.beginPath(); ctx.arc(x, y, r * 1.15, 0, Math.PI * 2); ctx.fill();
+      });
+      ctx.restore();
+    }
+
+    /* labels */
+    var ly1 = oTop + lab * 0.95;
+    runs([["Outside  ", ik(0.92)], ["Na⁺ " + NAO, AMB], ["  K⁺ " + fmtC(S.ko), ACC], [" mM", DIM]], s.x + 8, ly1, lab);
+    var ly2 = iBot - lab * 0.95;
+    var inParts = [["Inside  ", ik(0.92)], ["K⁺ " + fmtC(m.ki), ACC], ["  Na⁺ " + fmtC(m.nai), AMB], [" mM", DIM]];
+    if (!small) inParts.push(["   ⊖ A⁻ trapped", DIM]);
+    runs(inParts, s.x + 8, ly2, lab);
+    /* channel names, just above the membrane */
+    var cl = Math.max(11, lab - 1), cy = oBot - tb * 0.55 - cl * 1.3;
+    function chanLabel(text, f, color){
+      ctx.save(); ctx.font = "400 " + cl + "px " + MONO; var tw = ctx.measureText(text).width;
+      var x = Math.max(s.x + 4, Math.min(s.x + s.w - tw - 4, s.x + f * s.w - tw / 2));
+      pill(x - 5, cy - cl * 0.75, tw + 10, cl * 1.5);
+      ctx.fillStyle = color; ctx.textBaseline = "middle"; ctx.fillText(text, x, cy); ctx.restore();
+    }
+    chanLabel("K⁺ leak", CHANNELS[0].f, ACC);
+    chanLabel("Na⁺ leak", CHANNELS[1].f, AMB);
+    chanLabel(pumpOn ? (s.w < 480 ? "" : "pump: ") + "3 Na⁺ out, 2 K⁺ in" : "pump off", CHANNELS[3].f, pumpOn ? ik(0.92) : AMB);
+  }
+
+  function arrowV(x, y0, y1, w, col){
+    if (Math.abs(y1 - y0) < 6) return;
+    var d = y1 > y0 ? 1 : -1, hl = Math.min(9, Math.abs(y1 - y0) * 0.5);
+    ctx.save(); ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = w; ctx.lineCap = "round";
+    ctx.beginPath(); ctx.moveTo(x, y0); ctx.lineTo(x, y1 - d * hl); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x, y1); ctx.lineTo(x - 3 - w, y1 - d * hl); ctx.lineTo(x + 3 + w, y1 - d * hl); ctx.closePath(); ctx.fill();
+    ctx.restore();
+  }
+  function arrowH(y, x0, x1, w, col){
+    if (Math.abs(x1 - x0) < 6) return;
+    var d = x1 > x0 ? 1 : -1, hl = Math.min(9, Math.abs(x1 - x0) * 0.5);
+    ctx.save(); ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = w; ctx.lineCap = "round";
+    ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x1 - d * hl, y); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x1, y); ctx.lineTo(x1 - d * hl, y - 3 - w); ctx.lineTo(x1 - d * hl, y + 3 + w); ctx.closePath(); ctx.fill();
+    ctx.restore();
+  }
+  /* spread labels so none overlap: items {v (position), ...}; returns positions */
+  function spread(items, gap, lo, hi){
+    var o = items.slice().sort(function(a, b){ return a.v - b.v; });
+    for (var i = 0; i < o.length; i++){ o[i].at = Math.max(o[i].v, lo); if (i && o[i].at < o[i - 1].at + gap) o[i].at = o[i - 1].at + gap; }
+    for (var j = o.length - 1; j >= 0; j--){ if (o[j].at > hi - (o.length - 1 - j) * gap) o[j].at = hi - (o.length - 1 - j) * gap; if (j < o.length - 1 && o[j].at > o[j + 1].at - gap) o[j].at = o[j + 1].at - gap; }
+  }
+
+  function drawPanel(L, m){
+    var p = L.p, fs = 11, sK = 1 / (1 + S.p), sNa = S.p / (1 + S.p);
+    ctx.save();
+    ctx.fillStyle = ik(0.9); ctx.font = "500 12px " + MONO; ctx.textBaseline = "middle";
+    if (L.wide){
+      ctx.textAlign = "left"; ctx.fillText("Membrane potential, mV", p.x, p.y + 6);
+      var ax = p.x + 40, y0 = p.y + 26, y1 = p.y + p.h - 4;
+      var Y = function(v){ return y0 + (VTOP - v) / (VTOP - VBOT) * (y1 - y0); };
+      ctx.strokeStyle = dm(0.16); ctx.lineWidth = 1;
+      [50, 0, -50, -100].forEach(function(v){
+        ctx.beginPath(); ctx.moveTo(ax, Y(v)); ctx.lineTo(p.x + p.w, Y(v)); ctx.stroke();
+        ctx.fillStyle = DIM; ctx.font = "400 " + fs + "px " + MONO; ctx.textAlign = "right"; ctx.fillText(fmtV(v), ax - 8, Y(v));
+      });
+      ctx.strokeStyle = dm(0.6); ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(ax, y0); ctx.lineTo(ax, y1); ctx.stroke();
+      /* equilibrium lines */
+      ctx.setLineDash([5, 4]); ctx.lineWidth = 1.5;
+      ctx.strokeStyle = am(0.85); ctx.beginPath(); ctx.moveTo(ax - 6, Y(m.ena)); ctx.lineTo(p.x + p.w * 0.62, Y(m.ena)); ctx.stroke();
+      ctx.strokeStyle = ac(0.7); ctx.beginPath(); ctx.moveTo(ax - 6, Y(m.ek)); ctx.lineTo(p.x + p.w * 0.62, Y(m.ek)); ctx.stroke();
+      ctx.setLineDash([]);
+      /* the tug: arrows from Vm toward each equilibrium, thickness = share of the permeability */
+      var yv = Y(m.vm);
+      arrowV(ax + 14, yv, Y(m.ek), 1 + 6 * sK, ac(0.75));
+      arrowV(ax + 26, yv, Y(m.ena), 1 + 6 * sNa, am(0.75));
+      /* Vm line */
+      ctx.save(); ctx.globalCompositeOperation = "lighter";
+      var gl = ctx.createLinearGradient(ax - 10, 0, p.x + p.w * 0.66, 0); gl.addColorStop(0, ac(0.95)); gl.addColorStop(1, ac(0.35));
+      ctx.strokeStyle = gl; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(ax - 10, yv); ctx.lineTo(p.x + p.w * 0.66, yv); ctx.stroke();
+      ctx.fillStyle = ac(0.35); ctx.beginPath(); ctx.arc(ax, yv, 9, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = ACC; ctx.beginPath(); ctx.arc(ax, yv, 4.5, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+      /* labels on the right, spread apart */
+      var lx = p.x + p.w * 0.66 + 6;
+      var items = [
+        { v: Y(m.ena), main: "E", sub: "Na", val: " " + fmtV(m.ena), col: AMB, w: "400" },
+        { v: Y(m.ek), main: "E", sub: "K", val: " " + fmtV(m.ek), col: ACC, w: "400" },
+        { v: yv, main: "V", sub: "m", val: " " + fmtV(m.vm), col: ACC, w: "600" }
+      ];
+      spread(items, 17, y0 + 4, y1 - 4);
+      items.forEach(function(it){
+        var tw = subText(it.main, it.sub, lx, it.at, 12, it.col, "left", it.w);
+        ctx.font = it.w + " 12px " + MONO; ctx.fillStyle = it.col; ctx.textAlign = "left"; ctx.fillText(it.val, lx + tw, it.at);
+        if (Math.abs(it.at - it.v) > 2){ ctx.strokeStyle = dm(0.5); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(lx - 5, it.v); ctx.lineTo(lx - 1, it.at); ctx.stroke(); }
+      });
+    } else {
+      ctx.textAlign = "left"; ctx.fillText("Membrane potential, mV", p.x, p.y + 6);
+      var x0 = p.x + 4, x1 = p.x + p.w - 4;
+      var X = function(v){ return x0 + (v - VBOT) / (VTOP - VBOT) * (x1 - x0); };
+      var ay = Math.max(p.y + 58, p.y + p.h - 24);
+      ctx.strokeStyle = dm(0.6); ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(x0, ay); ctx.lineTo(x1, ay); ctx.stroke();
+      [-100, -50, 0, 50].forEach(function(v){
+        ctx.strokeStyle = dm(0.5); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(X(v), ay); ctx.lineTo(X(v), ay + 5); ctx.stroke();
+        ctx.fillStyle = DIM; ctx.font = "400 " + fs + "px " + MONO; ctx.textAlign = "center"; ctx.fillText(fmtV(v), X(v), ay + 15);
+      });
+      ctx.setLineDash([4, 3]); ctx.lineWidth = 1.5;
+      ctx.strokeStyle = am(0.85); ctx.beginPath(); ctx.moveTo(X(m.ena), ay - 30); ctx.lineTo(X(m.ena), ay + 4); ctx.stroke();
+      ctx.strokeStyle = ac(0.7); ctx.beginPath(); ctx.moveTo(X(m.ek), ay - 30); ctx.lineTo(X(m.ek), ay + 4); ctx.stroke();
+      ctx.setLineDash([]);
+      var xv = X(m.vm);
+      arrowH(ay - 8, xv, X(m.ek), 1 + 5 * sK, ac(0.75));
+      arrowH(ay - 18, xv, X(m.ena), 1 + 5 * sNa, am(0.75));
+      ctx.save(); ctx.globalCompositeOperation = "lighter";
+      ctx.strokeStyle = ACC; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(xv, ay - 32); ctx.lineTo(xv, ay + 4); ctx.stroke();
+      ctx.fillStyle = ac(0.35); ctx.beginPath(); ctx.arc(xv, ay, 8, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = ACC; ctx.beginPath(); ctx.arc(xv, ay, 4, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+      /* labels in one row above the markers, spread apart */
+      ctx.font = "400 12px " + MONO;
+      var ly = ay - 42;
+      var it2 = [
+        { v: X(m.ek), main: "E", sub: "K", val: " " + fmtV(m.ek), col: ACC, w: "400" },
+        { v: X(m.vm), main: "V", sub: "m", val: " " + fmtV(m.vm), col: ACC, w: "600" },
+        { v: X(m.ena), main: "E", sub: "Na", val: " " + fmtV(m.ena), col: AMB, w: "400" }
+      ];
+      var lw = 0; it2.forEach(function(it){ ctx.font = it.w + " 12px " + MONO; it.tw = ctx.measureText(it.main + it.sub + it.val).width; lw = Math.max(lw, it.tw); });
+      spread(it2, lw + 8, x0 + lw / 2, x1 - lw / 2);
+      it2.forEach(function(it){
+        ctx.strokeStyle = dm(0.5); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(it.at, ly + 8); ctx.lineTo(it.v, ay - 31); ctx.stroke();
+        var tw = subText(it.main, it.sub, it.at - it.tw / 2, ly, 12, it.col, "left", it.w);
+        ctx.font = it.w + " 12px " + MONO; ctx.fillStyle = it.col; ctx.textAlign = "left"; ctx.fillText(it.val, it.at - it.tw / 2 + tw, ly);
+      });
+    }
+    ctx.restore();
+  }
+
+  function draw(){
+    if (!W || !H) return;
+    var w = W, h = H, L = layout(w, h), m = model(S), fl = fluxes(m, S);
+    ctx.save();
+    ctx.globalCompositeOperation = "source-over"; ctx.filter = "none";
+    ctx.fillStyle = "rgba(0,0,0,1)"; ctx.fillRect(0, 0, w, h);
+    ctx.restore();
+    drawScene(L, m, fl);
+    drawPanel(L, m);
+    /* bloom */
+    if (canBlur){
+      bctx.setTransform(1, 0, 0, 1, 0, 0); bctx.clearRect(0, 0, buf.width, buf.height);
+      if (canvas.width && canvas.height) bctx.drawImage(canvas, 0, 0);
+      ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.38; ctx.filter = "blur(7px)";
+      (buf.width&&buf.height)&&ctx.drawImage(buf, 0, 0, w, h); ctx.restore();
+    }
+    /* vignette */
+    var cx = w / 2, cy = h / 2;
+    var vig = ctx.createRadialGradient(cx, cy, h * 0.28, cx, cy, w * 0.72);
+    vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.52)");
+    ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
+  }
+
+  /* ---------- readouts ---------- */
+  var live = document.getElementById("rmLive");
+  var s1 = document.getElementById("rmS1"), s2 = document.getElementById("rmS2");
+  var last = {};
+  function setHTML(el, key, html){ if (last[key] !== html){ last[key] = html; el.innerHTML = html; } }
+  var U = function(t){ return "<span class=\"rm-u\">" + t + "</span>"; };
+  function readouts(){
+    var m = model(S);
+    var vm = fmtV(m.vm), ek = fmtV(m.ek);
+    setHTML(live, "live", (pumpOn ? "Pump on" : "Pump off") + " &middot; " + vm + " " + U("mV"));
+    setHTML(s1, "s1", vm + "<small>mV</small>");
+    setHTML(s2, "s2", ek + "<small>mV</small>");
+    var gap = Math.round(m.vm - m.ek), txt;
+    var running = Math.abs(T.rho - S.rho) > 0.01;
+    if (!pumpOn && running) txt = "Pump off &middot; gradients running down &middot; V" + U("m") + " " + vm + " " + U("mV");
+    else if (!pumpOn) txt = "Pump off &middot; gradients nearly gone &middot; V" + U("m") + " " + vm + " " + U("mV");
+    else if (pumpOn && running) txt = "Pump on &middot; rebuilding the gradients &middot; V" + U("m") + " " + vm + " " + U("mV");
+    else if (gap <= 0) txt = "V" + U("m") + " " + vm + " " + U("mV") + " &middot; sitting on E" + U("K") + ": only K&#8314; leaks";
+    else txt = "V" + U("m") + " " + vm + " " + U("mV") + " &middot; " + gap + " " + U("mV") + " above E" + U("K");
+    setHTML(ovl, "ovl", txt);
+  }
+
+  /* ---------- animation ---------- */
+  var raf = 0, lastT = 0;
+  function ease(cur, tgt, dt, tau){ var d = tgt - cur; if (Math.abs(d) < 1e-4) return tgt; return cur + d * (1 - Math.exp(-dt / tau)); }
+  function frame(now){
+    var dt = lastT ? Math.min(now - lastT, 50) / 1000 : 0.016; lastT = now;
+    S.ko = ease(S.ko, T.ko, dt, 0.18); S.p = ease(S.p, T.p, dt, 0.18); S.r = ease(S.r, T.r, dt, 0.2);
+    S.rho = ease(S.rho, T.rho, dt, T.rho > S.rho ? 1.6 : 0.9);
+    if (Math.abs(S.rho - T.rho) < 0.002) S.rho = T.rho;
+    var m = model(S);
+    stepParticles(dt, fluxes(m, S));
+    draw(); readouts();
+    raf = requestAnimationFrame(frame);   /* ion flux is the content: the loop runs while the card is open */
+  }
+  function kick(){
+    if (RM){ S.ko = T.ko; S.p = T.p; S.r = T.r; S.rho = T.rho; draw(); readouts(); return; }
+    if (!raf){ lastT = 0; raf = requestAnimationFrame(frame); }
+  }
+
+  /* ---------- controls ---------- */
+  function fill(el){ var mn = +el.min, mx = +el.max; el.style.setProperty("--fill", ((+el.value - mn) / (mx - mn) * 100) + "%"); }
+  function ticks(id, el, list){
+    var box = document.getElementById(id), mn = +el.min, mx = +el.max;
+    list.forEach(function(t){
+      var d = document.createElement("div"); d.className = "rm-tick";
+      d.style.left = ((t[0] - mn) / (mx - mn) * 100) + "%";
+      d.innerHTML = t[1] + (t[2] ? "<i>" + t[2] + "</i>" : "");
+      box.appendChild(d);
+    });
+  }
+  var koEl = document.getElementById("rmKo"), pEl = document.getElementById("rmP");
+  var koV = document.getElementById("rmKoV"), pV = document.getElementById("rmPV");
+  ticks("rmKoT", koEl, [[2, "2"], [5, "5", "normal"], [10, "10"], [15, "15"], [20, "20 mM"]]);
+  ticks("rmPT", pEl, [[0, "0%"], [5, "5%", "neuron"], [25, "25%"], [50, "50%"]]);
+  function onKo(){ T.ko = +koEl.value; koV.textContent = fmtC(T.ko) + " mM"; fill(koEl); kick(); }
+  function onP(){ T.p = +pEl.value / 100; pV.textContent = Math.round(+pEl.value) + "%"; fill(pEl); kick(); }
+  koEl.addEventListener("input", onKo); koEl.addEventListener("change", onKo);
+  pEl.addEventListener("input", onP); pEl.addEventListener("change", onP);
+
+  function group(id, fn){
+    var g = document.getElementById(id), bs = g.querySelectorAll("button");
+    Array.prototype.forEach.call(bs, function(b){
+      b.addEventListener("click", function(){
+        Array.prototype.forEach.call(bs, function(x){ x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+        fn(b);
+      });
+    });
+  }
+  group("rmPump", function(b){
+    pumpOn = b.getAttribute("data-pump") === "on";
+    T.r = pumpOn ? 1.5 : 1; T.rho = pumpOn ? 0 : RUN_END;
+    if (RM) S.rho = T.rho;
+    kick(); readouts();
+  });
+
+  var DROP = {
+    why: "Potassium is about 28 times more concentrated inside than out, and the resting membrane is studded with K⁺ leak channels. K⁺ drifts out down that gradient, and each ion that leaves strands a negative charge inside, mostly on proteins that cannot follow. Within milliseconds the inside is negative enough to pull K⁺ back as hard as the gradient pushes it out: that balance point is E<sub>K</sub>, about −90 mV, from the Nernst equation. Only a tiny fraction of the K⁺ has to move to get there, so the concentrations barely change. The membrane also leaks a little Na⁺, which both its gradient and the negative inside pull in, so the potential settles a little above E<sub>K</sub>, near −70 mV. Raise outside K⁺ and the gradient shrinks, E<sub>K</sub> rises and the whole cell depolarises.",
+    pump: "Each cycle of the Na⁺/K⁺ ATPase spends one ATP to move 3 Na⁺ out and 2 K⁺ in. It exports one more positive charge than it brings in, so it is electrogenic, but that adds only a few millivolts to the resting potential. Its real job is upkeep: the leaks run the gradients down all the time and the pump rebuilds them, which takes a large share of a neuron’s ATP. Block it with ouabain or starve it of ATP and the potential barely moves at first, then drifts toward zero over minutes to hours as K⁺ seeps out and Na⁺ seeps in. Change outside K⁺ or the K⁺ permeability instead and the potential shifts at once."
+  };
+  var dropP = document.getElementById("rmDropP");
+  group("rmDrop", function(b){ dropP.innerHTML = DROP[b.getAttribute("data-k")]; });
+  dropP.innerHTML = DROP.why;
+
+  onKo(); onP();
+  S.ko = T.ko; S.p = T.p;
+  resize(); readouts();
+  window.addEventListener("resize", resize);
+  if (window.ResizeObserver){ try { new ResizeObserver(function(){ resize(); }).observe(wrap); } catch (e) {} }
+  if (document.fonts && document.fonts.ready){ document.fonts.ready.then(function(){ draw(); }).catch(function(){}); }
+  if (RM){ draw(); readouts(); } else kick();
+})();
+</script>
+<script>/* kwFit: the widget tells the page how tall it is, so the frame fits it (F14: never a viewport min-height inside a frame) */
+(function(){function h(){return Math.ceil(document.documentElement.scrollHeight);}function send(){try{parent.postMessage({kwH:h(),kwId:'g-resting-membrane-potential'},'*');}catch(e){}}
+if(window.ResizeObserver){new ResizeObserver(send).observe(document.body);}window.addEventListener('load',send);setTimeout(send,600);setTimeout(send,2000);})();</script></body></html>
