@@ -118,7 +118,16 @@
     ".kw-passbar .pb-half .pb-l{margin:8px 0 16px}" +
     ".kw-passbar .pb-half .pb-hand{margin-top:auto;padding-top:14px}" +
     ".kw-passbar .pb-half .pb-fine{margin-bottom:0}" +
-    "@media (max-width:700px){.kw-passbar .pb-duo{grid-template-columns:1fr;gap:12px}.kw-passbar .pb-top{min-height:0}.kw-passbar.duo .pb-sheet{padding:18px 14px 14px;max-height:calc(100vh - 150px);max-height:calc(100dvh - 150px)}.kw-passbar.duo .pb-h{font-size:20px;margin-bottom:12px}.kw-passbar .pb-half{padding:16px 16px 14px}.kw-passbar .pb-half .pb-price .n{font-size:34px}.kw-passbar .pb-free{font-size:24px}}" +
+    ".kw-passbar .pb-ph{display:none}" +
+    ".kw-passbar .pb-foot{margin-top:14px}" +
+    ".kw-passbar .pb-foot .pb-hand{margin-top:0}" +
+    ".kw-passbar .pb-short{font-size:12px;line-height:1.4;color:#a79fb3;margin:8px 0 0;text-align:center}" +
+    ".kw-passbar .pb-more{font-size:11.5px;line-height:1.5;color:#8f86a0;margin:0 0 12px;text-align:center}" +
+    "@media (max-width:700px){.kw-passbar .pb-duo{grid-template-columns:1fr 1fr;gap:10px}.kw-passbar .pb-top{min-height:0}.kw-passbar.duo .pb-sheet{padding:18px 14px 14px;max-height:calc(100vh - 150px);max-height:calc(100dvh - 150px)}.kw-passbar.duo .pb-h{font-size:20px;margin-bottom:12px}.kw-passbar .pb-half{padding:16px 16px 14px}.kw-passbar .pb-half .pb-price .n{font-size:34px}.kw-passbar .pb-free{font-size:24px}" +
+      /* v8 (23 Nov 2026): both doors above the fold on a phone. Two compact halves side by side, long lines move under them */
+      ".kw-passbar .pb-ph{display:block}.kw-passbar .pb-dk{display:none}.kw-passbar .pb-half{padding:14px 11px 12px}.kw-passbar .pb-half .pb-top{flex:1}" +
+      ".kw-passbar .pb-half .pb-eye{font-size:10.5px;margin-bottom:6px}.kw-passbar .pb-half .pb-price{font-size:12.5px}.kw-passbar .pb-half .pb-price .n{font-size:30px}.kw-passbar .pb-half .pb-price s{margin-left:4px}" +
+      ".kw-passbar .pb-free{font-size:19px}.kw-passbar .pb-half .pb-cta{font-size:14.5px;line-height:1.25;padding:13px 8px;margin-top:12px}.kw-passbar .pb-foot{margin-top:12px}.kw-passbar .pb-half .pb-short{min-height:2.8em}}" +
     "@media (prefers-reduced-motion:reduce){.kw-passbar *{transition:none!important}}";
 
   var who = PARENT ? 'theirs' : 'yours', they = PARENT ? 'they stay' : 'you stay', plan = PARENT ? 'their plan' : 'your plan';
@@ -152,21 +161,26 @@
           '<div class="pb-top">' +
             '<p class="pb-eye">Students</p>' +
             '<p class="pb-price"><span class="n">$79</span>a term<s>$99</s></p>' +
-            '<p class="pb-l">Or $29 a month or $249 a year.</p>' +
+            '<p class="pb-l pb-dk">Or $29 a month or $249 a year.</p>' +
           '</div>' +
           '<a class="pb-cta" data-kw-from="foundbar" href="' + SIGNUP + '">claim your student seat</a>' +
-          '<p class="pb-trust">Free for a week first. We take a card to start &#8212; cancel inside the week and you pay nothing.</p>' +
-          '<p class="pb-fine">The first 50 student plans, or until Fri 9 April 2027, whichever comes first.</p>' +
-          hand +
+          '<p class="pb-short pb-ph">Free for a week. Card to start.</p>' +
+          '<p class="pb-trust pb-dk">Free for a week first. We take a card to start &#8212; cancel inside the week and you pay nothing.</p>' +
+          '<p class="pb-fine pb-dk">The first 50 student plans, or until Fri 9 April 2027, whichever comes first.</p>' +
         '</div>' +
         '<div class="pb-half pb-tea">' +
           '<div class="pb-top">' +
             '<p class="pb-eye">Teachers</p>' +
             '<p class="pb-free">Free until Fri 9 April 2027.</p>' +
-            '<p class="pb-l">Run this model with your class. Every teacher who joins before then is free.</p>' +
+            '<p class="pb-l pb-dk">Run this model with your class. Every teacher who joins before then is free.</p>' +
           '</div>' +
           '<a class="pb-cta" data-kw-from="foundbar-teacher" href="' + TEACH_SIGNUP + '">claim your teacher seat</a>' +
+          '<p class="pb-short pb-ph">Run it with your class.</p>' +
         '</div>' +
+      '</div>' +
+      '<div class="pb-foot">' +
+        '<p class="pb-more pb-ph">Students: or $29 a month or $249 a year. We take a card to start &#8212; cancel inside the free week and you pay nothing. The first 50 student plans, or until Fri 9 April 2027, whichever comes first.</p>' +
+        hand +
       '</div>' +
     '</div>' +
     '<button class="pb-bar" type="button" aria-expanded="false" aria-controls="kwFoundSheet">' +
